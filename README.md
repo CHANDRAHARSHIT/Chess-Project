@@ -1,73 +1,104 @@
-# React + TypeScript + Vite
+# ChessCraft
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> **Launch Your Own Chess Platform.** A creator-owned, white-label chess infrastructure that allows chess creators, coaches, and academies to launch their own branded chess experience.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## ♟️ The Vision
 
-## React Compiler
+ChessCraft is **not** another chess clone. It is a business-in-a-box platform for the chess ecosystem:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Audience Ownership:** Move your followers away from closed algorithms and maintain direct billing and subscriber relationships.
+- **Brand Independence:** Launch on a custom domain (e.g. `academy.yourbrand.com`) with bespoke themes, logos, and style controls.
+- **Modern Learning Experience:** Build interactive exercise modules, database study books, and standard game history logging for students.
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🛠️ Technology Stack
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- **Core Framework:** React 19, Vite, TypeScript
+- **Styling Pipeline:** Tailwind CSS v3, PostCSS, Autoprefixer
+- **Chess Engine:** Stockfish JS (compiled via WASM/Emscripten running asynchronously in a Web Worker)
+- **State & Rules Validation:** `chess.js` & `react-chessboard`
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+---
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## ⚙️ Core Architecture
+
+### CORS-Safe CDN Stockfish Hook
+The engine utilizes a custom React hook `useStockfish.ts` to instantiate Stockfish on a native browser background worker without local file caching or origin issues:
+```typescript
+const blobCode = `importScripts("https://cdnjs.cloudflare.com/ajax/libs/stockfish.js/10.0.2/stockfish.js");`;
+const blob = new Blob([blobCode], { type: 'application/javascript' });
+const workerUrl = URL.createObjectURL(blob);
+const worker = new Worker(workerUrl);
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Universal Chess Interface (UCI) Parser
+Monitors outputs from the background threads to translate centipawn score weights (+10 to -10 range) relative to White, plotting real-time advantages on the vertical HTML evaluation bar:
+```typescript
+const scoreMatch = line.match(/score (cp|mate) (-?\d+)/);
+if (scoreMatch) {
+  const type = scoreMatch[1];
+  let value = parseInt(scoreMatch[2], 10);
+  if (isBlackTurn) value = -value; // Convert perspective to White
+}
+```
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+---
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 🚀 Local Deployment
+
+Get the project running locally in three commands:
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/CHANDRAHARSHIT/Chess-Project.git
+   cd Chess-Project
+   ```
+
+2. **Install modules:**
+   ```bash
+   npm install
+   ```
+
+3. **Start local developer server:**
+   ```bash
+   npm run dev
+   ```
+
+4. **Verify production bundle:**
+   ```bash
+   npm run build
+   ```
+
+---
+
+## 📦 Project Directory Layout
+
+```
+├── package.json              # Compilation rules & packages
+├── tailwind.config.js        # Design system brand color settings
+├── postcss.config.js         # CSS compiler settings
+├── vite.config.ts            # Vite client setup
+├── tsconfig.json             # TypeScript configurations
+├── src/
+│   ├── App.tsx               # Main assembly page
+│   ├── index.css             # Tailwind baseline & Google font imports
+│   ├── main.tsx              # React mounting root
+│   ├── types/
+│   │   └── chess.ts          # Type configurations for AI levels & states
+│   ├── utils/
+│   │   └── chessHelpers.ts   # Move converters & game checkers
+│   ├── hooks/
+│   │   └── useStockfish.ts   # Web worker UCI hooks
+│   └── components/
+│       ├── Navbar.tsx        # Top navigation
+│       ├── Hero.tsx          # Pitch banner + interactive branding board
+│       ├── Features.tsx      # "Why Ownership Matters"
+│       ├── ProductDemo.tsx   # Stockfish play dashboard + evaluation
+│       ├── HowItWorks.tsx    # Onboarding steps
+│       ├── BuiltFor.tsx      # Target profiles
+│       ├── PartnerCTA.tsx    # Form submission pilot signups
+│       └── Footer.tsx        # Signature links
 ```
