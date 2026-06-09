@@ -87,18 +87,18 @@ export default function Hero() {
               <div className="bg-brand-surface border border-brand-border rounded-xl shadow-2xl overflow-hidden">
                 {/* Board Area */}
                 <div className="p-4 bg-brand-surface">
-                  <div className="aspect-square rounded-lg overflow-hidden border border-brand-border bg-[#1A2235]">
+                  <div className="aspect-square rounded-lg overflow-hidden">
                     <Chessboard
                       options={{
                         position: gameFen,
                         onPieceDrop: ({ sourceSquare, targetSquare }) => {
                           return onDrop(sourceSquare, targetSquare);
                         },
-                        darkSquareStyle: { backgroundColor: '#1E293B' },
-                        lightSquareStyle: { backgroundColor: '#384252' },
+                        darkSquareStyle: { backgroundColor: '#b58863' },
+                        lightSquareStyle: { backgroundColor: '#f0d9b5' },
                         boardStyle: {
                           borderRadius: '4px',
-                          boxShadow: '0 5px 15px rgba(0, 0, 0, 0.5)',
+                          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.6)',
                         },
                       }}
                     />

@@ -146,24 +146,24 @@ export default function ProductDemo() {
   const customSquareStyles: Record<string, React.CSSProperties> = {};
   if (history.length > 0) {
     const last = history[history.length - 1];
+    // Yellow highlight for last move — classic chess-site style
     customSquareStyles[last.from] = {
-      backgroundColor: 'rgba(255,255,255,0.04)',
-      boxShadow: 'inset 0 0 0 2px rgba(255,255,255,0.15)',
+      backgroundColor: 'rgba(255, 255, 0, 0.4)',
     };
     customSquareStyles[last.to] = {
-      backgroundColor: 'rgba(255,255,255,0.04)',
-      boxShadow: 'inset 0 0 0 2px rgba(255,255,255,0.15)',
+      backgroundColor: 'rgba(255, 255, 0, 0.4)',
     };
   }
   if (showAnalysisHint && bestMove) {
     const { from, to } = parseUciMove(bestMove);
+    // Green highlight for engine suggestion
     customSquareStyles[from] = {
-      backgroundColor: 'rgba(99,102,241,0.15)',
-      boxShadow: 'inset 0 0 0 3px rgba(99,102,241,0.7)',
+      backgroundColor: 'rgba(0, 200, 100, 0.45)',
+      boxShadow: 'inset 0 0 0 3px rgba(0, 180, 80, 0.9)',
     };
     customSquareStyles[to] = {
-      backgroundColor: 'rgba(99,102,241,0.15)',
-      boxShadow: 'inset 0 0 0 3px rgba(99,102,241,0.7)',
+      backgroundColor: 'rgba(0, 200, 100, 0.45)',
+      boxShadow: 'inset 0 0 0 3px rgba(0, 180, 80, 0.9)',
     };
   }
 
@@ -219,7 +219,7 @@ export default function ProductDemo() {
 
             {/* ── Col 2: Chessboard ───────────────────────────── */}
             <div className="lg:col-span-7 flex flex-col justify-center">
-              <div className="aspect-square w-full rounded-lg overflow-hidden shadow-xl border border-brand-border relative bg-[#1B2235]">
+              <div className="aspect-square w-full rounded-lg overflow-hidden shadow-xl border border-brand-border relative">
 
                 {/* Game Over Overlay */}
                 {gameOverReason && (
@@ -241,7 +241,7 @@ export default function ProductDemo() {
                   </div>
                 )}
 
-                {/* react-chessboard — stays mounted, never remounts */}
+                {/* react-chessboard — classic brown/beige look, stays mounted, never remounts */}
                 <Chessboard
                   options={{
                     position: gameFen,
@@ -249,8 +249,8 @@ export default function ProductDemo() {
                       onDrop(sourceSquare, targetSquare),
                     boardOrientation: playerColor === 'w' ? 'white' : 'black',
                     squareStyles: customSquareStyles,
-                    darkSquareStyle: { backgroundColor: '#1E293B' },
-                    lightSquareStyle: { backgroundColor: '#384252' },
+                    darkSquareStyle: { backgroundColor: '#b58863' },
+                    lightSquareStyle: { backgroundColor: '#f0d9b5' },
                     boardStyle: { borderRadius: '4px' },
                   }}
                 />
