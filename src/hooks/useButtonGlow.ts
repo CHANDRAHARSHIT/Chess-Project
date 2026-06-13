@@ -65,13 +65,13 @@ export function useButtonGlow<T extends HTMLElement>() {
       const quickX = gsap.quickTo(btn, '--glow-x', {
         duration: 0.18,
         ease: 'power2.out',
-        valueTemplate: (v) => `${v}%`,
+        valueTemplate: (v: string | number) => `${v}%`,
       });
 
       const quickY = gsap.quickTo(btn, '--glow-y', {
         duration: 0.18,
         ease: 'power2.out',
-        valueTemplate: (v) => `${v}%`,
+        valueTemplate: (v: string | number) => `${v}%`,
       });
 
       const setOpacity = (val: number) => {
