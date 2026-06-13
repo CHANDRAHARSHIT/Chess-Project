@@ -1,5 +1,11 @@
-import { useState } from 'react';
+/**
+ * PartnerCTA.tsx  (Contact / Partner section)
+ * ScrollTrigger animation: section card fades up + slight scale on enter viewport.
+ */
+
+import { useState, useRef } from 'react';
 import { CheckCircle2, ArrowRight, AlertCircle } from 'lucide-react';
+import { useScrollReveal } from '../hooks/useScrollReveal';
 
 // Read recipient from environment — never hardcoded
 const RECIPIENT_EMAIL = import.meta.env.VITE_CONTACT_EMAIL as string | undefined;
@@ -12,6 +18,14 @@ export default function ContactSection() {
   const [emailError, setEmailError] = useState('');
   const [messageError, setMessageError] = useState('');
   const [status, setStatus] = useState<FormStatus>('idle');
+
+  // ScrollTrigger reveal for the section card
+  const cardRef = useRef<HTMLDivElement>(null);
+  useScrollReveal(cardRef as React.RefObject<Element | null>, {
+    y: 50,
+    duration: 0.9,
+    start: 'top 88%',
+  });
 
   const validateEmail = (val: string) => {
     if (!val) return 'Email is required.';
@@ -69,7 +83,12 @@ export default function ContactSection() {
       <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-brand-accent/5 rounded-full blur-[130px] pointer-events-none" />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="bg-brand-bg border border-brand-border rounded-2xl shadow-2xl p-8 sm:p-12 text-center space-y-8 relative overflow-hidden">
+        {/* ref attached here — ScrollTrigger fades this card up on enter */}
+        <div
+          ref={cardRef}
+          className="bg-brand-bg border border-brand-border rounded-2xl shadow-2xl p-8 sm:p-12 text-center space-y-8 relative overflow-hidden"
+          style={{ opacity: 0 }}
+        >
 
           {/* Top accent line */}
           <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-brand-accent/60 to-transparent" />

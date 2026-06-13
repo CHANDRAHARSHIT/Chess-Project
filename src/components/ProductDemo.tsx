@@ -5,6 +5,7 @@ import { useStockfish } from '../hooks/useStockfish';
 import { parseUciMove, getGameOverReason } from '../utils/chessHelpers';
 import { DIFFICULTY_CONFIGS, type DifficultyLevel } from '../types/chess';
 import { RotateCcw, Sparkles, AlertCircle, ArrowRightLeft, Info } from 'lucide-react';
+import { useScrollReveal } from '../hooks/useScrollReveal';
 
 export default function ProductDemo() {
   // ─── ROOT CAUSE OF SCROLL BUG ─────────────────────────────────────────────
@@ -35,6 +36,12 @@ export default function ProductDemo() {
 
   // Move history container — scroll inside the box, never the page
   const moveHistoryContainerRef = useRef<HTMLDivElement>(null);
+
+  // ScrollTrigger reveal refs
+  const headerRef    = useRef<HTMLDivElement>(null);
+  const dashboardRef = useRef<HTMLDivElement>(null);
+  useScrollReveal(headerRef    as React.RefObject<Element | null>, { y: 50, duration: 0.8 });
+  useScrollReveal(dashboardRef as React.RefObject<Element | null>, { y: 60, duration: 0.9, delay: 0.1 });
 
   // Sync game-over state after every FEN change
   useEffect(() => {
@@ -177,7 +184,11 @@ export default function ProductDemo() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
         {/* Section Title */}
-        <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
+        <div
+          ref={headerRef}
+          className="text-center max-w-3xl mx-auto mb-16 space-y-4"
+          style={{ opacity: 0 }}
+        >
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-accent/10 border border-brand-accent/20">
             <Sparkles className="w-3.5 h-3.5 text-brand-accent" />
             <span className="font-sans font-medium text-xs text-brand-accent tracking-wide uppercase">
@@ -194,7 +205,11 @@ export default function ProductDemo() {
         </div>
 
         {/* Dashboard */}
-        <div className="bg-brand-surface border border-brand-border rounded-xl shadow-2xl p-4 sm:p-6 lg:p-8 max-w-5xl mx-auto">
+        <div
+          ref={dashboardRef}
+          className="bg-brand-surface border border-brand-border rounded-xl shadow-2xl p-4 sm:p-6 lg:p-8 max-w-5xl mx-auto"
+          style={{ opacity: 0 }}
+        >
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
 
             {/* ── Col 1: Eval Bar ─────────────────────────────── */}

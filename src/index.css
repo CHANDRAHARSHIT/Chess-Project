@@ -4,6 +4,7 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ─── Base Reset ─────────────────────────────────────────────────────────── */
 html, body {
   background-color: #0B1020;
   color: #F8FAFC;
@@ -15,27 +16,116 @@ html, body {
   min-height: 100vh;
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
+/* ─── ScrollSmoother Wrapper ─────────────────────────────────────────────── */
+/* Prepared for GSAP Club ScrollSmoother. Currently uses native browser scroll. */
+/* When upgrading to Club, add: overflow: hidden + position: fixed to #smooth-wrapper */
+/* and ScrollSmoother.create({ smooth: 2, effects: true, smoothTouch: 0.1 }); */
+#smooth-wrapper {
+  width: 100%;
+  min-height: 100vh;
+}
+
+#smooth-content {
+  width: 100%;
+  /* Custom scrollbar for when ScrollSmoother takes over */
+  scrollbar-width: thin;
+  scrollbar-color: #1F2937 #0B1020;
+}
+
+/* ─── Custom Scrollbar (Webkit) ──────────────────────────────────────────── */
+#smooth-content::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
-::-webkit-scrollbar-track {
+#smooth-content::-webkit-scrollbar-track {
   background: #0B1020;
 }
-::-webkit-scrollbar-thumb {
+#smooth-content::-webkit-scrollbar-thumb {
   background: #1F2937;
   border-radius: 3px;
 }
-::-webkit-scrollbar-thumb:hover {
+#smooth-content::-webkit-scrollbar-thumb:hover {
   background: #374151;
 }
 
-/* Utility Animations */
+/* ─── Keyframe Animations ────────────────────────────────────────────────── */
+
+/* Hero background orbs — very slow infinite float */
+@keyframes orb-float-a {
+  0%, 100% { transform: translate(-50%, -50%) scale(1);   opacity: 0.06; }
+  50%       { transform: translate(-50%, -55%) scale(1.1); opacity: 0.09; }
+}
+@keyframes orb-float-b {
+  0%, 100% { transform: translate(0, 0) scale(1);    opacity: 0.05; }
+  50%       { transform: translate(-8px, -12px) scale(1.08); opacity: 0.08; }
+}
+
+.hero-orb-a {
+  animation: orb-float-a 10s ease-in-out infinite;
+}
+.hero-orb-b {
+  animation: orb-float-b 13s ease-in-out infinite;
+}
+
+/* CTA Button glow pulse */
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 20px 0px rgba(99, 102, 241, 0.3); }
+  50%       { box-shadow: 0 0 32px 4px rgba(99, 102, 241, 0.5); }
+}
+.btn-glow {
+  animation: glow-pulse 2.5s ease-in-out infinite;
+}
+
+/* Chessboard float — driven by CSS for perf, overridden by GSAP on mount */
+@keyframes board-float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-10px); }
+}
+
+/* Nav link underline grow */
+.nav-link {
+  position: relative;
+  display: inline-block;
+}
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1.5px;
+  background-color: #6366F1;
+  transition: width 0.25s ease;
+  border-radius: 1px;
+}
+.nav-link:hover::after {
+  width: 100%;
+}
+
+/* Utility pulse (legacy compat) */
 @keyframes pulse-slow {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
+  50%       { opacity: 0.6; }
 }
 .animate-pulse-slow {
   animation: pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* ─── Accessibility: Reduced Motion ──────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .hero-orb-a,
+  .hero-orb-b,
+  .btn-glow,
+  .board-float-anim {
+    animation: none !important;
+  }
 }
