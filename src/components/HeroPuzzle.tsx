@@ -82,17 +82,17 @@ export default function HeroPuzzle() {
 
   // ── Chess state ────────────────────────────────────────────────────────────
   const gameRef = useRef(new Chess(PUZZLE.fen));
-  const [gameFen, setGameFen]         = useState(PUZZLE.fen);
+  const [gameFen, setGameFen]         = useState<string>(PUZZLE.fen);
 
   // ── Puzzle phase & counter ─────────────────────────────────────────────────
   const [phase, setPhase]             = useState<PuzzlePhase>('idle');
-  const [movesLeft, setMovesLeft]     = useState(PUZZLE.totalMoves);
+  const [movesLeft, setMovesLeft]     = useState<number>(PUZZLE.totalMoves);
 
   // ── Last-move highlight ────────────────────────────────────────────────────
   const [lastMove, setLastMove]       = useState<{ from: string; to: string } | null>(null);
 
   // ── Checkmate impact ───────────────────────────────────────────────────────
-  const [checkmateImpact, setCheckmateImpact] = useState<CheckmateImpact>('none');
+  const [, setCheckmateImpact] = useState<CheckmateImpact>('none');
   const [kingPulse, setKingPulse]     = useState(false);
 
   // ── Solve animation ────────────────────────────────────────────────────────
@@ -514,8 +514,8 @@ export default function HeroPuzzle() {
                 },
                 showNotation: false,
                 squareStyles: customSquareStyles,
-                animationDuration: 280,
-                isDraggablePiece: isInteractive ? undefined : () => false,
+                animationDurationInMs: 280,
+                allowDragging: isInteractive,
               }}
             />
           </div>
