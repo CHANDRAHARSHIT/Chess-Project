@@ -99,7 +99,7 @@ export default function HeroPuzzle() {
   const [kingPulse, setKingPulse]     = useState(false);
 
   // ── Solve animation ────────────────────────────────────────────────────────
-  const [solveStep, setSolveStep]         = useState(-1);
+  const [, setSolveStep]         = useState(-1);
   const [solveAnnotation, setSolveAnnotation] = useState('');
   const solveTimerRef                     = useRef<ReturnType<typeof setTimeout> | null>(null);
   const solveAbortRef                     = useRef(false);
