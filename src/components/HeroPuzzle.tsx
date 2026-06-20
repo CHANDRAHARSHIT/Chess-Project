@@ -4,8 +4,9 @@
  * Premium chess puzzle component — Chess.com / Lichess quality experience.
  *
  * ── Puzzle ───────────────────────────────────────────────────────────────────
- * White to play and checkmate in two.
- * FEN: 2k5/K1p5/8/8/7B/8/1Q6/1r1R4 w - - 0 1
+ * White to play and check mate in two.
+ * FEN: 2kr4/K1pp4/8/8/8/8/7Q/3R4 w - - 0 1
+ * Position: White Ka7 Qh2 Rd1 | Black Kc8 Rd8 Pc7 Pd7
  * Solution: 1. Qb8+! Rxb8 2. Rd8#
  *
  * ── Premium Animation Systems ────────────────────────────────────────────────
@@ -50,17 +51,19 @@ const BOARD_LIGHT = '#EEEED2';
 
 // ── Puzzle definition (data-driven — swap to change puzzle) ──────────────────
 const PUZZLE = {
-  fen: '2k5/K1p5/8/8/7B/8/1Q6/1r1R4 w - - 0 1',
-  label: 'White to play and checkmate in two',
+  // Position: White Ka7 Qh2 Rd1 | Black Kc8 Rd8 Pc7 Pd7 | White to move
+  // Generated via chess.js load() from hardcoded FEN — NOT derived from move history
+  fen: '2kr4/K1pp4/8/8/8/8/7Q/3R4 w - - 0 1',
+  label: 'White to play and check mate in two',
   totalMoves: 2,
-  blackResponse: { from: 'b1', to: 'b8' },
-  matingMove:    { from: 'd1', to: 'd8' },
+  blackResponse: { from: 'c7', to: 'd6' },
+  matingMove:    { from: 'd1', to: 'c1' },
   // King square to pulse on checkmate (black king)
   kingSquare: 'c8',
   solution: [
-    { from: 'b2', to: 'b8', san: 'Qb8+',  annotation: 'Check! The queen sacrifices herself on b8.', animate: true },
-    { from: 'b1', to: 'b8', san: '...Rxb8', annotation: "Black is forced to capture — the only legal move.", animate: true },
-    { from: 'd1', to: 'd8', san: 'Rd8#',  annotation: '✓ Checkmate! The rook delivers the final blow.', animate: true },
+    { from: 'h2', to: 'd6', san: 'Qd6',   annotation: 'Brilliant! The queen sacrifices herself on d6.', animate: true },
+    { from: 'c7', to: 'd6', san: '...cxd6', annotation: "Black is forced to capture.", animate: true },
+    { from: 'd1', to: 'c1', san: 'Rc1#',   annotation: '✓ Checkmate! The rook delivers the final blow.', animate: true },
   ],
 } as const;
 
@@ -768,7 +771,7 @@ export default function HeroPuzzle() {
         </div>
       </div>{/* end board-cursor-glow */}
 
-      {/* ── Puzzle label + move counter ────────────────────────────────────── */}
+      {/* ── Below-board label: White to play + moves counter ──────────────── */}
       <div className="flex items-center justify-between px-1">
         <div>
           <p className="text-xs text-brand-secondary font-sans font-medium uppercase tracking-wider">

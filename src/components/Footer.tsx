@@ -16,8 +16,8 @@ export default function Footer() {
   return (
     <footer
       ref={footerRef}
-      className="bg-brand-bg py-12 md:py-16"
-      style={{ opacity: 0 }}
+      className="py-12 md:py-16"
+      style={{ opacity: 0, backgroundColor: '#0F1D4D' }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
