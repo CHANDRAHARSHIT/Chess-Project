@@ -87,7 +87,7 @@ export default function BrandSection() {
               <img
                 src="/new section .png"
                 alt="Build more than subscribers"
-                className="w-full max-w-[520px] h-auto object-contain"
+                className="w-full max-w-[640px] h-auto object-contain"
                 draggable={false}
               />
             </div>

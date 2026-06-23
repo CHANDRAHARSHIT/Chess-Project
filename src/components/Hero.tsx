@@ -45,6 +45,20 @@ export default function Hero() {
 
   const primaryGlowRef = useButtonGlow<HTMLAnchorElement>();
 
+  // ── Tilt animation for Play button (same effect as hero logo) ────────────
+  const playBtnTiltRef = usePerspectiveTilt<HTMLAnchorElement>({
+    maxRotate:       8,
+    scalePeak:       1.05,
+    quickToDuration: 0.3,
+    quickToEase:     'power2.out',
+  });
+
+  // Merge tilt ref + glow ref onto the same anchor element
+  const mergedPlayRef = (el: HTMLAnchorElement | null) => {
+    (primaryGlowRef as React.MutableRefObject<HTMLAnchorElement | null>).current = el;
+    (playBtnTiltRef as React.MutableRefObject<HTMLAnchorElement | null>).current = el;
+  };
+
   // ── GSAP entrance animations ───────────────────────────────────────────────
   useGSAP(
     () => {
@@ -245,7 +259,7 @@ export default function Hero() {
               style={{ opacity: 0 }}
             >
               <a
-                ref={primaryGlowRef}
+                ref={mergedPlayRef}
                 href="#interactive-demo"
                 id="hero-cta-primary"
                 className="
@@ -253,16 +267,16 @@ export default function Hero() {
                   font-sans font-semibold text-sm
                   bg-brand-accent hover:bg-brand-accent/95 text-white
                   px-6 py-3.5 rounded-lg
-                  transition-all duration-200
+                  transition-colors duration-200
                   shadow-xl shadow-brand-accent/20
-                  hover:scale-[1.05] active:scale-[0.97]
                   btn-glow-container btn-glow-accent cta-shine
                 "
+                style={{ transformStyle: 'preserve-3d', willChange: 'transform' }}
               >
                 <img
                   src="/play icon.png"
                   alt="Play"
-                  style={{ width: '18px', height: '18px', objectFit: 'contain' }}
+                  style={{ width: '26px', height: '26px', objectFit: 'contain' }}
                   draggable={false}
                 />
                 Play

@@ -14,6 +14,7 @@ import {
   CornerUpLeft,
   Shuffle,
   Pencil,
+  MoreHorizontal,
 } from 'lucide-react';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import { useButtonGlow } from '../hooks/useButtonGlow';
@@ -48,6 +49,9 @@ export default function ProductDemo() {
   const [showHint, setShowHint] = useState(false);
   const [gameOverReason, setGameOverReason] = useState<string | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [showMoreMenu, setShowMoreMenu] = useState(false);
+  const moreMenuRef = useRef<HTMLDivElement>(null);
+  const moreButtonRef = useRef<HTMLButtonElement>(null);
   const hintTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const playAgainGlowRef = useButtonGlow<HTMLButtonElement>();
@@ -70,6 +74,9 @@ export default function ProductDemo() {
   const [boardHeight, setBoardHeight] = useState<number>(0);
   const [controlsHeight, setControlsHeight] = useState<number>(0);
   const [isDesktop, setIsDesktop] = useState<boolean>(false);
+  // Progressive eval stabilization — separate displayed eval from raw eval
+  const [displayEval, setDisplayEval] = useState<{ type: 'cp' | 'mate'; value: number } | null>(null);
+  const evalTimeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   const boardContainerRef = useRef<HTMLDivElement>(null);
   const controlsRef = useRef<HTMLDivElement>(null);
@@ -115,6 +122,32 @@ export default function ProductDemo() {
     setGameOverReason(getGameOverReason(gameRef.current));
   }, [gameFen]);
 
+  // Progressive eval stabilization — update display eval at 1s, 2s, 3s, 4s, 5s after each change
+  useEffect(() => {
+    // Clear existing scheduled updates
+    evalTimeoutsRef.current.forEach(t => clearTimeout(t));
+    evalTimeoutsRef.current = [];
+
+    if (!evaluation) return;
+
+    // Immediately set after each evaluation update (raw)
+    // Then also schedule delayed snapshots to let Stockfish stabilize
+    const delays = [1000, 2000, 3000, 4000, 5000];
+    delays.forEach(delay => {
+      const t = setTimeout(() => {
+        setDisplayEval({ type: evaluation.type, value: evaluation.value });
+      }, delay);
+      evalTimeoutsRef.current.push(t);
+    });
+
+    // Also set immediately so the bar reacts to moves right away
+    setDisplayEval({ type: evaluation.type, value: evaluation.value });
+
+    return () => {
+      evalTimeoutsRef.current.forEach(t => clearTimeout(t));
+    };
+  }, [evaluation]);
+
   // Scroll only inside the move history container
   useEffect(() => {
     const container = moveHistoryContainerRef.current;
@@ -123,7 +156,22 @@ export default function ProductDemo() {
     }
   }, [gameFen]);
 
-  // Close More menu on outside click — removed (More menu removed)
+  // Close More menu on outside click
+  useEffect(() => {
+    if (!showMoreMenu) return;
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (
+        moreMenuRef.current &&
+        !moreMenuRef.current.contains(e.target as Node) &&
+        moreButtonRef.current &&
+        !moreButtonRef.current.contains(e.target as Node)
+      ) {
+        setShowMoreMenu(false);
+      }
+    };
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, [showMoreMenu]);
 
   // AI move trigger — fires when it's the engine's turn
   useEffect(() => {
@@ -275,15 +323,21 @@ export default function ProductDemo() {
   let evalPercent = 50;
   let evalLabel = '0.0';
   let evalIsNegative = false;
-  if (evaluation) {
-    if (evaluation.type === 'cp') {
-      const val = evaluation.value;
+  if (displayEval) {
+    if (displayEval.type === 'cp') {
+      const val = displayEval.value;
       const clamped = Math.max(-8, Math.min(8, val));
       evalPercent = ((clamped + 8) / 16) * 100;
       evalIsNegative = val < 0;
-      evalLabel = val > 0 ? `+${val.toFixed(1)}` : val.toFixed(1);
+      // Never show -0.0
+      const rounded = parseFloat(val.toFixed(1));
+      if (rounded === 0) {
+        evalLabel = '0.0';
+      } else {
+        evalLabel = val > 0 ? `+${val.toFixed(1)}` : val.toFixed(1);
+      }
     } else {
-      const val = evaluation.value;
+      const val = displayEval.value;
       evalPercent = val > 0 ? 95 : 5;
       evalIsNegative = val < 0;
       evalLabel = `M${Math.abs(val)}`;
@@ -340,12 +394,12 @@ export default function ProductDemo() {
 
             {/* ── Col 1: Eval Bar ──────────────────────────────────── */}
             <div
-              className="lg:col-span-1 flex lg:flex-col items-center justify-start gap-0 self-stretch"
-              style={{ padding: '4px 0' }}
+              className="lg:col-span-1 flex lg:flex-col items-center justify-center gap-0"
+              style={{ alignSelf: 'stretch', padding: '0' }}
             >
-              {/* Eval bar: 16px wide, 8px radius */}
+              {/* Eval bar: 16px wide, 8px radius, matches board height exactly */}
               <div
-                className="relative overflow-hidden flex lg:flex-col-reverse items-start lg:items-end"
+                className="relative overflow-hidden flex lg:flex-col-reverse items-start lg:items-end w-full h-full"
                 style={{
                   width: isDesktop ? '16px' : '100%',
                   borderRadius: '8px',
@@ -353,6 +407,7 @@ export default function ProductDemo() {
                   background: 'rgba(255,255,255,0.04)',
                   border: '1px solid rgba(255,255,255,0.08)',
                   backdropFilter: 'blur(8px)',
+                  minHeight: isDesktop && boardHeight ? `${boardHeight}px` : undefined,
                 }}
               >
                 <div
@@ -378,7 +433,7 @@ export default function ProductDemo() {
 
             {/* ── Col 2: Chessboard ────────────────────────────────────────── */}
             <div className="lg:col-span-7 flex flex-col justify-center">
-              <div ref={boardContainerRef} className="aspect-square w-full shadow-xl border border-brand-border relative overflow-hidden">
+              <div ref={boardContainerRef} className="aspect-square w-full shadow-xl border border-brand-border relative overflow-hidden" style={{ borderRadius: '4px' }}>
 
                 {/* Game Over Overlay */}
                 {gameOverReason && (
@@ -425,7 +480,7 @@ export default function ProductDemo() {
                   }`}
                 />
                 <span>
-                  {currentTurn === 'w' ? "White's turn" : "Black's turn"}
+                  {currentTurn === 'w' ? "White's Turn" : "Black's Turn"}
                   {isEditMode && (
                     <span className="text-brand-accent ml-1.5 font-medium">
                       (Edit Position Mode)
@@ -454,14 +509,15 @@ export default function ProductDemo() {
 
               <div ref={controlsRef} className="flex flex-col gap-5">
                 {/* ── Toolbar ───────────────────────────────────── */}
-                <div className="grid grid-cols-5 gap-2">
+                <div className="grid grid-cols-4 gap-2">
 
                   {/* Undo */}
                   <button
                     onClick={handleUndo}
                     disabled={!canUndo || isThinking || isEditMode}
                     title="Undo last move"
-                    className="flex flex-col items-center justify-center gap-1.5 py-3 px-1 rounded-lg border border-brand-border bg-brand-bg hover:bg-white/5 hover:border-brand-accent/40 text-brand-secondary hover:text-white transition-all duration-200 disabled:opacity-40 disabled:pointer-events-none group"
+                    className="flex flex-col items-center justify-center gap-1.5 py-3 px-1 rounded-lg border border-brand-border bg-brand-bg hover:bg-white/5 hover:border-brand-accent/40 text-brand-secondary hover:text-white transition-all duration-200 disabled:opacity-40 group"
+                    style={{ cursor: (!canUndo || isThinking || isEditMode) ? 'not-allowed' : 'pointer' }}
                   >
                     <CornerUpLeft className="w-5 h-5 group-hover:scale-110 transition-transform" />
                     <span className="text-[10px] font-medium font-sans tracking-wide">Undo</span>
@@ -472,7 +528,8 @@ export default function ProductDemo() {
                     onClick={handleHint}
                     disabled={!!gameOverReason || isThinking || isEditMode || game_is_human_turn(currentTurn, playerColor) === false}
                     title="Get a hint"
-                    className="flex flex-col items-center justify-center gap-1.5 py-3 px-1 rounded-lg border border-brand-border bg-brand-bg hover:bg-white/5 hover:border-brand-accent/40 text-brand-secondary hover:text-yellow-400 transition-all duration-200 disabled:opacity-40 disabled:pointer-events-none group"
+                    className="flex flex-col items-center justify-center gap-1.5 py-3 px-1 rounded-lg border border-brand-border bg-brand-bg hover:bg-white/5 hover:border-brand-accent/40 text-brand-secondary hover:text-yellow-400 transition-all duration-200 disabled:opacity-40 group"
+                    style={{ cursor: (!!gameOverReason || isThinking || isEditMode || !game_is_human_turn(currentTurn, playerColor)) ? 'not-allowed' : 'pointer' }}
                   >
                     <Lightbulb className="w-5 h-5 group-hover:scale-110 transition-transform" />
                     <span className="text-[10px] font-medium font-sans tracking-wide">Hint</span>
@@ -483,33 +540,70 @@ export default function ProductDemo() {
                     onClick={handleReset}
                     disabled={isEditMode}
                     title="Reset game"
-                    className="flex flex-col items-center justify-center gap-1.5 py-3 px-1 rounded-lg border border-brand-border bg-brand-bg hover:bg-white/5 hover:border-red-500/40 text-brand-secondary hover:text-red-400 transition-all duration-200 disabled:opacity-40 disabled:pointer-events-none group"
+                    className="flex flex-col items-center justify-center gap-1.5 py-3 px-1 rounded-lg border border-brand-border bg-brand-bg hover:bg-white/5 hover:border-red-500/40 text-brand-secondary hover:text-red-400 transition-all duration-200 disabled:opacity-40 group"
+                    style={{ cursor: isEditMode ? 'not-allowed' : 'pointer' }}
                   >
                     <RotateCcw className="w-5 h-5 group-hover:rotate-[-45deg] transition-transform duration-300" />
                     <span className="text-[10px] font-medium font-sans tracking-wide">Reset</span>
                   </button>
 
-                  {/* Chess960 */}
-                  <button
-                    onClick={handleChess960}
-                    disabled={isEditMode}
-                    title="Start Chess960 game"
-                    className="flex flex-col items-center justify-center gap-1.5 py-3 px-1 rounded-lg border border-brand-border bg-brand-bg hover:bg-white/5 hover:border-brand-accent/40 text-brand-secondary hover:text-white transition-all duration-200 disabled:opacity-40 disabled:pointer-events-none group"
-                  >
-                    <Shuffle className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                    <span className="text-[10px] font-medium font-sans tracking-wide">Chess960</span>
-                  </button>
+                  {/* More — opens popup with Chess960 + Edit Position */}
+                  <div className="relative">
+                    <button
+                      ref={moreButtonRef}
+                      onClick={() => setShowMoreMenu(prev => !prev)}
+                      title="More options"
+                      className={`w-full flex flex-col items-center justify-center gap-1.5 py-3 px-1 rounded-lg border transition-all duration-200 group cursor-pointer ${
+                        showMoreMenu
+                          ? 'border-brand-accent/60 bg-brand-accent/10 text-white'
+                          : 'border-brand-border bg-brand-bg hover:bg-white/5 hover:border-brand-accent/40 text-brand-secondary hover:text-white'
+                      }`}
+                    >
+                      <MoreHorizontal className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                      <span className="text-[10px] font-medium font-sans tracking-wide">More</span>
+                    </button>
 
-                  {/* Edit Position */}
-                  <button
-                    onClick={handleOpenEditor}
-                    disabled={isThinking}
-                    title="Edit board position"
-                    className="flex flex-col items-center justify-center gap-1.5 py-3 px-1 rounded-lg border border-brand-border bg-brand-bg hover:bg-white/5 hover:border-brand-accent/40 text-brand-secondary hover:text-white transition-all duration-200 disabled:opacity-40 disabled:pointer-events-none group"
-                  >
-                    <Pencil className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                    <span className="text-[10px] font-medium font-sans tracking-wide">Edit Position</span>
-                  </button>
+                    {/* Popup menu */}
+                    {showMoreMenu && (
+                      <div
+                        ref={moreMenuRef}
+                        className="absolute right-0 top-full mt-1.5 z-50 min-w-[160px] animate-fade-in"
+                        style={{
+                          background: 'rgba(17, 24, 39, 0.97)',
+                          border: '1px solid rgba(99, 102, 241, 0.25)',
+                          borderRadius: '10px',
+                          boxShadow: '0 8px 32px rgba(0,0,0,0.55), 0 0 0 1px rgba(99,102,241,0.1)',
+                          backdropFilter: 'blur(12px)',
+                          overflow: 'hidden',
+                        }}
+                      >
+                        {/* Chess960 */}
+                        <button
+                          onClick={() => { handleChess960(); setShowMoreMenu(false); }}
+                          disabled={isEditMode}
+                          className="w-full flex items-center gap-3 px-4 py-3 text-sm text-brand-secondary hover:text-white hover:bg-white/10 transition-all duration-150 disabled:opacity-40 group cursor-pointer"
+                          style={{ cursor: isEditMode ? 'not-allowed' : 'pointer' }}
+                        >
+                          <Shuffle className="w-4 h-4 text-brand-accent group-hover:scale-110 transition-transform" />
+                          <span className="font-sans font-medium">Chess960</span>
+                        </button>
+
+                        {/* Divider */}
+                        <div style={{ height: '1px', background: 'rgba(255,255,255,0.06)', margin: '0 12px' }} />
+
+                        {/* Edit Position */}
+                        <button
+                          onClick={() => { handleOpenEditor(); setShowMoreMenu(false); }}
+                          disabled={isThinking}
+                          className="w-full flex items-center gap-3 px-4 py-3 text-sm text-brand-secondary hover:text-white hover:bg-white/10 transition-all duration-150 disabled:opacity-40 group cursor-pointer"
+                          style={{ cursor: isThinking ? 'not-allowed' : 'pointer' }}
+                        >
+                          <Pencil className="w-4 h-4 text-brand-accent group-hover:scale-110 transition-transform" />
+                          <span className="font-sans font-medium">Edit Position</span>
+                        </button>
+                      </div>
+                    )}
+                  </div>
 
                 </div>
 

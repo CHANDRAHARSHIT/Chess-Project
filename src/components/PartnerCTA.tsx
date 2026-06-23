@@ -99,7 +99,7 @@ export default function ContactSection() {
   };
 
   return (
-    <section ref={ctaSectionRef} id="partner-cta" className="py-20 md:py-28 bg-brand-surface relative overflow-hidden">
+    <section ref={ctaSectionRef} id="partner-cta" className="py-20 md:py-28 bg-brand-bg relative overflow-hidden">
       {/* Background glow */}
       <div className="cta-orb absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-brand-accent/5 rounded-full blur-[130px] pointer-events-none" />
 
@@ -107,7 +107,7 @@ export default function ContactSection() {
         {/* ref attached here — ScrollTrigger fades this card up on enter */}
         <div
           ref={cardRef}
-          className="bg-brand-bg border border-brand-border rounded-2xl shadow-2xl p-8 sm:p-12 text-center space-y-8 relative overflow-hidden"
+          className="bg-brand-surface border border-brand-border rounded-2xl shadow-2xl p-8 sm:p-12 text-center space-y-8 relative overflow-hidden"
           style={{ opacity: 0 }}
         >
 
@@ -158,7 +158,7 @@ export default function ContactSection() {
                     if (emailError) setEmailError(validateEmail(e.target.value));
                   }}
                   placeholder="you@example.com"
-                  className={`w-full bg-brand-surface border rounded-lg px-4 py-2.5 text-sm text-white placeholder-brand-secondary/40 focus:outline-none transition-all font-sans ${
+                  className={`w-full bg-brand-bg border rounded-lg px-4 py-2.5 text-sm text-white placeholder-brand-secondary/40 focus:outline-none transition-all font-sans ${
                     emailError
                       ? 'border-red-500/70 focus:border-red-500'
                       : 'border-brand-border focus:border-brand-accent/70'
@@ -184,7 +184,7 @@ export default function ContactSection() {
                     if (messageError) setMessageError(validateMessage(e.target.value));
                   }}
                   placeholder="Tell us how we can help you."
-                  className={`w-full bg-brand-surface border rounded-lg px-4 py-2.5 text-sm text-white placeholder-brand-secondary/40 focus:outline-none transition-all font-sans resize-none ${
+                  className={`w-full bg-brand-bg border rounded-lg px-4 py-2.5 text-sm text-white placeholder-brand-secondary/40 focus:outline-none transition-all font-sans resize-none ${
                     messageError
                       ? 'border-red-500/70 focus:border-red-500'
                       : 'border-brand-border focus:border-brand-accent/70'

@@ -404,18 +404,20 @@ export default function HeroPuzzle() {
         setMovesLeft(1);
         setPhase('black_responding');
 
-        // Show White first move annotation !?
-        triggerAnnotation(targetSquare, '!?');
+        // Show White first move annotation !!
+        triggerAnnotation(targetSquare, '!!');
 
-        // Black auto-responds after 600ms
+        // Black auto-responds after 600ms with a random legal move
         setTimeout(() => {
-          const ok = applyMove(PUZZLE.blackResponse.from, PUZZLE.blackResponse.to);
-          if (ok) {
+          const legalMoves = gameRef.current.moves();
+          if (legalMoves.length > 0) {
+            const randomMove = legalMoves[Math.floor(Math.random() * legalMoves.length)];
+            gameRef.current.move(randomMove);
+            setGameFen(gameRef.current.fen());
+            
             const hist = gameRef.current.history({ verbose: true });
             const blackSan = hist[hist.length - 1].san.replace('x', '');
             addNotation(`   ...${blackSan}`);
-            // Show Black move annotation ?
-            triggerAnnotation(PUZZLE.blackResponse.to, '?');
           }
           setPhase('awaiting_mate');
         }, 600);
@@ -425,12 +427,24 @@ export default function HeroPuzzle() {
         const displaySan = lastEntry.san.replace('x', '');
         addNotation(`2. ${displaySan}`);
         if (game.isCheckmate()) {
-          // Show White final mating move annotation !!
-          triggerAnnotation(targetSquare, '!!');
+          // No annotation on the final mating move
           celebrate();
         } else {
-          setPhase('failed');
-          setMovesLeft(0);
+          // Not checkmate — black responds with random move
+          setPhase('black_responding');
+          setTimeout(() => {
+            const legalMoves = gameRef.current.moves();
+            if (legalMoves.length > 0) {
+              const randomMove = legalMoves[Math.floor(Math.random() * legalMoves.length)];
+              gameRef.current.move(randomMove);
+              setGameFen(gameRef.current.fen());
+              
+              const hist = gameRef.current.history({ verbose: true });
+              const blackSan = hist[hist.length - 1].san.replace('x', '');
+              addNotation(`   ...${blackSan}`);
+            }
+            setPhase('awaiting_mate');
+          }, 600);
         }
       }
 
@@ -519,10 +533,9 @@ export default function HeroPuzzle() {
       // ── Update moves counter (white moves only: step 0, step 2) ─────────
       if (i === 0) setMovesLeft(1);
 
-      // ── Annotation badge ────────────────────────────────────────────────
-      if (i === 0) triggerAnnotation(step.to, '!?');
-      else if (i === 1) triggerAnnotation(step.to, '?');
-      else if (i === 2) triggerAnnotation(step.to, '!!');
+      // ── Annotation badge: only show !! on white's first move (Qd6) ──────
+      if (i === 0) triggerAnnotation(step.to, '!!');
+      // No annotation for black response (i===1) or final checkmate (i===2)
 
       // ── Post-move pause so the viewer sees the result ───────────────────
       if (step.animate) {
@@ -767,6 +780,82 @@ export default function HeroPuzzle() {
 
             {/* ── Move Quality Annotation Badge ── */}
             <MoveAnnotation activeAnnotation={activeAnnotation} />
+
+            {/* ── Engraved board coordinates (files: a–h bottom, ranks: 8–1 left) ── */}
+            {/* File labels a–h along the bottom inside the board */}
+            <div
+              aria-hidden="true"
+              style={{
+                position: 'absolute',
+                bottom: '2px',
+                left: 0,
+                right: 0,
+                display: 'flex',
+                pointerEvents: 'none',
+                zIndex: 25,
+                paddingLeft: '3%',
+                paddingRight: '1%',
+              }}
+            >
+              {['a','b','c','d','e','f','g','h'].map((file) => (
+                <span
+                  key={file}
+                  style={{
+                    flex: 1,
+                    textAlign: 'right',
+                    fontFamily: 'Inter, system-ui, sans-serif',
+                    fontSize: 'clamp(6px, 1vw, 9px)',
+                    fontWeight: 700,
+                    color: 'rgba(238,238,210,0.55)',
+                    textShadow: '0 1px 2px rgba(0,0,0,0.7), 0 -1px 1px rgba(0,0,0,0.5)',
+                    userSelect: 'none',
+                    lineHeight: 1,
+                    paddingRight: '3px',
+                  }}
+                >
+                  {file}
+                </span>
+              ))}
+            </div>
+
+            {/* Rank labels 8–1 along the left inside the board */}
+            <div
+              aria-hidden="true"
+              style={{
+                position: 'absolute',
+                top: 0,
+                bottom: 0,
+                left: '2px',
+                display: 'flex',
+                flexDirection: 'column',
+                pointerEvents: 'none',
+                zIndex: 25,
+                paddingTop: '1%',
+                paddingBottom: '3%',
+              }}
+            >
+              {['8','7','6','5','4','3','2','1'].map((rank) => (
+                <span
+                  key={rank}
+                  style={{
+                    flex: 1,
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    fontFamily: 'Inter, system-ui, sans-serif',
+                    fontSize: 'clamp(6px, 1vw, 9px)',
+                    fontWeight: 700,
+                    color: 'rgba(118,150,86,0.75)',
+                    textShadow: '0 1px 2px rgba(0,0,0,0.7), 0 -1px 1px rgba(0,0,0,0.5)',
+                    userSelect: 'none',
+                    lineHeight: 1,
+                    paddingLeft: '2px',
+                    paddingTop: '2px',
+                  }}
+                >
+                  {rank}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
       </div>{/* end board-cursor-glow */}
@@ -813,24 +902,7 @@ export default function HeroPuzzle() {
         </div>
       )}
 
-      {/* ── Notation panel ───────────────────────────────────────────────────── */}
-      {notationEntries.length > 0 && (
-        <div
-          ref={notationRef}
-          className="max-h-20 overflow-y-auto bg-brand-bg/60 border border-brand-border/50 rounded-lg px-3 py-2 move-history-scroll"
-        >
-          <div className="flex flex-wrap gap-x-3 gap-y-0.5">
-            {notationEntries.map((entry, i) => (
-              <span
-                key={i}
-                className="font-mono text-xs text-brand-secondary animate-fade-in"
-              >
-                {entry}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
+      {/* Notation panel intentionally removed */}
 
       {/* ── Action buttons ───────────────────────────────────────────────────── */}
       <div className="flex gap-3">
