@@ -10,6 +10,8 @@ import {
 
 const BOARD_DARK = '#769656';
 const BOARD_LIGHT = '#EEEED2';
+const FILE_LABELS = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'] as const;
+const RANK_LABELS = ['8', '7', '6', '5', '4', '3', '2', '1'] as const;
 
 interface DragState {
   pointerId: number;
@@ -131,10 +133,13 @@ export function EditPositionBoard({
     onPositionChange(setPieceOnSquare(position, square, selectedTool));
   };
 
+  const fileLabels = boardOrientation === 'white' ? FILE_LABELS : [...FILE_LABELS].reverse();
+  const rankLabels = boardOrientation === 'white' ? [...RANK_LABELS].reverse() : RANK_LABELS;
+
   return (
     <div
       ref={boardFrameRef}
-      className="relative aspect-square w-full overflow-hidden rounded-xl border border-brand-border shadow-xl touch-none select-none"
+      className="relative aspect-square w-full max-w-[820px] mx-auto overflow-hidden rounded-xl border border-brand-border shadow-xl touch-none select-none"
     >
       <Chessboard
         options={{
@@ -187,6 +192,24 @@ export function EditPositionBoard({
           showNotation: false,
         }}
       />
+
+      <div className="pointer-events-none absolute inset-0 z-10">
+        <div className="absolute bottom-1.5 left-2 right-2 grid grid-cols-8 text-[10px] font-semibold uppercase tracking-[0.08em] text-black/35">
+          {fileLabels.map((file) => (
+            <span key={file} className="justify-self-center">
+              {file}
+            </span>
+          ))}
+        </div>
+
+        <div className="absolute left-1.5 top-2 bottom-2 grid grid-rows-8 text-[10px] font-semibold text-black/35">
+          {rankLabels.map((rank) => (
+            <span key={rank} className="self-center">
+              {rank}
+            </span>
+          ))}
+        </div>
+      </div>
 
       {dragState && (
         <div

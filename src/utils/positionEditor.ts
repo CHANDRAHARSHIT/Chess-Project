@@ -335,3 +335,47 @@ export function createStandardEditorState(): EditorPositionState {
 export function createChess960EditorState(): EditorPositionState {
   return parseFenToEditorState(generateChess960FEN());
 }
+
+function mirrorSquareVertically(square: string): string {
+  const file = square[0];
+  const rank = Number(square[1]);
+
+  if (!/^[a-h]$/.test(file) || Number.isNaN(rank) || rank < 1 || rank > 8) {
+    return square;
+  }
+
+  return `${file}${9 - rank}`;
+}
+
+function swapPieceColor(pieceCode: EditorPieceCode): EditorPieceCode {
+  const nextColor = pieceCode[0] === 'w' ? 'b' : 'w';
+  return `${nextColor}${pieceCode[1]}` as EditorPieceCode;
+}
+
+export function switchEditorSides(state: EditorPositionState): EditorPositionState {
+  const nextPosition: PositionDataType = {};
+
+  // Mirror each piece to the opposite rank and swap piece colors.
+  for (const [square, piece] of Object.entries(state.position)) {
+    const mirroredSquare = mirrorSquareVertically(square);
+    nextPosition[mirroredSquare] = {
+      pieceType: swapPieceColor(piece.pieceType as EditorPieceCode),
+    };
+  }
+
+  const normalizedEnPassant = normalizeEnPassant(state.enPassant);
+  const mirroredEnPassant =
+    normalizedEnPassant === '-' ? '-' : mirrorSquareVertically(normalizedEnPassant);
+
+  return {
+    position: nextPosition,
+    activeColor: state.activeColor === 'w' ? 'b' : 'w',
+    castlingRights: {
+      K: state.castlingRights.k,
+      Q: state.castlingRights.q,
+      k: state.castlingRights.K,
+      q: state.castlingRights.Q,
+    },
+    enPassant: mirroredEnPassant,
+  };
+}
