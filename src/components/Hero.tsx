@@ -18,6 +18,7 @@ import { useRef } from 'react';
 
 import { useGSAP } from '../hooks/useGSAP';
 import { usePerspectiveTilt } from '../hooks/usePerspectiveTilt';
+import { useMagneticWiggle } from '../hooks/useMagneticWiggle';
 import { useButtonGlow } from '../hooks/useButtonGlow';
 import { gsap, dur, ease } from '../utils/gsapConfig';
 import HeroPuzzle from './HeroPuzzle';
@@ -62,11 +63,17 @@ export default function Hero() {
     disableMobileFloat: true,
   });
 
+  const ctaAnchorRef = useRef<HTMLAnchorElement>(null);
+
   // Merge tilt ref + glow ref onto the same anchor element
   const mergedPlayRef = (el: HTMLAnchorElement | null) => {
     (primaryGlowRef as React.MutableRefObject<HTMLAnchorElement | null>).current = el;
     (playBtnTiltRef as React.MutableRefObject<HTMLAnchorElement | null>).current = el;
+    (ctaAnchorRef as React.MutableRefObject<HTMLAnchorElement | null>).current = el;
   };
+
+  useMagneticWiggle({ targetRef: heroLogoRef, containerRef: heroLogoContainerRef, magneticStrength: 0.35 });
+  useMagneticWiggle({ targetRef: playIconRef, containerRef: ctaAnchorRef, magneticStrength: 0.4 });
 
   // ── GSAP entrance animations ───────────────────────────────────────────────
   useGSAP(
@@ -153,30 +160,8 @@ export default function Hero() {
         });
       }
 
-      // ── Hero logo floating animation ────────────────────────────────────
+      // ── Glow pulses (preserved) ──────────────────────────────────────────
       if (heroLogoRef.current) {
-        gsap.to(heroLogoRef.current, {
-          y: -6,
-          duration: 2,
-          repeat: -1,
-          yoyo: true,
-          ease: 'power1.inOut',
-        });
-        gsap.to(heroLogoRef.current, {
-          scale: 1.03,
-          duration: 2.5,
-          repeat: -1,
-          yoyo: true,
-          ease: 'sine.inOut',
-        });
-        gsap.to(heroLogoRef.current, {
-          rotation: 2,
-          duration: 3,
-          repeat: -1,
-          yoyo: true,
-          ease: 'sine.inOut',
-        });
-        // Subtle glow pulse
         gsap.to(heroLogoRef.current, {
           filter: 'drop-shadow(0 0 12px rgba(99, 102, 241, 0.5))',
           duration: 2,
@@ -185,46 +170,7 @@ export default function Hero() {
           ease: 'sine.inOut',
         });
       }
-
-      // ── Play icon floating animation — identical motion to hero logo ──────
-      // Same 4-layer animation: float ↕, scale breathe, gentle rotation, glow pulse
       if (playIconRef.current) {
-        // Layer 1: translateY float (-6px → 0) over 3s
-        gsap.to(playIconRef.current, {
-          y: -6,
-          duration: 3,
-          repeat: -1,
-          yoyo: true,
-          ease: 'power1.inOut',
-        });
-        // Layer 2: subtle X drift (-2px → +2px)
-        gsap.to(playIconRef.current, {
-          x: 2,
-          duration: 3.5,
-          repeat: -1,
-          yoyo: true,
-          ease: 'sine.inOut',
-          delay: 0.4,
-        });
-        // Layer 3: gentle scale breathe
-        gsap.to(playIconRef.current, {
-          scale: 1.04,
-          duration: 2.5,
-          repeat: -1,
-          yoyo: true,
-          ease: 'sine.inOut',
-          delay: 0.2,
-        });
-        // Layer 4: subtle rotation ±2°
-        gsap.to(playIconRef.current, {
-          rotation: 2,
-          duration: 4,
-          repeat: -1,
-          yoyo: true,
-          ease: 'sine.inOut',
-          delay: 0.6,
-        });
-        // Layer 5: indigo glow pulse matching hero logo
         gsap.to(playIconRef.current, {
           filter: 'drop-shadow(0 0 10px rgba(99, 102, 241, 0.55))',
           duration: 2,
@@ -331,8 +277,8 @@ export default function Hero() {
                 style={{ 
                   transformStyle: 'preserve-3d', 
                   willChange: 'transform',
-                  width: '190px',
-                  height: '80px',
+                  width: '140px',
+                  height: '64px',
                   padding: '0 20px',
                 }}
               >

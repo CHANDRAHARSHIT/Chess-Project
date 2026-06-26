@@ -103,11 +103,11 @@ export default function ContactSection() {
       {/* Background glow */}
       <div className="cta-orb absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-brand-accent/5 rounded-full blur-[130px] pointer-events-none" />
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* ref attached here — ScrollTrigger fades this card up on enter */}
         <div
           ref={cardRef}
-          className="bg-brand-surface border border-brand-border rounded-2xl shadow-2xl p-8 sm:p-12 text-center space-y-8 relative overflow-hidden"
+          className="bg-brand-surface border border-brand-border rounded-2xl shadow-2xl py-8 px-6 sm:py-12 sm:px-8 text-center space-y-8 relative overflow-hidden"
           style={{ opacity: 0 }}
         >
 
@@ -141,7 +141,7 @@ export default function ContactSection() {
               </button>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} noValidate className="text-left max-w-lg mx-auto space-y-5">
+            <form onSubmit={handleSubmit} noValidate className="text-left max-w-xl mx-auto space-y-5">
 
               {/* Email field */}
               <div className="space-y-1.5">

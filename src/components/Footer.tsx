@@ -16,7 +16,7 @@ export default function Footer() {
   return (
     <footer
       ref={footerRef}
-      className="py-12 md:py-16"
+      className="py-6 md:py-8"
       style={{ opacity: 0, backgroundColor: '#0F1D4D' }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

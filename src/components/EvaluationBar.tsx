@@ -33,7 +33,7 @@ export function EvaluationBar({ evaluation, isDesktop, boardHeight }: Evaluation
 
   return (
     <div
-      className="flex lg:flex-col items-center justify-center gap-0"
+      className="flex lg:flex-col items-center justify-center gap-2"
       style={{ alignSelf: 'stretch', padding: '0' }}
     >
       <div
@@ -60,8 +60,8 @@ export function EvaluationBar({ evaluation, isDesktop, boardHeight }: Evaluation
         <span
           className="font-mono font-semibold text-sm sm:text-base lg:text-lg px-2 py-1 shadow-sm leading-none rounded-md"
           style={{
-            backgroundColor: evalIsNegative ? '#111827' : '#ffffff',
-            color: evalIsNegative ? '#ffffff' : '#111827',
+            backgroundColor: '#ffffff',
+            color: '#111827',
           }}
         >
           {evalLabel}
