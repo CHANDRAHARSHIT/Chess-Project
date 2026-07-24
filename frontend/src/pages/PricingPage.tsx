@@ -12,7 +12,8 @@ import {
   Info,
   AlertCircle,
 } from "lucide-react";
-import { useNavigate, useLocation } from "react-router";
+import { useLocation, useNavigate } from "react-router";
+import { PricingApi } from "../services/pricingApi";
 
 // Custom SVG Chess Pieces for premium decorative background
 const PieceSvg: React.FC<{
@@ -84,6 +85,30 @@ const PieceSvg: React.FC<{
   }
 };
 
+// Skeleton Loading Card Component
+const PricingSkeletonCard: React.FC<{ isPopular?: boolean }> = ({ isPopular = false }) => (
+  <div
+    className={`rounded-3xl p-6 sm:p-8 flex flex-col justify-between overflow-hidden animate-pulse border
+      ${isPopular
+        ? "bg-[#0e1428]/80 border-brand-accent/20"
+        : "bg-[#0c1020]/40 border-brand-border/30"
+      }
+    `}
+  >
+    <div>
+      <div className="h-6 w-32 bg-white/10 rounded mb-3" />
+      <div className="h-4 w-48 bg-white/5 rounded mb-6" />
+      <div className="h-12 w-36 bg-white/15 rounded mb-8" />
+      <div className="space-y-3 mb-8">
+        {[1, 2, 3, 4, 5].map((i) => (
+          <div key={i} className="h-4 w-full bg-white/5 rounded" />
+        ))}
+      </div>
+    </div>
+    <div className="h-12 w-full bg-white/10 rounded-xl" />
+  </div>
+);
+
 interface PlanProps {
   name: string;
   price: string;
@@ -93,6 +118,7 @@ interface PlanProps {
   ctaText: string;
   isPopular?: boolean;
   yearlySaving?: string;
+  isDisabled?: boolean;
   onCtaClick: () => void;
 }
 
@@ -105,6 +131,7 @@ const PricingCard: React.FC<PlanProps> = ({
   ctaText,
   isPopular = false,
   yearlySaving,
+  isDisabled = false,
   onCtaClick,
 }) => {
   return (
@@ -192,7 +219,8 @@ const PricingCard: React.FC<PlanProps> = ({
       {/* Button */}
       <button
         onClick={onCtaClick}
-        className={`w-full py-3.5 px-6 rounded-xl font-mono text-xs uppercase tracking-widest font-semibold transition-all duration-300 relative overflow-hidden cursor-pointer
+        disabled={isDisabled}
+        className={`w-full py-3.5 px-6 rounded-xl font-mono text-xs uppercase tracking-widest font-semibold transition-all duration-300 relative overflow-hidden cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
           ${isPopular
             ? "btn-premium-cta cta-shine text-brand-accent border-brand-accent/40 shadow-lg hover:scale-[1.01]"
             : "bg-white/5 border border-white/10 hover:border-brand-accent/40 text-brand-secondary hover:text-white active:scale-[0.99]"
@@ -210,6 +238,12 @@ export default function PricingPage() {
   const location = useLocation();
   const [isYearly, setIsYearly] = useState(false);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
+  const [isRedirecting, setIsRedirecting] = useState(false);
+
+  const monthlyPriceFormatted = "$5.00 USD";
+  const yearlyPriceFormatted = "$20.40 USD";
+  const yearlySavingsFormatted = "$39.60 USD";
+  const equivMonthlyFormatted = "$1.70 USD";
 
   const [showSessionError, setShowSessionError] = useState(() => {
     const params = new URLSearchParams(location.search);
@@ -221,8 +255,20 @@ export default function PricingPage() {
     navigate("/");
   };
 
-  const handleUpgrade = (planType: "Monthly" | "Yearly") => {
-    navigate(`/payment?plan=${planType.toLowerCase()}`);
+  const handleUpgrade = async (planType: "Monthly" | "Yearly") => {
+    setIsRedirecting(true);
+    try {
+      const res = await PricingApi.createCheckout("premium", planType.toLowerCase() as "monthly" | "yearly");
+      if (res.status === "success" && (res.url || res.checkoutUrl)) {
+        window.location.href = res.url || res.checkoutUrl!;
+      } else {
+        alert(res.message || "Failed to initialize Stripe Checkout. Please try again.");
+        setIsRedirecting(false);
+      }
+    } catch (err: any) {
+      alert(err.message || "An unexpected error occurred.");
+      setIsRedirecting(false);
+    }
   };
 
   const faqs = [
@@ -232,11 +278,11 @@ export default function PricingPage() {
     },
     {
       q: "Can I switch plans?",
-      a: "Yes, absolutely! You can switch from monthly to yearly billing at any time to lock in the 20% discount. The remaining time on your monthly plan will be credited pro-rata toward the cost of the yearly plan automatically.",
+      a: "Yes, absolutely! You can switch from monthly to yearly billing at any time to lock in the yearly savings. The remaining time on your monthly plan will be credited pro-rata toward the cost of the yearly plan automatically.",
     },
     {
       q: "Do yearly plans save money?",
-      a: "Yes. The yearly plan saves you over 33% compared to paying monthly. This brings your effective monthly rate down to just $9.99, saving you $60 over a full year compared to standard monthly renewals.",
+      a: "Yes. The yearly plan saves you 66% compared to paying monthly. This brings your effective monthly rate down significantly, saving you money over a full year compared to standard monthly renewals.",
     },
     {
       q: "Can I upgrade anytime?",
@@ -456,9 +502,9 @@ export default function PricingPage() {
               Yearly
             </button>
 
-            {/* Save 20% indicator */}
+            {/* SAVE 66% indicator */}
             <div className="absolute z-20 top-0 left-3/4 -translate-x-1/2 -translate-y-1/2 sm:left-[calc(100%+14px)] sm:top-1/2 sm:translate-x-0 whitespace-nowrap bg-brand-accent/15 border border-brand-accent/30 text-brand-accent text-[10px] font-mono tracking-wider uppercase px-2 py-0.5 rounded-md flex items-center gap-1">
-              Save 20%
+              SAVE 66%
             </div>
           </div>
         </section>
@@ -489,10 +535,12 @@ export default function PricingPage() {
           {/* PREMIUM PLAN */}
           <PricingCard
             name="Premium Plan"
-            price={isYearly ? "$10.00 NZD" : "$1.00 NZD"}
+            price={isYearly ? yearlyPriceFormatted : monthlyPriceFormatted}
             period={isYearly ? "/ year" : "/ month"}
             yearlySaving={
-              isYearly ? "Save $2 NZD (Equivalent to $0.83 NZD/mo)" : undefined
+              isYearly
+                ? `Save ${yearlySavingsFormatted} (Equivalent to ${equivMonthlyFormatted}/mo)`
+                : undefined
             }
             description="Built for ambitious chess players who want unlimited reviews, deep analysis, and tracking."
             features={[
@@ -508,8 +556,9 @@ export default function PricingPage() {
               "Priority Support",
               "No Ads",
             ]}
-            ctaText="Upgrade to Premium"
+            ctaText={isRedirecting ? "Connecting to Stripe..." : "Upgrade to Premium"}
             isPopular={true}
+            isDisabled={isRedirecting}
             onCtaClick={() => handleUpgrade(isYearly ? "Yearly" : "Monthly")}
           />
         </section>
