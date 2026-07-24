@@ -232,11 +232,11 @@ export default function PricingPage() {
     },
     {
       q: "Can I switch plans?",
-      a: "Yes, absolutely! You can switch from monthly to yearly billing at any time to lock in the 20% discount. The remaining time on your monthly plan will be credited pro-rata toward the cost of the yearly plan automatically.",
+      a: "Yes, absolutely! You can switch from monthly to yearly billing at any time to lock in the 66% discount. The remaining time on your monthly plan will be credited pro-rata toward the cost of the yearly plan automatically.",
     },
     {
       q: "Do yearly plans save money?",
-      a: "Yes. The yearly plan saves you over 33% compared to paying monthly. This brings your effective monthly rate down to just $9.99, saving you $60 over a full year compared to standard monthly renewals.",
+      a: "Yes. The yearly plan saves you 66% compared to paying monthly. This brings your effective monthly rate down to just $1.70 USD, saving you $39.60 USD over a full year compared to standard monthly renewals.",
     },
     {
       q: "Can I upgrade anytime?",
@@ -456,9 +456,9 @@ export default function PricingPage() {
               Yearly
             </button>
 
-            {/* Save 20% indicator */}
+            {/* Save 66% indicator */}
             <div className="absolute z-20 top-0 left-3/4 -translate-x-1/2 -translate-y-1/2 sm:left-[calc(100%+14px)] sm:top-1/2 sm:translate-x-0 whitespace-nowrap bg-brand-accent/15 border border-brand-accent/30 text-brand-accent text-[10px] font-mono tracking-wider uppercase px-2 py-0.5 rounded-md flex items-center gap-1">
-              Save 20%
+              Save 66%
             </div>
           </div>
         </section>
@@ -489,10 +489,10 @@ export default function PricingPage() {
           {/* PREMIUM PLAN */}
           <PricingCard
             name="Premium Plan"
-            price={isYearly ? "$10.00 NZD" : "$1.00 NZD"}
+            price={isYearly ? "$20.40 USD" : "$5.00 USD"}
             period={isYearly ? "/ year" : "/ month"}
             yearlySaving={
-              isYearly ? "Save $2 NZD (Equivalent to $0.83 NZD/mo)" : undefined
+              isYearly ? "Save $39.60 USD (Equivalent to $1.70 USD/mo)" : undefined
             }
             description="Built for ambitious chess players who want unlimited reviews, deep analysis, and tracking."
             features={[

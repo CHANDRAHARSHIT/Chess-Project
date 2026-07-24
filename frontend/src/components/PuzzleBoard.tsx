@@ -10,6 +10,7 @@ import { BoardCoordinates } from "./BoardCoordinates";
 export interface PuzzleBoardProps {
   puzzle: ChessPuzzle;
   puzzleNumber?: string | number;
+  boardId?: string;
   onSolved?: () => void;
   onFailed?: () => void;
   onNextPuzzle?: () => void;
@@ -18,6 +19,7 @@ export interface PuzzleBoardProps {
 export function PuzzleBoard({
   puzzle,
   puzzleNumber,
+  boardId = "puzzle-board",
   onSolved,
   onFailed,
   onNextPuzzle,
@@ -37,10 +39,58 @@ export function PuzzleBoard({
   } | null>(null);
   const [hintSquare, setHintSquare] = useState<string | null>(null);
 
+  const boardContainerRef = useRef<HTMLDivElement>(null);
+  const [measuredWidth, setMeasuredWidth] = useState<number>(0);
+
+  useEffect(() => {
+    const el = boardContainerRef.current;
+    if (!el) return;
+
+    const measure = () => {
+      const rect = el.getBoundingClientRect();
+      const style = window.getComputedStyle(el);
+      const width = Math.floor(rect.width);
+
+      if (
+        style.display === "none" ||
+        style.visibility === "hidden" ||
+        width === 0
+      ) {
+        setMeasuredWidth(0);
+      } else {
+        setMeasuredWidth(width);
+      }
+    };
+
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  // Diagnostic logging before render
+  if (boardContainerRef.current) {
+    const rect = boardContainerRef.current.getBoundingClientRect();
+    const style = window.getComputedStyle(boardContainerRef.current);
+    console.log(`[PuzzleBoard '${boardId}' Container Measure]`, {
+      width: rect.width,
+      height: rect.height,
+      display: style.display,
+      visibility: style.visibility,
+      measuredWidth,
+    });
+  }
+
   // Reset board and status when the puzzle prop changes
   useEffect(() => {
-    gameRef.current = new Chess(puzzle.fen);
-    setGameFen(puzzle.fen);
+    try {
+      gameRef.current = new Chess(puzzle.fen);
+      setGameFen(puzzle.fen);
+    } catch (e) {
+      console.error("Failed to parse FEN in PuzzleBoard:", puzzle.fen, e);
+      gameRef.current = new Chess();
+      setGameFen(gameRef.current.fen());
+    }
     setPuzzleStatus("solving");
     setLastMove(null);
     setIsShaking(false);
@@ -198,12 +248,14 @@ export function PuzzleBoard({
       </div>
 
       <div
-        className={`relative w-full max-w-[500px] sm:max-w-[540px] aspect-square shadow-[0_20px_50px_rgba(212,175,110,0.03)] border overflow-hidden bg-brand-surface transition-all duration-300 z-10 ${isShaking
-          ? "border-rose-500 ring-4 ring-rose-500/25"
-          : puzzleStatus === "solved"
-            ? "border-emerald-500 ring-4 ring-emerald-500/25 animate-pulse"
-            : "border-brand-border/80"
-          }`}
+        ref={boardContainerRef}
+        className={`relative w-full max-w-[500px] sm:max-w-[540px] aspect-square shadow-[0_20px_50px_rgba(212,175,110,0.03)] border overflow-hidden bg-brand-surface transition-all duration-300 z-10 ${
+          isShaking
+            ? "border-rose-500 ring-4 ring-rose-500/25"
+            : puzzleStatus === "solved"
+              ? "border-emerald-500 ring-4 ring-emerald-500/25 animate-pulse"
+              : "border-brand-border/80"
+        }`}
       >
         <ThemedChessboard
           options={{
@@ -219,7 +271,7 @@ export function PuzzleBoard({
         />
 
         <BoardCoordinates boardOrientation={boardOrientation} />
-                </div>
+      </div>
 
       {/* Below the board: Status indicator */}
       <div className="h-8 flex items-center justify-center z-10">

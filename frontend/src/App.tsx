@@ -12,9 +12,7 @@
 // ── GSAP: register plugins immediately (before any component renders) ──────
 import './utils/gsapConfig';
 
-import { useState } from 'react';
 import GlobalBackground from './components/GlobalBackground';
-import PremiumLoader from './components/PremiumLoader';
 import AppRouter from './router/AppRouter';
 
 import { ParticlesProvider } from '@tsparticles/react';
@@ -25,32 +23,9 @@ const initParticles = async (engine: any) => {
 };
 
 function App() {
-  // ── Loader: show only once per browser session (persists across client-side navigation) ──
-  const [loaderDone, setLoaderDone] = useState(() => {
-    try {
-      return sessionStorage.getItem('xlchess_loader_shown') === 'true';
-    } catch {
-      return false;
-    }
-  });
-
-  const handleLoaderComplete = () => {
-    try {
-      sessionStorage.setItem('xlchess_loader_shown', 'true');
-    } catch {
-      // Ignore storage errors (private browsing, etc.)
-    }
-    setLoaderDone(true);
-  };
-
 
   return (
     <ParticlesProvider init={initParticles}>
-
-      {/* ── Premium Loader — shown until page is ready (once per session) ── */}
-      {!loaderDone && (
-        <PremiumLoader onComplete={handleLoaderComplete} />
-      )}
 
       {/* ── Ambient background chess pieces ─────────────────────────────── */}
       <GlobalBackground />

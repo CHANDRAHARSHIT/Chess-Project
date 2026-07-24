@@ -1,0 +1,176 @@
+/* ══════════════════════════════════════════════════════════════════════════════
+   RoyalPurplePathway.css — Self-Contained Styles for Royal Purple Pathway
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+.royal-purple-container {
+  position: relative;
+  width: 100%;
+  height: 640px;
+  overflow: hidden;
+  border-radius: 1rem;
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  background-color: #0a0518;
+  user-select: none;
+  box-shadow: 0 25px 50px -12px rgba(10, 5, 24, 0.8);
+}
+
+.royal-purple-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  /* background-position: center; */
+  background-repeat: no-repeat;
+  filter: hue-rotate(260deg) saturate(150%);
+  pointer-events: none;
+}
+
+.royal-purple-vignette {
+  position: absolute;
+  inset: 0;
+  /* background: linear-gradient(180deg, rgba(10,5,24,0.9) 0%, rgba(10,5,24,0.5) 50%, rgba(10,5,24,0.95) 100%); */
+  pointer-events: none;
+}
+
+.royal-purple-beam-wrap {
+  position: absolute;
+  pointer-events: none;
+  z-index: 10;
+  transform: translate(-50%, -50%);
+}
+
+.royal-purple-beam {
+  width: 100%;
+  height: 100%;
+  border-radius: 9999px;
+  transition: all 0.5s ease;
+}
+
+.royal-purple-beam-unlocked {
+  background: linear-gradient(90deg, #a855f7, #e879f9, #a855f7);
+  box-shadow: 0 0 14px rgba(168, 85, 247, 0.9);
+  opacity: 0.95;
+}
+
+.royal-purple-beam-locked {
+  background-color: rgba(58, 20, 95, 0.6);
+  border: 1px solid rgba(107, 33, 168, 0.4);
+  opacity: 0.4;
+}
+
+.royal-purple-tile-wrap {
+  position: absolute;
+  z-index: 20;
+  transform: translate(-50%, -50%);
+  transition: transform 0.3s ease;
+}
+
+.royal-purple-tile-wrap:hover {
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+.royal-purple-tile-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 5rem;
+  height: 5rem;
+  user-select: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+@media (min-width: 640px) {
+  .royal-purple-tile-button {
+    width: 5.5rem;
+    height: 5.5rem;
+  }
+}
+
+.royal-purple-tile-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  filter: grayscale(100%);
+}
+
+.royal-purple-active-aura {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background-color: rgba(217, 70, 239, 0.5);
+  filter: blur(16px);
+  animation: royalPurplePulse 2s infinite ease-in-out;
+  pointer-events: none;
+}
+
+@keyframes royalPurplePulse {
+  0%, 100% { transform: scale(1.2); opacity: 0.7; }
+  50% { transform: scale(1.35); opacity: 1; }
+}
+
+.royal-purple-tile-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: hue-rotate(240deg) drop-shadow(0 10px 15px rgba(0, 0, 0, 0.5));
+  transition: all 0.3s ease;
+}
+
+.royal-purple-current-img {
+  transform: scale(1.1);
+  filter: hue-rotate(240deg) brightness(1.25) drop-shadow(0 0 18px rgba(217, 70, 239, 0.9));
+}
+
+.royal-purple-number {
+  font-family: 'Bonheur Royale', cursive;
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 1;
+  color: #f5d0fe;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.95);
+  pointer-events: none;
+}
+
+.royal-purple-number-current {
+  color: #f472b6;
+  font-weight: 800;
+  transform: scale(1.1);
+}
+
+.royal-purple-badge {
+  position: absolute;
+  top: -0.25rem;
+  right: -0.25rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.royal-purple-badge-locked {
+  background-color: rgba(30, 11, 48, 0.9);
+  border: 1px solid #6b21a8;
+  color: #c084fc;
+}
+
+.royal-purple-badge-completed {
+  background-color: #c026d3;
+  border: 1px solid #e879f9;
+  color: #ffffff;
+}
+
+.royal-purple-badge-current {
+  background-color: #d946ef;
+  border: 1px solid #f0abfc;
+  color: #020617;
+  animation: royalPurpleBounce 1.5s infinite;
+}
+
+@keyframes royalPurpleBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}

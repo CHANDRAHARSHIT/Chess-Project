@@ -80,7 +80,7 @@ export default function SuccessfulPage() {
             renewalDate: 'Pending Verification',
             username: session?.user?.name || 'Member',
             email: session?.user?.email || '',
-            currency: 'NZD',
+            currency: 'USD',
             discount: '$0.00'
           });
           setLoading(false);
