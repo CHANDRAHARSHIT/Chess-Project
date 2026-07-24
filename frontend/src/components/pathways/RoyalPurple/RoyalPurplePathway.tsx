@@ -51,10 +51,10 @@ export const RoyalPurplePathway: React.FC<PathwayComponentProps> = ({
       const firstUncompleted = ROYAL_PURPLE_NODES.find(n => !completedSet.has(n.id));
       currentId = firstUncompleted ? firstUncompleted.id : ROYAL_PURPLE_NODES[ROYAL_PURPLE_NODES.length - 1].id;
     }
-    ROYAL_PURPLE_NODES.forEach((node) => {
+    ROYAL_PURPLE_NODES.forEach((node, i) => {
       if (completedSet.has(node.id)) {
         states[node.id] = 'completed';
-      } else if (node.id === currentId) {
+      } else if (node.id === currentId || i === 0 || (i > 0 && completedSet.has(ROYAL_PURPLE_NODES[i - 1].id))) {
         states[node.id] = 'current';
       } else {
         states[node.id] = 'locked';

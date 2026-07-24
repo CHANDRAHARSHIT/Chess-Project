@@ -5,30 +5,46 @@
 .royal-gold-container {
   position: relative;
   width: 100%;
-  height: 100%;
-  min-height: 540px;
+  max-width: 440px;
+  margin-left: auto;
+  margin-right: auto;
+  aspect-ratio: 1024 / 1536;
   overflow: hidden;
   border-radius: 1rem;
   border: 1px solid rgba(212, 175, 110, 0.35);
   background-color: #080b14;
   user-select: none;
-  box-shadow: 25px 50px -12px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+}
+
+@media (min-width: 1024px) {
+  .royal-gold-container {
+    height: 100%;
+    max-width: none;
+    aspect-ratio: auto;
+    box-shadow: 25px 50px -12px rgba(0, 0, 0, 0.7);
+  }
 }
 
 .royal-gold-bg {
   position: absolute;
   inset: 0;
-  background-size: cover;
-  /* background-position: center; */
-  /* background-repeat: no-repeat; */
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
   pointer-events: none;
   transition: all 0.5s ease-in-out;
+}
+
+@media (min-width: 1024px) {
+  .royal-gold-bg {
+    background-size: cover;
+  }
 }
 
 .royal-gold-vignette {
   position: absolute;
   inset: 0;
-  /* background: linear-gradient(180deg, rgba(8,11,20,0.75) 0%, rgba(8,11,20,0.4) 50%, rgba(8,11,20,0.85) 100%); */
   pointer-events: none;
 }
 
@@ -73,12 +89,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 5rem;
-  height: 5rem;
+  width: 4.25rem;
+  height: 4.25rem;
   user-select: none;
   background: transparent;
   border: none;
   cursor: pointer;
+}
+
+@media (min-width: 480px) {
+  .royal-gold-tile-button {
+    width: 4.75rem;
+    height: 4.75rem;
+  }
 }
 
 @media (min-width: 640px) {
@@ -105,8 +128,16 @@
 }
 
 @keyframes royalGoldPulse {
-  0%, 100% { transform: scale(1.2); opacity: 0.7; }
-  50% { transform: scale(1.35); opacity: 1; }
+  0%,
+  100% {
+    transform: scale(1.2);
+    opacity: 0.7;
+  }
+
+  50% {
+    transform: scale(1.35);
+    opacity: 1;
+  }
 }
 
 .royal-gold-tile-img {
@@ -124,12 +155,24 @@
 
 .royal-gold-number {
   font-family: 'Bonheur Royale', cursive;
-  font-size: 2.25rem;
+  font-size: 1.75rem;
   font-weight: 700;
   line-height: 1;
   color: #fef3c7;
   text-shadow: 0 2px 5px rgba(0, 0, 0, 0.95);
   pointer-events: none;
+}
+
+@media (min-width: 480px) {
+  .royal-gold-number {
+    font-size: 2rem;
+  }
+}
+
+@media (min-width: 640px) {
+  .royal-gold-number {
+    font-size: 2.25rem;
+  }
 }
 
 .royal-gold-number-current {
@@ -171,6 +214,12 @@
 }
 
 @keyframes royalGoldBounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-4px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-4px);
+  }
 }

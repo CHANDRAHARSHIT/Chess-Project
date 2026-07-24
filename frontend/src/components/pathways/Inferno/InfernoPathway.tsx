@@ -48,10 +48,10 @@ export const InfernoPathway: React.FC<PathwayComponentProps> = ({
       const firstUncompleted = INFERNO_NODES.find(n => !completedSet.has(n.id));
       currentId = firstUncompleted ? firstUncompleted.id : INFERNO_NODES[INFERNO_NODES.length - 1].id;
     }
-    INFERNO_NODES.forEach((node) => {
+    INFERNO_NODES.forEach((node, i) => {
       if (completedSet.has(node.id)) {
         states[node.id] = 'completed';
-      } else if (node.id === currentId) {
+      } else if (node.id === currentId || i === 0 || (i > 0 && completedSet.has(INFERNO_NODES[i - 1].id))) {
         states[node.id] = 'current';
       } else {
         states[node.id] = 'locked';

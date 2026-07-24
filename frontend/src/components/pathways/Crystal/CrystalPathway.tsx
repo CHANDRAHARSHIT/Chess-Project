@@ -48,10 +48,10 @@ export const CrystalPathway: React.FC<PathwayComponentProps> = ({
       const firstUncompleted = CRYSTAL_NODES.find(n => !completedSet.has(n.id));
       currentId = firstUncompleted ? firstUncompleted.id : CRYSTAL_NODES[CRYSTAL_NODES.length - 1].id;
     }
-    CRYSTAL_NODES.forEach((node) => {
+    CRYSTAL_NODES.forEach((node, i) => {
       if (completedSet.has(node.id)) {
         states[node.id] = 'completed';
-      } else if (node.id === currentId) {
+      } else if (node.id === currentId || i === 0 || (i > 0 && completedSet.has(CRYSTAL_NODES[i - 1].id))) {
         states[node.id] = 'current';
       } else {
         states[node.id] = 'locked';

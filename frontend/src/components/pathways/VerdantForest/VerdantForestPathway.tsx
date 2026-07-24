@@ -49,10 +49,10 @@ export const VerdantForestPathway: React.FC<PathwayComponentProps> = ({
       const firstUncompleted = VERDANT_FOREST_NODES.find(n => !completedSet.has(n.id));
       currentId = firstUncompleted ? firstUncompleted.id : VERDANT_FOREST_NODES[VERDANT_FOREST_NODES.length - 1].id;
     }
-    VERDANT_FOREST_NODES.forEach((node) => {
+    VERDANT_FOREST_NODES.forEach((node, i) => {
       if (completedSet.has(node.id)) {
         states[node.id] = 'completed';
-      } else if (node.id === currentId) {
+      } else if (node.id === currentId || i === 0 || (i > 0 && completedSet.has(VERDANT_FOREST_NODES[i - 1].id))) {
         states[node.id] = 'current';
       } else {
         states[node.id] = 'locked';
