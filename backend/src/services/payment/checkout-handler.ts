@@ -7,12 +7,14 @@ export async function handleCheckoutSessionCompleted(payload: any) {
   const subscriptionId = payload.subscription;
 
   if (userId) {
-    // Secure mapping of User to gatewayCustomerId
+    // Detect mode from customer ID prefix: cus_test_ = test mode, otherwise live mode.
+    // Stripe test-mode customer IDs contain "_test_" in the string.
+    const field = customerId?.includes("_test_") ? "stripeTestCustomerId" : "stripeLiveCustomerId";
     await prisma.user.update({
       where: { id: userId },
-      data: { gatewayCustomerId: customerId },
+      data: { [field]: customerId },
     });
-    console.log(`[CheckoutHandler]: Linked user ${userId} to Stripe customer ${customerId}`);
+    console.log(`[CheckoutHandler]: Linked user ${userId} to Stripe customer ${customerId} (${field})`);
   }
 
   // Double-ensure subscription record is populated/updated

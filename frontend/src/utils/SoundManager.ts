@@ -218,7 +218,7 @@ export class SoundManager {
   initFromStorage() {
     if (!this.isBrowser) return;
     const stored = localStorage.getItem(SoundManager.STORAGE_KEY);
-    this.muted = stored === "false";
+    this.muted = stored !== "true";
   }
 
   static readonly STORAGE_KEY = "sound-enabled";

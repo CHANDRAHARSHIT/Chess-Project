@@ -1,4 +1,5 @@
 import { useRef, useEffect, useState } from "react";
+import { useBoardSettings } from "../hooks/useBoardSettings";
 
 // =========================================================================
 // 1. CONFIGURATION
@@ -17,20 +18,6 @@ const PIECE_THICKNESS: Record<string, number> = {
   King: 0.65,
 };
 
-const PIECE_ASSETS: Record<string, string> = {
-  wK: "https://upload.wikimedia.org/wikipedia/commons/4/42/Chess_klt45.svg",
-  wQ: "https://upload.wikimedia.org/wikipedia/commons/1/15/Chess_qlt45.svg",
-  wR: "https://upload.wikimedia.org/wikipedia/commons/7/72/Chess_rlt45.svg",
-  wB: "https://upload.wikimedia.org/wikipedia/commons/b/b1/Chess_blt45.svg",
-  wN: "https://upload.wikimedia.org/wikipedia/commons/7/70/Chess_nlt45.svg",
-  wP: "https://upload.wikimedia.org/wikipedia/commons/4/45/Chess_plt45.svg",
-  bK: "https://upload.wikimedia.org/wikipedia/commons/f/f0/Chess_kdt45.svg",
-  bQ: "https://upload.wikimedia.org/wikipedia/commons/4/47/Chess_qdt45.svg",
-  bR: "https://upload.wikimedia.org/wikipedia/commons/f/ff/Chess_rdt45.svg",
-  bB: "https://upload.wikimedia.org/wikipedia/commons/9/98/Chess_bdt45.svg",
-  bN: "https://upload.wikimedia.org/wikipedia/commons/e/ef/Chess_ndt45.svg",
-  bP: "https://upload.wikimedia.org/wikipedia/commons/c/c7/Chess_pdt45.svg"
-};
 
 // =========================================================================
 // 2. MATH HELPERS
@@ -98,6 +85,8 @@ export default function ChessAnimationLayer({
   onLand,
   onComplete 
 }: ChessAnimationLayerProps) {
+
+  const { pieceSet } = useBoardSettings();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   
   const [ghost, setGhost] = useState<{
@@ -289,42 +278,63 @@ export default function ChessAnimationLayer({
     ? `drop-shadow(${shadowOffset}px ${shadowOffset}px ${shadowBlur}px rgba(0, 0, 0, ${shadowOpacity}))`
     : undefined;
 
+   const GhostPiece = currentGhost
+  ? pieceSet.pieces[currentGhost.type]
+  : null;
+
+const CapturedPiece = capturedGhost
+  ? pieceSet.pieces[capturedGhost.type]
+  : null;
+
   return (
     <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 99 }}>
       <canvas ref={canvasRef} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }} />
-      {currentGhost && (
-        <img 
-          src={PIECE_ASSETS[currentGhost.type]} 
-          alt="" 
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: squareSize,
-            height: squareSize,
-            willChange: 'transform',
-            transform: `translate3d(${currentGhost.x}px, ${currentGhost.y}px, 0) scale(${currentGhost.scale})`,
-            opacity: currentGhost.opacity,
-            filter: ghostFilter,
-          }} 
-        />
-      )}
-      {capturedGhost && (
-        <img 
-          src={PIECE_ASSETS[capturedGhost.type]} 
-          alt="" 
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: squareSize,
-            height: squareSize,
-            willChange: 'transform',
-            transform: `translate3d(${capturedGhost.x}px, ${capturedGhost.y}px, 0) scale(${capturedGhost.scale})`,
-            opacity: capturedGhost.opacity,
-          }} 
-        />
-      )}
+      {currentGhost && GhostPiece && (
+  <div
+    style={{
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: squareSize,
+      height: squareSize,
+      willChange: "transform",
+      transform: `translate3d(${currentGhost.x}px, ${currentGhost.y}px, 0) scale(${currentGhost.scale})`,
+      opacity: currentGhost.opacity,
+      filter: ghostFilter,
+    }}
+  >
+    {GhostPiece({
+      svgStyle: {
+        width: "100%",
+        height: "100%",
+        display: "block",
+      },
+    })}
+  </div>
+)}
+      {capturedGhost && CapturedPiece && (
+  <div
+    style={{
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: squareSize,
+      height: squareSize,
+      willChange: "transform",
+      transform: `translate3d(${capturedGhost.x}px, ${capturedGhost.y}px, 0) scale(${capturedGhost.scale})`,
+      opacity: capturedGhost.opacity,
+    }}
+  >
+    {CapturedPiece({
+      svgStyle: {
+        width: "100%",
+        height: "100%",
+        display: "block",
+      },
+    })}
+  </div>
+)}
+      
     </div>
   );
 }

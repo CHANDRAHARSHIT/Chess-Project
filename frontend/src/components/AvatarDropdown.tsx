@@ -14,8 +14,8 @@ export const AvatarDropdown: React.FC = () => {
 
   // ── Sound state (mirrors SoundToggle logic so they stay in sync) ───────────
   const [soundEnabled, setSoundEnabled] = useState<boolean>(() => {
-    if (typeof window === 'undefined') return true;
-    return localStorage.getItem(STORAGE_KEY) !== 'false';
+    if (typeof window === 'undefined') return false;
+    return localStorage.getItem(STORAGE_KEY) === 'true';
   });
 
   const toggleSound = () => {
@@ -103,8 +103,7 @@ export const AvatarDropdown: React.FC = () => {
             </p>
           </div>
 
-          {/* ── Divider ───────────────────────────────────────────────────── */}
-          <div className="my-1.5 border-t border-brand-border/40" role="separator" />
+          
 
           {/* ── Settings ──────────────────────────────────────────────────── */}
           <button
