@@ -86,7 +86,7 @@ const PieceSvg: React.FC<{
 };
 
 // Skeleton Loading Card Component
-const PricingSkeletonCard: React.FC<{ isPopular?: boolean }> = ({ isPopular = false }) => (
+export const PricingSkeletonCard: React.FC<{ isPopular?: boolean }> = ({ isPopular = false }) => (
   <div
     className={`rounded-3xl p-6 sm:p-8 flex flex-col justify-between overflow-hidden animate-pulse border
       ${isPopular

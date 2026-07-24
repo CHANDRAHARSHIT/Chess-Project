@@ -33,7 +33,7 @@ async function seed() {
   const proMonthly = await prisma.product.upsert({
     where: { identifier: "pro_monthly" },
     update: {
-      priceAmount: 100,
+      priceAmount: 864, // 8.64 NZD in cents
       currency: "nzd",
       ...monthlyPriceData,
     },
@@ -41,7 +41,7 @@ async function seed() {
       identifier: "pro_monthly",
       name: "Premium Monthly",
       description: "Access to all premium chess tools billed monthly.",
-      priceAmount: 100,
+      priceAmount: 864,
       currency: "nzd",
       billingInterval: "month",
       ...monthlyPriceData,
@@ -71,7 +71,7 @@ async function seed() {
   const proYearly = await prisma.product.upsert({
     where: { identifier: "pro_yearly" },
     update: {
-      priceAmount: 1000,
+      priceAmount: 3525, // 35.25 NZD in cents
       currency: "nzd",
       ...yearlyPriceData,
     },
@@ -79,7 +79,7 @@ async function seed() {
       identifier: "pro_yearly",
       name: "Premium Yearly",
       description: "Access to all premium chess tools billed yearly.",
-      priceAmount: 1000,
+      priceAmount: 3525,
       currency: "nzd",
       billingInterval: "year",
       ...yearlyPriceData,

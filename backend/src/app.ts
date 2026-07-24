@@ -6,6 +6,8 @@ import { env } from "./config/env.js";
 import { authRouter } from "./routes/auth.route.js";
 import { userRouter } from "./routes/user.route.js";
 import { paymentRouter } from "./routes/payment.route.js";
+import { pricingRouter } from "./routes/pricing.route.js";
+import { checkoutRouter } from "./routes/checkout.route.js";
 import { errorHandler } from "./middleware/error.middleware.js";
 
 const app = express();
@@ -63,8 +65,7 @@ app.get("/api/auth/signin/", (req, res) => {
 });
 
 // Ensure Auth.js sees the correct public hostname when behind a reverse proxy (Vercel rewrite).
-// Vercel rewrites change the Host header to the Railway backend hostname, which causes Auth.js
-// to construct OAuth callback URLs with the wrong origin (redirect_uri_mismatch).
+
 app.use("/api/auth/*", (req, _res, next) => {
   try {
     const authUrl = new URL(env.AUTH_URL);
@@ -76,6 +77,8 @@ app.use("/api/auth/*", (req, _res, next) => {
 }, authRouter);
 app.use("/api/users", userRouter);
 app.use("/api/payments", paymentRouter);
+app.use("/api/pricing", pricingRouter);
+app.use("/api/checkout", checkoutRouter);
 
 // Catch-all centralized error handler
 app.use(errorHandler);

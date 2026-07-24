@@ -40,17 +40,23 @@ export default function SuccessfulPage() {
             const data = res.data;
             
             if (data.isSubscribed && data.subscription) {
+              const stripeSession = data.session;
               const upgradeDetails: UpgradeDetails = {
                 billingCycle: data.subscription.billingInterval === 'year' ? 'Yearly' : 'Monthly',
                 purchaseDate: new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }),
-                txnId: data.session.id,
+                txnId: stripeSession.id,
                 selectedPlan: data.subscription.productName,
-                totalPaid: `$${(data.session.amountTotal / 100).toFixed(2)}`,
-                renewalDate: new Date(data.subscription.currentPeriodEnd).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }),
+                // Use pre-formatted amount from Stripe metadata (e.g. "₹483", "$5", "NZ$9")
+                totalPaid: stripeSession.totalPaidFormatted || 'Processing...',
+                renewalDate: data.subscription.currentPeriodEnd
+                  ? new Date(data.subscription.currentPeriodEnd).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })
+                  : 'Pending Verification',
                 username: session?.user?.name || 'Grandmaster',
-                email: data.session.customerEmail || session?.user?.email || '',
-                currency: data.session.currency.toUpperCase(),
-                discount: '$0.00'
+                email: stripeSession.customerEmail || session?.user?.email || '',
+                // Currency code from Stripe session (e.g. "INR", "USD", "NZD")
+                currency: stripeSession.currency || 'NZD',
+                // Discount formatted with correct symbol
+                discount: `${stripeSession.symbol || ''}0.00`,
               };
               setDetails(upgradeDetails);
               setLoading(false);
@@ -81,7 +87,7 @@ export default function SuccessfulPage() {
             username: session?.user?.name || 'Member',
             email: session?.user?.email || '',
             currency: 'NZD',
-            discount: '$0.00'
+            discount: 'NZ$0.00',
           });
           setLoading(false);
         }

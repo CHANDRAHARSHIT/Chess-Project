@@ -13,6 +13,8 @@ import { useNavigate, useLocation } from "react-router";
 import { useSession } from "../hooks/useSession";
 import { AuthModal } from "../components/AuthModal";
 import { PaymentService } from "../services/payment";
+import { usePricing } from "../hooks/usePricing";
+import { PricingApi } from "../services/pricingApi";
 export default function CheckoutPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -76,13 +78,23 @@ export default function CheckoutPage() {
     setAuthModalOpen(true);
   };
 
-  // Auto Calculations
-  const basePrice = isYearly ? 12.0 : 1.0;
-  const planDiscount = isYearly ? 2.0 : 0.0; // Base yearly was $12.00 NZD, plan saves $2.00 NZD
-  const billingCycleLabel = isYearly ? "Premium Yearly" : "Premium Monthly";
+  const { pricing } = usePricing();
 
-  // Final Total
-  const grandTotal = basePrice - planDiscount;
+  const symbol = pricing.symbol;
+  const monthlyVal = pricing.monthly;
+  const yearlyVal = pricing.yearly;
+
+  const basePriceFormatted = isYearly
+    ? `${symbol}${monthlyVal * 12}`
+    : `${symbol}${monthlyVal}`;
+  const planDiscountFormatted = isYearly
+    ? `${symbol}${Math.round(monthlyVal * 12 - yearlyVal)}`
+    : `${symbol}0`;
+  const grandTotalFormatted = isYearly
+    ? `${symbol}${yearlyVal}`
+    : `${symbol}${monthlyVal}`;
+
+  const billingCycleLabel = isYearly ? "Premium Yearly" : "Premium Monthly";
 
   // Next Renewal Date calculation
   const nextRenewalDate = () => {
@@ -98,20 +110,21 @@ export default function CheckoutPage() {
       year: "numeric",
     });
   };
+
   // Complete checkout flow
   const handleProceedToPayment = async () => {
     setIsProcessing(true);
 
     try {
-      const plan = isYearly ? "pro_yearly" : "pro_monthly";
-      const response = await PaymentService.createCheckoutSession(plan);
+      const billing = isYearly ? "yearly" : "monthly";
+      const response = await PricingApi.createCheckout("premium", billing);
 
-      if (response.status === "success" && response.checkoutUrl) {
-        if (response.sessionId) {
-          sessionStorage.setItem('pending_checkout_session_id', response.sessionId);
+      if (response.status === "success" && (response.url || response.checkoutUrl)) {
+        if ((response as any).sessionId) {
+          sessionStorage.setItem('pending_checkout_session_id', (response as any).sessionId);
         }
         // Securely redirect customer to Stripe hosted checkout page
-        window.location.href = response.checkoutUrl;
+        window.location.href = response.url || response.checkoutUrl!;
       } else {
         alert(
           response.message ||
@@ -443,24 +456,24 @@ export default function CheckoutPage() {
                     </div>
                   </div>
                   <span className="text-sm font-mono text-[#e5dfd5]">
-                    ${basePrice.toFixed(2)} NZD
+                    {basePriceFormatted}
                   </span>
                 </div>
 
                 {/* Subtotal */}
                 <div className="flex justify-between items-center text-xs text-brand-secondary pt-2 border-t border-brand-border/20">
                   <span>Subtotal</span>
-                  <span className="font-mono">${basePrice.toFixed(2)} NZD</span>
+                  <span className="font-mono">{basePriceFormatted}</span>
                 </div>
 
                 {/* Plan discount */}
                 {isYearly && (
                   <div className="flex justify-between items-center text-xs text-brand-secondary">
                     <span className="flex items-center gap-1 text-emerald-400 font-mono">
-                      Plan Savings (17%)
+                      Plan Savings (66%)
                     </span>
                     <span className="font-mono text-emerald-400">
-                      -${planDiscount.toFixed(2)} NZD
+                      -{planDiscountFormatted}
                     </span>
                   </div>
                 )}
@@ -471,7 +484,7 @@ export default function CheckoutPage() {
                     Total
                   </span>
                   <span className="text-2xl font-display font-bold text-white text-gold-gradient">
-                    ${grandTotal.toFixed(2)} NZD
+                    {grandTotalFormatted}
                   </span>
                 </div>
               </div>
