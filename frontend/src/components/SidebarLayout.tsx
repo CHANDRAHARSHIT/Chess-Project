@@ -1,5 +1,18 @@
 import { useState } from "react";
-import { Menu, X, Home, Puzzle, CreditCard, User, CircleUserRound, Crown, GraduationCap, BookOpen, Bot, BookMarked, ChevronDown } from "lucide-react";
+import {
+  Menu,
+  X,
+  Home,
+  Puzzle,
+  CreditCard,
+  CircleUserRound,
+  Crown,
+  GraduationCap,
+  BookOpen,
+  Bot,
+  BookMarked,
+  ChevronDown,
+} from "lucide-react";
 import { useLogoAnimation } from "../hooks/useLogoAnimation";
 import { soundManager } from "../utils/SoundManager";
 import { useSession } from "../hooks/useSession";
@@ -20,8 +33,6 @@ export default function SidebarLayout({
   const [mobileOpenItem, setMobileOpenItem] = useState<string | null>(null);
   const { status } = useSession();
 
-
-
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -30,7 +41,6 @@ export default function SidebarLayout({
     setIsModalOpen(true);
     setIsMobileOpen(false);
   };
-
 
   const { containerRef, logoRef } = useLogoAnimation();
 
@@ -42,10 +52,10 @@ export default function SidebarLayout({
       href: "/learn",
       icon: GraduationCap,
       subItems: [
-        { name: "Lessons", href: "/lessons", icon: BookOpen },
-        { name: "Play Coach", href: "/play-coach", icon: Bot },
-        { name: "Openings", href: "/openings", icon: BookMarked }
-      ]
+        { name: "Lessons", href: "/lessons", icon: BookOpen, comingSoon: true },
+        { name: "Play Coach", href: "/play-coach", icon: Bot, comingSoon: true },
+        { name: "Openings", href: "/openings", icon: BookMarked },
+      ],
     },
     { name: "Pricing", href: "/pricing", icon: CreditCard },
     { name: "Premium", href: "/premium", icon: Crown },
@@ -72,7 +82,6 @@ export default function SidebarLayout({
     }
   };
 
-
   return (
     <div className="min-h-screen text-brand-text bg-brand-bg flex flex-col relative select-none">
       {/* ── TOP HEADER ──────────────────────────────────────────────────────── */}
@@ -86,7 +95,6 @@ export default function SidebarLayout({
           >
             <Menu className="w-5 h-5" />
           </button>
-
 
           <div
             ref={containerRef}
@@ -110,17 +118,12 @@ export default function SidebarLayout({
               }}
             />
             <div className="flex flex-col leading-none">
-              <h1 className="text-1xl font-bold tracking-wide">
-                XLCHESS
-              </h1>
+              <h1 className="text-1xl font-bold tracking-wide">XLCHESS</h1>
 
-              <p className="text-xs">
-                Excel at Chess
-              </p>
+              <p className="text-xs">Excel at Chess</p>
             </div>
           </div>
         </div>
-
 
         {/* Right: More Menu & Auth Controls */}
         <div className="flex items-center gap-2 sm:gap-3">
@@ -149,13 +152,16 @@ export default function SidebarLayout({
       <div className="flex flex-1 pt-16">
         {/* Desktop Sidebar (Fixed) */}
         <aside
-          className={`fixed top-16 left-0 bottom-0 z-30 bg-[#080B14]/90 backdrop-blur-md border-r border-brand-border flex flex-col py-4 transition-all duration-300 hidden md:flex ${isExpanded ? "w-64" : "w-20"
-            }`}
+          className={`fixed top-16 left-0 bottom-0 z-30 bg-[#080B14]/90 backdrop-blur-md border-r border-brand-border flex flex-col py-4 transition-all duration-300 hidden md:flex ${
+            isExpanded ? "w-64" : "w-20"
+          }`}
         >
           <nav className="flex-1 space-y-1">
             {menuItems.map((item) => {
               const Icon = item.icon;
-              const isActive = location.pathname === item.href || (item.subItems?.some(sub => location.pathname === sub.href));
+              const isActive =
+                location.pathname === item.href ||
+                item.subItems?.some((sub) => location.pathname === sub.href);
 
               return (
                 <div key={item.name} className="relative group/navitem">
@@ -168,23 +174,27 @@ export default function SidebarLayout({
                         handleLinkClick(item.href, e);
                       }
                     }}
-                    className={`b1 relative flex transition-all duration-200 cursor-pointer ${isExpanded
-                      ? `items-center gap-4 px-4 py-3 mx-3 rounded-xl ${isActive
-                        ? "text-brand-accent bg-brand-accent/10 font-medium shadow-[inset_1px_0_0_rgba(212,175,110,0.1)]"
-                        : "text-brand-secondary hover:text-white hover:bg-white/5 group-hover/navitem:bg-white/5 group-hover/navitem:text-white"
-                      }`
-                      : `flex-col items-center justify-center py-2.5 mx-2 rounded-lg text-center ${isActive
-                        ? "text-brand-accent bg-brand-accent/10 border-brand-accent font-medium"
-                        : "text-brand-secondary hover:text-white hover:bg-white/5 group-hover/navitem:bg-white/5 group-hover/navitem:text-white"
-                      }`
-                      }`}
+                    className={`b1 relative flex transition-all duration-200 cursor-pointer ${
+                      isExpanded
+                        ? `items-center gap-4 px-4 py-3 mx-3 rounded-xl ${
+                            isActive
+                              ? "text-brand-accent bg-brand-accent/10 font-medium shadow-[inset_1px_0_0_rgba(212,175,110,0.1)]"
+                              : "text-brand-secondary hover:text-white hover:bg-white/5 group-hover/navitem:bg-white/5 group-hover/navitem:text-white"
+                          }`
+                        : `flex-col items-center justify-center py-2.5 mx-2 rounded-lg text-center ${
+                            isActive
+                              ? "text-brand-accent bg-brand-accent/10 border-brand-accent font-medium"
+                              : "text-brand-secondary hover:text-white hover:bg-white/5 group-hover/navitem:bg-white/5 group-hover/navitem:text-white"
+                          }`
+                    }`}
                   >
                     <Icon
                       className={`w-5 h-5 transition-transform duration-200 group-hover/navitem:scale-105 ${isActive ? "text-brand-accent" : "text-brand-secondary group-hover/navitem:text-white"}`}
                     />
                     <span
-                      className={`font-sans tracking-wide transition-all ${isExpanded ? "text-sm" : "text-[10px] mt-1"
-                        }`}
+                      className={`font-sans tracking-wide transition-all ${
+                        isExpanded ? "text-sm" : "text-[10px] mt-1"
+                      }`}
                     >
                       {item.name}
                     </span>
@@ -193,29 +203,44 @@ export default function SidebarLayout({
                   {item.subItems && (
                     <div
                       className="absolute left-full top-0 hidden group-hover/navitem:block z-[100] animate-in fade-in slide-in-from-left-2 duration-150"
-                      style={{ paddingLeft: '8px' }}
+                      style={{ paddingLeft: "8px" }}
                     >
                       <div
                         className="w-52 rounded-xl border border-brand-border py-1.5 shadow-2xl"
                         style={{
-                          background: '#0A0E1A',
-                          boxShadow: '0 8px 32px rgba(0,0,0,0.85), 0 0 0 1px rgba(212,175,110,0.10)',
+                          background: "#0A0E1A",
+                          boxShadow:
+                            "0 8px 32px rgba(0,0,0,0.85), 0 0 0 1px rgba(212,175,110,0.10)",
                         }}
                       >
                         {item.subItems.map((subItem) => {
                           const SubIcon = subItem.icon;
-                          const isSubActive = location.pathname === subItem.href;
+                          const isSubActive =
+                            location.pathname === subItem.href;
+                          const isComingSoon = subItem.comingSoon;
                           return (
                             <a
                               key={subItem.name}
-                              href={subItem.href}
-                              onClick={(e) => handleLinkClick(subItem.href, e)}
-                              className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm font-sans text-left transition-colors duration-150 cursor-pointer group/sub ${isSubActive
-                                ? "text-brand-accent bg-white/[0.06]"
-                                : "text-brand-secondary hover:text-white hover:bg-white/[0.06]"
-                                }`}
+                              href={isComingSoon ? "#" : subItem.href}
+                              onClick={(e) => {
+                                if (isComingSoon) {
+                                  e.preventDefault();
+                                  return;
+                                }
+                                handleLinkClick(subItem.href, e);
+                              }}
+                              title={isComingSoon ? "Coming Soon" : undefined}
+                              className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm font-sans text-left transition-colors duration-150 ${
+                                isComingSoon
+                                  ? "opacity-40 cursor-not-allowed select-none"
+                                  : isSubActive
+                                  ? "text-brand-accent bg-white/[0.06] cursor-pointer"
+                                  : "text-brand-secondary hover:text-white hover:bg-white/[0.06] cursor-pointer"
+                              }`}
                             >
-                              <SubIcon className={`w-4 h-4 shrink-0 transition-colors duration-150 ${isSubActive ? "text-brand-accent" : "text-brand-accent/70 group-hover/sub:text-brand-accent"}`} />
+                              <SubIcon
+                                className={`w-4 h-4 shrink-0 transition-colors duration-150 ${isSubActive ? "text-brand-accent" : "text-brand-accent/70 group-hover/sub:text-brand-accent"}`}
+                              />
                               <span className="flex-1">{subItem.name}</span>
                             </a>
                           );
@@ -238,15 +263,17 @@ export default function SidebarLayout({
         {/* Mobile Sidebar (Slide-out Overlay Drawer) */}
         {/* Backdrop overlay */}
         <div
-          className={`fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity duration-300 md:hidden ${isMobileOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-            }`}
+          className={`fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity duration-300 md:hidden ${
+            isMobileOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+          }`}
           onClick={() => setIsMobileOpen(false)}
         />
 
         {/* Drawer itself */}
         <aside
-          className={`fixed top-0 left-0 bottom-0 w-64 z-50 bg-[#080B14] border-r border-brand-border flex flex-col py-4 transition-transform duration-300 ease-in-out md:hidden ${isMobileOpen ? "translate-x-0" : "-translate-x-full"
-            }`}
+          className={`fixed top-0 left-0 bottom-0 w-64 z-50 bg-[#080B14] border-r border-brand-border flex flex-col py-4 transition-transform duration-300 ease-in-out md:hidden ${
+            isMobileOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
         >
           {/* Drawer Header */}
           <div className="flex items-center justify-between px-4 pb-4 border-b border-brand-border/40">
@@ -264,7 +291,9 @@ export default function SidebarLayout({
           <nav className="flex-1 mt-4 space-y-1 overflow-y-auto">
             {menuItems.map((item) => {
               const Icon = item.icon;
-              const isActive = location.pathname === item.href || (item.subItems?.some(sub => location.pathname === sub.href));
+              const isActive =
+                location.pathname === item.href ||
+                item.subItems?.some((sub) => location.pathname === sub.href);
               const isSubOpen = mobileOpenItem === item.name;
 
               return (
@@ -275,14 +304,18 @@ export default function SidebarLayout({
                         // Toggle nested list; don't navigate
                         setMobileOpenItem(isSubOpen ? null : item.name);
                       } else {
-                        handleLinkClick(item.href, e as unknown as React.MouseEvent);
+                        handleLinkClick(
+                          item.href,
+                          e as unknown as React.MouseEvent,
+                        );
                       }
                     }}
-                    className={`group w-full flex items-center gap-4 px-4 py-3 mx-3 rounded-xl transition-all duration-200 cursor-pointer text-left ${isActive
-                      ? "text-brand-accent bg-brand-accent/10 font-medium"
-                      : "text-brand-secondary hover:text-white hover:bg-white/5"
-                      }`}
-                    style={{ width: 'calc(100% - 1.5rem)' }}
+                    className={`group w-full flex items-center gap-4 px-4 py-3 mx-3 rounded-xl transition-all duration-200 cursor-pointer text-left ${
+                      isActive
+                        ? "text-brand-accent bg-brand-accent/10 font-medium"
+                        : "text-brand-secondary hover:text-white hover:bg-white/5"
+                    }`}
+                    style={{ width: "calc(100% - 1.5rem)" }}
                   >
                     <Icon
                       className={`w-5 h-5 shrink-0 ${isActive ? "text-brand-accent" : "text-brand-secondary group-hover:text-white"}`}
@@ -292,8 +325,11 @@ export default function SidebarLayout({
                     </span>
                     {item.subItems && (
                       <ChevronDown
-                        className={`w-4 h-4 shrink-0 transition-transform duration-200 ${isSubOpen ? "rotate-180 text-brand-accent" : "text-brand-secondary/60"
-                          }`}
+                        className={`w-4 h-4 shrink-0 transition-transform duration-200 ${
+                          isSubOpen
+                            ? "rotate-180 text-brand-accent"
+                            : "text-brand-secondary/60"
+                        }`}
                       />
                     )}
                   </button>
@@ -303,18 +339,33 @@ export default function SidebarLayout({
                       {item.subItems.map((subItem) => {
                         const SubIcon = subItem.icon;
                         const isSubActive = location.pathname === subItem.href;
+                        const isComingSoon = subItem.comingSoon;
                         return (
                           <a
                             key={subItem.name}
-                            href={subItem.href}
-                            onClick={(e) => handleLinkClick(subItem.href, e)}
-                            className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200 cursor-pointer ${isSubActive
-                              ? "text-brand-accent bg-brand-accent/5 font-medium"
-                              : "text-brand-secondary hover:text-white hover:bg-white/5"
-                              }`}
+                            href={isComingSoon ? "#" : subItem.href}
+                            onClick={(e) => {
+                              if (isComingSoon) {
+                                e.preventDefault();
+                                return;
+                              }
+                              handleLinkClick(subItem.href, e);
+                            }}
+                            title={isComingSoon ? "Coming Soon" : undefined}
+                            className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200 ${
+                              isComingSoon
+                                ? "opacity-40 cursor-not-allowed select-none"
+                                : isSubActive
+                                ? "text-brand-accent bg-brand-accent/5 font-medium cursor-pointer"
+                                : "text-brand-secondary hover:text-white hover:bg-white/5 cursor-pointer"
+                            }`}
                           >
-                            <SubIcon className={`w-4 h-4 ${isSubActive ? "text-brand-accent" : "text-brand-secondary"}`} />
-                            <span className="font-sans text-sm">{subItem.name}</span>
+                            <SubIcon
+                              className={`w-4 h-4 ${isSubActive ? "text-brand-accent" : "text-brand-secondary"}`}
+                            />
+                            <span className="font-sans text-sm">
+                              {subItem.name}
+                            </span>
                           </a>
                         );
                       })}
@@ -328,8 +379,9 @@ export default function SidebarLayout({
 
         {/* ── MAIN CONTENT WORKSPACE ─────────────────────────────────────────── */}
         <div
-          className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${isExpanded ? "md:pl-64" : "md:pl-20"
-            }`}
+          className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${
+            isExpanded ? "md:pl-64" : "md:pl-20"
+          }`}
         >
           {children}
         </div>
