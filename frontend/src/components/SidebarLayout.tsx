@@ -43,7 +43,6 @@ export default function SidebarLayout({
     { name: "Puzzles", href: "/puzzles", icon: Puzzle },
     { name: "Pricing", href: "/pricing", icon: CreditCard },
     { name: "Premium", href: "/premium", icon: Crown },
-    { name: "Profile", href: "/profile", icon: CircleUserRound },
   ];
 
   const handleLinkClick = (href: string, e: React.MouseEvent) => {
