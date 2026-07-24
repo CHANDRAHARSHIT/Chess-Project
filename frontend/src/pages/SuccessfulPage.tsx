@@ -246,9 +246,9 @@ export default function SuccessfulPage() {
               <span className="font-mono text-[#e5dfd5]">{details.billingCycle}</span>
             </div>
 
-            <div className="flex justify-between items-center text-sm">
-              <span className="text-brand-secondary font-sans">Transaction ID</span>
-              <span className="font-mono text-xs text-brand-accent">{details.txnId}</span>
+            <div className="flex justify-between items-center text-sm gap-2 sm:gap-4">
+              <span className="text-brand-secondary font-sans shrink-0">Transaction ID</span>
+              <span className="font-mono text-xs text-brand-accent text-right break-all [overflow-wrap:anywhere] min-w-0">{details.txnId}</span>
             </div>
 
             <div className="flex justify-between items-center text-sm">

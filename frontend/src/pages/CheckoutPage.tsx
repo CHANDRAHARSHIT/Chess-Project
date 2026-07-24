@@ -13,7 +13,6 @@ import { useNavigate, useLocation } from "react-router";
 import { useSession } from "../hooks/useSession";
 import { AuthModal } from "../components/AuthModal";
 import { PaymentService } from "../services/payment";
-
 export default function CheckoutPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -29,6 +28,37 @@ export default function CheckoutPage() {
   // Checkout States
   const [isProcessing, setIsProcessing] = useState(false);
 
+  useEffect(() => {
+    const checkPendingSession = async () => {
+      const pendingId = sessionStorage.getItem('pending_checkout_session_id');
+      if (!pendingId) return;
+
+      setIsProcessing(true); // show overlay briefly while we check
+      try {
+        const result = await PaymentService.getCheckoutSession(pendingId);
+        if (result?.data?.session?.status !== 'complete') {
+          sessionStorage.removeItem('pending_checkout_session_id');
+          navigate('/payment/failed');
+          return;
+        }
+        // completed — clear the pending marker; success_url flow handles the rest
+        sessionStorage.removeItem('pending_checkout_session_id');
+      } catch (err) {
+        console.error('[CheckoutPage] Session status check failed:', err);
+        sessionStorage.removeItem('pending_checkout_session_id');
+      } finally {
+        setIsProcessing(false);
+      }
+    };
+
+    checkPendingSession();
+
+    const handlePageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) checkPendingSession();
+    };
+    window.addEventListener('pageshow', handlePageShow);
+    return () => window.removeEventListener('pageshow', handlePageShow);
+  }, [navigate]);
   useEffect(() => {
     // Detect plan selection from URL query parameter
     const params = new URLSearchParams(location.search);
@@ -77,12 +107,15 @@ export default function CheckoutPage() {
       const response = await PaymentService.createCheckoutSession(plan);
 
       if (response.status === "success" && response.checkoutUrl) {
+        if (response.sessionId) {
+          sessionStorage.setItem('pending_checkout_session_id', response.sessionId);
+        }
         // Securely redirect customer to Stripe hosted checkout page
         window.location.href = response.checkoutUrl;
       } else {
         alert(
           response.message ||
-            "Failed to initialize secure checkout session. Please try again.",
+          "Failed to initialize secure checkout session. Please try again.",
         );
         setIsProcessing(false);
       }

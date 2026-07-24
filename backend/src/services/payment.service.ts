@@ -63,7 +63,7 @@ export class PaymentService {
   /**
    * Initiates a Stripe checkout session. Resolves price and product details from the DB.
    */
-  static async createCheckoutSession(userId: string, planIdentifier: string): Promise<string> {
+  static async createCheckoutSession(userId: string, planIdentifier: string): Promise<{ url: string; sessionId: string }> {
     const gatewayCustomerId = await this.getOrCreateCustomer(userId);
 
     // Fetch the product pricing configuration from the database
@@ -80,6 +80,7 @@ export class PaymentService {
       customer: gatewayCustomerId,
       line_items: [{ price: product.gatewayPriceId, quantity: 1 }],
       mode: "subscription",
+      expires_at: Math.floor(Date.now() / 1000) + 1800,
       success_url: env.STRIPE_SUCCESS_URL || `${env.CLIENT_ORIGIN}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: env.STRIPE_CANCEL_URL || `${env.CLIENT_ORIGIN}/pricing`,
       metadata: { userId, productId: product.id },
@@ -90,7 +91,7 @@ export class PaymentService {
       throw new Error("Stripe checkout session creation failed to return a redirect URL.");
     }
 
-    return session.url;
+    return { url: session.url, sessionId: session.id };
   }
 
   /**
@@ -231,6 +232,7 @@ export class PaymentService {
       session: {
         id: session.id,
         paymentStatus: session.payment_status,
+        status: session.status,
         amountTotal: session.amount_total,
         currency: session.currency,
         customerEmail: session.customer_details?.email || null,

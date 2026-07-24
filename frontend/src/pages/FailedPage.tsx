@@ -17,7 +17,7 @@ export default function FailedPage() {
 
   return (
     <div className="min-h-screen bg-brand-bg text-brand-text flex flex-col relative overflow-hidden select-none pb-16">
-      
+
       {/* Ambient background glows */}
       <div className="absolute top-[10%] left-1/2 -translate-x-1/2 w-[80vw] max-w-[900px] h-[400px] bg-rose-500/5 rounded-full blur-[140px] pointer-events-none z-0" />
       <div className="absolute top-[30%] left-[20%] w-[300px] h-[300px] bg-brand-accent/5 rounded-full blur-[100px] pointer-events-none z-0" />
@@ -36,11 +36,11 @@ export default function FailedPage() {
 
       {/* Main content wrapper */}
       <main className="relative z-10 flex-1 flex flex-col items-center justify-center max-w-md mx-auto px-4 py-12 w-full text-center">
-        
+
         {/* Failed Icon Block */}
         <div className="relative mb-6">
           <div className="absolute inset-0 rounded-full bg-rose-500/20 blur-xl scale-125 animate-pulse" />
-          
+
           <motion.div
             initial={{ scale: 0, rotate: 30 }}
             animate={{ scale: 1, rotate: 0 }}

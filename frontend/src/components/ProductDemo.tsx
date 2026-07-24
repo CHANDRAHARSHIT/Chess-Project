@@ -20,12 +20,10 @@ import {
 } from 'lucide-react';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import { useButtonGlow } from '../hooks/useButtonGlow';
+import { BoardCoordinates } from './BoardCoordinates';
 
 // Board colors + piece set now come from Settings -> Board & Pieces
 // (see useBoardSettings inside the component) instead of being hardcoded here.
-
-// Set false to hide coordinates; toggle easily here.
-const SHOW_COORDINATES = false;
 
 // ── Sound helper ─────────────────────────────────────────────────────────────────
 // Plays the correct sound for a chess.js move result and current game state.
@@ -401,7 +399,7 @@ export default function ProductDemo() {
               <EvaluationBar evaluation={displayEval} isDesktop={isDesktop} boardHeight={boardHeight} />
             </div>
 
-            {/* â”€â”€ Col 2: Chessboard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+            {/* ── Col 2: Chessboard ────────────────────────────────────────── */}
             <div className="lg:col-span-7 flex flex-col lg:justify-start justify-center">
               <div ref={boardContainerRef} className="aspect-square w-full shadow-xl border border-[rgba(212,175,110,0.12)] relative overflow-hidden" style={{ borderRadius: '4px' }}>
 
@@ -435,10 +433,12 @@ export default function ProductDemo() {
                     boardOrientation: boardOrientation,
                     squareStyles: customSquareStyles,
                     boardStyle: { borderRadius: '0px' },
-                    showNotation: SHOW_COORDINATES,
+                    showNotation: false,
                   }}
                 />
-              </div>
+
+                <BoardCoordinates boardOrientation={boardOrientation} />
+                </div>
 
               {/* Turn indicator */}
               <div className="mt-3 flex items-center gap-2 text-xs text-[#8E8B82] px-1">
