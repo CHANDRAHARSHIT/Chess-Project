@@ -20,6 +20,7 @@
  */
 import { defaultPieces } from "react-chessboard";
 import type { PieceRenderObject } from "react-chessboard";
+console.log("defaultPieces:", defaultPieces);
 
 export interface PieceSetDef {
   id: string;

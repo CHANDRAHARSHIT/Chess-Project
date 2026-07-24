@@ -1,14 +1,13 @@
 /**
  * OpeningProgressBar.tsx
  *
- * Displays step progress: "Step N of M" + a gold-filled progress bar.
- * Consistent with the existing PuzzlePage stat chips style.
+ * A slim progress bar indicating how far through the opening the user has gotten.
  */
 
 interface OpeningProgressBarProps {
   currentUserStep: number;
   totalUserSteps: number;
-  progress: number; // 0–1
+  progress: number; // 0–1 fraction
 }
 
 export function OpeningProgressBar({
@@ -16,32 +15,30 @@ export function OpeningProgressBar({
   totalUserSteps,
   progress,
 }: OpeningProgressBarProps) {
-  const pct = Math.round(progress * 100);
+  const pct = Math.max(0, Math.min(1, progress)) * 100;
 
   return (
-    <div className="flex flex-col gap-1.5 w-full">
-      <div className="flex items-center justify-between">
-        <span className="font-mono text-xs text-brand-secondary uppercase tracking-widest">
-          Progress
-        </span>
-        <span className="font-mono text-xs text-brand-accent font-semibold">
-          {currentUserStep} / {totalUserSteps}
-        </span>
-      </div>
-
+    <div className="flex items-center gap-3">
       {/* Track */}
-      <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
-        {/* Fill */}
+      <div
+        className="flex-1 h-1.5 rounded-full overflow-hidden"
+        style={{ background: "rgba(255,255,255,0.06)" }}
+      >
         <div
-          className="h-full rounded-full transition-all duration-500 ease-out"
+          className="h-full rounded-full transition-all duration-500"
           style={{
             width: `${pct}%`,
             background:
-              "linear-gradient(90deg, #B8934A 0%, #D4AF6E 60%, #E8C88A 100%)",
-            boxShadow: "0 0 8px rgba(212,175,110,0.4)",
+              "linear-gradient(90deg, rgba(212,175,110,0.7) 0%, rgba(212,175,110,1) 100%)",
+            boxShadow: pct > 0 ? "0 0 6px rgba(212,175,110,0.4)" : "none",
           }}
         />
       </div>
+
+      {/* Label */}
+      <span className="font-mono text-[10px] text-brand-secondary shrink-0 tabular-nums">
+        {currentUserStep} / {totalUserSteps}
+      </span>
     </div>
   );
 }

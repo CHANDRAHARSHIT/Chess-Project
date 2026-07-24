@@ -67,3 +67,8 @@ export type ProductFeature = Prisma.ProductFeatureModel
  * 
  */
 export type WebhookEvent = Prisma.WebhookEventModel
+/**
+ * Model Opening
+ * 
+ */
+export type Opening = Prisma.OpeningModel

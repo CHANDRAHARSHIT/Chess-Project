@@ -1,14 +1,10 @@
 /**
  * OpeningCoachPanel.tsx
  *
- * Right-side panel displaying the virtual coach's message, move status
- * (correct / wrong / opponent), and the move history list.
- *
- * Coach image (coach.png) is displayed on the left of a speech bubble
- * whose tail points LEFT toward the coach — matching chess.com's style.
+ * Displays the coach image (/public/coach.png), a contextual coaching message,
+ * and the move history for the current training session.
  */
 
-import { CheckCircle2, XCircle, Loader2, GraduationCap } from "lucide-react";
 import type { TrainerStatus } from "../../hooks/useOpeningTrainer";
 
 interface OpeningCoachPanelProps {
@@ -17,147 +13,90 @@ interface OpeningCoachPanelProps {
   movesPlayed: string[];
 }
 
-const statusConfig: Record<
-  TrainerStatus,
-  {
-    label: string;
-    color: string;
-    bgColor: string;
-    borderColor: string;
-    Icon: React.ComponentType<{ className?: string }>;
-  }
-> = {
-  playing: {
-    label: "Your move",
-    color: "text-brand-accent",
-    bgColor: "rgba(212,175,110,0.08)",
-    borderColor: "rgba(212,175,110,0.25)",
-    Icon: GraduationCap,
-  },
-  opponent: {
-    label: "Opponent's move…",
-    color: "text-brand-secondary",
-    bgColor: "rgba(255,255,255,0.04)",
-    borderColor: "rgba(255,255,255,0.10)",
-    Icon: Loader2,
-  },
-  wrong: {
-    label: "Incorrect — try again",
-    color: "text-rose-400",
-    bgColor: "rgba(239,68,68,0.06)",
-    borderColor: "rgba(239,68,68,0.25)",
-    Icon: XCircle,
-  },
-  complete: {
-    label: "Opening complete!",
-    color: "text-emerald-400",
-    bgColor: "rgba(52,211,153,0.06)",
-    borderColor: "rgba(52,211,153,0.25)",
-    Icon: CheckCircle2,
-  },
-};
-
 export function OpeningCoachPanel({
   coachMessage,
   status,
   movesPlayed,
 }: OpeningCoachPanelProps) {
-  const cfg = statusConfig[status];
-  const Icon = cfg.Icon;
+  const messageColor =
+    status === "wrong"
+      ? "#f87171" // rose-400
+      : status === "complete"
+      ? "#34d399" // emerald-400
+      : "#e5dfd5"; // brand text
 
   return (
-    <div className="flex flex-col gap-5 h-full">
-
-      {/* ── Coach + Speech Bubble ─────────────────────────────────────────── */}
-      <div className="flex items-start gap-3">
-
-        {/* Coach avatar */}
-        <div className="shrink-0 flex flex-col items-center gap-1.5">
-          <div
-            className="w-16 h-16 rounded-full overflow-hidden ring-2"
-            style={{
-              boxShadow:
-                "0 0 0 2px rgba(212,175,110,0.30), 0 4px 16px rgba(0,0,0,0.5)",
-            }}
+    <div className="flex flex-col gap-4 h-full">
+      {/* Coach avatar */}
+      <div className="flex items-center gap-3">
+        <div
+          className="w-12 h-12 rounded-full overflow-hidden shrink-0 border"
+          style={{ borderColor: "rgba(212,175,110,0.30)" }}
+        >
+          <img
+            src="/coach.png"
+            alt="Coach"
+            className="w-full h-full object-cover object-top"
+            draggable={false}
+          />
+        </div>
+        <div>
+          <p
+            className="font-display text-sm font-semibold"
+            style={{ color: "rgba(212,175,110,0.9)" }}
           >
-            <img
-              src="/coach.png"
-              alt="Coach"
-              className="w-full h-full object-cover object-top"
-              draggable={false}
-            />
-          </div>
-          <p className="font-mono text-[9px] text-brand-secondary uppercase tracking-widest text-center">
             Coach
           </p>
-        </div>
-
-        {/* Speech bubble with left-pointing tail */}
-        <div className="relative flex-1 min-w-0">
-          {/* Left-pointing triangle tail */}
-          <div
-            className="absolute left-0 top-5 -translate-x-full"
-            style={{
-              width: 0,
-              height: 0,
-              borderTop: "9px solid transparent",
-              borderBottom: "9px solid transparent",
-              borderRight: `10px solid ${cfg.bgColor}`,
-              filter: "drop-shadow(-1px 0 0 rgba(212,175,110,0.15))",
-            }}
-          />
-
-          {/* Bubble body */}
-          <div
-            className="rounded-2xl rounded-tl-sm px-4 py-3 text-sm font-sans leading-relaxed transition-colors duration-300"
-            style={{
-              background: cfg.bgColor,
-              border: `1px solid ${cfg.borderColor}`,
-              color: "var(--text-primary)",
-            }}
-          >
-            {coachMessage}
-          </div>
+          <p className="font-mono text-[10px] uppercase tracking-widest text-brand-secondary">
+            Opening Trainer
+          </p>
         </div>
       </div>
 
-      {/* ── Status badge ──────────────────────────────────────────────────── */}
+      {/* Speech bubble */}
       <div
-        className={`flex items-center gap-2 text-xs font-mono font-semibold uppercase tracking-wider ${cfg.color}`}
+        className="rounded-xl px-4 py-3 flex-1"
+        style={{
+          background: "rgba(212,175,110,0.06)",
+          border: "1px solid rgba(212,175,110,0.15)",
+        }}
       >
-        <Icon
-          className={`w-4 h-4 shrink-0 ${status === "opponent" ? "animate-spin" : ""}`}
-        />
-        <span>{cfg.label}</span>
+        <p
+          className="font-sans text-sm leading-relaxed transition-colors duration-300"
+          style={{ color: messageColor }}
+        >
+          {coachMessage}
+        </p>
       </div>
 
-      {/* ── Move history ──────────────────────────────────────────────────── */}
+      {/* Move history */}
       {movesPlayed.length > 0 && (
-        <div className="flex flex-col gap-2 flex-1">
-          <div className="flex items-center gap-2">
-            <div className="flex-1 h-px bg-brand-border/30" />
-            <p className="font-mono text-[10px] text-brand-secondary uppercase tracking-widest">
-              Moves Played
-            </p>
-            <div className="flex-1 h-px bg-brand-border/30" />
-          </div>
-          <div className="flex flex-wrap gap-1.5">
+        <div className="mt-auto">
+          <p className="font-mono text-[10px] uppercase tracking-widest text-brand-secondary mb-2">
+            Moves Played
+          </p>
+          <div className="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto">
             {movesPlayed.map((san, i) => {
-              const moveNum = Math.floor(i / 2) + 1;
-              const isWhite = i % 2 === 0;
+              const isWhiteMove = i % 2 === 0;
+              const moveNumber = Math.floor(i / 2) + 1;
               return (
                 <span
                   key={i}
-                  className="inline-flex items-center gap-1 font-mono text-xs px-2 py-1 rounded-lg"
+                  className="font-mono text-xs px-1.5 py-0.5 rounded"
                   style={{
-                    background: "rgba(255,255,255,0.05)",
-                    border: "1px solid rgba(255,255,255,0.08)",
+                    background: isWhiteMove
+                      ? "rgba(212,175,110,0.12)"
+                      : "rgba(255,255,255,0.05)",
+                    color: isWhiteMove ? "rgba(212,175,110,0.9)" : "#9ca3af",
+                    border: `1px solid ${
+                      isWhiteMove
+                        ? "rgba(212,175,110,0.20)"
+                        : "rgba(255,255,255,0.08)"
+                    }`,
                   }}
                 >
-                  {isWhite && (
-                    <span className="text-brand-secondary/60">{moveNum}.</span>
-                  )}
-                  <span className="text-brand-text">{san}</span>
+                  {isWhiteMove ? `${moveNumber}. ` : ""}
+                  {san}
                 </span>
               );
             })}

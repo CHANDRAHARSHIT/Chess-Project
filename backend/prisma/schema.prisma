@@ -180,3 +180,11 @@ model WebhookEvent {
   payload        Json?    // Full audit log payload
   createdAt      DateTime @default(now())
 }
+
+model Opening {
+  id    String @id @default(cuid())
+  eco   String
+  name  String
+  pgn   String
+  moves String
+}
