@@ -1,5 +1,13 @@
 import { useState } from "react";
-import {Menu, X, Home, Puzzle, CircleUserRound, Crown, CreditCard}from "lucide-react";
+import {
+  Menu,
+  X,
+  Home,
+  Puzzle,
+  CircleUserRound,
+  Crown,
+  CreditCard,
+} from "lucide-react";
 import { useLogoAnimation } from "../hooks/useLogoAnimation";
 import { soundManager } from "../utils/SoundManager";
 import { useSession } from "../hooks/useSession";
@@ -19,27 +27,23 @@ export default function SidebarLayout({
   const [modalMode, setModalMode] = useState<"login" | "register">("login");
   const { status } = useSession();
 
-  
-
   const navigate = useNavigate();
   const location = useLocation();
 
   const openModal = (mode: "login" | "register") => {
-  setModalMode(mode);
-  setIsModalOpen(true);
-  setIsMobileOpen(false);
-};
-
+    setModalMode(mode);
+    setIsModalOpen(true);
+    setIsMobileOpen(false);
+  };
 
   const { containerRef, logoRef } = useLogoAnimation();
 
   const menuItems = [
-  { name: "Home", href: "/", icon: Home },
-  { name: "Puzzles", href: "/puzzles", icon: Puzzle },
-  { name: "Pricing", href: "/pricing", icon: CreditCard },
-  { name: "Premium", href: "/premium", icon: Crown },
-  
-];
+    { name: "Home", href: "/", icon: Home },
+    { name: "Puzzles", href: "/puzzles", icon: Puzzle },
+    { name: "Pricing", href: "/pricing", icon: CreditCard },
+    { name: "Premium", href: "/premium", icon: Crown },
+  ];
 
   const handleLinkClick = (href: string, e: React.MouseEvent) => {
     e.preventDefault();
@@ -62,7 +66,6 @@ export default function SidebarLayout({
     }
   };
 
-
   return (
     <div className="min-h-screen text-brand-text bg-brand-bg flex flex-col relative select-none">
       {/* ── TOP HEADER ──────────────────────────────────────────────────────── */}
@@ -76,7 +79,6 @@ export default function SidebarLayout({
           >
             <Menu className="w-5 h-5" />
           </button>
-          
 
           <div
             ref={containerRef}
@@ -100,17 +102,12 @@ export default function SidebarLayout({
               }}
             />
             <div className="flex flex-col leading-none">
-              <h1 className="text-1xl font-bold tracking-wide">
-                XLCHESS
-              </h1>
+              <h1 className="text-1xl font-bold tracking-wide">XLCHESS</h1>
 
-              <p className="text-xs">
-                Excel at Chess
-              </p>
+              <p className="text-xs">Excel at Chess</p>
             </div>
           </div>
         </div>
-
 
         {/* Right: More Menu & Auth Controls */}
         <div className="flex items-center gap-2 sm:gap-3">
@@ -139,8 +136,9 @@ export default function SidebarLayout({
       <div className="flex flex-1 pt-16">
         {/* Desktop Sidebar (Fixed) */}
         <aside
-          className={`fixed top-16 left-0 bottom-0 z-30 bg-[#080B14]/90 backdrop-blur-md border-r border-brand-border flex flex-col py-4 transition-all duration-300  md:flex ${isExpanded ? "w-64" : "w-20"
-            }`}
+          className={`fixed top-16 left-0 bottom-0 z-30 bg-[#080B14]/90 backdrop-blur-md border-r border-brand-border flex flex-col py-4 transition-all duration-300 hidden md:flex ${
+            isExpanded ? "w-64" : "w-20"
+          }`}
         >
           <nav className="flex-1 space-y-1">
             {menuItems.map((item) => {
@@ -152,23 +150,27 @@ export default function SidebarLayout({
                   key={item.name}
                   href={item.href}
                   onClick={(e) => handleLinkClick(item.href, e)}
-                  className={`b1 group relative flex transition-all duration-200 cursor-pointer ${isExpanded
-                    ? `items-center gap-4 px-4 py-3 mx-3 rounded-xl ${isActive
-                      ? "text-brand-accent bg-brand-accent/10 font-medium shadow-[inset_1px_0_0_rgba(212,175,110,0.1)]"
-                      : "text-brand-secondary hover:text-white hover:bg-white/5"
-                    }`
-                    : `flex-col items-center justify-center py-2.5 mx-2 rounded-lg text-center ${isActive
-                      ? "text-brand-accent bg-brand-accent/10 border-brand-accent font-medium"
-                      : "text-brand-secondary hover:text-white hover:bg-white/5"
-                    }`
-                    }`}
+                  className={`b1 group relative flex transition-all duration-200 cursor-pointer ${
+                    isExpanded
+                      ? `items-center gap-4 px-4 py-3 mx-3 rounded-xl ${
+                          isActive
+                            ? "text-brand-accent bg-brand-accent/10 font-medium shadow-[inset_1px_0_0_rgba(212,175,110,0.1)]"
+                            : "text-brand-secondary hover:text-white hover:bg-white/5"
+                        }`
+                      : `flex-col items-center justify-center py-2.5 mx-2 rounded-lg text-center ${
+                          isActive
+                            ? "text-brand-accent bg-brand-accent/10 border-brand-accent font-medium"
+                            : "text-brand-secondary hover:text-white hover:bg-white/5"
+                        }`
+                  }`}
                 >
                   <Icon
                     className={`w-5 h-5 transition-transform duration-200 group-hover:scale-105 ${isActive ? "text-brand-accent" : "text-brand-secondary group-hover:text-white"}`}
                   />
                   <span
-                    className={`font-sans tracking-wide transition-all ${isExpanded ? "text-sm" : "text-[10px] mt-1"
-                      }`}
+                    className={`font-sans tracking-wide transition-all ${
+                      isExpanded ? "text-sm" : "text-[10px] mt-1"
+                    }`}
                   >
                     {item.name}
                   </span>
@@ -177,25 +179,27 @@ export default function SidebarLayout({
             })}
           </nav>
         </aside>
-        
+
         <AuthModal
-  isOpen={isModalOpen}
-  onClose={() => setIsModalOpen(false)}
-  initialMode={modalMode}
-/>
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          initialMode={modalMode}
+        />
 
         {/* Mobile Sidebar (Slide-out Overlay Drawer) */}
         {/* Backdrop overlay */}
         <div
-          className={`fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity duration-300 md:hidden ${isMobileOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-            }`}
+          className={`fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity duration-300 md:hidden ${
+            isMobileOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+          }`}
           onClick={() => setIsMobileOpen(false)}
         />
 
         {/* Drawer itself */}
         <aside
-          className={`fixed top-0 left-0 bottom-0 w-64 z-50 bg-[#080B14] border-r border-brand-border flex flex-col py-4 transition-transform duration-300 ease-in-out md:hidden ${isMobileOpen ? "translate-x-0" : "-translate-x-full"
-            }`}
+          className={`fixed top-0 left-0 bottom-0 w-64 z-50 bg-[#080B14] border-r border-brand-border flex flex-col py-4 transition-transform duration-300 ease-in-out md:hidden ${
+            isMobileOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
         >
           {/* Drawer Header */}
           <div className="flex items-center justify-between px-4 pb-4 border-b border-brand-border/40">
@@ -220,10 +224,11 @@ export default function SidebarLayout({
                   key={item.name}
                   href={item.href}
                   onClick={(e) => handleLinkClick(item.href, e)}
-                  className={`group flex items-center gap-4 px-4 py-3 mx-3 rounded-xl transition-all duration-200 cursor-pointer ${isActive
-                    ? "text-brand-accent bg-brand-accent/10 font-medium"
-                    : "text-brand-secondary hover:text-white hover:bg-white/5"
-                    }`}
+                  className={`group flex items-center gap-4 px-4 py-3 mx-3 rounded-xl transition-all duration-200 cursor-pointer ${
+                    isActive
+                      ? "text-brand-accent bg-brand-accent/10 font-medium"
+                      : "text-brand-secondary hover:text-white hover:bg-white/5"
+                  }`}
                 >
                   <Icon
                     className={`w-5 h-5 ${isActive ? "text-brand-accent" : "text-brand-secondary group-hover:text-white"}`}
@@ -239,8 +244,9 @@ export default function SidebarLayout({
 
         {/* ── MAIN CONTENT WORKSPACE ─────────────────────────────────────────── */}
         <div
-          className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${isExpanded ? "md:pl-64" : "md:pl-20"
-            }`}
+          className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${
+            isExpanded ? "md:pl-64" : "md:pl-20"
+          }`}
         >
           {children}
         </div>
