@@ -3,8 +3,23 @@ import { prisma } from "./config/prisma.js";
 async function seed() {
   console.log("Seeding subscription products...");
 
-  const monthlyPriceId = process.env.STRIPE_PRICE_PRO_MONTHLY || "price_1MonthlyMock";
-  const yearlyPriceId = process.env.STRIPE_PRICE_PRO_YEARLY || "price_1YearlyMock";
+  const stripeKey = process.env.STRIPE_SECRET_KEY || "";
+  const isLive = stripeKey.startsWith("sk_live_");
+  const mode = isLive ? "live" : "test";
+
+  const monthlyPriceId = process.env.STRIPE_PRICE_PRO_MONTHLY || null;
+  const yearlyPriceId  = process.env.STRIPE_PRICE_PRO_YEARLY  || null;
+
+  // Write price IDs into the correct mode-specific column only.
+  // The other column is left unchanged so both environments accumulate over time.
+  const monthlyPriceData = isLive
+    ? { gatewayLivePriceId: monthlyPriceId }
+    : { gatewayTestPriceId: monthlyPriceId };
+  const yearlyPriceData = isLive
+    ? { gatewayLivePriceId: yearlyPriceId }
+    : { gatewayTestPriceId: yearlyPriceId };
+
+  console.log(`[Seed]: Running in ${mode} mode. Price IDs will be stored in gateway${isLive ? "Live" : "Test"}PriceId.`);
 
   const features = [
     { featureKey: "unlimited_puzzles", featureValue: "true" },
@@ -18,9 +33,9 @@ async function seed() {
   const proMonthly = await prisma.product.upsert({
     where: { identifier: "pro_monthly" },
     update: {
-      priceAmount: 100, // 1 NZD in cents
+      priceAmount: 100,
       currency: "nzd",
-      gatewayPriceId: monthlyPriceId,
+      ...monthlyPriceData,
     },
     create: {
       identifier: "pro_monthly",
@@ -29,7 +44,7 @@ async function seed() {
       priceAmount: 100,
       currency: "nzd",
       billingInterval: "month",
-      gatewayPriceId: monthlyPriceId,
+      ...monthlyPriceData,
       isActive: true,
       displayOrder: 1,
     },
@@ -56,9 +71,9 @@ async function seed() {
   const proYearly = await prisma.product.upsert({
     where: { identifier: "pro_yearly" },
     update: {
-      priceAmount: 1000, // 10 NZD in cents
+      priceAmount: 1000,
       currency: "nzd",
-      gatewayPriceId: yearlyPriceId,
+      ...yearlyPriceData,
     },
     create: {
       identifier: "pro_yearly",
@@ -67,7 +82,7 @@ async function seed() {
       priceAmount: 1000,
       currency: "nzd",
       billingInterval: "year",
-      gatewayPriceId: yearlyPriceId,
+      ...yearlyPriceData,
       isActive: true,
       displayOrder: 2,
     },

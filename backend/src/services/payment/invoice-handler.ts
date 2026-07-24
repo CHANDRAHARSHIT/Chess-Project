@@ -32,7 +32,7 @@ export async function handleInvoicePaymentSucceeded(payload: any) {
   if (!subscription && subscriptionId) {
     const priceId = payload.lines?.data[0]?.price?.id;
     if (priceId) {
-      const product = await prisma.product.findUnique({ where: { gatewayPriceId: priceId } });
+      const product = await prisma.product.findFirst({ where: { OR: [{ gatewayLivePriceId: priceId }, { gatewayTestPriceId: priceId }] } });
       if (product) {
         subscription = await prisma.subscription.create({
           data: {
