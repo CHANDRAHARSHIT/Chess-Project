@@ -25,39 +25,58 @@ const stripe = new Stripe(env.STRIPE_SECRET_KEY || "", {
   apiVersion: "2026-06-24.dahlia" as any,
 });
 
+/**
+ * Returns true when the configured Stripe key is a live-mode key.
+ * Stripe live keys always start with `sk_live_`; test keys start with `sk_test_`.
+ */
+function isLiveMode(): boolean {
+  return (env.STRIPE_SECRET_KEY || "").startsWith("sk_live_");
+}
+
+/**
+ * Returns the Prisma field name for the active Stripe mode's customer ID column.
+ */
+function customerIdField(): "stripeLiveCustomerId" | "stripeTestCustomerId" {
+  return isLiveMode() ? "stripeLiveCustomerId" : "stripeTestCustomerId";
+}
+
 export class PaymentService {
   /**
    * Resolves the gateway customer ID. If missing, registers a new profile with Stripe.
    */
   static async getOrCreateCustomer(userId: string): Promise<string> {
+    const field = customerIdField();
+    const mode = isLiveMode() ? "live" : "test";
+
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: { email: true, name: true, gatewayCustomerId: true },
+      select: { email: true, name: true, stripeLiveCustomerId: true, stripeTestCustomerId: true },
     });
 
     if (!user) {
       throw new Error(`User with ID ${userId} not found.`);
     }
 
-    if (user.gatewayCustomerId) {
-      return user.gatewayCustomerId;
+    const existingCustomerId = user[field];
+    if (existingCustomerId) {
+      return existingCustomerId;
     }
 
-    console.log(`[Stripe]: Registering customer ${user.email} (${user.name || ""})`);
+    console.log(`[Stripe/${mode}]: Registering customer ${user.email} (${user.name || ""})`);
     const customer = await stripe.customers.create({
       email: user.email,
       name: user.name || undefined,
     });
 
-    const gatewayCustomerId = customer.id;
+    const newCustomerId = customer.id;
 
-    // Save ID to database
+    // Persist the new customer ID into the correct mode-specific column
     await prisma.user.update({
       where: { id: userId },
-      data: { gatewayCustomerId },
+      data: { [field]: newCustomerId },
     });
 
-    return gatewayCustomerId;
+    return newCustomerId;
   }
 
   /**
@@ -98,18 +117,22 @@ export class PaymentService {
    * Creates a Stripe customer billing portal session.
    */
   static async createBillingPortalSession(userId: string): Promise<string> {
+    const field = customerIdField();
+    const mode = isLiveMode() ? "live" : "test";
+
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: { gatewayCustomerId: true },
+      select: { stripeLiveCustomerId: true, stripeTestCustomerId: true },
     });
 
-    if (!user || !user.gatewayCustomerId) {
-      throw new Error("No billing profile customer ID found for this account.");
+    const customerId = user?.[field];
+    if (!user || !customerId) {
+      throw new Error(`No ${mode}-mode billing profile found for this account.`);
     }
 
-    console.log(`[Stripe]: Creating billing portal session for customer: ${user.gatewayCustomerId}`);
+    console.log(`[Stripe/${mode}]: Creating billing portal session for customer: ${customerId}`);
     const session = await stripe.billingPortal.sessions.create({
-      customer: user.gatewayCustomerId,
+      customer: customerId,
       return_url: `${env.CLIENT_ORIGIN}/profile`,
     });
 
@@ -207,11 +230,12 @@ export class PaymentService {
 
     // Security check: ensure metadata belongs to the authenticated user
     if (session.metadata?.userId !== userId) {
+      const field = customerIdField();
       const user = await prisma.user.findUnique({
         where: { id: userId },
-        select: { gatewayCustomerId: true },
+        select: { stripeLiveCustomerId: true, stripeTestCustomerId: true },
       });
-      if (!user || user.gatewayCustomerId !== session.customer) {
+      if (!user || user[field] !== session.customer) {
         throw new Error("Access denied. Transaction profile mismatch.");
       }
     }
