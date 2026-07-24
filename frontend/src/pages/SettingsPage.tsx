@@ -15,7 +15,7 @@
  * this page.
  */
 import { useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import {
   ArrowLeft,
   Settings as SettingsIcon,
@@ -72,11 +72,17 @@ const CATEGORIES: SettingsCategory[] = [
 
 export default function SettingsPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { boardTheme, pieceSet, setBoardThemeId, setPieceSetId } = useBoardSettings();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<TabId>("boards");
-  const [activeCategory, setActiveCategory] = useState("board-pieces");
+  // Honour an optional ?tab= query param so external links (e.g. /profile
+  // redirect) can deep-link directly to a specific settings category.
+  const initialCategory = CATEGORIES.some((c) => c.id === searchParams.get("tab"))
+    ? (searchParams.get("tab") as string)
+    : "board-pieces";
+  const [activeCategory, setActiveCategory] = useState(initialCategory);
 
   // Changes are staged locally and only pushed into BoardSettingsContext
   // (and localStorage) when the player clicks "Save" — mirrors the
