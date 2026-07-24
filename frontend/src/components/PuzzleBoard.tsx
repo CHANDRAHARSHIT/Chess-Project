@@ -1,13 +1,11 @@
 import { useState, useRef, useCallback, useEffect } from "react";
-import { Chessboard } from "react-chessboard";
+import { ThemedChessboard } from "./ThemedChessboard";
 import { Chess } from "chess.js";
 import type { ChessPuzzle } from "../utils/PuzzleLoader";
 import { validateMove } from "../utils/PuzzleValidator";
 import { HelpCircle, RotateCcw, ArrowRight, Play, Check } from "lucide-react";
 import { soundManager } from "../utils/SoundManager";
-
-const BOARD_DARK = "#769656";
-const BOARD_LIGHT = "#EEEED2";
+import { BoardCoordinates } from "./BoardCoordinates";
 
 export interface PuzzleBoardProps {
   puzzle: ChessPuzzle;
@@ -53,7 +51,11 @@ export function PuzzleBoard({
       const style = window.getComputedStyle(el);
       const width = Math.floor(rect.width);
 
-      if (style.display === "none" || style.visibility === "hidden" || width === 0) {
+      if (
+        style.display === "none" ||
+        style.visibility === "hidden" ||
+        width === 0
+      ) {
         setMeasuredWidth(0);
       } else {
         setMeasuredWidth(width);
@@ -247,88 +249,28 @@ export function PuzzleBoard({
 
       <div
         ref={boardContainerRef}
-        className={`relative w-full max-w-[500px] sm:max-w-[540px] aspect-square shadow-[0_20px_50px_rgba(212,175,110,0.03)] border overflow-hidden bg-brand-surface transition-all duration-300 z-10 ${isShaking
-          ? "border-rose-500 ring-4 ring-rose-500/25"
-          : puzzleStatus === "solved"
-            ? "border-emerald-500 ring-4 ring-emerald-500/25 animate-pulse"
-            : "border-brand-border/80"
-          }`}
+        className={`relative w-full max-w-[500px] sm:max-w-[540px] aspect-square shadow-[0_20px_50px_rgba(212,175,110,0.03)] border overflow-hidden bg-brand-surface transition-all duration-300 z-10 ${
+          isShaking
+            ? "border-rose-500 ring-4 ring-rose-500/25"
+            : puzzleStatus === "solved"
+              ? "border-emerald-500 ring-4 ring-emerald-500/25 animate-pulse"
+              : "border-brand-border/80"
+        }`}
       >
-        {measuredWidth > 0 && (
-          <Chessboard
-            options={{
-              id: boardId,
-              position: gameFen,
-              onPieceDrop: ({ sourceSquare, targetSquare }) =>
-                onDrop(sourceSquare, targetSquare ?? ""),
-              boardOrientation: boardOrientation,
-              squareStyles: customSquareStyles,
-              darkSquareStyle: { backgroundColor: BOARD_DARK },
-              lightSquareStyle: { backgroundColor: BOARD_LIGHT },
-              boardStyle: { borderRadius: "0px" },
-              showNotation: false,
-              allowDragging: puzzleStatus === "solving",
-            }}
-          />
-        )}
+        <ThemedChessboard
+          options={{
+            position: gameFen,
+            onPieceDrop: ({ sourceSquare, targetSquare }) =>
+              onDrop(sourceSquare, targetSquare ?? ""),
+            boardOrientation: boardOrientation,
+            squareStyles: customSquareStyles,
+            boardStyle: { borderRadius: "0px" },
+            showNotation: false,
+            allowDragging: puzzleStatus === "solving",
+          }}
+        />
 
-        {/* Board coordinate notation — Chess.com / HeroPuzzle style */}
-        {(() => {
-          const FILES = boardOrientation === "white"
-            ? ["a", "b", "c", "d", "e", "f", "g", "h"]
-            : ["h", "g", "f", "e", "d", "c", "b", "a"];
-          const RANKS = boardOrientation === "white"
-            ? ["8", "7", "6", "5", "4", "3", "2", "1"]
-            : ["1", "2", "3", "4", "5", "6", "7", "8"];
-          const ON_LIGHT = "#5C7D3A"; // deep green on cream square
-          const ON_DARK = "#FFF8E5"; // warm cream on green square
-          const baseStyle: React.CSSProperties = {
-            position: "absolute",
-            fontFamily: "Inter, system-ui, sans-serif",
-            fontSize: "9.5px",
-            fontWeight: 700,
-            lineHeight: 1,
-            pointerEvents: "none",
-            userSelect: "none",
-            zIndex: 25,
-          };
-          const nodes: React.ReactNode[] = [];
-          FILES.forEach((file, col) => {
-            const isDark = ((7 + col) % 2) === 1;
-            nodes.push(
-              <span
-                key={`file-${file}`}
-                aria-hidden="true"
-                style={{
-                  ...baseStyle,
-                  bottom: "2px",
-                  right: `calc(${(7 - col) * 12.5}% + 2px)`,
-                  color: isDark ? ON_DARK : ON_LIGHT,
-                }}
-              >
-                {file}
-              </span>
-            );
-          });
-          RANKS.forEach((rank, row) => {
-            const isDark = (row + 0) % 2 !== 0;
-            nodes.push(
-              <span
-                key={`rank-${rank}`}
-                aria-hidden="true"
-                style={{
-                  ...baseStyle,
-                  top: `calc(${row * 12.5}% + 2px)`,
-                  left: "2px",
-                  color: isDark ? ON_DARK : ON_LIGHT,
-                }}
-              >
-                {rank}
-              </span>
-            );
-          });
-          return nodes;
-        })()}
+        <BoardCoordinates boardOrientation={boardOrientation} />
       </div>
 
       {/* Below the board: Status indicator */}

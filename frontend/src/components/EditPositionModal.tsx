@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { defaultPieces } from 'react-chessboard';
 import { ArrowLeftRight, Eraser, Home, Shuffle, Trash2, X } from 'lucide-react';
 import {
   buildFenFromEditorState,
@@ -15,6 +14,7 @@ import { EvaluationBar } from './EvaluationBar';
 import { EditPositionBoard } from './EditPositionBoard';
 import type { BoardOrientation } from '../utils/editModeInteraction';
 import { soundManager } from '../utils/SoundManager';
+import { useBoardSettings } from '../hooks/useBoardSettings';
 
 const PIECE_ROWS = [
   ['wK', 'wQ', 'wR', 'wB', 'wN', 'wP'] as const,
@@ -49,6 +49,7 @@ export function EditPositionModal({
 
   const { evaluation, analyzePosition, stopSearch } = useStockfish();
   const analysisTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const { pieceSet } = useBoardSettings();
 
   useEffect(() => {
     if (!isOpen) return;
@@ -228,7 +229,7 @@ export function EditPositionModal({
                       className="grid grid-cols-6 gap-1.5 rounded-xl border border-[rgba(212,175,110,0.12)] bg-[#080B14]/50 p-1.5"
                     >
                       {row.map((pieceCode) => {
-                        const PieceSvg = defaultPieces[pieceCode];
+                        const PieceSvg = pieceSet.pieces[pieceCode];
                         const isSelected = selectedTool === pieceCode;
 
                         return (
@@ -522,7 +523,7 @@ export function EditPositionModal({
                   <div className="flex items-end justify-end pt-0.5 mt-auto">
                     <button
                       onClick={() => { soundManager.playButtonClick(); handleLoad(); }}
-                      className="w-full rounded-lg btn-premium-cta cta-shine w-full py-2 text-sm font-medium"
+                      className="w-full rounded-lg btn-premium-cta cta-shine py-2 text-sm font-medium"
                     >
                       Load
                     </button>

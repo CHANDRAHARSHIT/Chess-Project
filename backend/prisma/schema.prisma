@@ -17,9 +17,11 @@ model User {
   sessions          Session[]
   createdAt         DateTime        @default(now())
   
-  // Payment integration fields
-  gatewayCustomerId String?         @unique // Provider-agnostic payment gateway customer ID
-  subscriptions     Subscription[]
+  // Payment integration fields — two separate columns so test-mode and live-mode
+  // Stripe customer IDs can coexist in a single shared database.
+  stripeTestCustomerId String?         @unique // Stripe test-mode customer ID (cus_test_*)
+  stripeLiveCustomerId String?         @unique // Stripe live-mode customer ID  (cus_live_*)
+  subscriptions        Subscription[]
   payments          Payment[]
   billingProfile    BillingProfile?
 }
@@ -143,20 +145,22 @@ model BillingProfile {
 }
 
 model Product {
-  id              String           @id @default(cuid())
-  identifier      String           @unique // e.g. pro_monthly, pro_yearly
-  name            String
-  description     String?
-  priceAmount     Int              // Price in smallest unit (e.g. 999 for $9.99)
-  currency        String           @default("usd")
-  billingInterval String           // month, year, or one-time
-  gatewayPriceId  String           @unique // Price ID on provider (e.g., Stripe Price ID)
-  isActive        Boolean          @default(true)
-  displayOrder    Int              @default(0)
-  features        ProductFeature[]
-  subscriptions   Subscription[]
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
+  id                  String           @id @default(cuid())
+  identifier          String           @unique // e.g. pro_monthly, pro_yearly
+  name                String
+  description         String?
+  priceAmount         Int              // Price in smallest unit (e.g. 999 for $9.99)
+  currency            String           @default("usd")
+  billingInterval     String           // month, year, or one-time
+  // Mode-specific Stripe Price IDs — keep both so the same DB works in test and live mode
+  gatewayTestPriceId  String?          @unique // Stripe test-mode Price ID (price_xxx from test key)
+  gatewayLivePriceId  String?          @unique // Stripe live-mode Price ID (price_xxx from live key)
+  isActive            Boolean          @default(true)
+  displayOrder        Int              @default(0)
+  features            ProductFeature[]
+  subscriptions       Subscription[]
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
 }
 
 model ProductFeature {
@@ -179,4 +183,12 @@ model WebhookEvent {
   processed      Boolean  @default(true)
   payload        Json?    // Full audit log payload
   createdAt      DateTime @default(now())
+}
+
+model Opening {
+  id    String @id @default(cuid())
+  eco   String
+  name  String
+  pgn   String
+  moves String
 }

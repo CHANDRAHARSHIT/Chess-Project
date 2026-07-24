@@ -1,0 +1,26 @@
+--- frontend/src/components/SidebarLayout.tsx
++++ frontend/src/components/SidebarLayout.tsx
+@@ -1,5 +1,5 @@
+ import { useState } from "react";
+-import { Menu, X, Home, Puzzle, CreditCard, User, CircleUserRound, Crown } from "lucide-react";
++import { Menu, X, Home, Puzzle, CreditCard, User, CircleUserRound, Crown, GraduationCap, BookOpen, Bot, BookMarked } from "lucide-react";
+ import { useLogoAnimation } from "../hooks/useLogoAnimation";
+ import { soundManager } from "../utils/SoundManager";
+ import { useSession } from "../hooks/useSession";
+@@ -36,11 +36,16 @@
+   const { containerRef, logoRef } = useLogoAnimation();
+ 
+   const menuItems = [
+     { name: "Home", href: "/", icon: Home },
+     { name: "Puzzles", href: "/puzzles", icon: Puzzle },
++    { name: "Learn", href: "/learn", icon: GraduationCap, subItems: [
++      { name: "Lessons", href: "/lessons", icon: BookOpen },
++      { name: "Play Coach", href: "/play-coach", icon: Bot },
++      { name: "Openings", href: "/openings", icon: BookMarked }
++    ]},
+     { name: "Pricing", href: "/pricing", icon: CreditCard },
+     { name: "Premium", href: "/premium", icon: Crown },
+     { name: "Profile", href: "/profile", icon: User },
+   ];
+ 
+   const handleLinkClick = (href: string, e: React.MouseEvent) => {

@@ -24,12 +24,12 @@ import { soundManager } from '../utils/SoundManager';
 const STORAGE_KEY = 'sound-enabled'; // single source of truth for the key
 
 export default function SoundToggle() {
-  // Derive initial state from localStorage; default to true (enabled).
+  // Derive initial state from localStorage; default to false(muted).
   const [enabled, setEnabled] = useState<boolean>(() => {
-    if (typeof window === 'undefined') return true;
+    if (typeof window === 'undefined') return false;
     const stored = localStorage.getItem(STORAGE_KEY);
-    // Anything other than the explicit string 'false' → enabled
-    return stored !== 'false';
+    // Only the explicit string 'true' enables sound.
+    return stored === 'true';
   });
 
   // On first mount, ensure the SoundManager matches the stored preference.

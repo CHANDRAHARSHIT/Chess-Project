@@ -44,7 +44,8 @@ export type ProductMinAggregateOutputType = {
   priceAmount: number | null
   currency: string | null
   billingInterval: string | null
-  gatewayPriceId: string | null
+  gatewayTestPriceId: string | null
+  gatewayLivePriceId: string | null
   isActive: boolean | null
   displayOrder: number | null
   createdAt: Date | null
@@ -59,7 +60,8 @@ export type ProductMaxAggregateOutputType = {
   priceAmount: number | null
   currency: string | null
   billingInterval: string | null
-  gatewayPriceId: string | null
+  gatewayTestPriceId: string | null
+  gatewayLivePriceId: string | null
   isActive: boolean | null
   displayOrder: number | null
   createdAt: Date | null
@@ -74,7 +76,8 @@ export type ProductCountAggregateOutputType = {
   priceAmount: number
   currency: number
   billingInterval: number
-  gatewayPriceId: number
+  gatewayTestPriceId: number
+  gatewayLivePriceId: number
   isActive: number
   displayOrder: number
   createdAt: number
@@ -101,7 +104,8 @@ export type ProductMinAggregateInputType = {
   priceAmount?: true
   currency?: true
   billingInterval?: true
-  gatewayPriceId?: true
+  gatewayTestPriceId?: true
+  gatewayLivePriceId?: true
   isActive?: true
   displayOrder?: true
   createdAt?: true
@@ -116,7 +120,8 @@ export type ProductMaxAggregateInputType = {
   priceAmount?: true
   currency?: true
   billingInterval?: true
-  gatewayPriceId?: true
+  gatewayTestPriceId?: true
+  gatewayLivePriceId?: true
   isActive?: true
   displayOrder?: true
   createdAt?: true
@@ -131,7 +136,8 @@ export type ProductCountAggregateInputType = {
   priceAmount?: true
   currency?: true
   billingInterval?: true
-  gatewayPriceId?: true
+  gatewayTestPriceId?: true
+  gatewayLivePriceId?: true
   isActive?: true
   displayOrder?: true
   createdAt?: true
@@ -233,7 +239,8 @@ export type ProductGroupByOutputType = {
   priceAmount: number
   currency: string
   billingInterval: string
-  gatewayPriceId: string
+  gatewayTestPriceId: string | null
+  gatewayLivePriceId: string | null
   isActive: boolean
   displayOrder: number
   createdAt: Date
@@ -271,7 +278,8 @@ export type ProductWhereInput = {
   priceAmount?: Prisma.IntFilter<"Product"> | number
   currency?: Prisma.StringFilter<"Product"> | string
   billingInterval?: Prisma.StringFilter<"Product"> | string
-  gatewayPriceId?: Prisma.StringFilter<"Product"> | string
+  gatewayTestPriceId?: Prisma.StringNullableFilter<"Product"> | string | null
+  gatewayLivePriceId?: Prisma.StringNullableFilter<"Product"> | string | null
   isActive?: Prisma.BoolFilter<"Product"> | boolean
   displayOrder?: Prisma.IntFilter<"Product"> | number
   createdAt?: Prisma.DateTimeFilter<"Product"> | Date | string
@@ -288,7 +296,8 @@ export type ProductOrderByWithRelationInput = {
   priceAmount?: Prisma.SortOrder
   currency?: Prisma.SortOrder
   billingInterval?: Prisma.SortOrder
-  gatewayPriceId?: Prisma.SortOrder
+  gatewayTestPriceId?: Prisma.SortOrderInput | Prisma.SortOrder
+  gatewayLivePriceId?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
   displayOrder?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -300,7 +309,8 @@ export type ProductOrderByWithRelationInput = {
 export type ProductWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   identifier?: string
-  gatewayPriceId?: string
+  gatewayTestPriceId?: string
+  gatewayLivePriceId?: string
   AND?: Prisma.ProductWhereInput | Prisma.ProductWhereInput[]
   OR?: Prisma.ProductWhereInput[]
   NOT?: Prisma.ProductWhereInput | Prisma.ProductWhereInput[]
@@ -315,7 +325,7 @@ export type ProductWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"Product"> | Date | string
   features?: Prisma.ProductFeatureListRelationFilter
   subscriptions?: Prisma.SubscriptionListRelationFilter
-}, "id" | "identifier" | "gatewayPriceId">
+}, "id" | "identifier" | "gatewayTestPriceId" | "gatewayLivePriceId">
 
 export type ProductOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -325,7 +335,8 @@ export type ProductOrderByWithAggregationInput = {
   priceAmount?: Prisma.SortOrder
   currency?: Prisma.SortOrder
   billingInterval?: Prisma.SortOrder
-  gatewayPriceId?: Prisma.SortOrder
+  gatewayTestPriceId?: Prisma.SortOrderInput | Prisma.SortOrder
+  gatewayLivePriceId?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
   displayOrder?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -348,7 +359,8 @@ export type ProductScalarWhereWithAggregatesInput = {
   priceAmount?: Prisma.IntWithAggregatesFilter<"Product"> | number
   currency?: Prisma.StringWithAggregatesFilter<"Product"> | string
   billingInterval?: Prisma.StringWithAggregatesFilter<"Product"> | string
-  gatewayPriceId?: Prisma.StringWithAggregatesFilter<"Product"> | string
+  gatewayTestPriceId?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
+  gatewayLivePriceId?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
   isActive?: Prisma.BoolWithAggregatesFilter<"Product"> | boolean
   displayOrder?: Prisma.IntWithAggregatesFilter<"Product"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Product"> | Date | string
@@ -363,7 +375,8 @@ export type ProductCreateInput = {
   priceAmount: number
   currency?: string
   billingInterval: string
-  gatewayPriceId: string
+  gatewayTestPriceId?: string | null
+  gatewayLivePriceId?: string | null
   isActive?: boolean
   displayOrder?: number
   createdAt?: Date | string
@@ -380,7 +393,8 @@ export type ProductUncheckedCreateInput = {
   priceAmount: number
   currency?: string
   billingInterval: string
-  gatewayPriceId: string
+  gatewayTestPriceId?: string | null
+  gatewayLivePriceId?: string | null
   isActive?: boolean
   displayOrder?: number
   createdAt?: Date | string
@@ -397,7 +411,8 @@ export type ProductUpdateInput = {
   priceAmount?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   billingInterval?: Prisma.StringFieldUpdateOperationsInput | string
-  gatewayPriceId?: Prisma.StringFieldUpdateOperationsInput | string
+  gatewayTestPriceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gatewayLivePriceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -414,7 +429,8 @@ export type ProductUncheckedUpdateInput = {
   priceAmount?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   billingInterval?: Prisma.StringFieldUpdateOperationsInput | string
-  gatewayPriceId?: Prisma.StringFieldUpdateOperationsInput | string
+  gatewayTestPriceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gatewayLivePriceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -431,7 +447,8 @@ export type ProductCreateManyInput = {
   priceAmount: number
   currency?: string
   billingInterval: string
-  gatewayPriceId: string
+  gatewayTestPriceId?: string | null
+  gatewayLivePriceId?: string | null
   isActive?: boolean
   displayOrder?: number
   createdAt?: Date | string
@@ -446,7 +463,8 @@ export type ProductUpdateManyMutationInput = {
   priceAmount?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   billingInterval?: Prisma.StringFieldUpdateOperationsInput | string
-  gatewayPriceId?: Prisma.StringFieldUpdateOperationsInput | string
+  gatewayTestPriceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gatewayLivePriceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -461,7 +479,8 @@ export type ProductUncheckedUpdateManyInput = {
   priceAmount?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   billingInterval?: Prisma.StringFieldUpdateOperationsInput | string
-  gatewayPriceId?: Prisma.StringFieldUpdateOperationsInput | string
+  gatewayTestPriceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gatewayLivePriceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -481,7 +500,8 @@ export type ProductCountOrderByAggregateInput = {
   priceAmount?: Prisma.SortOrder
   currency?: Prisma.SortOrder
   billingInterval?: Prisma.SortOrder
-  gatewayPriceId?: Prisma.SortOrder
+  gatewayTestPriceId?: Prisma.SortOrder
+  gatewayLivePriceId?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   displayOrder?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -501,7 +521,8 @@ export type ProductMaxOrderByAggregateInput = {
   priceAmount?: Prisma.SortOrder
   currency?: Prisma.SortOrder
   billingInterval?: Prisma.SortOrder
-  gatewayPriceId?: Prisma.SortOrder
+  gatewayTestPriceId?: Prisma.SortOrder
+  gatewayLivePriceId?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   displayOrder?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -516,7 +537,8 @@ export type ProductMinOrderByAggregateInput = {
   priceAmount?: Prisma.SortOrder
   currency?: Prisma.SortOrder
   billingInterval?: Prisma.SortOrder
-  gatewayPriceId?: Prisma.SortOrder
+  gatewayTestPriceId?: Prisma.SortOrder
+  gatewayLivePriceId?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   displayOrder?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -564,7 +586,8 @@ export type ProductCreateWithoutSubscriptionsInput = {
   priceAmount: number
   currency?: string
   billingInterval: string
-  gatewayPriceId: string
+  gatewayTestPriceId?: string | null
+  gatewayLivePriceId?: string | null
   isActive?: boolean
   displayOrder?: number
   createdAt?: Date | string
@@ -580,7 +603,8 @@ export type ProductUncheckedCreateWithoutSubscriptionsInput = {
   priceAmount: number
   currency?: string
   billingInterval: string
-  gatewayPriceId: string
+  gatewayTestPriceId?: string | null
+  gatewayLivePriceId?: string | null
   isActive?: boolean
   displayOrder?: number
   createdAt?: Date | string
@@ -612,7 +636,8 @@ export type ProductUpdateWithoutSubscriptionsInput = {
   priceAmount?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   billingInterval?: Prisma.StringFieldUpdateOperationsInput | string
-  gatewayPriceId?: Prisma.StringFieldUpdateOperationsInput | string
+  gatewayTestPriceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gatewayLivePriceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -628,7 +653,8 @@ export type ProductUncheckedUpdateWithoutSubscriptionsInput = {
   priceAmount?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   billingInterval?: Prisma.StringFieldUpdateOperationsInput | string
-  gatewayPriceId?: Prisma.StringFieldUpdateOperationsInput | string
+  gatewayTestPriceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gatewayLivePriceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -644,7 +670,8 @@ export type ProductCreateWithoutFeaturesInput = {
   priceAmount: number
   currency?: string
   billingInterval: string
-  gatewayPriceId: string
+  gatewayTestPriceId?: string | null
+  gatewayLivePriceId?: string | null
   isActive?: boolean
   displayOrder?: number
   createdAt?: Date | string
@@ -660,7 +687,8 @@ export type ProductUncheckedCreateWithoutFeaturesInput = {
   priceAmount: number
   currency?: string
   billingInterval: string
-  gatewayPriceId: string
+  gatewayTestPriceId?: string | null
+  gatewayLivePriceId?: string | null
   isActive?: boolean
   displayOrder?: number
   createdAt?: Date | string
@@ -692,7 +720,8 @@ export type ProductUpdateWithoutFeaturesInput = {
   priceAmount?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   billingInterval?: Prisma.StringFieldUpdateOperationsInput | string
-  gatewayPriceId?: Prisma.StringFieldUpdateOperationsInput | string
+  gatewayTestPriceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gatewayLivePriceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -708,7 +737,8 @@ export type ProductUncheckedUpdateWithoutFeaturesInput = {
   priceAmount?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   billingInterval?: Prisma.StringFieldUpdateOperationsInput | string
-  gatewayPriceId?: Prisma.StringFieldUpdateOperationsInput | string
+  gatewayTestPriceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gatewayLivePriceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -764,7 +794,8 @@ export type ProductSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   priceAmount?: boolean
   currency?: boolean
   billingInterval?: boolean
-  gatewayPriceId?: boolean
+  gatewayTestPriceId?: boolean
+  gatewayLivePriceId?: boolean
   isActive?: boolean
   displayOrder?: boolean
   createdAt?: boolean
@@ -782,7 +813,8 @@ export type ProductSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   priceAmount?: boolean
   currency?: boolean
   billingInterval?: boolean
-  gatewayPriceId?: boolean
+  gatewayTestPriceId?: boolean
+  gatewayLivePriceId?: boolean
   isActive?: boolean
   displayOrder?: boolean
   createdAt?: boolean
@@ -797,7 +829,8 @@ export type ProductSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   priceAmount?: boolean
   currency?: boolean
   billingInterval?: boolean
-  gatewayPriceId?: boolean
+  gatewayTestPriceId?: boolean
+  gatewayLivePriceId?: boolean
   isActive?: boolean
   displayOrder?: boolean
   createdAt?: boolean
@@ -812,14 +845,15 @@ export type ProductSelectScalar = {
   priceAmount?: boolean
   currency?: boolean
   billingInterval?: boolean
-  gatewayPriceId?: boolean
+  gatewayTestPriceId?: boolean
+  gatewayLivePriceId?: boolean
   isActive?: boolean
   displayOrder?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "identifier" | "name" | "description" | "priceAmount" | "currency" | "billingInterval" | "gatewayPriceId" | "isActive" | "displayOrder" | "createdAt" | "updatedAt", ExtArgs["result"]["product"]>
+export type ProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "identifier" | "name" | "description" | "priceAmount" | "currency" | "billingInterval" | "gatewayTestPriceId" | "gatewayLivePriceId" | "isActive" | "displayOrder" | "createdAt" | "updatedAt", ExtArgs["result"]["product"]>
 export type ProductInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   features?: boolean | Prisma.Product$featuresArgs<ExtArgs>
   subscriptions?: boolean | Prisma.Product$subscriptionsArgs<ExtArgs>
@@ -842,7 +876,8 @@ export type $ProductPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     priceAmount: number
     currency: string
     billingInterval: string
-    gatewayPriceId: string
+    gatewayTestPriceId: string | null
+    gatewayLivePriceId: string | null
     isActive: boolean
     displayOrder: number
     createdAt: Date
@@ -1279,7 +1314,8 @@ export interface ProductFieldRefs {
   readonly priceAmount: Prisma.FieldRef<"Product", 'Int'>
   readonly currency: Prisma.FieldRef<"Product", 'String'>
   readonly billingInterval: Prisma.FieldRef<"Product", 'String'>
-  readonly gatewayPriceId: Prisma.FieldRef<"Product", 'String'>
+  readonly gatewayTestPriceId: Prisma.FieldRef<"Product", 'String'>
+  readonly gatewayLivePriceId: Prisma.FieldRef<"Product", 'String'>
   readonly isActive: Prisma.FieldRef<"Product", 'Boolean'>
   readonly displayOrder: Prisma.FieldRef<"Product", 'Int'>
   readonly createdAt: Prisma.FieldRef<"Product", 'DateTime'>

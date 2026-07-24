@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Chessboard, defaultPieces, type PositionDataType } from 'react-chessboard';
+import { type PositionDataType } from 'react-chessboard';
+import { ThemedChessboard } from './ThemedChessboard';
 import { getSquareFromPointer, type BoardOrientation } from '../utils/editModeInteraction';
 import {
   movePieceBetweenSquares,
@@ -7,9 +8,8 @@ import {
   type EditorPieceCode,
   type EditorTool,
 } from '../utils/positionEditor';
+import { useBoardSettings } from '../hooks/useBoardSettings';
 
-const BOARD_DARK = '#769656';
-const BOARD_LIGHT = '#EEEED2';
 const FILE_LABELS = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'] as const;
 const RANK_LABELS = ['8', '7', '6', '5', '4', '3', '2', '1'] as const;
 
@@ -39,6 +39,7 @@ export function EditPositionBoard({
 }: EditPositionBoardProps) {
   const boardFrameRef = useRef<HTMLDivElement>(null);
   const [dragState, setDragState] = useState<DragState | null>(null);
+  const { boardTheme, pieceSet } = useBoardSettings();
 
   useEffect(() => {
     setDragState(null);
@@ -145,7 +146,7 @@ export function EditPositionBoard({
       onContextMenu={(event) => event.preventDefault()}
       style={boardSize ? { width: `${boardSize}px`, height: `${boardSize}px`, maxWidth: '100%' } : {}}
     >
-      <Chessboard
+      <ThemedChessboard
         options={{
           position,
           allowDragging: false,
@@ -203,8 +204,6 @@ export function EditPositionBoard({
             );
           },
           squareStyles,
-          darkSquareStyle: { backgroundColor: BOARD_DARK },
-          lightSquareStyle: { backgroundColor: BOARD_LIGHT },
           boardStyle: { borderRadius: '0px', touchAction: 'none', userSelect: 'none' },
           showNotation: false,
         }}
@@ -219,7 +218,7 @@ export function EditPositionBoard({
             style={{
               bottom: '4px',
               left: `calc(${i * 12.5}% + 4px)`,
-              color: i % 2 === 0 ? '#EEEED2' : '#769656',
+              color: i % 2 === 0 ? boardTheme.light : boardTheme.dark,
               lineHeight: 1,
             }}
           >
@@ -235,7 +234,7 @@ export function EditPositionBoard({
             style={{
               bottom: `calc(${i * 12.5}% + 16px)`,
               left: '4px',
-              color: i % 2 === 0 ? '#EEEED2' : '#769656',
+              color: i % 2 === 0 ? boardTheme.light : boardTheme.dark,
               lineHeight: 1,
             }}
           >
@@ -259,7 +258,7 @@ export function EditPositionBoard({
           }}
         >
           {(() => {
-            const PieceSvg = defaultPieces[dragState.pieceCode];
+            const PieceSvg = pieceSet.pieces[dragState.pieceCode];
 
             return (
               <div className="h-full w-full">
