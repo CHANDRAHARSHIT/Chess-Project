@@ -161,8 +161,14 @@ export default function SidebarLayout({
               return (
                 <div key={item.name} className="relative group/navitem">
                   <a
-                    href={item.href}
-                    onClick={(e) => handleLinkClick(item.href, e)}
+                    href={item.subItems ? "#" : item.href}
+                    onClick={(e) => {
+                      if (item.subItems) {
+                        e.preventDefault();
+                      } else {
+                        handleLinkClick(item.href, e);
+                      }
+                    }}
                     className={`b1 relative flex transition-all duration-200 cursor-pointer ${isExpanded
                       ? `items-center gap-4 px-4 py-3 mx-3 rounded-xl ${isActive
                         ? "text-brand-accent bg-brand-accent/10 font-medium shadow-[inset_1px_0_0_rgba(212,175,110,0.1)]"
