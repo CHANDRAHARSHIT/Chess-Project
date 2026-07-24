@@ -56,8 +56,14 @@ export async function handleSubscriptionCreatedOrUpdated(payload: any) {
     return;
   }
 
-  const product = await prisma.product.findUnique({
-    where: { gatewayPriceId: priceId },
+  // Find product by Stripe Price ID — check both test and live columns
+  const product = await prisma.product.findFirst({
+    where: {
+      OR: [
+        { gatewayLivePriceId: priceId },
+        { gatewayTestPriceId: priceId },
+      ],
+    },
   });
 
   if (!product) {

@@ -40,6 +40,22 @@ function customerIdField(): "stripeLiveCustomerId" | "stripeTestCustomerId" {
   return isLiveMode() ? "stripeLiveCustomerId" : "stripeTestCustomerId";
 }
 
+/**
+ * Returns the correct Stripe Price ID for the active mode from a product record.
+ * Throws a clear error if the price ID for the current mode hasn't been configured.
+ */
+function getActivePriceId(product: { identifier: string; gatewayTestPriceId: string | null; gatewayLivePriceId: string | null }): string {
+  const mode = isLiveMode() ? "live" : "test";
+  const priceId = isLiveMode() ? product.gatewayLivePriceId : product.gatewayTestPriceId;
+  if (!priceId) {
+    throw new Error(
+      `Product '${product.identifier}' has no ${mode}-mode price ID configured. ` +
+      `Set STRIPE_${mode.toUpperCase()}_PRICE_${product.identifier.toUpperCase()} in your environment and re-run the seed.`
+    );
+  }
+  return priceId;
+}
+
 export class PaymentService {
   /**
    * Resolves the gateway customer ID. If missing, registers a new profile with Stripe.
@@ -94,10 +110,13 @@ export class PaymentService {
       throw new Error(`Product plan '${planIdentifier}' is unavailable or inactive.`);
     }
 
-    console.log(`[Stripe]: Creating checkout for customer: ${gatewayCustomerId}, price: ${product.gatewayPriceId}`);
+    const activePriceId = getActivePriceId(product);
+    const mode = isLiveMode() ? "live" : "test";
+
+    console.log(`[Stripe/${mode}]: Creating checkout for customer: ${gatewayCustomerId}, price: ${activePriceId}`);
     const session = await stripe.checkout.sessions.create({
       customer: gatewayCustomerId,
-      line_items: [{ price: product.gatewayPriceId, quantity: 1 }],
+      line_items: [{ price: activePriceId, quantity: 1 }],
       mode: "subscription",
       expires_at: Math.floor(Date.now() / 1000) + 1800,
       success_url: env.STRIPE_SUCCESS_URL || `${env.CLIENT_ORIGIN}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
