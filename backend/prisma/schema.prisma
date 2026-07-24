@@ -17,9 +17,11 @@ model User {
   sessions          Session[]
   createdAt         DateTime        @default(now())
   
-  // Payment integration fields
-  gatewayCustomerId String?         @unique // Provider-agnostic payment gateway customer ID
-  subscriptions     Subscription[]
+  // Payment integration fields — two separate columns so test-mode and live-mode
+  // Stripe customer IDs can coexist in a single shared database.
+  stripeTestCustomerId String?         @unique // Stripe test-mode customer ID (cus_test_*)
+  stripeLiveCustomerId String?         @unique // Stripe live-mode customer ID  (cus_live_*)
+  subscriptions        Subscription[]
   payments          Payment[]
   billingProfile    BillingProfile?
 }

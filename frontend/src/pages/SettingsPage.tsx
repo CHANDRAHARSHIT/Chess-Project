@@ -15,7 +15,7 @@
  * this page.
  */
 import { useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import {
   ArrowLeft,
   Settings as SettingsIcon,
@@ -24,7 +24,6 @@ import {
   Gamepad2,
   Monitor,
   Bell,
-  UserCog,
   CircleUserRound,
   CreditCard,
   Check,
@@ -33,6 +32,7 @@ import { useBoardSettings } from "../hooks/useBoardSettings";
 import { BOARD_THEMES } from "../data/boardThemes";
 import { PIECE_SETS } from "../data/pieceSets";
 import BoardPreview from "../components/BoardPreview";
+import ProfileContent from "../components/ProfileContent";
 import { soundManager } from "../utils/SoundManager";
 
 type TabId = "boards" | "pieces" | "background" | "presets";
@@ -62,20 +62,27 @@ interface SettingsCategory {
 
 const CATEGORIES: SettingsCategory[] = [
   { id: "board-pieces", name: "Board & Pieces", icon: Grid3x3, available: true },
-  { id: "profile", name: "Profile", icon: CircleUserRound, available: true, path: "/profile" },
+  { id: "profile", name: "Profile", icon: CircleUserRound, available: true },
   { id: "membership", name: "Membership", icon: CreditCard, available: true, path: "/pricing" },
   { id: "gameplay", name: "Gameplay", icon: Gamepad2, available: false },
   { id: "interface", name: "Interface", icon: Monitor, available: false },
   { id: "notifications", name: "Notifications", icon: Bell, available: false },
-  { id: "account", name: "Account", icon: UserCog, available: false },
+  
 ];
 
 export default function SettingsPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { boardTheme, pieceSet, setBoardThemeId, setPieceSetId } = useBoardSettings();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<TabId>("boards");
+  // Honour an optional ?tab= query param so external links (e.g. /profile
+  // redirect) can deep-link directly to a specific settings category.
+  const initialCategory = CATEGORIES.some((c) => c.id === searchParams.get("tab"))
+    ? (searchParams.get("tab") as string)
+    : "board-pieces";
+  const [activeCategory, setActiveCategory] = useState(initialCategory);
 
   // Changes are staged locally and only pushed into BoardSettingsContext
   // (and localStorage) when the player clicks "Save" — mirrors the
@@ -149,7 +156,7 @@ export default function SettingsPage() {
             <nav className="flex flex-col gap-1" aria-label="Settings categories">
               {filteredCategories.map((cat) => {
                 const Icon = cat.icon;
-                const isActive = cat.id === "board-pieces";
+                const isActive = cat.id === activeCategory;
 
                 if (!cat.available) {
                   return (
@@ -173,9 +180,14 @@ export default function SettingsPage() {
                     type="button"
                     aria-current={isActive ? "page" : undefined}
                     onClick={() => {
-                      if (!cat.path) return; // already showing this section inline
+                      
                       soundManager.playButtonClick();
-                      navigate(cat.path);
+                        if (cat.id === "membership") {
+                         navigate("/pricing");
+                          return;
+                        }
+
+                       setActiveCategory(cat.id);
                     }}
                     className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors duration-150 cursor-pointer ${
                       isActive
@@ -197,7 +209,9 @@ export default function SettingsPage() {
           </div>
 
           {/* ── RIGHT: Board & Pieces panel ─────────────────────────────── */}
+           {activeCategory === "board-pieces" ? (
           <div className="bg-brand-surface/30 border border-brand-border/40 rounded-2xl p-5 sm:p-7">
+           
             <h2 className="text-xl font-display font-bold text-white tracking-wide">
               Board & Pieces
             </h2>
@@ -358,7 +372,11 @@ export default function SettingsPage() {
                 Save
               </button>
             </div>
-          </div>
+            </div> 
+
+            ) : (
+              <ProfileContent />
+            )}
         </div>
       </main>
     </div>

@@ -34,13 +34,18 @@ export async function handleSubscriptionCreatedOrUpdated(payload: any) {
   const trialStart = payload.trial_start ? new Date(payload.trial_start * 1000) : null;
   const trialEnd = payload.trial_end ? new Date(payload.trial_end * 1000) : null;
   
-  // Find user by customer ID
-  const user = await prisma.user.findUnique({
-    where: { gatewayCustomerId: customerId },
+  // Find user by Stripe customer ID — check both test and live columns
+  const user = await prisma.user.findFirst({
+    where: {
+      OR: [
+        { stripeLiveCustomerId: customerId },
+        { stripeTestCustomerId: customerId },
+      ],
+    },
   });
 
   if (!user) {
-    console.error(`[SubscriptionHandler]: User with gatewayCustomerId ${customerId} not found.`);
+    console.error(`[SubscriptionHandler]: User with customer ID ${customerId} not found.`);
     return;
   }
 

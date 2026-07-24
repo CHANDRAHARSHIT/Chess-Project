@@ -9,9 +9,14 @@ export async function handleInvoicePaymentSucceeded(payload: any) {
   const invoiceId = payload.id;
   const chargeId = payload.charge;
 
-  // Locate user
-  const user = await prisma.user.findUnique({
-    where: { gatewayCustomerId: customerId },
+  // Locate user — check both test and live Stripe customer ID columns
+  const user = await prisma.user.findFirst({
+    where: {
+      OR: [
+        { stripeLiveCustomerId: customerId },
+        { stripeTestCustomerId: customerId },
+      ],
+    },
   });
 
   if (!user) {
@@ -86,8 +91,13 @@ export async function handleInvoicePaymentFailed(payload: any) {
   const paymentIntentId = payload.payment_intent;
   const invoiceId = payload.id;
 
-  const user = await prisma.user.findUnique({
-    where: { gatewayCustomerId: customerId },
+  const user = await prisma.user.findFirst({
+    where: {
+      OR: [
+        { stripeLiveCustomerId: customerId },
+        { stripeTestCustomerId: customerId },
+      ],
+    },
   });
 
   if (!user) {

@@ -1,6 +1,6 @@
 import HomePage from '../pages/HomePage';
 import PuzzlePage from '../pages/PuzzlePage';
-import ProfilePage from '../pages/ProfilePage';
+import { Navigate } from 'react-router';
 import SettingsPage from '../pages/SettingsPage';
 import PricingPage from '../pages/PricingPage';
 import CheckoutPage from '../pages/CheckoutPage';
@@ -18,7 +18,7 @@ export interface RouteConfig {
 export const mainRoutes: RouteConfig[] = [
   { path: '/', element: <HomePage /> },
   { path: '/puzzles', element: <PuzzlePage /> },
-  { path: '/profile', element: <ProtectedRoute><ProfilePage /></ProtectedRoute> },
+  { path: '/profile', element: <Navigate to="/settings?tab=profile" replace /> },
   // Not behind ProtectedRoute: board/piece preferences are stored in
   // localStorage (like the Sound toggle) so guests can use them too.
   { path: '/settings', element: <SettingsPage /> },
