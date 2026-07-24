@@ -63,6 +63,7 @@ function OpeningSidebar({
       className="flex flex-col shrink-0 rounded-2xl overflow-hidden"
       style={{
         width: "280px",
+        height: "calc(100vh - 11rem)",
         background: "rgba(8,11,20,0.80)",
         border: "1px solid rgba(212,175,110,0.10)",
         backdropFilter: "blur(12px)",
@@ -302,7 +303,7 @@ export default function OpeningsPage() {
       {/* ── Main content: sidebar + board + coach ─────────────────────────── */}
       <div className="flex flex-col lg:flex-row gap-6 flex-1">
         {/* ── Opening list sidebar ─────────────────────────────────────── */}
-        <div className="hidden lg:block shrink-0">
+        <div className="hidden lg:block shrink-0 self-start sticky top-6">
           <OpeningSidebar
             openings={openings}
             selectedId={selectedOpening?.id ?? null}
