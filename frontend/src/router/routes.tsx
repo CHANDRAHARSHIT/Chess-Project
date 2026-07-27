@@ -8,6 +8,7 @@ import SuccessfulPage from "../pages/SuccessfulPage";
 import FailedPage from "../pages/FailedPage";
 import PremiumPage from "../pages/PremiumPage";
 import OpeningsPage from "../pages/OpeningsPage";
+import SubscriptionsPage from "../pages/SubscriptionsPage";
 import { ProtectedRoute } from "../components/ProtectedRoute";
 
 export interface RouteConfig {
@@ -20,6 +21,7 @@ export const mainRoutes: RouteConfig[] = [
   { path: "/", element: <HomePage /> },
   { path: "/puzzles", element: <PuzzlePage /> },
   { path: "/openings", element: <OpeningsPage /> },
+  { path: "/subscriptions", element: <SubscriptionsPage /> },
   {
     path: "/profile",
     element: <Navigate to="/settings?tab=profile" replace />,

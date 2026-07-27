@@ -62,9 +62,9 @@ export const ModelName = {
   ProductFeature: 'ProductFeature',
   WebhookEvent: 'WebhookEvent',
   Opening: 'Opening',
-  ChessOpening: 'ChessOpening',
-  ChessOpeningStep: 'ChessOpeningStep',
-  CuratedPuzzle: 'CuratedPuzzle',
+  Course: 'Course',
+  Lesson: 'Lesson',
+  LessonProgress: 'LessonProgress',
   CustomLink: 'CustomLink'
 } as const
 
@@ -253,53 +253,54 @@ export const OpeningScalarFieldEnum = {
 export type OpeningScalarFieldEnum = (typeof OpeningScalarFieldEnum)[keyof typeof OpeningScalarFieldEnum]
 
 
-export const ChessOpeningScalarFieldEnum = {
+export const CourseScalarFieldEnum = {
   id: 'id',
   slug: 'slug',
-  eco: 'eco',
-  name: 'name',
-  pgn: 'pgn',
   title: 'title',
   description: 'description',
+  thumbnail: 'thumbnail',
+  published: 'published',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CourseScalarFieldEnum = (typeof CourseScalarFieldEnum)[keyof typeof CourseScalarFieldEnum]
+
+
+export const LessonScalarFieldEnum = {
+  id: 'id',
+  courseId: 'courseId',
+  slug: 'slug',
+  title: 'title',
+  description: 'description',
+  thumbnail: 'thumbnail',
   difficulty: 'difficulty',
-  isActive: 'isActive',
-  displayOrder: 'displayOrder',
+  estimatedTime: 'estimatedTime',
+  category: 'category',
+  published: 'published',
+  content: 'content',
+  settings: 'settings',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
-export type ChessOpeningScalarFieldEnum = (typeof ChessOpeningScalarFieldEnum)[keyof typeof ChessOpeningScalarFieldEnum]
+export type LessonScalarFieldEnum = (typeof LessonScalarFieldEnum)[keyof typeof LessonScalarFieldEnum]
 
 
-export const ChessOpeningStepScalarFieldEnum = {
+export const LessonProgressScalarFieldEnum = {
   id: 'id',
-  openingId: 'openingId',
-  stepOrder: 'stepOrder',
-  move: 'move',
-  isOpponentMove: 'isOpponentMove',
-  coachMessage: 'coachMessage',
-  highlightFrom: 'highlightFrom',
-  highlightTo: 'highlightTo',
-  createdAt: 'createdAt',
+  userId: 'userId',
+  lessonId: 'lessonId',
+  currentStep: 'currentStep',
+  completed: 'completed',
+  accuracy: 'accuracy',
+  mistakes: 'mistakes',
+  xp: 'xp',
+  timeSpent: 'timeSpent',
   updatedAt: 'updatedAt'
 } as const
 
-export type ChessOpeningStepScalarFieldEnum = (typeof ChessOpeningStepScalarFieldEnum)[keyof typeof ChessOpeningStepScalarFieldEnum]
-
-
-export const CuratedPuzzleScalarFieldEnum = {
-  id: 'id',
-  fen: 'fen',
-  moves: 'moves',
-  rating: 'rating',
-  ratingDeviation: 'ratingDeviation',
-  popularity: 'popularity',
-  nbPlays: 'nbPlays',
-  themes: 'themes',
-  createdAt: 'createdAt'
-} as const
-
-export type CuratedPuzzleScalarFieldEnum = (typeof CuratedPuzzleScalarFieldEnum)[keyof typeof CuratedPuzzleScalarFieldEnum]
+export type LessonProgressScalarFieldEnum = (typeof LessonProgressScalarFieldEnum)[keyof typeof LessonProgressScalarFieldEnum]
 
 
 export const CustomLinkScalarFieldEnum = {
@@ -331,6 +332,13 @@ export const NullableJsonNullValueInput = {
 } as const
 
 export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
+export const JsonNullValueInput = {
+  JsonNull: JsonNull
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
 export const QueryMode = {

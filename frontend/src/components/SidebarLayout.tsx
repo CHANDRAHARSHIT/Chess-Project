@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import {
   Menu, X, Home, Puzzle, CreditCard, CircleUserRound, Crown,
-  GraduationCap, BookOpen, Bot, BookMarked, ChevronDown, ChevronUp,
-  Zap, History, Clock, ThumbsUp, PlaySquare, BarChart2, Flag,
-  Plus, Shuffle, Video, UserCircle2, ExternalLink, Pencil, MoveDown, MoveUp, Archive
+  GraduationCap, BookOpen, Bot, BookMarked, ChevronDown,
+  Zap, Clock, BarChart2, Flag,
+  Plus, Shuffle, Video, UserCircle2, ExternalLink, Pencil, MoveUp, Archive
 } from "lucide-react";
 import { useLogoAnimation } from "../hooks/useLogoAnimation";
 import { soundManager } from "../utils/SoundManager";
@@ -37,7 +37,6 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<"login" | "register">("login");
   const [mobileOpenItem, setMobileOpenItem] = useState<string | null>(null);
-  const [desktopOpenItem, setDesktopOpenItem] = useState<string | null>(null);
   const [isYouOpen, setIsYouOpen] = useState(true);
   
   const [hoveredSubMenu, setHoveredSubMenu] = useState<{items: any[], top: number, left: number} | null>(null);
@@ -204,9 +203,9 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
   };
 
   const MOCK_SUBSCRIPTIONS = [
-    { name: "Hikaru Nakamura", avatar: "https://i.pravatar.cc/150?u=hikaru" },
-    { name: "GothamChess", avatar: "https://i.pravatar.cc/150?u=gotham" },
-    { name: "Magnus Carlsen", avatar: "https://i.pravatar.cc/150?u=magnus" },
+    { name: "Hikaru Nakamura", avatar: "https://i.pravatar.cc/150?u=hikaru", href: "/subscriptions" },
+    { name: "GothamChess", avatar: "https://i.pravatar.cc/150?u=gotham", href: "/subscriptions" },
+    { name: "Magnus Carlsen", avatar: "https://i.pravatar.cc/150?u=magnus", href: "/subscriptions" },
   ];
 
   const handleLinkClick = (href: string, e: React.MouseEvent) => {
@@ -245,10 +244,10 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
   ];
 
   const exploreSection = [
-    { name: "Quick Game", href: "/play", icon: Zap },
-    { name: "Lessons", href: "/lessons", icon: BookOpen },
+    { name: "Quick Game", href: "/play", icon: Zap, comingSoon: true },
+    { name: "Lessons", href: "/lessons", icon: BookOpen, comingSoon: true },
     { name: "Puzzles", href: "/puzzles", icon: Puzzle },
-    { name: "Variants", href: "/variants", icon: Shuffle },
+    { name: "Variants", href: "/variants", icon: Shuffle, comingSoon: true },
     { name: "Pricing", href: "/pricing", icon: CreditCard },
     { name: "Premium", href: "/premium", icon: Crown },
   ];
@@ -259,16 +258,14 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
   ];
 
   const youSection = [
-    { name: "Stats", href: "/stats", icon: BarChart2 },
-    { name: "History", href: "/history", icon: History },
-    { name: "Complete Later", href: "/complete-later", icon: Clock },
-    { name: "Liked Content", href: "/liked", icon: ThumbsUp },
-    { name: "Your Content", href: "/your-content", icon: Video },
-    { name: "Your Channel", href: "/channel", icon: UserCircle2 },
+    { name: "Stats", href: "/settings?tab=profile", icon: BarChart2 },
+    { name: "Complete Later", href: "/complete-later", icon: Clock, comingSoon: true },
+    { name: "Your Content", href: "/your-content", icon: Video, comingSoon: true },
+    { name: "Your Channel", href: "/channel", icon: UserCircle2, comingSoon: true },
   ];
 
   const miscSection = [
-    { name: "Report", href: "/report", icon: Flag }
+    { name: "Report", href: "/report", icon: Flag, comingSoon: true }
   ];
 
   const urlOptions = [
@@ -281,22 +278,23 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
 
   // Helper for rendering a nav link
   // section: 'active' = in Explore section, 'more' = in More section
-  const renderNavItem = (item: any, isSub = false, customLinkIndex?: number, section: 'active' | 'more' = 'active') => {
+  const renderNavItem = (item: any, customLinkIndex?: number, section: 'active' | 'more' = 'active') => {
     const Icon = item.icon;
-    const isActive = location.pathname === item.href || (item.subItems?.some((s:any) => location.pathname === s.href));
+    const isActive = !item.comingSoon && (location.pathname === item.href || (item.subItems?.some((s:any) => location.pathname === s.href)));
     
     const isAvatar = item.avatar !== undefined;
     const isCustomLink = customLinkIndex !== undefined;
     const hasSubItems = Boolean(item.subItems);
-    const isSubOpen = desktopOpenItem === item.name || mobileOpenItem === item.name;
+    const isSubOpen = mobileOpenItem === item.name;
+    const isDisabled = Boolean(item.comingSoon);
 
     return (
       <div key={item.name + (section === 'more' ? '-more' : '')} className="flex flex-col w-full">
         <div className="relative group/navitem flex items-center">
           <a
-            href={hasSubItems ? "#" : item.href}
+            href={isDisabled ? "#" : hasSubItems ? "#" : item.href}
             onMouseEnter={(e) => {
-              if (hasSubItems && !isMobileOpen) {
+              if (hasSubItems && !isMobileOpen && !isDisabled) {
                 if (hoverTimeout.current) clearTimeout(hoverTimeout.current);
                 const rect = e.currentTarget.getBoundingClientRect();
                 setHoveredSubMenu({ items: item.subItems, top: rect.top, left: rect.right + 4 });
@@ -310,6 +308,10 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
               }
             }}
             onClick={(e) => {
+              if (isDisabled) {
+                e.preventDefault();
+                return;
+              }
               if (hasSubItems) {
                 e.preventDefault();
                 if (isMobileOpen) {
@@ -321,15 +323,22 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
                 handleLinkClick(item.href, e);
               }
             }}
-            className={`relative w-full flex transition-all duration-200 cursor-pointer ${
+            title={isDisabled ? "Coming soon" : undefined}
+            className={`relative w-full flex transition-all duration-200 ${
+              isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'
+            } ${
               isExpanded || isMobileOpen
                 ? `items-center gap-4 px-3 py-2.5 mx-2 rounded-xl ${
-                    isActive
+                    isDisabled
+                      ? "opacity-60 select-none text-brand-secondary"
+                      : isActive
                       ? "text-brand-accent bg-white/10 font-medium"
                       : "text-brand-secondary hover:text-white hover:bg-white/5 group-hover/navitem:bg-white/5 group-hover/navitem:text-white"
                   }`
                 : `flex-col items-center justify-center py-[14px] mx-2 rounded-lg text-center ${
-                    isActive
+                    isDisabled
+                      ? "opacity-60 select-none text-brand-secondary"
+                      : isActive
                       ? "text-brand-accent bg-white/10 font-medium"
                       : "text-brand-secondary hover:text-white hover:bg-white/5 group-hover/navitem:bg-white/5 group-hover/navitem:text-white"
                   }`
@@ -422,7 +431,7 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
                   }}
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-sans transition-colors duration-150 ${
                     subItem.comingSoon
-                      ? "opacity-40 cursor-not-allowed select-none"
+                      ? "opacity-60 cursor-not-allowed select-none"
                       : isSubActive
                       ? "text-brand-accent bg-white/10 font-medium cursor-pointer"
                       : "text-brand-secondary hover:text-white hover:bg-white/5 cursor-pointer"
@@ -529,7 +538,7 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
               </div>
             )}
             {exploreSection.map(item => renderNavItem(item))}
-            {customLinks.map((link, index) => renderNavItem({ name: link.name, href: link.url, icon: ExternalLink }, false, index))}
+            {customLinks.map((link, index) => renderNavItem({ name: link.name, href: link.url, icon: ExternalLink }, index))}
             <Divider />
 
             {/* AUTH / SUBSCRIPTIONS SECTION */}
@@ -559,7 +568,7 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
                   </div>
                 )}
                 {MOCK_SUBSCRIPTIONS.length > 0 ? (
-                  MOCK_SUBSCRIPTIONS.map(sub => renderNavItem({ ...sub, href: `/@${sub.name.replace(/\s+/g, '')}` }))
+                MOCK_SUBSCRIPTIONS.map(sub => renderNavItem({ ...sub, href: sub.href }))
                 ) : (
                   isExpanded && <div className="px-6 py-2 text-[13px] text-brand-secondary">No subscriptions yet.</div>
                 )}
@@ -601,7 +610,7 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
                   <ChevronDown className={`w-4 h-4 text-brand-secondary transition-transform duration-300 ${isMoreOpen ? 'rotate-180' : ''} group-hover:text-white`} />
                 </div>
                 <div className={`transition-all duration-300 overflow-hidden ${isMoreOpen ? 'max-h-[600px] opacity-100' : 'max-h-0 opacity-0'}`}>
-                  {moreLinks.map((link, index) => renderNavItem({ name: link.name, href: link.url, icon: ExternalLink }, false, index, 'more'))}
+                  {moreLinks.map((link, index) => renderNavItem({ name: link.name, href: link.url, icon: ExternalLink }, index, 'more'))}
                   <div className="px-6 pt-2 pb-1">
                     <p className="text-[11px] text-brand-secondary/50 italic leading-snug">
                       Coming soon: Links will be auto-sorted based on usage.
@@ -672,7 +681,7 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
                   }}
                   className={`w-full flex items-center gap-4 px-5 py-3 text-[14px] font-sans text-left transition-colors duration-150 ${
                     subItem.comingSoon
-                      ? "opacity-40 cursor-not-allowed select-none"
+                      ? "opacity-60 cursor-not-allowed select-none"
                       : isSubActive
                       ? "text-brand-accent bg-white/[0.06] cursor-pointer font-medium"
                       : "text-brand-secondary hover:text-white hover:bg-white/[0.06] cursor-pointer"
@@ -736,7 +745,7 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
               </button>
             </div>
             {exploreSection.map(item => renderNavItem(item))}
-            {customLinks.map((link, index) => renderNavItem({ name: link.name, href: link.url, icon: ExternalLink }, false, index))}
+            {customLinks.map((link, index) => renderNavItem({ name: link.name, href: link.url, icon: ExternalLink }, index))}
             
             <Divider />
 
@@ -757,7 +766,7 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
               <>
                 <div className="px-6 py-2"><span className="text-[15px] font-semibold text-white">Subscriptions</span></div>
                 {MOCK_SUBSCRIPTIONS.length > 0 ? (
-                  MOCK_SUBSCRIPTIONS.map(sub => renderNavItem({ ...sub, href: `/@${sub.name.replace(/\s+/g, '')}` }))
+                  MOCK_SUBSCRIPTIONS.map(sub => renderNavItem({ ...sub, href: sub.href }))
                 ) : (
                   <div className="px-6 py-2 text-[13px] text-brand-secondary">No subscriptions yet.</div>
                 )}
@@ -796,7 +805,7 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
                   <ChevronDown className={`w-4 h-4 text-brand-secondary transition-transform duration-300 ${isMoreOpen ? 'rotate-180' : ''}`} />
                 </div>
                 <div className={`transition-all duration-300 overflow-hidden ${isMoreOpen ? 'max-h-[600px]' : 'max-h-0'}`}>
-                  {moreLinks.map((link, index) => renderNavItem({ name: link.name, href: link.url, icon: ExternalLink }, false, index, 'more'))}
+                  {moreLinks.map((link, index) => renderNavItem({ name: link.name, href: link.url, icon: ExternalLink }, index, 'more'))}
                   <div className="px-6 pb-2">
                     <p className="text-[11px] text-brand-secondary/50 italic leading-snug">
                       Coming soon: Links will be auto-sorted based on usage.

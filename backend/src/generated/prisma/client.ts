@@ -97,20 +97,20 @@ export type WebhookEvent = Prisma.WebhookEventModel
  */
 export type Opening = Prisma.OpeningModel
 /**
- * Model ChessOpening
+ * Model Course
  * 
  */
-export type ChessOpening = Prisma.ChessOpeningModel
+export type Course = Prisma.CourseModel
 /**
- * Model ChessOpeningStep
+ * Model Lesson
  * 
  */
-export type ChessOpeningStep = Prisma.ChessOpeningStepModel
+export type Lesson = Prisma.LessonModel
 /**
- * Model CuratedPuzzle
+ * Model LessonProgress
  * 
  */
-export type CuratedPuzzle = Prisma.CuratedPuzzleModel
+export type LessonProgress = Prisma.LessonProgressModel
 /**
  * Model CustomLink
  * 
