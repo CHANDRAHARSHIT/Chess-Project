@@ -2172,26 +2172,32 @@ export default function HeroPuzzle({
                           squareStyles: boardSquareStyles,
                           animationDurationInMs: 0,
                           allowDragging: isActive && boardIsInteractive,
-                          squareRenderer: ({ square, piece, children }) => {
-                            const isKing =
-                              piece?.pieceType === "wK" ||
-                              piece?.pieceType === "bK";
-                            const isLosingKing =
-                              isKing && square === losingKingSq;
-                            const isWinningKing =
-                              isKing && square === winningKingSq;
-
-                            let className = "piece-normal-container";
-                            if (isLosingKing) {
-                              className = "king-defeated-container";
-                            } else if (isWinningKing) {
-                              className = "king-winning-container";
-                            }
-
-                            return <div className={className}>{children}</div>;
-                          },
                         }}
                       />
+
+                      {/* Losing king falldown & winning king glow animation via CSS (without squareRenderer to preserve click-to-move) */}
+                      {losingKingSq && (
+                        <style>{`
+                          #hero-chessboard-${i} [data-square="${losingKingSq}"] [data-piece],
+                          #hero-chessboard-${i} [data-square="${losingKingSq}"] img {
+                            transform: rotate(45deg) !important;
+                            transform-origin: center !important;
+                            transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1), filter 0.8s ease !important;
+                            filter: drop-shadow(0 0 5px rgba(239, 68, 68, 0.85)) sepia(1) saturate(12) hue-rotate(-50deg) brightness(0.7) contrast(1.1) !important;
+                          }
+                          ${
+                            winningKingSq
+                              ? `
+                          #hero-chessboard-${i} [data-square="${winningKingSq}"] [data-piece],
+                          #hero-chessboard-${i} [data-square="${winningKingSq}"] img {
+                            transition: filter 0.8s ease !important;
+                            filter: drop-shadow(0 0 5px rgba(34, 197, 94, 0.85)) sepia(1) saturate(12) hue-rotate(70deg) brightness(0.8) contrast(1.1) !important;
+                          }
+                          `
+                              : ""
+                          }
+                        `}</style>
+                      )}
 
                       {/* Move quality annotations */}
                       {isActive && (
