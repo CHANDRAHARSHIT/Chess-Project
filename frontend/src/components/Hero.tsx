@@ -321,7 +321,7 @@ export default function Hero() {
   return (
     <header
       ref={heroRef}
-      className="relative pt-28 pb-20 md:pt-36 md:pb-32 overflow-hidden"
+      className="relative pt-20 pb-20 md:pt-20 md:pb-32 overflow-hidden"
       id="hero-section"
     >
       {/* ── Background glow orbs ─────────────────────────────────────────── */}
