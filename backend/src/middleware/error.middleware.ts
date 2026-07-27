@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { env } from "../config/env.js";
+import rollbar from "../config/rollbar.js";
 
 export interface CustomError extends Error {
   statusCode?: number;
@@ -19,6 +20,11 @@ export function errorHandler(
     console.error(err.stack);
   }
 
+  // Report server errors (5xx) to Rollbar; skip client errors (4xx) intentionally.
+  if (statusCode >= 500) {
+    rollbar.error(err, req);
+  }
+
   res.status(statusCode).json({
     status: "error",
     statusCode,
@@ -26,3 +32,4 @@ export function errorHandler(
     ...(env.NODE_ENV === "development" && { stack: err.stack }),
   });
 }
+
