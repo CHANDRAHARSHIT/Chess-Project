@@ -26,7 +26,7 @@ export interface PuzzleBoardProps {
 export function PuzzleBoard({
   puzzle,
   puzzleNumber,
-  boardId = "puzzle-board",
+  boardId: _boardId = "puzzle-board",
   onSolved,
   onFailed,
   onNextPuzzle,
@@ -54,33 +54,6 @@ export function PuzzleBoard({
     .filter(Boolean);
 
   const boardContainerRef = useRef<HTMLDivElement>(null);
-  const [measuredWidth, setMeasuredWidth] = useState<number>(0);
-
-  useEffect(() => {
-    const el = boardContainerRef.current;
-    if (!el) return;
-
-    const measure = () => {
-      const rect = el.getBoundingClientRect();
-      const style = window.getComputedStyle(el);
-      const width = Math.floor(rect.width);
-
-      if (
-        style.display === "none" ||
-        style.visibility === "hidden" ||
-        width === 0
-      ) {
-        setMeasuredWidth(0);
-      } else {
-        setMeasuredWidth(width);
-      }
-    };
-
-    measure();
-    const observer = new ResizeObserver(measure);
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
 
   // Reset board and status when the puzzle prop changes
   useEffect(() => {
