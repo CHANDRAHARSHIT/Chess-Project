@@ -10,26 +10,20 @@
  */
 
 // ── GSAP: register plugins immediately (before any component renders) ──────
-import './utils/gsapConfig';
+import "./utils/gsapConfig";
 
-import GlobalBackground from './components/GlobalBackground';
-import AppRouter from './router/AppRouter';
+import AppRouter from "./router/AppRouter";
 
-import { ParticlesProvider } from '@tsparticles/react';
-import { loadConfettiCannonPreset } from '@tsparticles/preset-confetti-cannon';
+import { ParticlesProvider } from "@tsparticles/react";
+import { loadConfettiCannonPreset } from "@tsparticles/preset-confetti-cannon";
 
 const initParticles = async (engine: any) => {
   await loadConfettiCannonPreset(engine);
 };
 
 function App() {
-
   return (
     <ParticlesProvider init={initParticles}>
-
-      {/* ── Ambient background chess pieces ─────────────────────────────── */}
-      <GlobalBackground />
-
       {/* smooth-wrapper + smooth-content: ScrollSmoother-ready DOM structure. */}
       <div id="smooth-wrapper">
         <div id="smooth-content">

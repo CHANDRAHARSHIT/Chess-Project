@@ -43,7 +43,16 @@ import { ThemedChessboard } from "./ThemedChessboard";
 import { Chess } from "chess.js";
 import { parseUciMove } from "../utils/chessHelpers";
 import { useStockfish } from "../hooks/useStockfish";
-import { RotateCcw, Play, SkipForward, Zap, ChevronLeft, ChevronRight, Volume2, VolumeX } from "lucide-react";
+import {
+  RotateCcw,
+  Play,
+  SkipForward,
+  Zap,
+  ChevronLeft,
+  ChevronRight,
+  Volume2,
+  VolumeX,
+} from "lucide-react";
 import { useConfetti } from "../hooks/useConfetti";
 import { useMoveTrail } from "../hooks/useMoveTrail";
 import { gsap } from "../utils/gsapConfig";
@@ -236,7 +245,6 @@ const historicalBlackMoves = [
 const START_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 const PUZZLE3_FEN = "7k/5p1P/5ppK/6P1/8/8/1q6/BQ6 w - - 4 1";
 
-
 const getKingSquares = (fen: string) => {
   const tempGame = new Chess(fen);
   let losingKingSq: string | null = null;
@@ -265,8 +273,10 @@ interface HeroPuzzleProps {
   onDragEnd?: () => void;
 }
 
-export default function HeroPuzzle({ onDragStart, onDragEnd }: HeroPuzzleProps) {
-
+export default function HeroPuzzle({
+  onDragStart,
+  onDragEnd,
+}: HeroPuzzleProps) {
   const soundManagerRef = useRef<SoundManager>(SoundManager.createInstance());
   const soundManager = soundManagerRef.current;
   const [isMuted, setIsMuted] = useState<boolean>(true);
@@ -284,31 +294,30 @@ export default function HeroPuzzle({ onDragStart, onDragEnd }: HeroPuzzleProps) 
 
   const isHeroVisibleRef = useRef(true);
 
-const heroSoundRef = useRef({
-  playMove: () => {
-    if (isHeroVisibleRef.current) soundManager.playMove();
-  },
-  playCapture: () => {
-    if (isHeroVisibleRef.current) soundManager.playCapture();
-  },
-  playCheck: () => {
-    if (isHeroVisibleRef.current) soundManager.playCheck();
-  },
-  playCheckmate: () => {
-    if (isHeroVisibleRef.current) soundManager.playCheckmate();
-  },
-  playApplause: () => {
-    if (isHeroVisibleRef.current) soundManager.playApplause();
-  },
+  const heroSoundRef = useRef({
+    playMove: () => {
+      if (isHeroVisibleRef.current) soundManager.playMove();
+    },
+    playCapture: () => {
+      if (isHeroVisibleRef.current) soundManager.playCapture();
+    },
+    playCheck: () => {
+      if (isHeroVisibleRef.current) soundManager.playCheck();
+    },
+    playCheckmate: () => {
+      if (isHeroVisibleRef.current) soundManager.playCheckmate();
+    },
+    playApplause: () => {
+      if (isHeroVisibleRef.current) soundManager.playApplause();
+    },
 
-  playLose: () => { 
-    if (isHeroVisibleRef.current) soundManager.playLose(); 
-
-  },
-  playGameEnd: () => {
-    if (isHeroVisibleRef.current) soundManager.playGameEnd();
-  },
-});
+    playLose: () => {
+      if (isHeroVisibleRef.current) soundManager.playLose();
+    },
+    playGameEnd: () => {
+      if (isHeroVisibleRef.current) soundManager.playGameEnd();
+    },
+  });
 
   // â”€â”€ State variables for Puzzle 0 (Evergreen Game Autoplay & Puzzle) â”€â”€â”€â”€â”€â”€â”€â”€
   const [phase0, setPhase0] = useState<
@@ -537,7 +546,6 @@ const heroSoundRef = useRef({
     return () => window.removeEventListener("resize", updateSize);
   }, []);
 
-
   const abortRef = useRef<boolean>(false);
   const autoplayInstanceRef = useRef<number>(0);
   // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
@@ -560,24 +568,23 @@ const heroSoundRef = useRef({
     );
   }, []);
 
-
   useEffect(() => {
-  const el = containerRef.current;
-  if (!el) return;
+    const el = containerRef.current;
+    if (!el) return;
 
-  const observer = new IntersectionObserver(
-    ([entry]) => {
-      isHeroVisibleRef.current = entry.isIntersecting;
-    },
-    {
-      threshold: 0.1,
-    }
-  );
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isHeroVisibleRef.current = entry.isIntersecting;
+      },
+      {
+        threshold: 0.1,
+      },
+    );
 
-  observer.observe(el);
+    observer.observe(el);
 
-  return () => observer.disconnect();
-}, []);
+    return () => observer.disconnect();
+  }, []);
   // Magnetic piece hover effect removed to allow standard react-chessboard drag without interference
   // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
   // PREMIUM PIECE ANIMATION SYSTEM
@@ -958,7 +965,7 @@ const heroSoundRef = useRef({
     const checkmateFen = gameRef1.current.fen();
     const tempGame = new Chess(checkmateFen);
     const losingColor = tempGame.turn(); // the side that is in checkmate
-    const playerWon = losingColor === "b"; 
+    const playerWon = losingColor === "b";
     const { losingKingSq } = getKingSquares(checkmateFen);
 
     if (playerWon) {
@@ -1965,15 +1972,9 @@ const heroSoundRef = useRef({
           inactive slides = rotated mini-board preview cards that peek into view.
           â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       {/* Stage: clips the visible area so only the active board + partial previews show */}
-      <div
-        className="relative w-full"
-        style={{ overflow: "hidden" }}
-      >
+      <div className="relative w-full" style={{ overflow: "hidden" }}>
         {/* Outer glow for checkmate state */}
-        <div
-          className="absolute inset-0 rounded-xl pointer-events-none z-10"
-
-        />
+        <div className="absolute inset-0 rounded-xl pointer-events-none z-10" />
         {/* CHECKMATE impact overlay â€” GSAP toggles display:flex */}
         <div
           ref={checkmateRef}
@@ -2197,7 +2198,9 @@ const heroSoundRef = useRef({
                         <MoveAnnotation activeAnnotation={activeAnnotation} />
                       )}
 
-                      {isActive && <BoardCoordinates boardOrientation="white" />}
+                      {isActive && (
+                        <BoardCoordinates boardOrientation="white" />
+                      )}
                     </div>
                   </div>
                 </motion.div>
@@ -2205,12 +2208,13 @@ const heroSoundRef = useRef({
             );
           })}
         </motion.div>
-        {/* Carousel Prev/Next + Pagination Dots */}
-        <div className="flex items-center justify-center gap-6 p-2 mt-1">
+        {/* Carousel Controls + Sound Toggle */}
+        <div className="flex items-center justify-center gap-3 p-3 mt-1">
           <button
             onClick={toPrev}
             disabled={activeIndex === 0}
-            className="p-2 rounded-full border text-[#8E8B82]
+            aria-label="Previous slide"
+            className="p-2 rounded-full border border-[rgba(212,175,110,0.30)] text-[#8E8B82]
                        hover:text-white hover:border-[rgba(212,175,110,0.5)] hover:bg-white/5
                        disabled:opacity-30 disabled:cursor-not-allowed
                        transition-all duration-200"
@@ -2222,37 +2226,49 @@ const heroSoundRef = useRef({
               <button
                 key={i}
                 onClick={() => toSlide(i)}
-                className={`rounded-full transition-all duration-300 ${activeIndex === i
-                  ? "w-5 h-1.5 bg-[#D4AF6E]"
-                  : "w-1.5 h-1.5 bg-brand-secondary/40 hover:bg-brand-secondary"
-                  }`}
+                aria-label={`Go to slide ${i + 1}`}
+                className={`rounded-full transition-all duration-300 ${
+                  activeIndex === i
+                    ? "w-5 h-1.5 bg-[#D4AF6E]"
+                    : "w-1.5 h-1.5 bg-brand-secondary/40 hover:bg-brand-secondary"
+                }`}
               />
             ))}
           </div>
           <button
             onClick={toNext}
             disabled={activeIndex === CAROUSEL_ITEMS.length - 1}
-            className="p-2 rounded-full border text-[#8E8B82]
+            aria-label="Next slide"
+            className="p-2 rounded-full border border-[rgba(212,175,110,0.30)] text-[#8E8B82]
                        hover:text-white hover:border-[rgba(212,175,110,0.5)] hover:bg-white/5
                        disabled:opacity-30 disabled:cursor-not-allowed
                        transition-all duration-200"
           >
             <ChevronRight className="w-4 h-4" />
           </button>
+
+          {/* Divider */}
+          <div
+            className="w-px h-4 bg-[rgba(212,175,110,0.2)] mx-0.5"
+            aria-hidden="true"
+          />
+
+          {/* Sound Toggle */}
+          <button
+            onClick={toggleMute}
+            aria-label={isMuted ? "Unmute sound" : "Mute sound"}
+            title={isMuted ? "Unmute sound" : "Mute sound"}
+            className="p-2 rounded-full border border-[rgba(212,175,110,0.30)] text-[#8E8B82]
+                       hover:text-white hover:border-[rgba(212,175,110,0.5)] hover:bg-white/5
+                       transition-all duration-200"
+          >
+            {isMuted ? (
+              <VolumeX className="w-4 h-4 text-rose-400/80" />
+            ) : (
+              <Volume2 className="w-4 h-4 text-[#D4AF6E]" />
+            )}
+          </button>
         </div>
-        <button
-          onClick={toggleMute}
-          aria-label={isMuted ? "Unmute sound" : "Mute sound"}
-          className="p-2 rounded-full border text-[#8E8B82]
-             hover:text-white hover:border-[rgba(212,175,110,0.5)] hover:bg-white/5
-             transition-all duration-200"
-        >
-          {isMuted ? (
-            <VolumeX className="w-4 h-4" />
-          ) : (
-            <Volume2 className="w-4 h-4 text-[#D4AF6E]" />
-          )}
-        </button>
       </div>
       {/* Below-board Info Panel */}
       <div className="flex items-center justify-between px-0 mt-1">
@@ -2263,7 +2279,6 @@ const heroSoundRef = useRef({
             </span>
           </div>
         </div>
-
       </div>
       {/* Action Buttons */}
       <div className="flex gap-3 mt-1">
@@ -2283,7 +2298,10 @@ const heroSoundRef = useRef({
                   btn-glow-container btn-glow-surface
                 "
               >
-                <SkipForward size={18} className="w-4 h-4 text-[#D4AF6E] animate-pulse" />
+                <SkipForward
+                  size={18}
+                  className="w-4 h-4 text-[#D4AF6E] animate-pulse"
+                />
                 Skip Animation
               </button>
             )}
@@ -2377,13 +2395,13 @@ const heroSoundRef = useRef({
               phase1 === "black_responding" ||
               phase1 === "awaiting_mate" ||
               phase1 === "failed") && (
-                <>
-                  <button
-                    onClick={() => {
-                      cleanupGame();
-                      initGame(1);
-                    }}
-                    className="
+              <>
+                <button
+                  onClick={() => {
+                    cleanupGame();
+                    initGame(1);
+                  }}
+                  className="
                     flex-1 flex items-center justify-center gap-2
                     px-4 py-2.5 rounded-lg
                     font-sans text-sm font-semibold
@@ -2393,13 +2411,13 @@ const heroSoundRef = useRef({
                     transition-all duration-200
                     btn-glow-container btn-glow-surface
                   "
-                  >
-                    <RotateCcw className="w-4 h-4 text-[#D4AF6E]" />
-                    Reset
-                  </button>
-                  <button
-                    onClick={handleSolve1}
-                    className="
+                >
+                  <RotateCcw className="w-4 h-4 text-[#D4AF6E]" />
+                  Reset
+                </button>
+                <button
+                  onClick={handleSolve1}
+                  className="
                     flex-1 flex items-center justify-center gap-2
                     px-4 py-2.5 rounded-lg
                     font-sans text-sm font-semibold
@@ -2409,12 +2427,12 @@ const heroSoundRef = useRef({
                     transition-all duration-200
                     btn-glow-container btn-glow-surface
                   "
-                  >
-                    <Play className="w-4 h-4 text-[#D4AF6E]" />
-                    Solve
-                  </button>
-                </>
-              )}
+                >
+                  <Play className="w-4 h-4 text-[#D4AF6E]" />
+                  Solve
+                </button>
+              </>
+            )}
             {phase1 === "solved" && (
               <button
                 onClick={handleReplayOriginal}
@@ -2456,13 +2474,13 @@ const heroSoundRef = useRef({
             {(phase2 === "idle" ||
               phase2 === "awaiting_move" ||
               phase2 === "failed") && (
-                <>
-                  <button
-                    onClick={() => {
-                      cleanupGame();
-                      initGame(2);
-                    }}
-                    className="
+              <>
+                <button
+                  onClick={() => {
+                    cleanupGame();
+                    initGame(2);
+                  }}
+                  className="
                     flex-1 flex items-center justify-center gap-2
                     px-4 py-2.5 rounded-lg
                     font-sans text-sm font-semibold
@@ -2472,12 +2490,12 @@ const heroSoundRef = useRef({
                     transition-all duration-200
                     btn-glow-container btn-glow-surface
                   "
-                  >
-                    <RotateCcw className="w-4 h-4 text-[#D4AF6E]" />
-                    Reset
-                  </button>
-                </>
-              )}
+                >
+                  <RotateCcw className="w-4 h-4 text-[#D4AF6E]" />
+                  Reset
+                </button>
+              </>
+            )}
             {phase2 === "solved" && (
               <button
                 onClick={() => {
@@ -2522,13 +2540,13 @@ const heroSoundRef = useRef({
             {(phase3 === "idle" ||
               phase3 === "awaiting_move" ||
               phase3 === "failed") && (
-                <>
-                  <button
-                    onClick={() => {
-                      cleanupGame();
-                      initGame(3);
-                    }}
-                    className="
+              <>
+                <button
+                  onClick={() => {
+                    cleanupGame();
+                    initGame(3);
+                  }}
+                  className="
                     flex-1 flex items-center justify-center gap-2
                     px-4 py-2.5 rounded-lg
                     font-sans text-sm font-semibold
@@ -2538,12 +2556,12 @@ const heroSoundRef = useRef({
                     transition-all duration-200
                     btn-glow-container btn-glow-surface
                   "
-                  >
-                    <RotateCcw className="w-4 h-4 text-[#D4AF6E]" />
-                    Reset
-                  </button>
-                </>
-              )}
+                >
+                  <RotateCcw className="w-4 h-4 text-[#D4AF6E]" />
+                  Reset
+                </button>
+              </>
+            )}
             {phase3 === "solved" && (
               <button
                 onClick={() => {
