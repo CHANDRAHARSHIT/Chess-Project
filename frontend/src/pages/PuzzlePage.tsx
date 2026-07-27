@@ -4,15 +4,11 @@ import { RoyalGoldPathway, ROYAL_GOLD_NODES } from '../components/pathways/Royal
 import { PATHWAY_NODES } from '../components/pathways';
 import type { PathNode, PlayerProgress } from '../types/PuzzlePath';
 import { PuzzleBoard } from '../components/PuzzleBoard';
-import { CustomPuzzleModal } from '../components/CustomPuzzleModal';
+import { CustomPuzzlePanel } from '../components/CustomPuzzlePanel';
 import { CustomPuzzleSession } from '../components/CustomPuzzleSession';
 import type { PuzzleFilters } from '../types/puzzle';
 import { 
-  Trophy, 
-  Zap, 
   HelpCircle, 
-  CircleDot,
-  CheckCircle2,
   Sparkles,
   ArrowLeft,
   ArrowRight,
@@ -24,11 +20,15 @@ import { Confetti } from '../components/Confetti';
 export default function PuzzlePage() {
   const navigate = useNavigate();
 
-  // Custom Puzzle session state
-  const [showCustomModal, setShowCustomModal] = useState(false);
+  // ── Right-panel mode: 'pathway' | 'config' ──────────────────────────────────
+  // 'pathway' = show RoyalGoldPathway + Custom Puzzles button
+  // 'config'  = show CustomPuzzlePanel (inline filter picker)
+  const [rightPanelMode, setRightPanelMode] = useState<'pathway' | 'config'>('pathway');
+
+  // Active custom session filters (null = no session running)
   const [customFilters, setCustomFilters] = useState<PuzzleFilters | null>(null);
 
-  // Mobile View State: 'pathway' (default) or 'board'
+  // Mobile view state
   const [mobileView, setMobileView] = useState<'pathway' | 'board'>('pathway');
 
   const activePathwayNodes = useMemo(() => {
@@ -84,7 +84,7 @@ export default function PuzzlePage() {
 
     try {
       if (targetNode?.fen) {
-        new Chess(targetNode.fen); // Validate FEN syntax
+        new Chess(targetNode.fen);
       }
       return {
         id: targetNode?.id || defaultNode?.id || 'placeholder_004',
@@ -97,20 +97,20 @@ export default function PuzzlePage() {
       return {
         id: defaultNode?.id || 'placeholder_004',
         fen: defaultNode?.fen || 'rnbqkn1r/ppppp2p/5p2/6p1/4P3/3P4/PPP2PPP/RNBQKBNR w KQkq - 0 3',
-        solution: defaultNode?.solution || defaultNode?.solution || 'Qh5#',
+        solution: defaultNode?.solution || 'Qh5#',
         rating: defaultNode?.rating || 500,
       };
     }
   }, [selectedNode, activePathwayNodes]);
 
-  // Select node callback from any active pathway component
+  // Select node callback from pathway
   const handleSelectNode = useCallback((node: PathNode) => {
     setSelectedNode(node);
     setShowConfetti(false);
-    setMobileView('board'); // Purely local state update
+    setMobileView('board');
   }, []);
 
-  // Return to pathway callback
+  // Return to pathway callback (mobile)
   const handleReturnToPathway = useCallback(() => {
     setMobileView('pathway');
   }, []);
@@ -131,7 +131,7 @@ export default function PuzzlePage() {
     }
   }, [selectedNode, activePathwayNodes]);
 
-  // Mobile-specific Next Puzzle handler (advances node and returns to pathway view)
+  // Mobile-specific Next Puzzle (advances + returns to pathway view)
   const handleNextPuzzleMobile = useCallback(() => {
     handleNextPuzzle();
     setMobileView('pathway');
@@ -173,18 +173,21 @@ export default function PuzzlePage() {
     navigate('/');
   }, [navigate]);
 
-  // ─── Custom Puzzle handlers ────────────────────────────────────────────────
-  const handleOpenCustomModal = useCallback(() => {
-    setShowCustomModal(true);
+  // ── Custom Puzzle handlers ──────────────────────────────────────────────────
+
+  /** Open inline config panel (replaces pathway in right column) */
+  const handleOpenCustomConfig = useCallback(() => {
+    setRightPanelMode('config');
   }, []);
 
-  const handleCloseCustomModal = useCallback(() => {
-    setShowCustomModal(false);
+  /** Close config panel — revert right panel to pathway */
+  const handleCloseCustomConfig = useCallback(() => {
+    setRightPanelMode('pathway');
   }, []);
 
-  /** Called when the user clicks "Start!" in the modal */
+  /** Called when the user clicks "Start Session" in the panel */
   const handleStartCustomSession = useCallback((filters: PuzzleFilters) => {
-    setShowCustomModal(false);
+    setRightPanelMode('pathway'); // reset for when they exit
     setCustomFilters(filters);
   }, []);
 
@@ -193,19 +196,67 @@ export default function PuzzlePage() {
     setCustomFilters(null);
   }, []);
 
+  // ── Right panel content selector ─────────────────────────────────────────
+  // Returns the JSX for the right (lg:col-span-5) column in pathway mode
+  const renderRightPanel = () => {
+    if (rightPanelMode === 'config') {
+      return (
+        <div className="flex flex-col w-full h-full">
+          <CustomPuzzlePanel
+            onStart={handleStartCustomSession}
+            onClose={handleCloseCustomConfig}
+          />
+        </div>
+      );
+    }
+
+    // Default: pathway + custom puzzles button below it
+    return (
+      <div className="flex flex-col w-full h-full gap-3">
+        <RoyalGoldPathway
+          playerProgress={playerProgress}
+          onSelectPuzzle={handleSelectNode}
+        />
+
+        {/* Custom Puzzles button — below the pathway */}
+        <button
+          id="custom-puzzles-btn"
+          onClick={handleOpenCustomConfig}
+          className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-xs font-mono uppercase tracking-wider font-semibold transition-all duration-300 cursor-pointer"
+          style={{
+            background: "linear-gradient(135deg, rgba(212,175,110,0.10) 0%, rgba(184,147,74,0.06) 100%)",
+            border: "1px solid rgba(212,175,110,0.22)",
+            color: "#D4AF6E",
+            boxShadow: "0 2px 12px rgba(212,175,110,0.07)",
+          }}
+          onMouseEnter={(e) => {
+            (e.currentTarget as HTMLButtonElement).style.background =
+              "linear-gradient(135deg, rgba(212,175,110,0.18) 0%, rgba(184,147,74,0.12) 100%)";
+            (e.currentTarget as HTMLButtonElement).style.boxShadow =
+              "0 4px 20px rgba(212,175,110,0.18)";
+            (e.currentTarget as HTMLButtonElement).style.transform = "translateY(-1px)";
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLButtonElement).style.background =
+              "linear-gradient(135deg, rgba(212,175,110,0.10) 0%, rgba(184,147,74,0.06) 100%)";
+            (e.currentTarget as HTMLButtonElement).style.boxShadow =
+              "0 2px 12px rgba(212,175,110,0.07)";
+            (e.currentTarget as HTMLButtonElement).style.transform = "translateY(0)";
+          }}
+        >
+          <Sparkles className="w-3.5 h-3.5" />
+          Custom Puzzles
+        </button>
+      </div>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-brand-bg text-brand-text flex flex-col relative select-none pb-16 pt-20 sm:pt-8">
       {showConfetti && <Confetti />}
 
       {/* Ambient Lighting */}
       <div className="absolute top-[15%] left-1/2 -translate-x-1/2 w-[80vw] max-w-[1200px] h-[400px] rounded-full blur-[160px] bg-brand-accent/5 pointer-events-none z-0" />
-
-      {/* ── Custom Puzzle Modal ──────────────────────────────────────────────── */}
-      <CustomPuzzleModal
-        isOpen={showCustomModal}
-        onClose={handleCloseCustomModal}
-        onStart={handleStartCustomSession}
-      />
 
       {/* Main Container */}
       <main className="relative z-10 flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex flex-col justify-center">
@@ -222,39 +273,7 @@ export default function PuzzlePage() {
             Back to Home
           </button>
 
-          {/* Custom Puzzles button */}
-          {!customFilters && (
-            <button
-              id="custom-puzzles-btn"
-              onClick={handleOpenCustomModal}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono uppercase tracking-wider font-semibold transition-all duration-300 cursor-pointer"
-              style={{
-                background: "linear-gradient(135deg, rgba(212,175,110,0.12) 0%, rgba(184,147,74,0.08) 100%)",
-                border: "1px solid rgba(212,175,110,0.25)",
-                color: "#D4AF6E",
-                boxShadow: "0 2px 12px rgba(212,175,110,0.08)",
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLButtonElement).style.background =
-                  "linear-gradient(135deg, rgba(212,175,110,0.2) 0%, rgba(184,147,74,0.14) 100%)";
-                (e.currentTarget as HTMLButtonElement).style.boxShadow =
-                  "0 4px 20px rgba(212,175,110,0.2)";
-                (e.currentTarget as HTMLButtonElement).style.transform = "translateY(-1px)";
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLButtonElement).style.background =
-                  "linear-gradient(135deg, rgba(212,175,110,0.12) 0%, rgba(184,147,74,0.08) 100%)";
-                (e.currentTarget as HTMLButtonElement).style.boxShadow =
-                  "0 2px 12px rgba(212,175,110,0.08)";
-                (e.currentTarget as HTMLButtonElement).style.transform = "translateY(0)";
-              }}
-            >
-              <Sparkles className="w-3.5 h-3.5" />
-              Custom Puzzles
-            </button>
-          )}
-
-          {/* Exit custom session button */}
+          {/* Exit custom session button (only shown during an active session) */}
           {customFilters && (
             <button
               onClick={handleExitCustomSession}
@@ -276,7 +295,7 @@ export default function PuzzlePage() {
           )}
         </div>
 
-        {/* ── Custom Puzzle Session Mode vs Pathway Mode ───────────────────── */}
+        {/* ── Custom Puzzle Session Mode vs Pathway Mode ─────────────────────── */}
         {customFilters ? (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start w-full">
             {/* Board area */}
@@ -324,7 +343,7 @@ export default function PuzzlePage() {
                     <p className="text-[10px] font-mono uppercase tracking-widest mb-2" style={{ color: "#5C5954" }}>
                       Active Themes
                     </p>
-                    <div className="flex flex-wrap gap-1.5">
+                    <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto pr-1">
                       {customFilters.themes.map((t) => (
                         <span
                           key={t}
@@ -365,10 +384,11 @@ export default function PuzzlePage() {
             </div>
           </div>
         ) : (
-          /* ── Pathway Mode ───────────────────────────────────────────────── */
+          /* ── Pathway Mode ──────────────────────────────────────────────────── */
           <>
             {/* DESKTOP VIEW */}
             <div className="hidden lg:grid lg:grid-cols-12 gap-8 items-stretch w-full">
+              {/* Left: puzzle board */}
               <div className="lg:col-span-7 flex flex-col items-center w-full space-y-6">
                 <div className="w-full bg-[#0c1020]/70 backdrop-blur-xl border border-brand-border rounded-2xl p-5 text-left shadow-2xl relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   <div>
@@ -406,15 +426,13 @@ export default function PuzzlePage() {
                 </div>
               </div>
 
+              {/* Right: pathway or config panel */}
               <div className="lg:col-span-5 flex flex-col w-full h-full">
-                <RoyalGoldPathway
-                  playerProgress={playerProgress}
-                  onSelectPuzzle={handleSelectNode}
-                />
+                {renderRightPanel()}
               </div>
             </div>
 
-            {/* MOBILE VIEW (Driven strictly by local mobileView state) */}
+            {/* MOBILE VIEW */}
             <div className="lg:hidden w-full flex flex-col">
               {(() => {
                 switch (mobileView) {
@@ -433,7 +451,7 @@ export default function PuzzlePage() {
                           </button>
                         </div>
 
-                        {/* Mobile Board Deck Header Card */}
+                        {/* Mobile Board Header Card */}
                         <div className="w-full bg-[#0c1020]/70 backdrop-blur-xl border border-brand-border rounded-2xl p-4 text-left shadow-2xl relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                           <div>
                             <div className="flex items-center gap-2">
@@ -475,12 +493,37 @@ export default function PuzzlePage() {
 
                   case 'pathway':
                   default:
+                    if (rightPanelMode === 'config') {
+                      return (
+                        <div className="w-full">
+                          <CustomPuzzlePanel
+                            onStart={handleStartCustomSession}
+                            onClose={handleCloseCustomConfig}
+                          />
+                        </div>
+                      );
+                    }
                     return (
-                      <div className="w-full flex flex-col">
+                      <div className="w-full flex flex-col gap-3">
                         <RoyalGoldPathway
                           playerProgress={playerProgress}
                           onSelectPuzzle={handleSelectNode}
                         />
+                        {/* Custom Puzzles button on mobile — below pathway */}
+                        <button
+                          id="custom-puzzles-btn-mobile"
+                          onClick={handleOpenCustomConfig}
+                          className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-xs font-mono uppercase tracking-wider font-semibold transition-all duration-300 cursor-pointer"
+                          style={{
+                            background: "linear-gradient(135deg, rgba(212,175,110,0.10) 0%, rgba(184,147,74,0.06) 100%)",
+                            border: "1px solid rgba(212,175,110,0.22)",
+                            color: "#D4AF6E",
+                            boxShadow: "0 2px 12px rgba(212,175,110,0.07)",
+                          }}
+                        >
+                          <Sparkles className="w-3.5 h-3.5" />
+                          Custom Puzzles
+                        </button>
                       </div>
                     );
                 }

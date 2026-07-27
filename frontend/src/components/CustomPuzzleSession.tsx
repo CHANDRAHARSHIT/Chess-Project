@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { Chess } from "chess.js";
 import { PuzzleBoard } from "./PuzzleBoard";
 import { PuzzleApiService } from "../services/puzzle.service";
@@ -107,6 +107,13 @@ export function CustomPuzzleSession({ filters, onExit }: CustomPuzzleSessionProp
       setCurrentIndex((prev) => prev + 1);
     }
   }, [currentIndex, puzzles.length]);
+
+  // ─── Memoize current puzzle (MUST be before any early returns to follow Rules of Hooks) ───
+  const currentRawPuzzle = puzzles[currentIndex];
+  const currentPuzzle = useMemo(() => {
+    if (!currentRawPuzzle) return null;
+    return convertPuzzle(currentRawPuzzle);
+  }, [currentRawPuzzle]);
 
   // ─── Loading State ───────────────────────────────────────────────────────────
   if (loading) {
@@ -264,8 +271,6 @@ export function CustomPuzzleSession({ filters, onExit }: CustomPuzzleSessionProp
   }
 
   // ─── Active Puzzle ────────────────────────────────────────────────────────────
-  const currentRawPuzzle = puzzles[currentIndex];
-  const currentPuzzle = convertPuzzle(currentRawPuzzle);
 
   return (
     <div className="flex flex-col gap-6 w-full">
@@ -335,13 +340,15 @@ export function CustomPuzzleSession({ filters, onExit }: CustomPuzzleSessionProp
       </div>
 
       {/* Puzzle Board */}
-      <PuzzleBoard
-        puzzle={currentPuzzle}
-        puzzleNumber={`${currentIndex + 1}`}
-        onSolved={handleSolved}
-        onFailed={handleFailed}
-        onNextPuzzle={handleNextPuzzle}
-      />
+      {currentPuzzle && (
+        <PuzzleBoard
+          puzzle={currentPuzzle}
+          puzzleNumber={`${currentIndex + 1}`}
+          onSolved={handleSolved}
+          onFailed={handleFailed}
+          onNextPuzzle={handleNextPuzzle}
+        />
+      )}
 
       {/* Theme tags */}
       {currentRawPuzzle.themes.length > 0 && (
