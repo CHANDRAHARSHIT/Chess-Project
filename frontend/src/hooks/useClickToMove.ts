@@ -49,13 +49,13 @@ function buildOptionSquares(
     const isCapture = m.flags.includes('c') || m.flags.includes('e');
     styles[m.to] = isCapture
       ? {
-          // Hollow ring for captures (chess.com style)
-          background:
-            'radial-gradient(transparent 0%, transparent 78%, rgba(0,0,0,0.18) 79%)',
-          borderRadius: '50%',
+          // Red ring for capture squares — piece art remains visible through
+          // the transparent center, matching Chess.com / Lichess convention.
+          background: "rgba(220,38,38,0.5)",
+          borderRadius: "50%",
         }
       : {
-          // Filled dot for quiet moves
+          // Filled dark dot for quiet (non-capture) moves
           background:
             'radial-gradient(rgba(0,0,0,0.18) 22%, transparent 22%)',
           borderRadius: '50%',
