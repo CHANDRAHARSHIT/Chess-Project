@@ -284,31 +284,31 @@ export default function HeroPuzzle({ onDragStart, onDragEnd }: HeroPuzzleProps) 
 
   const isHeroVisibleRef = useRef(true);
 
-const heroSoundRef = useRef({
-  playMove: () => {
-    if (isHeroVisibleRef.current) soundManager.playMove();
-  },
-  playCapture: () => {
-    if (isHeroVisibleRef.current) soundManager.playCapture();
-  },
-  playCheck: () => {
-    if (isHeroVisibleRef.current) soundManager.playCheck();
-  },
-  playCheckmate: () => {
-    if (isHeroVisibleRef.current) soundManager.playCheckmate();
-  },
-  playApplause: () => {
-    if (isHeroVisibleRef.current) soundManager.playApplause();
-  },
+  const heroSoundRef = useRef({
+    playMove: () => {
+      if (isHeroVisibleRef.current) soundManager.playMove();
+    },
+    playCapture: () => {
+      if (isHeroVisibleRef.current) soundManager.playCapture();
+    },
+    playCheck: () => {
+      if (isHeroVisibleRef.current) soundManager.playCheck();
+    },
+    playCheckmate: () => {
+      if (isHeroVisibleRef.current) soundManager.playCheckmate();
+    },
+    playApplause: () => {
+      if (isHeroVisibleRef.current) soundManager.playApplause();
+    },
 
-  playLose: () => { 
-    if (isHeroVisibleRef.current) soundManager.playLose(); 
+    playLose: () => {
+      if (isHeroVisibleRef.current) soundManager.playLose();
 
-  },
-  playGameEnd: () => {
-    if (isHeroVisibleRef.current) soundManager.playGameEnd();
-  },
-});
+    },
+    playGameEnd: () => {
+      if (isHeroVisibleRef.current) soundManager.playGameEnd();
+    },
+  });
 
   // â”€â”€ State variables for Puzzle 0 (Evergreen Game Autoplay & Puzzle) â”€â”€â”€â”€â”€â”€â”€â”€
   const [phase0, setPhase0] = useState<
@@ -562,22 +562,22 @@ const heroSoundRef = useRef({
 
 
   useEffect(() => {
-  const el = containerRef.current;
-  if (!el) return;
+    const el = containerRef.current;
+    if (!el) return;
 
-  const observer = new IntersectionObserver(
-    ([entry]) => {
-      isHeroVisibleRef.current = entry.isIntersecting;
-    },
-    {
-      threshold: 0.1,
-    }
-  );
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isHeroVisibleRef.current = entry.isIntersecting;
+      },
+      {
+        threshold: 0.1,
+      }
+    );
 
-  observer.observe(el);
+    observer.observe(el);
 
-  return () => observer.disconnect();
-}, []);
+    return () => observer.disconnect();
+  }, []);
   // Magnetic piece hover effect removed to allow standard react-chessboard drag without interference
   // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
   // PREMIUM PIECE ANIMATION SYSTEM
@@ -958,7 +958,7 @@ const heroSoundRef = useRef({
     const checkmateFen = gameRef1.current.fen();
     const tempGame = new Chess(checkmateFen);
     const losingColor = tempGame.turn(); // the side that is in checkmate
-    const playerWon = losingColor === "b"; 
+    const playerWon = losingColor === "b";
     const { losingKingSq } = getKingSquares(checkmateFen);
 
     if (playerWon) {
@@ -2062,7 +2062,6 @@ const heroSoundRef = useRef({
                   : i === 2
                     ? checkedKingSquare2
                     : checkedKingSquare3;
-            const { losingKingSq, winningKingSq } = getKingSquares(boardFen);
             const boardIsInteractive =
               i === 0
                 ? phase0 === "PUZZLE" && !isStockfishThinking0
@@ -2171,24 +2170,7 @@ const heroSoundRef = useRef({
                           squareStyles: boardSquareStyles,
                           animationDurationInMs: 0,
                           allowDragging: isActive && boardIsInteractive,
-                          squareRenderer: ({ square, piece, children }) => {
-                            const isKing =
-                              piece?.pieceType === "wK" ||
-                              piece?.pieceType === "bK";
-                            const isLosingKing =
-                              isKing && square === losingKingSq;
-                            const isWinningKing =
-                              isKing && square === winningKingSq;
 
-                            let className = "piece-normal-container";
-                            if (isLosingKing) {
-                              className = "king-defeated-container";
-                            } else if (isWinningKing) {
-                              className = "king-winning-container";
-                            }
-
-                            return <div className={className}>{children}</div>;
-                          },
                         }}
                       />
 
