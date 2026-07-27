@@ -508,10 +508,10 @@ export default function ProductDemo() {
                   {/* Reset */}
                   <button
                     onClick={() => { handleReset(); }}
-                    disabled={isEditMode}
+                    disabled={!canUndo || isEditMode}
                     title="Reset game"
                     className="flex flex-col items-center justify-center gap-1.5 py-3 px-1 rounded-lg border border-[rgba(212,175,110,0.12)] bg-[#080B14] hover:bg-white/5 hover:border-red-500/40 text-[#8E8B82] hover:text-red-400 transition-all duration-200 disabled:opacity-40 group"
-                    style={{ cursor: isEditMode ? 'not-allowed' : 'pointer' }}
+                    style={{ cursor: (!canUndo || isEditMode) ? 'not-allowed' : 'pointer' }}
                   >
                     <RotateCcw className="w-5 h-5 group-hover:rotate-[-45deg] transition-transform duration-300" />
                     <span className="text-[10px] font-medium font-sans tracking-wide">Reset</span>

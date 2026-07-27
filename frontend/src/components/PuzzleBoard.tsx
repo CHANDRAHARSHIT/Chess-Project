@@ -3,7 +3,7 @@ import { ThemedChessboard } from "./ThemedChessboard";
 import { Chess } from "chess.js";
 import type { ChessPuzzle } from "../utils/PuzzleLoader";
 import { validateMove } from "../utils/PuzzleValidator";
-import { HelpCircle, RotateCcw, ArrowRight, Play, Check } from "lucide-react";
+import { HelpCircle, RotateCcw, ArrowRight, Play, Check, Undo2 } from "lucide-react";
 import { soundManager } from "../utils/SoundManager";
 import { BoardCoordinates } from "./BoardCoordinates";
 
@@ -199,6 +199,20 @@ export function PuzzleBoard({
     }
   }, [puzzleStatus, puzzle.solution]);
 
+  const canUndo = gameRef.current.history().length > 0;
+
+  const handleUndo = useCallback(() => {
+    const game = gameRef.current;
+    if (game.history().length === 0) return;
+    game.undo();
+    setGameFen(game.fen());
+    setPuzzleStatus("solving");
+    setLastMove(null);
+    setIsShaking(false);
+    setErrorSquares(null);
+    setHintSquare(null);
+  }, []);
+
   const handleReset = useCallback(() => {
     gameRef.current = new Chess(puzzle.fen);
     setGameFen(puzzle.fen);
@@ -291,7 +305,7 @@ export function PuzzleBoard({
         )}
       </div>
 
-      {/* Elegant Controls: Hint, Reset, Next Puzzle */}
+      {/* Elegant Controls: Hint, Undo, Reset, Next Puzzle */}
       <div className="flex items-center gap-3 sm:gap-4 pt-2 z-10">
         <button
           onClick={() => {
@@ -308,9 +322,22 @@ export function PuzzleBoard({
         <button
           onClick={() => {
             soundManager.playButtonClick();
+            handleUndo();
+          }}
+          disabled={!canUndo}
+          className="px-5 py-2.5 rounded-xl font-mono text-xs uppercase tracking-wider font-semibold bg-white/5 border border-white/10 hover:border-brand-accent/40 text-brand-secondary hover:text-white transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center gap-1.5 shadow-sm"
+        >
+          <Undo2 className="w-3.5 h-3.5" />
+          Undo
+        </button>
+
+        <button
+          onClick={() => {
+            soundManager.playButtonClick();
             handleReset();
           }}
-          className="px-5 py-2.5 rounded-xl font-mono text-xs uppercase tracking-wider font-semibold bg-white/5 border border-white/10 hover:border-brand-accent/40 text-brand-secondary hover:text-white transition-all duration-300 cursor-pointer flex items-center gap-1.5 shadow-sm"
+          disabled={!canUndo}
+          className="px-5 py-2.5 rounded-xl font-mono text-xs uppercase tracking-wider font-semibold bg-white/5 border border-white/10 hover:border-brand-accent/40 text-brand-secondary hover:text-white transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center gap-1.5 shadow-sm"
         >
           <RotateCcw className="w-3.5 h-3.5" />
           Reset
