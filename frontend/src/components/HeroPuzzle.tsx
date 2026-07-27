@@ -43,7 +43,16 @@ import { ThemedChessboard } from "./ThemedChessboard";
 import { Chess } from "chess.js";
 import { parseUciMove } from "../utils/chessHelpers";
 import { useStockfish } from "../hooks/useStockfish";
-import { RotateCcw, Play, SkipForward, Zap, ChevronLeft, ChevronRight, Volume2, VolumeX } from "lucide-react";
+import {
+  RotateCcw,
+  Play,
+  SkipForward,
+  Zap,
+  ChevronLeft,
+  ChevronRight,
+  Volume2,
+  VolumeX,
+} from "lucide-react";
 import { useConfetti } from "../hooks/useConfetti";
 import { useMoveTrail } from "../hooks/useMoveTrail";
 import { gsap } from "../utils/gsapConfig";
@@ -236,7 +245,6 @@ const historicalBlackMoves = [
 const START_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 const PUZZLE3_FEN = "7k/5p1P/5ppK/6P1/8/8/1q6/BQ6 w - - 4 1";
 
-
 const getKingSquares = (fen: string) => {
   const tempGame = new Chess(fen);
   let losingKingSq: string | null = null;
@@ -265,8 +273,10 @@ interface HeroPuzzleProps {
   onDragEnd?: () => void;
 }
 
-export default function HeroPuzzle({ onDragStart, onDragEnd }: HeroPuzzleProps) {
-
+export default function HeroPuzzle({
+  onDragStart,
+  onDragEnd,
+}: HeroPuzzleProps) {
   const soundManagerRef = useRef<SoundManager>(SoundManager.createInstance());
   const soundManager = soundManagerRef.current;
   const [isMuted, setIsMuted] = useState<boolean>(true);
@@ -303,7 +313,6 @@ export default function HeroPuzzle({ onDragStart, onDragEnd }: HeroPuzzleProps) 
 
     playLose: () => {
       if (isHeroVisibleRef.current) soundManager.playLose();
-
     },
     playGameEnd: () => {
       if (isHeroVisibleRef.current) soundManager.playGameEnd();
@@ -537,7 +546,6 @@ export default function HeroPuzzle({ onDragStart, onDragEnd }: HeroPuzzleProps) 
     return () => window.removeEventListener("resize", updateSize);
   }, []);
 
-
   const abortRef = useRef<boolean>(false);
   const autoplayInstanceRef = useRef<number>(0);
   // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
@@ -560,7 +568,6 @@ export default function HeroPuzzle({ onDragStart, onDragEnd }: HeroPuzzleProps) 
     );
   }, []);
 
-
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
@@ -571,7 +578,7 @@ export default function HeroPuzzle({ onDragStart, onDragEnd }: HeroPuzzleProps) 
       },
       {
         threshold: 0.1,
-      }
+      },
     );
 
     observer.observe(el);
@@ -1965,15 +1972,9 @@ export default function HeroPuzzle({ onDragStart, onDragEnd }: HeroPuzzleProps) 
           inactive slides = rotated mini-board preview cards that peek into view.
           â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       {/* Stage: clips the visible area so only the active board + partial previews show */}
-      <div
-        className="relative w-full"
-        style={{ overflow: "hidden" }}
-      >
+      <div className="relative w-full" style={{ overflow: "hidden" }}>
         {/* Outer glow for checkmate state */}
-        <div
-          className="absolute inset-0 rounded-xl pointer-events-none z-10"
-
-        />
+        <div className="absolute inset-0 rounded-xl pointer-events-none z-10" />
         {/* CHECKMATE impact overlay â€” GSAP toggles display:flex */}
         <div
           ref={checkmateRef}
@@ -2062,6 +2063,7 @@ export default function HeroPuzzle({ onDragStart, onDragEnd }: HeroPuzzleProps) 
                   : i === 2
                     ? checkedKingSquare2
                     : checkedKingSquare3;
+            const { losingKingSq, winningKingSq } = getKingSquares(boardFen);
             const boardIsInteractive =
               i === 0
                 ? phase0 === "PUZZLE" && !isStockfishThinking0
@@ -2170,16 +2172,41 @@ export default function HeroPuzzle({ onDragStart, onDragEnd }: HeroPuzzleProps) 
                           squareStyles: boardSquareStyles,
                           animationDurationInMs: 0,
                           allowDragging: isActive && boardIsInteractive,
-
                         }}
                       />
+
+                      {/* Losing king falldown & winning king glow animation via CSS (without squareRenderer to preserve click-to-move) */}
+                      {losingKingSq && (
+                        <style>{`
+                          #hero-chessboard-${i} [data-square="${losingKingSq}"] [data-piece],
+                          #hero-chessboard-${i} [data-square="${losingKingSq}"] img {
+                            transform: rotate(45deg) !important;
+                            transform-origin: center !important;
+                            transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1), filter 0.8s ease !important;
+                            filter: drop-shadow(0 0 5px rgba(239, 68, 68, 0.85)) sepia(1) saturate(12) hue-rotate(-50deg) brightness(0.7) contrast(1.1) !important;
+                          }
+                          ${
+                            winningKingSq
+                              ? `
+                          #hero-chessboard-${i} [data-square="${winningKingSq}"] [data-piece],
+                          #hero-chessboard-${i} [data-square="${winningKingSq}"] img {
+                            transition: filter 0.8s ease !important;
+                            filter: drop-shadow(0 0 5px rgba(34, 197, 94, 0.85)) sepia(1) saturate(12) hue-rotate(70deg) brightness(0.8) contrast(1.1) !important;
+                          }
+                          `
+                              : ""
+                          }
+                        `}</style>
+                      )}
 
                       {/* Move quality annotations */}
                       {isActive && (
                         <MoveAnnotation activeAnnotation={activeAnnotation} />
                       )}
 
-                      {isActive && <BoardCoordinates boardOrientation="white" />}
+                      {isActive && (
+                        <BoardCoordinates boardOrientation="white" />
+                      )}
                     </div>
                   </div>
                 </motion.div>
@@ -2204,10 +2231,11 @@ export default function HeroPuzzle({ onDragStart, onDragEnd }: HeroPuzzleProps) 
               <button
                 key={i}
                 onClick={() => toSlide(i)}
-                className={`rounded-full transition-all duration-300 ${activeIndex === i
-                  ? "w-5 h-1.5 bg-[#D4AF6E]"
-                  : "w-1.5 h-1.5 bg-brand-secondary/40 hover:bg-brand-secondary"
-                  }`}
+                className={`rounded-full transition-all duration-300 ${
+                  activeIndex === i
+                    ? "w-5 h-1.5 bg-[#D4AF6E]"
+                    : "w-1.5 h-1.5 bg-brand-secondary/40 hover:bg-brand-secondary"
+                }`}
               />
             ))}
           </div>
@@ -2245,7 +2273,6 @@ export default function HeroPuzzle({ onDragStart, onDragEnd }: HeroPuzzleProps) 
             </span>
           </div>
         </div>
-
       </div>
       {/* Action Buttons */}
       <div className="flex gap-3 mt-1">
@@ -2265,7 +2292,10 @@ export default function HeroPuzzle({ onDragStart, onDragEnd }: HeroPuzzleProps) 
                   btn-glow-container btn-glow-surface
                 "
               >
-                <SkipForward size={18} className="w-4 h-4 text-[#D4AF6E] animate-pulse" />
+                <SkipForward
+                  size={18}
+                  className="w-4 h-4 text-[#D4AF6E] animate-pulse"
+                />
                 Skip Animation
               </button>
             )}
@@ -2359,13 +2389,13 @@ export default function HeroPuzzle({ onDragStart, onDragEnd }: HeroPuzzleProps) 
               phase1 === "black_responding" ||
               phase1 === "awaiting_mate" ||
               phase1 === "failed") && (
-                <>
-                  <button
-                    onClick={() => {
-                      cleanupGame();
-                      initGame(1);
-                    }}
-                    className="
+              <>
+                <button
+                  onClick={() => {
+                    cleanupGame();
+                    initGame(1);
+                  }}
+                  className="
                     flex-1 flex items-center justify-center gap-2
                     px-4 py-2.5 rounded-lg
                     font-sans text-sm font-semibold
@@ -2375,13 +2405,13 @@ export default function HeroPuzzle({ onDragStart, onDragEnd }: HeroPuzzleProps) 
                     transition-all duration-200
                     btn-glow-container btn-glow-surface
                   "
-                  >
-                    <RotateCcw className="w-4 h-4 text-[#D4AF6E]" />
-                    Reset
-                  </button>
-                  <button
-                    onClick={handleSolve1}
-                    className="
+                >
+                  <RotateCcw className="w-4 h-4 text-[#D4AF6E]" />
+                  Reset
+                </button>
+                <button
+                  onClick={handleSolve1}
+                  className="
                     flex-1 flex items-center justify-center gap-2
                     px-4 py-2.5 rounded-lg
                     font-sans text-sm font-semibold
@@ -2391,12 +2421,12 @@ export default function HeroPuzzle({ onDragStart, onDragEnd }: HeroPuzzleProps) 
                     transition-all duration-200
                     btn-glow-container btn-glow-surface
                   "
-                  >
-                    <Play className="w-4 h-4 text-[#D4AF6E]" />
-                    Solve
-                  </button>
-                </>
-              )}
+                >
+                  <Play className="w-4 h-4 text-[#D4AF6E]" />
+                  Solve
+                </button>
+              </>
+            )}
             {phase1 === "solved" && (
               <button
                 onClick={handleReplayOriginal}
@@ -2438,13 +2468,13 @@ export default function HeroPuzzle({ onDragStart, onDragEnd }: HeroPuzzleProps) 
             {(phase2 === "idle" ||
               phase2 === "awaiting_move" ||
               phase2 === "failed") && (
-                <>
-                  <button
-                    onClick={() => {
-                      cleanupGame();
-                      initGame(2);
-                    }}
-                    className="
+              <>
+                <button
+                  onClick={() => {
+                    cleanupGame();
+                    initGame(2);
+                  }}
+                  className="
                     flex-1 flex items-center justify-center gap-2
                     px-4 py-2.5 rounded-lg
                     font-sans text-sm font-semibold
@@ -2454,12 +2484,12 @@ export default function HeroPuzzle({ onDragStart, onDragEnd }: HeroPuzzleProps) 
                     transition-all duration-200
                     btn-glow-container btn-glow-surface
                   "
-                  >
-                    <RotateCcw className="w-4 h-4 text-[#D4AF6E]" />
-                    Reset
-                  </button>
-                </>
-              )}
+                >
+                  <RotateCcw className="w-4 h-4 text-[#D4AF6E]" />
+                  Reset
+                </button>
+              </>
+            )}
             {phase2 === "solved" && (
               <button
                 onClick={() => {
@@ -2504,13 +2534,13 @@ export default function HeroPuzzle({ onDragStart, onDragEnd }: HeroPuzzleProps) 
             {(phase3 === "idle" ||
               phase3 === "awaiting_move" ||
               phase3 === "failed") && (
-                <>
-                  <button
-                    onClick={() => {
-                      cleanupGame();
-                      initGame(3);
-                    }}
-                    className="
+              <>
+                <button
+                  onClick={() => {
+                    cleanupGame();
+                    initGame(3);
+                  }}
+                  className="
                     flex-1 flex items-center justify-center gap-2
                     px-4 py-2.5 rounded-lg
                     font-sans text-sm font-semibold
@@ -2520,12 +2550,12 @@ export default function HeroPuzzle({ onDragStart, onDragEnd }: HeroPuzzleProps) 
                     transition-all duration-200
                     btn-glow-container btn-glow-surface
                   "
-                  >
-                    <RotateCcw className="w-4 h-4 text-[#D4AF6E]" />
-                    Reset
-                  </button>
-                </>
-              )}
+                >
+                  <RotateCcw className="w-4 h-4 text-[#D4AF6E]" />
+                  Reset
+                </button>
+              </>
+            )}
             {phase3 === "solved" && (
               <button
                 onClick={() => {
