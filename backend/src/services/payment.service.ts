@@ -1,6 +1,7 @@
 import { prisma } from "../config/prisma.js";
 import { env } from "../config/env.js";
 import Stripe from "stripe";
+import { CurrencyFormatter } from "../utils/CurrencyFormatter.js";
 import {
   handleSubscriptionCreatedOrUpdated,
   handleSubscriptionDeleted,
@@ -265,21 +266,17 @@ export class PaymentService {
         throw new Error("Access denied. Transaction profile mismatch.");
       }
     }
-
     // Read currency context from Stripe metadata (set during checkout session creation)
     const meta = session.metadata || {};
     const currency = (session.currency || meta.currency || "nzd").toUpperCase();
-    const symbol = meta.symbol || (currency === "NZD" ? "NZ$" : currency + " ");
+    const symbol = meta.symbol || CurrencyFormatter.getSymbol(currency);
     const amountRaw = session.amount_total ?? 0;
     const billing = (meta.billing as "monthly" | "yearly") || "monthly";
 
-    // Format the total paid using symbol from metadata.
-    // For zero-decimal currencies (JPY, KRW) amount is already in major units.
-    // For all others Stripe stores in cents (divide by 100).
-    const ZERO_DECIMAL = new Set(["JPY", "KRW", "BIF", "CLP", "GNF", "VND"]);
-    const divisor = ZERO_DECIMAL.has(currency) ? 1 : 100;
-    const amountMajor = amountRaw / divisor;
-    const totalPaidFormatted = meta.amountFormatted || `${symbol}${amountMajor}`;
+    // Format the total paid. Stripe stores zero-decimal currencies (JPY, KRW, etc.)
+    // in major units already; everything else is stored in minor units (cents).
+    const amountMajor = CurrencyFormatter.isZeroDecimal(currency) ? amountRaw : amountRaw / 100;
+    const totalPaidFormatted = meta.amountFormatted || CurrencyFormatter.format(amountMajor, currency);
 
     // Retrieve active DB subscription (synced by webhooks — may be slightly delayed)
     const subscription = await prisma.subscription.findFirst({

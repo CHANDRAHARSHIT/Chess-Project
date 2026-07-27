@@ -48,47 +48,27 @@ const DEFAULT_REGION: RegionInfo = {
   locale: "en-NZ",
 };
 
-const TIMEZONE_TO_COUNTRY: Record<string, string> = {
-  "Asia/Kolkata": "IN",
-  "Asia/Calcutta": "IN",
-  "Europe/London": "GB",
-  "Europe/Paris": "FR",
-  "Europe/Berlin": "DE",
-  "Europe/Rome": "IT",
-  "Europe/Madrid": "ES",
-  "Australia/Sydney": "AU",
-  "Australia/Melbourne": "AU",
-  "America/New_York": "US",
-  "America/Chicago": "US",
-  "America/Denver": "US",
-  "America/Los_Angeles": "US",
-  "America/Toronto": "CA",
-  "America/Vancouver": "CA",
-  "Asia/Tokyo": "JP",
-  "Pacific/Auckland": "NZ",
-};
-
 const LANG_PREFIX_TO_COUNTRY: Record<string, string> = {
-  "hi": "IN",
-  "ja": "JP",
-  "de": "DE",
-  "fr": "FR",
-  "it": "IT",
-  "es": "ES",
-  "ko": "KR",
-  "zh": "CN",
-  "pt": "BR",
-  "ru": "RU",
+  hi: "IN",
+  ja: "JP",
+  de: "DE",
+  fr: "FR",
+  it: "IT",
+  es: "ES",
+  ko: "KR",
+  zh: "CN",
+  pt: "BR",
+  ru: "RU",
 };
 
 export class RegionService {
   /**
-   * Detects the user's country following priority:
-   * 1. Cloudflare headers (cf-ipcountry)
-   * 2. Vercel Geo headers (x-vercel-ip-country)
-   * 3. IP Geolocation API (fallback fetch)
-   * 4. Accept-Language
-   * 5. Timezone
+   * Detects the user's country following priority (cheapest/most reliable first):
+   * 1. Dev override via ?country= query param (non-production only)
+   * 2. Cloudflare header (cf-ipcountry)
+   * 3. Vercel Geo header (x-vercel-ip-country)
+   * 4. Accept-Language header
+   * 5. IP Geolocation API (last resort — network call, only if nothing above matched)
    * 6. Default to NZ
    */
   public static async detectRegion(req?: Request): Promise<RegionInfo> {
@@ -97,7 +77,7 @@ export class RegionService {
     }
 
     try {
-      // 0. Development override via query param
+      // 1. Development override via query param
       if (process.env.NODE_ENV !== "production") {
         const queryCountry = req.query?.country as string;
         if (queryCountry) {
@@ -109,7 +89,7 @@ export class RegionService {
         }
       }
 
-      // 1. Cloudflare headers
+      // 2. Cloudflare header
       const cfCountry = req.headers["cf-ipcountry"];
       if (typeof cfCountry === "string" && cfCountry.length === 2 && cfCountry !== "XX") {
         const info = this.getRegionByCountryCode(cfCountry);
@@ -119,7 +99,7 @@ export class RegionService {
         }
       }
 
-      // 2. Vercel Geo headers
+      // 3. Vercel Geo header
       const vercelCountry = req.headers["x-vercel-ip-country"];
       if (typeof vercelCountry === "string" && vercelCountry.length === 2) {
         const info = this.getRegionByCountryCode(vercelCountry);
@@ -129,38 +109,9 @@ export class RegionService {
         }
       }
 
-      // Extract client IP address
-      const rawIp =
-        (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() ||
-        req.socket?.remoteAddress ||
-        "";
-
-      // If IP is valid public IP, perform IP Geolocation API lookup
-      if (rawIp && rawIp !== "127.0.0.1" && rawIp !== "::1" && !rawIp.startsWith("192.168.")) {
-        try {
-          const geoRes = await fetch(`https://ipapi.co/${rawIp}/json/`, {
-            headers: { "User-Agent": "XLChess-App/1.0" },
-            signal: AbortSignal.timeout(1500),
-          });
-          if (geoRes.ok) {
-            const geoData = await geoRes.json();
-            if (geoData.country_code) {
-              const info = this.getRegionByCountryCode(geoData.country_code);
-              if (info) {
-                console.log(`[RegionService]: Detected region via IP Geolocation: ${info.countryCode}`);
-                return info;
-              }
-            }
-          }
-        } catch (e) {
-          // Silent fallback to next strategy
-        }
-      }
-
-      // 4. Accept-Language header
+      // 4. Accept-Language header (instant, no network call)
       const acceptLang = req.headers["accept-language"];
       if (typeof acceptLang === "string") {
-        // e.g. "en-IN,en;q=0.9,hi;q=0.8" or "en-US"
         const parts = acceptLang.split(",")[0].trim();
         if (parts.includes("-")) {
           const countryCode = parts.split("-")[1].toUpperCase();
@@ -181,13 +132,30 @@ export class RegionService {
         }
       }
 
-      // 5. Timezone header/query
-      const tzHeader = (req.headers["x-timezone"] as string) || (req.query?.tz as string);
-      if (tzHeader && TIMEZONE_TO_COUNTRY[tzHeader]) {
-        const info = this.getRegionByCountryCode(TIMEZONE_TO_COUNTRY[tzHeader]);
-        if (info) {
-          console.log(`[RegionService]: Detected region via Timezone: ${info.countryCode}`);
-          return info;
+      // 5. IP Geolocation API — last resort, only reached if no header/language signal matched
+      const rawIp =
+        (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() ||
+        req.socket?.remoteAddress ||
+        "";
+
+      if (rawIp && rawIp !== "127.0.0.1" && rawIp !== "::1" && !rawIp.startsWith("192.168.")) {
+        try {
+          const geoRes = await fetch(`https://ipapi.co/${rawIp}/json/`, {
+            headers: { "User-Agent": "XLChess-App/1.0" },
+            signal: AbortSignal.timeout(1500),
+          });
+          if (geoRes.ok) {
+            const geoData = await geoRes.json();
+            if (geoData.country_code) {
+              const info = this.getRegionByCountryCode(geoData.country_code);
+              if (info) {
+                console.log(`[RegionService]: Detected region via IP Geolocation: ${info.countryCode}`);
+                return info;
+              }
+            }
+          }
+        } catch (e) {
+          // Silent fallback to default
         }
       }
     } catch (error) {

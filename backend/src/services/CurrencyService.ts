@@ -34,8 +34,7 @@ export class CurrencyService {
    * Fetches latest exchange rates with NZD base currency. Uses cache if valid.
    */
   public static async getExchangeRates(): Promise<Record<string, number>> {
-    const cache = ExchangeRateCache.getInstance();
-    const cachedRates = cache.getRates();
+    const cachedRates = ExchangeRateCache.getRates();
     if (cachedRates) {
       console.log("[CurrencyService]: Using cached exchange rates...");
       return cachedRates;
@@ -50,7 +49,7 @@ export class CurrencyService {
       if (response.ok) {
         const data = await response.json();
         if (data && data.rates) {
-          cache.setRates(data.rates, "NZD");
+          ExchangeRateCache.setRates(data.rates, "NZD");
           return data.rates;
         }
       }
@@ -60,7 +59,7 @@ export class CurrencyService {
     }
 
     // Cache fallback rates temporarily so repeated failures don't bombard network
-    cache.setRates(FALLBACK_NZD_EXCHANGE_RATES, "NZD");
+    ExchangeRateCache.setRates(FALLBACK_NZD_EXCHANGE_RATES, "NZD");
     return FALLBACK_NZD_EXCHANGE_RATES;
   }
 
@@ -78,11 +77,9 @@ export class CurrencyService {
 
     const rates = await this.getExchangeRates();
     const rate = rates[code] || FALLBACK_NZD_EXCHANGE_RATES[code] || 1.0;
-    const rawConverted = nzdAmount * rate;
 
-    // Standard rounding for display / DTO (rounded integer or round to 2 decimals)
     return {
-      convertedAmount: rawConverted,
+      convertedAmount: nzdAmount * rate,
       rate,
     };
   }

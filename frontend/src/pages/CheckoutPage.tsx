@@ -14,7 +14,7 @@ import { useSession } from "../hooks/useSession";
 import { AuthModal } from "../components/AuthModal";
 import { PaymentService } from "../services/payment";
 import { usePricing } from "../hooks/usePricing";
-import { PricingApi } from "../services/pricingApi";
+
 export default function CheckoutPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -78,7 +78,7 @@ export default function CheckoutPage() {
     setAuthModalOpen(true);
   };
 
-  const { pricing } = usePricing();
+  const { pricing, createCheckout } = usePricing();
 
   const symbol = pricing.symbol;
   const monthlyVal = pricing.monthly;
@@ -117,7 +117,7 @@ export default function CheckoutPage() {
 
     try {
       const billing = isYearly ? "yearly" : "monthly";
-      const response = await PricingApi.createCheckout("premium", billing);
+      const response = await createCheckout("premium", billing);
 
       if (response.status === "success" && (response.url || response.checkoutUrl)) {
         if ((response as any).sessionId) {
@@ -537,10 +537,10 @@ export default function CheckoutPage() {
                   <span className="text-[10px] font-mono tracking-tight font-extrabold">
                     AMEX
                   </span>
-                  <span className="text-[10px] font-mono tracking-tight font-extrabold font-sans">
+                  <span className="text-[10px] font-mono tracking-tight font-extrabold ">
                     GPay
                   </span>
-                  <span className="text-[10px] font-mono tracking-tight font-extrabold font-sans">
+                  <span className="text-[10px] font-mono tracking-tight font-extrabold ">
                     Apple Pay
                   </span>
                 </div>

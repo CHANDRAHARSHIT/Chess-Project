@@ -13,7 +13,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router";
-import { PricingApi } from "../services/pricingApi";
+import { usePricing } from "../hooks/usePricing";
 
 // Custom SVG Chess Pieces for premium decorative background
 const PieceSvg: React.FC<{
@@ -240,10 +240,12 @@ export default function PricingPage() {
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
   const [isRedirecting, setIsRedirecting] = useState(false);
 
-  const monthlyPriceFormatted = "$5.00 USD";
-  const yearlyPriceFormatted = "$20.40 USD";
-  const yearlySavingsFormatted = "$39.60 USD";
-  const equivMonthlyFormatted = "$1.70 USD";
+ const { pricing, createCheckout } = usePricing();
+
+const monthlyPriceFormatted = `${pricing.symbol}${pricing.monthly}`;
+const yearlyPriceFormatted = `${pricing.symbol}${pricing.yearly}`;
+const yearlySavingsFormatted = `${pricing.symbol}${Math.max(pricing.monthly * 12 - pricing.yearly, 0)}`;
+const equivMonthlyFormatted = `${pricing.symbol}${(pricing.yearly / 12).toFixed(2)}`;
 
   const [showSessionError, setShowSessionError] = useState(() => {
     const params = new URLSearchParams(location.search);
@@ -255,21 +257,21 @@ export default function PricingPage() {
     navigate("/");
   };
 
-  const handleUpgrade = async (planType: "Monthly" | "Yearly") => {
-    setIsRedirecting(true);
-    try {
-      const res = await PricingApi.createCheckout("premium", planType.toLowerCase() as "monthly" | "yearly");
-      if (res.status === "success" && (res.url || res.checkoutUrl)) {
-        window.location.href = res.url || res.checkoutUrl!;
-      } else {
-        alert(res.message || "Failed to initialize Stripe Checkout. Please try again.");
-        setIsRedirecting(false);
-      }
-    } catch (err: any) {
-      alert(err.message || "An unexpected error occurred.");
+ const handleUpgrade = async (planType: "Monthly" | "Yearly") => {
+  setIsRedirecting(true);
+  try {
+    const res = await createCheckout("premium", planType.toLowerCase() as "monthly" | "yearly");
+    if (res.status === "success" && (res.url || res.checkoutUrl)) {
+      window.location.href = res.url || res.checkoutUrl!;
+    } else {
+      alert(res.message || "Failed to initialize Stripe Checkout. Please try again.");
       setIsRedirecting(false);
     }
-  };
+  } catch (err: any) {
+    alert(err.message || "An unexpected error occurred.");
+    setIsRedirecting(false);
+  }
+};
 
   const faqs = [
     {

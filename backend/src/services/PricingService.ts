@@ -43,29 +43,23 @@ export class PricingService {
     locale = "en-NZ"
   ): Promise<PricingDTO> {
     const symbol = CurrencyFormatter.getSymbol(currency);
-    const isZeroDecimal = CurrencyFormatter.isZeroDecimal(currency);
 
     const { convertedAmount: monthlyConverted } = await CurrencyService.convertNZD(
       this.BASE_MONTHLY_NZD,
       currency
     );
-
     const { convertedAmount: yearlyConverted } = await CurrencyService.convertNZD(
       this.BASE_YEARLY_NZD,
       currency
     );
-
-    // Format amounts: round to integer if large or zero decimal currency, else standard round
-    const monthly = isZeroDecimal ? Math.round(monthlyConverted) : Math.round(monthlyConverted);
-    const yearly = isZeroDecimal ? Math.round(yearlyConverted) : Math.round(yearlyConverted);
 
     return {
       country,
       countryCode,
       currency: currency.toUpperCase(),
       symbol,
-      monthly,
-      yearly,
+      monthly: Math.round(monthlyConverted),
+      yearly: Math.round(yearlyConverted),
       locale,
       baseMonthlyNZD: this.BASE_MONTHLY_NZD,
       baseYearlyNZD: this.BASE_YEARLY_NZD,
@@ -78,7 +72,7 @@ export class PricingService {
       countryCode: "NZ",
       currency: "NZD",
       symbol: "NZ$",
-      monthly: 9, // Math.round(8.64) or 8.64
+      monthly: 9,
       yearly: 35,
       locale: "en-NZ",
       baseMonthlyNZD: this.BASE_MONTHLY_NZD,
