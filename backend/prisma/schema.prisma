@@ -165,6 +165,59 @@ model Opening {
   name  String
   pgn   String
   moves String
+
+  @@index([eco])
+  @@index([name])
+}
+
+model ChessOpening {
+  id               String             @id
+  slug             String             @unique
+  eco              String
+  name             String
+  pgn              String
+  title            String
+  description      String?
+  difficulty       OpeningDifficulty  @default(BEGINNER)
+  isActive         Boolean            @default(true)
+  displayOrder     Int                @default(0)
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime
+  ChessOpeningStep ChessOpeningStep[]
+
+  @@index([difficulty])
+  @@index([eco])
+}
+
+model ChessOpeningStep {
+  id             String       @id
+  openingId      String
+  stepOrder      Int
+  move           String
+  isOpponentMove Boolean      @default(false)
+  coachMessage   String
+  highlightFrom  String
+  highlightTo    String
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime
+  ChessOpening   ChessOpening @relation(fields: [openingId], references: [id], onDelete: Cascade)
+
+  @@unique([openingId, stepOrder])
+  @@index([openingId])
+}
+
+model CuratedPuzzle {
+  id              String   @id
+  fen             String
+  moves           String
+  rating          Int
+  ratingDeviation Int
+  popularity      Int
+  nbPlays         Int
+  themes          String[] @default([])
+  createdAt       DateTime @default(now())
+
+  @@index([rating])
 }
 
 model Course {

@@ -287,6 +287,23 @@ export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
   _max?: Prisma.NestedJsonNullableFilter<$PrismaModel>
 }
 
+export type EnumOpeningDifficultyFilter<$PrismaModel = never> = {
+  equals?: $Enums.OpeningDifficulty | Prisma.EnumOpeningDifficultyFieldRefInput<$PrismaModel>
+  in?: $Enums.OpeningDifficulty[] | Prisma.ListEnumOpeningDifficultyFieldRefInput<$PrismaModel>
+  notIn?: $Enums.OpeningDifficulty[] | Prisma.ListEnumOpeningDifficultyFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumOpeningDifficultyFilter<$PrismaModel> | $Enums.OpeningDifficulty
+}
+
+export type EnumOpeningDifficultyWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.OpeningDifficulty | Prisma.EnumOpeningDifficultyFieldRefInput<$PrismaModel>
+  in?: $Enums.OpeningDifficulty[] | Prisma.ListEnumOpeningDifficultyFieldRefInput<$PrismaModel>
+  notIn?: $Enums.OpeningDifficulty[] | Prisma.ListEnumOpeningDifficultyFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumOpeningDifficultyWithAggregatesFilter<$PrismaModel> | $Enums.OpeningDifficulty
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumOpeningDifficultyFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumOpeningDifficultyFilter<$PrismaModel>
+}
+
 export type JsonFilter<$PrismaModel = never> =
 | Prisma.PatchUndefined<
     Prisma.Either<Required<JsonFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonFilterBase<$PrismaModel>>, 'path'>>,
@@ -622,6 +639,23 @@ export type NestedJsonNullableFilterBase<$PrismaModel = never> = {
   gt?: runtime.InputJsonValue | Prisma.JsonFieldRefInput<$PrismaModel>
   gte?: runtime.InputJsonValue | Prisma.JsonFieldRefInput<$PrismaModel>
   not?: runtime.InputJsonValue | Prisma.JsonFieldRefInput<$PrismaModel> | Prisma.JsonNullValueFilter
+}
+
+export type NestedEnumOpeningDifficultyFilter<$PrismaModel = never> = {
+  equals?: $Enums.OpeningDifficulty | Prisma.EnumOpeningDifficultyFieldRefInput<$PrismaModel>
+  in?: $Enums.OpeningDifficulty[] | Prisma.ListEnumOpeningDifficultyFieldRefInput<$PrismaModel>
+  notIn?: $Enums.OpeningDifficulty[] | Prisma.ListEnumOpeningDifficultyFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumOpeningDifficultyFilter<$PrismaModel> | $Enums.OpeningDifficulty
+}
+
+export type NestedEnumOpeningDifficultyWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.OpeningDifficulty | Prisma.EnumOpeningDifficultyFieldRefInput<$PrismaModel>
+  in?: $Enums.OpeningDifficulty[] | Prisma.ListEnumOpeningDifficultyFieldRefInput<$PrismaModel>
+  notIn?: $Enums.OpeningDifficulty[] | Prisma.ListEnumOpeningDifficultyFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumOpeningDifficultyWithAggregatesFilter<$PrismaModel> | $Enums.OpeningDifficulty
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumOpeningDifficultyFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumOpeningDifficultyFilter<$PrismaModel>
 }
 
 export type NestedJsonFilter<$PrismaModel = never> =
