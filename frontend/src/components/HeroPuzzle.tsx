@@ -424,6 +424,8 @@ const heroSoundRef = useRef({
   const [, setIsCheckmateGlow3] = useState<boolean>(false);
 
   const hasCelebrated3Ref = useRef<boolean>(false);
+  const puzzle3StepRef = useRef<number>(0);
+  const puzzle4StepRef = useRef<number>(0);
   // â”€â”€ Safe Timers Ref â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const activeTimeoutsRef = useRef<number[]>([]);
   const pendingResolversRef = useRef<(() => void)[]>([]);
@@ -885,6 +887,7 @@ const heroSoundRef = useRef({
         setGameFen2("r5k1/6pp/r7/q3N1P1/3Q4/1Pp5/2P5/1K1R3R w - - 0 1");
         setPhase2("idle");
         hasCelebrated2Ref.current = false;
+        puzzle3StepRef.current = 0;
       } else if (index === 3) {
         setLastMove3(null);
         setCheckedKingSquare3(null);
@@ -893,6 +896,7 @@ const heroSoundRef = useRef({
         setGameFen3(PUZZLE3_FEN);
         setPhase3("idle");
         hasCelebrated3Ref.current = false;
+        puzzle4StepRef.current = 0;
       }
     },
     [runAutoplay0],
@@ -950,7 +954,7 @@ const heroSoundRef = useRef({
       });
     });
     const pool = safeMoves.length > 0 ? safeMoves : legalMoves;
-    return pool[Math.floor(Math.random() * pool.length)];
+    return pool[0] || null;
   }, []);
   const celebrateOriginal = useCallback(async () => {
     if (hasCelebratedOriginalRef.current) return;
@@ -1026,92 +1030,171 @@ const heroSoundRef = useRef({
         } else {
           heroSoundRef.current.playMove();
         }
-        // const history = game.history({ verbose: true });
-        // const lastEntry = history[history.length - 1];
-        // const displaySan = lastEntry.san.replace('x', '');
+
+        // Only trigger !! annotation for 1. Qd6 (h2 to d6)
+        const isQd6 = sourceSquare === "h2" && targetSquare === "d6";
+
         if (phase1 === "idle") {
           if (game.isCheckmate()) {
-            triggerAnnotation(targetSquare, "!!");
+            if (isQd6) {
+              triggerAnnotation(targetSquare, "!!");
+            }
             celebrateOriginal();
             return;
           }
           setPhase1("black_responding");
-          triggerAnnotation(targetSquare, "!!");
+          if (isQd6) {
+            triggerAnnotation(targetSquare, "!!");
+          }
           safeSetTimeout(() => {
             if (solveAbortRef.current) return;
-            const blackMove = pickSafeBlackMoveOriginal();
-            if (blackMove) {
-              const probe = new Chess(game.fen());
-              const moveResult = probe.move(blackMove);
-              if (moveResult) {
+            getEngineMove(game.fen(), 5, (bestMoveStr) => {
+              if (solveAbortRef.current) return;
+              let blackMoveFrom: string | null = null;
+              let blackMoveTo: string | null = null;
+              let blackMovePromotion: string | undefined;
+              let isEngineCaptured = false;
+
+              if (bestMoveStr) {
+                const { from, to, promotion } = parseUciMove(bestMoveStr);
+                const legalMoves = game.moves({ verbose: true });
+                const engineMove = legalMoves.find(
+                  (m) => m.from === from && m.to === to,
+                );
+                if (engineMove) {
+                  blackMoveFrom = from;
+                  blackMoveTo = to;
+                  blackMovePromotion = promotion || "q";
+                  isEngineCaptured = !!engineMove.captured;
+                }
+              }
+
+              if (!blackMoveFrom || !blackMoveTo) {
+                const fallbackMove = pickSafeBlackMoveOriginal();
+                if (fallbackMove) {
+                  const probe = new Chess(game.fen());
+                  const res = probe.move(fallbackMove);
+                  if (res) {
+                    blackMoveFrom = res.from;
+                    blackMoveTo = res.to;
+                    blackMovePromotion = res.promotion;
+                    isEngineCaptured = !!res.captured;
+                  }
+                }
+              }
+
+              if (blackMoveFrom && blackMoveTo) {
+                const fromSq = blackMoveFrom;
+                const toSq = blackMoveTo;
+                const prom = blackMovePromotion;
+                const captured = isEngineCaptured;
+
                 animatePieceMove(
-                  moveResult.from,
-                  moveResult.to,
+                  fromSq,
+                  toSq,
                   boardInnerRef.current,
-                  !!moveResult.captured,
+                  captured,
                   () => {
-                    gameRef1.current.move(blackMove);
+                    gameRef1.current.move({ from: fromSq, to: toSq, promotion: prom || "q" });
                     setGameFen1(gameRef1.current.fen());
-                    setLastMove1({ from: moveResult.from, to: moveResult.to });
-                    showTrail(moveResult.from, moveResult.to);
+                    setLastMove1({ from: fromSq, to: toSq });
+                    showTrail(fromSq, toSq);
                   },
                 ).then(() => {
-                  // Black's response sound
-                  if (!!moveResult.captured) {
+                  if (captured) {
                     heroSoundRef.current.playCapture();
                   } else {
                     heroSoundRef.current.playMove();
                   }
-                  setPhase1("awaiting_mate");
+                  if (gameRef1.current.isCheckmate()) {
+                    celebrateOriginal();
+                  } else {
+                    setPhase1("awaiting_mate");
+                  }
                 });
               } else {
                 setPhase1("awaiting_mate");
               }
-            } else {
-              setPhase1("awaiting_mate");
-            }
+            });
           }, 600);
         } else if (phase1 === "awaiting_mate") {
           if (game.isCheckmate()) {
+            if (isQd6) {
+              triggerAnnotation(targetSquare, "!!");
+            }
             celebrateOriginal();
           } else {
             setPhase1("black_responding");
             safeSetTimeout(() => {
               if (solveAbortRef.current) return;
-              const blackMove = pickSafeBlackMoveOriginal();
-              if (blackMove) {
-                const probe = new Chess(game.fen());
-                const moveResult = probe.move(blackMove);
-                if (moveResult) {
+              getEngineMove(game.fen(), 5, (bestMoveStr) => {
+                if (solveAbortRef.current) return;
+                let blackMoveFrom: string | null = null;
+                let blackMoveTo: string | null = null;
+                let blackMovePromotion: string | undefined;
+                let isEngineCaptured = false;
+
+                if (bestMoveStr) {
+                  const { from, to, promotion } = parseUciMove(bestMoveStr);
+                  const legalMoves = game.moves({ verbose: true });
+                  const engineMove = legalMoves.find(
+                    (m) => m.from === from && m.to === to,
+                  );
+                  if (engineMove) {
+                    blackMoveFrom = from;
+                    blackMoveTo = to;
+                    blackMovePromotion = promotion || "q";
+                    isEngineCaptured = !!engineMove.captured;
+                  }
+                }
+
+                if (!blackMoveFrom || !blackMoveTo) {
+                  const fallbackMove = pickSafeBlackMoveOriginal();
+                  if (fallbackMove) {
+                    const probe = new Chess(game.fen());
+                    const res = probe.move(fallbackMove);
+                    if (res) {
+                      blackMoveFrom = res.from;
+                      blackMoveTo = res.to;
+                      blackMovePromotion = res.promotion;
+                      isEngineCaptured = !!res.captured;
+                    }
+                  }
+                }
+
+                if (blackMoveFrom && blackMoveTo) {
+                  const fromSq = blackMoveFrom;
+                  const toSq = blackMoveTo;
+                  const prom = blackMovePromotion;
+                  const captured = isEngineCaptured;
+
                   animatePieceMove(
-                    moveResult.from,
-                    moveResult.to,
+                    fromSq,
+                    toSq,
                     boardInnerRef.current,
-                    !!moveResult.captured,
+                    captured,
                     () => {
-                      gameRef1.current.move(blackMove);
+                      gameRef1.current.move({ from: fromSq, to: toSq, promotion: prom || "q" });
                       setGameFen1(gameRef1.current.fen());
-                      setLastMove1({
-                        from: moveResult.from,
-                        to: moveResult.to,
-                      });
-                      showTrail(moveResult.from, moveResult.to);
+                      setLastMove1({ from: fromSq, to: toSq });
+                      showTrail(fromSq, toSq);
                     },
                   ).then(() => {
-                    // Black's response sound
-                    if (!!moveResult.captured) {
+                    if (captured) {
                       heroSoundRef.current.playCapture();
                     } else {
                       heroSoundRef.current.playMove();
                     }
-                    setPhase1("awaiting_mate");
+                    if (gameRef1.current.isCheckmate()) {
+                      celebrateOriginal();
+                    } else {
+                      setPhase1("awaiting_mate");
+                    }
                   });
                 } else {
                   setPhase1("awaiting_mate");
                 }
-              } else {
-                setPhase1("awaiting_mate");
-              }
+              });
             }, 600);
           }
         }
@@ -1127,6 +1210,7 @@ const heroSoundRef = useRef({
       animatePieceMove,
       showTrail,
       safeSetTimeout,
+      getEngineMove,
     ],
   );
   const handleSolve1 = useCallback(async () => {
@@ -1357,6 +1441,21 @@ const heroSoundRef = useRef({
         },
       ).then(() => {
         if (solveAbortRef.current) return;
+
+        // Evaluate !! annotation for White's move in Puzzle #4
+        if (puzzle4StepRef.current === 0 && sourceSquare === "b1" && targetSquare === "c2") {
+          triggerAnnotation(targetSquare, "!!");
+          puzzle4StepRef.current = 1;
+        } else if (puzzle4StepRef.current === 2 && sourceSquare === "c2" && targetSquare === "d3") {
+          triggerAnnotation(targetSquare, "!!");
+          puzzle4StepRef.current = 3;
+        } else if (puzzle4StepRef.current === 4 && sourceSquare === "d3" && targetSquare === "e4") {
+          triggerAnnotation(targetSquare, "!!");
+          puzzle4StepRef.current = 5;
+        } else {
+          puzzle4StepRef.current = -1; // Script broken or past 5th move
+        }
+
         // Play sound for user's move
         if (game.isGameOver()) {
           celebrate3();
@@ -1371,7 +1470,6 @@ const heroSoundRef = useRef({
         }
 
         setPhase3("black_responding");
-        triggerAnnotation(targetSquare, "!!");
 
         safeSetTimeout(() => {
           if (solveAbortRef.current) return;
@@ -1383,6 +1481,17 @@ const heroSoundRef = useRef({
               (m) => m.from === from && m.to === to,
             );
             if (engineMove) {
+              // Evaluate !! annotation for Black's move in Puzzle #4
+              if (puzzle4StepRef.current === 1 && from === "b2" && to === "c3") {
+                triggerAnnotation(to, "!!");
+                puzzle4StepRef.current = 2;
+              } else if (puzzle4StepRef.current === 3 && from === "c3" && to === "d4") {
+                triggerAnnotation(to, "!!");
+                puzzle4StepRef.current = 4;
+              } else {
+                puzzle4StepRef.current = -1; // Script broken or past 5th move
+              }
+
               animatePieceMove(
                 from,
                 to,
@@ -1408,6 +1517,7 @@ const heroSoundRef = useRef({
                 }
               });
             } else {
+              puzzle4StepRef.current = -1;
               setPhase3("awaiting_move");
             }
           });
@@ -1453,6 +1563,27 @@ const heroSoundRef = useRef({
         },
       ).then(() => {
         if (solveAbortRef.current) return;
+
+        // Evaluate !! annotation for White's move in Puzzle #3
+        if (puzzle3StepRef.current === 0 && sourceSquare === "d4" && targetSquare === "c4") {
+          triggerAnnotation(targetSquare, "!!");
+          puzzle3StepRef.current = 1;
+        } else if (puzzle3StepRef.current === 2 && sourceSquare === "e5" && targetSquare === "f7") {
+          triggerAnnotation(targetSquare, "!!");
+          puzzle3StepRef.current = 3;
+        } else if (puzzle3StepRef.current === 4 && sourceSquare === "f7" && targetSquare === "h6") {
+          triggerAnnotation(targetSquare, "!!");
+          puzzle3StepRef.current = 5;
+        } else if (puzzle3StepRef.current === 6 && sourceSquare === "c4" && targetSquare === "g8") {
+          triggerAnnotation(targetSquare, "!!");
+          puzzle3StepRef.current = 7;
+        } else if (puzzle3StepRef.current === 8 && sourceSquare === "h6" && targetSquare === "f7") {
+          triggerAnnotation(targetSquare, "!!");
+          puzzle3StepRef.current = 9;
+        } else {
+          puzzle3StepRef.current = -1; // Script broken or past 9th move
+        }
+
         // Play sound for user's move
         if (game.isGameOver()) {
           celebrate2();
@@ -1468,7 +1599,6 @@ const heroSoundRef = useRef({
 
         // Trigger Stockfish response for Black
         setPhase2("black_responding");
-        triggerAnnotation(targetSquare, "!!");
 
         safeSetTimeout(() => {
           if (solveAbortRef.current) return;
@@ -1480,6 +1610,23 @@ const heroSoundRef = useRef({
               (m) => m.from === from && m.to === to,
             );
             if (engineMove) {
+              // Evaluate !! annotation for Black's move in Puzzle #3
+              if (puzzle3StepRef.current === 1 && from === "g8" && to === "h8") {
+                triggerAnnotation(to, "!!");
+                puzzle3StepRef.current = 2;
+              } else if (puzzle3StepRef.current === 3 && from === "h8" && to === "g8") {
+                triggerAnnotation(to, "!!");
+                puzzle3StepRef.current = 4;
+              } else if (puzzle3StepRef.current === 5 && from === "g8" && to === "h8") {
+                triggerAnnotation(to, "!!");
+                puzzle3StepRef.current = 6;
+              } else if (puzzle3StepRef.current === 7 && to === "g8") {
+                triggerAnnotation(to, "!!");
+                puzzle3StepRef.current = 8;
+              } else {
+                puzzle3StepRef.current = -1; // Script broken or past 9th move
+              }
+
               animatePieceMove(
                 from,
                 to,
@@ -1505,6 +1652,7 @@ const heroSoundRef = useRef({
                 }
               });
             } else {
+              puzzle3StepRef.current = -1;
               setPhase2("awaiting_move");
             }
           });
