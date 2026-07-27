@@ -4,15 +4,15 @@
  * Redesigned to match the assignment directory exactly.
  */
 
-import { useRef, useState, useEffect } from 'react';
-import { useGSAP } from '../hooks/useGSAP';
-import { usePerspectiveTilt } from '../hooks/usePerspectiveTilt';
-import { useMagneticButton } from '../hooks/useMagneticButton';
-import { useButtonGlow } from '../hooks/useButtonGlow';
-import { gsap, dur, ease } from '../utils/gsapConfig';
-import HeroPuzzle from './HeroPuzzle';
-import { AuthModal } from './AuthModal';
-import { useSearchParams } from 'react-router';
+import { useRef, useState, useEffect } from "react";
+import { useGSAP } from "../hooks/useGSAP";
+import { usePerspectiveTilt } from "../hooks/usePerspectiveTilt";
+import { useMagneticButton } from "../hooks/useMagneticButton";
+import { useButtonGlow } from "../hooks/useButtonGlow";
+import { gsap, dur, ease } from "../utils/gsapConfig";
+import HeroPuzzle from "./HeroPuzzle";
+import { AuthModal } from "./AuthModal";
+import { useSearchParams } from "react-router";
 
 export default function Hero() {
   // Authentication states
@@ -47,9 +47,6 @@ export default function Hero() {
   const boardColRef = useRef<HTMLDivElement>(null);
   const boardCardRef = useRef<HTMLDivElement>(null);
 
-  const beam1Ref = useRef<HTMLDivElement>(null);
-  const beam2Ref = useRef<HTMLDivElement>(null);
-
   const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
@@ -73,7 +70,7 @@ export default function Hero() {
     maxRotate: 6,
     scalePeak: 1.03,
     quickToDuration: 0.35,
-    quickToEase: 'power2.out',
+    quickToEase: "power2.out",
     floatDistance: 8,
     floatDuration: 3,
     paused: isDragging,
@@ -84,11 +81,18 @@ export default function Hero() {
 
   // Merge glow ref onto the anchor element
   const mergedPlayRef = (el: HTMLAnchorElement | null) => {
-    (primaryGlowRef as React.MutableRefObject<HTMLAnchorElement | null>).current = el;
-    (ctaAnchorRef as React.MutableRefObject<HTMLAnchorElement | null>).current = el;
+    (
+      primaryGlowRef as React.MutableRefObject<HTMLAnchorElement | null>
+    ).current = el;
+    (ctaAnchorRef as React.MutableRefObject<HTMLAnchorElement | null>).current =
+      el;
   };
 
-  useMagneticButton({ targetRef: playIconRef, containerRef: ctaAnchorRef, magneticStrength: 1.0 });
+  useMagneticButton({
+    targetRef: playIconRef,
+    containerRef: ctaAnchorRef,
+    magneticStrength: 1.0,
+  });
 
   // ── GSAP entrance animations ───────────────────────────────────────────────
   useGSAP(
@@ -100,53 +104,62 @@ export default function Hero() {
       // ① Logo — cinematic fade-down
       tl.fromTo(
         heroLogoRef.current,
-        { opacity: 0, y: -28, filter: 'blur(6px)' },
-        { opacity: 1, y: 0, filter: 'blur(0px)', duration: 1.0, ease: 'expo.out' },
-        0
+        { opacity: 0, y: -28, filter: "blur(6px)" },
+        {
+          opacity: 1,
+          y: 0,
+          filter: "blur(0px)",
+          duration: 1.0,
+          ease: "expo.out",
+        },
+        0,
       );
 
       // Make containers visible
-      if (line1Ref.current) line1Ref.current.style.opacity = '1';
-      if (subtitleRef.current) subtitleRef.current.style.opacity = '1';
+      if (line1Ref.current) line1Ref.current.style.opacity = "1";
+      if (subtitleRef.current) subtitleRef.current.style.opacity = "1";
 
       // ── Custom SplitText Utility ─────────────────────────────────────────
-      const splitText = (element: HTMLElement | null, type: 'char' | 'word') => {
+      const splitText = (
+        element: HTMLElement | null,
+        type: "char" | "word",
+      ) => {
         if (!element) return { spans: [] };
-        const text = element.textContent?.trim() || '';
-        element.setAttribute('aria-label', text);
-        element.innerHTML = '';
-        const chunks = type === 'char' ? text.split('') : text.split(' ');
+        const text = element.textContent?.trim() || "";
+        element.setAttribute("aria-label", text);
+        element.innerHTML = "";
+        const chunks = type === "char" ? text.split("") : text.split(" ");
         const spans: HTMLSpanElement[] = [];
         chunks.forEach((chunk, index) => {
-          if (type === 'char' && chunk === ' ') {
-            element.appendChild(document.createTextNode(' '));
+          if (type === "char" && chunk === " ") {
+            element.appendChild(document.createTextNode(" "));
             return;
           }
-          const span = document.createElement('span');
-          span.style.display = 'inline-block';
-          span.style.opacity = '0';
-          span.style.willChange = 'transform, opacity';
-          span.setAttribute('aria-hidden', 'true');
+          const span = document.createElement("span");
+          span.style.display = "inline-block";
+          span.style.opacity = "0";
+          span.style.willChange = "transform, opacity";
+          span.setAttribute("aria-hidden", "true");
           span.textContent = chunk;
           element.appendChild(span);
           spans.push(span);
-          if (type === 'word' && index < chunks.length - 1) {
-            element.appendChild(document.createTextNode(' '));
+          if (type === "word" && index < chunks.length - 1) {
+            element.appendChild(document.createTextNode(" "));
           }
         });
         return { spans };
       };
 
-      const splitL1 = splitText(line1Ref.current, 'word');
-      const splitS1 = splitText(subPara1Ref.current, 'word');
-      const splitS2 = splitText(subPara2Ref.current, 'word');
+      const splitL1 = splitText(line1Ref.current, "word");
+      const splitS1 = splitText(subPara1Ref.current, "word");
+      const splitS2 = splitText(subPara2Ref.current, "word");
 
       // Eyebrow label reveal
       tl.fromTo(
         eyebrowRef.current,
         { opacity: 0, x: -20 },
-        { opacity: 1, x: 0, duration: 0.7, ease: 'expo.out' },
-        0.2
+        { opacity: 1, x: 0, duration: 0.7, ease: "expo.out" },
+        0.2,
       );
 
       // ② Headline — cinematic stagger
@@ -159,33 +172,33 @@ export default function Hero() {
           rotationX: 0,
           duration: 0.9,
           stagger: 0.07,
-          ease: 'expo.out',
-          transformOrigin: '50% 100%',
+          ease: "expo.out",
+          transformOrigin: "50% 100%",
         },
-        0.35
+        0.35,
       );
 
       // Rule reveal
       tl.fromTo(
         ruleRef.current,
         { width: 0, opacity: 0 },
-        { width: '40px', opacity: 1, duration: 0.8, ease: 'expo.out' },
-        '-=0.2'
+        { width: "40px", opacity: 1, duration: 0.8, ease: "expo.out" },
+        "-=0.2",
       );
 
       // ③ Subtitle — word-by-word blur dissolve
       tl.fromTo(
         [...splitS1.spans, ...splitS2.spans],
-        { opacity: 0, y: 16, filter: 'blur(5px)' },
+        { opacity: 0, y: 16, filter: "blur(5px)" },
         {
           opacity: 1,
           y: 0,
-          filter: 'blur(0px)',
+          filter: "blur(0px)",
           duration: 0.85,
           stagger: 0.018,
-          ease: 'expo.out',
+          ease: "expo.out",
         },
-        '-=0.5'
+        "-=0.5",
       );
 
       // ④ CTA — spring entrance
@@ -193,63 +206,70 @@ export default function Hero() {
         ctaRef.current,
         { opacity: 0, y: 20, scale: 0.95 },
         { opacity: 1, y: 0, scale: 1, duration: dur(0.6), ease: ease.spring },
-        '-=0.35'
+        "-=0.35",
       );
 
       // ⑤ Board column — cinematic entrance
       tl.fromTo(
         boardColRef.current,
         { opacity: 0, x: 90, rotation: -4 },
-        { opacity: 1, x: 0, rotation: 0, duration: dur(1.3), ease: 'power2.out' },
-        0.25
+        {
+          opacity: 1,
+          x: 0,
+          rotation: 0,
+          duration: dur(1.3),
+          ease: "power2.out",
+        },
+        0.25,
       );
 
-      // ── Ambient light beams ────────────────────────────────────────────
-      if (beam1Ref.current) {
-        gsap.to(beam1Ref.current, {
-          x: '+=30', opacity: 0.04, duration: 12,
-          ease: 'sine.inOut', repeat: -1, yoyo: true,
-        });
-      }
-      if (beam2Ref.current) {
-        gsap.to(beam2Ref.current, {
-          x: '-=20', opacity: 0.03, duration: 15,
-          ease: 'sine.inOut', repeat: -1, yoyo: true, delay: 3,
-        });
-      }
-
       // ── Background orbs drift ──────────────────────────────────────────
-      const orbA = heroRef.current.querySelector('.hero-orb-a');
-      const orbB = heroRef.current.querySelector('.hero-orb-b');
+      const orbA = heroRef.current.querySelector(".hero-orb-a");
+      const orbB = heroRef.current.querySelector(".hero-orb-b");
       if (orbA) {
         gsap.to(orbA, {
-          x: '+=60', y: '-=40', scale: 1.15, duration: 18,
-          ease: 'sine.inOut', repeat: -1, yoyo: true,
+          x: "+=60",
+          y: "-=40",
+          scale: 1.15,
+          duration: 18,
+          ease: "sine.inOut",
+          repeat: -1,
+          yoyo: true,
         });
       }
       if (orbB) {
         gsap.to(orbB, {
-          x: '-=40', y: '+=60', scale: 0.9, duration: 22,
-          ease: 'sine.inOut', repeat: -1, yoyo: true,
+          x: "-=40",
+          y: "+=60",
+          scale: 0.9,
+          duration: 22,
+          ease: "sine.inOut",
+          repeat: -1,
+          yoyo: true,
         });
       }
 
-      const orbC = heroRef.current.querySelector('.hero-orb-c');
+      const orbC = heroRef.current.querySelector(".hero-orb-c");
       if (orbC) {
         gsap.to(orbC, {
-          x: '+=30', y: '-=20', scale: 1.1, duration: 14,
-          ease: 'sine.inOut', repeat: -1, yoyo: true,
+          x: "+=30",
+          y: "-=20",
+          scale: 1.1,
+          duration: 14,
+          ease: "sine.inOut",
+          repeat: -1,
+          yoyo: true,
         });
       }
 
       // ── Play icon glow pulse ───────────────────────────────────────────
       if (playIconRef.current) {
         gsap.to(playIconRef.current, {
-          filter: 'drop-shadow(0 0 10px rgba(212, 175, 110, 0.5))',
+          filter: "drop-shadow(0 0 10px rgba(212, 175, 110, 0.5))",
           duration: 2.5,
           repeat: -1,
           yoyo: true,
-          ease: 'sine.inOut',
+          ease: "sine.inOut",
         });
       }
 
@@ -257,107 +277,86 @@ export default function Hero() {
       const ctaEl = ctaAnchorRef.current;
       const textEl = playTextRef.current;
       if (ctaEl && textEl) {
-        const chars = textEl.querySelectorAll('.play-char');
+        const chars = textEl.querySelectorAll(".play-char");
 
         const onMouseEnter = () => {
           gsap.to(chars, {
-            y: -18, opacity: 0, duration: 0.22,
-            stagger: 0.028, ease: 'power2.in', overwrite: true,
+            y: -18,
+            opacity: 0,
+            duration: 0.22,
+            stagger: 0.028,
+            ease: "power2.in",
+            overwrite: true,
           });
         };
 
         const onMouseLeave = () => {
-          gsap.fromTo(chars,
+          gsap.fromTo(
+            chars,
             { y: 16, opacity: 0 },
             {
-              y: 0, opacity: 1, duration: 0.38,
-              stagger: 0.045, ease: 'back.out(1.6)', overwrite: true,
-            }
+              y: 0,
+              opacity: 1,
+              duration: 0.38,
+              stagger: 0.045,
+              ease: "back.out(1.6)",
+              overwrite: true,
+            },
           );
         };
 
-        ctaEl.addEventListener('mouseenter', onMouseEnter);
-        ctaEl.addEventListener('mouseleave', onMouseLeave);
+        ctaEl.addEventListener("mouseenter", onMouseEnter);
+        ctaEl.addEventListener("mouseleave", onMouseLeave);
 
         return () => {
-          ctaEl.removeEventListener('mouseenter', onMouseEnter);
-          ctaEl.removeEventListener('mouseleave', onMouseLeave);
+          ctaEl.removeEventListener("mouseenter", onMouseEnter);
+          ctaEl.removeEventListener("mouseleave", onMouseLeave);
         };
       }
     },
     heroRef,
-    []
+    [],
   );
 
   return (
     <header
       ref={heroRef}
-      className="relative pt-28 pb-20 md:pt-36 md:pb-32 overflow-hidden"
+      className="relative pt-20 pb-20 md:pt-20 md:pb-32 overflow-hidden"
       id="hero-section"
     >
-      {/* ── Ambient light beams ──────────────────────────────────────────── */}
-      <div
-        ref={beam1Ref}
-        className="hero-beam"
-        style={{
-          left: '22%',
-          opacity: 0.025,
-          animationDelay: '0s',
-        }}
-        aria-hidden="true"
-      />
-      <div
-        ref={beam2Ref}
-        className="hero-beam"
-        style={{
-          left: '58%',
-          opacity: 0.018,
-          animationDelay: '-4s',
-          animationDuration: '11s',
-        }}
-        aria-hidden="true"
-      />
-
       {/* ── Background glow orbs ─────────────────────────────────────────── */}
       <div
         className="hero-orb-a absolute top-1/4 left-1/3 w-[600px] h-[600px] rounded-full blur-[140px] pointer-events-none"
-        style={{ background: 'rgba(212, 175, 110, 0.04)' }}
+        style={{ background: "rgba(212, 175, 110, 0.04)" }}
         aria-hidden="true"
       />
       <div
         className="hero-orb-b absolute top-0 right-10 w-[400px] h-[400px] rounded-full blur-[120px] pointer-events-none"
-        style={{ background: 'rgba(212, 175, 110, 0.03)' }}
+        style={{ background: "rgba(212, 175, 110, 0.03)" }}
         aria-hidden="true"
       />
       <div
         className="hero-orb-c absolute bottom-0 right-1/4 w-[500px] h-[500px] rounded-full blur-[120px] pointer-events-none"
-        style={{ background: 'rgba(180, 147, 74, 0.02)' }}
+        style={{ background: "rgba(180, 147, 74, 0.02)" }}
         aria-hidden="true"
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 lg:items-center">
-
           {/* ── Text Column ────────────────────────────────────────────────── */}
           <div className="lg:col-span-6 space-y-8 md:space-y-10 text-left">
-
-
             {/* Editorial headline */}
             <h1
               className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-7xl tracking-editorial leading-[0.95]"
-              style={{ color: 'var(--text-primary)' }}
+              style={{ color: "var(--text-primary)" }}
             >
-              <span
-                ref={line1Ref}
-                className="block"
-                style={{ opacity: 0 }}
-              >
+              <span ref={line1Ref} className="block" style={{ opacity: 0 }}>
                 Build the Future of
               </span>
               <span
                 ref={line2Ref}
                 className="block text-gold-gradient font-display"
-                style={{ opacity: 0, fontStyle: 'italic', fontWeight: 400 }}
+                style={{ opacity: 0, fontStyle: "italic", fontWeight: 400 }}
               >
                 Online Chess
               </span>
@@ -380,9 +379,10 @@ export default function Hero() {
               <p
                 ref={subPara2Ref}
                 className="font-sans text-base sm:text-[17px] leading-relaxed"
-                style={{ color: 'var(--text-secondary)' }}
+                style={{ color: "var(--text-secondary)" }}
               >
-                A complete chess platform to play, learn, compete, and grow—built to become the world's #1 destination for chess.
+                A complete chess platform to play, learn, compete, and
+                grow—built to become the world's #1 destination for chess.
               </p>
             </div>
 
@@ -404,12 +404,12 @@ export default function Hero() {
                   group
                 "
                 style={{
-                  transformStyle: 'preserve-3d',
-                  willChange: 'transform',
-                  width: '140px',
-                  height: '60px',
-                  padding: '0 10px',
-                  fontSize: '13px',
+                  transformStyle: "preserve-3d",
+                  willChange: "transform",
+                  width: "140px",
+                  height: "60px",
+                  padding: "0 10px",
+                  fontSize: "13px",
                 }}
               >
                 <img
@@ -417,11 +417,11 @@ export default function Hero() {
                   src="/play icon.png"
                   alt="Play"
                   style={{
-                    width: '58px',
-                    height: '58px',
-                    objectFit: 'contain',
-                    willChange: 'transform, filter',
-                    transformOrigin: 'center center',
+                    width: "58px",
+                    height: "58px",
+                    objectFit: "contain",
+                    willChange: "transform, filter",
+                    transformOrigin: "center center",
                     flexShrink: 0,
                   }}
                   draggable={false}
@@ -431,18 +431,17 @@ export default function Hero() {
                   className="ml-2 font-sans font-semibold text-[16px] flex overflow-hidden"
                   style={{ lineHeight: 1 }}
                 >
-                  {'Play'.split('').map((char, i) => (
+                  {"Play".split("").map((char, i) => (
                     <span
                       key={i}
                       className="play-char inline-block"
-                      style={{ display: 'inline-block' }}
+                      style={{ display: "inline-block" }}
                     >
                       {char}
                     </span>
                   ))}
                 </span>
               </a>
-
             </div>
           </div>
 
@@ -452,27 +451,27 @@ export default function Hero() {
             className="lg:col-span-6 flex justify-center"
             style={{
               opacity: 0,
-              perspective: '1000px',
+              perspective: "1000px",
             }}
           >
             <div
               ref={tiltRef}
               className="w-full max-w-[440px] md:max-w-[480px]"
               style={{
-                transformStyle: 'preserve-3d',
-                willChange: 'transform, filter',
+                transformStyle: "preserve-3d",
+                willChange: "transform, filter",
               }}
             >
               {/* Board card — luxury obsidian + gold hairline */}
               <div
                 ref={boardCardRef}
                 className="shadow-deep overflow-hidden hero-board-card"
-                style={{ transformStyle: 'preserve-3d', borderRadius: '2px' }}
+                style={{ transformStyle: "preserve-3d", borderRadius: "2px" }}
               >
                 {/* Engraved coordinate decoration — top right corner */}
                 <div
                   className="card-coordinate"
-                  style={{ top: '12px', right: '14px', bottom: 'auto' }}
+                  style={{ top: "12px", right: "14px", bottom: "auto" }}
                   aria-hidden="true"
                 >
                   e4 · d5
@@ -481,7 +480,7 @@ export default function Hero() {
                 {/* Board Area */}
                 <div
                   className="p-4 board-cursor-glow"
-                  style={{ background: 'rgba(8, 11, 20, 0.95)' }}
+                  style={{ background: "rgba(8, 11, 20, 0.95)" }}
                 >
                   <HeroPuzzle />
                 </div>
@@ -489,18 +488,19 @@ export default function Hero() {
 
               {/* Floating micro-particles around board */}
               <div className="hero-particles" aria-hidden="true">
-                {['e4', 'Nf3', '♔', 'd5', 'O-O', '♖', 'c4', '♗'].map((glyph, i) => (
-                  <span
-                    key={i}
-                    className={`hero-particle hero-particle-${i + 1}`}
-                  >
-                    {glyph}
-                  </span>
-                ))}
+                {["e4", "Nf3", "♔", "d5", "O-O", "♖", "c4", "♗"].map(
+                  (glyph, i) => (
+                    <span
+                      key={i}
+                      className={`hero-particle hero-particle-${i + 1}`}
+                    >
+                      {glyph}
+                    </span>
+                  ),
+                )}
               </div>
             </div>
           </div>
-
         </div>
       </div>
       {/* Reusable Auth Modal */}

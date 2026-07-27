@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { CircleUserRound, LogOut, CreditCard, Settings, Palette, Volume2, VolumeX } from "lucide-react";
+import { LogOut, Settings, Palette, Volume2, VolumeX } from "lucide-react";
 import { useSession } from "../hooks/useSession";
 import { useNavigate } from "react-router";
 import { soundManager } from "../utils/SoundManager";
@@ -14,8 +14,8 @@ export const AvatarDropdown: React.FC = () => {
 
   // ── Sound state (mirrors SoundToggle logic so they stay in sync) ───────────
   const [soundEnabled, setSoundEnabled] = useState<boolean>(() => {
-    if (typeof window === 'undefined') return true;
-    return localStorage.getItem(STORAGE_KEY) !== 'false';
+    if (typeof window === 'undefined') return false;
+    return localStorage.getItem(STORAGE_KEY) === 'true';
   });
 
   const toggleSound = () => {
@@ -103,45 +103,13 @@ export const AvatarDropdown: React.FC = () => {
             </p>
           </div>
 
-          {/* Profile option */}
-          <button
-            onClick={() => {
-              navigate("/profile");
-              setIsOpen(false);
-            }}
-            className="w-full flex items-center gap-3 px-4 py-2 text-sm font-sans text-brand-secondary hover:text-white hover:bg-white/5 text-left transition-colors duration-150 cursor-pointer"
-            role="menuitem"
-          >
-            {/* <User className="w-4 h-4 text-brand-accent" /> */}
-            <CircleUserRound
-              className="w-5 h-5 text-[#5EA1FF]"
-              strokeWidth={1.8}
-            />
-            Profile
-          </button>
-
-          {/* Membership option */}
-          <button
-            onClick={() => {
-              navigate("/pricing");
-              setIsOpen(false);
-            }}
-            className="w-full flex items-center gap-3 px-4 py-2 text-sm font-sans text-brand-secondary hover:text-white hover:bg-white/5 text-left transition-colors duration-150 cursor-pointer"
-            role="menuitem"
-          >
-            <CreditCard className="w-4 h-4 text-brand-accent" />
-            Membership
-          </button>
-
-
-          {/* ── Divider ───────────────────────────────────────────────────── */}
-          <div className="my-1.5 border-t border-brand-border/40" role="separator" />
+          
 
           {/* ── Settings ──────────────────────────────────────────────────── */}
           <button
             id="avatar-menu-settings"
             role="menuitem"
-            onClick={() => { setIsOpen(false); navigate('/profile'); }}
+            onClick={() => { setIsOpen(false); navigate('/settings'); }}
             className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-sans text-brand-secondary hover:text-white hover:bg-white/[0.06] text-left transition-colors duration-150 cursor-pointer group"
             tabIndex={0}
           >

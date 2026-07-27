@@ -21,11 +21,12 @@ export class PaymentController {
         return res.status(400).json({ status: "fail", message: "Invalid or missing billing plan ID." });
       }
 
-      const checkoutUrl = await PaymentService.createCheckoutSession(userId, selectedPlan);
+      const { url: checkoutUrl, sessionId } = await PaymentService.createCheckoutSession(userId, selectedPlan);
 
       return res.status(200).json({
         status: "success",
         checkoutUrl,
+        sessionId,
       });
     } catch (error) {
       next(error);

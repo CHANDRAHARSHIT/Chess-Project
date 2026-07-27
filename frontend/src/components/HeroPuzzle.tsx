@@ -39,11 +39,20 @@ import {
   useEffect,
   useLayoutEffect,
 } from "react";
-import { Chessboard } from "react-chessboard";
+import { ThemedChessboard } from "./ThemedChessboard";
 import { Chess } from "chess.js";
 import { parseUciMove } from "../utils/chessHelpers";
 import { useStockfish } from "../hooks/useStockfish";
-import { RotateCcw, Play, SkipForward, Zap, ChevronLeft, ChevronRight, Volume2, VolumeX } from "lucide-react";
+import {
+  RotateCcw,
+  Play,
+  SkipForward,
+  Zap,
+  ChevronLeft,
+  ChevronRight,
+  Volume2,
+  VolumeX,
+} from "lucide-react";
 import { useConfetti } from "../hooks/useConfetti";
 import { useMoveTrail } from "../hooks/useMoveTrail";
 import { gsap } from "../utils/gsapConfig";
@@ -53,6 +62,7 @@ import { MoveAnnotation } from "./MoveAnnotation";
 import ChessAnimationLayer from "./ChessAnimationLayer";
 import { motion } from "framer-motion";
 import { SoundManager } from "../utils/SoundManager";
+import { BoardCoordinates } from "./BoardCoordinates";
 interface ActiveMove {
   startX: number;
   startY: number;
@@ -122,8 +132,8 @@ const TIMING = {
   REPLAY_DELAY: 100, // Pause/delay before replay autoplay loop begins in milliseconds (default: 100ms)
 };
 // â”€â”€ Board theme â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-const BOARD_DARK = "#769656";
-const BOARD_LIGHT = "#EEEED2";
+// Board colors + piece set now come from Settings -> Board & Pieces
+// (see useBoardSettings below) instead of being hardcoded here.
 const PGN_MOVES = [
   "e4",
   "e5",
@@ -235,7 +245,6 @@ const historicalBlackMoves = [
 const START_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 const PUZZLE3_FEN = "7k/5p1P/5ppK/6P1/8/8/1q6/BQ6 w - - 4 1";
 
-
 const getKingSquares = (fen: string) => {
   const tempGame = new Chess(fen);
   let losingKingSq: string | null = null;
@@ -264,8 +273,10 @@ interface HeroPuzzleProps {
   onDragEnd?: () => void;
 }
 
-export default function HeroPuzzle({ onDragStart, onDragEnd }: HeroPuzzleProps) {
-
+export default function HeroPuzzle({
+  onDragStart,
+  onDragEnd,
+}: HeroPuzzleProps) {
   const soundManagerRef = useRef<SoundManager>(SoundManager.createInstance());
   const soundManager = soundManagerRef.current;
   const [isMuted, setIsMuted] = useState<boolean>(true);
@@ -279,34 +290,34 @@ export default function HeroPuzzle({ onDragStart, onDragEnd }: HeroPuzzleProps) 
   const boardCardRef = useRef<HTMLDivElement>(null);
   const boardInnerRef = useRef<HTMLDivElement>(null);
   const checkmateRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const isHeroVisibleRef = useRef(true);
 
-const heroSoundRef = useRef({
-  playMove: () => {
-    if (isHeroVisibleRef.current) soundManager.playMove();
-  },
-  playCapture: () => {
-    if (isHeroVisibleRef.current) soundManager.playCapture();
-  },
-  playCheck: () => {
-    if (isHeroVisibleRef.current) soundManager.playCheck();
-  },
-  playCheckmate: () => {
-    if (isHeroVisibleRef.current) soundManager.playCheckmate();
-  },
-  playApplause: () => {
-    if (isHeroVisibleRef.current) soundManager.playApplause();
-  },
+  const heroSoundRef = useRef({
+    playMove: () => {
+      if (isHeroVisibleRef.current) soundManager.playMove();
+    },
+    playCapture: () => {
+      if (isHeroVisibleRef.current) soundManager.playCapture();
+    },
+    playCheck: () => {
+      if (isHeroVisibleRef.current) soundManager.playCheck();
+    },
+    playCheckmate: () => {
+      if (isHeroVisibleRef.current) soundManager.playCheckmate();
+    },
+    playApplause: () => {
+      if (isHeroVisibleRef.current) soundManager.playApplause();
+    },
 
-  playLose: () => { 
-    if (isHeroVisibleRef.current) soundManager.playLose(); 
-
-  },
-  playGameEnd: () => {
-    if (isHeroVisibleRef.current) soundManager.playGameEnd();
-  },
-});
+    playLose: () => {
+      if (isHeroVisibleRef.current) soundManager.playLose();
+    },
+    playGameEnd: () => {
+      if (isHeroVisibleRef.current) soundManager.playGameEnd();
+    },
+  });
 
   // â”€â”€ State variables for Puzzle 0 (Evergreen Game Autoplay & Puzzle) â”€â”€â”€â”€â”€â”€â”€â”€
   const [phase0, setPhase0] = useState<
@@ -422,6 +433,8 @@ const heroSoundRef = useRef({
   const [, setIsCheckmateGlow3] = useState<boolean>(false);
 
   const hasCelebrated3Ref = useRef<boolean>(false);
+  const puzzle3StepRef = useRef<number>(0);
+  const puzzle4StepRef = useRef<number>(0);
   // â”€â”€ Safe Timers Ref â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const activeTimeoutsRef = useRef<number[]>([]);
   const pendingResolversRef = useRef<(() => void)[]>([]);
@@ -535,7 +548,6 @@ const heroSoundRef = useRef({
     return () => window.removeEventListener("resize", updateSize);
   }, []);
 
-
   const abortRef = useRef<boolean>(false);
   const autoplayInstanceRef = useRef<number>(0);
   // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
@@ -558,24 +570,23 @@ const heroSoundRef = useRef({
     );
   }, []);
 
-
   useEffect(() => {
-  const el = boardCardRef.current;
-  if (!el) return;
+    const el = containerRef.current;
+    if (!el) return;
 
-  const observer = new IntersectionObserver(
-    ([entry]) => {
-      isHeroVisibleRef.current = entry.isIntersecting;
-    },
-    {
-      threshold: 0.1,
-    }
-  );
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isHeroVisibleRef.current = entry.isIntersecting;
+      },
+      {
+        threshold: 0.1,
+      },
+    );
 
-  observer.observe(el);
+    observer.observe(el);
 
-  return () => observer.disconnect();
-}, []);
+    return () => observer.disconnect();
+  }, []);
   // Magnetic piece hover effect removed to allow standard react-chessboard drag without interference
   // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
   // PREMIUM PIECE ANIMATION SYSTEM
@@ -883,6 +894,7 @@ const heroSoundRef = useRef({
         setGameFen2("r5k1/6pp/r7/q3N1P1/3Q4/1Pp5/2P5/1K1R3R w - - 0 1");
         setPhase2("idle");
         hasCelebrated2Ref.current = false;
+        puzzle3StepRef.current = 0;
       } else if (index === 3) {
         setLastMove3(null);
         setCheckedKingSquare3(null);
@@ -891,6 +903,7 @@ const heroSoundRef = useRef({
         setGameFen3(PUZZLE3_FEN);
         setPhase3("idle");
         hasCelebrated3Ref.current = false;
+        puzzle4StepRef.current = 0;
       }
     },
     [runAutoplay0],
@@ -948,7 +961,7 @@ const heroSoundRef = useRef({
       });
     });
     const pool = safeMoves.length > 0 ? safeMoves : legalMoves;
-    return pool[Math.floor(Math.random() * pool.length)];
+    return pool[0] || null;
   }, []);
   const celebrateOriginal = useCallback(async () => {
     if (hasCelebratedOriginalRef.current) return;
@@ -956,7 +969,7 @@ const heroSoundRef = useRef({
     const checkmateFen = gameRef1.current.fen();
     const tempGame = new Chess(checkmateFen);
     const losingColor = tempGame.turn(); // the side that is in checkmate
-    const playerWon = losingColor === "b"; 
+    const playerWon = losingColor === "b";
     const { losingKingSq } = getKingSquares(checkmateFen);
 
     if (playerWon) {
@@ -1024,92 +1037,171 @@ const heroSoundRef = useRef({
         } else {
           heroSoundRef.current.playMove();
         }
-        // const history = game.history({ verbose: true });
-        // const lastEntry = history[history.length - 1];
-        // const displaySan = lastEntry.san.replace('x', '');
+
+        // Only trigger !! annotation for 1. Qd6 (h2 to d6)
+        const isQd6 = sourceSquare === "h2" && targetSquare === "d6";
+
         if (phase1 === "idle") {
           if (game.isCheckmate()) {
-            triggerAnnotation(targetSquare, "!!");
+            if (isQd6) {
+              triggerAnnotation(targetSquare, "!!");
+            }
             celebrateOriginal();
             return;
           }
           setPhase1("black_responding");
-          triggerAnnotation(targetSquare, "!!");
+          if (isQd6) {
+            triggerAnnotation(targetSquare, "!!");
+          }
           safeSetTimeout(() => {
             if (solveAbortRef.current) return;
-            const blackMove = pickSafeBlackMoveOriginal();
-            if (blackMove) {
-              const probe = new Chess(game.fen());
-              const moveResult = probe.move(blackMove);
-              if (moveResult) {
+            getEngineMove(game.fen(), 5, (bestMoveStr) => {
+              if (solveAbortRef.current) return;
+              let blackMoveFrom: string | null = null;
+              let blackMoveTo: string | null = null;
+              let blackMovePromotion: string | undefined;
+              let isEngineCaptured = false;
+
+              if (bestMoveStr) {
+                const { from, to, promotion } = parseUciMove(bestMoveStr);
+                const legalMoves = game.moves({ verbose: true });
+                const engineMove = legalMoves.find(
+                  (m) => m.from === from && m.to === to,
+                );
+                if (engineMove) {
+                  blackMoveFrom = from;
+                  blackMoveTo = to;
+                  blackMovePromotion = promotion || "q";
+                  isEngineCaptured = !!engineMove.captured;
+                }
+              }
+
+              if (!blackMoveFrom || !blackMoveTo) {
+                const fallbackMove = pickSafeBlackMoveOriginal();
+                if (fallbackMove) {
+                  const probe = new Chess(game.fen());
+                  const res = probe.move(fallbackMove);
+                  if (res) {
+                    blackMoveFrom = res.from;
+                    blackMoveTo = res.to;
+                    blackMovePromotion = res.promotion;
+                    isEngineCaptured = !!res.captured;
+                  }
+                }
+              }
+
+              if (blackMoveFrom && blackMoveTo) {
+                const fromSq = blackMoveFrom;
+                const toSq = blackMoveTo;
+                const prom = blackMovePromotion;
+                const captured = isEngineCaptured;
+
                 animatePieceMove(
-                  moveResult.from,
-                  moveResult.to,
+                  fromSq,
+                  toSq,
                   boardInnerRef.current,
-                  !!moveResult.captured,
+                  captured,
                   () => {
-                    gameRef1.current.move(blackMove);
+                    gameRef1.current.move({ from: fromSq, to: toSq, promotion: prom || "q" });
                     setGameFen1(gameRef1.current.fen());
-                    setLastMove1({ from: moveResult.from, to: moveResult.to });
-                    showTrail(moveResult.from, moveResult.to);
+                    setLastMove1({ from: fromSq, to: toSq });
+                    showTrail(fromSq, toSq);
                   },
                 ).then(() => {
-                  // Black's response sound
-                  if (!!moveResult.captured) {
+                  if (captured) {
                     heroSoundRef.current.playCapture();
                   } else {
                     heroSoundRef.current.playMove();
                   }
-                  setPhase1("awaiting_mate");
+                  if (gameRef1.current.isCheckmate()) {
+                    celebrateOriginal();
+                  } else {
+                    setPhase1("awaiting_mate");
+                  }
                 });
               } else {
                 setPhase1("awaiting_mate");
               }
-            } else {
-              setPhase1("awaiting_mate");
-            }
+            });
           }, 600);
         } else if (phase1 === "awaiting_mate") {
           if (game.isCheckmate()) {
+            if (isQd6) {
+              triggerAnnotation(targetSquare, "!!");
+            }
             celebrateOriginal();
           } else {
             setPhase1("black_responding");
             safeSetTimeout(() => {
               if (solveAbortRef.current) return;
-              const blackMove = pickSafeBlackMoveOriginal();
-              if (blackMove) {
-                const probe = new Chess(game.fen());
-                const moveResult = probe.move(blackMove);
-                if (moveResult) {
+              getEngineMove(game.fen(), 5, (bestMoveStr) => {
+                if (solveAbortRef.current) return;
+                let blackMoveFrom: string | null = null;
+                let blackMoveTo: string | null = null;
+                let blackMovePromotion: string | undefined;
+                let isEngineCaptured = false;
+
+                if (bestMoveStr) {
+                  const { from, to, promotion } = parseUciMove(bestMoveStr);
+                  const legalMoves = game.moves({ verbose: true });
+                  const engineMove = legalMoves.find(
+                    (m) => m.from === from && m.to === to,
+                  );
+                  if (engineMove) {
+                    blackMoveFrom = from;
+                    blackMoveTo = to;
+                    blackMovePromotion = promotion || "q";
+                    isEngineCaptured = !!engineMove.captured;
+                  }
+                }
+
+                if (!blackMoveFrom || !blackMoveTo) {
+                  const fallbackMove = pickSafeBlackMoveOriginal();
+                  if (fallbackMove) {
+                    const probe = new Chess(game.fen());
+                    const res = probe.move(fallbackMove);
+                    if (res) {
+                      blackMoveFrom = res.from;
+                      blackMoveTo = res.to;
+                      blackMovePromotion = res.promotion;
+                      isEngineCaptured = !!res.captured;
+                    }
+                  }
+                }
+
+                if (blackMoveFrom && blackMoveTo) {
+                  const fromSq = blackMoveFrom;
+                  const toSq = blackMoveTo;
+                  const prom = blackMovePromotion;
+                  const captured = isEngineCaptured;
+
                   animatePieceMove(
-                    moveResult.from,
-                    moveResult.to,
+                    fromSq,
+                    toSq,
                     boardInnerRef.current,
-                    !!moveResult.captured,
+                    captured,
                     () => {
-                      gameRef1.current.move(blackMove);
+                      gameRef1.current.move({ from: fromSq, to: toSq, promotion: prom || "q" });
                       setGameFen1(gameRef1.current.fen());
-                      setLastMove1({
-                        from: moveResult.from,
-                        to: moveResult.to,
-                      });
-                      showTrail(moveResult.from, moveResult.to);
+                      setLastMove1({ from: fromSq, to: toSq });
+                      showTrail(fromSq, toSq);
                     },
                   ).then(() => {
-                    // Black's response sound
-                    if (!!moveResult.captured) {
+                    if (captured) {
                       heroSoundRef.current.playCapture();
                     } else {
                       heroSoundRef.current.playMove();
                     }
-                    setPhase1("awaiting_mate");
+                    if (gameRef1.current.isCheckmate()) {
+                      celebrateOriginal();
+                    } else {
+                      setPhase1("awaiting_mate");
+                    }
                   });
                 } else {
                   setPhase1("awaiting_mate");
                 }
-              } else {
-                setPhase1("awaiting_mate");
-              }
+              });
             }, 600);
           }
         }
@@ -1125,6 +1217,7 @@ const heroSoundRef = useRef({
       animatePieceMove,
       showTrail,
       safeSetTimeout,
+      getEngineMove,
     ],
   );
   const handleSolve1 = useCallback(async () => {
@@ -1355,6 +1448,21 @@ const heroSoundRef = useRef({
         },
       ).then(() => {
         if (solveAbortRef.current) return;
+
+        // Evaluate !! annotation for White's move in Puzzle #4
+        if (puzzle4StepRef.current === 0 && sourceSquare === "b1" && targetSquare === "c2") {
+          triggerAnnotation(targetSquare, "!!");
+          puzzle4StepRef.current = 1;
+        } else if (puzzle4StepRef.current === 2 && sourceSquare === "c2" && targetSquare === "d3") {
+          triggerAnnotation(targetSquare, "!!");
+          puzzle4StepRef.current = 3;
+        } else if (puzzle4StepRef.current === 4 && sourceSquare === "d3" && targetSquare === "e4") {
+          triggerAnnotation(targetSquare, "!!");
+          puzzle4StepRef.current = 5;
+        } else {
+          puzzle4StepRef.current = -1; // Script broken or past 5th move
+        }
+
         // Play sound for user's move
         if (game.isGameOver()) {
           celebrate3();
@@ -1369,7 +1477,6 @@ const heroSoundRef = useRef({
         }
 
         setPhase3("black_responding");
-        triggerAnnotation(targetSquare, "!!");
 
         safeSetTimeout(() => {
           if (solveAbortRef.current) return;
@@ -1381,6 +1488,17 @@ const heroSoundRef = useRef({
               (m) => m.from === from && m.to === to,
             );
             if (engineMove) {
+              // Evaluate !! annotation for Black's move in Puzzle #4
+              if (puzzle4StepRef.current === 1 && from === "b2" && to === "c3") {
+                triggerAnnotation(to, "!!");
+                puzzle4StepRef.current = 2;
+              } else if (puzzle4StepRef.current === 3 && from === "c3" && to === "d4") {
+                triggerAnnotation(to, "!!");
+                puzzle4StepRef.current = 4;
+              } else {
+                puzzle4StepRef.current = -1; // Script broken or past 5th move
+              }
+
               animatePieceMove(
                 from,
                 to,
@@ -1406,6 +1524,7 @@ const heroSoundRef = useRef({
                 }
               });
             } else {
+              puzzle4StepRef.current = -1;
               setPhase3("awaiting_move");
             }
           });
@@ -1451,6 +1570,27 @@ const heroSoundRef = useRef({
         },
       ).then(() => {
         if (solveAbortRef.current) return;
+
+        // Evaluate !! annotation for White's move in Puzzle #3
+        if (puzzle3StepRef.current === 0 && sourceSquare === "d4" && targetSquare === "c4") {
+          triggerAnnotation(targetSquare, "!!");
+          puzzle3StepRef.current = 1;
+        } else if (puzzle3StepRef.current === 2 && sourceSquare === "e5" && targetSquare === "f7") {
+          triggerAnnotation(targetSquare, "!!");
+          puzzle3StepRef.current = 3;
+        } else if (puzzle3StepRef.current === 4 && sourceSquare === "f7" && targetSquare === "h6") {
+          triggerAnnotation(targetSquare, "!!");
+          puzzle3StepRef.current = 5;
+        } else if (puzzle3StepRef.current === 6 && sourceSquare === "c4" && targetSquare === "g8") {
+          triggerAnnotation(targetSquare, "!!");
+          puzzle3StepRef.current = 7;
+        } else if (puzzle3StepRef.current === 8 && sourceSquare === "h6" && targetSquare === "f7") {
+          triggerAnnotation(targetSquare, "!!");
+          puzzle3StepRef.current = 9;
+        } else {
+          puzzle3StepRef.current = -1; // Script broken or past 9th move
+        }
+
         // Play sound for user's move
         if (game.isGameOver()) {
           celebrate2();
@@ -1466,7 +1606,6 @@ const heroSoundRef = useRef({
 
         // Trigger Stockfish response for Black
         setPhase2("black_responding");
-        triggerAnnotation(targetSquare, "!!");
 
         safeSetTimeout(() => {
           if (solveAbortRef.current) return;
@@ -1478,6 +1617,23 @@ const heroSoundRef = useRef({
               (m) => m.from === from && m.to === to,
             );
             if (engineMove) {
+              // Evaluate !! annotation for Black's move in Puzzle #3
+              if (puzzle3StepRef.current === 1 && from === "g8" && to === "h8") {
+                triggerAnnotation(to, "!!");
+                puzzle3StepRef.current = 2;
+              } else if (puzzle3StepRef.current === 3 && from === "h8" && to === "g8") {
+                triggerAnnotation(to, "!!");
+                puzzle3StepRef.current = 4;
+              } else if (puzzle3StepRef.current === 5 && from === "g8" && to === "h8") {
+                triggerAnnotation(to, "!!");
+                puzzle3StepRef.current = 6;
+              } else if (puzzle3StepRef.current === 7 && to === "g8") {
+                triggerAnnotation(to, "!!");
+                puzzle3StepRef.current = 8;
+              } else {
+                puzzle3StepRef.current = -1; // Script broken or past 9th move
+              }
+
               animatePieceMove(
                 from,
                 to,
@@ -1503,6 +1659,7 @@ const heroSoundRef = useRef({
                 }
               });
             } else {
+              puzzle3StepRef.current = -1;
               setPhase2("awaiting_move");
             }
           });
@@ -1954,7 +2111,7 @@ const heroSoundRef = useRef({
     initGame(1);
   }, [cleanupGame, initGame]);
   return (
-    <div className="flex flex-col gap-0.5">
+    <div ref={containerRef} className="flex flex-col gap-0.5">
       {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
           HORIZONTAL CAROUSEL STAGE
           The outer div clips to show only the active board + peeking previews.
@@ -1963,15 +2120,9 @@ const heroSoundRef = useRef({
           inactive slides = rotated mini-board preview cards that peek into view.
           â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       {/* Stage: clips the visible area so only the active board + partial previews show */}
-      <div
-        className="relative w-full"
-        style={{ overflow: "hidden" }}
-      >
+      <div className="relative w-full" style={{ overflow: "hidden" }}>
         {/* Outer glow for checkmate state */}
-        <div
-          className="absolute inset-0 rounded-xl pointer-events-none z-10"
-
-        />
+        <div className="absolute inset-0 rounded-xl pointer-events-none z-10" />
         {/* CHECKMATE impact overlay â€” GSAP toggles display:flex */}
         <div
           ref={checkmateRef}
@@ -2152,7 +2303,7 @@ const heroSoundRef = useRef({
                       )}
 
                       {/* The Chessboard - ALWAYS mounted! */}
-                      <Chessboard
+                      <ThemedChessboard
                         options={{
                           position: boardFen,
                           onPieceDrag: () => {
@@ -2162,8 +2313,6 @@ const heroSoundRef = useRef({
                             onDragEnd?.();
                             return onDrop(sourceSquare, targetSquare ?? "");
                           },
-                          darkSquareStyle: { backgroundColor: BOARD_DARK },
-                          lightSquareStyle: { backgroundColor: BOARD_LIGHT },
                           boardStyle: {
                             borderRadius: "0px",
                           },
@@ -2171,105 +2320,41 @@ const heroSoundRef = useRef({
                           squareStyles: boardSquareStyles,
                           animationDurationInMs: 0,
                           allowDragging: isActive && boardIsInteractive,
-                          squareRenderer: ({ square, piece, children }) => {
-                            const isKing =
-                              piece?.pieceType === "wK" ||
-                              piece?.pieceType === "bK";
-                            const isLosingKing =
-                              isKing && square === losingKingSq;
-                            const isWinningKing =
-                              isKing && square === winningKingSq;
-
-                            let className = "piece-normal-container";
-                            if (isLosingKing) {
-                              className = "king-defeated-container";
-                            } else if (isWinningKing) {
-                              className = "king-winning-container";
-                            }
-
-                            return <div className={className}>{children}</div>;
-                          },
                         }}
                       />
+
+                      {/* Losing king falldown & winning king glow animation via CSS (without squareRenderer to preserve click-to-move) */}
+                      {losingKingSq && (
+                        <style>{`
+                          #hero-chessboard-${i} [data-square="${losingKingSq}"] [data-piece],
+                          #hero-chessboard-${i} [data-square="${losingKingSq}"] img {
+                            transform: rotate(45deg) !important;
+                            transform-origin: center !important;
+                            transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1), filter 0.8s ease !important;
+                            filter: drop-shadow(0 0 5px rgba(239, 68, 68, 0.85)) sepia(1) saturate(12) hue-rotate(-50deg) brightness(0.7) contrast(1.1) !important;
+                          }
+                          ${
+                            winningKingSq
+                              ? `
+                          #hero-chessboard-${i} [data-square="${winningKingSq}"] [data-piece],
+                          #hero-chessboard-${i} [data-square="${winningKingSq}"] img {
+                            transition: filter 0.8s ease !important;
+                            filter: drop-shadow(0 0 5px rgba(34, 197, 94, 0.85)) sepia(1) saturate(12) hue-rotate(70deg) brightness(0.8) contrast(1.1) !important;
+                          }
+                          `
+                              : ""
+                          }
+                        `}</style>
+                      )}
 
                       {/* Move quality annotations */}
                       {isActive && (
                         <MoveAnnotation activeAnnotation={activeAnnotation} />
                       )}
 
-                      {/* ── Board coordinate notation (Chess.com style) ───────────────────
-                           • File letters (a–h): bottom-right corner of each square
-                             in the bottom rank only.
-                           • Rank numbers (8–1): top-left corner of each square
-                             in the leftmost file only.
-                           • Color alternates with the square background:
-                               dark square  → light label  (#e8eec9 / cream)
-                               light square → dark label   (#769656 / green)
-                           • squareSize is available from the outer scope.
-                      ──────────────────────────────────────────────────────────────── */}
-                      {isActive && (() => {
-                        // Board is always White's perspective for these puzzles
-                        // (a=col0, h=col7; rank8=row0, rank1=row7)
-                        const FILES = ["a", "b", "c", "d", "e", "f", "g", "h"];
-                        const RANKS = ["8", "7", "6", "5", "4", "3", "2", "1"];
-
-                        // ── Colors ──────────────────────────────────────────────────────────
-                        const ON_LIGHT = "#5C7D3A"; // deep green on cream square
-                        const ON_DARK = "#FFF8E5"; // warm cream on green square
-
-                        const baseStyle: React.CSSProperties = {
-                          position: "absolute",
-                          fontFamily: "Inter, system-ui, sans-serif",
-                          fontSize: "9.5px",
-                          fontWeight: 700,
-                          lineHeight: 1,
-                          pointerEvents: "none",
-                          userSelect: "none",
-                          zIndex: 25,
-                        };
-
-                        const nodes: React.ReactNode[] = [];
-
-                        FILES.forEach((file, col) => {
-                          const isDark = ((7 + col) % 2) === 1;
-                          nodes.push(
-                            <span
-                              key={`file-${file}`}
-                              aria-hidden="true"
-                              style={{
-                                ...baseStyle,
-                                bottom: "2px",
-                                right: `calc(${(7 - col) * 12.5}% + 2px)`,
-                                color: isDark ? ON_DARK : ON_LIGHT,
-                              }}
-                            >
-                              {file}
-                            </span>
-                          );
-                        });
-
-                        // ── Rank numbers: top-left of each square on left file ───────────────
-                        // Col 0 = file a: a8=dark(row0), a7=light(row1), a6=dark(row2) …
-                        RANKS.forEach((rank, row) => {
-                          const isDark = (row + 0) % 2 !== 0;
-                          nodes.push(
-                            <span
-                              key={`rank-${rank}`}
-                              aria-hidden="true"
-                              style={{
-                                ...baseStyle,
-                                top: `calc(${row * 12.5}% + 2px)`,
-                                left: "2px",
-                                color: isDark ? ON_DARK : ON_LIGHT,
-                              }}
-                            >
-                              {rank}
-                            </span>
-                          );
-                        });
-
-                        return nodes;
-                      })()}
+                      {isActive && (
+                        <BoardCoordinates boardOrientation="white" />
+                      )}
                     </div>
                   </div>
                 </motion.div>
@@ -2277,12 +2362,13 @@ const heroSoundRef = useRef({
             );
           })}
         </motion.div>
-        {/* Carousel Prev/Next + Pagination Dots */}
-        <div className="flex items-center justify-center gap-6 p-2 mt-1">
+        {/* Carousel Controls + Sound Toggle */}
+        <div className="flex items-center justify-center gap-3 p-3 mt-1">
           <button
             onClick={toPrev}
             disabled={activeIndex === 0}
-            className="p-2 rounded-full border text-[#8E8B82]
+            aria-label="Previous slide"
+            className="p-2 rounded-full border border-[rgba(212,175,110,0.30)] text-[#8E8B82]
                        hover:text-white hover:border-[rgba(212,175,110,0.5)] hover:bg-white/5
                        disabled:opacity-30 disabled:cursor-not-allowed
                        transition-all duration-200"
@@ -2294,37 +2380,49 @@ const heroSoundRef = useRef({
               <button
                 key={i}
                 onClick={() => toSlide(i)}
-                className={`rounded-full transition-all duration-300 ${activeIndex === i
-                  ? "w-5 h-1.5 bg-[#D4AF6E]"
-                  : "w-1.5 h-1.5 bg-brand-secondary/40 hover:bg-brand-secondary"
-                  }`}
+                aria-label={`Go to slide ${i + 1}`}
+                className={`rounded-full transition-all duration-300 ${
+                  activeIndex === i
+                    ? "w-5 h-1.5 bg-[#D4AF6E]"
+                    : "w-1.5 h-1.5 bg-brand-secondary/40 hover:bg-brand-secondary"
+                }`}
               />
             ))}
           </div>
           <button
             onClick={toNext}
             disabled={activeIndex === CAROUSEL_ITEMS.length - 1}
-            className="p-2 rounded-full border text-[#8E8B82]
+            aria-label="Next slide"
+            className="p-2 rounded-full border border-[rgba(212,175,110,0.30)] text-[#8E8B82]
                        hover:text-white hover:border-[rgba(212,175,110,0.5)] hover:bg-white/5
                        disabled:opacity-30 disabled:cursor-not-allowed
                        transition-all duration-200"
           >
             <ChevronRight className="w-4 h-4" />
           </button>
+
+          {/* Divider */}
+          <div
+            className="w-px h-4 bg-[rgba(212,175,110,0.2)] mx-0.5"
+            aria-hidden="true"
+          />
+
+          {/* Sound Toggle */}
+          <button
+            onClick={toggleMute}
+            aria-label={isMuted ? "Unmute sound" : "Mute sound"}
+            title={isMuted ? "Unmute sound" : "Mute sound"}
+            className="p-2 rounded-full border border-[rgba(212,175,110,0.30)] text-[#8E8B82]
+                       hover:text-white hover:border-[rgba(212,175,110,0.5)] hover:bg-white/5
+                       transition-all duration-200"
+          >
+            {isMuted ? (
+              <VolumeX className="w-4 h-4 text-rose-400/80" />
+            ) : (
+              <Volume2 className="w-4 h-4 text-[#D4AF6E]" />
+            )}
+          </button>
         </div>
-        <button
-          onClick={toggleMute}
-          aria-label={isMuted ? "Unmute sound" : "Mute sound"}
-          className="p-2 rounded-full border text-[#8E8B82]
-             hover:text-white hover:border-[rgba(212,175,110,0.5)] hover:bg-white/5
-             transition-all duration-200"
-        >
-          {isMuted ? (
-            <VolumeX className="w-4 h-4" />
-          ) : (
-            <Volume2 className="w-4 h-4 text-[#D4AF6E]" />
-          )}
-        </button>
       </div>
       {/* Below-board Info Panel */}
       <div className="flex items-center justify-between px-0 mt-1">
@@ -2335,7 +2433,6 @@ const heroSoundRef = useRef({
             </span>
           </div>
         </div>
-
       </div>
       {/* Action Buttons */}
       <div className="flex gap-3 mt-1">
@@ -2355,7 +2452,10 @@ const heroSoundRef = useRef({
                   btn-glow-container btn-glow-surface
                 "
               >
-                <SkipForward size={18} className="w-4 h-4 text-[#D4AF6E] animate-pulse" />
+                <SkipForward
+                  size={18}
+                  className="w-4 h-4 text-[#D4AF6E] animate-pulse"
+                />
                 Skip Animation
               </button>
             )}
@@ -2449,13 +2549,13 @@ const heroSoundRef = useRef({
               phase1 === "black_responding" ||
               phase1 === "awaiting_mate" ||
               phase1 === "failed") && (
-                <>
-                  <button
-                    onClick={() => {
-                      cleanupGame();
-                      initGame(1);
-                    }}
-                    className="
+              <>
+                <button
+                  onClick={() => {
+                    cleanupGame();
+                    initGame(1);
+                  }}
+                  className="
                     flex-1 flex items-center justify-center gap-2
                     px-4 py-2.5 rounded-lg
                     font-sans text-sm font-semibold
@@ -2465,13 +2565,13 @@ const heroSoundRef = useRef({
                     transition-all duration-200
                     btn-glow-container btn-glow-surface
                   "
-                  >
-                    <RotateCcw className="w-4 h-4 text-[#D4AF6E]" />
-                    Reset
-                  </button>
-                  <button
-                    onClick={handleSolve1}
-                    className="
+                >
+                  <RotateCcw className="w-4 h-4 text-[#D4AF6E]" />
+                  Reset
+                </button>
+                <button
+                  onClick={handleSolve1}
+                  className="
                     flex-1 flex items-center justify-center gap-2
                     px-4 py-2.5 rounded-lg
                     font-sans text-sm font-semibold
@@ -2481,12 +2581,12 @@ const heroSoundRef = useRef({
                     transition-all duration-200
                     btn-glow-container btn-glow-surface
                   "
-                  >
-                    <Play className="w-4 h-4 text-[#D4AF6E]" />
-                    Solve
-                  </button>
-                </>
-              )}
+                >
+                  <Play className="w-4 h-4 text-[#D4AF6E]" />
+                  Solve
+                </button>
+              </>
+            )}
             {phase1 === "solved" && (
               <button
                 onClick={handleReplayOriginal}
@@ -2528,13 +2628,13 @@ const heroSoundRef = useRef({
             {(phase2 === "idle" ||
               phase2 === "awaiting_move" ||
               phase2 === "failed") && (
-                <>
-                  <button
-                    onClick={() => {
-                      cleanupGame();
-                      initGame(2);
-                    }}
-                    className="
+              <>
+                <button
+                  onClick={() => {
+                    cleanupGame();
+                    initGame(2);
+                  }}
+                  className="
                     flex-1 flex items-center justify-center gap-2
                     px-4 py-2.5 rounded-lg
                     font-sans text-sm font-semibold
@@ -2544,12 +2644,12 @@ const heroSoundRef = useRef({
                     transition-all duration-200
                     btn-glow-container btn-glow-surface
                   "
-                  >
-                    <RotateCcw className="w-4 h-4 text-[#D4AF6E]" />
-                    Reset
-                  </button>
-                </>
-              )}
+                >
+                  <RotateCcw className="w-4 h-4 text-[#D4AF6E]" />
+                  Reset
+                </button>
+              </>
+            )}
             {phase2 === "solved" && (
               <button
                 onClick={() => {
@@ -2594,13 +2694,13 @@ const heroSoundRef = useRef({
             {(phase3 === "idle" ||
               phase3 === "awaiting_move" ||
               phase3 === "failed") && (
-                <>
-                  <button
-                    onClick={() => {
-                      cleanupGame();
-                      initGame(3);
-                    }}
-                    className="
+              <>
+                <button
+                  onClick={() => {
+                    cleanupGame();
+                    initGame(3);
+                  }}
+                  className="
                     flex-1 flex items-center justify-center gap-2
                     px-4 py-2.5 rounded-lg
                     font-sans text-sm font-semibold
@@ -2610,12 +2710,12 @@ const heroSoundRef = useRef({
                     transition-all duration-200
                     btn-glow-container btn-glow-surface
                   "
-                  >
-                    <RotateCcw className="w-4 h-4 text-[#D4AF6E]" />
-                    Reset
-                  </button>
-                </>
-              )}
+                >
+                  <RotateCcw className="w-4 h-4 text-[#D4AF6E]" />
+                  Reset
+                </button>
+              </>
+            )}
             {phase3 === "solved" && (
               <button
                 onClick={() => {

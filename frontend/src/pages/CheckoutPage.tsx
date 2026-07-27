@@ -13,7 +13,6 @@ import { useNavigate, useLocation } from "react-router";
 import { useSession } from "../hooks/useSession";
 import { AuthModal } from "../components/AuthModal";
 import { PaymentService } from "../services/payment";
-
 export default function CheckoutPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -29,6 +28,37 @@ export default function CheckoutPage() {
   // Checkout States
   const [isProcessing, setIsProcessing] = useState(false);
 
+  useEffect(() => {
+    const checkPendingSession = async () => {
+      const pendingId = sessionStorage.getItem('pending_checkout_session_id');
+      if (!pendingId) return;
+
+      setIsProcessing(true); // show overlay briefly while we check
+      try {
+        const result = await PaymentService.getCheckoutSession(pendingId);
+        if (result?.data?.session?.status !== 'complete') {
+          sessionStorage.removeItem('pending_checkout_session_id');
+          navigate('/payment/failed');
+          return;
+        }
+        // completed — clear the pending marker; success_url flow handles the rest
+        sessionStorage.removeItem('pending_checkout_session_id');
+      } catch (err) {
+        console.error('[CheckoutPage] Session status check failed:', err);
+        sessionStorage.removeItem('pending_checkout_session_id');
+      } finally {
+        setIsProcessing(false);
+      }
+    };
+
+    checkPendingSession();
+
+    const handlePageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) checkPendingSession();
+    };
+    window.addEventListener('pageshow', handlePageShow);
+    return () => window.removeEventListener('pageshow', handlePageShow);
+  }, [navigate]);
   useEffect(() => {
     // Detect plan selection from URL query parameter
     const params = new URLSearchParams(location.search);
@@ -47,8 +77,8 @@ export default function CheckoutPage() {
   };
 
   // Auto Calculations
-  const basePrice = isYearly ? 12.0 : 1.0;
-  const planDiscount = isYearly ? 2.0 : 0.0; // Base yearly was $12.00 NZD, plan saves $2.00 NZD
+  const basePrice = isYearly ? 60.0 : 5.0;
+  const planDiscount = isYearly ? 39.6 : 0.0; // Base yearly is $60.00 USD (monthly price * 12), plan saves $39.60 USD (66% discount)
   const billingCycleLabel = isYearly ? "Premium Yearly" : "Premium Monthly";
 
   // Final Total
@@ -77,12 +107,15 @@ export default function CheckoutPage() {
       const response = await PaymentService.createCheckoutSession(plan);
 
       if (response.status === "success" && response.checkoutUrl) {
+        if (response.sessionId) {
+          sessionStorage.setItem('pending_checkout_session_id', response.sessionId);
+        }
         // Securely redirect customer to Stripe hosted checkout page
         window.location.href = response.checkoutUrl;
       } else {
         alert(
           response.message ||
-            "Failed to initialize secure checkout session. Please try again.",
+          "Failed to initialize secure checkout session. Please try again.",
         );
         setIsProcessing(false);
       }
@@ -410,24 +443,24 @@ export default function CheckoutPage() {
                     </div>
                   </div>
                   <span className="text-sm font-mono text-[#e5dfd5]">
-                    ${basePrice.toFixed(2)} NZD
+                    ${basePrice.toFixed(2)} USD
                   </span>
                 </div>
 
                 {/* Subtotal */}
                 <div className="flex justify-between items-center text-xs text-brand-secondary pt-2 border-t border-brand-border/20">
                   <span>Subtotal</span>
-                  <span className="font-mono">${basePrice.toFixed(2)} NZD</span>
+                  <span className="font-mono">${basePrice.toFixed(2)} USD</span>
                 </div>
 
                 {/* Plan discount */}
                 {isYearly && (
                   <div className="flex justify-between items-center text-xs text-brand-secondary">
                     <span className="flex items-center gap-1 text-emerald-400 font-mono">
-                      Plan Savings (17%)
+                      Plan Savings (66%)
                     </span>
                     <span className="font-mono text-emerald-400">
-                      -${planDiscount.toFixed(2)} NZD
+                      -${planDiscount.toFixed(2)} USD
                     </span>
                   </div>
                 )}
@@ -438,7 +471,7 @@ export default function CheckoutPage() {
                     Total
                   </span>
                   <span className="text-2xl font-display font-bold text-white text-gold-gradient">
-                    ${grandTotal.toFixed(2)} NZD
+                    ${grandTotal.toFixed(2)} USD
                   </span>
                 </div>
               </div>

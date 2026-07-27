@@ -1,0 +1,176 @@
+/* ══════════════════════════════════════════════════════════════════════════════
+   CrystalPathway.css — Self-Contained Styles for Crystal Pathway
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+.crystal-container {
+  position: relative;
+  width: 100%;
+  height: 640px;
+  overflow: hidden;
+  border-radius: 1rem;
+  border: 1px solid rgba(6, 182, 212, 0.4);
+  background-color: #031525;
+  user-select: none;
+  box-shadow: 0 25px 50px -12px rgba(3, 21, 37, 0.9);
+}
+
+.crystal-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: hue-rotate(180deg) saturate(150%);
+  pointer-events: none;
+}
+
+.crystal-vignette {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(3,21,37,0.9) 0%, rgba(3,21,37,0.5) 50%, rgba(3,21,37,0.95) 100%);
+  pointer-events: none;
+}
+
+.crystal-beam-wrap {
+  position: absolute;
+  pointer-events: none;
+  z-index: 10;
+  transform: translate(-50%, -50%);
+}
+
+.crystal-beam {
+  width: 100%;
+  height: 100%;
+  border-radius: 9999px;
+  transition: all 0.5s ease;
+}
+
+.crystal-beam-unlocked {
+  background: linear-gradient(90deg, #22d3ee, #e0f2fe, #22d3ee);
+  box-shadow: 0 0 16px rgba(6, 182, 212, 0.95);
+  opacity: 0.95;
+}
+
+.crystal-beam-locked {
+  background-color: rgba(8, 51, 68, 0.6);
+  border: 1px solid rgba(22, 78, 99, 0.4);
+  opacity: 0.4;
+}
+
+.crystal-tile-wrap {
+  position: absolute;
+  z-index: 20;
+  transform: translate(-50%, -50%);
+  transition: transform 0.3s ease;
+}
+
+.crystal-tile-wrap:hover {
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+.crystal-tile-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 5rem;
+  height: 5rem;
+  user-select: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+@media (min-width: 640px) {
+  .crystal-tile-button {
+    width: 5.5rem;
+    height: 5.5rem;
+  }
+}
+
+.crystal-tile-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  filter: grayscale(100%);
+}
+
+.crystal-active-aura {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background-color: rgba(6, 182, 212, 0.5);
+  filter: blur(16px);
+  animation: crystalPulse 2s infinite ease-in-out;
+  pointer-events: none;
+}
+
+@keyframes crystalPulse {
+  0%, 100% { transform: scale(1.2); opacity: 0.7; }
+  50% { transform: scale(1.35); opacity: 1; }
+}
+
+.crystal-tile-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: hue-rotate(160deg) drop-shadow(0 10px 15px rgba(0, 0, 0, 0.5));
+  transition: all 0.3s ease;
+}
+
+.crystal-current-img {
+  transform: scale(1.1);
+  filter: hue-rotate(160deg) brightness(1.3) drop-shadow(0 0 18px rgba(6, 182, 212, 0.9));
+}
+
+.crystal-number {
+  font-family: 'Bonheur Royale', cursive;
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 1;
+  color: #a5f3fc;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.95);
+  pointer-events: none;
+}
+
+.crystal-number-current {
+  color: #67e8f9;
+  font-weight: 800;
+  transform: scale(1.1);
+}
+
+.crystal-badge {
+  position: absolute;
+  top: -0.25rem;
+  right: -0.25rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.crystal-badge-locked {
+  background-color: rgba(8, 51, 68, 0.9);
+  border: 1px solid #0e7490;
+  color: #22d3ee;
+}
+
+.crystal-badge-completed {
+  background-color: #0891b2;
+  border: 1px solid #67e8f9;
+  color: #ffffff;
+}
+
+.crystal-badge-current {
+  background-color: #22d3ee;
+  border: 1px solid #bae6fd;
+  color: #020617;
+  animation: crystalBounce 1.5s infinite;
+}
+
+@keyframes crystalBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}

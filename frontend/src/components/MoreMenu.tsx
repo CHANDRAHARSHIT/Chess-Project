@@ -4,7 +4,7 @@
  * A three-dot (⋮) dropdown that sits in the top-right header area.
  *
  * Menu items:
- *   Settings  → navigates to /profile (existing page)
+ *   Settings  → navigates to /settings (Board & Pieces, etc.)
  *   Theme     → disabled, "Coming Soon" tooltip
  *   ─── divider ───
  *   Sound     → full-row clickable toggle (reuses SoundManager, no SoundToggle sub-button)
@@ -31,8 +31,8 @@ export const MoreMenu: React.FC = () => {
 
   // ── Sound state (mirrors SoundToggle logic so they stay in sync) ───────────
   const [soundEnabled, setSoundEnabled] = useState<boolean>(() => {
-    if (typeof window === 'undefined') return true;
-    return localStorage.getItem(STORAGE_KEY) !== 'false';
+    if (typeof window === 'undefined') return false;
+    return localStorage.getItem(STORAGE_KEY) === 'true';
   });
 
   const toggleSound = () => {
@@ -110,7 +110,7 @@ export const MoreMenu: React.FC = () => {
           <button
             id="more-menu-settings"
             role="menuitem"
-            onClick={() => { setIsOpen(false); navigate('/profile'); }}
+            onClick={() => { setIsOpen(false); navigate('/settings'); }}
             className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-sans text-brand-secondary hover:text-white hover:bg-white/[0.06] text-left transition-colors duration-150 cursor-pointer group"
             tabIndex={0}
           >

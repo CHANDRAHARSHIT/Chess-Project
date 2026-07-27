@@ -394,7 +394,8 @@ export const ModelName = {
   Product: 'Product',
   ProductFeature: 'ProductFeature',
   WebhookEvent: 'WebhookEvent',
-  CuratedPuzzle: 'CuratedPuzzle'
+  CuratedPuzzle: 'CuratedPuzzle',
+  Opening: 'Opening'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -410,7 +411,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "account" | "session" | "verificationToken" | "subscription" | "payment" | "billingProfile" | "product" | "productFeature" | "webhookEvent" | "curatedPuzzle"
+    modelProps: "user" | "account" | "session" | "verificationToken" | "subscription" | "payment" | "billingProfile" | "product" | "productFeature" | "webhookEvent" | "curatedPuzzle" | "opening"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1228,6 +1229,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Opening: {
+      payload: Prisma.$OpeningPayload<ExtArgs>
+      fields: Prisma.OpeningFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.OpeningFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpeningPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.OpeningFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpeningPayload>
+        }
+        findFirst: {
+          args: Prisma.OpeningFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpeningPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.OpeningFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpeningPayload>
+        }
+        findMany: {
+          args: Prisma.OpeningFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpeningPayload>[]
+        }
+        create: {
+          args: Prisma.OpeningCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpeningPayload>
+        }
+        createMany: {
+          args: Prisma.OpeningCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.OpeningCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpeningPayload>[]
+        }
+        delete: {
+          args: Prisma.OpeningDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpeningPayload>
+        }
+        update: {
+          args: Prisma.OpeningUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpeningPayload>
+        }
+        deleteMany: {
+          args: Prisma.OpeningDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.OpeningUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.OpeningUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpeningPayload>[]
+        }
+        upsert: {
+          args: Prisma.OpeningUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpeningPayload>
+        }
+        aggregate: {
+          args: Prisma.OpeningAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateOpening>
+        }
+        groupBy: {
+          args: Prisma.OpeningGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OpeningGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.OpeningCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OpeningCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1274,7 +1349,8 @@ export const UserScalarFieldEnum = {
   emailVerified: 'emailVerified',
   image: 'image',
   createdAt: 'createdAt',
-  gatewayCustomerId: 'gatewayCustomerId'
+  stripeTestCustomerId: 'stripeTestCustomerId',
+  stripeLiveCustomerId: 'stripeLiveCustomerId'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -1388,7 +1464,8 @@ export const ProductScalarFieldEnum = {
   priceAmount: 'priceAmount',
   currency: 'currency',
   billingInterval: 'billingInterval',
-  gatewayPriceId: 'gatewayPriceId',
+  gatewayTestPriceId: 'gatewayTestPriceId',
+  gatewayLivePriceId: 'gatewayLivePriceId',
   isActive: 'isActive',
   displayOrder: 'displayOrder',
   createdAt: 'createdAt',
@@ -1436,6 +1513,17 @@ export const CuratedPuzzleScalarFieldEnum = {
 } as const
 
 export type CuratedPuzzleScalarFieldEnum = (typeof CuratedPuzzleScalarFieldEnum)[keyof typeof CuratedPuzzleScalarFieldEnum]
+
+
+export const OpeningScalarFieldEnum = {
+  id: 'id',
+  eco: 'eco',
+  name: 'name',
+  pgn: 'pgn',
+  moves: 'moves'
+} as const
+
+export type OpeningScalarFieldEnum = (typeof OpeningScalarFieldEnum)[keyof typeof OpeningScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1710,6 +1798,7 @@ export type GlobalOmitConfig = {
   productFeature?: Prisma.ProductFeatureOmit
   webhookEvent?: Prisma.WebhookEventOmit
   curatedPuzzle?: Prisma.CuratedPuzzleOmit
+  opening?: Prisma.OpeningOmit
 }
 
 /* Types for Logging */
