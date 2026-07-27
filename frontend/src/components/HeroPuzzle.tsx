@@ -2214,12 +2214,13 @@ export default function HeroPuzzle({
             );
           })}
         </motion.div>
-        {/* Carousel Prev/Next + Pagination Dots */}
-        <div className="flex items-center justify-center gap-6 p-2 mt-1">
+        {/* Carousel Controls + Sound Toggle */}
+        <div className="flex items-center justify-center gap-3 p-3 mt-1">
           <button
             onClick={toPrev}
             disabled={activeIndex === 0}
-            className="p-2 rounded-full border text-[#8E8B82]
+            aria-label="Previous slide"
+            className="p-2 rounded-full border border-[rgba(212,175,110,0.30)] text-[#8E8B82]
                        hover:text-white hover:border-[rgba(212,175,110,0.5)] hover:bg-white/5
                        disabled:opacity-30 disabled:cursor-not-allowed
                        transition-all duration-200"
@@ -2231,6 +2232,7 @@ export default function HeroPuzzle({
               <button
                 key={i}
                 onClick={() => toSlide(i)}
+                aria-label={`Go to slide ${i + 1}`}
                 className={`rounded-full transition-all duration-300 ${
                   activeIndex === i
                     ? "w-5 h-1.5 bg-[#D4AF6E]"
@@ -2242,27 +2244,37 @@ export default function HeroPuzzle({
           <button
             onClick={toNext}
             disabled={activeIndex === CAROUSEL_ITEMS.length - 1}
-            className="p-2 rounded-full border text-[#8E8B82]
+            aria-label="Next slide"
+            className="p-2 rounded-full border border-[rgba(212,175,110,0.30)] text-[#8E8B82]
                        hover:text-white hover:border-[rgba(212,175,110,0.5)] hover:bg-white/5
                        disabled:opacity-30 disabled:cursor-not-allowed
                        transition-all duration-200"
           >
             <ChevronRight className="w-4 h-4" />
           </button>
+
+          {/* Divider */}
+          <div
+            className="w-px h-4 bg-[rgba(212,175,110,0.2)] mx-0.5"
+            aria-hidden="true"
+          />
+
+          {/* Sound Toggle */}
+          <button
+            onClick={toggleMute}
+            aria-label={isMuted ? "Unmute sound" : "Mute sound"}
+            title={isMuted ? "Unmute sound" : "Mute sound"}
+            className="p-2 rounded-full border border-[rgba(212,175,110,0.30)] text-[#8E8B82]
+                       hover:text-white hover:border-[rgba(212,175,110,0.5)] hover:bg-white/5
+                       transition-all duration-200"
+          >
+            {isMuted ? (
+              <VolumeX className="w-4 h-4 text-rose-400/80" />
+            ) : (
+              <Volume2 className="w-4 h-4 text-[#D4AF6E]" />
+            )}
+          </button>
         </div>
-        <button
-          onClick={toggleMute}
-          aria-label={isMuted ? "Unmute sound" : "Mute sound"}
-          className="p-2 rounded-full border text-[#8E8B82]
-             hover:text-white hover:border-[rgba(212,175,110,0.5)] hover:bg-white/5
-             transition-all duration-200"
-        >
-          {isMuted ? (
-            <VolumeX className="w-4 h-4" />
-          ) : (
-            <Volume2 className="w-4 h-4 text-[#D4AF6E]" />
-          )}
-        </button>
       </div>
       {/* Below-board Info Panel */}
       <div className="flex items-center justify-between px-0 mt-1">
