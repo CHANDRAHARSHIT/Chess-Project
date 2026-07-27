@@ -12,6 +12,8 @@ import {
   Bot,
   BookMarked,
   ChevronDown,
+  Dices,
+  Sparkles,
 } from "lucide-react";
 import { useLogoAnimation } from "../hooks/useLogoAnimation";
 import { soundManager } from "../utils/SoundManager";
@@ -47,6 +49,15 @@ export default function SidebarLayout({
   const menuItems = [
     { name: "Home", href: "/", icon: Home },
     { name: "Puzzles", href: "/puzzles", icon: Puzzle },
+    {
+      name: "Play",
+      href: "/play",
+      icon: Bot,
+      subItems: [
+        { name: "Variants", href: "/variants", icon: Dices },
+        { name: "Chess 960", href: "/play/chess960", icon: Sparkles },
+      ],
+    },
     {
       name: "Learn",
       href: "/learn",
@@ -152,7 +163,7 @@ export default function SidebarLayout({
       <div className="flex flex-1 pt-16">
         {/* Desktop Sidebar (Fixed) */}
         <aside
-          className={`fixed top-16 left-0 bottom-0 z-30 bg-[#080B14]/90 backdrop-blur-md border-r border-brand-border flex flex-col py-4 transition-all duration-300 hidden md:flex ${
+          className={`fixed top-16 left-0 bottom-0 z-30 bg-[#080B14]/90 backdrop-blur-md border-r border-brand-border flex-col py-4 transition-all duration-300 hidden md:flex ${
             isExpanded ? "w-64" : "w-20"
           }`}
         >
