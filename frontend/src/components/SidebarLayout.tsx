@@ -185,27 +185,23 @@ export default function SidebarLayout({
                         handleLinkClick(item.href, e);
                       }
                     }}
-                    className={`b1 relative flex transition-all duration-200 cursor-pointer ${
-                      isExpanded
-                        ? `items-center gap-4 px-4 py-3 mx-3 rounded-xl ${
-                            isActive
-                              ? "text-brand-accent bg-brand-accent/10 font-medium shadow-[inset_1px_0_0_rgba(212,175,110,0.1)]"
-                              : "text-brand-secondary hover:text-white hover:bg-white/5 group-hover/navitem:bg-white/5 group-hover/navitem:text-white"
-                          }`
-                        : `flex-col items-center justify-center py-2.5 mx-2 rounded-lg text-center ${
-                            isActive
-                              ? "text-brand-accent bg-brand-accent/10 border-brand-accent font-medium"
-                              : "text-brand-secondary hover:text-white hover:bg-white/5 group-hover/navitem:bg-white/5 group-hover/navitem:text-white"
-                          }`
-                    }`}
+                    className={`b1 relative flex transition-all duration-200 cursor-pointer ${isExpanded
+                      ? `items-center gap-4 px-4 py-3 mx-3 rounded-xl ${isActive
+                        ? "text-brand-accent bg-brand-accent/10 font-medium shadow-[inset_1px_0_0_rgba(212,175,110,0.1)]"
+                        : "text-brand-secondary hover:text-white hover:bg-white/5 group-hover/navitem:bg-white/5 group-hover/navitem:text-white"
+                      }`
+                      : `flex-col items-center justify-center py-2.5 mx-2 rounded-lg text-center ${isActive
+                        ? "text-brand-accent bg-brand-accent/10 border-brand-accent font-medium"
+                        : "text-brand-secondary hover:text-white hover:bg-white/5 group-hover/navitem:bg-white/5 group-hover/navitem:text-white"
+                      }`
+                      }`}
                   >
                     <Icon
                       className={`w-5 h-5 transition-transform duration-200 group-hover/navitem:scale-105 ${isActive ? "text-brand-accent" : "text-brand-secondary group-hover/navitem:text-white"}`}
                     />
                     <span
-                      className={`font-sans tracking-wide transition-all ${
-                        isExpanded ? "text-sm" : "text-[10px] mt-1"
-                      }`}
+                      className={`font-sans tracking-wide transition-all ${isExpanded ? "text-sm" : "text-[10px] mt-1"
+                        }`}
                     >
                       {item.name}
                     </span>
@@ -241,13 +237,12 @@ export default function SidebarLayout({
                                 handleLinkClick(subItem.href, e);
                               }}
                               title={isComingSoon ? "Coming Soon" : undefined}
-                              className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm font-sans text-left transition-colors duration-150 ${
-                                isComingSoon
-                                  ? "opacity-40 cursor-not-allowed select-none"
-                                  : isSubActive
+                              className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm font-sans text-left transition-colors duration-150 ${isComingSoon
+                                ? "opacity-40 cursor-not-allowed select-none"
+                                : isSubActive
                                   ? "text-brand-accent bg-white/[0.06] cursor-pointer"
                                   : "text-brand-secondary hover:text-white hover:bg-white/[0.06] cursor-pointer"
-                              }`}
+                                }`}
                             >
                               <SubIcon
                                 className={`w-4 h-4 shrink-0 transition-colors duration-150 ${isSubActive ? "text-brand-accent" : "text-brand-accent/70 group-hover/sub:text-brand-accent"}`}
@@ -274,17 +269,15 @@ export default function SidebarLayout({
         {/* Mobile Sidebar (Slide-out Overlay Drawer) */}
         {/* Backdrop overlay */}
         <div
-          className={`fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity duration-300 md:hidden ${
-            isMobileOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-          }`}
+          className={`fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity duration-300 md:hidden ${isMobileOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+            }`}
           onClick={() => setIsMobileOpen(false)}
         />
 
         {/* Drawer itself */}
         <aside
-          className={`fixed top-0 left-0 bottom-0 w-64 z-50 bg-[#080B14] border-r border-brand-border flex flex-col py-4 transition-transform duration-300 ease-in-out md:hidden ${
-            isMobileOpen ? "translate-x-0" : "-translate-x-full"
-          }`}
+          className={`fixed top-0 left-0 bottom-0 w-64 z-50 bg-[#080B14] border-r border-brand-border flex flex-col py-4 transition-transform duration-300 ease-in-out md:hidden ${isMobileOpen ? "translate-x-0" : "-translate-x-full"
+            }`}
         >
           {/* Drawer Header */}
           <div className="flex items-center justify-between px-4 pb-4 border-b border-brand-border/40">
@@ -321,11 +314,10 @@ export default function SidebarLayout({
                         );
                       }
                     }}
-                    className={`group w-full flex items-center gap-4 px-4 py-3 mx-3 rounded-xl transition-all duration-200 cursor-pointer text-left ${
-                      isActive
-                        ? "text-brand-accent bg-brand-accent/10 font-medium"
-                        : "text-brand-secondary hover:text-white hover:bg-white/5"
-                    }`}
+                    className={`group w-full flex items-center gap-4 px-4 py-3 mx-3 rounded-xl transition-all duration-200 cursor-pointer text-left ${isActive
+                      ? "text-brand-accent bg-brand-accent/10 font-medium"
+                      : "text-brand-secondary hover:text-white hover:bg-white/5"
+                      }`}
                     style={{ width: "calc(100% - 1.5rem)" }}
                   >
                     <Icon
@@ -336,11 +328,10 @@ export default function SidebarLayout({
                     </span>
                     {item.subItems && (
                       <ChevronDown
-                        className={`w-4 h-4 shrink-0 transition-transform duration-200 ${
-                          isSubOpen
-                            ? "rotate-180 text-brand-accent"
-                            : "text-brand-secondary/60"
-                        }`}
+                        className={`w-4 h-4 shrink-0 transition-transform duration-200 ${isSubOpen
+                          ? "rotate-180 text-brand-accent"
+                          : "text-brand-secondary/60"
+                          }`}
                       />
                     )}
                   </button>
@@ -363,13 +354,12 @@ export default function SidebarLayout({
                               handleLinkClick(subItem.href, e);
                             }}
                             title={isComingSoon ? "Coming Soon" : undefined}
-                            className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200 ${
-                              isComingSoon
-                                ? "opacity-40 cursor-not-allowed select-none"
-                                : isSubActive
+                            className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200 ${isComingSoon
+                              ? "opacity-40 cursor-not-allowed select-none"
+                              : isSubActive
                                 ? "text-brand-accent bg-brand-accent/5 font-medium cursor-pointer"
                                 : "text-brand-secondary hover:text-white hover:bg-white/5 cursor-pointer"
-                            }`}
+                              }`}
                           >
                             <SubIcon
                               className={`w-4 h-4 ${isSubActive ? "text-brand-accent" : "text-brand-secondary"}`}
@@ -390,9 +380,8 @@ export default function SidebarLayout({
 
         {/* ── MAIN CONTENT WORKSPACE ─────────────────────────────────────────── */}
         <div
-          className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${
-            isExpanded ? "md:pl-64" : "md:pl-20"
-          }`}
+          className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${isExpanded ? "md:pl-64" : "md:pl-20"
+            }`}
         >
           {children}
         </div>
