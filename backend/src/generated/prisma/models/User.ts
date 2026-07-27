@@ -207,10 +207,11 @@ export type UserWhereInput = {
   stripeTestCustomerId?: Prisma.StringNullableFilter<"User"> | string | null
   stripeLiveCustomerId?: Prisma.StringNullableFilter<"User"> | string | null
   accounts?: Prisma.AccountListRelationFilter
+  billingProfile?: Prisma.XOR<Prisma.BillingProfileNullableScalarRelationFilter, Prisma.BillingProfileWhereInput> | null
+  customLinks?: Prisma.CustomLinkListRelationFilter
+  payments?: Prisma.PaymentListRelationFilter
   sessions?: Prisma.SessionListRelationFilter
   subscriptions?: Prisma.SubscriptionListRelationFilter
-  payments?: Prisma.PaymentListRelationFilter
-  billingProfile?: Prisma.XOR<Prisma.BillingProfileNullableScalarRelationFilter, Prisma.BillingProfileWhereInput> | null
 }
 
 export type UserOrderByWithRelationInput = {
@@ -223,10 +224,11 @@ export type UserOrderByWithRelationInput = {
   stripeTestCustomerId?: Prisma.SortOrderInput | Prisma.SortOrder
   stripeLiveCustomerId?: Prisma.SortOrderInput | Prisma.SortOrder
   accounts?: Prisma.AccountOrderByRelationAggregateInput
+  billingProfile?: Prisma.BillingProfileOrderByWithRelationInput
+  customLinks?: Prisma.CustomLinkOrderByRelationAggregateInput
+  payments?: Prisma.PaymentOrderByRelationAggregateInput
   sessions?: Prisma.SessionOrderByRelationAggregateInput
   subscriptions?: Prisma.SubscriptionOrderByRelationAggregateInput
-  payments?: Prisma.PaymentOrderByRelationAggregateInput
-  billingProfile?: Prisma.BillingProfileOrderByWithRelationInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -242,10 +244,11 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   image?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   accounts?: Prisma.AccountListRelationFilter
+  billingProfile?: Prisma.XOR<Prisma.BillingProfileNullableScalarRelationFilter, Prisma.BillingProfileWhereInput> | null
+  customLinks?: Prisma.CustomLinkListRelationFilter
+  payments?: Prisma.PaymentListRelationFilter
   sessions?: Prisma.SessionListRelationFilter
   subscriptions?: Prisma.SubscriptionListRelationFilter
-  payments?: Prisma.PaymentListRelationFilter
-  billingProfile?: Prisma.XOR<Prisma.BillingProfileNullableScalarRelationFilter, Prisma.BillingProfileWhereInput> | null
 }, "id" | "email" | "stripeTestCustomerId" | "stripeLiveCustomerId">
 
 export type UserOrderByWithAggregationInput = {
@@ -286,10 +289,11 @@ export type UserCreateInput = {
   stripeTestCustomerId?: string | null
   stripeLiveCustomerId?: string | null
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  billingProfile?: Prisma.BillingProfileCreateNestedOneWithoutUserInput
+  customLinks?: Prisma.CustomLinkCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
-  payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
-  billingProfile?: Prisma.BillingProfileCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -302,10 +306,11 @@ export type UserUncheckedCreateInput = {
   stripeTestCustomerId?: string | null
   stripeLiveCustomerId?: string | null
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  billingProfile?: Prisma.BillingProfileUncheckedCreateNestedOneWithoutUserInput
+  customLinks?: Prisma.CustomLinkUncheckedCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
-  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
-  billingProfile?: Prisma.BillingProfileUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -318,10 +323,11 @@ export type UserUpdateInput = {
   stripeTestCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  billingProfile?: Prisma.BillingProfileUpdateOneWithoutUserNestedInput
+  customLinks?: Prisma.CustomLinkUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
-  payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
-  billingProfile?: Prisma.BillingProfileUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -334,10 +340,11 @@ export type UserUncheckedUpdateInput = {
   stripeTestCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  billingProfile?: Prisma.BillingProfileUncheckedUpdateOneWithoutUserNestedInput
+  customLinks?: Prisma.CustomLinkUncheckedUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
-  payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
-  billingProfile?: Prisma.BillingProfileUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -497,6 +504,20 @@ export type UserUpdateOneRequiredWithoutBillingProfileNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutBillingProfileInput, Prisma.UserUpdateWithoutBillingProfileInput>, Prisma.UserUncheckedUpdateWithoutBillingProfileInput>
 }
 
+export type UserCreateNestedOneWithoutCustomLinksInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCustomLinksInput, Prisma.UserUncheckedCreateWithoutCustomLinksInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCustomLinksInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutCustomLinksNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCustomLinksInput, Prisma.UserUncheckedCreateWithoutCustomLinksInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCustomLinksInput
+  upsert?: Prisma.UserUpsertWithoutCustomLinksInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCustomLinksInput, Prisma.UserUpdateWithoutCustomLinksInput>, Prisma.UserUncheckedUpdateWithoutCustomLinksInput>
+}
+
 export type UserCreateWithoutAccountsInput = {
   id?: string
   name?: string | null
@@ -506,10 +527,11 @@ export type UserCreateWithoutAccountsInput = {
   createdAt?: Date | string
   stripeTestCustomerId?: string | null
   stripeLiveCustomerId?: string | null
+  billingProfile?: Prisma.BillingProfileCreateNestedOneWithoutUserInput
+  customLinks?: Prisma.CustomLinkCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
-  payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
-  billingProfile?: Prisma.BillingProfileCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAccountsInput = {
@@ -521,10 +543,11 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   createdAt?: Date | string
   stripeTestCustomerId?: string | null
   stripeLiveCustomerId?: string | null
+  billingProfile?: Prisma.BillingProfileUncheckedCreateNestedOneWithoutUserInput
+  customLinks?: Prisma.CustomLinkUncheckedCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
-  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
-  billingProfile?: Prisma.BillingProfileUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAccountsInput = {
@@ -552,10 +575,11 @@ export type UserUpdateWithoutAccountsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   stripeTestCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingProfile?: Prisma.BillingProfileUpdateOneWithoutUserNestedInput
+  customLinks?: Prisma.CustomLinkUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
-  payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
-  billingProfile?: Prisma.BillingProfileUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -567,10 +591,11 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   stripeTestCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingProfile?: Prisma.BillingProfileUncheckedUpdateOneWithoutUserNestedInput
+  customLinks?: Prisma.CustomLinkUncheckedUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
-  payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
-  billingProfile?: Prisma.BillingProfileUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSessionsInput = {
@@ -583,9 +608,10 @@ export type UserCreateWithoutSessionsInput = {
   stripeTestCustomerId?: string | null
   stripeLiveCustomerId?: string | null
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
-  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
-  payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
   billingProfile?: Prisma.BillingProfileCreateNestedOneWithoutUserInput
+  customLinks?: Prisma.CustomLinkCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -598,9 +624,10 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   stripeTestCustomerId?: string | null
   stripeLiveCustomerId?: string | null
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
-  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
-  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
   billingProfile?: Prisma.BillingProfileUncheckedCreateNestedOneWithoutUserInput
+  customLinks?: Prisma.CustomLinkUncheckedCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -629,9 +656,10 @@ export type UserUpdateWithoutSessionsInput = {
   stripeTestCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
-  subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
-  payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
   billingProfile?: Prisma.BillingProfileUpdateOneWithoutUserNestedInput
+  customLinks?: Prisma.CustomLinkUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -644,9 +672,10 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   stripeTestCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
-  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
-  payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
   billingProfile?: Prisma.BillingProfileUncheckedUpdateOneWithoutUserNestedInput
+  customLinks?: Prisma.CustomLinkUncheckedUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSubscriptionsInput = {
@@ -659,9 +688,10 @@ export type UserCreateWithoutSubscriptionsInput = {
   stripeTestCustomerId?: string | null
   stripeLiveCustomerId?: string | null
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
-  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
-  payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
   billingProfile?: Prisma.BillingProfileCreateNestedOneWithoutUserInput
+  customLinks?: Prisma.CustomLinkCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSubscriptionsInput = {
@@ -674,9 +704,10 @@ export type UserUncheckedCreateWithoutSubscriptionsInput = {
   stripeTestCustomerId?: string | null
   stripeLiveCustomerId?: string | null
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
-  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
-  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
   billingProfile?: Prisma.BillingProfileUncheckedCreateNestedOneWithoutUserInput
+  customLinks?: Prisma.CustomLinkUncheckedCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSubscriptionsInput = {
@@ -705,9 +736,10 @@ export type UserUpdateWithoutSubscriptionsInput = {
   stripeTestCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
-  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
-  payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
   billingProfile?: Prisma.BillingProfileUpdateOneWithoutUserNestedInput
+  customLinks?: Prisma.CustomLinkUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSubscriptionsInput = {
@@ -720,9 +752,10 @@ export type UserUncheckedUpdateWithoutSubscriptionsInput = {
   stripeTestCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
-  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
-  payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
   billingProfile?: Prisma.BillingProfileUncheckedUpdateOneWithoutUserNestedInput
+  customLinks?: Prisma.CustomLinkUncheckedUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPaymentsInput = {
@@ -735,9 +768,10 @@ export type UserCreateWithoutPaymentsInput = {
   stripeTestCustomerId?: string | null
   stripeLiveCustomerId?: string | null
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  billingProfile?: Prisma.BillingProfileCreateNestedOneWithoutUserInput
+  customLinks?: Prisma.CustomLinkCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
-  billingProfile?: Prisma.BillingProfileCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPaymentsInput = {
@@ -750,9 +784,10 @@ export type UserUncheckedCreateWithoutPaymentsInput = {
   stripeTestCustomerId?: string | null
   stripeLiveCustomerId?: string | null
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  billingProfile?: Prisma.BillingProfileUncheckedCreateNestedOneWithoutUserInput
+  customLinks?: Prisma.CustomLinkUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
-  billingProfile?: Prisma.BillingProfileUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPaymentsInput = {
@@ -781,9 +816,10 @@ export type UserUpdateWithoutPaymentsInput = {
   stripeTestCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  billingProfile?: Prisma.BillingProfileUpdateOneWithoutUserNestedInput
+  customLinks?: Prisma.CustomLinkUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
-  billingProfile?: Prisma.BillingProfileUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPaymentsInput = {
@@ -796,9 +832,10 @@ export type UserUncheckedUpdateWithoutPaymentsInput = {
   stripeTestCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  billingProfile?: Prisma.BillingProfileUncheckedUpdateOneWithoutUserNestedInput
+  customLinks?: Prisma.CustomLinkUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
-  billingProfile?: Prisma.BillingProfileUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutBillingProfileInput = {
@@ -811,9 +848,10 @@ export type UserCreateWithoutBillingProfileInput = {
   stripeTestCustomerId?: string | null
   stripeLiveCustomerId?: string | null
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  customLinks?: Prisma.CustomLinkCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
-  payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutBillingProfileInput = {
@@ -826,9 +864,10 @@ export type UserUncheckedCreateWithoutBillingProfileInput = {
   stripeTestCustomerId?: string | null
   stripeLiveCustomerId?: string | null
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  customLinks?: Prisma.CustomLinkUncheckedCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
-  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutBillingProfileInput = {
@@ -857,9 +896,10 @@ export type UserUpdateWithoutBillingProfileInput = {
   stripeTestCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  customLinks?: Prisma.CustomLinkUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
-  payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutBillingProfileInput = {
@@ -872,9 +912,90 @@ export type UserUncheckedUpdateWithoutBillingProfileInput = {
   stripeTestCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  customLinks?: Prisma.CustomLinkUncheckedUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutCustomLinksInput = {
+  id?: string
+  name?: string | null
+  email: string
+  emailVerified?: Date | string | null
+  image?: string | null
+  createdAt?: Date | string
+  stripeTestCustomerId?: string | null
+  stripeLiveCustomerId?: string | null
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  billingProfile?: Prisma.BillingProfileCreateNestedOneWithoutUserInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutCustomLinksInput = {
+  id?: string
+  name?: string | null
+  email: string
+  emailVerified?: Date | string | null
+  image?: string | null
+  createdAt?: Date | string
+  stripeTestCustomerId?: string | null
+  stripeLiveCustomerId?: string | null
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  billingProfile?: Prisma.BillingProfileUncheckedCreateNestedOneWithoutUserInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutCustomLinksInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutCustomLinksInput, Prisma.UserUncheckedCreateWithoutCustomLinksInput>
+}
+
+export type UserUpsertWithoutCustomLinksInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutCustomLinksInput, Prisma.UserUncheckedUpdateWithoutCustomLinksInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutCustomLinksInput, Prisma.UserUncheckedCreateWithoutCustomLinksInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutCustomLinksInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutCustomLinksInput, Prisma.UserUncheckedUpdateWithoutCustomLinksInput>
+}
+
+export type UserUpdateWithoutCustomLinksInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  stripeTestCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  billingProfile?: Prisma.BillingProfileUpdateOneWithoutUserNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutCustomLinksInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  stripeTestCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  billingProfile?: Prisma.BillingProfileUncheckedUpdateOneWithoutUserNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -884,16 +1005,18 @@ export type UserUncheckedUpdateWithoutBillingProfileInput = {
 
 export type UserCountOutputType = {
   accounts: number
+  customLinks: number
+  payments: number
   sessions: number
   subscriptions: number
-  payments: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   accounts?: boolean | UserCountOutputTypeCountAccountsArgs
+  customLinks?: boolean | UserCountOutputTypeCountCustomLinksArgs
+  payments?: boolean | UserCountOutputTypeCountPaymentsArgs
   sessions?: boolean | UserCountOutputTypeCountSessionsArgs
   subscriptions?: boolean | UserCountOutputTypeCountSubscriptionsArgs
-  payments?: boolean | UserCountOutputTypeCountPaymentsArgs
 }
 
 /**
@@ -916,6 +1039,20 @@ export type UserCountOutputTypeCountAccountsArgs<ExtArgs extends runtime.Types.E
 /**
  * UserCountOutputType without action
  */
+export type UserCountOutputTypeCountCustomLinksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CustomLinkWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountPaymentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PaymentWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
 export type UserCountOutputTypeCountSessionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.SessionWhereInput
 }
@@ -925,13 +1062,6 @@ export type UserCountOutputTypeCountSessionsArgs<ExtArgs extends runtime.Types.E
  */
 export type UserCountOutputTypeCountSubscriptionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.SubscriptionWhereInput
-}
-
-/**
- * UserCountOutputType without action
- */
-export type UserCountOutputTypeCountPaymentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.PaymentWhereInput
 }
 
 
@@ -945,10 +1075,11 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   stripeTestCustomerId?: boolean
   stripeLiveCustomerId?: boolean
   accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>
+  billingProfile?: boolean | Prisma.User$billingProfileArgs<ExtArgs>
+  customLinks?: boolean | Prisma.User$customLinksArgs<ExtArgs>
+  payments?: boolean | Prisma.User$paymentsArgs<ExtArgs>
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
   subscriptions?: boolean | Prisma.User$subscriptionsArgs<ExtArgs>
-  payments?: boolean | Prisma.User$paymentsArgs<ExtArgs>
-  billingProfile?: boolean | Prisma.User$billingProfileArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -988,10 +1119,11 @@ export type UserSelectScalar = {
 export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "emailVerified" | "image" | "createdAt" | "stripeTestCustomerId" | "stripeLiveCustomerId", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>
+  billingProfile?: boolean | Prisma.User$billingProfileArgs<ExtArgs>
+  customLinks?: boolean | Prisma.User$customLinksArgs<ExtArgs>
+  payments?: boolean | Prisma.User$paymentsArgs<ExtArgs>
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
   subscriptions?: boolean | Prisma.User$subscriptionsArgs<ExtArgs>
-  payments?: boolean | Prisma.User$paymentsArgs<ExtArgs>
-  billingProfile?: boolean | Prisma.User$billingProfileArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1001,10 +1133,11 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   name: "User"
   objects: {
     accounts: Prisma.$AccountPayload<ExtArgs>[]
+    billingProfile: Prisma.$BillingProfilePayload<ExtArgs> | null
+    customLinks: Prisma.$CustomLinkPayload<ExtArgs>[]
+    payments: Prisma.$PaymentPayload<ExtArgs>[]
     sessions: Prisma.$SessionPayload<ExtArgs>[]
     subscriptions: Prisma.$SubscriptionPayload<ExtArgs>[]
-    payments: Prisma.$PaymentPayload<ExtArgs>[]
-    billingProfile: Prisma.$BillingProfilePayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1410,10 +1543,11 @@ readonly fields: UserFieldRefs;
 export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   accounts<T extends Prisma.User$accountsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$accountsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  billingProfile<T extends Prisma.User$billingProfileArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$billingProfileArgs<ExtArgs>>): Prisma.Prisma__BillingProfileClient<runtime.Types.Result.GetResult<Prisma.$BillingProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  customLinks<T extends Prisma.User$customLinksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$customLinksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CustomLinkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  payments<T extends Prisma.User$paymentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$paymentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   sessions<T extends Prisma.User$sessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   subscriptions<T extends Prisma.User$subscriptionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$subscriptionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SubscriptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  payments<T extends Prisma.User$paymentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$paymentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  billingProfile<T extends Prisma.User$billingProfileArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$billingProfileArgs<ExtArgs>>): Prisma.Prisma__BillingProfileClient<runtime.Types.Result.GetResult<Prisma.$BillingProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1868,6 +2002,73 @@ export type User$accountsArgs<ExtArgs extends runtime.Types.Extensions.InternalA
 }
 
 /**
+ * User.billingProfile
+ */
+export type User$billingProfileArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BillingProfile
+   */
+  select?: Prisma.BillingProfileSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BillingProfile
+   */
+  omit?: Prisma.BillingProfileOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BillingProfileInclude<ExtArgs> | null
+  where?: Prisma.BillingProfileWhereInput
+}
+
+/**
+ * User.customLinks
+ */
+export type User$customLinksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CustomLink
+   */
+  select?: Prisma.CustomLinkSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CustomLink
+   */
+  omit?: Prisma.CustomLinkOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CustomLinkInclude<ExtArgs> | null
+  where?: Prisma.CustomLinkWhereInput
+  orderBy?: Prisma.CustomLinkOrderByWithRelationInput | Prisma.CustomLinkOrderByWithRelationInput[]
+  cursor?: Prisma.CustomLinkWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CustomLinkScalarFieldEnum | Prisma.CustomLinkScalarFieldEnum[]
+}
+
+/**
+ * User.payments
+ */
+export type User$paymentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Payment
+   */
+  select?: Prisma.PaymentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Payment
+   */
+  omit?: Prisma.PaymentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PaymentInclude<ExtArgs> | null
+  where?: Prisma.PaymentWhereInput
+  orderBy?: Prisma.PaymentOrderByWithRelationInput | Prisma.PaymentOrderByWithRelationInput[]
+  cursor?: Prisma.PaymentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PaymentScalarFieldEnum | Prisma.PaymentScalarFieldEnum[]
+}
+
+/**
  * User.sessions
  */
 export type User$sessionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1913,49 +2114,6 @@ export type User$subscriptionsArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.SubscriptionScalarFieldEnum | Prisma.SubscriptionScalarFieldEnum[]
-}
-
-/**
- * User.payments
- */
-export type User$paymentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Payment
-   */
-  select?: Prisma.PaymentSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Payment
-   */
-  omit?: Prisma.PaymentOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.PaymentInclude<ExtArgs> | null
-  where?: Prisma.PaymentWhereInput
-  orderBy?: Prisma.PaymentOrderByWithRelationInput | Prisma.PaymentOrderByWithRelationInput[]
-  cursor?: Prisma.PaymentWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.PaymentScalarFieldEnum | Prisma.PaymentScalarFieldEnum[]
-}
-
-/**
- * User.billingProfile
- */
-export type User$billingProfileArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the BillingProfile
-   */
-  select?: Prisma.BillingProfileSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the BillingProfile
-   */
-  omit?: Prisma.BillingProfileOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.BillingProfileInclude<ExtArgs> | null
-  where?: Prisma.BillingProfileWhereInput
 }
 
 /**

@@ -394,7 +394,11 @@ export const ModelName = {
   Product: 'Product',
   ProductFeature: 'ProductFeature',
   WebhookEvent: 'WebhookEvent',
-  Opening: 'Opening'
+  Opening: 'Opening',
+  ChessOpening: 'ChessOpening',
+  ChessOpeningStep: 'ChessOpeningStep',
+  CuratedPuzzle: 'CuratedPuzzle',
+  CustomLink: 'CustomLink'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -410,7 +414,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "account" | "session" | "verificationToken" | "subscription" | "payment" | "billingProfile" | "product" | "productFeature" | "webhookEvent" | "opening"
+    modelProps: "user" | "account" | "session" | "verificationToken" | "subscription" | "payment" | "billingProfile" | "product" | "productFeature" | "webhookEvent" | "opening" | "chessOpening" | "chessOpeningStep" | "curatedPuzzle" | "customLink"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1228,6 +1232,302 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ChessOpening: {
+      payload: Prisma.$ChessOpeningPayload<ExtArgs>
+      fields: Prisma.ChessOpeningFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ChessOpeningFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChessOpeningPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ChessOpeningFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChessOpeningPayload>
+        }
+        findFirst: {
+          args: Prisma.ChessOpeningFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChessOpeningPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ChessOpeningFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChessOpeningPayload>
+        }
+        findMany: {
+          args: Prisma.ChessOpeningFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChessOpeningPayload>[]
+        }
+        create: {
+          args: Prisma.ChessOpeningCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChessOpeningPayload>
+        }
+        createMany: {
+          args: Prisma.ChessOpeningCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ChessOpeningCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChessOpeningPayload>[]
+        }
+        delete: {
+          args: Prisma.ChessOpeningDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChessOpeningPayload>
+        }
+        update: {
+          args: Prisma.ChessOpeningUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChessOpeningPayload>
+        }
+        deleteMany: {
+          args: Prisma.ChessOpeningDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ChessOpeningUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ChessOpeningUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChessOpeningPayload>[]
+        }
+        upsert: {
+          args: Prisma.ChessOpeningUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChessOpeningPayload>
+        }
+        aggregate: {
+          args: Prisma.ChessOpeningAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateChessOpening>
+        }
+        groupBy: {
+          args: Prisma.ChessOpeningGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ChessOpeningGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ChessOpeningCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ChessOpeningCountAggregateOutputType> | number
+        }
+      }
+    }
+    ChessOpeningStep: {
+      payload: Prisma.$ChessOpeningStepPayload<ExtArgs>
+      fields: Prisma.ChessOpeningStepFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ChessOpeningStepFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChessOpeningStepPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ChessOpeningStepFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChessOpeningStepPayload>
+        }
+        findFirst: {
+          args: Prisma.ChessOpeningStepFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChessOpeningStepPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ChessOpeningStepFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChessOpeningStepPayload>
+        }
+        findMany: {
+          args: Prisma.ChessOpeningStepFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChessOpeningStepPayload>[]
+        }
+        create: {
+          args: Prisma.ChessOpeningStepCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChessOpeningStepPayload>
+        }
+        createMany: {
+          args: Prisma.ChessOpeningStepCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ChessOpeningStepCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChessOpeningStepPayload>[]
+        }
+        delete: {
+          args: Prisma.ChessOpeningStepDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChessOpeningStepPayload>
+        }
+        update: {
+          args: Prisma.ChessOpeningStepUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChessOpeningStepPayload>
+        }
+        deleteMany: {
+          args: Prisma.ChessOpeningStepDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ChessOpeningStepUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ChessOpeningStepUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChessOpeningStepPayload>[]
+        }
+        upsert: {
+          args: Prisma.ChessOpeningStepUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChessOpeningStepPayload>
+        }
+        aggregate: {
+          args: Prisma.ChessOpeningStepAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateChessOpeningStep>
+        }
+        groupBy: {
+          args: Prisma.ChessOpeningStepGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ChessOpeningStepGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ChessOpeningStepCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ChessOpeningStepCountAggregateOutputType> | number
+        }
+      }
+    }
+    CuratedPuzzle: {
+      payload: Prisma.$CuratedPuzzlePayload<ExtArgs>
+      fields: Prisma.CuratedPuzzleFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CuratedPuzzleFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CuratedPuzzlePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CuratedPuzzleFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CuratedPuzzlePayload>
+        }
+        findFirst: {
+          args: Prisma.CuratedPuzzleFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CuratedPuzzlePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CuratedPuzzleFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CuratedPuzzlePayload>
+        }
+        findMany: {
+          args: Prisma.CuratedPuzzleFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CuratedPuzzlePayload>[]
+        }
+        create: {
+          args: Prisma.CuratedPuzzleCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CuratedPuzzlePayload>
+        }
+        createMany: {
+          args: Prisma.CuratedPuzzleCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CuratedPuzzleCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CuratedPuzzlePayload>[]
+        }
+        delete: {
+          args: Prisma.CuratedPuzzleDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CuratedPuzzlePayload>
+        }
+        update: {
+          args: Prisma.CuratedPuzzleUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CuratedPuzzlePayload>
+        }
+        deleteMany: {
+          args: Prisma.CuratedPuzzleDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CuratedPuzzleUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CuratedPuzzleUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CuratedPuzzlePayload>[]
+        }
+        upsert: {
+          args: Prisma.CuratedPuzzleUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CuratedPuzzlePayload>
+        }
+        aggregate: {
+          args: Prisma.CuratedPuzzleAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCuratedPuzzle>
+        }
+        groupBy: {
+          args: Prisma.CuratedPuzzleGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CuratedPuzzleGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CuratedPuzzleCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CuratedPuzzleCountAggregateOutputType> | number
+        }
+      }
+    }
+    CustomLink: {
+      payload: Prisma.$CustomLinkPayload<ExtArgs>
+      fields: Prisma.CustomLinkFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CustomLinkFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomLinkPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CustomLinkFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomLinkPayload>
+        }
+        findFirst: {
+          args: Prisma.CustomLinkFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomLinkPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CustomLinkFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomLinkPayload>
+        }
+        findMany: {
+          args: Prisma.CustomLinkFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomLinkPayload>[]
+        }
+        create: {
+          args: Prisma.CustomLinkCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomLinkPayload>
+        }
+        createMany: {
+          args: Prisma.CustomLinkCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CustomLinkCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomLinkPayload>[]
+        }
+        delete: {
+          args: Prisma.CustomLinkDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomLinkPayload>
+        }
+        update: {
+          args: Prisma.CustomLinkUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomLinkPayload>
+        }
+        deleteMany: {
+          args: Prisma.CustomLinkDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CustomLinkUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CustomLinkUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomLinkPayload>[]
+        }
+        upsert: {
+          args: Prisma.CustomLinkUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomLinkPayload>
+        }
+        aggregate: {
+          args: Prisma.CustomLinkAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCustomLink>
+        }
+        groupBy: {
+          args: Prisma.CustomLinkGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CustomLinkGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CustomLinkCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CustomLinkCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1389,12 +1689,12 @@ export const ProductScalarFieldEnum = {
   priceAmount: 'priceAmount',
   currency: 'currency',
   billingInterval: 'billingInterval',
-  gatewayTestPriceId: 'gatewayTestPriceId',
-  gatewayLivePriceId: 'gatewayLivePriceId',
   isActive: 'isActive',
   displayOrder: 'displayOrder',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  gatewayTestPriceId: 'gatewayTestPriceId',
+  gatewayLivePriceId: 'gatewayLivePriceId'
 } as const
 
 export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]
@@ -1434,6 +1734,70 @@ export const OpeningScalarFieldEnum = {
 } as const
 
 export type OpeningScalarFieldEnum = (typeof OpeningScalarFieldEnum)[keyof typeof OpeningScalarFieldEnum]
+
+
+export const ChessOpeningScalarFieldEnum = {
+  id: 'id',
+  slug: 'slug',
+  eco: 'eco',
+  name: 'name',
+  pgn: 'pgn',
+  title: 'title',
+  description: 'description',
+  difficulty: 'difficulty',
+  isActive: 'isActive',
+  displayOrder: 'displayOrder',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ChessOpeningScalarFieldEnum = (typeof ChessOpeningScalarFieldEnum)[keyof typeof ChessOpeningScalarFieldEnum]
+
+
+export const ChessOpeningStepScalarFieldEnum = {
+  id: 'id',
+  openingId: 'openingId',
+  stepOrder: 'stepOrder',
+  move: 'move',
+  isOpponentMove: 'isOpponentMove',
+  coachMessage: 'coachMessage',
+  highlightFrom: 'highlightFrom',
+  highlightTo: 'highlightTo',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ChessOpeningStepScalarFieldEnum = (typeof ChessOpeningStepScalarFieldEnum)[keyof typeof ChessOpeningStepScalarFieldEnum]
+
+
+export const CuratedPuzzleScalarFieldEnum = {
+  id: 'id',
+  fen: 'fen',
+  moves: 'moves',
+  rating: 'rating',
+  ratingDeviation: 'ratingDeviation',
+  popularity: 'popularity',
+  nbPlays: 'nbPlays',
+  themes: 'themes',
+  createdAt: 'createdAt'
+} as const
+
+export type CuratedPuzzleScalarFieldEnum = (typeof CuratedPuzzleScalarFieldEnum)[keyof typeof CuratedPuzzleScalarFieldEnum]
+
+
+export const CustomLinkScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  name: 'name',
+  url: 'url',
+  isArchived: 'isArchived',
+  clickCount: 'clickCount',
+  lastClickedAt: 'lastClickedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CustomLinkScalarFieldEnum = (typeof CustomLinkScalarFieldEnum)[keyof typeof CustomLinkScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1575,6 +1939,20 @@ export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$Prisma
 
 
 /**
+ * Reference to a field of type 'OpeningDifficulty'
+ */
+export type EnumOpeningDifficultyFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OpeningDifficulty'>
+    
+
+
+/**
+ * Reference to a field of type 'OpeningDifficulty[]'
+ */
+export type ListEnumOpeningDifficultyFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OpeningDifficulty[]'>
+    
+
+
+/**
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -1708,6 +2086,10 @@ export type GlobalOmitConfig = {
   productFeature?: Prisma.ProductFeatureOmit
   webhookEvent?: Prisma.WebhookEventOmit
   opening?: Prisma.OpeningOmit
+  chessOpening?: Prisma.ChessOpeningOmit
+  chessOpeningStep?: Prisma.ChessOpeningStepOmit
+  curatedPuzzle?: Prisma.CuratedPuzzleOmit
+  customLink?: Prisma.CustomLinkOmit
 }
 
 /* Types for Logging */

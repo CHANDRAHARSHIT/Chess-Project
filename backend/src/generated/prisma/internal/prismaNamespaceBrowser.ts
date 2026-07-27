@@ -61,7 +61,11 @@ export const ModelName = {
   Product: 'Product',
   ProductFeature: 'ProductFeature',
   WebhookEvent: 'WebhookEvent',
-  Opening: 'Opening'
+  Opening: 'Opening',
+  ChessOpening: 'ChessOpening',
+  ChessOpeningStep: 'ChessOpeningStep',
+  CuratedPuzzle: 'CuratedPuzzle',
+  CustomLink: 'CustomLink'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -202,12 +206,12 @@ export const ProductScalarFieldEnum = {
   priceAmount: 'priceAmount',
   currency: 'currency',
   billingInterval: 'billingInterval',
-  gatewayTestPriceId: 'gatewayTestPriceId',
-  gatewayLivePriceId: 'gatewayLivePriceId',
   isActive: 'isActive',
   displayOrder: 'displayOrder',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  gatewayTestPriceId: 'gatewayTestPriceId',
+  gatewayLivePriceId: 'gatewayLivePriceId'
 } as const
 
 export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]
@@ -247,6 +251,70 @@ export const OpeningScalarFieldEnum = {
 } as const
 
 export type OpeningScalarFieldEnum = (typeof OpeningScalarFieldEnum)[keyof typeof OpeningScalarFieldEnum]
+
+
+export const ChessOpeningScalarFieldEnum = {
+  id: 'id',
+  slug: 'slug',
+  eco: 'eco',
+  name: 'name',
+  pgn: 'pgn',
+  title: 'title',
+  description: 'description',
+  difficulty: 'difficulty',
+  isActive: 'isActive',
+  displayOrder: 'displayOrder',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ChessOpeningScalarFieldEnum = (typeof ChessOpeningScalarFieldEnum)[keyof typeof ChessOpeningScalarFieldEnum]
+
+
+export const ChessOpeningStepScalarFieldEnum = {
+  id: 'id',
+  openingId: 'openingId',
+  stepOrder: 'stepOrder',
+  move: 'move',
+  isOpponentMove: 'isOpponentMove',
+  coachMessage: 'coachMessage',
+  highlightFrom: 'highlightFrom',
+  highlightTo: 'highlightTo',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ChessOpeningStepScalarFieldEnum = (typeof ChessOpeningStepScalarFieldEnum)[keyof typeof ChessOpeningStepScalarFieldEnum]
+
+
+export const CuratedPuzzleScalarFieldEnum = {
+  id: 'id',
+  fen: 'fen',
+  moves: 'moves',
+  rating: 'rating',
+  ratingDeviation: 'ratingDeviation',
+  popularity: 'popularity',
+  nbPlays: 'nbPlays',
+  themes: 'themes',
+  createdAt: 'createdAt'
+} as const
+
+export type CuratedPuzzleScalarFieldEnum = (typeof CuratedPuzzleScalarFieldEnum)[keyof typeof CuratedPuzzleScalarFieldEnum]
+
+
+export const CustomLinkScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  name: 'name',
+  url: 'url',
+  isArchived: 'isArchived',
+  clickCount: 'clickCount',
+  lastClickedAt: 'lastClickedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CustomLinkScalarFieldEnum = (typeof CustomLinkScalarFieldEnum)[keyof typeof CustomLinkScalarFieldEnum]
 
 
 export const SortOrder = {

@@ -96,3 +96,23 @@ export type WebhookEvent = Prisma.WebhookEventModel
  * 
  */
 export type Opening = Prisma.OpeningModel
+/**
+ * Model ChessOpening
+ * 
+ */
+export type ChessOpening = Prisma.ChessOpeningModel
+/**
+ * Model ChessOpeningStep
+ * 
+ */
+export type ChessOpeningStep = Prisma.ChessOpeningStepModel
+/**
+ * Model CuratedPuzzle
+ * 
+ */
+export type CuratedPuzzle = Prisma.CuratedPuzzleModel
+/**
+ * Model CustomLink
+ * 
+ */
+export type CustomLink = Prisma.CustomLinkModel
