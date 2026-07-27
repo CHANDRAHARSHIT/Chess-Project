@@ -7,27 +7,49 @@
  *   ┌──────────────────────────────────────────────────────────┐
  *   │  [Openings Sidebar]  │  Top bar (title + ECO + reset)   │
  *   │  ─ Search bar        ├───────────────────────────────────┤
- *   │  ─ Scrollable list   │  Progress bar                     │
- *   │    of openings       ├───────────────────────────────────┤
- *   │                      │  Board          │  Coach Panel    │
+ *   │  ─ Paginated list    │  Progress bar                     │
+ *   │    (100 per page)    ├───────────────────────────────────┤
+ *   │  ─ Prev / Next       │  Board          │  Coach Panel    │
  *   └──────────────────────┴─────────────────┴─────────────────┘
  *
  * Data flow:
- *   OpeningService.getAllOpenings() → state → user selects one →
- *   useOpeningTrainer(selectedOpening) → OpeningBoard + CoachPanel
+ *   useOpenings() → OpeningService (localStorage + in-memory cache) →
+ *   user selects one → useOpeningTrainer(selectedOpening) → board + coach
+ *
+ * Caching:
+ *   The first visit fetches ~3000 records and stores them in localStorage.
+ *   Every subsequent visit (including after a full browser refresh) loads
+ *   from the persistent cache synchronously — no spinner, no network wait.
+ *   Cache expires after 24 hours.
+ *
+ * Pagination:
+ *   All data is loaded once. The sidebar slices the filtered array
+ *   client-side (PAGE_SIZE = 100). Changing pages makes zero API requests.
  */
 
 import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router";
-import { ArrowLeft, RotateCcw, Search, BookMarked, ChevronRight } from "lucide-react";
+import {
+  ArrowLeft,
+  RotateCcw,
+  Search,
+  BookMarked,
+  ChevronRight,
+  ChevronLeft,
+} from "lucide-react";
 import { useOpeningTrainer } from "../hooks/useOpeningTrainer";
-import { OpeningService } from "../services/opening";
+import { useOpenings } from "../hooks/useOpenings";
 import { OpeningBoard } from "../components/openings/OpeningBoard";
 import { OpeningCoachPanel } from "../components/openings/OpeningCoachPanel";
 import { OpeningProgressBar } from "../components/openings/OpeningProgressBar";
 import { OpeningCompletionCard } from "../components/openings/OpeningCompletionCard";
 import { soundManager } from "../utils/SoundManager";
 import type { Opening } from "../types/opening";
+
+// ─── Constants ────────────────────────────────────────────────────────────────
+
+/** Number of openings shown per sidebar page. */
+const PAGE_SIZE = 100;
 
 // ─── Sidebar ──────────────────────────────────────────────────────────────────
 
@@ -47,7 +69,9 @@ function OpeningSidebar({
   error,
 }: OpeningSidebarProps) {
   const [query, setQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
 
+  // Filter the full (cached) dataset by search query
   const filtered = useMemo(() => {
     if (!query.trim()) return openings;
     const q = query.toLowerCase();
@@ -57,6 +81,20 @@ function OpeningSidebar({
         o.eco.toLowerCase().includes(q)
     );
   }, [openings, query]);
+
+  // Reset to page 1 whenever the search query or the full list changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [query, openings]);
+
+  // Pagination — all slicing happens on the in-memory filtered array; no API calls
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const safePage = Math.min(currentPage, totalPages);
+  const pageStart = (safePage - 1) * PAGE_SIZE;
+  const visibleOpenings = filtered.slice(pageStart, pageStart + PAGE_SIZE);
+
+  const handlePrev = () => setCurrentPage((p) => Math.max(1, p - 1));
+  const handleNext = () => setCurrentPage((p) => Math.min(totalPages, p + 1));
 
   return (
     <aside
@@ -71,7 +109,7 @@ function OpeningSidebar({
     >
       {/* Sidebar header */}
       <div
-        className="px-4 py-3 flex items-center gap-2"
+        className="px-4 py-3 flex items-center gap-2 shrink-0"
         style={{ borderBottom: "1px solid rgba(212,175,110,0.08)" }}
       >
         <BookMarked className="w-4 h-4 text-brand-accent shrink-0" />
@@ -91,7 +129,10 @@ function OpeningSidebar({
       </div>
 
       {/* Search bar */}
-      <div className="px-3 py-2.5" style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+      <div
+        className="px-3 py-2.5 shrink-0"
+        style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}
+      >
         <div className="relative">
           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-brand-secondary pointer-events-none" />
           <input
@@ -115,7 +156,7 @@ function OpeningSidebar({
         </div>
       </div>
 
-      {/* List */}
+      {/* List — shows only the current page slice */}
       <div className="flex-1 overflow-y-auto" style={{ minHeight: 0 }}>
         {isLoading && (
           <div className="flex flex-col gap-2 p-3">
@@ -137,13 +178,15 @@ function OpeningSidebar({
 
         {!isLoading && !error && filtered.length === 0 && (
           <div className="p-4 text-center">
-            <p className="font-sans text-xs text-brand-secondary">No openings match your search.</p>
+            <p className="font-sans text-xs text-brand-secondary">
+              No openings match your search.
+            </p>
           </div>
         )}
 
         {!isLoading &&
           !error &&
-          filtered.map((opening) => {
+          visibleOpenings.map((opening) => {
             const isSelected = opening.id === selectedId;
             return (
               <button
@@ -188,6 +231,49 @@ function OpeningSidebar({
             );
           })}
       </div>
+
+      {/* Pagination controls — only rendered when there is more than one page */}
+      {!isLoading && !error && totalPages > 1 && (
+        <div
+          className="shrink-0 flex items-center justify-between gap-2 px-3 py-2"
+          style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}
+        >
+          <button
+            onClick={handlePrev}
+            disabled={safePage <= 1}
+            aria-label="Previous page"
+            className="flex items-center justify-center w-6 h-6 rounded transition-all duration-150 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+            style={{
+              background: "rgba(255,255,255,0.04)",
+              border: "1px solid rgba(255,255,255,0.08)",
+              color: "rgba(212,175,110,0.7)",
+            }}
+          >
+            <ChevronLeft className="w-3.5 h-3.5" />
+          </button>
+
+          <span
+            className="font-mono text-[10px] text-center leading-tight"
+            style={{ color: "rgba(255,255,255,0.35)" }}
+          >
+            {safePage} / {totalPages}
+          </span>
+
+          <button
+            onClick={handleNext}
+            disabled={safePage >= totalPages}
+            aria-label="Next page"
+            className="flex items-center justify-center w-6 h-6 rounded transition-all duration-150 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+            style={{
+              background: "rgba(255,255,255,0.04)",
+              border: "1px solid rgba(255,255,255,0.08)",
+              color: "rgba(212,175,110,0.7)",
+            }}
+          >
+            <ChevronRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
     </aside>
   );
 }
@@ -197,26 +283,18 @@ function OpeningSidebar({
 export default function OpeningsPage() {
   const navigate = useNavigate();
 
-  const [openings, setOpenings] = useState<Opening[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [fetchError, setFetchError] = useState<string | null>(null);
+  // useOpenings() seeds state synchronously from localStorage on refresh,
+  // so isLoading is false immediately when a valid cache entry exists.
+  const { openings, isLoading, error: fetchError } = useOpenings();
+
   const [selectedOpening, setSelectedOpening] = useState<Opening | null>(null);
 
-  // Fetch all openings from backend on mount
+  // Auto-select the first opening once data arrives (first visit or after refresh)
   useEffect(() => {
-    setIsLoading(true);
-    setFetchError(null);
-    OpeningService.getAllOpenings()
-      .then((data) => {
-        setOpenings(data);
-        // Auto-select the first opening so the board is immediately ready
-        if (data.length > 0) setSelectedOpening(data[0]);
-      })
-      .catch(() => {
-        setFetchError("Failed to load openings. Please try again.");
-      })
-      .finally(() => setIsLoading(false));
-  }, []);
+    if (openings.length > 0 && selectedOpening === null) {
+      setSelectedOpening(openings[0]);
+    }
+  }, [openings, selectedOpening]);
 
   const trainer = useOpeningTrainer(selectedOpening);
 

@@ -2227,11 +2227,10 @@ export default function HeroPuzzle({
                 key={i}
                 onClick={() => toSlide(i)}
                 aria-label={`Go to slide ${i + 1}`}
-                className={`rounded-full transition-all duration-300 ${
-                  activeIndex === i
-                    ? "w-5 h-1.5 bg-[#D4AF6E]"
-                    : "w-1.5 h-1.5 bg-brand-secondary/40 hover:bg-brand-secondary"
-                }`}
+                className={`rounded-full transition-all duration-300 ${activeIndex === i
+                  ? "w-5 h-1.5 bg-[#D4AF6E]"
+                  : "w-1.5 h-1.5 bg-brand-secondary/40 hover:bg-brand-secondary"
+                  }`}
               />
             ))}
           </div>
@@ -2395,13 +2394,13 @@ export default function HeroPuzzle({
               phase1 === "black_responding" ||
               phase1 === "awaiting_mate" ||
               phase1 === "failed") && (
-              <>
-                <button
-                  onClick={() => {
-                    cleanupGame();
-                    initGame(1);
-                  }}
-                  className="
+                <>
+                  <button
+                    onClick={() => {
+                      cleanupGame();
+                      initGame(1);
+                    }}
+                    className="
                     flex-1 flex items-center justify-center gap-2
                     px-4 py-2.5 rounded-lg
                     font-sans text-sm font-semibold
@@ -2411,13 +2410,13 @@ export default function HeroPuzzle({
                     transition-all duration-200
                     btn-glow-container btn-glow-surface
                   "
-                >
-                  <RotateCcw className="w-4 h-4 text-[#D4AF6E]" />
-                  Reset
-                </button>
-                <button
-                  onClick={handleSolve1}
-                  className="
+                  >
+                    <RotateCcw className="w-4 h-4 text-[#D4AF6E]" />
+                    Reset
+                  </button>
+                  <button
+                    onClick={handleSolve1}
+                    className="
                     flex-1 flex items-center justify-center gap-2
                     px-4 py-2.5 rounded-lg
                     font-sans text-sm font-semibold
@@ -2427,12 +2426,12 @@ export default function HeroPuzzle({
                     transition-all duration-200
                     btn-glow-container btn-glow-surface
                   "
-                >
-                  <Play className="w-4 h-4 text-[#D4AF6E]" />
-                  Solve
-                </button>
-              </>
-            )}
+                  >
+                    <Play className="w-4 h-4 text-[#D4AF6E]" />
+                    Solve
+                  </button>
+                </>
+              )}
             {phase1 === "solved" && (
               <button
                 onClick={handleReplayOriginal}
@@ -2474,13 +2473,13 @@ export default function HeroPuzzle({
             {(phase2 === "idle" ||
               phase2 === "awaiting_move" ||
               phase2 === "failed") && (
-              <>
-                <button
-                  onClick={() => {
-                    cleanupGame();
-                    initGame(2);
-                  }}
-                  className="
+                <>
+                  <button
+                    onClick={() => {
+                      cleanupGame();
+                      initGame(2);
+                    }}
+                    className="
                     flex-1 flex items-center justify-center gap-2
                     px-4 py-2.5 rounded-lg
                     font-sans text-sm font-semibold
@@ -2490,12 +2489,12 @@ export default function HeroPuzzle({
                     transition-all duration-200
                     btn-glow-container btn-glow-surface
                   "
-                >
-                  <RotateCcw className="w-4 h-4 text-[#D4AF6E]" />
-                  Reset
-                </button>
-              </>
-            )}
+                  >
+                    <RotateCcw className="w-4 h-4 text-[#D4AF6E]" />
+                    Reset
+                  </button>
+                </>
+              )}
             {phase2 === "solved" && (
               <button
                 onClick={() => {
@@ -2540,13 +2539,13 @@ export default function HeroPuzzle({
             {(phase3 === "idle" ||
               phase3 === "awaiting_move" ||
               phase3 === "failed") && (
-              <>
-                <button
-                  onClick={() => {
-                    cleanupGame();
-                    initGame(3);
-                  }}
-                  className="
+                <>
+                  <button
+                    onClick={() => {
+                      cleanupGame();
+                      initGame(3);
+                    }}
+                    className="
                     flex-1 flex items-center justify-center gap-2
                     px-4 py-2.5 rounded-lg
                     font-sans text-sm font-semibold
@@ -2556,12 +2555,12 @@ export default function HeroPuzzle({
                     transition-all duration-200
                     btn-glow-container btn-glow-surface
                   "
-                >
-                  <RotateCcw className="w-4 h-4 text-[#D4AF6E]" />
-                  Reset
-                </button>
-              </>
-            )}
+                  >
+                    <RotateCcw className="w-4 h-4 text-[#D4AF6E]" />
+                    Reset
+                  </button>
+                </>
+              )}
             {phase3 === "solved" && (
               <button
                 onClick={() => {
