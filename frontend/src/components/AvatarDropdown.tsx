@@ -96,15 +96,15 @@ export const AvatarDropdown: React.FC = () => {
       {/* Dropdown Menu */}
       {isOpen && (
         <div
-          className="absolute right-0 mt-2 w-48 bg-brand-surface border border-brand-border rounded-xl shadow-xl shadow-brand-bg/60 py-2 backdrop-blur-md animate-in fade-in slide-in-from-top-2 duration-150"
+          className="absolute right-0 mt-2 w-48 bg-brand-surface border border-brand-border rounded-xl shadow-xl  py-2 backdrop-blur-md animate-in fade-in slide-in-from-top-2 duration-150"
           role="menu"
           aria-label="User options"
         >
           {activeMenu === "main" && (
            <>
           {/* User Meta header */}
-          <div className="px-4 py-2 border-b border-brand-border/40 mb-1">
-            <p className="text-xs font-sans font-semibold text-white truncate">
+          <div className="px-4 py-2 border-b border-[rgba(212,175,110,0.40)] mb-1">
+            <p className="text-xs font-sans font-semibold text-brand-text truncate">
               {user.name || "User Profile"}
             </p>
             <p className="text-[10px] font-sans text-brand-secondary truncate">
@@ -119,7 +119,7 @@ export const AvatarDropdown: React.FC = () => {
             id="avatar-menu-settings"
             role="menuitem"
             onClick={() => { setIsOpen(false); navigate('/settings'); }}
-            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-sans text-brand-secondary hover:text-white hover:bg-white/[0.06] text-left transition-colors duration-150 cursor-pointer group"
+            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-sans text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06] text-left transition-colors duration-150 cursor-pointer group"
             tabIndex={0}
           >
             <Settings className="w-4 h-4 text-brand-accent/70 group-hover:text-brand-accent shrink-0 transition-colors duration-150" />
@@ -132,7 +132,7 @@ export const AvatarDropdown: React.FC = () => {
               type="button"
               role="menuitem"
               onClick={() => setActiveMenu("theme")}
-              className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-sans text-brand-secondary hover:text-white hover:bg-white/[0.06] text-left transition-colors duration-150 cursor-pointer group"
+              className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-sans text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06] text-left transition-colors duration-150 cursor-pointer group"
               >
               <Palette className="w-4 h-4 text-brand-accent/70 group-hover:text-brand-accent shrink-0 transition-colors duration-150" />
 
@@ -150,7 +150,7 @@ export const AvatarDropdown: React.FC = () => {
             onClick={toggleSound}
             aria-pressed={soundEnabled}
             aria-label={soundEnabled ? 'Mute sound' : 'Unmute sound'}
-            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-sans text-brand-secondary hover:text-white hover:bg-white/[0.06] text-left transition-colors duration-150 cursor-pointer group"
+            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-sans text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06] text-left transition-colors duration-150 cursor-pointer group"
             tabIndex={0}
           >
             {soundEnabled ? (
@@ -165,14 +165,14 @@ export const AvatarDropdown: React.FC = () => {
                 'text-[10px] font-mono px-1.5 py-0.5 rounded-full border transition-colors duration-200',
                 soundEnabled
                   ? 'border-brand-accent/40 text-brand-accent bg-brand-accent/10'
-                  : 'border-brand-border/40 text-brand-secondary/50 bg-white/5',
+                  : 'border-[rgba(212,175,110,0.40)] text-brand-secondary/50 bg-brand-text/5',
               ].join(' ')}
             >
               {soundEnabled ? 'ON' : 'OFF'}
             </span>
           </button>
 
-          <div className="my-1.5 border-t border-brand-border/40" role="separator" />
+          <div className="my-1.5 border-t border-[rgba(212,175,110,0.40)]" role="separator" />
 
           {/* Sign Out option */}
           <button
@@ -194,10 +194,10 @@ export const AvatarDropdown: React.FC = () => {
     <button
       type="button"
       onClick={() => setActiveMenu("main")}
-      className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-sans text-brand-secondary hover:text-white hover:bg-white/[0.06] text-left transition-colors duration-150 cursor-pointer"
+      className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-sans text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06] text-left transition-colors duration-150 cursor-pointer"
     >
       <ChevronLeft className="w-4 h-4" />
-      <span className="font-medium text-white">Theme</span>
+      <span className="font-medium text-brand-text">Theme</span>
     </button>
 
     <div className="px-4 pt-2 pb-3">
@@ -206,7 +206,7 @@ export const AvatarDropdown: React.FC = () => {
       </p>
     </div>
 
-    <div className="border-t border-brand-border/40" />
+    <div className="border-t border-[rgba(212,175,110,0.40)]" />
 
     <button
       type="button"
@@ -214,11 +214,11 @@ export const AvatarDropdown: React.FC = () => {
          setActiveMenu("main");
          setIsOpen(false);
       }}
-      className="w-full flex items-center justify-between px-4 py-2.5 text-sm font-sans text-brand-secondary hover:text-white hover:bg-white/[0.06] transition-colors duration-150"
+      className="w-full flex items-center justify-between px-4 py-2.5 text-sm font-sans text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06] transition-colors duration-150"
     >
       <div className="w-6 flex justify-center items-center">
        {themeMode.id === "system" && (
-       <span className="text-white text-base">✓</span>
+       <span className="text-brand-text text-base">✓</span>
       )}
     </div>
 
@@ -233,11 +233,11 @@ export const AvatarDropdown: React.FC = () => {
          setActiveMenu("main");
           setIsOpen(false);
       }}
-      className="w-full flex items-center justify-between px-4 py-2.5 text-sm font-sans text-brand-secondary hover:text-white hover:bg-white/[0.06] transition-colors duration-150"
+      className="w-full flex items-center justify-between px-4 py-2.5 text-sm font-sans text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06] transition-colors duration-150"
     >
       <div className="w-6 flex justify-center items-center">
        {themeMode.id === "dark" && (
-        <span className="text-white text-base">✓</span>
+        <span className="text-brand-text text-base">✓</span>
             )}
         </div>
 
@@ -252,11 +252,11 @@ export const AvatarDropdown: React.FC = () => {
          setActiveMenu("main");
          setIsOpen(false);
       }}
-      className="w-full flex items-center justify-between px-4 py-2.5 text-sm font-sans text-brand-secondary hover:text-white hover:bg-white/[0.06] transition-colors duration-150"
+      className="w-full flex items-center justify-between px-4 py-2.5 text-sm font-sans text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06] transition-colors duration-150"
     >
       <div className="w-6 flex justify-center items-center">
        {themeMode.id === "light" && (
-      <span className="text-white text-base">✓</span>
+      <span className="text-brand-text text-base">✓</span>
       )}
      </div>
 

@@ -86,8 +86,8 @@ export const MoreMenu: React.FC = () => {
           'focus:outline-none focus:ring-2 focus:ring-brand-accent/40',
           'cursor-pointer',
           isOpen
-            ? 'border-brand-border/60 bg-white/[0.08] text-white'
-            : 'border-transparent text-brand-secondary hover:text-white hover:border-brand-border/40 hover:bg-white/5',
+            ? 'border-[rgba(212,175,110,0.60)] bg-brand-text/[0.08] text-brand-text'
+            : 'border-transparent text-brand-secondary hover:text-brand-text hover:border-[rgba(212,175,110,0.40)] hover:bg-brand-text/5',
         ].join(' ')}
       >
         <MoreVertical className="w-4 h-4" />
@@ -100,9 +100,8 @@ export const MoreMenu: React.FC = () => {
           role="menu"
           aria-label="More options menu"
           aria-orientation="vertical"
-          className="absolute right-0 mt-2 w-52 rounded-xl border border-brand-border py-1.5 shadow-2xl animate-in fade-in slide-in-from-top-2 duration-150"
+          className="absolute right-0 mt-2 w-52 rounded-xl border border-brand-border bg-brand-surface py-1.5 shadow-2xl animate-in fade-in slide-in-from-top-2 duration-150"
           style={{
-            background: '#0A0E1A',
             boxShadow: '0 8px 32px rgba(0,0,0,0.85), 0 0 0 1px rgba(212,175,110,0.10)',
           }}
         >
@@ -111,7 +110,7 @@ export const MoreMenu: React.FC = () => {
             id="more-menu-settings"
             role="menuitem"
             onClick={() => { setIsOpen(false); navigate('/settings'); }}
-            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-sans text-brand-secondary hover:text-white hover:bg-white/[0.06] text-left transition-colors duration-150 cursor-pointer group"
+            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-sans text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06] text-left transition-colors duration-150 cursor-pointer group"
             tabIndex={0}
           >
             <Settings className="w-4 h-4 text-brand-accent/70 group-hover:text-brand-accent shrink-0 transition-colors duration-150" />
@@ -128,13 +127,13 @@ export const MoreMenu: React.FC = () => {
           >
             <Palette className="w-4 h-4 text-brand-accent/30 shrink-0" />
             <span className="flex-1">Theme</span>
-            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-full border border-brand-border/30 text-brand-secondary/40 bg-white/[0.03]">
+            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-full border border-[rgba(212,175,110,0.30)] text-brand-secondary/40 bg-brand-text/[0.03]">
               Soon
             </span>
           </div>
 
           {/* ── Divider ───────────────────────────────────────────────────── */}
-          <div className="my-1.5 border-t border-brand-border/40" role="separator" />
+          <div className="my-1.5 border-t border-[rgba(212,175,110,0.40)]" role="separator" />
 
           {/* ── Sound — full-row button ────────────────────────────────────── */}
           <button
@@ -143,7 +142,7 @@ export const MoreMenu: React.FC = () => {
             onClick={toggleSound}
             aria-pressed={soundEnabled}
             aria-label={soundEnabled ? 'Mute sound' : 'Unmute sound'}
-            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-sans text-brand-secondary hover:text-white hover:bg-white/[0.06] text-left transition-colors duration-150 cursor-pointer group"
+            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-sans text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06] text-left transition-colors duration-150 cursor-pointer group"
             tabIndex={0}
           >
             {soundEnabled ? (
@@ -158,7 +157,7 @@ export const MoreMenu: React.FC = () => {
                 'text-[10px] font-mono px-1.5 py-0.5 rounded-full border transition-colors duration-200',
                 soundEnabled
                   ? 'border-brand-accent/40 text-brand-accent bg-brand-accent/10'
-                  : 'border-brand-border/40 text-brand-secondary/50 bg-white/5',
+                  : 'border-[rgba(212,175,110,0.40)] text-brand-secondary/50 bg-brand-text/5',
               ].join(' ')}
             >
               {soundEnabled ? 'ON' : 'OFF'}

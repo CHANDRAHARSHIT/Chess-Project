@@ -138,7 +138,7 @@ export default function BrandSection() {
             </div>
 
             <div className="space-y-4 max-w-xl">
-              <h2 className="font-display font-semibold text-4xl sm:text-5xl md:text-6xl text-white tracking-tight leading-[1.05]">
+              <h2 className="font-display font-semibold text-4xl sm:text-5xl md:text-6xl text-brand-text tracking-tight leading-[1.05]">
                 <span className="block" style={{ color: 'var(--text-primary)' }}>Build More Than</span>
                 <span className="block text-gold-gradient">
                   Subscribers

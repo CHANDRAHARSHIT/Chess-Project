@@ -154,11 +154,8 @@ export default function ContactSection() {
               </div>
               <button
                 onClick={handleReset}
-                className="text-sm font-medium transition-colors duration-300"
-                style={{ color: 'var(--gold-bright)' }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = '#E8C88A')}
-                onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--gold-bright)')}
-              >
+                className="text-sm font-medium transition-colors duration-300 text-brand-accent hover:brightness-110"
+                 >
                 Send another message →
               </button>
             </div>
@@ -228,7 +225,7 @@ export default function ContactSection() {
               >
                 {status === 'submitting' ? (
                   <>
-                    <span className="w-5 h-5 border-2 border-obsidian-DEFAULT/30 border-t-obsidian-DEFAULT rounded-full animate-spin" />
+                    <span className="w-5 h-5 border-2 border-brand-bg/30 border-t-brand-bg rounded-full animate-spin" />
                     Sending...
                   </>
                 ) : (

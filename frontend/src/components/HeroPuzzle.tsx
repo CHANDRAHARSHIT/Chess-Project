@@ -2210,8 +2210,8 @@ const heroSoundRef = useRef({
           <button
             onClick={toPrev}
             disabled={activeIndex === 0}
-            className="p-2 rounded-full border text-[#8E8B82]
-                       hover:text-white hover:border-[rgba(212,175,110,0.5)] hover:bg-white/5
+            className="p-2 rounded-full border text-brand-secondary
+                       hover:text-brand-text hover:border-[rgba(212,175,110,0.5)] hover:bg-brand-text/5
                        disabled:opacity-30 disabled:cursor-not-allowed
                        transition-all duration-200"
           >
@@ -2223,7 +2223,7 @@ const heroSoundRef = useRef({
                 key={i}
                 onClick={() => toSlide(i)}
                 className={`rounded-full transition-all duration-300 ${activeIndex === i
-                  ? "w-5 h-1.5 bg-[#D4AF6E]"
+                  ? "w-5 h-1.5 bg-brand-accent"
                   : "w-1.5 h-1.5 bg-brand-secondary/40 hover:bg-brand-secondary"
                   }`}
               />
@@ -2232,8 +2232,8 @@ const heroSoundRef = useRef({
           <button
             onClick={toNext}
             disabled={activeIndex === CAROUSEL_ITEMS.length - 1}
-            className="p-2 rounded-full border text-[#8E8B82]
-                       hover:text-white hover:border-[rgba(212,175,110,0.5)] hover:bg-white/5
+            className="p-2 rounded-full border text-brand-secondary
+                       hover:text-brand-text hover:border-[rgba(212,175,110,0.5)] hover:bg-brand-text/5
                        disabled:opacity-30 disabled:cursor-not-allowed
                        transition-all duration-200"
           >
@@ -2243,14 +2243,14 @@ const heroSoundRef = useRef({
         <button
           onClick={toggleMute}
           aria-label={isMuted ? "Unmute sound" : "Mute sound"}
-          className="p-2 rounded-full border text-[#8E8B82]
-             hover:text-white hover:border-[rgba(212,175,110,0.5)] hover:bg-white/5
+          className="p-2 rounded-full border text-brand-secondary
+             hover:text-brand-text hover:border-[rgba(212,175,110,0.5)] hover:bg-brand-text/5
              transition-all duration-200"
         >
           {isMuted ? (
             <VolumeX className="w-4 h-4" />
           ) : (
-            <Volume2 className="w-4 h-4 text-[#D4AF6E]" />
+            <Volume2 className="w-4 h-4 text-brand-accent" />
           )}
         </button>
       </div>
@@ -2258,7 +2258,7 @@ const heroSoundRef = useRef({
       <div className="flex items-center justify-between px-0 mt-1">
         <div>
           <div className="flex flex-col gap-0.5 text-left">
-            <span className="text-[15px] font-sans text-white font-bold leading-tight">
+            <span className="text-[15px] font-sans text-brand-text font-bold leading-tight">
               {descBottom}
             </span>
           </div>
@@ -2276,14 +2276,14 @@ const heroSoundRef = useRef({
                   flex-1 flex items-center justify-center gap-2
                   px-4 py-2.5 rounded-lg
                   font-sans text-sm font-semibold
-                  bg-[#0C1020] border border-[rgba(212,175,110,0.12)]
-                  text-[#8E8B82] hover:text-white
-                  hover:border-[rgba(212,175,110,0.4)] hover:bg-white/5
+                  bg-brand-surface border border-brand-border
+                  text-brand-secondary hover:text-brand-text
+                  hover:border-[rgba(212,175,110,0.4)] hover:bg-brand-text/5
                   transition-all duration-200
                   btn-glow-container btn-glow-surface
                 "
               >
-                <SkipForward size={18} className="w-4 h-4 text-[#D4AF6E] animate-pulse" />
+                <SkipForward size={18} className="w-4 h-4 text-brand-accent animate-pulse" />
                 Skip Animation
               </button>
             )}
@@ -2307,14 +2307,14 @@ const heroSoundRef = useRef({
                     flex-1 flex items-center justify-center gap-2
                     px-4 py-2.5 rounded-lg
                     font-sans text-sm font-semibold
-                    bg-[#0C1020] border border-[rgba(212,175,110,0.12)]
-                    text-[#8E8B82] hover:text-white
-                    hover:border-[rgba(212,175,110,0.4)] hover:bg-white/5
+                    bg-brand-surface border border-brand-border
+                    text-brand-secondary hover:text-brand-text
+                    hover:border-[rgba(212,175,110,0.4)] hover:bg-brand-text/5
                     transition-all duration-200
                     btn-glow-container btn-glow-surface
                   "
                 >
-                  <RotateCcw className="w-4 h-4 text-[#D4AF6E]" />
+                  <RotateCcw className="w-4 h-4 text-brand-accent" />
                   Reset
                 </button>
                 <button
@@ -2323,14 +2323,14 @@ const heroSoundRef = useRef({
                     flex-1 flex items-center justify-center gap-2
                     px-4 py-2.5 rounded-lg
                     font-sans text-sm font-semibold
-                    bg-[#0C1020] border border-[rgba(212,175,110,0.12)]
-                    text-[#8E8B82] hover:text-white
-                    hover:border-[rgba(212,175,110,0.4)] hover:bg-white/5
+                    bg-brand-surface border border-brand-border
+                    text-brand-secondary hover:text-brand-text
+                    hover:border-[rgba(212,175,110,0.4)] hover:bg-brand-text/5
                     transition-all duration-200
                     btn-glow-container btn-glow-surface
                   "
                 >
-                  <RotateCcw className="w-4 h-4 text-[#D4AF6E]" />
+                  <RotateCcw className="w-4 h-4 text-brand-accent" />
                   Replay Game
                 </button>
               </>
@@ -2343,7 +2343,7 @@ const heroSoundRef = useRef({
                   px-4 py-2.5 rounded-lg
                   font-sans text-sm font-semibold
                   btn-premium-cta cta-shine
-                  text-white
+                  text-brand-text
                   transition-all duration-200
                   btn-glow-container btn-glow-accent
                   group
@@ -2363,12 +2363,12 @@ const heroSoundRef = useRef({
                   flex-1 flex items-center justify-center gap-2
                   px-4 py-2.5 rounded-lg
                   font-sans text-sm font-semibold
-                  bg-[#0C1020] border border-[rgba(212,175,110,0.12)]
-                  text-[#8E8B82] opacity-50
+                  bg-brand-surface border border-brand-border
+                  text-brand-secondary opacity-50
                   btn-glow-container btn-glow-surface
                 "
               >
-                <Play className="w-4 h-4 text-[#D4AF6E] animate-pulse" />
+                <Play className="w-4 h-4 text-brand-accent animate-pulse" />
                 Solving in Progress...
               </button>
             )}
@@ -2387,14 +2387,14 @@ const heroSoundRef = useRef({
                     flex-1 flex items-center justify-center gap-2
                     px-4 py-2.5 rounded-lg
                     font-sans text-sm font-semibold
-                    bg-[#0C1020] border border-[rgba(212,175,110,0.12)]
-                    text-[#8E8B82] hover:text-white
-                    hover:border-[rgba(212,175,110,0.4)] hover:bg-white/5
+                    bg-brand-surface border border-brand-border
+                    text-brand-secondary hover:text-brand-text
+                    hover:border-[rgba(212,175,110,0.4)] hover:bg-brand-text/5
                     transition-all duration-200
                     btn-glow-container btn-glow-surface
                   "
                   >
-                    <RotateCcw className="w-4 h-4 text-[#D4AF6E]" />
+                    <RotateCcw className="w-4 h-4 text-brand-accent" />
                     Reset
                   </button>
                   <button
@@ -2403,14 +2403,14 @@ const heroSoundRef = useRef({
                     flex-1 flex items-center justify-center gap-2
                     px-4 py-2.5 rounded-lg
                     font-sans text-sm font-semibold
-                    bg-[#0C1020] border border-[rgba(212,175,110,0.12)]
-                    text-[#8E8B82] hover:text-white
-                    hover:border-[rgba(212,175,110,0.4)] hover:bg-white/5
+                    bg-brand-surface border border-brand-border
+                    text-brand-secondary hover:text-brand-text
+                    hover:border-[rgba(212,175,110,0.4)] hover:bg-brand-text/5
                     transition-all duration-200
                     btn-glow-container btn-glow-surface
                   "
                   >
-                    <Play className="w-4 h-4 text-[#D4AF6E]" />
+                    <Play className="w-4 h-4 text-brand-accent" />
                     Solve
                   </button>
                 </>
@@ -2423,7 +2423,7 @@ const heroSoundRef = useRef({
                   px-4 py-2.5 rounded-lg
                   font-sans text-sm font-semibold
                   btn-premium-cta cta-shine
-                  text-white
+                  text-brand-text
                   transition-all duration-200
                   btn-glow-container btn-glow-accent
                   group
@@ -2444,12 +2444,12 @@ const heroSoundRef = useRef({
                   flex-1 flex items-center justify-center gap-2
                   px-4 py-2.5 rounded-lg
                   font-sans text-sm font-semibold
-                  bg-[#0C1020] border border-[rgba(212,175,110,0.12)]
-                  text-[#8E8B82] opacity-50
+                  bg-brand-surface border border-brand-border
+                  text-brand-secondary opacity-50
                   btn-glow-container btn-glow-surface
                 "
               >
-                <Play className="w-4 h-4 text-[#D4AF6E] animate-pulse" />
+                <Play className="w-4 h-4 text-brand-accent animate-pulse" />
                 Black Responding...
               </button>
             )}
@@ -2466,14 +2466,14 @@ const heroSoundRef = useRef({
                     flex-1 flex items-center justify-center gap-2
                     px-4 py-2.5 rounded-lg
                     font-sans text-sm font-semibold
-                    bg-[#0C1020] border border-[rgba(212,175,110,0.12)]
-                    text-[#8E8B82] hover:text-white
-                    hover:border-[rgba(212,175,110,0.4)] hover:bg-white/5
+                    bg-brand-surface border border-brand-border
+                    text-brand-secondary hover:text-brand-text
+                    hover:border-[rgba(212,175,110,0.4)] hover:bg-brand-text/5
                     transition-all duration-200
                     btn-glow-container btn-glow-surface
                   "
                   >
-                    <RotateCcw className="w-4 h-4 text-[#D4AF6E]" />
+                    <RotateCcw className="w-4 h-4 text-brand-accent" />
                     Reset
                   </button>
                 </>
@@ -2489,7 +2489,7 @@ const heroSoundRef = useRef({
                   px-4 py-2.5 rounded-lg
                   font-sans text-sm font-semibold
                   btn-premium-cta cta-shine
-                  text-white
+                  text-brand-text
                   transition-all duration-200
                   btn-glow-container btn-glow-accent
                   group
@@ -2510,12 +2510,12 @@ const heroSoundRef = useRef({
                   flex-1 flex items-center justify-center gap-2
                   px-4 py-2.5 rounded-lg
                   font-sans text-sm font-semibold
-                  bg-[#0C1020] border border-[rgba(212,175,110,0.12)]
-                  text-[#8E8B82] opacity-50
+                  bg-brand-surface border border-brand-border
+                  text-brand-secondary opacity-50
                   btn-glow-container btn-glow-surface
                 "
               >
-                <Play className="w-4 h-4 text-[#D4AF6E] animate-pulse" />
+                <Play className="w-4 h-4 text-brand-accent animate-pulse" />
                 Black Responding...
               </button>
             )}
@@ -2532,14 +2532,14 @@ const heroSoundRef = useRef({
                     flex-1 flex items-center justify-center gap-2
                     px-4 py-2.5 rounded-lg
                     font-sans text-sm font-semibold
-                    bg-[#0C1020] border border-[rgba(212,175,110,0.12)]
-                    text-[#8E8B82] hover:text-white
-                    hover:border-[rgba(212,175,110,0.4)] hover:bg-white/5
+                    bg-brand-surface border border-brand-border
+                    text-brand-secondary hover:text-brand-text
+                    hover:border-[rgba(212,175,110,0.4)] hover:bg-brand-text/5
                     transition-all duration-200
                     btn-glow-container btn-glow-surface
                   "
                   >
-                    <RotateCcw className="w-4 h-4 text-[#D4AF6E]" />
+                    <RotateCcw className="w-4 h-4 text-brand-accent" />
                     Reset
                   </button>
                 </>
@@ -2555,7 +2555,7 @@ const heroSoundRef = useRef({
                   px-4 py-2.5 rounded-lg
                   font-sans text-sm font-semibold
                   btn-premium-cta cta-shine
-                  text-white
+                  text-brand-text
                   transition-all duration-200
                   btn-glow-container btn-glow-accent
                   group

@@ -254,7 +254,7 @@ export function PuzzleBoard({
             ? "border-rose-500 ring-4 ring-rose-500/25"
             : puzzleStatus === "solved"
               ? "border-emerald-500 ring-4 ring-emerald-500/25 animate-pulse"
-              : "border-brand-border/80"
+              : "border-[rgba(212,175,110,0.80)]"
         }`}
       >
         <ThemedChessboard
@@ -284,7 +284,7 @@ export function PuzzleBoard({
             Incorrect. Try Again
           </span>
         ) : (
-          <span className="font-mono uppercase tracking-wider text-xs font-bold text-[#e5dfd5] flex items-center gap-1.5 bg-white/5 border border-white/10 px-3 py-1 rounded-full">
+          <span className="font-mono uppercase tracking-wider text-xs font-bold text-brand-text flex items-center gap-1.5 bg-brand-text/5 border border-white/10 px-3 py-1 rounded-full">
             <Play className="w-3.5 h-3.5 text-brand-accent fill-current" />
             {playerColor === "w" ? "White to Move" : "Black to Move"}
           </span>
@@ -299,7 +299,7 @@ export function PuzzleBoard({
             handleHint();
           }}
           disabled={puzzleStatus === "solved"}
-          className="px-5 py-2.5 rounded-xl font-mono text-xs uppercase tracking-wider font-semibold bg-white/5 border border-white/10 hover:border-brand-accent/40 text-brand-secondary hover:text-white transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center gap-1.5 shadow-sm"
+          className="px-5 py-2.5 rounded-xl font-mono text-xs uppercase tracking-wider font-semibold bg-brand-text/5 border border-white/10 hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center gap-1.5 shadow-sm"
         >
           <HelpCircle className="w-3.5 h-3.5" />
           Hint
@@ -310,7 +310,7 @@ export function PuzzleBoard({
             soundManager.playButtonClick();
             handleReset();
           }}
-          className="px-5 py-2.5 rounded-xl font-mono text-xs uppercase tracking-wider font-semibold bg-white/5 border border-white/10 hover:border-brand-accent/40 text-brand-secondary hover:text-white transition-all duration-300 cursor-pointer flex items-center gap-1.5 shadow-sm"
+          className="px-5 py-2.5 rounded-xl font-mono text-xs uppercase tracking-wider font-semibold bg-brand-text/5 border border-white/10 hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text transition-all duration-300 cursor-pointer flex items-center gap-1.5 shadow-sm"
         >
           <RotateCcw className="w-3.5 h-3.5" />
           Reset

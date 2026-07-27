@@ -171,7 +171,7 @@ export default function PuzzlePage() {
         <div className="mb-4 flex items-center justify-between w-full">
           <button
             onClick={handleNavigateHome}
-            className="flex items-center gap-2.5 text-xs text-brand-secondary hover:text-white transition-all duration-300 cursor-pointer uppercase tracking-wider font-mono font-medium"
+            className="flex items-center gap-2.5 text-xs text-brand-secondary hover:text-brand-text transition-all duration-300 cursor-pointer uppercase tracking-wider font-mono font-medium"
           >
             <span className="w-5 h-5 rounded-full border border-brand-border flex items-center justify-center font-bold text-[9px] hover:border-brand-accent/50">
               <ArrowLeft className="w-3 h-3" />
@@ -183,10 +183,10 @@ export default function PuzzlePage() {
         {/* DESKTOP VIEW */}
         <div className="hidden lg:grid lg:grid-cols-12 gap-8 items-stretch w-full">
           <div className="lg:col-span-7 flex flex-col items-center w-full space-y-6">
-            <div className="w-full bg-[#0c1020]/70 backdrop-blur-xl border border-brand-border rounded-2xl p-5 text-left shadow-2xl relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="w-full bg-brand-surface/70 backdrop-blur-xl border border-brand-border rounded-2xl p-5 text-left shadow-2xl relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
                 <div className="flex items-center gap-2">
-                  <h1 className="text-xl sm:text-2xl font-display font-semibold text-white tracking-wide">
+                  <h1 className="text-xl sm:text-2xl font-display font-semibold text-brand-text tracking-wide">
                     {selectedNode ? `Level ${selectedNode.levelNumber}: ${selectedNode.title || 'Mate in 1'}` : 'Mate in 1 Tactics'}
                   </h1>
                   <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider bg-amber-500/10 border border-amber-500/30 text-amber-400">
@@ -247,10 +247,10 @@ export default function PuzzlePage() {
                     </div>
 
                     {/* Mobile Board Deck Header Card */}
-                    <div className="w-full bg-[#0c1020]/70 backdrop-blur-xl border border-brand-border rounded-2xl p-4 text-left shadow-2xl relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <div className="w-full bg-brand-surface/70 backdrop-blur-xl border border-brand-border rounded-2xl p-4 text-left shadow-2xl relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                       <div>
                         <div className="flex items-center gap-2">
-                          <h1 className="text-lg font-display font-semibold text-white tracking-wide">
+                          <h1 className="text-lg font-display font-semibold text-brand-text tracking-wide">
                             {selectedNode ? `Level ${selectedNode.levelNumber}: ${selectedNode.title || 'Mate in 1'}` : 'Mate in 1 Tactics'}
                           </h1>
                           <span className="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold uppercase tracking-wider bg-amber-500/10 border border-amber-500/30 text-amber-400">

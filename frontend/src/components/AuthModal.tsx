@@ -84,7 +84,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMo
         <button
           ref={closeButtonRef}
           onClick={onClose}
-          className="absolute top-4 right-4 text-brand-secondary hover:text-white hover:bg-white/10 p-1.5 rounded-lg transition-all duration-200"
+          className="absolute top-4 right-4 text-brand-secondary hover:text-brand-text hover:bg-brand-text/10 p-1.5 rounded-lg transition-all duration-200"
           aria-label="Close modal"
         >
           <X className="w-5 h-5" />
@@ -94,7 +94,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMo
         <div className="text-center mb-6 mt-2">
           <h2
             id="auth-modal-title"
-            className="text-2xl font-sans font-bold text-white tracking-wide"
+            className="text-2xl font-sans font-bold text-brand-text tracking-wide"
           >
             {mode === "login" ? "Sign in using" : "Get Started"}
           </h2>
@@ -133,7 +133,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMo
         </button>
 
         {/* Modal Mode Toggle Footer */}
-        <div className="mt-8 text-center border-t border-brand-border/40 pt-4">
+        <div className="mt-8 text-center border-t border-[rgba(212,175,110,0.40)] pt-4">
           {mode === "login" ? (
             <button
               onClick={() => setMode("register")}
