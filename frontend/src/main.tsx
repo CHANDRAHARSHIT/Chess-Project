@@ -7,6 +7,7 @@ import { soundManager } from './utils/SoundManager'
 import { SessionProvider } from './context/SessionContext'
 import { BoardSettingsProvider } from './context/BoardSettingsContext'
 import ScrollToTop from "./components/ScrollToTop";
+import { ThemeProvider } from "./context/ThemeContext";
 
 // Restore the user's saved sound preference before the first render.
 // This ensures no sounds fire in the wrong mute state during startup.
@@ -18,7 +19,9 @@ createRoot(document.getElementById('root')!).render(
      <ScrollToTop />
       <SessionProvider>
         <BoardSettingsProvider>
+          <ThemeProvider>
           <App />
+           </ThemeProvider>
         </BoardSettingsProvider>
       </SessionProvider>
     </BrowserRouter>

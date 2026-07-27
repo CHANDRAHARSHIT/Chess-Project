@@ -73,6 +73,35 @@
   --ease-precise: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+:root[data-theme="light"] {
+  /* --- Core Palette --- */
+  --obsidian: #f8f8f8;
+  --obsidian-mid: #ffffff;
+  --obsidian-light: #f2f2f2;
+  --obsidian-glass: rgba(255, 255, 255, 0.75);
+
+  /* --- Text Hierarchy --- */
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --text-tertiary: #6b7280;
+
+  /* --- Marble / Stone --- */
+  --marble-light: rgba(0, 0, 0, 0.03);
+  --marble-line: rgba(0, 0, 0, 0.08);
+  --marble-border: rgba(0, 0, 0, 0.12);
+  --marble-border-strong: rgba(0, 0, 0, 0.2);
+
+  /* --- Glass --- */
+  --glass-bg: rgba(255, 255, 255, 0.75);
+  --glass-border: rgba(0, 0, 0, 0.08);
+  --glass-border-gold: rgba(212, 175, 110, 0.18);
+
+  /* --- Shadows --- */
+  --shadow-deep: 0 12px 40px rgba(0, 0, 0, 0.12);
+  --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+
 /* ─── Base Reset ─────────────────────────────────────────────────────────── */
 html {
   background: var(--obsidian);
