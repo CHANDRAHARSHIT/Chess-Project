@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { ThemedChessboard } from './ThemedChessboard';
 import { Chess } from 'chess.js';
 import { useStockfish } from '../hooks/useStockfish';
-import { parseUciMove, getGameOverReason } from '../utils/chessHelpers';
+import { parseUciMove, getGameOverReason, playMoveSound } from '../utils/chessHelpers';
 import { generateChess960FEN } from '../utils/chess960';
 import { EditPositionModal } from './EditPositionModal';
 import { EvaluationBar } from './EvaluationBar';
@@ -24,24 +24,6 @@ import { BoardCoordinates } from './BoardCoordinates';
 
 // Board colors + piece set now come from Settings -> Board & Pieces
 // (see useBoardSettings inside the component) instead of being hardcoded here.
-
-// ── Sound helper ─────────────────────────────────────────────────────────────────
-// Plays the correct sound for a chess.js move result and current game state.
-function playMoveSound(game: Chess, moveFlags: string, captured: boolean): void {
-  if (game.isCheckmate()) {
-    soundManager.playCheckmate();
-  } else if (game.inCheck()) {
-    soundManager.playCheck();
-  } else if (moveFlags.includes('k') || moveFlags.includes('q')) {
-    soundManager.playCastle();
-  } else if (moveFlags.includes('p')) {
-    soundManager.playPromote();
-  } else if (captured) {
-    soundManager.playCapture();
-  } else {
-    soundManager.playMove();
-  }
-}
 
 export default function ProductDemo() {
   // ─── ROOT CAUSE OF SCROLL BUG ──────────────────────────────────────────────────
