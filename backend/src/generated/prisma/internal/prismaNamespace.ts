@@ -394,6 +394,7 @@ export const ModelName = {
   Product: 'Product',
   ProductFeature: 'ProductFeature',
   WebhookEvent: 'WebhookEvent',
+  CuratedPuzzle: 'CuratedPuzzle',
   Opening: 'Opening'
 } as const
 
@@ -410,7 +411,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "account" | "session" | "verificationToken" | "subscription" | "payment" | "billingProfile" | "product" | "productFeature" | "webhookEvent" | "opening"
+    modelProps: "user" | "account" | "session" | "verificationToken" | "subscription" | "payment" | "billingProfile" | "product" | "productFeature" | "webhookEvent" | "curatedPuzzle" | "opening"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1154,6 +1155,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    CuratedPuzzle: {
+      payload: Prisma.$CuratedPuzzlePayload<ExtArgs>
+      fields: Prisma.CuratedPuzzleFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CuratedPuzzleFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CuratedPuzzlePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CuratedPuzzleFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CuratedPuzzlePayload>
+        }
+        findFirst: {
+          args: Prisma.CuratedPuzzleFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CuratedPuzzlePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CuratedPuzzleFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CuratedPuzzlePayload>
+        }
+        findMany: {
+          args: Prisma.CuratedPuzzleFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CuratedPuzzlePayload>[]
+        }
+        create: {
+          args: Prisma.CuratedPuzzleCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CuratedPuzzlePayload>
+        }
+        createMany: {
+          args: Prisma.CuratedPuzzleCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CuratedPuzzleCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CuratedPuzzlePayload>[]
+        }
+        delete: {
+          args: Prisma.CuratedPuzzleDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CuratedPuzzlePayload>
+        }
+        update: {
+          args: Prisma.CuratedPuzzleUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CuratedPuzzlePayload>
+        }
+        deleteMany: {
+          args: Prisma.CuratedPuzzleDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CuratedPuzzleUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CuratedPuzzleUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CuratedPuzzlePayload>[]
+        }
+        upsert: {
+          args: Prisma.CuratedPuzzleUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CuratedPuzzlePayload>
+        }
+        aggregate: {
+          args: Prisma.CuratedPuzzleAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCuratedPuzzle>
+        }
+        groupBy: {
+          args: Prisma.CuratedPuzzleGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CuratedPuzzleGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CuratedPuzzleCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CuratedPuzzleCountAggregateOutputType> | number
+        }
+      }
+    }
     Opening: {
       payload: Prisma.$OpeningPayload<ExtArgs>
       fields: Prisma.OpeningFieldRefs
@@ -1423,6 +1498,21 @@ export const WebhookEventScalarFieldEnum = {
 } as const
 
 export type WebhookEventScalarFieldEnum = (typeof WebhookEventScalarFieldEnum)[keyof typeof WebhookEventScalarFieldEnum]
+
+
+export const CuratedPuzzleScalarFieldEnum = {
+  id: 'id',
+  fen: 'fen',
+  moves: 'moves',
+  rating: 'rating',
+  ratingDeviation: 'ratingDeviation',
+  popularity: 'popularity',
+  nbPlays: 'nbPlays',
+  themes: 'themes',
+  createdAt: 'createdAt'
+} as const
+
+export type CuratedPuzzleScalarFieldEnum = (typeof CuratedPuzzleScalarFieldEnum)[keyof typeof CuratedPuzzleScalarFieldEnum]
 
 
 export const OpeningScalarFieldEnum = {
@@ -1707,6 +1797,7 @@ export type GlobalOmitConfig = {
   product?: Prisma.ProductOmit
   productFeature?: Prisma.ProductFeatureOmit
   webhookEvent?: Prisma.WebhookEventOmit
+  curatedPuzzle?: Prisma.CuratedPuzzleOmit
   opening?: Prisma.OpeningOmit
 }
 
