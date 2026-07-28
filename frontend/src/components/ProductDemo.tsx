@@ -359,7 +359,7 @@ export default function ProductDemo() {
   if (history.length > 0) {
     const last = history[history.length - 1];
     customSquareStyles[last.from] = { backgroundColor: 'rgba(255, 255, 0, 0.4)' };
-    customSquareStyles[last.to]   = { backgroundColor: 'rgba(255, 255, 0, 0.4)' };
+    customSquareStyles[last.to] = { backgroundColor: 'rgba(255, 255, 0, 0.4)' };
   }
   if (showHint && bestMove) {
     const { from, to } = parseUciMove(bestMove);
@@ -405,7 +405,7 @@ export default function ProductDemo() {
 
                 {/* Game Over Overlay */}
                 {gameOverReason && (
-                  <div className="absolute inset-0 z-20 bg-brand-bg/90 backdrop-blur-sm flex flex-col items-center justify-center p-6 space-y-4">
+                  <div className="absolute inset-0 z-30 bg-brand-bg/90 backdrop-blur-sm flex flex-col items-center justify-center p-6 space-y-4">
                     <div className="w-12 h-12 rounded-full border border-[rgba(212,175,110,0.3)] flex items-center justify-center text-brand-accent">
                       <AlertCircle className="w-6 h-6" />
                     </div>
@@ -438,7 +438,7 @@ export default function ProductDemo() {
                 />
 
                 <BoardCoordinates boardOrientation={boardOrientation} />
-                </div>
+              </div>
 
               {/* Turn indicator */}
               <div className="mt-3 flex items-center gap-2 text-xs text-brand-secondary px-1">
@@ -508,10 +508,10 @@ export default function ProductDemo() {
                   {/* Reset */}
                   <button
                     onClick={() => { handleReset(); }}
-                    disabled={isEditMode}
+                    disabled={!canUndo || isEditMode}
                     title="Reset game"
                     className="flex flex-col items-center justify-center gap-1.5 py-3 px-1 rounded-lg border border-brand-border bg-brand-bg hover:bg-brand-text/5 hover:border-red-500/40 text-brand-secondary hover:text-red-400 transition-all duration-200 disabled:opacity-40 group"
-                    style={{ cursor: isEditMode ? 'not-allowed' : 'pointer' }}
+                    style={{ cursor: (!canUndo || isEditMode) ? 'not-allowed' : 'pointer' }}
                   >
                     <RotateCcw className="w-5 h-5 group-hover:rotate-[-45deg] transition-transform duration-300" />
                     <span className="text-[10px] font-medium font-sans tracking-wide">Reset</span>

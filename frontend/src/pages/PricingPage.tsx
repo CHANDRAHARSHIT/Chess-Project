@@ -13,6 +13,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router";
+import { useNavigationStack } from "../hooks/useNavigationStack";
 
 // Custom SVG Chess Pieces for premium decorative background
 const PieceSvg: React.FC<{
@@ -208,6 +209,7 @@ const PricingCard: React.FC<PlanProps> = ({
 export default function PricingPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { getPrevious } = useNavigationStack();
   const [isYearly, setIsYearly] = useState(false);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
 
@@ -216,8 +218,15 @@ export default function PricingPage() {
     return params.get("error") === "payment_expired";
   });
 
-  // Navigate back to Home
-  const handleNavigateHome = () => {
+  // Navigate back to PREVIOUS page
+  const handleNavigateBack = () => {
+    const previousPage = getPrevious();
+
+    if (previousPage) {
+      navigate(previousPage.path);
+      return;
+    }
+
     navigate("/");
   };
 
@@ -342,18 +351,16 @@ export default function PricingPage() {
         </motion.div>
       </div>
 
-      {/* SidebarLayout handles header globally */}
-
       <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-1 flex flex-col items-center w-full pt-8">
         <div className="w-full flex justify-start mb-6">
           <button
-            onClick={handleNavigateHome}
+            onClick={handleNavigateBack}
             className="flex items-center gap-2.5 text-xs sm:text-sm text-brand-secondary hover:text-brand-text transition-all duration-300 cursor-pointer uppercase tracking-wider font-mono font-medium"
           >
             <span className="w-5 h-5 rounded-full border border-brand-border flex items-center justify-center font-bold text-[9px] hover:border-brand-accent/50">
               &lt;
             </span>
-            Back to Home
+            Back to {getPrevious()?.label ?? "Home"}
           </button>
         </div>
         {showSessionError && (
@@ -492,7 +499,9 @@ export default function PricingPage() {
             price={isYearly ? "$20.40 USD" : "$5.00 USD"}
             period={isYearly ? "/ year" : "/ month"}
             yearlySaving={
-              isYearly ? "Save $39.60 USD (Equivalent to $1.70 USD/mo)" : undefined
+              isYearly
+                ? "Save $39.60 USD (Equivalent to $1.70 USD/mo)"
+                : undefined
             }
             description="Built for ambitious chess players who want unlimited reviews, deep analysis, and tracking."
             features={[
@@ -528,16 +537,16 @@ export default function PricingPage() {
           <div className="bg-brand-surface/60 backdrop-blur-xl border border-brand-border rounded-2xl overflow-hidden shadow-2xl">
             {/* Desktop Table view */}
             <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
+              <table className="w-full text-left border-collapse min-w-[640px]">
                 <thead>
                   <tr className="border-b border-[rgba(212,175,110,0.60)] bg-brand-text/[0.02]">
-                    <th className="py-5 px-6 text-sm font-mono tracking-wider text-brand-secondary uppercase">
+                    <th className="py-4 px-6 text-xs font-sans font-bold tracking-wider text-brand-secondary uppercase min-w-[200px]">
                       Feature
                     </th>
-                    <th className="py-5 px-6 text-sm font-mono tracking-wider text-brand-secondary uppercase text-center w-1/4">
+                    <th className="py-4 px-6 text-xs font-sans font-bold tracking-wider text-brand-secondary uppercase text-center min-w-[160px] w-1/4">
                       Free
                     </th>
-                    <th className="py-5 px-6 text-sm font-mono tracking-wider text-brand-accent uppercase text-center w-1/4">
+                    <th className="py-4 px-6 text-xs font-sans font-bold tracking-wider text-brand-accent uppercase text-center min-w-[240px] w-1/3">
                       Premium
                     </th>
                   </tr>
@@ -551,7 +560,7 @@ export default function PricingPage() {
                       <td className="py-2 px-6 text-sm font-sans font-medium text-brand-text">
                         {feature.name}
                       </td>
-                      <td className="py-2 px-6 text-center text-sm font-sans text-brand-secondary">
+                      <td className="py-3 px-6 text-center text-sm font-sans text-brand-secondary">
                         {typeof feature.free === "boolean" ? (
                           feature.free ? (
                             <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500/10 text-emerald-400">
@@ -561,12 +570,12 @@ export default function PricingPage() {
                             <span className="text-brand-secondary/40">—</span>
                           )
                         ) : (
-                          <span className="font-mono text-xs">
+                          <span className="inline-block whitespace-nowrap font-mono text-xs bg-white/5 border border-white/10 px-2.5 py-1 rounded-lg text-brand-secondary">
                             {feature.free}
                           </span>
                         )}
                       </td>
-                      <td className="py-4.5 px-6 text-center text-sm font-sans text-brand-accent font-semibold">
+                      <td className="py-3 px-6 text-center text-sm font-sans text-brand-accent font-semibold">
                         {typeof feature.premium === "boolean" ? (
                           feature.premium ? (
                             <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500/10 text-emerald-400">
@@ -576,7 +585,7 @@ export default function PricingPage() {
                             <span className="text-brand-secondary/40">—</span>
                           )
                         ) : (
-                          <span className="font-mono text-xs bg-brand-accent/10 border border-brand-accent/20 px-2 py-0.5 rounded text-brand-accent">
+                          <span className="inline-block whitespace-nowrap font-mono text-xs bg-brand-accent/10 border border-brand-accent/20 px-2.5 py-1 rounded-lg text-brand-accent">
                             {feature.premium}
                           </span>
                         )}
@@ -676,7 +685,7 @@ export default function PricingPage() {
               </button>
 
               <button
-                onClick={handleNavigateHome}
+                onClick={handleNavigateBack}
                 className="w-full sm:w-auto px-8 py-4 rounded-xl font-mono text-xs uppercase tracking-widest font-semibold bg-brand-text/5 border border-white/10 hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text transition-all duration-300 cursor-pointer active:scale-[0.99]"
               >
                 Continue Free
