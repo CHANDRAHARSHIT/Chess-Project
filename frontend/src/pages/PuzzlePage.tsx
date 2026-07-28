@@ -21,8 +21,6 @@ export default function PuzzlePage() {
   const navigate = useNavigate();
 
   // ── Right-panel mode: 'pathway' | 'config' ──────────────────────────────────
-  // 'pathway' = show RoyalGoldPathway + Custom Puzzles button
-  // 'config'  = show CustomPuzzlePanel (inline filter picker)
   const [rightPanelMode, setRightPanelMode] = useState<'pathway' | 'config'>('pathway');
 
   // Active custom session filters (null = no session running)
@@ -197,7 +195,6 @@ export default function PuzzlePage() {
   }, []);
 
   // ── Right panel content selector ─────────────────────────────────────────
-  // Returns the JSX for the right (lg:col-span-5) column in pathway mode
   const renderRightPanel = () => {
     if (rightPanelMode === 'config') {
       return (
@@ -265,7 +262,7 @@ export default function PuzzlePage() {
         <div className="mb-4 flex items-center justify-between w-full">
           <button
             onClick={handleNavigateHome}
-            className="flex items-center gap-2.5 text-xs text-brand-secondary hover:text-white transition-all duration-300 cursor-pointer uppercase tracking-wider font-mono font-medium"
+            className="flex items-center gap-2.5 text-xs text-brand-secondary hover:text-brand-text transition-all duration-300 cursor-pointer uppercase tracking-wider font-mono font-medium"
           >
             <span className="w-5 h-5 rounded-full border border-brand-border flex items-center justify-center font-bold text-[9px] hover:border-brand-accent/50">
               <ArrowLeft className="w-3 h-3" />
@@ -330,17 +327,17 @@ export default function PuzzlePage() {
                     <Sparkles className="w-4 h-4" style={{ color: "#D4AF6E" }} />
                   </div>
                   <div>
-                    <h2 className="text-xl font-semibold text-white" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+                    <h2 className="text-xl font-semibold text-brand-text" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
                       Custom Session
                     </h2>
-                    <p className="text-xs mt-0.5" style={{ color: "#8E8B82" }}>
+                    <p className="text-xs mt-0.5 text-brand-secondary">
                       Rated {customFilters.minRating ?? 0} – {customFilters.maxRating ?? 3000}
                     </p>
                   </div>
                 </div>
                 {customFilters.themes && customFilters.themes.length > 0 && (
                   <div>
-                    <p className="text-[10px] font-mono uppercase tracking-widest mb-2" style={{ color: "#5C5954" }}>
+                    <p className="text-[10px] font-mono uppercase tracking-widest mb-2 text-brand-secondary">
                       Active Themes
                     </p>
                     <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto pr-1">
@@ -361,19 +358,19 @@ export default function PuzzlePage() {
                   </div>
                 )}
                 {(!customFilters.themes || customFilters.themes.length === 0) && (
-                  <p className="text-xs" style={{ color: "#8E8B82" }}>
+                  <p className="text-xs text-brand-secondary">
                     All themes included in this session.
                   </p>
                 )}
               </div>
 
               {/* Hint card */}
-              <div className="bg-[#0c1020]/30 backdrop-blur-sm border border-brand-border/60 rounded-2xl p-5 text-left flex items-start gap-3.5">
+              <div className="bg-brand-surface/30 backdrop-blur-sm border border-brand-border/60 rounded-2xl p-5 text-left flex items-start gap-3.5">
                 <div className="w-8 h-8 rounded-lg bg-brand-accent/10 border border-brand-accent/20 text-brand-accent flex items-center justify-center flex-shrink-0 mt-0.5">
                   <HelpCircle className="w-4 h-4" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-mono text-white uppercase tracking-wider font-semibold mb-1">
+                  <h4 className="text-xs font-mono text-brand-text uppercase tracking-wider font-semibold mb-1">
                     Tactics Training Advice
                   </h4>
                   <p className="text-xs text-brand-secondary font-sans leading-relaxed">
@@ -390,10 +387,10 @@ export default function PuzzlePage() {
             <div className="hidden lg:grid lg:grid-cols-12 gap-8 items-stretch w-full">
               {/* Left: puzzle board */}
               <div className="lg:col-span-7 flex flex-col items-center w-full space-y-6">
-                <div className="w-full bg-[#0c1020]/70 backdrop-blur-xl border border-brand-border rounded-2xl p-5 text-left shadow-2xl relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="w-full bg-brand-surface/70 backdrop-blur-xl border border-brand-border rounded-2xl p-5 text-left shadow-2xl relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   <div>
                     <div className="flex items-center gap-2">
-                      <h1 className="text-xl sm:text-2xl font-display font-semibold text-white tracking-wide">
+                      <h1 className="text-xl sm:text-2xl font-display font-semibold text-brand-text tracking-wide">
                         {selectedNode ? `Level ${selectedNode.levelNumber}: ${selectedNode.title || 'Mate in 1'}` : 'Mate in 1 Tactics'}
                       </h1>
                       <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider bg-amber-500/10 border border-amber-500/30 text-amber-400">
@@ -452,10 +449,10 @@ export default function PuzzlePage() {
                         </div>
 
                         {/* Mobile Board Header Card */}
-                        <div className="w-full bg-[#0c1020]/70 backdrop-blur-xl border border-brand-border rounded-2xl p-4 text-left shadow-2xl relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                        <div className="w-full bg-brand-surface/70 backdrop-blur-xl border border-brand-border rounded-2xl p-4 text-left shadow-2xl relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                           <div>
                             <div className="flex items-center gap-2">
-                              <h1 className="text-lg font-display font-semibold text-white tracking-wide">
+                              <h1 className="text-lg font-display font-semibold text-brand-text tracking-wide">
                                 {selectedNode ? `Level ${selectedNode.levelNumber}: ${selectedNode.title || 'Mate in 1'}` : 'Mate in 1 Tactics'}
                               </h1>
                               <span className="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold uppercase tracking-wider bg-amber-500/10 border border-amber-500/30 text-amber-400">

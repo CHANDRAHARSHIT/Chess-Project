@@ -17,6 +17,7 @@ import {
   Clock,
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router";
+import { useNavigationStack } from "../hooks/useNavigationStack";
 
 // ─── Decorative floating chess pieces ────────────────────────────────────────
 const PieceSvg: React.FC<{
@@ -75,7 +76,7 @@ const PieceSvg: React.FC<{
   }
 };
 
-// ─── Existing Diamond features — DO NOT change ────────────────────────────────
+// ─── Existing Diamond features ────────────────────────────────────────────────
 const DIAMOND_FEATURES = [
   "Unlimited Engine Analysis",
   "Unlimited Game Reviews",
@@ -169,10 +170,9 @@ const PLANS: PlanDef[] = [
     accentBorder: "border-sky-300/40",
     accentBg: "bg-sky-300/12",
     glowRgba: "rgba(125,211,252,0.10)",
-    // ── EXISTING PRICE — DO NOT CHANGE ──
+    // ── EXISTING PRICE ──
     monthlyPrice: "$5.00",
     yearlyPrice: null,
-    // ────────────────────────────────────
     comingSoonMonthly: false,
     comingSoonYearly: true,
     isHighlighted: true,
@@ -211,19 +211,19 @@ const COMPARISON_ROWS: Array<{
   diamond: string | boolean;
   family: string | boolean;
 }> = [
-    { label: "Online Games", gold: "Unlimited", platinum: "Unlimited", diamond: "Unlimited", family: "Unlimited" },
-    { label: "Engine Analysis", gold: "Basic", platinum: "Advanced", diamond: "Unlimited (Deep Stockfish)", family: "Unlimited (Deep Stockfish)" },
-    { label: "Game Reviews / Month", gold: "5", platinum: "25", diamond: "Unlimited", family: "Unlimited" },
-    { label: "Puzzle Training", gold: "50 / day", platinum: "Unlimited", diamond: "Unlimited", family: "Unlimited" },
-    { label: "Opening Explorer", gold: "Limited", platinum: "Advanced", diamond: "Advanced Explorer", family: "Advanced Explorer" },
-    { label: "Performance Insights", gold: false, platinum: true, diamond: true, family: true },
-    { label: "Accuracy Reports", gold: false, platinum: true, diamond: true, family: true },
-    { label: "Premium Themes", gold: "Basic", platinum: true, diamond: true, family: true },
-    { label: "Ad Free", gold: true, platinum: true, diamond: true, family: true },
-    { label: "Early Access Features", gold: false, platinum: false, diamond: true, family: true },
-    { label: "Priority Support", gold: false, platinum: false, diamond: true, family: true },
-    { label: "Accounts", gold: "1", platinum: "1", diamond: "1", family: "Up to 5" },
-  ];
+  { label: "Online Games", gold: "Unlimited", platinum: "Unlimited", diamond: "Unlimited", family: "Unlimited" },
+  { label: "Engine Analysis", gold: "Basic", platinum: "Advanced", diamond: "Unlimited (Deep Stockfish)", family: "Unlimited (Deep Stockfish)" },
+  { label: "Game Reviews / Month", gold: "5", platinum: "25", diamond: "Unlimited", family: "Unlimited" },
+  { label: "Puzzle Training", gold: "50 / day", platinum: "Unlimited", diamond: "Unlimited", family: "Unlimited" },
+  { label: "Opening Explorer", gold: "Limited", platinum: "Advanced", diamond: "Advanced Explorer", family: "Advanced Explorer" },
+  { label: "Performance Insights", gold: false, platinum: true, diamond: true, family: true },
+  { label: "Accuracy Reports", gold: false, platinum: true, diamond: true, family: true },
+  { label: "Premium Themes", gold: "Basic", platinum: true, diamond: true, family: true },
+  { label: "Ad Free", gold: true, platinum: true, diamond: true, family: true },
+  { label: "Early Access Features", gold: false, platinum: false, diamond: true, family: true },
+  { label: "Priority Support", gold: false, platinum: false, diamond: true, family: true },
+  { label: "Accounts", gold: "1", platinum: "1", diamond: "1", family: "Up to 5" },
+];
 
 const FAQS = [
   {
@@ -263,10 +263,11 @@ function CompCell({
   if (typeof value === "boolean") {
     return value ? (
       <span
-        className={`inline-flex items-center justify-center w-5 h-5 rounded-full ${diamond
-          ? "bg-sky-300/15 text-sky-300"
-          : "bg-emerald-500/10 text-emerald-400"
-          }`}
+        className={`inline-flex items-center justify-center w-5 h-5 rounded-full ${
+          diamond
+            ? "bg-sky-300/15 text-sky-300"
+            : "bg-emerald-500/10 text-emerald-400"
+        }`}
       >
         <Check className="w-3 h-3" />
       </span>
@@ -276,10 +277,11 @@ function CompCell({
   }
   return (
     <span
-      className={`inline-block whitespace-nowrap font-mono text-[11px] px-2 py-0.5 rounded-md border ${diamond
-        ? "bg-sky-300/10 border-sky-300/20 text-sky-300"
-        : "bg-white/5 border-white/10 text-brand-secondary"
-        }`}
+      className={`inline-block whitespace-nowrap font-mono text-[11px] px-2 py-0.5 rounded-md border ${
+        diamond
+          ? "bg-sky-300/10 border-sky-300/20 text-sky-300"
+          : "bg-brand-text/5 border-brand-border text-brand-secondary"
+      }`}
     >
       {value}
     </span>
@@ -290,6 +292,7 @@ function CompCell({
 export default function PricingPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { getPrevious } = useNavigationStack();
   const [isYearly, setIsYearly] = useState(false);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
 
@@ -298,13 +301,20 @@ export default function PricingPage() {
     return params.get("error") === "payment_expired";
   });
 
-  const handleNavigateHome = () => navigate("/");
+  const handleNavigateBack = () => {
+    const previousPage = getPrevious();
 
-  // ─ EXISTING PAYMENT HANDLER — DO NOT CHANGE ─
+    if (previousPage) {
+      navigate(previousPage.path);
+      return;
+    }
+
+    navigate("/");
+  };
+
   const handleUpgrade = (planType: "Monthly" | "Yearly") => {
     navigate(`/payment?plan=${planType.toLowerCase()}`);
   };
-  // ────────────────────────────────────────────
 
   return (
     <div className="min-h-screen bg-brand-bg text-brand-text flex flex-col relative overflow-hidden select-none pb-16 sm:pb-24">
@@ -332,7 +342,12 @@ export default function PricingPage() {
       <div className="absolute bottom-[35%] left-[5%] w-28 h-28 pointer-events-none opacity-30 md:block hidden z-0">
         <motion.div
           animate={{ y: [0, 20, 0], rotate: [-8, 8, -8] }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 1,
+          }}
         >
           <PieceSvg type="king" />
         </motion.div>
@@ -340,24 +355,28 @@ export default function PricingPage() {
       <div className="absolute bottom-[10%] right-[8%] w-24 h-24 pointer-events-none opacity-40 md:block hidden z-0">
         <motion.div
           animate={{ y: [0, -16, 0], rotate: [4, -12, 4] }}
-          transition={{ duration: 7.5, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
+          transition={{
+            duration: 7.5,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 1.5,
+          }}
         >
           <PieceSvg type="knight" />
         </motion.div>
       </div>
 
       <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-1 flex flex-col items-center w-full pt-8">
-
         {/* ── Back ── */}
         <div className="w-full flex justify-start mb-6">
           <button
-            onClick={handleNavigateHome}
-            className="flex items-center gap-2.5 text-xs sm:text-sm text-brand-secondary hover:text-white transition-all duration-300 cursor-pointer uppercase tracking-wider font-mono font-medium"
+            onClick={handleNavigateBack}
+            className="flex items-center gap-2.5 text-xs sm:text-sm text-brand-secondary hover:text-brand-text transition-all duration-300 cursor-pointer uppercase tracking-wider font-mono font-medium"
           >
             <span className="w-5 h-5 rounded-full border border-brand-border flex items-center justify-center font-bold text-[9px] hover:border-brand-accent/50">
               &lt;
             </span>
-            Back to Home
+            Back to {getPrevious()?.label ?? "Home"}
           </button>
         </div>
 
@@ -370,14 +389,17 @@ export default function PricingPage() {
           >
             <div className="flex items-center gap-2">
               <AlertCircle className="w-5 h-5 flex-shrink-0" />
-              <span>Your payment session has expired or no completed purchase was found.</span>
+              <span>
+                Your payment session has expired or no completed purchase was
+                found.
+              </span>
             </div>
             <button
               onClick={() => {
                 setShowSessionError(false);
                 navigate(location.pathname, { replace: true });
               }}
-              className="text-amber-400 hover:text-white font-mono text-xs uppercase font-bold cursor-pointer flex-shrink-0"
+              className="text-amber-400 hover:text-brand-text font-mono text-xs uppercase font-bold cursor-pointer flex-shrink-0"
             >
               Dismiss
             </button>
@@ -390,7 +412,7 @@ export default function PricingPage() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#0c1020]/80 border border-brand-border backdrop-blur-sm text-brand-accent text-xs font-sans tracking-wide mb-6 shadow-sm"
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-surface/80 border border-brand-border backdrop-blur-sm text-brand-accent text-xs font-sans tracking-wide mb-6 shadow-sm"
           >
             <Sparkles className="w-3.5 h-3.5" />
             <span>Trusted by thousands of chess players</span>
@@ -400,10 +422,9 @@ export default function PricingPage() {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-4xl sm:text-5xl md:text-6xl font-display font-medium tracking-tight text-white mb-6 leading-[1.05]"
+            className="text-4xl sm:text-5xl md:text-6xl font-display font-medium tracking-tight text-brand-text mb-6 leading-[1.05]"
           >
-            Unlock Your Full{" "}
-            <br className="sm:block hidden" />
+            Unlock Your Full <br className="sm:block hidden" />
             <span className="text-gold-gradient font-bold italic">
               Chess Potential
             </span>
@@ -422,11 +443,11 @@ export default function PricingPage() {
 
         {/* ── BILLING TOGGLE ── */}
         <section className="mb-14 z-20">
-          <div className="bg-[#0c1020]/90 border border-brand-border p-1.5 rounded-2xl flex items-center relative shadow-xl">
+          <div className="bg-brand-surface/90 border border-brand-border p-1.5 rounded-2xl flex items-center relative shadow-xl">
             <button
               onClick={() => setIsYearly(false)}
               className={`relative z-10 px-6 py-2.5 rounded-xl font-mono text-xs uppercase tracking-wider font-semibold transition-all duration-300 cursor-pointer min-w-[120px] text-center
-                ${!isYearly ? "text-[#080b14]" : "text-brand-secondary hover:text-white"}`}
+                ${!isYearly ? "text-brand-bg" : "text-brand-secondary hover:text-brand-text"}`}
             >
               {!isYearly && (
                 <motion.div
@@ -441,7 +462,7 @@ export default function PricingPage() {
             <button
               onClick={() => setIsYearly(true)}
               className={`relative z-10 px-6 py-2.5 rounded-xl font-mono text-xs uppercase tracking-wider font-semibold transition-all duration-300 cursor-pointer min-w-[120px] text-center
-                ${isYearly ? "text-[#080b14]" : "text-brand-secondary hover:text-white"}`}
+                ${isYearly ? "text-brand-bg" : "text-brand-secondary hover:text-brand-text"}`}
             >
               {isYearly && (
                 <motion.div
@@ -481,10 +502,11 @@ export default function PricingPage() {
                     ? { boxShadow: `0 0 50px ${plan.glowRgba}` }
                     : undefined
                 }
-                className={`relative flex flex-col rounded-2xl border p-5 pt-6 transition-all duration-300 ${plan.isHighlighted
-                  ? `bg-gradient-to-b from-[#08101e] to-[#06090f] ${plan.accentBorder}`
-                  : `bg-[#0b0f1d]/70 backdrop-blur-sm ${plan.accentBorder}`
-                  }`}
+                className={`relative flex flex-col rounded-2xl border p-5 pt-6 transition-all duration-300 ${
+                  plan.isHighlighted
+                    ? `bg-gradient-to-b from-brand-surface to-brand-bg ${plan.accentBorder}`
+                    : `bg-brand-surface/60 backdrop-blur-sm ${plan.accentBorder}`
+                }`}
               >
                 {/* Diamond top glow */}
                 {plan.isHighlighted && (
@@ -501,7 +523,7 @@ export default function PricingPage() {
 
                 {/* Coming Soon pill */}
                 {comingSoon && (
-                  <div className="absolute top-3 right-3 flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-brand-secondary text-[9px] font-mono tracking-wide uppercase">
+                  <div className="absolute top-3 right-3 flex items-center gap-1 px-2 py-0.5 rounded-full bg-brand-text/5 border border-brand-border text-brand-secondary text-[9px] font-mono tracking-wide uppercase">
                     <Clock className="w-2.5 h-2.5" />
                     Soon
                   </div>
@@ -515,7 +537,9 @@ export default function PricingPage() {
                     {plan.icon}
                   </div>
                   <div>
-                    <h3 className={`font-display font-semibold text-base tracking-wide ${plan.accentText}`}>
+                    <h3
+                      className={`font-display font-semibold text-base tracking-wide ${plan.accentText}`}
+                    >
                       {plan.name}
                     </h3>
                     <p className="text-[11px] text-brand-secondary leading-none mt-0.5">
@@ -528,16 +552,19 @@ export default function PricingPage() {
                 <div className="mb-5 min-h-[64px] flex flex-col justify-center">
                   <div className="flex items-baseline gap-1">
                     <span
-                      className={`text-3xl font-display font-bold ${isDiamond && !comingSoon
-                        ? "text-sky-300"
-                        : comingSoon
-                          ? "text-white/35"
-                          : "text-white"
-                        }`}
+                      className={`text-3xl font-display font-bold ${
+                        isDiamond && !comingSoon
+                          ? "text-sky-300"
+                          : comingSoon
+                          ? "text-brand-text/35"
+                          : "text-brand-text"
+                      }`}
                     >
                       {displayPrice}
                     </span>
-                    <span className="text-xs text-brand-secondary font-sans">/ mo</span>
+                    <span className="text-xs text-brand-secondary font-sans">
+                      / mo
+                    </span>
                   </div>
                   {!comingSoon && isYearly && plan.yearlyPrice && (
                     <span className="text-[11px] font-mono text-emerald-400 mt-0.5">
@@ -561,16 +588,18 @@ export default function PricingPage() {
                   {plan.features.slice(0, 7).map((feat, fi) => (
                     <li key={fi} className="flex items-start gap-2.5">
                       <span
-                        className={`flex-shrink-0 w-4 h-4 rounded-full flex items-center justify-center mt-0.5 ${isDiamond && !comingSoon
-                          ? "bg-sky-300/15 text-sky-300"
-                          : "bg-white/5 text-brand-secondary"
-                          }`}
+                        className={`flex-shrink-0 w-4 h-4 rounded-full flex items-center justify-center mt-0.5 ${
+                          isDiamond && !comingSoon
+                            ? "bg-sky-300/15 text-sky-300"
+                            : "bg-brand-text/5 text-brand-secondary"
+                        }`}
                       >
                         <Check className="w-2.5 h-2.5" />
                       </span>
                       <span
-                        className={`text-xs font-sans leading-relaxed ${comingSoon ? "text-brand-secondary/40" : "text-[#e5dfd5]"
-                          }`}
+                        className={`text-xs font-sans leading-relaxed ${
+                          comingSoon ? "text-brand-secondary/40" : "text-brand-text"
+                        }`}
                       >
                         {typeof feat.value === "string"
                           ? `${feat.label} — ${feat.value}`
@@ -580,8 +609,11 @@ export default function PricingPage() {
                   ))}
                   {plan.features.length > 7 && (
                     <li
-                      className={`text-[11px] font-mono pl-6 ${comingSoon ? "text-brand-secondary/30" : "text-brand-secondary/60"
-                        }`}
+                      className={`text-[11px] font-mono pl-6 ${
+                        comingSoon
+                          ? "text-brand-secondary/30"
+                          : "text-brand-secondary/60"
+                      }`}
                     >
                       +{plan.features.length - 7} more features
                     </li>
@@ -596,12 +628,13 @@ export default function PricingPage() {
                       handleUpgrade("Monthly");
                     }
                   }}
-                  className={`w-full py-3 px-4 rounded-xl font-mono text-[11px] uppercase tracking-widest font-semibold transition-all duration-300 relative overflow-hidden ${comingSoon || (isDiamond && isYearly)
-                    ? "bg-white/5 border border-white/8 text-brand-secondary/30 cursor-not-allowed"
-                    : isDiamond
+                  className={`w-full py-3 px-4 rounded-xl font-mono text-[11px] uppercase tracking-widest font-semibold transition-all duration-300 relative overflow-hidden ${
+                    comingSoon || (isDiamond && isYearly)
+                      ? "bg-brand-text/5 border border-brand-text/10 text-brand-secondary/30 cursor-not-allowed"
+                      : isDiamond
                       ? "bg-sky-500 hover:bg-sky-400 text-white border border-sky-300/50 shadow-lg shadow-sky-300/20 hover:scale-[1.01] cursor-pointer active:scale-[0.99]"
-                      : "bg-white/5 border border-white/10 hover:border-brand-accent/30 text-brand-secondary hover:text-white cursor-pointer active:scale-[0.99]"
-                    }`}
+                      : "bg-brand-text/5 border border-brand-border hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text cursor-pointer active:scale-[0.99]"
+                  }`}
                 >
                   <span className="relative z-10 flex items-center justify-center gap-1.5">
                     {comingSoon || (isDiamond && isYearly) ? (
@@ -627,7 +660,7 @@ export default function PricingPage() {
         {/* ── COMPARISON TABLE ── */}
         <section className="w-full max-w-6xl mb-20 sm:mb-24 z-10">
           <div className="text-center mb-10">
-            <h2 className="text-2xl sm:text-3xl font-display font-medium text-white mb-3">
+            <h2 className="text-2xl sm:text-3xl font-display font-medium text-brand-text mb-3">
               Compare All Plans
             </h2>
             <p className="text-sm text-brand-secondary font-sans">
@@ -635,10 +668,10 @@ export default function PricingPage() {
             </p>
           </div>
 
-          <div className="w-full overflow-x-auto rounded-2xl border border-brand-border bg-[#0b0f1d]/60 backdrop-blur-xl shadow-2xl">
+          <div className="w-full overflow-x-auto rounded-2xl border border-brand-border bg-brand-surface/60 backdrop-blur-xl shadow-2xl">
             <table className="w-full text-left border-collapse min-w-[700px]">
               <thead>
-                <tr className="border-b border-brand-border/60 bg-white/[0.02]">
+                <tr className="border-b border-brand-border/60 bg-brand-text/[0.02]">
                   <th className="py-4 px-5 text-xs font-mono text-brand-secondary uppercase tracking-wider min-w-[180px]">
                     Feature
                   </th>
@@ -650,7 +683,9 @@ export default function PricingPage() {
                     return (
                       <th
                         key={p.id}
-                        className={`py-4 px-4 text-center text-xs font-mono uppercase tracking-wider ${p.accentText} ${isDiamond ? "bg-sky-300/[0.05]" : ""}`}
+                        className={`py-4 px-4 text-center text-xs font-mono uppercase tracking-wider ${
+                          p.accentText
+                        } ${isDiamond ? "bg-sky-300/[0.05]" : ""}`}
                       >
                         <div className="flex flex-col items-center gap-1">
                           <span
@@ -675,9 +710,9 @@ export default function PricingPage() {
                 {COMPARISON_ROWS.map((row, i) => (
                   <tr
                     key={i}
-                    className="hover:bg-white/[0.015] transition-colors duration-100"
+                    className="hover:bg-brand-text/[0.015] transition-colors duration-100"
                   >
-                    <td className="py-3 px-5 text-sm font-sans font-medium text-[#e5dfd5]">
+                    <td className="py-3 px-5 text-sm font-sans font-medium text-brand-text">
                       {row.label}
                     </td>
                     <td className="py-3 px-4 text-center">
@@ -710,19 +745,22 @@ export default function PricingPage() {
                     return (
                       <td
                         key={p.id}
-                        className={`py-5 px-4 text-center ${isDiamond ? "bg-sky-300/[0.04]" : ""}`}
+                        className={`py-5 px-4 text-center ${
+                          isDiamond ? "bg-sky-300/[0.04]" : ""
+                        }`}
                       >
                         <button
                           disabled={disabled}
                           onClick={() => {
                             if (!disabled && isDiamond) handleUpgrade("Monthly");
                           }}
-                          className={`inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg font-mono text-[10px] uppercase tracking-widest font-semibold transition-all duration-200 ${disabled
-                            ? "opacity-25 cursor-not-allowed text-brand-secondary border border-white/10"
-                            : isDiamond
+                          className={`inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg font-mono text-[10px] uppercase tracking-widest font-semibold transition-all duration-200 ${
+                            disabled
+                              ? "opacity-25 cursor-not-allowed text-brand-secondary border border-brand-border"
+                              : isDiamond
                               ? "bg-sky-500 hover:bg-sky-400 text-white border border-sky-300/40 shadow shadow-sky-300/20 cursor-pointer hover:scale-[1.02]"
-                              : "bg-white/5 border border-white/10 hover:border-brand-accent/30 text-brand-secondary hover:text-white cursor-pointer"
-                            }`}
+                              : "bg-brand-text/5 border border-brand-border hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text cursor-pointer"
+                          }`}
                         >
                           {disabled ? (
                             "Soon"
@@ -745,7 +783,7 @@ export default function PricingPage() {
         {/* ── FAQ ── */}
         <section className="w-full max-w-3xl px-4 mb-20 sm:mb-28 z-10">
           <div className="text-center mb-10">
-            <h2 className="text-2xl sm:text-3xl font-display font-medium text-white mb-3">
+            <h2 className="text-2xl sm:text-3xl font-display font-medium text-brand-text mb-3">
               Frequently Asked Questions
             </h2>
             <p className="text-sm text-brand-secondary font-sans">
@@ -759,11 +797,11 @@ export default function PricingPage() {
               return (
                 <div
                   key={index}
-                  className="bg-[#0c1020]/60 backdrop-blur-xl border border-brand-border rounded-2xl overflow-hidden transition-all duration-300 hover:border-sky-300/20"
+                  className="bg-brand-surface/60 backdrop-blur-xl border border-brand-border rounded-2xl overflow-hidden transition-all duration-300 hover:border-sky-300/20"
                 >
                   <button
                     onClick={() => setOpenFaqIndex(isOpen ? null : index)}
-                    className="w-full flex items-center justify-between text-left py-5 px-6 font-display font-medium text-base sm:text-lg text-white hover:text-sky-300 transition-colors duration-200 cursor-pointer"
+                    className="w-full flex items-center justify-between text-left py-5 px-6 font-display font-medium text-base sm:text-lg text-brand-text hover:text-sky-300 transition-colors duration-200 cursor-pointer"
                   >
                     <span>{faq.q}</span>
                     <motion.span
@@ -783,7 +821,7 @@ export default function PricingPage() {
                         exit={{ height: 0, opacity: 0 }}
                         transition={{ duration: 0.25, ease: "easeInOut" }}
                       >
-                        <div className="px-6 py-3 text-sm sm:text-base text-brand-secondary font-sans leading-relaxed border-t border-brand-border/20">
+                        <div className="px-6 pb-5 pt-1 text-sm sm:text-base text-brand-secondary font-sans leading-relaxed border-t border-brand-border/40">
                           {faq.a}
                         </div>
                       </motion.div>
@@ -802,7 +840,7 @@ export default function PricingPage() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="rounded-3xl p-8 sm:p-12 text-center relative overflow-hidden bg-gradient-to-b from-[#08101e]/95 to-[#06090f]/98 border border-sky-300/20 shadow-[0_20px_50px_rgba(125,211,252,0.06)]"
+            className="rounded-3xl p-8 sm:p-12 text-center relative overflow-hidden bg-gradient-to-b from-brand-surface/90 to-brand-bg/95 border border-sky-300/20 shadow-[0_20px_50px_rgba(125,211,252,0.06)]"
           >
             {/* Background glows */}
             <div className="absolute top-[-100px] left-[-100px] w-[200px] h-[200px] bg-sky-300/6 rounded-full blur-3xl pointer-events-none" />
@@ -810,7 +848,7 @@ export default function PricingPage() {
 
             <Trophy className="w-12 h-12 text-sky-300 mx-auto mb-6 drop-shadow-[0_0_12px_rgba(125,211,252,0.4)] animate-pulse" />
 
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-medium text-white mb-4 tracking-tight">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-medium text-brand-text mb-4 tracking-tight">
               Ready to Level Up Your Chess?
             </h2>
 
@@ -829,8 +867,8 @@ export default function PricingPage() {
               </button>
 
               <button
-                onClick={handleNavigateHome}
-                className="w-full sm:w-auto px-8 py-4 rounded-xl font-mono text-xs uppercase tracking-widest font-semibold bg-white/5 border border-white/10 hover:border-sky-300/40 text-brand-secondary hover:text-white transition-all duration-300 cursor-pointer active:scale-[0.99]"
+                onClick={handleNavigateBack}
+                className="w-full sm:w-auto px-8 py-4 rounded-xl font-mono text-xs uppercase tracking-widest font-semibold bg-brand-text/5 border border-brand-border hover:border-sky-300/40 text-brand-secondary hover:text-brand-text transition-all duration-300 cursor-pointer active:scale-[0.99]"
               >
                 Continue Free
               </button>

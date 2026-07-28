@@ -43,7 +43,7 @@ export default function PuzzlePractice() {
     <div className="flex flex-col items-center gap-6 max-w-md mx-auto py-8">
       {/* Title & Metadata Panel */}
       <div className="text-center">
-        <h3 className="text-2xl font-bold text-white tracking-tight">Mate in 1 Practice</h3>
+        <h3 className="text-2xl font-bold text-brand-text tracking-tight">Mate in 1 Practice</h3>
         <p className="text-sm text-brand-secondary mt-1">
           Difficulty Rating: <span className="text-brand-accent font-semibold">{currentPuzzle.rating}</span>
         </p>

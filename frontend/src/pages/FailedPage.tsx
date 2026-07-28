@@ -56,7 +56,7 @@ export default function FailedPage() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="text-3xl font-display font-medium text-white tracking-wide mb-3 leading-tight"
+          className="text-3xl font-display font-medium text-brand-text tracking-wide mb-3 leading-tight"
         >
           Payment Unsuccessful
         </motion.h1>
@@ -75,13 +75,13 @@ export default function FailedPage() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
-          className="w-full bg-[#0c1020]/60 backdrop-blur-xl border border-brand-border rounded-2xl p-5 mb-8 text-left relative overflow-hidden"
+          className="w-full bg-brand-surface/60 backdrop-blur-xl border border-brand-border rounded-2xl p-5 mb-8 text-left relative overflow-hidden"
         >
           <div className="flex items-start gap-3">
             <AlertCircle className="w-5 h-5 text-rose-400 mt-0.5 flex-shrink-0" />
             <div>
               <span className="text-[10px] font-mono text-brand-secondary uppercase tracking-wider block mb-0.5">Status Reason</span>
-              <span className="text-sm font-sans text-[#e5dfd5] leading-relaxed">{errorReason}</span>
+              <span className="text-sm font-sans text-brand-text leading-relaxed">{errorReason}</span>
             </div>
           </div>
         </motion.div>
@@ -95,7 +95,7 @@ export default function FailedPage() {
         >
           <button
             onClick={() => navigate('/pricing')}
-            className="w-full py-4 px-6 rounded-xl font-mono text-xs uppercase tracking-widest font-semibold bg-white/5 border border-white/10 hover:border-brand-accent/40 text-brand-secondary hover:text-white transition-all duration-300 cursor-pointer flex items-center justify-center gap-2 shadow-md active:scale-[0.99]"
+            className="w-full py-4 px-6 rounded-xl font-mono text-xs uppercase tracking-widest font-semibold bg-brand-text/5 border border-white/10 hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text transition-all duration-300 cursor-pointer flex items-center justify-center gap-2 shadow-md active:scale-[0.99]"
           >
             <RefreshCw className="w-4 h-4" />
             <span>Try Again</span>

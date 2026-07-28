@@ -32,7 +32,7 @@ export function OpeningBoard({
       ? "border-rose-500 ring-4 ring-rose-500/25"
       : ringStyle === "complete"
         ? "border-emerald-500 ring-4 ring-emerald-500/25 animate-pulse"
-        : "border-brand-border/80";
+        : "border-[rgba(212,175,110,0.80)]";
 
   return (
     <div
