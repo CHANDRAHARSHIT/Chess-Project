@@ -95,7 +95,7 @@ export function OpeningCompletionCard({
       {/* Action button */}
       <button
         onClick={onPlayAgain}
-        className="flex items-center gap-2 px-6 py-2.5 rounded-xl font-mono text-xs uppercase tracking-wider font-semibold bg-white/5 border border-white/10 hover:border-brand-accent/40 text-brand-secondary hover:text-white transition-all duration-200 cursor-pointer"
+        className="flex items-center gap-2 px-6 py-2.5 rounded-xl font-mono text-xs uppercase tracking-wider font-semibold bg-brand-text/5 border border-white/10 hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text transition-all duration-200 cursor-pointer"
       >
         <RotateCcw className="w-3.5 h-3.5" />
         Play Again

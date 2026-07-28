@@ -134,7 +134,7 @@ export default function BrandSection() {
             style={{ opacity: 0 }}
           >
             <div className="space-y-4 max-w-xl">
-              <h2 className="font-display font-semibold text-4xl sm:text-5xl md:text-6xl text-white tracking-tight leading-[1.05]">
+              <h2 className="font-display font-semibold text-4xl sm:text-5xl md:text-6xl text-brand-text tracking-tight leading-[1.05]">
                 <span
                   className="block"
                   style={{ color: "var(--text-primary)" }}
@@ -145,7 +145,7 @@ export default function BrandSection() {
               </h2>
             </div>
 
-            <div className="space-y-4 max-w-lg">
+            <div className="space-y-1 max-w-lg">
               <p
                 className="font-sans text-base sm:text-[19px] leading-relaxed font-light"
                 style={{ color: "var(--text-secondary)" }}

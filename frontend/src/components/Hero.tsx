@@ -381,8 +381,8 @@ export default function Hero() {
                 className="font-sans text-base sm:text-[17px] leading-relaxed"
                 style={{ color: "var(--text-secondary)" }}
               >
-                A complete chess platform to play, learn, compete, and
-                grow—built to become the world's #1 destination for chess.
+                A complete chess platform to play, learn, compete, and grow -
+                built to become the world's #1 destination for chess.
               </p>
             </div>
 
@@ -478,10 +478,7 @@ export default function Hero() {
                 </div>
 
                 {/* Board Area */}
-                <div
-                  className="p-4 board-cursor-glow"
-                  style={{ background: "rgba(8, 11, 20, 0.95)" }}
-                >
+                <div className="p-4 board-cursor-glow bg-brand-bg/95">
                   <HeroPuzzle />
                 </div>
               </div>
