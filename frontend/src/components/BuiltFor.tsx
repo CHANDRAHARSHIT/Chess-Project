@@ -79,7 +79,7 @@ export default function BuiltFor() {
           <div className="section-eyebrow justify-center">
             Target Audience
           </div>
-          <h2 className="font-display font-semibold text-4xl sm:text-5xl md:text-6xl text-white tracking-tight leading-tight">
+          <h2 className="font-display font-semibold text-4xl sm:text-5xl md:text-6xl text-brand-text tracking-tight leading-tight">
             Built For Independent <span className="text-gold-gradient" style={{ fontStyle: 'italic', fontWeight: 400 }}>Creators</span>
           </h2>
           <p className="font-sans text-base leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
@@ -106,7 +106,7 @@ export default function BuiltFor() {
                 <div className="feature-icon-box">
                   {target.icon}
                 </div>
-                <h3 className="font-display font-semibold text-xl text-white" style={{ letterSpacing: '-0.01em' }}>
+                <h3 className="font-display font-semibold text-xl text-brand-text" style={{ letterSpacing: '-0.01em' }}>
                   {target.title}
                 </h3>
                 <p className="font-sans text-sm leading-relaxed" style={{ color: 'var(--text-secondary)', lineHeight: '1.7' }}>

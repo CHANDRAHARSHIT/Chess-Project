@@ -2,6 +2,7 @@
  * ThemedChessboard.tsx
  *
  * The one place every board's square colors + piece art come from.
+ * Click-to-move is also applied here globally via useClickToMove.
  *
  * Any component that renders a chess board should render <ThemedChessboard />
  * instead of importing <Chessboard /> from react-chessboard directly. That
@@ -10,6 +11,8 @@
  *   - A newly added board automatically respects the player's
  *     Settings -> Board & Pieces choice with zero extra wiring — just use
  *     this component instead of react-chessboard's.
+ *   - A newly added board also gets click-to-move for free, because this
+ *     wrapper injects the useClickToMove hook centrally.
  *   - There is exactly one place that maps our BoardTheme/PieceSet objects
  *     onto react-chessboard's actual prop shape. If react-chessboard's
  *     theming API ever changes (or we swap libraries entirely), this file
@@ -37,9 +40,11 @@
  * whatever is passed in `options` is spread last and wins. That's an
  * escape hatch, not the normal path, so reach for it deliberately.)
  */
+import { useId } from "react";
 import { Chessboard } from "react-chessboard";
 import type { ChessboardOptions } from "react-chessboard";
 import { useBoardSettings } from "../hooks/useBoardSettings";
+import { useClickToMove } from "../hooks/useClickToMove";
 
 interface ThemedChessboardProps {
   options: ChessboardOptions;
@@ -47,14 +52,19 @@ interface ThemedChessboardProps {
 
 export function ThemedChessboard({ options }: ThemedChessboardProps) {
   const { boardTheme, pieceSet } = useBoardSettings();
+  // Augments options with click-to-move state and handlers.
+  // Boards without onPieceDrop (e.g. EditPositionBoard) are untouched.
+  const clickOptions = useClickToMove(options);
+  const autoId = useId();
 
   return (
     <Chessboard
       options={{
+        id: `board-${autoId}`,
         darkSquareStyle: { backgroundColor: boardTheme.dark },
         lightSquareStyle: { backgroundColor: boardTheme.light },
         pieces: pieceSet.pieces,
-        ...options,
+        ...clickOptions,
       }}
     />
   );

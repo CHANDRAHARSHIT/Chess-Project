@@ -7,27 +7,49 @@
  *   ┌──────────────────────────────────────────────────────────┐
  *   │  [Openings Sidebar]  │  Top bar (title + ECO + reset)   │
  *   │  ─ Search bar        ├───────────────────────────────────┤
- *   │  ─ Scrollable list   │  Progress bar                     │
- *   │    of openings       ├───────────────────────────────────┤
- *   │                      │  Board          │  Coach Panel    │
+ *   │  ─ Paginated list    │  Progress bar                     │
+ *   │    (100 per page)    ├───────────────────────────────────┤
+ *   │  ─ Prev / Next       │  Board          │  Coach Panel    │
  *   └──────────────────────┴─────────────────┴─────────────────┘
  *
  * Data flow:
- *   OpeningService.getAllOpenings() → state → user selects one →
- *   useOpeningTrainer(selectedOpening) → OpeningBoard + CoachPanel
+ *   useOpenings() → OpeningService (localStorage + in-memory cache) →
+ *   user selects one → useOpeningTrainer(selectedOpening) → board + coach
+ *
+ * Caching:
+ *   The first visit fetches ~3000 records and stores them in localStorage.
+ *   Every subsequent visit (including after a full browser refresh) loads
+ *   from the persistent cache synchronously — no spinner, no network wait.
+ *   Cache expires after 24 hours.
+ *
+ * Pagination:
+ *   All data is loaded once. The sidebar slices the filtered array
+ *   client-side (PAGE_SIZE = 100). Changing pages makes zero API requests.
  */
 
 import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router";
-import { ArrowLeft, RotateCcw, Search, BookMarked, ChevronRight } from "lucide-react";
+import {
+  ArrowLeft,
+  RotateCcw,
+  Search,
+  BookMarked,
+  ChevronRight,
+  ChevronLeft,
+} from "lucide-react";
 import { useOpeningTrainer } from "../hooks/useOpeningTrainer";
-import { OpeningService } from "../services/opening";
+import { useOpenings } from "../hooks/useOpenings";
 import { OpeningBoard } from "../components/openings/OpeningBoard";
 import { OpeningCoachPanel } from "../components/openings/OpeningCoachPanel";
 import { OpeningProgressBar } from "../components/openings/OpeningProgressBar";
 import { OpeningCompletionCard } from "../components/openings/OpeningCompletionCard";
 import { soundManager } from "../utils/SoundManager";
 import type { Opening } from "../types/opening";
+
+// ─── Constants ────────────────────────────────────────────────────────────────
+
+/** Number of openings shown per sidebar page. */
+const PAGE_SIZE = 100;
 
 // ─── Sidebar ──────────────────────────────────────────────────────────────────
 
@@ -47,16 +69,31 @@ function OpeningSidebar({
   error,
 }: OpeningSidebarProps) {
   const [query, setQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
 
+  // Filter the full (cached) dataset by search query
   const filtered = useMemo(() => {
     if (!query.trim()) return openings;
     const q = query.toLowerCase();
     return openings.filter(
       (o) =>
-        o.name.toLowerCase().includes(q) ||
-        o.eco.toLowerCase().includes(q)
+        o.name.toLowerCase().includes(q) || o.eco.toLowerCase().includes(q),
     );
   }, [openings, query]);
+
+  // Reset to page 1 whenever the search query or the full list changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [query, openings]);
+
+  // Pagination — all slicing happens on the in-memory filtered array; no API calls
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const safePage = Math.min(currentPage, totalPages);
+  const pageStart = (safePage - 1) * PAGE_SIZE;
+  const visibleOpenings = filtered.slice(pageStart, pageStart + PAGE_SIZE);
+
+  const handlePrev = () => setCurrentPage((p) => Math.max(1, p - 1));
+  const handleNext = () => setCurrentPage((p) => Math.min(totalPages, p + 1));
 
   return (
     <aside
@@ -64,14 +101,14 @@ function OpeningSidebar({
       style={{
         width: "280px",
         height: "calc(100vh - 11rem)",
-        background: "rgba(8,11,20,0.80)",
+        background: "var(--glass-bg)",
         border: "1px solid rgba(212,175,110,0.10)",
         backdropFilter: "blur(12px)",
       }}
     >
       {/* Sidebar header */}
       <div
-        className="px-4 py-3 flex items-center gap-2"
+        className="px-4 py-3 flex items-center gap-2 shrink-0"
         style={{ borderBottom: "1px solid rgba(212,175,110,0.08)" }}
       >
         <BookMarked className="w-4 h-4 text-brand-accent shrink-0" />
@@ -91,7 +128,10 @@ function OpeningSidebar({
       </div>
 
       {/* Search bar */}
-      <div className="px-3 py-2.5" style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+      <div
+        className="px-3 py-2.5"
+        style={{ borderBottom: "1px solid var(--glass-border)" }}
+      >
         <div className="relative">
           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-brand-secondary pointer-events-none" />
           <input
@@ -101,21 +141,21 @@ function OpeningSidebar({
             placeholder="Search by name or ECO…"
             className="w-full pl-8 pr-3 py-2 text-xs font-sans rounded-lg outline-none transition-all duration-200 placeholder:text-brand-secondary/40"
             style={{
-              background: "rgba(255,255,255,0.04)",
-              border: "1px solid rgba(255,255,255,0.08)",
-              color: "#e5dfd5",
+              background: "var(--glass-bg)",
+              border: "1px solid var(--glass-border)",
+              color: "var(--text-primary)",
             }}
             onFocus={(e) => {
               e.currentTarget.style.borderColor = "rgba(212,175,110,0.35)";
             }}
             onBlur={(e) => {
-              e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)";
+              e.currentTarget.style.borderColor = "var(--glass-border)";
             }}
           />
         </div>
       </div>
 
-      {/* List */}
+      {/* List — shows only the current page slice */}
       <div className="flex-1 overflow-y-auto" style={{ minHeight: 0 }}>
         {isLoading && (
           <div className="flex flex-col gap-2 p-3">
@@ -123,7 +163,7 @@ function OpeningSidebar({
               <div
                 key={i}
                 className="h-11 rounded-lg animate-pulse"
-                style={{ background: "rgba(255,255,255,0.04)" }}
+                style={{ background: "var(--glass-bg)" }}
               />
             ))}
           </div>
@@ -137,13 +177,15 @@ function OpeningSidebar({
 
         {!isLoading && !error && filtered.length === 0 && (
           <div className="p-4 text-center">
-            <p className="font-sans text-xs text-brand-secondary">No openings match your search.</p>
+            <p className="font-sans text-xs text-brand-secondary">
+              No openings match your search.
+            </p>
           </div>
         )}
 
         {!isLoading &&
           !error &&
-          filtered.map((opening) => {
+          visibleOpenings.map((opening) => {
             const isSelected = opening.id === selectedId;
             return (
               <button
@@ -174,7 +216,9 @@ function OpeningSidebar({
                   <p
                     className="font-sans text-xs leading-tight truncate mt-0.5 transition-colors duration-150"
                     style={{
-                      color: isSelected ? "#e5dfd5" : "#9ca3af",
+                      color: isSelected
+                        ? "var(--text-primary)"
+                        : "var(--text-secondary)",
                     }}
                   >
                     {opening.name}
@@ -188,6 +232,49 @@ function OpeningSidebar({
             );
           })}
       </div>
+
+      {/* Pagination controls — only rendered when there is more than one page */}
+      {!isLoading && !error && totalPages > 1 && (
+        <div
+          className="shrink-0 flex items-center justify-between gap-2 px-3 py-2"
+          style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}
+        >
+          <button
+            onClick={handlePrev}
+            disabled={safePage <= 1}
+            aria-label="Previous page"
+            className="flex items-center justify-center w-6 h-6 rounded transition-all duration-150 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+            style={{
+              background: "rgba(255,255,255,0.04)",
+              border: "1px solid rgba(255,255,255,0.08)",
+              color: "rgba(212,175,110,0.7)",
+            }}
+          >
+            <ChevronLeft className="w-3.5 h-3.5" />
+          </button>
+
+          <span
+            className="font-mono text-[10px] text-center leading-tight"
+            style={{ color: "rgba(255,255,255,0.35)" }}
+          >
+            {safePage} / {totalPages}
+          </span>
+
+          <button
+            onClick={handleNext}
+            disabled={safePage >= totalPages}
+            aria-label="Next page"
+            className="flex items-center justify-center w-6 h-6 rounded transition-all duration-150 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+            style={{
+              background: "rgba(255,255,255,0.04)",
+              border: "1px solid rgba(255,255,255,0.08)",
+              color: "rgba(212,175,110,0.7)",
+            }}
+          >
+            <ChevronRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
     </aside>
   );
 }
@@ -197,26 +284,18 @@ function OpeningSidebar({
 export default function OpeningsPage() {
   const navigate = useNavigate();
 
-  const [openings, setOpenings] = useState<Opening[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [fetchError, setFetchError] = useState<string | null>(null);
+  // useOpenings() seeds state synchronously from localStorage on refresh,
+  // so isLoading is false immediately when a valid cache entry exists.
+  const { openings, isLoading, error: fetchError } = useOpenings();
+
   const [selectedOpening, setSelectedOpening] = useState<Opening | null>(null);
 
-  // Fetch all openings from backend on mount
+  // Auto-select the first opening once data arrives (first visit or after refresh)
   useEffect(() => {
-    setIsLoading(true);
-    setFetchError(null);
-    OpeningService.getAllOpenings()
-      .then((data) => {
-        setOpenings(data);
-        // Auto-select the first opening so the board is immediately ready
-        if (data.length > 0) setSelectedOpening(data[0]);
-      })
-      .catch(() => {
-        setFetchError("Failed to load openings. Please try again.");
-      })
-      .finally(() => setIsLoading(false));
-  }, []);
+    if (openings.length > 0 && selectedOpening === null) {
+      setSelectedOpening(openings[0]);
+    }
+  }, [openings, selectedOpening]);
 
   const trainer = useOpeningTrainer(selectedOpening);
 
@@ -241,9 +320,7 @@ export default function OpeningsPage() {
     status === "wrong" ? "wrong" : isComplete ? "complete" : "none";
 
   // User move step count (exclude opponent moves — every other move starting at index 0)
-  const userStepsDone = Math.ceil(
-    Math.min(currentStepIndex, totalSteps) / 2
-  );
+  const userStepsDone = Math.ceil(Math.min(currentStepIndex, totalSteps) / 2);
   const totalUserSteps = Math.ceil(totalSteps / 2);
 
   return (
@@ -255,7 +332,7 @@ export default function OpeningsPage() {
             soundManager.playButtonClick();
             navigate(-1);
           }}
-          className="flex items-center gap-1.5 text-brand-secondary hover:text-white text-sm font-sans transition-colors duration-200 cursor-pointer group"
+          className="flex items-center gap-1.5 text-brand-secondary hover:text-brand-text text-sm font-sans transition-colors duration-200 cursor-pointer group"
         >
           <ArrowLeft className="w-4 h-4 transition-transform duration-200 group-hover:-translate-x-0.5" />
           <span>Back</span>
@@ -284,7 +361,7 @@ export default function OpeningsPage() {
             reset();
           }}
           disabled={!selectedOpening}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-brand-secondary hover:text-white text-xs font-mono uppercase tracking-wider hover:bg-white/5 border border-transparent hover:border-brand-border/40 transition-all duration-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-brand-secondary hover:text-brand-text text-xs font-mono uppercase tracking-wider hover:bg-brand-text/5 border border-transparent hover:border-[rgba(212,175,110,0.40)] transition-all duration-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
         >
           <RotateCcw className="w-3.5 h-3.5" />
           <span className="hidden sm:inline">Reset</span>
@@ -320,9 +397,9 @@ export default function OpeningsPage() {
             <select
               className="w-full pl-9 pr-4 py-2.5 text-sm font-sans rounded-xl outline-none cursor-pointer appearance-none"
               style={{
-                background: "rgba(8,11,20,0.80)",
-                border: "1px solid rgba(212,175,110,0.15)",
-                color: "#e5dfd5",
+                background: "var(--glass-bg)",
+                border: "1px solid var(--glass-border-gold)",
+                color: "var(--text-primary)",
               }}
               value={selectedOpening?.id ?? ""}
               onChange={(e) => {
@@ -382,12 +459,12 @@ export default function OpeningsPage() {
                       Incorrect move — try again
                     </span>
                   ) : status === "opponent" ? (
-                    <span className="font-mono uppercase tracking-wider text-xs font-bold text-brand-secondary flex items-center gap-1.5 bg-white/5 border border-white/10 px-3 py-1 rounded-full">
+                    <span className="font-mono uppercase tracking-wider text-xs font-bold text-brand-secondary flex items-center gap-1.5 bg-brand-text/5 border border-white/10 px-3 py-1 rounded-full">
                       <span className="w-2 h-2 rounded-full bg-brand-secondary animate-pulse" />
                       Opponent thinking…
                     </span>
                   ) : status === "idle" ? (
-                    <span className="font-mono uppercase tracking-wider text-xs font-bold text-brand-secondary/50 flex items-center gap-1.5 bg-white/5 border border-white/5 px-3 py-1 rounded-full">
+                    <span className="font-mono uppercase tracking-wider text-xs font-bold text-brand-secondary/50 flex items-center gap-1.5 bg-brand-text/5 border border-white/5 px-3 py-1 rounded-full">
                       Choose an opening to begin
                     </span>
                   ) : (
@@ -406,7 +483,7 @@ export default function OpeningsPage() {
             <div
               className="lg:w-72 xl:w-80 rounded-2xl p-5 flex flex-col shrink-0"
               style={{
-                background: "rgba(8,11,20,0.7)",
+                background: "var(--glass-bg)",
                 border: "1px solid rgba(212,175,110,0.12)",
                 backdropFilter: "blur(12px)",
                 boxShadow: "0 8px 32px rgba(0,0,0,0.4)",

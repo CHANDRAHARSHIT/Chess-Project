@@ -9,7 +9,8 @@
     "start": "node dist/index.js",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
-    "db:seed": "tsx src/seed.ts"
+    "db:seed": "tsx src/seed.ts",
+    "db:seed:puzzles": "tsx src/scripts/seed-puzzles.ts"
   },
   "dependencies": {
     "@auth/core": "^0.37.4",

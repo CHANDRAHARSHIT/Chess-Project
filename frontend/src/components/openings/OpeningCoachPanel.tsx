@@ -23,7 +23,7 @@ export function OpeningCoachPanel({
       ? "#f87171" // rose-400
       : status === "complete"
       ? "#34d399" // emerald-400
-      : "#e5dfd5"; // brand text
+      : "var(--text-primary)"; // brand text
 
   return (
     <div className="flex flex-col gap-4 h-full">
@@ -57,8 +57,8 @@ export function OpeningCoachPanel({
       <div
         className="rounded-xl px-4 py-3 flex-1"
         style={{
-          background: "rgba(212,175,110,0.06)",
-          border: "1px solid rgba(212,175,110,0.15)",
+            background: "var(--glass-bg)",
+            border: "1px solid var(--glass-border-gold)",
         }}
       >
         <p
@@ -84,14 +84,18 @@ export function OpeningCoachPanel({
                   key={i}
                   className="font-mono text-xs px-1.5 py-0.5 rounded"
                   style={{
-                    background: isWhiteMove
-                      ? "rgba(212,175,110,0.12)"
-                      : "rgba(255,255,255,0.05)",
-                    color: isWhiteMove ? "rgba(212,175,110,0.9)" : "#9ca3af",
-                    border: `1px solid ${
-                      isWhiteMove
-                        ? "rgba(212,175,110,0.20)"
-                        : "rgba(255,255,255,0.08)"
+                   background: isWhiteMove
+                   ? "rgba(212,175,110,0.12)"
+                   : "var(--glass-bg)",
+
+                   color: isWhiteMove
+                   ? "rgba(212,175,110,0.9)"
+                   : "var(--text-secondary)",
+
+                   border: `1px solid ${
+                   isWhiteMove
+                   ? "rgba(212,175,110,0.20)"
+                   : "var(--glass-border)"
                     }`,
                   }}
                 >
