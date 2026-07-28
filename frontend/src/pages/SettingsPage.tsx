@@ -14,7 +14,7 @@
  * single form — future tickets can flesh those out without restructuring
  * this page.
  */
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import {
   ArrowLeft,
@@ -98,6 +98,13 @@ export default function SettingsPage() {
     ? (searchParams.get("tab") as string)
     : "board-pieces";
   const [activeCategory, setActiveCategory] = useState(initialCategory);
+
+  useEffect(() => {
+    const tabParam = searchParams.get("tab");
+    if (tabParam && CATEGORIES.some((c) => c.id === tabParam)) {
+      setActiveCategory(tabParam);
+    }
+  }, [searchParams]);
 
   // Changes are staged locally and only pushed into BoardSettingsContext
   // (and localStorage) when the player clicks "Save" — mirrors the
@@ -203,14 +210,17 @@ export default function SettingsPage() {
                     aria-current={isActive ? "page" : undefined}
                     onClick={() => {
                       soundManager.playButtonClick();
-                      if (cat.path === "/pricing") {
-                        push({
-                          label: "Settings",
-                          path: "/settings",
-                        });
+                      if (cat.path) {
+                        if (cat.path === "/pricing") {
+                          push({
+                            label: "Settings",
+                            path: "/settings",
+                          });
+                        }
+                        navigate(cat.path);
+                      } else {
+                        setActiveCategory(cat.id);
                       }
-
-                      navigate(cat.path);
                     }}
                     className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors duration-150 cursor-pointer ${
                       isActive
