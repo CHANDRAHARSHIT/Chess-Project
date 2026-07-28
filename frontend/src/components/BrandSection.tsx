@@ -145,7 +145,7 @@ export default function BrandSection() {
               </h2>
             </div>
 
-            <div className="space-y-4 max-w-lg">
+            <div className="space-y-1 max-w-lg">
               <p
                 className="font-sans text-base sm:text-[19px] leading-relaxed font-light"
                 style={{ color: "var(--text-secondary)" }}
