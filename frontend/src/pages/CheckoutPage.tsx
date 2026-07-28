@@ -99,6 +99,36 @@ export default function CheckoutPage() {
     });
   };
 
+  // Complete checkout flow
+  const handleProceedToPayment = async () => {
+    setIsProcessing(true);
+
+    try {
+      const plan = isYearly ? "pro_yearly" : "pro_monthly";
+      const response = await PaymentService.createCheckoutSession(plan);
+
+      if (response.status === "success" && response.checkoutUrl) {
+        if (response.sessionId) {
+          sessionStorage.setItem("pending_checkout_session_id", response.sessionId);
+        }
+        // Securely redirect customer to Stripe hosted checkout page
+        window.location.href = response.checkoutUrl;
+      } else {
+        alert(
+          response.message ||
+            "Failed to initialize secure checkout session. Please try again.",
+        );
+        setIsProcessing(false);
+      }
+    } catch (error: any) {
+      console.error("[CheckoutPage] Payment redirect error:", error);
+      alert(
+        "An unexpected error occurred while establishing a secure billing session. Please try again.",
+      );
+      setIsProcessing(false);
+    }
+  };
+
   // ──────────────────────────────────────────────────────────────────────────
   // RENDER: LOADING STATE
   // ──────────────────────────────────────────────────────────────────────────
@@ -466,22 +496,14 @@ export default function CheckoutPage() {
                 .
               </p>
 
-              {/* Proceed Button (Disabled for Demo Version) */}
-              <div
-                className="w-full mb-4"
-                title="Not available in demo version"
+              {/* Proceed Button */}
+              <button
+                onClick={handleProceedToPayment}
+                className="w-full py-4 px-6 rounded-xl font-mono text-xs uppercase tracking-widest font-bold btn-premium-cta btn-glow-container btn-glow-accent cta-shine cursor-pointer shadow-lg hover:scale-[1.01] flex items-center justify-center gap-2 mb-4"
               >
-                <button
-                  disabled
-                  type="button"
-                  aria-disabled="true"
-                  title="Not available in demo version"
-                  className="w-full py-4 px-6 rounded-xl font-mono text-xs uppercase tracking-widest font-bold btn-premium-cta opacity-50 cursor-not-allowed flex items-center justify-center gap-2 select-none"
-                >
-                  <span>Proceed to Payment</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              </div>
+                <span>Proceed to Payment</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
 
               <div className="text-center text-[10px] font-mono text-brand-secondary flex items-center justify-center gap-1.5 mb-6">
                 <Lock className="w-3 h-3 text-brand-accent" />
