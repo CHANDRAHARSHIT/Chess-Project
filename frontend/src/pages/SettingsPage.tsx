@@ -72,7 +72,7 @@ const CATEGORIES: SettingsCategory[] = [
     id: "membership",
     name: "Membership",
     icon: CreditCard,
-    available: false,
+    available: true,
     path: "/pricing",
   },
   { id: "gameplay", name: "Gameplay", icon: Gamepad2, available: false },

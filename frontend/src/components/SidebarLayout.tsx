@@ -58,8 +58,8 @@ export default function SidebarLayout({
         { name: "Openings", href: "/openings", icon: BookMarked },
       ],
     },
-    { name: "Pricing", href: "/pricing", icon: CreditCard, comingSoon: true },
-    { name: "Premium", href: "/premium", icon: Crown, comingSoon: true },
+    { name: "Pricing", href: "/pricing", icon: CreditCard },
+    { name: "Premium", href: "/premium", icon: Crown },
   ];
 
   const handleLinkClick = (href: string, e: React.MouseEvent) => {

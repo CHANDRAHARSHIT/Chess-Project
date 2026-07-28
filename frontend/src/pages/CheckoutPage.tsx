@@ -30,22 +30,22 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     const checkPendingSession = async () => {
-      const pendingId = sessionStorage.getItem('pending_checkout_session_id');
+      const pendingId = sessionStorage.getItem("pending_checkout_session_id");
       if (!pendingId) return;
 
       setIsProcessing(true); // show overlay briefly while we check
       try {
         const result = await PaymentService.getCheckoutSession(pendingId);
-        if (result?.data?.session?.status !== 'complete') {
-          sessionStorage.removeItem('pending_checkout_session_id');
-          navigate('/payment/failed');
+        if (result?.data?.session?.status !== "complete") {
+          sessionStorage.removeItem("pending_checkout_session_id");
+          navigate("/payment/failed");
           return;
         }
         // completed — clear the pending marker; success_url flow handles the rest
-        sessionStorage.removeItem('pending_checkout_session_id');
+        sessionStorage.removeItem("pending_checkout_session_id");
       } catch (err) {
-        console.error('[CheckoutPage] Session status check failed:', err);
-        sessionStorage.removeItem('pending_checkout_session_id');
+        console.error("[CheckoutPage] Session status check failed:", err);
+        sessionStorage.removeItem("pending_checkout_session_id");
       } finally {
         setIsProcessing(false);
       }
@@ -56,8 +56,8 @@ export default function CheckoutPage() {
     const handlePageShow = (event: PageTransitionEvent) => {
       if (event.persisted) checkPendingSession();
     };
-    window.addEventListener('pageshow', handlePageShow);
-    return () => window.removeEventListener('pageshow', handlePageShow);
+    window.addEventListener("pageshow", handlePageShow);
+    return () => window.removeEventListener("pageshow", handlePageShow);
   }, [navigate]);
   useEffect(() => {
     // Detect plan selection from URL query parameter
@@ -97,35 +97,6 @@ export default function CheckoutPage() {
       month: "long",
       year: "numeric",
     });
-  };
-  // Complete checkout flow
-  const handleProceedToPayment = async () => {
-    setIsProcessing(true);
-
-    try {
-      const plan = isYearly ? "pro_yearly" : "pro_monthly";
-      const response = await PaymentService.createCheckoutSession(plan);
-
-      if (response.status === "success" && response.checkoutUrl) {
-        if (response.sessionId) {
-          sessionStorage.setItem('pending_checkout_session_id', response.sessionId);
-        }
-        // Securely redirect customer to Stripe hosted checkout page
-        window.location.href = response.checkoutUrl;
-      } else {
-        alert(
-          response.message ||
-          "Failed to initialize secure checkout session. Please try again.",
-        );
-        setIsProcessing(false);
-      }
-    } catch (error: any) {
-      console.error("[CheckoutPage] Payment redirect error:", error);
-      alert(
-        "An unexpected error occurred while establishing a secure billing session. Please try again.",
-      );
-      setIsProcessing(false);
-    }
   };
 
   // ──────────────────────────────────────────────────────────────────────────
@@ -495,14 +466,22 @@ export default function CheckoutPage() {
                 .
               </p>
 
-              {/* Proceed Button */}
-              <button
-                onClick={handleProceedToPayment}
-                className="w-full py-4 px-6 rounded-xl font-mono text-xs uppercase tracking-widest font-bold btn-premium-cta btn-glow-container btn-glow-accent cta-shine cursor-pointer shadow-lg hover:scale-[1.01] flex items-center justify-center gap-2 mb-4"
+              {/* Proceed Button (Disabled for Demo Version) */}
+              <div
+                className="w-full mb-4"
+                title="Not available in demo version"
               >
-                <span>Proceed to Payment</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
+                <button
+                  disabled
+                  type="button"
+                  aria-disabled="true"
+                  title="Not available in demo version"
+                  className="w-full py-4 px-6 rounded-xl font-mono text-xs uppercase tracking-widest font-bold btn-premium-cta opacity-50 cursor-not-allowed flex items-center justify-center gap-2 select-none"
+                >
+                  <span>Proceed to Payment</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
 
               <div className="text-center text-[10px] font-mono text-brand-secondary flex items-center justify-center gap-1.5 mb-6">
                 <Lock className="w-3 h-3 text-brand-accent" />
