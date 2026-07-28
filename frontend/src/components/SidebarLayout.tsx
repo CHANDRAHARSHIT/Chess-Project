@@ -51,6 +51,7 @@ export default function SidebarLayout({
       name: "Learn",
       href: "/learn",
       icon: GraduationCap,
+      comingSoon: true,
       subItems: [
         { name: "Lessons", href: "/lessons", icon: BookOpen, comingSoon: true },
         { name: "Play Coach", href: "/play-coach", icon: Bot, comingSoon: true },
@@ -197,7 +198,7 @@ export default function SidebarLayout({
                     </span>
                   </a>
 
-                  {item.subItems && (
+                  {item.subItems && !item.comingSoon && (
                     <div
                       className="absolute left-full top-0 hidden group-hover/navitem:block z-[100] animate-in fade-in slide-in-from-left-2 duration-150"
                       style={{ paddingLeft: "8px" }}
