@@ -10,6 +10,7 @@ import PremiumPage from "../pages/PremiumPage";
 import OpeningsPage from "../pages/OpeningsPage";
 import VariantsPage from "../pages/VariantsPage";
 import Chess960Page from "../pages/Chess960Page";
+import LessonBuilderPage from "../pages/LessonBuilderPage";
 import { ProtectedRoute } from "../components/ProtectedRoute";
 
 export interface RouteConfig {
@@ -24,6 +25,7 @@ export const mainRoutes: RouteConfig[] = [
   { path: "/openings", element: <OpeningsPage /> },
   { path: "/variants", element: <VariantsPage /> },
   { path: "/play/chess960", element: <Chess960Page /> },
+  { path: "/lesson-builder", element: <LessonBuilderPage /> },
   {
     path: "/profile",
     element: <Navigate to="/settings?tab=profile" replace />,

@@ -62,7 +62,10 @@ export const ModelName = {
   ProductFeature: 'ProductFeature',
   WebhookEvent: 'WebhookEvent',
   CuratedPuzzle: 'CuratedPuzzle',
-  Opening: 'Opening'
+  Opening: 'Opening',
+  Lesson: 'Lesson',
+  Segment: 'Segment',
+  Slide: 'Slide'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -265,6 +268,64 @@ export const OpeningScalarFieldEnum = {
 export type OpeningScalarFieldEnum = (typeof OpeningScalarFieldEnum)[keyof typeof OpeningScalarFieldEnum]
 
 
+export const LessonScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  description: 'description',
+  authorId: 'authorId',
+  authorDisplayName: 'authorDisplayName',
+  status: 'status',
+  coverImage: 'coverImage',
+  slug: 'slug',
+  version: 'version',
+  isPremium: 'isPremium',
+  priceAmount: 'priceAmount',
+  isAiGenerated: 'isAiGenerated',
+  aiPrompt: 'aiPrompt',
+  averageRating: 'averageRating',
+  ratingsCount: 'ratingsCount',
+  channelId: 'channelId',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  publishedAt: 'publishedAt'
+} as const
+
+export type LessonScalarFieldEnum = (typeof LessonScalarFieldEnum)[keyof typeof LessonScalarFieldEnum]
+
+
+export const SegmentScalarFieldEnum = {
+  id: 'id',
+  lessonId: 'lessonId',
+  title: 'title',
+  order: 'order',
+  description: 'description',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SegmentScalarFieldEnum = (typeof SegmentScalarFieldEnum)[keyof typeof SegmentScalarFieldEnum]
+
+
+export const SlideScalarFieldEnum = {
+  id: 'id',
+  segmentId: 'segmentId',
+  order: 'order',
+  title: 'title',
+  coachText: 'coachText',
+  fen: 'fen',
+  annotations: 'annotations',
+  audioUrl: 'audioUrl',
+  audioDuration: 'audioDuration',
+  videoUrl: 'videoUrl',
+  interactiveData: 'interactiveData',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SlideScalarFieldEnum = (typeof SlideScalarFieldEnum)[keyof typeof SlideScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -279,6 +340,13 @@ export const NullableJsonNullValueInput = {
 } as const
 
 export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
+export const JsonNullValueInput = {
+  JsonNull: JsonNull
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
 export const QueryMode = {

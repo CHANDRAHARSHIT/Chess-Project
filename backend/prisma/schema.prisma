@@ -3,28 +3,29 @@ datasource db {
 }
 
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider      = "prisma-client"
+  output        = "../src/generated/prisma"
   binaryTargets = ["native", "windows", "debian-openssl-3.0.x"]
 }
 
 model User {
-  id                String          @id @default(cuid())
-  name              String?
-  email             String          @unique
-  emailVerified     DateTime?
-  image             String?
-  accounts          Account[]
-  sessions          Session[]
-  createdAt         DateTime        @default(now())
-  
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  createdAt     DateTime  @default(now())
+
   // Payment integration fields — two separate columns so test-mode and live-mode
   // Stripe customer IDs can coexist in a single shared database.
   stripeTestCustomerId String?         @unique // Stripe test-mode customer ID (cus_test_*)
   stripeLiveCustomerId String?         @unique // Stripe live-mode customer ID  (cus_live_*)
   subscriptions        Subscription[]
-  payments          Payment[]
-  billingProfile    BillingProfile?
+  payments             Payment[]
+  billingProfile       BillingProfile?
+  lessons              Lesson[]
 }
 
 model Account {
@@ -83,7 +84,7 @@ model Subscription {
   id                    String             @id @default(cuid())
   userId                String
   user                  User               @relation(fields: [userId], references: [id], onDelete: Cascade)
-  productId             String             // References the database Product plan
+  productId             String // References the database Product plan
   product               Product            @relation(fields: [productId], references: [id])
   status                SubscriptionStatus
   gatewaySubscriptionId String?            @unique // Subscription ID from Stripe/PayPal
@@ -105,33 +106,33 @@ model Payment {
   user                   User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   subscriptionId         String?
   subscription           Subscription? @relation(fields: [subscriptionId], references: [id], onDelete: SetNull)
-  amount                 Int           // Amount in cents / smallest currency unit
+  amount                 Int // Amount in cents / smallest currency unit
   currency               String        @default("usd")
   status                 PaymentStatus
-  paymentMethod          String?       // e.g., card, paypal
+  paymentMethod          String? // e.g., card, paypal
   gatewayPaymentIntentId String?       @unique // Intent or transaction reference
-  gatewayInvoiceId       String?       // Invoice reference from gateway
+  gatewayInvoiceId       String? // Invoice reference from gateway
   receiptUrl             String?
   errorMessage           String?
-  
-  // Auditing, support & refund debugging fields
-  provider               String        @default("stripe") // e.g. stripe, paypal, razorpay
-  failureCode            String?       // Gateway specific failure code (e.g. card_declined)
-  gatewayCustomerId      String?       // Customer ID on gateway for secondary verification
-  refundedAmount         Int?          @default(0) // Refunded amount in cents
-  gatewayMetadata        Json?         // JSON block mapping gateway details (card brand, user ip etc.)
 
-  createdAt              DateTime      @default(now())
-  updatedAt              DateTime      @updatedAt
+  // Auditing, support & refund debugging fields
+  provider          String  @default("stripe") // e.g. stripe, paypal, razorpay
+  failureCode       String? // Gateway specific failure code (e.g. card_declined)
+  gatewayCustomerId String? // Customer ID on gateway for secondary verification
+  refundedAmount    Int?    @default(0) // Refunded amount in cents
+  gatewayMetadata   Json? // JSON block mapping gateway details (card brand, user ip etc.)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model BillingProfile {
-  id           String   @id @default(cuid())
-  userId       String   @unique
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           String  @id @default(cuid())
+  userId       String  @unique
+  user         User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   billingEmail String?
   billingName  String?
-  
+
   // Future invoicing & tax configurations (address lines etc. left as stubs)
   addressLine1 String?
   addressLine2 String?
@@ -140,35 +141,35 @@ model BillingProfile {
   postalCode   String?
   country      String?
   vatId        String?
-  
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Product {
-  id                  String           @id @default(cuid())
-  identifier          String           @unique // e.g. pro_monthly, pro_yearly
-  name                String
-  description         String?
-  priceAmount         Int              // Price in smallest unit (e.g. 999 for $9.99)
-  currency            String           @default("usd")
-  billingInterval     String           // month, year, or one-time
+  id                 String           @id @default(cuid())
+  identifier         String           @unique // e.g. pro_monthly, pro_yearly
+  name               String
+  description        String?
+  priceAmount        Int // Price in smallest unit (e.g. 999 for $9.99)
+  currency           String           @default("usd")
+  billingInterval    String // month, year, or one-time
   // Mode-specific Stripe Price IDs — keep both so the same DB works in test and live mode
-  gatewayTestPriceId  String?          @unique // Stripe test-mode Price ID (price_xxx from test key)
-  gatewayLivePriceId  String?          @unique // Stripe live-mode Price ID (price_xxx from live key)
-  isActive            Boolean          @default(true)
-  displayOrder        Int              @default(0)
-  features            ProductFeature[]
-  subscriptions       Subscription[]
-  createdAt           DateTime         @default(now())
-  updatedAt           DateTime         @updatedAt
+  gatewayTestPriceId String?          @unique // Stripe test-mode Price ID (price_xxx from test key)
+  gatewayLivePriceId String?          @unique // Stripe live-mode Price ID (price_xxx from live key)
+  isActive           Boolean          @default(true)
+  displayOrder       Int              @default(0)
+  features           ProductFeature[]
+  subscriptions      Subscription[]
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
 }
 
 model ProductFeature {
   id           String   @id @default(cuid())
   productId    String
   product      Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  featureKey   String   // e.g. unlimited_puzzles, advanced_analysis
+  featureKey   String // e.g. unlimited_puzzles, advanced_analysis
   featureValue String   @default("true") // true/false or limit strings e.g. "100"
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -179,33 +180,112 @@ model ProductFeature {
 model WebhookEvent {
   id             String   @id @default(cuid())
   gatewayEventId String   @unique // External event ID (e.g. Stripe evt_...)
-  provider       String   // e.g. stripe, paypal
-  eventType      String   // e.g. invoice.payment_succeeded
+  provider       String // e.g. stripe, paypal
+  eventType      String // e.g. invoice.payment_succeeded
   processed      Boolean  @default(true)
-  payload        Json?    // Full audit log payload
+  payload        Json? // Full audit log payload
   createdAt      DateTime @default(now())
 }
 
 /// Curated puzzle dataset sourced from Lichess puzzle database.
 /// Used for the Custom Puzzles feature — filterable by theme and rating range.
 model CuratedPuzzle {
-  id              String   @id                    // Lichess PuzzleId (e.g. "ZEBhn")
-  fen             String                          // FEN of the position before the puzzle starts
-  moves           String                          // Space-separated UCI move list (solution)
-  rating          Int                             // Puzzle difficulty rating
-  ratingDeviation Int                             // Rating deviation (confidence)
-  popularity      Int                             // Lichess popularity score (-100 to 100)
-  nbPlays         Int                             // Total number of times played
-  themes          String[]                        // Array of theme tags (e.g. ["mate", "mateIn1"])
+  id              String   @id // Lichess PuzzleId (e.g. "ZEBhn")
+  fen             String // FEN of the position before the puzzle starts
+  moves           String // Space-separated UCI move list (solution)
+  rating          Int // Puzzle difficulty rating
+  ratingDeviation Int // Rating deviation (confidence)
+  popularity      Int // Lichess popularity score (-100 to 100)
+  nbPlays         Int // Total number of times played
+  themes          String[] // Array of theme tags (e.g. ["mate", "mateIn1"])
   createdAt       DateTime @default(now())
 
-  @@index([rating])    // Fast filtering by rating range
+  @@index([rating]) // Fast filtering by rating range
 }
-                        
+
 model Opening {
   id    String @id @default(cuid())
   eco   String
   name  String
   pgn   String
   moves String
+}
+
+enum LessonStatus {
+  DRAFT
+  PUBLISHED
+}
+
+model Lesson {
+  id                String       @id @default(cuid())
+  title             String
+  description       String?
+  authorId          String
+  author            User         @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorDisplayName String?
+  status            LessonStatus @default(DRAFT)
+  coverImage        String?
+  slug              String?      @unique
+
+  // Extensibility fields (versioning, monetization, creator features, AI generation)
+  version       Int     @default(1)
+  isPremium     Boolean @default(false)
+  priceAmount   Int?
+  isAiGenerated Boolean @default(false)
+  aiPrompt      String?
+  averageRating Float?
+  ratingsCount  Int     @default(0)
+  channelId     String?
+  metadata      Json?
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  publishedAt DateTime?
+
+  segments Segment[]
+
+  @@index([authorId])
+  @@index([status])
+  @@index([slug])
+  @@index([channelId])
+}
+
+model Segment {
+  id          String  @id @default(cuid())
+  lessonId    String
+  lesson      Lesson  @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  title       String
+  order       Int
+  description String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  slides Slide[]
+
+  @@unique([lessonId, order])
+  @@index([lessonId])
+}
+
+model Slide {
+  id          String  @id @default(cuid())
+  segmentId   String
+  segment     Segment @relation(fields: [segmentId], references: [id], onDelete: Cascade)
+  order       Int
+  title       String?
+  coachText   String  @db.Text
+  fen         String
+  annotations Json
+
+  // Extensibility fields (voice narration, media, interactive challenges)
+  audioUrl        String?
+  audioDuration   Int?
+  videoUrl        String?
+  interactiveData Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([segmentId, order])
+  @@index([segmentId])
 }
