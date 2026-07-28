@@ -1571,7 +1571,7 @@ export default function HeroPuzzle({
       ).then(() => {
         if (solveAbortRef.current) return;
 
-        // Evaluate !! annotation for White's move in Puzzle #3
+        // Evaluate !! annotation for White's move in puzzle #3
         if (puzzle3StepRef.current === 0 && sourceSquare === "d4" && targetSquare === "c4") {
           triggerAnnotation(targetSquare, "!!");
           puzzle3StepRef.current = 1;
