@@ -46,7 +46,7 @@ export default function SidebarLayout({
 
   const menuItems = [
     { name: "Home", href: "/", icon: Home },
-    { name: "Puzzles", href: "/puzzles", icon: Puzzle },
+    { name: "Puzzles", href: "/puzzles", icon: Puzzle, comingSoon: true },
     {
       name: "Learn",
       href: "/learn",
@@ -57,8 +57,8 @@ export default function SidebarLayout({
         { name: "Openings", href: "/openings", icon: BookMarked },
       ],
     },
-    { name: "Pricing", href: "/pricing", icon: CreditCard },
-    { name: "Premium", href: "/premium", icon: Crown },
+    { name: "Pricing", href: "/pricing", icon: CreditCard, comingSoon: true },
+    { name: "Premium", href: "/premium", icon: Crown, comingSoon: true },
   ];
 
   const handleLinkClick = (href: string, e: React.MouseEvent) => {
@@ -165,27 +165,29 @@ export default function SidebarLayout({
               return (
                 <div key={item.name} className="relative group/navitem">
                   <a
-                    href={item.subItems ? "#" : item.href}
+                    href={item.subItems || item.comingSoon ? "#" : item.href}
                     onClick={(e) => {
-                      if (item.subItems) {
+                      if (item.subItems || item.comingSoon) {
                         e.preventDefault();
                       } else {
                         handleLinkClick(item.href, e);
                       }
                     }}
-                    className={`b1 relative flex transition-all duration-200 cursor-pointer ${isExpanded
+                    title={item.comingSoon ? "Coming Soon" : undefined}
+
+                    className={`b1 relative flex transition-all duration-200 ${item.comingSoon ? "opacity-40 cursor-not-allowed select-none" : "cursor-pointer"} ${isExpanded
                       ? `items-center gap-4 px-4 py-3 mx-3 rounded-xl ${isActive
                         ? "text-brand-accent bg-brand-accent/10 font-medium shadow-[inset_1px_0_0_rgba(212,175,110,0.1)]"
-                        : "text-brand-secondary hover:text-white hover:bg-white/5 group-hover/navitem:bg-white/5 group-hover/navitem:text-white"
+                        : `text-brand-secondary ${!item.comingSoon ? "hover:text-white hover:bg-white/5 group-hover/navitem:bg-white/5 group-hover/navitem:text-white" : ""}`
                       }`
                       : `flex-col items-center justify-center py-2.5 mx-2 rounded-lg text-center ${isActive
                         ? "text-brand-accent bg-brand-accent/10 border-brand-accent font-medium"
-                        : "text-brand-secondary hover:text-white hover:bg-white/5 group-hover/navitem:bg-white/5 group-hover/navitem:text-white"
+                        : `text-brand-secondary ${!item.comingSoon ? "hover:text-white hover:bg-white/5 group-hover/navitem:bg-white/5 group-hover/navitem:text-white" : ""}`
                       }`
                       }`}
                   >
                     <Icon
-                      className={`w-5 h-5 transition-transform duration-200 group-hover/navitem:scale-105 ${isActive ? "text-brand-accent" : "text-brand-secondary group-hover/navitem:text-white"}`}
+                      className={`w-5 h-5 transition-transform duration-200 ${!item.comingSoon ? "group-hover/navitem:scale-105" : ""} ${isActive ? "text-brand-accent" : `text-brand-secondary ${!item.comingSoon ? "group-hover/navitem:text-white" : ""}`}`}
                     />
                     <span
                       className={`font-sans tracking-wide transition-all ${isExpanded ? "text-sm" : "text-[10px] mt-1"
@@ -292,24 +294,22 @@ export default function SidebarLayout({
                 <div key={item.name} className="flex flex-col">
                   <button
                     onClick={(e) => {
+                      if (item.comingSoon) return;
                       if (item.subItems) {
-                        // Toggle nested list; don't navigate
                         setMobileOpenItem(isSubOpen ? null : item.name);
                       } else {
-                        handleLinkClick(
-                          item.href,
-                          e as unknown as React.MouseEvent,
-                        );
+                        handleLinkClick(item.href, e as unknown as React.MouseEvent);
                       }
                     }}
-                    className={`group w-full flex items-center gap-4 px-4 py-3 mx-3 rounded-xl transition-all duration-200 cursor-pointer text-left ${isActive
+                    title={item.comingSoon ? "Coming Soon" : undefined}
+                    className={`group w-full flex items-center gap-4 px-4 py-3 mx-3 rounded-xl transition-all duration-200 text-left ${item.comingSoon ? "opacity-40 cursor-not-allowed select-none" : "cursor-pointer"} ${isActive
                       ? "text-brand-accent bg-brand-accent/10 font-medium"
-                      : "text-brand-secondary hover:text-white hover:bg-white/5"
+                      : `text-brand-secondary ${!item.comingSoon ? "hover:text-white hover:bg-white/5" : ""}`
                       }`}
                     style={{ width: "calc(100% - 1.5rem)" }}
                   >
                     <Icon
-                      className={`w-5 h-5 shrink-0 ${isActive ? "text-brand-accent" : "text-brand-secondary group-hover:text-white"}`}
+                      className={`w-5 h-5 shrink-0 ${isActive ? "text-brand-accent" : `text-brand-secondary ${!item.comingSoon ? "group-hover:text-white" : ""}`}`}
                     />
                     <span className="font-sans text-sm tracking-wide flex-1">
                       {item.name}

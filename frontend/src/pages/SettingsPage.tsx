@@ -72,7 +72,7 @@ const CATEGORIES: SettingsCategory[] = [
     id: "membership",
     name: "Membership",
     icon: CreditCard,
-    available: true,
+    available: false,
     path: "/pricing",
   },
   { id: "gameplay", name: "Gameplay", icon: Gamepad2, available: false },
@@ -208,11 +208,10 @@ export default function SettingsPage() {
 
                       setActiveCategory(cat.id);
                     }}
-                    className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors duration-150 cursor-pointer ${
-                      isActive
-                        ? "bg-brand-accent/10 text-brand-accent font-medium ring-1 ring-brand-accent/30"
-                        : "text-brand-secondary hover:text-white hover:bg-white/5"
-                    }`}
+                    className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors duration-150 cursor-pointer ${isActive
+                      ? "bg-brand-accent/10 text-brand-accent font-medium ring-1 ring-brand-accent/30"
+                      : "text-brand-secondary hover:text-white hover:bg-white/5"
+                      }`}
                   >
                     <Icon className="w-4 h-4 shrink-0" />
                     <span className="text-sm font-sans flex-1">{cat.name}</span>
@@ -264,11 +263,10 @@ export default function SettingsPage() {
                         soundManager.playButtonClick();
                         setActiveTab(tab.id);
                       }}
-                      className={`relative pb-3 text-sm font-sans font-semibold transition-colors cursor-pointer whitespace-nowrap ${
-                        isActive
-                          ? "text-white"
-                          : "text-brand-secondary hover:text-white"
-                      }`}
+                      className={`relative pb-3 text-sm font-sans font-semibold transition-colors cursor-pointer whitespace-nowrap ${isActive
+                        ? "text-white"
+                        : "text-brand-secondary hover:text-white"
+                        }`}
                     >
                       {tab.name}
                       {isActive && (
@@ -295,11 +293,10 @@ export default function SettingsPage() {
                               soundManager.playButtonClick();
                               setPendingBoardThemeId(theme.id);
                             }}
-                            className={`group relative flex flex-col items-center gap-2 rounded-xl p-2.5 transition-all duration-150 cursor-pointer ${
-                              isSelected
-                                ? "ring-2 ring-brand-accent bg-brand-accent/5"
-                                : "ring-1 ring-brand-border/40 hover:ring-brand-border/80 hover:bg-white/[0.03]"
-                            }`}
+                            className={`group relative flex flex-col items-center gap-2 rounded-xl p-2.5 transition-all duration-150 cursor-pointer ${isSelected
+                              ? "ring-2 ring-brand-accent bg-brand-accent/5"
+                              : "ring-1 ring-brand-border/40 hover:ring-brand-border/80 hover:bg-white/[0.03]"
+                              }`}
                           >
                             <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg overflow-hidden grid grid-cols-2 grid-rows-2 shadow-inner shadow-black/30">
                               <div style={{ backgroundColor: theme.light }} />
@@ -337,11 +334,10 @@ export default function SettingsPage() {
                               soundManager.playButtonClick();
                               setPendingPieceSetId(set.id);
                             }}
-                            className={`group relative flex flex-col items-center gap-2 rounded-xl p-2.5 transition-all duration-150 cursor-pointer ${
-                              isSelected
-                                ? "ring-2 ring-brand-accent bg-brand-accent/5"
-                                : "ring-1 ring-brand-border/40 hover:ring-brand-border/80 hover:bg-white/[0.03]"
-                            }`}
+                            className={`group relative flex flex-col items-center gap-2 rounded-xl p-2.5 transition-all duration-150 cursor-pointer ${isSelected
+                              ? "ring-2 ring-brand-accent bg-brand-accent/5"
+                              : "ring-1 ring-brand-border/40 hover:ring-brand-border/80 hover:bg-white/[0.03]"
+                              }`}
                           >
                             <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg bg-[#4d4536] flex items-center justify-center gap-1.5 p-2">
                               <div className="w-6 h-6 sm:w-7 sm:h-7">
