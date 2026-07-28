@@ -40,6 +40,7 @@
  * whatever is passed in `options` is spread last and wins. That's an
  * escape hatch, not the normal path, so reach for it deliberately.)
  */
+import { useId } from "react";
 import { Chessboard } from "react-chessboard";
 import type { ChessboardOptions } from "react-chessboard";
 import { useBoardSettings } from "../hooks/useBoardSettings";
@@ -54,10 +55,12 @@ export function ThemedChessboard({ options }: ThemedChessboardProps) {
   // Augments options with click-to-move state and handlers.
   // Boards without onPieceDrop (e.g. EditPositionBoard) are untouched.
   const clickOptions = useClickToMove(options);
+  const autoId = useId();
 
   return (
     <Chessboard
       options={{
+        id: `board-${autoId}`,
         darkSquareStyle: { backgroundColor: boardTheme.dark },
         lightSquareStyle: { backgroundColor: boardTheme.light },
         pieces: pieceSet.pieces,
