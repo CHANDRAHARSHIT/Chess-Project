@@ -341,7 +341,7 @@ export default function ProductDemo() {
   if (history.length > 0) {
     const last = history[history.length - 1];
     customSquareStyles[last.from] = { backgroundColor: 'rgba(255, 255, 0, 0.4)' };
-    customSquareStyles[last.to]   = { backgroundColor: 'rgba(255, 255, 0, 0.4)' };
+    customSquareStyles[last.to] = { backgroundColor: 'rgba(255, 255, 0, 0.4)' };
   }
   if (showHint && bestMove) {
     const { from, to } = parseUciMove(bestMove);
@@ -383,17 +383,17 @@ export default function ProductDemo() {
 
             {/* ── Col 2: Chessboard ────────────────────────────────────────── */}
             <div className="lg:col-span-7 flex flex-col lg:justify-start justify-center">
-              <div ref={boardContainerRef} className="aspect-square w-full shadow-xl border border-[rgba(212,175,110,0.12)] relative overflow-hidden" style={{ borderRadius: '4px' }}>
+              <div ref={boardContainerRef} className="aspect-square w-full shadow-xl border border-brand-border relative overflow-hidden" style={{ borderRadius: '4px' }}>
 
                 {/* Game Over Overlay */}
                 {gameOverReason && (
-                  <div className="absolute inset-0 z-20 bg-[#080B14]/90 backdrop-blur-sm flex flex-col items-center justify-center p-6 space-y-4">
-                    <div className="w-12 h-12 rounded-full border border-[rgba(212,175,110,0.3)] flex items-center justify-center text-[#D4AF6E]">
+                  <div className="absolute inset-0 z-30 bg-brand-bg/90 backdrop-blur-sm flex flex-col items-center justify-center p-6 space-y-4">
+                    <div className="w-12 h-12 rounded-full border border-[rgba(212,175,110,0.3)] flex items-center justify-center text-brand-accent">
                       <AlertCircle className="w-6 h-6" />
                     </div>
                     <div className="text-center">
-                      <h4 className="text-lg font-bold text-white">Game Finished</h4>
-                      <p className="text-sm text-[#8E8B82] mt-1">{gameOverReason}</p>
+                      <h4 className="text-lg font-bold text-brand-text">Game Finished</h4>
+                      <p className="text-sm text-brand-secondary mt-1">{gameOverReason}</p>
                     </div>
                     <button
                       ref={playAgainGlowRef}
@@ -420,24 +420,24 @@ export default function ProductDemo() {
                 />
 
                 <BoardCoordinates boardOrientation={boardOrientation} />
-                </div>
+              </div>
 
               {/* Turn indicator */}
-              <div className="mt-3 flex items-center gap-2 text-xs text-[#8E8B82] px-1">
+              <div className="mt-3 flex items-center gap-2 text-xs text-brand-secondary px-1">
                 <span
-                  className={`w-2.5 h-2.5 rounded-full border border-[rgba(212,175,110,0.12)] ${
+                  className={`w-2.5 h-2.5 rounded-full border border-brand-border ${
                     currentTurn === 'w' ? 'bg-white' : 'bg-neutral-800'
                   }`}
                 />
                 <span>
                   {currentTurn === 'w' ? "White's Turn" : "Black's Turn"}
                   {isEditMode && (
-                    <span className="text-[#D4AF6E] ml-1.5 font-medium">
+                    <span className="text-brand-accent ml-1.5 font-medium">
                       (Edit Position Mode)
                     </span>
                   )}
                   {isThinking && (
-                    <span className="text-[#D4AF6E] animate-pulse ml-1.5 font-medium">
+                    <span className="text-brand-accent animate-pulse ml-1.5 font-medium">
                       (AI Thinking...)
                     </span>
                   )}
@@ -468,7 +468,7 @@ export default function ProductDemo() {
                     onClick={() => { handleUndo(); }}
                     disabled={!canUndo || isThinking || isEditMode}
                     title="Undo last move"
-                    className="flex flex-col items-center justify-center gap-1.5 py-3 px-1 rounded-lg border border-[rgba(212,175,110,0.12)] bg-[#080B14] hover:bg-white/5 hover:border-[rgba(212,175,110,0.4)] text-[#8E8B82] hover:text-white transition-all duration-200 disabled:opacity-40 group"
+                    className="flex flex-col items-center justify-center gap-1.5 py-3 px-1 rounded-lg border border-brand-border bg-brand-bg hover:bg-brand-text/5 hover:border-[rgba(212,175,110,0.4)] text-brand-secondary hover:text-brand-text transition-all duration-200 disabled:opacity-40 group"
                     style={{ cursor: (!canUndo || isThinking || isEditMode) ? 'not-allowed' : 'pointer' }}
                   >
                     <CornerUpLeft className="w-5 h-5 group-hover:scale-110 transition-transform" />
@@ -480,7 +480,7 @@ export default function ProductDemo() {
                     onClick={() => { soundManager.playButtonClick(); handleHint(); }}
                     disabled={!!gameOverReason || isThinking || isEditMode || game_is_human_turn(currentTurn, playerColor) === false}
                     title="Get a hint"
-                    className="flex flex-col items-center justify-center gap-1.5 py-3 px-1 rounded-lg border border-[rgba(212,175,110,0.12)] bg-[#080B14] hover:bg-white/5 hover:border-[rgba(212,175,110,0.4)] text-[#8E8B82] hover:text-yellow-400 transition-all duration-200 disabled:opacity-40 group"
+                    className="flex flex-col items-center justify-center gap-1.5 py-3 px-1 rounded-lg border border-brand-border bg-brand-bg hover:bg-brand-text/5 hover:border-[rgba(212,175,110,0.4)] text-brand-secondary hover:text-yellow-400 transition-all duration-200 disabled:opacity-40 group"
                     style={{ cursor: (!!gameOverReason || isThinking || isEditMode || !game_is_human_turn(currentTurn, playerColor)) ? 'not-allowed' : 'pointer' }}
                   >
                     <Lightbulb className="w-5 h-5 group-hover:scale-110 transition-transform" />
@@ -492,7 +492,7 @@ export default function ProductDemo() {
                     onClick={() => { handleReset(); }}
                     disabled={!canUndo || isEditMode}
                     title="Reset game"
-                    className="flex flex-col items-center justify-center gap-1.5 py-3 px-1 rounded-lg border border-[rgba(212,175,110,0.12)] bg-[#080B14] hover:bg-white/5 hover:border-red-500/40 text-[#8E8B82] hover:text-red-400 transition-all duration-200 disabled:opacity-40 group"
+                    className="flex flex-col items-center justify-center gap-1.5 py-3 px-1 rounded-lg border border-brand-border bg-brand-bg hover:bg-brand-text/5 hover:border-red-500/40 text-brand-secondary hover:text-red-400 transition-all duration-200 disabled:opacity-40 group"
                     style={{ cursor: (!canUndo || isEditMode) ? 'not-allowed' : 'pointer' }}
                   >
                     <RotateCcw className="w-5 h-5 group-hover:rotate-[-45deg] transition-transform duration-300" />
@@ -507,8 +507,8 @@ export default function ProductDemo() {
                       title="More options"
                       className={`w-full flex flex-col items-center justify-center gap-1.5 py-3 px-1 rounded-lg border transition-all duration-200 group cursor-pointer ${
                         showMoreMenu
-                          ? 'border-[rgba(212,175,110,0.6)] bg-[rgba(212,175,110,0.08)] text-white'
-                          : 'border-[rgba(212,175,110,0.12)] bg-[#080B14] hover:bg-white/5 hover:border-[rgba(212,175,110,0.4)] text-[#8E8B82] hover:text-white'
+                          ? 'border-[rgba(212,175,110,0.6)] bg-[rgba(212,175,110,0.08)] text-brand-text'
+                          : 'border-brand-border bg-brand-bg hover:bg-brand-text/5 hover:border-[rgba(212,175,110,0.4)] text-brand-secondary hover:text-brand-text'
                       }`}
                     >
                       <MoreHorizontal className="w-5 h-5 group-hover:scale-110 transition-transform" />
@@ -533,10 +533,10 @@ export default function ProductDemo() {
                         <button
                           onClick={() => { soundManager.playButtonClick(); handleChess960(); setShowMoreMenu(false); }}
                           disabled={isEditMode}
-                          className="w-full flex items-center gap-3 px-4 py-3 text-sm text-[#8E8B82] hover:text-white hover:bg-white/10 transition-all duration-150 disabled:opacity-40 group cursor-pointer"
+                          className="w-full flex items-center gap-3 px-4 py-3 text-sm text-brand-secondary hover:text-brand-text hover:bg-brand-text/10 transition-all duration-150 disabled:opacity-40 group cursor-pointer"
                           style={{ cursor: isEditMode ? 'not-allowed' : 'pointer' }}
                         >
-                          <Shuffle className="w-4 h-4 text-[#D4AF6E] group-hover:scale-110 transition-transform" />
+                          <Shuffle className="w-4 h-4 text-brand-accent group-hover:scale-110 transition-transform" />
                           <span className="font-sans font-medium">Chess960</span>
                         </button>
 
@@ -547,10 +547,10 @@ export default function ProductDemo() {
                         <button
                           onClick={() => { soundManager.playButtonClick(); handleOpenEditor(); setShowMoreMenu(false); }}
                           disabled={isThinking}
-                          className="w-full flex items-center gap-3 px-4 py-3 text-sm text-[#8E8B82] hover:text-white hover:bg-white/10 transition-all duration-150 disabled:opacity-40 group cursor-pointer"
+                          className="w-full flex items-center gap-3 px-4 py-3 text-sm text-brand-secondary hover:text-brand-text hover:bg-brand-text/10 transition-all duration-150 disabled:opacity-40 group cursor-pointer"
                           style={{ cursor: isThinking ? 'not-allowed' : 'pointer' }}
                         >
-                          <Pencil className="w-4 h-4 text-[#D4AF6E] group-hover:scale-110 transition-transform" />
+                          <Pencil className="w-4 h-4 text-brand-accent group-hover:scale-110 transition-transform" />
                           <span className="font-sans font-medium">Edit Position</span>
                         </button>
                       </div>
@@ -562,12 +562,12 @@ export default function ProductDemo() {
                 {/* â”€â”€ Difficulty â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                 <div className="space-y-2 text-left">
                   <div className="flex items-center justify-between">
-                    <label className="text-xs font-sans text-[#8E8B82]">Difficulty</label>
-                    <span className="text-xs font-semibold text-[#D4AF6E] font-sans">
+                    <label className="text-xs font-sans text-brand-secondary">Difficulty</label>
+                    <span className="text-xs font-semibold text-brand-accent font-sans">
                       {currentConfig.name} ({currentConfig.rating})
                     </span>
                   </div>
-                  <div className="grid grid-cols-5 gap-1 bg-[#080B14] p-1 rounded-lg border border-[rgba(212,175,110,0.12)]">
+                  <div className="grid grid-cols-5 gap-1 bg-brand-bg p-1 rounded-lg border border-brand-border">
                     {([1, 2, 3, 4, 5] as DifficultyLevel[]).map((level) => (
                       <button
                         key={level}
@@ -578,8 +578,8 @@ export default function ProductDemo() {
                         title={`${DIFFICULTY_CONFIGS[level].name} (${DIFFICULTY_CONFIGS[level].rating})`}
                         className={`py-1 rounded text-xs font-mono transition-all duration-200 ${
                           difficulty === level
-                            ? 'bg-[#D4AF6E] text-[#080B14] shadow-sm font-bold'
-                            : 'text-[#8E8B82] hover:bg-white/5'
+                            ? 'bg-brand-accent text-brand-bg shadow-sm font-bold'
+                            : 'text-brand-secondary hover:bg-brand-text/5'
                         }`}
                       >
                         {level}
@@ -598,21 +598,21 @@ export default function ProductDemo() {
               >
                 <div
                   ref={moveHistoryContainerRef}
-                  className="flex-1 overflow-y-auto border border-[rgba(212,175,110,0.12)]/60 rounded-lg p-3 bg-[#080B14]/40 font-mono text-sm space-y-1 move-history-scroll"
+                  className="flex-1 overflow-y-auto border border-[rgba(212,175,110,0.60)] rounded-lg p-3 bg-brand-bg/40 font-mono text-sm space-y-1 move-history-scroll"
                 >
                   {movePairs.length === 0 ? (
-                    <div className="text-[#8E8B82]/60 text-xs text-center py-10">
+                    <div className="text-brand-secondary/60 text-xs text-center py-10">
                       No moves yet. Make a move on the board.
                     </div>
                   ) : (
                     movePairs.map((pair) => (
                       <div
                         key={pair.moveNumber}
-                        className="grid grid-cols-12 gap-1 py-1 px-2 rounded hover:bg-white/5 transition-colors"
+                        className="grid grid-cols-12 gap-1 py-1 px-2 rounded hover:bg-brand-text/5 transition-colors"
                       >
-                        <span className="col-span-2 text-[#8E8B82]/70">{pair.moveNumber}.</span>
-                        <span className="col-span-5 text-white font-medium">{pair.white.san}</span>
-                        <span className="col-span-5 text-[#8E8B82] font-medium">
+                        <span className="col-span-2 text-brand-secondary/70">{pair.moveNumber}.</span>
+                        <span className="col-span-5 text-brand-text font-medium">{pair.white.san}</span>
+                        <span className="col-span-5 text-brand-secondary font-medium">
                           {pair.black ? pair.black.san : ''}
                         </span>
                       </div>

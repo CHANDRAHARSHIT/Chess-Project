@@ -13,6 +13,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router";
+import { useNavigationStack } from "../hooks/useNavigationStack";
 
 // Custom SVG Chess Pieces for premium decorative background
 const PieceSvg: React.FC<{
@@ -116,8 +117,8 @@ const PricingCard: React.FC<PlanProps> = ({
       transition={{ duration: 0.6 }}
       className={`relative rounded-3xl p-6 sm:p-8 flex flex-col justify-between overflow-hidden transition-all duration-500
         ${isPopular
-          ? "bg-gradient-to-b from-[#0e1428] to-[#080b14] border border-brand-accent/30 shadow-[0_20px_50px_rgba(212,175,110,0.06)]"
-          : "bg-[#0c1020]/60 backdrop-blur-xl border border-brand-border/40 hover:border-brand-accent/20"
+          ? "bg-gradient-to-b from-brand-surface to-brand-bg border border-brand-accent/30 shadow-[0_20px_50px_rgba(212,175,110,0.06)]"
+          : "bg-brand-surface/60 backdrop-blur-xl border border-[rgba(212,175,110,0.40)] hover:border-brand-accent/20"
         }
       `}
     >
@@ -137,7 +138,7 @@ const PricingCard: React.FC<PlanProps> = ({
 
         {/* Plan Header */}
         <div className="mb-6">
-          <h3 className="text-xl sm:text-2xl font-display font-medium text-white tracking-wide mb-2">
+          <h3 className="text-xl sm:text-2xl font-display font-medium text-brand-text tracking-wide mb-2">
             {name}
           </h3>
           <p className="text-sm text-brand-secondary font-sans leading-relaxed">
@@ -148,7 +149,7 @@ const PricingCard: React.FC<PlanProps> = ({
         {/* Pricing Area */}
         <div className="mb-8 flex flex-col justify-end min-h-[85px]">
           <div className="flex items-baseline gap-1">
-            <span className="text-4xl sm:text-5xl font-display font-bold text-white text-gold-gradient">
+            <span className="text-4xl sm:text-5xl font-display font-bold text-brand-text text-gold-gradient">
               {price}
             </span>
             {period && (
@@ -176,12 +177,12 @@ const PricingCard: React.FC<PlanProps> = ({
             <li key={i} className="flex items-start gap-3">
               <span
                 className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center mt-0.5
-                ${isPopular ? "bg-brand-accent/15 text-brand-accent" : "bg-white/5 text-brand-secondary"}
+                ${isPopular ? "bg-brand-accent/15 text-brand-accent" : "bg-brand-text/5 text-brand-secondary"}
               `}
               >
                 <Check className="w-3 h-3" />
               </span>
-              <span className="text-sm font-sans text-[#e5dfd5] leading-relaxed">
+              <span className="text-sm font-sans text-brand-text leading-relaxed">
                 {feature}
               </span>
             </li>
@@ -195,7 +196,7 @@ const PricingCard: React.FC<PlanProps> = ({
         className={`w-full py-3.5 px-6 rounded-xl font-mono text-xs uppercase tracking-widest font-semibold transition-all duration-300 relative overflow-hidden cursor-pointer
           ${isPopular
             ? "btn-premium-cta cta-shine text-brand-accent border-brand-accent/40 shadow-lg hover:scale-[1.01]"
-            : "bg-white/5 border border-white/10 hover:border-brand-accent/40 text-brand-secondary hover:text-white active:scale-[0.99]"
+            : "bg-brand-text/5 border border-white/10 hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text active:scale-[0.99]"
           }
         `}
       >
@@ -208,6 +209,7 @@ const PricingCard: React.FC<PlanProps> = ({
 export default function PricingPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { getPrevious } = useNavigationStack();
   const [isYearly, setIsYearly] = useState(false);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
 
@@ -216,8 +218,15 @@ export default function PricingPage() {
     return params.get("error") === "payment_expired";
   });
 
-  // Navigate back to Home
-  const handleNavigateHome = () => {
+  // Navigate back to PREVIOUS page
+  const handleNavigateBack = () => {
+    const previousPage = getPrevious();
+
+    if (previousPage) {
+      navigate(previousPage.path);
+      return;
+    }
+
     navigate("/");
   };
 
@@ -342,18 +351,16 @@ export default function PricingPage() {
         </motion.div>
       </div>
 
-      {/* SidebarLayout handles header globally */}
-
       <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-1 flex flex-col items-center w-full pt-8">
         <div className="w-full flex justify-start mb-6">
           <button
-            onClick={handleNavigateHome}
-            className="flex items-center gap-2.5 text-xs sm:text-sm text-brand-secondary hover:text-white transition-all duration-300 cursor-pointer uppercase tracking-wider font-mono font-medium"
+            onClick={handleNavigateBack}
+            className="flex items-center gap-2.5 text-xs sm:text-sm text-brand-secondary hover:text-brand-text transition-all duration-300 cursor-pointer uppercase tracking-wider font-mono font-medium"
           >
             <span className="w-5 h-5 rounded-full border border-brand-border flex items-center justify-center font-bold text-[9px] hover:border-brand-accent/50">
               &lt;
             </span>
-            Back to Home
+            Back to {getPrevious()?.label ?? "Home"}
           </button>
         </div>
         {showSessionError && (
@@ -374,7 +381,7 @@ export default function PricingPage() {
                 setShowSessionError(false);
                 navigate(location.pathname, { replace: true });
               }}
-              className="text-amber-400 hover:text-white font-mono text-xs uppercase font-bold cursor-pointer flex-shrink-0"
+              className="text-amber-400 hover:text-brand-text font-mono text-xs uppercase font-bold cursor-pointer flex-shrink-0"
             >
               Dismiss
             </button>
@@ -388,7 +395,7 @@ export default function PricingPage() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#0c1020]/80 border border-brand-border backdrop-blur-sm text-brand-accent text-xs font-sans tracking-wide mb-6 shadow-sm"
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-surface/80 border border-brand-border backdrop-blur-sm text-brand-accent text-xs font-sans tracking-wide mb-6 shadow-sm"
           >
             <Sparkles className="w-3.5 h-3.5" />
             <span>Trusted by thousands of chess players</span>
@@ -399,7 +406,7 @@ export default function PricingPage() {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-4xl sm:text-5xl md:text-6xl font-display font-medium tracking-tight text-white mb-6 leading-[1.05]"
+            className="text-4xl sm:text-5xl md:text-6xl font-display font-medium tracking-tight text-brand-text mb-6 leading-[1.05]"
           >
             Unlock Your Full <br className="sm:block hidden" />
             <span className="text-gold-gradient font-bold italic">
@@ -422,11 +429,11 @@ export default function PricingPage() {
 
         {/* ── PRICING TOGGLE ─────────────────────────────────────────────────── */}
         <section className="mb-14 sm:mb-18 z-20">
-          <div className="bg-[#0c1020]/90 border border-brand-border p-1.5 rounded-2xl flex items-center relative shadow-xl">
+          <div className="bg-brand-surface/90 border border-brand-border p-1.5 rounded-2xl flex items-center relative shadow-xl">
             <button
               onClick={() => setIsYearly(false)}
               className={`relative z-10 px-6 py-2.5 rounded-xl font-mono text-xs uppercase tracking-wider font-semibold transition-all duration-300 cursor-pointer min-w-[120px] text-center
-                ${!isYearly ? "text-[#080b14]" : "text-brand-secondary hover:text-white"}
+                ${!isYearly ? "text-brand-bg" : "text-brand-secondary hover:text-brand-text"}
               `}
             >
               {/* Animated active BG slider */}
@@ -443,7 +450,7 @@ export default function PricingPage() {
             <button
               onClick={() => setIsYearly(true)}
               className={`relative z-10 px-6 py-2.5 rounded-xl font-mono text-xs uppercase tracking-wider font-semibold transition-all duration-300 cursor-pointer min-w-[120px] text-center flex items-center justify-center gap-1.5
-                ${isYearly ? "text-[#080b14]" : "text-brand-secondary hover:text-white"}
+                ${isYearly ? "text-brand-bg" : "text-brand-secondary hover:text-brand-text"}
               `}
             >
               {isYearly && (
@@ -492,7 +499,9 @@ export default function PricingPage() {
             price={isYearly ? "$20.40 USD" : "$5.00 USD"}
             period={isYearly ? "/ year" : "/ month"}
             yearlySaving={
-              isYearly ? "Save $39.60 USD (Equivalent to $1.70 USD/mo)" : undefined
+              isYearly
+                ? "Save $39.60 USD (Equivalent to $1.70 USD/mo)"
+                : undefined
             }
             description="Built for ambitious chess players who want unlimited reviews, deep analysis, and tracking."
             features={[
@@ -517,7 +526,7 @@ export default function PricingPage() {
         {/* ── FEATURE COMPARISON ─────────────────────────────────────────────── */}
         <section className="w-full max-w-4xl px-4 mb-20 sm:mb-28 z-10">
           <div className="text-center mb-10">
-            <h2 className="text-2xl sm:text-3xl font-display font-medium text-white mb-3">
+            <h2 className="text-2xl sm:text-3xl font-display font-medium text-brand-text mb-3">
               Compare Features
             </h2>
             <p className="text-sm text-brand-secondary font-sans">
@@ -525,19 +534,19 @@ export default function PricingPage() {
             </p>
           </div>
 
-          <div className="bg-[#0c1020]/60 backdrop-blur-xl border border-brand-border rounded-2xl overflow-hidden shadow-2xl">
+          <div className="bg-brand-surface/60 backdrop-blur-xl border border-brand-border rounded-2xl overflow-hidden shadow-2xl">
             {/* Desktop Table view */}
             <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
+              <table className="w-full text-left border-collapse min-w-[640px]">
                 <thead>
-                  <tr className="border-b border-brand-border/60 bg-white/[0.02]">
-                    <th className="py-5 px-6 text-sm font-mono tracking-wider text-brand-secondary uppercase">
+                  <tr className="border-b border-[rgba(212,175,110,0.60)] bg-brand-text/[0.02]">
+                    <th className="py-4 px-6 text-xs font-sans font-bold tracking-wider text-brand-secondary uppercase min-w-[200px]">
                       Feature
                     </th>
-                    <th className="py-5 px-6 text-sm font-mono tracking-wider text-brand-secondary uppercase text-center w-1/4">
+                    <th className="py-4 px-6 text-xs font-sans font-bold tracking-wider text-brand-secondary uppercase text-center min-w-[160px] w-1/4">
                       Free
                     </th>
-                    <th className="py-5 px-6 text-sm font-mono tracking-wider text-brand-accent uppercase text-center w-1/4">
+                    <th className="py-4 px-6 text-xs font-sans font-bold tracking-wider text-brand-accent uppercase text-center min-w-[240px] w-1/3">
                       Premium
                     </th>
                   </tr>
@@ -546,12 +555,12 @@ export default function PricingPage() {
                   {featuresList.map((feature, index) => (
                     <tr
                       key={index}
-                      className="hover:bg-white/[0.01] transition-colors duration-150"
+                      className="hover:bg-brand-text/[0.01] transition-colors duration-150"
                     >
-                      <td className="py-2 px-6 text-sm font-sans font-medium text-[#e5dfd5]">
+                      <td className="py-2 px-6 text-sm font-sans font-medium text-brand-text">
                         {feature.name}
                       </td>
-                      <td className="py-2 px-6 text-center text-sm font-sans text-brand-secondary">
+                      <td className="py-3 px-6 text-center text-sm font-sans text-brand-secondary">
                         {typeof feature.free === "boolean" ? (
                           feature.free ? (
                             <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500/10 text-emerald-400">
@@ -561,12 +570,12 @@ export default function PricingPage() {
                             <span className="text-brand-secondary/40">—</span>
                           )
                         ) : (
-                          <span className="font-mono text-xs">
+                          <span className="inline-block whitespace-nowrap font-mono text-xs bg-white/5 border border-white/10 px-2.5 py-1 rounded-lg text-brand-secondary">
                             {feature.free}
                           </span>
                         )}
                       </td>
-                      <td className="py-4.5 px-6 text-center text-sm font-sans text-brand-accent font-semibold">
+                      <td className="py-3 px-6 text-center text-sm font-sans text-brand-accent font-semibold">
                         {typeof feature.premium === "boolean" ? (
                           feature.premium ? (
                             <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500/10 text-emerald-400">
@@ -576,7 +585,7 @@ export default function PricingPage() {
                             <span className="text-brand-secondary/40">—</span>
                           )
                         ) : (
-                          <span className="font-mono text-xs bg-brand-accent/10 border border-brand-accent/20 px-2 py-0.5 rounded text-brand-accent">
+                          <span className="inline-block whitespace-nowrap font-mono text-xs bg-brand-accent/10 border border-brand-accent/20 px-2.5 py-1 rounded-lg text-brand-accent">
                             {feature.premium}
                           </span>
                         )}
@@ -592,7 +601,7 @@ export default function PricingPage() {
         {/* ── FAQ ACCORDION ─────────────────────────────────────────────────── */}
         <section className="w-full max-w-3xl px-4 mb-20 sm:mb-28 z-10">
           <div className="text-center mb-10">
-            <h2 className="text-2xl sm:text-3xl font-display font-medium text-white mb-3">
+            <h2 className="text-2xl sm:text-3xl font-display font-medium text-brand-text mb-3">
               Frequently Asked Questions
             </h2>
             <p className="text-sm text-brand-secondary font-sans">
@@ -606,11 +615,11 @@ export default function PricingPage() {
               return (
                 <div
                   key={index}
-                  className="bg-[#0c1020]/60 backdrop-blur-xl border border-brand-border rounded-2xl overflow-hidden transition-all duration-300 hover:border-brand-accent/20"
+                  className="bg-brand-surface/60 backdrop-blur-xl border border-brand-border rounded-2xl overflow-hidden transition-all duration-300 hover:border-brand-accent/20"
                 >
                   <button
                     onClick={() => setOpenFaqIndex(isOpen ? null : index)}
-                    className="w-full flex items-center justify-between text-left py-5 px-6 font-display font-medium text-base sm:text-lg text-white hover:text-brand-accent transition-colors duration-200 cursor-pointer"
+                    className="w-full flex items-center justify-between text-left py-5 px-6 font-display font-medium text-base sm:text-lg text-brand-text hover:text-brand-accent transition-colors duration-200 cursor-pointer"
                   >
                     <span>{faq.q}</span>
                     <motion.span
@@ -630,7 +639,7 @@ export default function PricingPage() {
                         exit={{ height: 0, opacity: 0 }}
                         transition={{ duration: 0.25, ease: "easeInOut" }}
                       >
-                        <div className="px-6 pb-5 pt-1 text-sm sm:text-base text-brand-secondary font-sans leading-relaxed border-t border-brand-border/20">
+                        <div className="px-6 pb-5 pt-1 text-sm sm:text-base text-brand-secondary font-sans leading-relaxed border-t border-[rgba(212,175,110,0.20)]">
                           {faq.a}
                         </div>
                       </motion.div>
@@ -649,7 +658,7 @@ export default function PricingPage() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="rounded-3xl p-8 sm:p-12 text-center relative overflow-hidden bg-gradient-to-b from-[#0e1428]/90 to-[#080b14]/95 border border-brand-accent/20 shadow-[0_20px_50px_rgba(212,175,110,0.04)]"
+            className="rounded-3xl p-8 sm:p-12 text-center relative overflow-hidden bg-gradient-to-b from-brand-surface/90 to-brand-bg/95 border border-brand-accent/20 shadow-[0_20px_50px_rgba(212,175,110,0.04)]"
           >
             {/* Background elements */}
             <div className="absolute top-[-100px] left-[-100px] w-[200px] h-[200px] bg-brand-accent/5 rounded-full blur-3xl pointer-events-none" />
@@ -657,7 +666,7 @@ export default function PricingPage() {
 
             <Trophy className="w-12 h-12 text-brand-accent mx-auto mb-6 drop-shadow-[0_0_10px_rgba(212,175,110,0.3)] animate-pulse" />
 
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-medium text-white mb-4 tracking-tight">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-medium text-brand-text mb-4 tracking-tight">
               Ready to Level Up Your Chess?
             </h2>
 
@@ -676,8 +685,8 @@ export default function PricingPage() {
               </button>
 
               <button
-                onClick={handleNavigateHome}
-                className="w-full sm:w-auto px-8 py-4 rounded-xl font-mono text-xs uppercase tracking-widest font-semibold bg-white/5 border border-white/10 hover:border-brand-accent/40 text-brand-secondary hover:text-white transition-all duration-300 cursor-pointer active:scale-[0.99]"
+                onClick={handleNavigateBack}
+                className="w-full sm:w-auto px-8 py-4 rounded-xl font-mono text-xs uppercase tracking-widest font-semibold bg-brand-text/5 border border-white/10 hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text transition-all duration-300 cursor-pointer active:scale-[0.99]"
               >
                 Continue Free
               </button>
@@ -689,7 +698,7 @@ export default function PricingPage() {
                 <ShieldCheck className="w-4 h-4 text-brand-accent" />
                 Secure Payments
               </div>
-              <div className="flex items-center gap-1.5 text-xs text-[#8e8b82]">
+              <div className="flex items-center gap-1.5 text-xs text-brand-secondary">
                 <Gamepad2 className="w-4 h-4 text-brand-accent" />
                 Cancel Anytime
               </div>

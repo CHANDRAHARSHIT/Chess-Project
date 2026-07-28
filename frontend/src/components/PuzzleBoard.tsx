@@ -3,7 +3,14 @@ import { ThemedChessboard } from "./ThemedChessboard";
 import { Chess } from "chess.js";
 import type { ChessPuzzle } from "../utils/PuzzleLoader";
 import { validateMove } from "../utils/PuzzleValidator";
-import { HelpCircle, RotateCcw, ArrowRight, Play, Check, Undo2 } from "lucide-react";
+import {
+  HelpCircle,
+  RotateCcw,
+  ArrowRight,
+  Play,
+  Check,
+  Undo2,
+} from "lucide-react";
 import { soundManager } from "../utils/SoundManager";
 import { BoardCoordinates } from "./BoardCoordinates";
 
@@ -19,7 +26,7 @@ export interface PuzzleBoardProps {
 export function PuzzleBoard({
   puzzle,
   puzzleNumber,
-  boardId = "puzzle-board",
+  boardId: _boardId = "puzzle-board",
   onSolved,
   onFailed,
   onNextPuzzle,
@@ -38,48 +45,15 @@ export function PuzzleBoard({
     to: string;
   } | null>(null);
   const [hintSquare, setHintSquare] = useState<string | null>(null);
+  const [solutionIndex, setSolutionIndex] = useState<number>(0);
+
+  // Parse space-separated solution moves (e.g. "e7e1 a1e1 e8e1" or "Qh5#")
+  const solutionMoves = (puzzle.solution || "")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
 
   const boardContainerRef = useRef<HTMLDivElement>(null);
-  const [measuredWidth, setMeasuredWidth] = useState<number>(0);
-
-  useEffect(() => {
-    const el = boardContainerRef.current;
-    if (!el) return;
-
-    const measure = () => {
-      const rect = el.getBoundingClientRect();
-      const style = window.getComputedStyle(el);
-      const width = Math.floor(rect.width);
-
-      if (
-        style.display === "none" ||
-        style.visibility === "hidden" ||
-        width === 0
-      ) {
-        setMeasuredWidth(0);
-      } else {
-        setMeasuredWidth(width);
-      }
-    };
-
-    measure();
-    const observer = new ResizeObserver(measure);
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
-  // Diagnostic logging before render
-  if (boardContainerRef.current) {
-    const rect = boardContainerRef.current.getBoundingClientRect();
-    const style = window.getComputedStyle(boardContainerRef.current);
-    console.log(`[PuzzleBoard '${boardId}' Container Measure]`, {
-      width: rect.width,
-      height: rect.height,
-      display: style.display,
-      visibility: style.visibility,
-      measuredWidth,
-    });
-  }
 
   // Reset board and status when the puzzle prop changes
   useEffect(() => {
@@ -91,12 +65,13 @@ export function PuzzleBoard({
       gameRef.current = new Chess();
       setGameFen(gameRef.current.fen());
     }
+    setSolutionIndex(0);
     setPuzzleStatus("solving");
     setLastMove(null);
     setIsShaking(false);
     setErrorSquares(null);
     setHintSquare(null);
-  }, [puzzle]);
+  }, [puzzle.id, puzzle.fen]);
 
   // Determine player color and board orientation from active color in FEN
   const playerColor = gameRef.current.turn(); // 'w' or 'b'
@@ -113,48 +88,103 @@ export function PuzzleBoard({
 
       // 1. Enforce that the piece belongs to the active side
       const piece = game.get(sourceSquare as any);
-      if (!piece || piece.color !== playerColor) {
+      if (!piece || piece.color !== game.turn()) {
         return false;
       }
 
-      // 2. Validate move against chess.js rules
+      // 2. Target move to validate against
+      const expectedMoveStr = solutionMoves[solutionIndex] || puzzle.solution;
+
+      // 3. Validate move against chess.js rules
       try {
         const move = game.move({
           from: sourceSquare,
           to: targetSquare,
-          promotion: "q", // default promotion to Queen for mate in 1
+          promotion: "q",
         });
 
         if (move) {
           setHintSquare(null);
 
-          // 3. Check if the legal move matches the puzzle's solution
-          const isCorrect = validateMove(move, puzzle.solution);
+          // 4. Check if the legal move matches the puzzle's expected solution move
+          const isCorrect = validateMove(move, expectedMoveStr);
 
           if (isCorrect) {
             // Correct Move: commit state
             setGameFen(game.fen());
             setLastMove({ from: sourceSquare, to: targetSquare });
-            setPuzzleStatus("solved");
 
-            // Play appropriate move sound, then applause for solved
-            if (game.isCheckmate()) {
-              soundManager.playCheckmate();
-            } else if (game.inCheck()) {
-              soundManager.playCheck();
-            } else if (move.flags.includes("k") || move.flags.includes("q")) {
-              soundManager.playCastle();
-            } else if (move.flags.includes("p")) {
-              soundManager.playPromote();
-            } else if (move.captured) {
-              soundManager.playCapture();
+            const nextIndex = solutionIndex + 1;
+
+            // Check if this was the final solution move (or only 1 solution move)
+            if (
+              nextIndex >= solutionMoves.length ||
+              solutionMoves.length <= 1
+            ) {
+              setPuzzleStatus("solved");
+
+              if (game.isCheckmate()) {
+                soundManager.playCheckmate();
+              } else if (game.inCheck()) {
+                soundManager.playCheck();
+              } else if (move.flags.includes("k") || move.flags.includes("q")) {
+                soundManager.playCastle();
+              } else if (move.flags.includes("p")) {
+                soundManager.playPromote();
+              } else if (move.captured) {
+                soundManager.playCapture();
+              } else {
+                soundManager.playMove();
+              }
+              soundManager.playApplause();
+
+              onSolved?.();
+              return true;
             } else {
-              soundManager.playMove();
-            }
-            soundManager.playApplause();
+              // Intermediate move in multi-move sequence: play move sound, then auto-reply opponent move
+              if (game.inCheck()) {
+                soundManager.playCheck();
+              } else if (move.captured) {
+                soundManager.playCapture();
+              } else {
+                soundManager.playMove();
+              }
 
-            onSolved?.();
-            return true;
+              setSolutionIndex(nextIndex);
+
+              // Auto-play opponent response move after short delay (400ms)
+              const oppMoveStr = solutionMoves[nextIndex];
+              if (oppMoveStr) {
+                setTimeout(() => {
+                  try {
+                    const oppMove = game.move({
+                      from: oppMoveStr.slice(0, 2),
+                      to: oppMoveStr.slice(2, 4),
+                      promotion: oppMoveStr[4] ?? "q",
+                    });
+                    if (oppMove) {
+                      setGameFen(game.fen());
+                      setLastMove({ from: oppMove.from, to: oppMove.to });
+                      if (game.inCheck()) {
+                        soundManager.playCheck();
+                      } else if (oppMove.captured) {
+                        soundManager.playCapture();
+                      } else {
+                        soundManager.playMove();
+                      }
+                    }
+                  } catch (e) {
+                    console.error(
+                      "Opponent move execution failed:",
+                      oppMoveStr,
+                      e,
+                    );
+                  }
+                  setSolutionIndex(nextIndex + 1);
+                }, 400);
+              }
+              return true;
+            }
           } else {
             // Incorrect Move: Undo instantly in chess engine
             game.undo();
@@ -184,20 +214,19 @@ export function PuzzleBoard({
 
       return false;
     },
-    [puzzle, puzzleStatus, playerColor, onSolved, onFailed],
+    [puzzle, puzzleStatus, solutionMoves, solutionIndex, onSolved, onFailed],
   );
 
   const handleHint = useCallback(() => {
     if (puzzleStatus === "solved") return;
     const game = gameRef.current;
     const legalMoves = game.moves({ verbose: true });
-    const correctMove = legalMoves.find((m) =>
-      validateMove(m, puzzle.solution),
-    );
+    const targetMoveStr = solutionMoves[solutionIndex] || puzzle.solution;
+    const correctMove = legalMoves.find((m) => validateMove(m, targetMoveStr));
     if (correctMove) {
       setHintSquare(correctMove.from);
     }
-  }, [puzzleStatus, puzzle.solution]);
+  }, [puzzleStatus, puzzle.solution, solutionMoves, solutionIndex]);
 
   const canUndo = gameRef.current.history().length > 0;
 
@@ -268,7 +297,7 @@ export function PuzzleBoard({
             ? "border-rose-500 ring-4 ring-rose-500/25"
             : puzzleStatus === "solved"
               ? "border-emerald-500 ring-4 ring-emerald-500/25 animate-pulse"
-              : "border-brand-border/80"
+              : "border-[rgba(212,175,110,0.80)]"
         }`}
       >
         <ThemedChessboard
@@ -298,7 +327,7 @@ export function PuzzleBoard({
             Incorrect. Try Again
           </span>
         ) : (
-          <span className="font-mono uppercase tracking-wider text-xs font-bold text-[#e5dfd5] flex items-center gap-1.5 bg-white/5 border border-white/10 px-3 py-1 rounded-full">
+          <span className="font-mono uppercase tracking-wider text-xs font-bold text-brand-text flex items-center gap-1.5 bg-brand-text/5 border border-white/10 px-3 py-1 rounded-full">
             <Play className="w-3.5 h-3.5 text-brand-accent fill-current" />
             {playerColor === "w" ? "White to Move" : "Black to Move"}
           </span>
@@ -313,7 +342,7 @@ export function PuzzleBoard({
             handleHint();
           }}
           disabled={puzzleStatus === "solved"}
-          className="px-5 py-2.5 rounded-xl font-mono text-xs uppercase tracking-wider font-semibold bg-white/5 border border-white/10 hover:border-brand-accent/40 text-brand-secondary hover:text-white transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center gap-1.5 shadow-sm"
+          className="px-5 py-2.5 rounded-xl font-mono text-xs uppercase tracking-wider font-semibold bg-brand-text/5 border border-white/10 hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center gap-1.5 shadow-sm"
         >
           <HelpCircle className="w-3.5 h-3.5" />
           Hint
@@ -337,7 +366,7 @@ export function PuzzleBoard({
             handleReset();
           }}
           disabled={!canUndo}
-          className="px-5 py-2.5 rounded-xl font-mono text-xs uppercase tracking-wider font-semibold bg-white/5 border border-white/10 hover:border-brand-accent/40 text-brand-secondary hover:text-white transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center gap-1.5 shadow-sm"
+          className="px-5 py-2.5 rounded-xl font-mono text-xs uppercase tracking-wider font-semibold bg-brand-text/5 border border-white/10 hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center gap-1.5 shadow-sm"
         >
           <RotateCcw className="w-3.5 h-3.5" />
           Reset

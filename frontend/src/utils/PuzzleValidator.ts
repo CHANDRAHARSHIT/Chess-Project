@@ -14,25 +14,40 @@ export function validateMove(playedMove: Move, expectedSolution: string): boolea
     return false;
   }
 
-  const cleanSolution = expectedSolution.trim();
+  // Extract the first target move if expectedSolution contains multiple space-separated moves
+  const cleanSolution = expectedSolution.trim().split(/\s+/)[0];
+  if (!cleanSolution) return false;
 
-  // 1. Construct the played move in UCI format (e.g., 'e2e4' or 'a7a8q')
-  const playedUci = `${playedMove.from}${playedMove.to}${playedMove.promotion || ''}`;
+  // 1. Construct the played move in UCI format (e.g., 'e2e4' or 'e7e8q')
+  const playedUci = `${playedMove.from}${playedMove.to}${playedMove.promotion || ''}`.toLowerCase();
 
   // 2. Extract SAN format (e.g., 'Qxf7#')
   const playedSan = playedMove.san.trim();
 
   // 3. Compare UCI formats (case-insensitive)
-  if (playedUci.toLowerCase() === cleanSolution.toLowerCase()) {
+  if (playedUci === cleanSolution.toLowerCase()) {
     return true;
   }
 
-  // 4. Compare SAN formats (exact match)
+  // 4. Compare from/to squares for UCI (handles optional promotion string matching)
+  const playedFromTo = `${playedMove.from}${playedMove.to}`.toLowerCase();
+  const cleanFromTo = cleanSolution.slice(0, 4).toLowerCase();
+  if (playedFromTo === cleanFromTo) {
+    if (cleanSolution.length === 5) {
+      if ((playedMove.promotion || 'q').toLowerCase() === cleanSolution[4].toLowerCase()) {
+        return true;
+      }
+    } else {
+      return true;
+    }
+  }
+
+  // 5. Compare SAN formats (exact match)
   if (playedSan === cleanSolution) {
     return true;
   }
 
-  // 5. Permissive SAN comparison (ignores '+' or '#' suffixes)
+  // 6. Permissive SAN comparison (ignores '+' or '#' suffixes)
   const cleanPlayedSan = playedSan.replace(/[+#]/g, '');
   const cleanExpectedSolution = cleanSolution.replace(/[+#]/g, '');
   if (cleanPlayedSan.toLowerCase() === cleanExpectedSolution.toLowerCase()) {
