@@ -1,6 +1,12 @@
 import type { Request, Response, NextFunction } from "express";
 import { prisma } from "../config/prisma.js";
 
+/**
+ * CustomLinksController
+ * 
+ * Handles CRUD operations for user custom links (shortcuts).
+ * Ensures that users can only manage their own links and that URLs are properly validated.
+ */
 export class CustomLinksController {
   static async getLinks(req: Request, res: Response, next: NextFunction) {
     try {
@@ -32,11 +38,15 @@ export class CustomLinksController {
         return res.status(400).json({ status: "fail", message: "Name and URL are required." });
       }
 
+      if (typeof url !== "string" || !url.startsWith("/") || url.startsWith("//")) {
+        return res.status(400).json({ status: "fail", message: "URL must be an internal path." });
+      }
+
       const link = await prisma.customLink.create({
         data: {
           name,
           url,
-          isArchived: isArchived || false,
+          isArchived: isArchived ?? false,
           userId,
         },
       });
@@ -56,6 +66,12 @@ export class CustomLinksController {
       }
 
       const { name, url, isArchived } = req.body;
+
+      if (url !== undefined) {
+        if (typeof url !== "string" || !url.startsWith("/") || url.startsWith("//")) {
+          return res.status(400).json({ status: "fail", message: "URL must be an internal path." });
+        }
+      }
 
       // Verify ownership
       const existingLink = await prisma.customLink.findUnique({ where: { id } });

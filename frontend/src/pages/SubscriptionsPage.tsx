@@ -1,5 +1,13 @@
-import { Users } from "lucide-react";
+import { Users, ArrowLeft } from "lucide-react";
+import { Link } from "react-router";
 
+/**
+ * SubscriptionsPage Component
+ * 
+ * A placeholder page for the upcoming Subscriptions feature where users
+ * will be able to follow and stay updated with their favorite chess creators.
+ * Currently displays a "Coming Soon" badge and a back button to return home.
+ */
 export default function SubscriptionsPage() {
   return (
     <div className="flex flex-col items-center justify-center min-h-[70vh] px-4 select-none">
@@ -24,13 +32,21 @@ export default function SubscriptionsPage() {
       </p>
 
       {/* Coming soon badge */}
-      <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-accent/10 border border-brand-accent/20">
+      <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-accent/10 border border-brand-accent/20 mb-8">
         <span className="relative flex h-2.5 w-2.5">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-accent opacity-75" />
           <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-brand-accent" />
         </span>
         <span className="text-brand-accent text-sm font-medium tracking-wide">Coming Soon</span>
       </div>
+
+      <Link 
+        to="/"
+        className="flex items-center gap-2 px-6 py-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all text-white/80 hover:text-white group"
+      >
+        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+        <span className="font-medium">Back to Home</span>
+      </Link>
     </div>
   );
 }

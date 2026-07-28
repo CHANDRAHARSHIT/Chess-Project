@@ -15,12 +15,18 @@ import { useNavigate, useLocation } from "react-router";
 
 // Hook for clicking outside the custom dropdown
 function useOnClickOutside(ref: any, handler: any) {
+  const handlerRef = useRef(handler);
+
+  useEffect(() => {
+    handlerRef.current = handler;
+  }, [handler]);
+
   useEffect(() => {
     const listener = (event: any) => {
       if (!ref.current || ref.current.contains(event.target)) {
         return;
       }
-      handler(event);
+      handlerRef.current(event);
     };
     document.addEventListener("mousedown", listener);
     document.addEventListener("touchstart", listener);
@@ -28,9 +34,18 @@ function useOnClickOutside(ref: any, handler: any) {
       document.removeEventListener("mousedown", listener);
       document.removeEventListener("touchstart", listener);
     };
-  }, [ref, handler]);
+  }, [ref]);
 }
 
+/**
+ * SidebarLayout Component
+ * 
+ * The main layout wrapper for the application. It provides:
+ * - A responsive sidebar navigation (collapsible on desktop, slide-out on mobile)
+ * - Dynamic rendering of navigation sections (Explore, Subscriptions, You, etc.)
+ * - Management of user "Custom Links", allowing users to save and organize shortcuts
+ * - Authentication state handling to show/hide restricted sections
+ */
 export default function SidebarLayout({ children }: { children: React.ReactNode }) {
   const [isExpanded, setIsExpanded] = useState(true);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
@@ -41,6 +56,12 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
   
   const [hoveredSubMenu, setHoveredSubMenu] = useState<{items: any[], top: number, left: number} | null>(null);
   const hoverTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (hoverTimeout.current) clearTimeout(hoverTimeout.current);
+    };
+  }, []);
 
   const { status } = useSession();
   const navigate = useNavigate();
@@ -104,9 +125,9 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
         // Optimistic update
         const updatedLink = { ...link, name: newLinkName, url: newLinkUrl };
         if (isMore) {
-          const arr = [...moreLinks]; arr[editLinkIndex] = updatedLink; setMoreLinks(arr);
+          setMoreLinks(prev => { const arr = [...prev]; arr[editLinkIndex] = updatedLink; return arr; });
         } else {
-          const arr = [...customLinks]; arr[editLinkIndex] = updatedLink; setCustomLinks(arr);
+          setCustomLinks(prev => { const arr = [...prev]; arr[editLinkIndex] = updatedLink; return arr; });
         }
 
         try {
@@ -131,7 +152,7 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
           });
           const json = await res.json();
           if (json.status === "success") {
-            setCustomLinks([...customLinks, json.data.link]);
+            setCustomLinks(prev => [...prev, json.data.link]);
           }
         } catch (err) {
           console.error(err);
@@ -156,7 +177,7 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
 
   const removeCustomLink = async (index: number) => {
     const link = customLinks[index];
-    setCustomLinks(customLinks.filter((_, i) => i !== index));
+    setCustomLinks(prev => prev.filter((_, i) => i !== index));
     try {
       await fetch(`/api/custom-links/${link.id}`, { method: 'DELETE', credentials: 'include' });
     } catch (err) { console.error(err); fetchLinks(); }
@@ -164,7 +185,7 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
 
   const removeMoreLink = async (index: number) => {
     const link = moreLinks[index];
-    setMoreLinks(moreLinks.filter((_, i) => i !== index));
+    setMoreLinks(prev => prev.filter((_, i) => i !== index));
     try {
       await fetch(`/api/custom-links/${link.id}`, { method: 'DELETE', credentials: 'include' });
     } catch (err) { console.error(err); fetchLinks(); }
@@ -174,8 +195,8 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
   const moveToMore = async (index: number) => {
     const link = customLinks[index];
     const updated = { ...link, isArchived: true };
-    setMoreLinks([...moreLinks, updated]);
-    setCustomLinks(customLinks.filter((_, i) => i !== index));
+    setMoreLinks(prev => [...prev, updated]);
+    setCustomLinks(prev => prev.filter((_, i) => i !== index));
     try {
       await fetch(`/api/custom-links/${link.id}`, {
         method: 'PUT',
@@ -190,8 +211,8 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
   const moveToActive = async (index: number) => {
     const link = moreLinks[index];
     const updated = { ...link, isArchived: false };
-    setCustomLinks([...customLinks, updated]);
-    setMoreLinks(moreLinks.filter((_, i) => i !== index));
+    setCustomLinks(prev => [...prev, updated]);
+    setMoreLinks(prev => prev.filter((_, i) => i !== index));
     try {
       await fetch(`/api/custom-links/${link.id}`, {
         method: 'PUT',
@@ -289,7 +310,7 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
     const isDisabled = Boolean(item.comingSoon);
 
     return (
-      <div key={item.name + (section === 'more' ? '-more' : '')} className="flex flex-col w-full">
+      <div key={isCustomLink ? `custom-${customLinkIndex}-${section}` : `${item.name}-${section}`} className="flex flex-col w-full">
         <div className="relative group/navitem flex items-center">
           <a
             href={isDisabled ? "#" : hasSubItems ? "#" : item.href}
