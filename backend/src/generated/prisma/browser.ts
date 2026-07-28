@@ -78,3 +78,8 @@ export type CuratedPuzzle = Prisma.CuratedPuzzleModel
  * 
  */
 export type Opening = Prisma.OpeningModel
+/**
+ * Model OpponentGame
+ * 
+ */
+export type OpponentGame = Prisma.OpponentGameModel

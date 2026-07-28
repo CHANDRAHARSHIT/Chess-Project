@@ -26,6 +26,7 @@ import {
   Bell,
   CircleUserRound,
   CreditCard,
+  Target,
   Check,
 } from "lucide-react";
 import { useBoardSettings } from "../hooks/useBoardSettings";
@@ -74,6 +75,13 @@ const CATEGORIES: SettingsCategory[] = [
     icon: CreditCard,
     available: true,
     path: "/pricing",
+  },
+  {
+    id: "scout-opponent",
+    name: "Scout Opponent",
+    icon: Target,
+    available: true,
+    path: "/opponents/add",
   },
   { id: "gameplay", name: "Gameplay", icon: Gamepad2, available: false },
   { id: "interface", name: "Interface", icon: Monitor, available: false },
@@ -201,8 +209,8 @@ export default function SettingsPage() {
                     aria-current={isActive ? "page" : undefined}
                     onClick={() => {
                       soundManager.playButtonClick();
-                      if (cat.id === "membership") {
-                        navigate("/pricing");
+                      if (cat.path) {
+                        navigate(cat.path);
                         return;
                       }
 
