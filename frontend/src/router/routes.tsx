@@ -1,13 +1,14 @@
-import HomePage from '../pages/HomePage';
-import PuzzlePage from '../pages/PuzzlePage';
-import ProfilePage from '../pages/ProfilePage';
-import SettingsPage from '../pages/SettingsPage';
-import PricingPage from '../pages/PricingPage';
-import CheckoutPage from '../pages/CheckoutPage';
-import SuccessfulPage from '../pages/SuccessfulPage';
-import FailedPage from '../pages/FailedPage';
-import PremiumPage from '../pages/PremiumPage';
-import { ProtectedRoute } from '../components/ProtectedRoute';
+import HomePage from "../pages/HomePage";
+import PuzzlePage from "../pages/PuzzlePage";
+import { Navigate } from "react-router";
+import SettingsPage from "../pages/SettingsPage";
+import PricingPage from "../pages/PricingPage";
+import CheckoutPage from "../pages/CheckoutPage";
+import SuccessfulPage from "../pages/SuccessfulPage";
+import FailedPage from "../pages/FailedPage";
+import PremiumPage from "../pages/PremiumPage";
+import OpeningsPage from "../pages/OpeningsPage";
+import { ProtectedRoute } from "../components/ProtectedRoute";
 
 export interface RouteConfig {
   path: string;
@@ -16,20 +17,31 @@ export interface RouteConfig {
 
 // Routes that run inside the MainLayout (Navbar + Sidebar + Footer)
 export const mainRoutes: RouteConfig[] = [
-  { path: '/', element: <HomePage /> },
-  { path: '/puzzles', element: <PuzzlePage /> },
-  { path: '/profile', element: <ProtectedRoute><ProfilePage /></ProtectedRoute> },
+  { path: "/", element: <HomePage /> },
+  { path: "/puzzles", element: <PuzzlePage /> },
+  { path: "/openings", element: <OpeningsPage /> },
+  {
+    path: "/profile",
+    element: <Navigate to="/settings?tab=profile" replace />,
+  },
   // Not behind ProtectedRoute: board/piece preferences are stored in
   // localStorage (like the Sound toggle) so guests can use them too.
-  { path: '/settings', element: <SettingsPage /> },
-  { path: '/premium', element: <ProtectedRoute><PremiumPage /></ProtectedRoute> },
-  { path: '/pricing', element: <PricingPage /> },
+  { path: "/settings", element: <SettingsPage /> },
+  {
+    path: "/premium",
+    element: (
+      <ProtectedRoute>
+        <PremiumPage />
+      </ProtectedRoute>
+    ),
+  },
+  { path: "/pricing", element: <PricingPage /> },
 ];
 
 // Routes that run inside the MinimalLayout (Navbar only, no Sidebar/Footer)
 export const minimalRoutes: RouteConfig[] = [
-  { path: '/payment', element: <CheckoutPage /> },
-  { path: '/successful', element: <SuccessfulPage /> },
-  { path: '/payment/success', element: <SuccessfulPage /> },
-  { path: '/payment/failed', element: <FailedPage /> },
+  { path: "/payment", element: <CheckoutPage /> },
+  { path: "/successful", element: <SuccessfulPage /> },
+  { path: "/payment/success", element: <SuccessfulPage /> },
+  { path: "/payment/failed", element: <FailedPage /> },
 ];

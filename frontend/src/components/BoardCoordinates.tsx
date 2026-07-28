@@ -19,13 +19,11 @@
  *   </div>
  */
 import React from "react";
+import { useBoardSettings } from "../hooks/useBoardSettings";
 
 interface BoardCoordinatesProps {
   boardOrientation?: "white" | "black";
 }
-
-const ON_LIGHT = "#5C7D3A"; // deep green on cream square
-const ON_DARK = "#FFF8E5";  // warm cream on green square
 
 const BASE_STYLE: React.CSSProperties = {
   position: "absolute",
@@ -41,6 +39,7 @@ const BASE_STYLE: React.CSSProperties = {
 export function BoardCoordinates({
   boardOrientation = "white",
 }: BoardCoordinatesProps) {
+    const { boardTheme } = useBoardSettings();
   const FILES =
     boardOrientation === "white"
       ? ["a", "b", "c", "d", "e", "f", "g", "h"]
@@ -64,7 +63,7 @@ export function BoardCoordinates({
               ...BASE_STYLE,
               bottom: "2px",
               right: `calc(${(7 - col) * 12.5}% + 2px)`,
-              color: isDark ? ON_DARK : ON_LIGHT,
+              color: isDark ? boardTheme.light : boardTheme.dark,
             }}
           >
             {file}
@@ -83,7 +82,7 @@ export function BoardCoordinates({
               ...BASE_STYLE,
               top: `calc(${row * 12.5}% + 2px)`,
               left: "2px",
-              color: isDark ? ON_DARK : ON_LIGHT,
+              color: isDark ? boardTheme.light : boardTheme.dark,
             }}
           >
             {rank}

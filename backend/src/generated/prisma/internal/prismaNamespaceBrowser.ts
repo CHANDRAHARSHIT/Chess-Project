@@ -60,7 +60,9 @@ export const ModelName = {
   BillingProfile: 'BillingProfile',
   Product: 'Product',
   ProductFeature: 'ProductFeature',
-  WebhookEvent: 'WebhookEvent'
+  WebhookEvent: 'WebhookEvent',
+  CuratedPuzzle: 'CuratedPuzzle',
+  Opening: 'Opening'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -86,7 +88,8 @@ export const UserScalarFieldEnum = {
   emailVerified: 'emailVerified',
   image: 'image',
   createdAt: 'createdAt',
-  gatewayCustomerId: 'gatewayCustomerId'
+  stripeTestCustomerId: 'stripeTestCustomerId',
+  stripeLiveCustomerId: 'stripeLiveCustomerId'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -200,7 +203,8 @@ export const ProductScalarFieldEnum = {
   priceAmount: 'priceAmount',
   currency: 'currency',
   billingInterval: 'billingInterval',
-  gatewayPriceId: 'gatewayPriceId',
+  gatewayTestPriceId: 'gatewayTestPriceId',
+  gatewayLivePriceId: 'gatewayLivePriceId',
   isActive: 'isActive',
   displayOrder: 'displayOrder',
   createdAt: 'createdAt',
@@ -233,6 +237,32 @@ export const WebhookEventScalarFieldEnum = {
 } as const
 
 export type WebhookEventScalarFieldEnum = (typeof WebhookEventScalarFieldEnum)[keyof typeof WebhookEventScalarFieldEnum]
+
+
+export const CuratedPuzzleScalarFieldEnum = {
+  id: 'id',
+  fen: 'fen',
+  moves: 'moves',
+  rating: 'rating',
+  ratingDeviation: 'ratingDeviation',
+  popularity: 'popularity',
+  nbPlays: 'nbPlays',
+  themes: 'themes',
+  createdAt: 'createdAt'
+} as const
+
+export type CuratedPuzzleScalarFieldEnum = (typeof CuratedPuzzleScalarFieldEnum)[keyof typeof CuratedPuzzleScalarFieldEnum]
+
+
+export const OpeningScalarFieldEnum = {
+  id: 'id',
+  eco: 'eco',
+  name: 'name',
+  pgn: 'pgn',
+  moves: 'moves'
+} as const
+
+export type OpeningScalarFieldEnum = (typeof OpeningScalarFieldEnum)[keyof typeof OpeningScalarFieldEnum]
 
 
 export const SortOrder = {

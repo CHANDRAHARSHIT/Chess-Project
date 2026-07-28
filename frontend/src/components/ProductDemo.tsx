@@ -359,7 +359,7 @@ export default function ProductDemo() {
   if (history.length > 0) {
     const last = history[history.length - 1];
     customSquareStyles[last.from] = { backgroundColor: 'rgba(255, 255, 0, 0.4)' };
-    customSquareStyles[last.to]   = { backgroundColor: 'rgba(255, 255, 0, 0.4)' };
+    customSquareStyles[last.to] = { backgroundColor: 'rgba(255, 255, 0, 0.4)' };
   }
   if (showHint && bestMove) {
     const { from, to } = parseUciMove(bestMove);
@@ -405,7 +405,7 @@ export default function ProductDemo() {
 
                 {/* Game Over Overlay */}
                 {gameOverReason && (
-                  <div className="absolute inset-0 z-20 bg-[#080B14]/90 backdrop-blur-sm flex flex-col items-center justify-center p-6 space-y-4">
+                  <div className="absolute inset-0 z-30 bg-[#080B14]/90 backdrop-blur-sm flex flex-col items-center justify-center p-6 space-y-4">
                     <div className="w-12 h-12 rounded-full border border-[rgba(212,175,110,0.3)] flex items-center justify-center text-[#D4AF6E]">
                       <AlertCircle className="w-6 h-6" />
                     </div>
@@ -438,14 +438,13 @@ export default function ProductDemo() {
                 />
 
                 <BoardCoordinates boardOrientation={boardOrientation} />
-                </div>
+              </div>
 
               {/* Turn indicator */}
               <div className="mt-3 flex items-center gap-2 text-xs text-[#8E8B82] px-1">
                 <span
-                  className={`w-2.5 h-2.5 rounded-full border border-[rgba(212,175,110,0.12)] ${
-                    currentTurn === 'w' ? 'bg-white' : 'bg-neutral-800'
-                  }`}
+                  className={`w-2.5 h-2.5 rounded-full border border-[rgba(212,175,110,0.12)] ${currentTurn === 'w' ? 'bg-white' : 'bg-neutral-800'
+                    }`}
                 />
                 <span>
                   {currentTurn === 'w' ? "White's Turn" : "Black's Turn"}
@@ -508,10 +507,10 @@ export default function ProductDemo() {
                   {/* Reset */}
                   <button
                     onClick={() => { handleReset(); }}
-                    disabled={isEditMode}
+                    disabled={!canUndo || isEditMode}
                     title="Reset game"
                     className="flex flex-col items-center justify-center gap-1.5 py-3 px-1 rounded-lg border border-[rgba(212,175,110,0.12)] bg-[#080B14] hover:bg-white/5 hover:border-red-500/40 text-[#8E8B82] hover:text-red-400 transition-all duration-200 disabled:opacity-40 group"
-                    style={{ cursor: isEditMode ? 'not-allowed' : 'pointer' }}
+                    style={{ cursor: (!canUndo || isEditMode) ? 'not-allowed' : 'pointer' }}
                   >
                     <RotateCcw className="w-5 h-5 group-hover:rotate-[-45deg] transition-transform duration-300" />
                     <span className="text-[10px] font-medium font-sans tracking-wide">Reset</span>
@@ -523,11 +522,10 @@ export default function ProductDemo() {
                       ref={moreButtonRef}
                       onClick={() => { soundManager.playButtonClick(); setShowMoreMenu(prev => !prev); }}
                       title="More options"
-                      className={`w-full flex flex-col items-center justify-center gap-1.5 py-3 px-1 rounded-lg border transition-all duration-200 group cursor-pointer ${
-                        showMoreMenu
-                          ? 'border-[rgba(212,175,110,0.6)] bg-[rgba(212,175,110,0.08)] text-white'
-                          : 'border-[rgba(212,175,110,0.12)] bg-[#080B14] hover:bg-white/5 hover:border-[rgba(212,175,110,0.4)] text-[#8E8B82] hover:text-white'
-                      }`}
+                      className={`w-full flex flex-col items-center justify-center gap-1.5 py-3 px-1 rounded-lg border transition-all duration-200 group cursor-pointer ${showMoreMenu
+                        ? 'border-[rgba(212,175,110,0.6)] bg-[rgba(212,175,110,0.08)] text-white'
+                        : 'border-[rgba(212,175,110,0.12)] bg-[#080B14] hover:bg-white/5 hover:border-[rgba(212,175,110,0.4)] text-[#8E8B82] hover:text-white'
+                        }`}
                     >
                       <MoreHorizontal className="w-5 h-5 group-hover:scale-110 transition-transform" />
                       <span className="text-[10px] font-medium font-sans tracking-wide">More</span>
@@ -594,11 +592,10 @@ export default function ProductDemo() {
                           setShowHint(false);
                         }}
                         title={`${DIFFICULTY_CONFIGS[level].name} (${DIFFICULTY_CONFIGS[level].rating})`}
-                        className={`py-1 rounded text-xs font-mono transition-all duration-200 ${
-                          difficulty === level
-                            ? 'bg-[#D4AF6E] text-[#080B14] shadow-sm font-bold'
-                            : 'text-[#8E8B82] hover:bg-white/5'
-                        }`}
+                        className={`py-1 rounded text-xs font-mono transition-all duration-200 ${difficulty === level
+                          ? 'bg-[#D4AF6E] text-[#080B14] shadow-sm font-bold'
+                          : 'text-[#8E8B82] hover:bg-white/5'
+                          }`}
                       >
                         {level}
                       </button>

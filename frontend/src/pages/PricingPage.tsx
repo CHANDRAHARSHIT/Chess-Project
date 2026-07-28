@@ -116,9 +116,10 @@ const PricingCard: React.FC<PlanProps> = ({
       whileHover={{ y: -8, transition: { duration: 0.3, ease: "easeOut" } }}
       transition={{ duration: 0.6 }}
       className={`relative rounded-3xl p-6 sm:p-8 flex flex-col justify-between overflow-hidden transition-all duration-500
-        ${isPopular
-          ? "bg-gradient-to-b from-[#0e1428] to-[#080b14] border border-brand-accent/30 shadow-[0_20px_50px_rgba(212,175,110,0.06)]"
-          : "bg-[#0c1020]/60 backdrop-blur-xl border border-brand-border/40 hover:border-brand-accent/20"
+        ${
+          isPopular
+            ? "bg-gradient-to-b from-[#0e1428] to-[#080b14] border border-brand-accent/30 shadow-[0_20px_50px_rgba(212,175,110,0.06)]"
+            : "bg-[#0c1020]/60 backdrop-blur-xl border border-brand-border/40 hover:border-brand-accent/20"
         }
       `}
     >
@@ -194,9 +195,10 @@ const PricingCard: React.FC<PlanProps> = ({
       <button
         onClick={onCtaClick}
         className={`w-full py-3.5 px-6 rounded-xl font-mono text-xs uppercase tracking-widest font-semibold transition-all duration-300 relative overflow-hidden cursor-pointer
-          ${isPopular
-            ? "btn-premium-cta cta-shine text-brand-accent border-brand-accent/40 shadow-lg hover:scale-[1.01]"
-            : "bg-white/5 border border-white/10 hover:border-brand-accent/40 text-brand-secondary hover:text-white active:scale-[0.99]"
+          ${
+            isPopular
+              ? "btn-premium-cta cta-shine text-brand-accent border-brand-accent/40 shadow-lg hover:scale-[1.01]"
+              : "bg-white/5 border border-white/10 hover:border-brand-accent/40 text-brand-secondary hover:text-white active:scale-[0.99]"
           }
         `}
       >
@@ -241,11 +243,11 @@ export default function PricingPage() {
     },
     {
       q: "Can I switch plans?",
-      a: "Yes, absolutely! You can switch from monthly to yearly billing at any time to lock in the 20% discount. The remaining time on your monthly plan will be credited pro-rata toward the cost of the yearly plan automatically.",
+      a: "Yes, absolutely! You can switch from monthly to yearly billing at any time to lock in the 66% discount. The remaining time on your monthly plan will be credited pro-rata toward the cost of the yearly plan automatically.",
     },
     {
       q: "Do yearly plans save money?",
-      a: "Yes. The yearly plan saves you over 33% compared to paying monthly. This brings your effective monthly rate down to just $9.99, saving you $60 over a full year compared to standard monthly renewals.",
+      a: "Yes. The yearly plan saves you 66% compared to paying monthly. This brings your effective monthly rate down to just $1.70 USD, saving you $39.60 USD over a full year compared to standard monthly renewals.",
     },
     {
       q: "Can I upgrade anytime?",
@@ -465,9 +467,9 @@ export default function PricingPage() {
               Yearly
             </button>
 
-            {/* Save 20% indicator */}
+            {/* Save 66% indicator */}
             <div className="absolute z-20 top-0 left-3/4 -translate-x-1/2 -translate-y-1/2 sm:left-[calc(100%+14px)] sm:top-1/2 sm:translate-x-0 whitespace-nowrap bg-brand-accent/15 border border-brand-accent/30 text-brand-accent text-[10px] font-mono tracking-wider uppercase px-2 py-0.5 rounded-md flex items-center gap-1">
-              Save 20%
+              Save 66%
             </div>
           </div>
         </section>
@@ -498,10 +500,12 @@ export default function PricingPage() {
           {/* PREMIUM PLAN */}
           <PricingCard
             name="Premium Plan"
-            price={isYearly ? "$10.00 NZD" : "$1.00 NZD"}
+            price={isYearly ? "$20.40 USD" : "$5.00 USD"}
             period={isYearly ? "/ year" : "/ month"}
             yearlySaving={
-              isYearly ? "Save $2 NZD (Equivalent to $0.83 NZD/mo)" : undefined
+              isYearly
+                ? "Save $39.60 USD (Equivalent to $1.70 USD/mo)"
+                : undefined
             }
             description="Built for ambitious chess players who want unlimited reviews, deep analysis, and tracking."
             features={[
@@ -537,16 +541,16 @@ export default function PricingPage() {
           <div className="bg-[#0c1020]/60 backdrop-blur-xl border border-brand-border rounded-2xl overflow-hidden shadow-2xl">
             {/* Desktop Table view */}
             <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
+              <table className="w-full text-left border-collapse min-w-[640px]">
                 <thead>
-                  <tr className="border-b border-brand-border/60 bg-white/[0.02]">
-                    <th className="py-5 px-6 text-sm font-mono tracking-wider text-brand-secondary uppercase">
+                  <tr className="border-b border-brand-border/60 bg-white/[0.03]">
+                    <th className="py-4 px-6 text-xs font-sans font-bold tracking-wider text-brand-secondary uppercase min-w-[200px]">
                       Feature
                     </th>
-                    <th className="py-5 px-6 text-sm font-mono tracking-wider text-brand-secondary uppercase text-center w-1/4">
+                    <th className="py-4 px-6 text-xs font-sans font-bold tracking-wider text-brand-secondary uppercase text-center min-w-[160px] w-1/4">
                       Free
                     </th>
-                    <th className="py-5 px-6 text-sm font-mono tracking-wider text-brand-accent uppercase text-center w-1/4">
+                    <th className="py-4 px-6 text-xs font-sans font-bold tracking-wider text-brand-accent uppercase text-center min-w-[240px] w-1/3">
                       Premium
                     </th>
                   </tr>
@@ -557,10 +561,10 @@ export default function PricingPage() {
                       key={index}
                       className="hover:bg-white/[0.01] transition-colors duration-150"
                     >
-                      <td className="py-2 px-6 text-sm font-sans font-medium text-[#e5dfd5]">
+                      <td className="py-3 px-6 text-sm font-sans font-medium text-[#e5dfd5]">
                         {feature.name}
                       </td>
-                      <td className="py-2 px-6 text-center text-sm font-sans text-brand-secondary">
+                      <td className="py-3 px-6 text-center text-sm font-sans text-brand-secondary">
                         {typeof feature.free === "boolean" ? (
                           feature.free ? (
                             <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500/10 text-emerald-400">
@@ -570,12 +574,12 @@ export default function PricingPage() {
                             <span className="text-brand-secondary/40">—</span>
                           )
                         ) : (
-                          <span className="font-mono text-xs">
+                          <span className="inline-block whitespace-nowrap font-mono text-xs bg-white/5 border border-white/10 px-2.5 py-1 rounded-lg text-brand-secondary">
                             {feature.free}
                           </span>
                         )}
                       </td>
-                      <td className="py-4.5 px-6 text-center text-sm font-sans text-brand-accent font-semibold">
+                      <td className="py-3 px-6 text-center text-sm font-sans text-brand-accent font-semibold">
                         {typeof feature.premium === "boolean" ? (
                           feature.premium ? (
                             <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500/10 text-emerald-400">
@@ -585,7 +589,7 @@ export default function PricingPage() {
                             <span className="text-brand-secondary/40">—</span>
                           )
                         ) : (
-                          <span className="font-mono text-xs bg-brand-accent/10 border border-brand-accent/20 px-2 py-0.5 rounded text-brand-accent">
+                          <span className="inline-block whitespace-nowrap font-mono text-xs bg-brand-accent/10 border border-brand-accent/20 px-2.5 py-1 rounded-lg text-brand-accent">
                             {feature.premium}
                           </span>
                         )}
@@ -639,7 +643,7 @@ export default function PricingPage() {
                         exit={{ height: 0, opacity: 0 }}
                         transition={{ duration: 0.25, ease: "easeInOut" }}
                       >
-                        <div className="px-6 pb-5 pt-1 text-sm sm:text-base text-brand-secondary font-sans leading-relaxed border-t border-brand-border/20">
+                        <div className="px-6 py-3 text-sm sm:text-base text-brand-secondary font-sans leading-relaxed border-t border-brand-border/20">
                           {faq.a}
                         </div>
                       </motion.div>
