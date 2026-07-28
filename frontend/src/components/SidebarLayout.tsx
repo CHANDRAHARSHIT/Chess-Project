@@ -20,6 +20,7 @@ import { AvatarDropdown } from "./AvatarDropdown";
 import { AuthModal } from "./AuthModal";
 import { MoreMenu } from "./MoreMenu";
 import { useNavigate, useLocation } from "react-router";
+import { useNavigationStack } from "../hooks/useNavigationStack";
 
 export default function SidebarLayout({
   children,
@@ -35,6 +36,7 @@ export default function SidebarLayout({
 
   const navigate = useNavigate();
   const location = useLocation();
+  const { push } = useNavigationStack();
 
   const openModal = (mode: "login" | "register") => {
     setModalMode(mode);
@@ -62,17 +64,35 @@ export default function SidebarLayout({
     { name: "Premium", href: "/premium", icon: Crown },
   ];
 
-  const handleLinkClick = (href: string, e: React.MouseEvent) => {
-    e.preventDefault();
-    soundManager.playButtonClick();
-    setIsMobileOpen(false);
+ const handleLinkClick = (href: string, e: React.MouseEvent) => {
+  e.preventDefault();
+  soundManager.playButtonClick();
+  setIsMobileOpen(false);
 
-    if (href === "/" && location.pathname === "/") {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    } else {
-      navigate(href);
-    }
+  // Going to Membership (Pricing) — remember where we came from.
+  if (href === "/pricing") {
+    // Use a route-to-label lookup instead of a switch statement.
+    // This makes the mapping easier to maintain as new pages are added.
+  const pageLabels: Record<string, string> = {
+    "/": "Home",
+    "/puzzles": "Puzzles",
+    "/settings": "Settings",
+    "/premium": "Premium",
+    "/profile": "Profile",
   };
+
+  push({
+    label: pageLabels[location.pathname] ?? "Home",
+    path: location.pathname,
+  });
+}
+
+  if (href === "/" && location.pathname === "/") {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  } else {
+    navigate(href);
+  }
+};
 
   const handleToggle = () => {
     soundManager.playButtonClick();

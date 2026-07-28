@@ -13,6 +13,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router";
+import { useNavigationStack } from "../hooks/useNavigationStack";
 
 // Custom SVG Chess Pieces for premium decorative background
 const PieceSvg: React.FC<{
@@ -210,6 +211,7 @@ const PricingCard: React.FC<PlanProps> = ({
 export default function PricingPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { getPrevious } = useNavigationStack();
   const [isYearly, setIsYearly] = useState(false);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
 
@@ -218,10 +220,17 @@ export default function PricingPage() {
     return params.get("error") === "payment_expired";
   });
 
-  // Navigate back to Home
-  const handleNavigateHome = () => {
-    navigate("/");
-  };
+  // Navigate back to PREVIOUS page
+  const handleNavigateBack = () => {
+  const previousPage = getPrevious();
+
+  if (previousPage) {
+    navigate(previousPage.path);
+    return;
+  }
+
+  navigate("/");
+};
 
   const handleUpgrade = (planType: "Monthly" | "Yearly") => {
     navigate(`/payment?plan=${planType.toLowerCase()}`);
@@ -349,13 +358,13 @@ export default function PricingPage() {
       <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-1 flex flex-col items-center w-full pt-8">
         <div className="w-full flex justify-start mb-6">
           <button
-            onClick={handleNavigateHome}
+            onClick={handleNavigateBack}
             className="flex items-center gap-2.5 text-xs sm:text-sm text-brand-secondary hover:text-white transition-all duration-300 cursor-pointer uppercase tracking-wider font-mono font-medium"
           >
             <span className="w-5 h-5 rounded-full border border-brand-border flex items-center justify-center font-bold text-[9px] hover:border-brand-accent/50">
               &lt;
             </span>
-            Back to Home
+            Back to {getPrevious()?.label ?? "Home"}
           </button>
         </div>
         {showSessionError && (
@@ -680,7 +689,7 @@ export default function PricingPage() {
               </button>
 
               <button
-                onClick={handleNavigateHome}
+                onClick={handleNavigateBack}
                 className="w-full sm:w-auto px-8 py-4 rounded-xl font-mono text-xs uppercase tracking-widest font-semibold bg-white/5 border border-white/10 hover:border-brand-accent/40 text-brand-secondary hover:text-white transition-all duration-300 cursor-pointer active:scale-[0.99]"
               >
                 Continue Free
