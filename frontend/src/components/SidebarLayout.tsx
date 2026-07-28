@@ -24,6 +24,21 @@ import { MoreMenu } from "./MoreMenu";
 import { useNavigate, useLocation } from "react-router";
 import { useNavigationStack } from "../hooks/useNavigationStack";
 
+interface SubMenuItem {
+  name: string;
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+  comingSoon?: boolean;
+}
+
+interface MenuItem {
+  name: string;
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+  comingSoon?: boolean;
+  subItems?: SubMenuItem[];
+}
+
 export default function SidebarLayout({
   children,
 }: {
@@ -48,7 +63,7 @@ export default function SidebarLayout({
 
   const { containerRef, logoRef } = useLogoAnimation();
 
-  const menuItems = [
+  const menuItems: MenuItem[] = [
     { name: "Home", href: "/", icon: Home },
     { name: "Puzzles", href: "/puzzles", icon: Puzzle, comingSoon: true },
     {
