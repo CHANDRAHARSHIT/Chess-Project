@@ -30,22 +30,22 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     const checkPendingSession = async () => {
-      const pendingId = sessionStorage.getItem('pending_checkout_session_id');
+      const pendingId = sessionStorage.getItem("pending_checkout_session_id");
       if (!pendingId) return;
 
       setIsProcessing(true); // show overlay briefly while we check
       try {
         const result = await PaymentService.getCheckoutSession(pendingId);
-        if (result?.data?.session?.status !== 'complete') {
-          sessionStorage.removeItem('pending_checkout_session_id');
-          navigate('/payment/failed');
+        if (result?.data?.session?.status !== "complete") {
+          sessionStorage.removeItem("pending_checkout_session_id");
+          navigate("/payment/failed");
           return;
         }
         // completed — clear the pending marker; success_url flow handles the rest
-        sessionStorage.removeItem('pending_checkout_session_id');
+        sessionStorage.removeItem("pending_checkout_session_id");
       } catch (err) {
-        console.error('[CheckoutPage] Session status check failed:', err);
-        sessionStorage.removeItem('pending_checkout_session_id');
+        console.error("[CheckoutPage] Session status check failed:", err);
+        sessionStorage.removeItem("pending_checkout_session_id");
       } finally {
         setIsProcessing(false);
       }
@@ -56,8 +56,8 @@ export default function CheckoutPage() {
     const handlePageShow = (event: PageTransitionEvent) => {
       if (event.persisted) checkPendingSession();
     };
-    window.addEventListener('pageshow', handlePageShow);
-    return () => window.removeEventListener('pageshow', handlePageShow);
+    window.addEventListener("pageshow", handlePageShow);
+    return () => window.removeEventListener("pageshow", handlePageShow);
   }, [navigate]);
   useEffect(() => {
     // Detect plan selection from URL query parameter
@@ -98,6 +98,7 @@ export default function CheckoutPage() {
       year: "numeric",
     });
   };
+
   // Complete checkout flow
   const handleProceedToPayment = async () => {
     setIsProcessing(true);
@@ -108,14 +109,14 @@ export default function CheckoutPage() {
 
       if (response.status === "success" && response.checkoutUrl) {
         if (response.sessionId) {
-          sessionStorage.setItem('pending_checkout_session_id', response.sessionId);
+          sessionStorage.setItem("pending_checkout_session_id", response.sessionId);
         }
         // Securely redirect customer to Stripe hosted checkout page
         window.location.href = response.checkoutUrl;
       } else {
         alert(
           response.message ||
-          "Failed to initialize secure checkout session. Please try again.",
+            "Failed to initialize secure checkout session. Please try again.",
         );
         setIsProcessing(false);
       }

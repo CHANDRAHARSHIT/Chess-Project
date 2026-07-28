@@ -1571,24 +1571,24 @@ export default function HeroPuzzle({
       ).then(() => {
         if (solveAbortRef.current) return;
 
-        // Evaluate !! annotation for White's move in Puzzle #3
+        // Evaluate !! annotation for White's move in puzzle #3
         if (puzzle3StepRef.current === 0 && sourceSquare === "d4" && targetSquare === "c4") {
           triggerAnnotation(targetSquare, "!!");
           puzzle3StepRef.current = 1;
-        } else if (puzzle3StepRef.current === 2 && sourceSquare === "e5" && targetSquare === "f7") {
+        } else if (puzzle3StepRef.current === 1 && sourceSquare === "e5" && targetSquare === "f7") {
+          triggerAnnotation(targetSquare, "!!");
+          puzzle3StepRef.current = 2;
+        } else if (puzzle3StepRef.current === 2 && sourceSquare === "f7" && targetSquare === "h6") {
           triggerAnnotation(targetSquare, "!!");
           puzzle3StepRef.current = 3;
-        } else if (puzzle3StepRef.current === 4 && sourceSquare === "f7" && targetSquare === "h6") {
+        } else if (puzzle3StepRef.current === 3 && sourceSquare === "c4" && targetSquare === "g8") {
+          triggerAnnotation(targetSquare, "!!");
+          puzzle3StepRef.current = 4;
+        } else if (puzzle3StepRef.current === 4 && sourceSquare === "h6" && targetSquare === "f7") {
           triggerAnnotation(targetSquare, "!!");
           puzzle3StepRef.current = 5;
-        } else if (puzzle3StepRef.current === 6 && sourceSquare === "c4" && targetSquare === "g8") {
-          triggerAnnotation(targetSquare, "!!");
-          puzzle3StepRef.current = 7;
-        } else if (puzzle3StepRef.current === 8 && sourceSquare === "h6" && targetSquare === "f7") {
-          triggerAnnotation(targetSquare, "!!");
-          puzzle3StepRef.current = 9;
         } else {
-          puzzle3StepRef.current = -1; // Script broken or past 9th move
+          puzzle3StepRef.current = -1; // Script broken or past expected moves
         }
 
         // Play sound for user's move
@@ -1617,23 +1617,6 @@ export default function HeroPuzzle({
               (m) => m.from === from && m.to === to,
             );
             if (engineMove) {
-              // Evaluate !! annotation for Black's move in Puzzle #3
-              if (puzzle3StepRef.current === 1 && from === "g8" && to === "h8") {
-                triggerAnnotation(to, "!!");
-                puzzle3StepRef.current = 2;
-              } else if (puzzle3StepRef.current === 3 && from === "h8" && to === "g8") {
-                triggerAnnotation(to, "!!");
-                puzzle3StepRef.current = 4;
-              } else if (puzzle3StepRef.current === 5 && from === "g8" && to === "h8") {
-                triggerAnnotation(to, "!!");
-                puzzle3StepRef.current = 6;
-              } else if (puzzle3StepRef.current === 7 && to === "g8") {
-                triggerAnnotation(to, "!!");
-                puzzle3StepRef.current = 8;
-              } else {
-                puzzle3StepRef.current = -1; // Script broken or past 9th move
-              }
-
               animatePieceMove(
                 from,
                 to,
@@ -2040,7 +2023,7 @@ export default function HeroPuzzle({
     if (phase0 === "PUZZLE") {
       descBottom = "White to move.";
     } else if (phase0 === "SUCCESS") {
-      descBottom = "Anderssen vs Dufresne, 1852 â€”.";
+      descBottom = "Anderssen vs Dufresne, 1852.";
     } else if (phase0 === "REPLAY") {
       descBottom = "Restarting autoplay...";
     }
@@ -2066,7 +2049,7 @@ export default function HeroPuzzle({
         descBottom = "Game over.";
       }
     } else {
-      descBottom = "Find the winning move for white.";
+      descBottom = "Find the winning move for White.";
     }
   } else {
     if (phase3 === "solved") {
@@ -2080,6 +2063,8 @@ export default function HeroPuzzle({
       } else {
         descBottom = "Game over.";
       }
+    } else {
+      descBottom = "Find the winning move for White.";
     }
   }
   // â”€â”€ Carousel definitions â”€â”€
@@ -2333,16 +2318,15 @@ export default function HeroPuzzle({
                             transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1), filter 0.8s ease !important;
                             filter: drop-shadow(0 0 5px rgba(239, 68, 68, 0.85)) sepia(1) saturate(12) hue-rotate(-50deg) brightness(0.7) contrast(1.1) !important;
                           }
-                          ${
-                            winningKingSq
-                              ? `
+                          ${winningKingSq
+                            ? `
                           #hero-chessboard-${i} [data-square="${winningKingSq}"] [data-piece],
                           #hero-chessboard-${i} [data-square="${winningKingSq}"] img {
                             transition: filter 0.8s ease !important;
                             filter: drop-shadow(0 0 5px rgba(34, 197, 94, 0.85)) sepia(1) saturate(12) hue-rotate(70deg) brightness(0.8) contrast(1.1) !important;
                           }
                           `
-                              : ""
+                            : ""
                           }
                         `}</style>
                       )}
@@ -2381,11 +2365,10 @@ export default function HeroPuzzle({
                 key={i}
                 onClick={() => toSlide(i)}
                 aria-label={`Go to slide ${i + 1}`}
-                className={`rounded-full transition-all duration-300 ${
-                  activeIndex === i
-                    ? "w-5 h-1.5 bg-[#D4AF6E]"
-                    : "w-1.5 h-1.5 bg-brand-secondary/40 hover:bg-brand-secondary"
-                }`}
+                className={`rounded-full transition-all duration-300 ${activeIndex === i
+                  ? "w-5 h-1.5 bg-[#D4AF6E]"
+                  : "w-1.5 h-1.5 bg-brand-secondary/40 hover:bg-brand-secondary"
+                  }`}
               />
             ))}
           </div>
@@ -2549,13 +2532,13 @@ export default function HeroPuzzle({
               phase1 === "black_responding" ||
               phase1 === "awaiting_mate" ||
               phase1 === "failed") && (
-              <>
-                <button
-                  onClick={() => {
-                    cleanupGame();
-                    initGame(1);
-                  }}
-                  className="
+                <>
+                  <button
+                    onClick={() => {
+                      cleanupGame();
+                      initGame(1);
+                    }}
+                    className="
                     flex-1 flex items-center justify-center gap-2
                     px-4 py-2.5 rounded-lg
                     font-sans text-sm font-semibold
@@ -2565,13 +2548,13 @@ export default function HeroPuzzle({
                     transition-all duration-200
                     btn-glow-container btn-glow-surface
                   "
-                >
-                  <RotateCcw className="w-4 h-4 text-[#D4AF6E]" />
-                  Reset
-                </button>
-                <button
-                  onClick={handleSolve1}
-                  className="
+                  >
+                    <RotateCcw className="w-4 h-4 text-[#D4AF6E]" />
+                    Reset
+                  </button>
+                  <button
+                    onClick={handleSolve1}
+                    className="
                     flex-1 flex items-center justify-center gap-2
                     px-4 py-2.5 rounded-lg
                     font-sans text-sm font-semibold
@@ -2581,12 +2564,12 @@ export default function HeroPuzzle({
                     transition-all duration-200
                     btn-glow-container btn-glow-surface
                   "
-                >
-                  <Play className="w-4 h-4 text-[#D4AF6E]" />
-                  Solve
-                </button>
-              </>
-            )}
+                  >
+                    <Play className="w-4 h-4 text-[#D4AF6E]" />
+                    Solve
+                  </button>
+                </>
+              )}
             {phase1 === "solved" && (
               <button
                 onClick={handleReplayOriginal}
@@ -2628,13 +2611,13 @@ export default function HeroPuzzle({
             {(phase2 === "idle" ||
               phase2 === "awaiting_move" ||
               phase2 === "failed") && (
-              <>
-                <button
-                  onClick={() => {
-                    cleanupGame();
-                    initGame(2);
-                  }}
-                  className="
+                <>
+                  <button
+                    onClick={() => {
+                      cleanupGame();
+                      initGame(2);
+                    }}
+                    className="
                     flex-1 flex items-center justify-center gap-2
                     px-4 py-2.5 rounded-lg
                     font-sans text-sm font-semibold
@@ -2644,12 +2627,12 @@ export default function HeroPuzzle({
                     transition-all duration-200
                     btn-glow-container btn-glow-surface
                   "
-                >
-                  <RotateCcw className="w-4 h-4 text-[#D4AF6E]" />
-                  Reset
-                </button>
-              </>
-            )}
+                  >
+                    <RotateCcw className="w-4 h-4 text-[#D4AF6E]" />
+                    Reset
+                  </button>
+                </>
+              )}
             {phase2 === "solved" && (
               <button
                 onClick={() => {
@@ -2694,13 +2677,13 @@ export default function HeroPuzzle({
             {(phase3 === "idle" ||
               phase3 === "awaiting_move" ||
               phase3 === "failed") && (
-              <>
-                <button
-                  onClick={() => {
-                    cleanupGame();
-                    initGame(3);
-                  }}
-                  className="
+                <>
+                  <button
+                    onClick={() => {
+                      cleanupGame();
+                      initGame(3);
+                    }}
+                    className="
                     flex-1 flex items-center justify-center gap-2
                     px-4 py-2.5 rounded-lg
                     font-sans text-sm font-semibold
@@ -2710,12 +2693,12 @@ export default function HeroPuzzle({
                     transition-all duration-200
                     btn-glow-container btn-glow-surface
                   "
-                >
-                  <RotateCcw className="w-4 h-4 text-[#D4AF6E]" />
-                  Reset
-                </button>
-              </>
-            )}
+                  >
+                    <RotateCcw className="w-4 h-4 text-[#D4AF6E]" />
+                    Reset
+                  </button>
+                </>
+              )}
             {phase3 === "solved" && (
               <button
                 onClick={() => {

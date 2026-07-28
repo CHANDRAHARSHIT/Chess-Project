@@ -190,10 +190,10 @@ export function useClickToMove(options: ChessboardOptions): ChessboardOptions {
     ...options,
     onSquareClick: handleSquareClick,
     squareStyles: {
-      // Board-level highlights (last move, hints, errors) are behind ours.
-      ...options.squareStyles,
-      // Click-to-move highlights are on top but only non-null entries win.
+      // Click-to-move selection dots are the base layer.
       ...optionSquares,
+      // Board-level highlights (last move, hints, errors) always win on top.
+      ...options.squareStyles,
     },
   };
 }
