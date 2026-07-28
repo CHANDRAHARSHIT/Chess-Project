@@ -1575,20 +1575,20 @@ export default function HeroPuzzle({
         if (puzzle3StepRef.current === 0 && sourceSquare === "d4" && targetSquare === "c4") {
           triggerAnnotation(targetSquare, "!!");
           puzzle3StepRef.current = 1;
-        } else if (puzzle3StepRef.current === 2 && sourceSquare === "e5" && targetSquare === "f7") {
+        } else if (puzzle3StepRef.current === 1 && sourceSquare === "e5" && targetSquare === "f7") {
+          triggerAnnotation(targetSquare, "!!");
+          puzzle3StepRef.current = 2;
+        } else if (puzzle3StepRef.current === 2 && sourceSquare === "f7" && targetSquare === "h6") {
           triggerAnnotation(targetSquare, "!!");
           puzzle3StepRef.current = 3;
-        } else if (puzzle3StepRef.current === 4 && sourceSquare === "f7" && targetSquare === "h6") {
+        } else if (puzzle3StepRef.current === 3 && sourceSquare === "c4" && targetSquare === "g8") {
+          triggerAnnotation(targetSquare, "!!");
+          puzzle3StepRef.current = 4;
+        } else if (puzzle3StepRef.current === 4 && sourceSquare === "h6" && targetSquare === "f7") {
           triggerAnnotation(targetSquare, "!!");
           puzzle3StepRef.current = 5;
-        } else if (puzzle3StepRef.current === 6 && sourceSquare === "c4" && targetSquare === "g8") {
-          triggerAnnotation(targetSquare, "!!");
-          puzzle3StepRef.current = 7;
-        } else if (puzzle3StepRef.current === 8 && sourceSquare === "h6" && targetSquare === "f7") {
-          triggerAnnotation(targetSquare, "!!");
-          puzzle3StepRef.current = 9;
         } else {
-          puzzle3StepRef.current = -1; // Script broken or past 9th move
+          puzzle3StepRef.current = -1; // Script broken or past expected moves
         }
 
         // Play sound for user's move
@@ -1617,23 +1617,6 @@ export default function HeroPuzzle({
               (m) => m.from === from && m.to === to,
             );
             if (engineMove) {
-              // Evaluate !! annotation for Black's move in Puzzle #3
-              if (puzzle3StepRef.current === 1 && from === "g8" && to === "h8") {
-                triggerAnnotation(to, "!!");
-                puzzle3StepRef.current = 2;
-              } else if (puzzle3StepRef.current === 3 && from === "h8" && to === "g8") {
-                triggerAnnotation(to, "!!");
-                puzzle3StepRef.current = 4;
-              } else if (puzzle3StepRef.current === 5 && from === "g8" && to === "h8") {
-                triggerAnnotation(to, "!!");
-                puzzle3StepRef.current = 6;
-              } else if (puzzle3StepRef.current === 7 && to === "g8") {
-                triggerAnnotation(to, "!!");
-                puzzle3StepRef.current = 8;
-              } else {
-                puzzle3StepRef.current = -1; // Script broken or past 9th move
-              }
-
               animatePieceMove(
                 from,
                 to,
@@ -2066,7 +2049,7 @@ export default function HeroPuzzle({
         descBottom = "Game over.";
       }
     } else {
-      descBottom = "Find the winning move for white.";
+      descBottom = "Find the winning move for White.";
     }
   } else {
     if (phase3 === "solved") {
@@ -2080,6 +2063,8 @@ export default function HeroPuzzle({
       } else {
         descBottom = "Game over.";
       }
+    } else {
+      descBottom = "Find the winning move for White.";
     }
   }
   // â”€â”€ Carousel definitions â”€â”€
