@@ -478,10 +478,7 @@ export default function Hero() {
                 </div>
 
                 {/* Board Area */}
-                <div
-                  className="p-4 board-cursor-glow"
-                  style={{ background: "rgba(8, 11, 20, 0.95)" }}
-                >
+                <div className="p-4 board-cursor-glow bg-brand-bg/95">
                   <HeroPuzzle />
                 </div>
               </div>

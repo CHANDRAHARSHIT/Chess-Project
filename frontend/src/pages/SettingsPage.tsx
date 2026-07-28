@@ -4,15 +4,6 @@
  * Site settings, modeled after chess.com's Settings screen
  * (https://www.chess.com/settings) — left-hand category list, right-hand
  * content panel with tabs.
- *
- * Day-one scope: only "Board & Pieces" is implemented, and within it only
- * the "Boards" and "Pieces" tabs are functional. "Background" and "Presets"
- * are shown (matching the reference layout) but disabled with a "Soon"
- * badge, same pattern already used for "Theme" in MoreMenu/AvatarDropdown.
- * The other left-nav categories (Gameplay, Interface, etc.) are stubbed out
- * the same way so the page reads as a real settings home, not just a
- * single form — future tickets can flesh those out without restructuring
- * this page.
  */
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router";
@@ -57,7 +48,7 @@ interface SettingsCategory {
   icon: typeof Grid3x3;
   available: boolean;
   /** Route this category navigates to. Omitted for categories that render
-   *  their content inline within this page (currently just Board & Pieces). */
+   *  their content inline within this page (currently Board & Pieces and Profile). */
   path?: string;
 }
 
@@ -107,8 +98,7 @@ export default function SettingsPage() {
   }, [searchParams]);
 
   // Changes are staged locally and only pushed into BoardSettingsContext
-  // (and localStorage) when the player clicks "Save" — mirrors the
-  // Cancel/Save pattern on chess.com's own Board & Pieces screen.
+  // (and localStorage) when the player clicks "Save"
   const [pendingBoardThemeId, setPendingBoardThemeId] = useState(boardTheme.id);
   const [pendingPieceSetId, setPendingPieceSetId] = useState(pieceSet.id);
   const [justSaved, setJustSaved] = useState(false);
@@ -140,13 +130,13 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="min-h-screen text-brand-text flex flex-col bg-transparent selection:bg-brand-accent selection:text-white">
+    <div className="min-h-screen text-brand-text flex flex-col bg-transparent selection:bg-brand-accent selection:text-brand-text">
       <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-5 pb-16 relative z-10 flex flex-col gap-6">
         {/* Back link */}
         <div className="mt-4">
           <button
             onClick={() => navigate("/")}
-            className="inline-flex items-center gap-2 text-brand-secondary hover:text-white transition-colors duration-200 font-sans text-sm font-semibold cursor-pointer group"
+            className="inline-flex items-center gap-2 text-brand-secondary hover:text-brand-text transition-colors duration-200 font-sans text-sm font-semibold cursor-pointer group"
           >
             <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
             Back to Play
@@ -158,7 +148,7 @@ export default function SettingsPage() {
           <div className="w-10 h-10 rounded-xl bg-brand-accent/10 flex items-center justify-center text-brand-accent shrink-0">
             <SettingsIcon className="w-5 h-5" />
           </div>
-          <h1 className="text-2xl sm:text-3xl font-display font-bold text-white tracking-wide">
+          <h1 className="text-2xl sm:text-3xl font-display font-bold text-brand-text tracking-wide">
             Settings
           </h1>
         </div>
@@ -173,7 +163,7 @@ export default function SettingsPage() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search Settings"
-                className="w-full bg-white/5 border border-brand-border/40 rounded-lg pl-9 pr-3 py-2 text-sm font-sans text-white placeholder:text-brand-secondary/50 focus:outline-none focus:ring-1 focus:ring-brand-accent/50 focus:border-brand-accent/50 transition-colors"
+                className="w-full bg-brand-text/5 border border-[rgba(212,175,110,0.40)] rounded-lg pl-9 pr-3 py-2 text-sm font-sans text-brand-text placeholder:text-brand-secondary/50 focus:outline-none focus:ring-1 focus:ring-brand-accent/50 focus:border-brand-accent/50 transition-colors"
               />
             </div>
 
@@ -196,7 +186,7 @@ export default function SettingsPage() {
                       <span className="text-sm font-sans flex-1">
                         {cat.name}
                       </span>
-                      <span className="text-[9px] font-mono px-1.5 py-0.5 rounded-full border border-brand-border/30 text-brand-secondary/40">
+                      <span className="text-[9px] font-mono px-1.5 py-0.5 rounded-full border border-[rgba(212,175,110,0.30)] text-brand-secondary/40">
                         Soon
                       </span>
                     </div>
@@ -225,7 +215,7 @@ export default function SettingsPage() {
                     className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors duration-150 cursor-pointer ${
                       isActive
                         ? "bg-brand-accent/10 text-brand-accent font-medium ring-1 ring-brand-accent/30"
-                        : "text-brand-secondary hover:text-white hover:bg-white/5"
+                        : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5"
                     }`}
                   >
                     <Icon className="w-4 h-4 shrink-0" />
@@ -241,10 +231,10 @@ export default function SettingsPage() {
             </nav>
           </div>
 
-          {/* ── RIGHT: Board & Pieces panel ─────────────────────────────── */}
+          {/* ── RIGHT: Board & Pieces panel or Profile Content ──────────── */}
           {activeCategory === "board-pieces" ? (
-            <div className="bg-brand-surface/30 border border-brand-border/40 rounded-2xl p-5 sm:p-7">
-              <h2 className="text-xl font-display font-bold text-white tracking-wide">
+            <div className="bg-brand-surface/30 border border-[rgba(212,175,110,0.40)] rounded-2xl p-5 sm:p-7">
+              <h2 className="text-xl font-display font-bold text-brand-text tracking-wide">
                 Board & Pieces
               </h2>
               <p className="text-sm font-sans text-brand-secondary/70 mt-1">
@@ -252,7 +242,7 @@ export default function SettingsPage() {
               </p>
 
               {/* Tabs */}
-              <div className="flex items-center gap-6 border-b border-brand-border/30 mt-6 overflow-x-auto no-scrollbar">
+              <div className="flex items-center gap-6 border-b border-[rgba(212,175,110,0.30)] mt-6 overflow-x-auto no-scrollbar">
                 {TABS.map((tab) => {
                   if (!tab.available) {
                     return (
@@ -262,7 +252,7 @@ export default function SettingsPage() {
                         className="pb-3 text-sm font-sans font-medium text-brand-secondary/30 cursor-not-allowed flex items-center gap-1.5 select-none whitespace-nowrap"
                       >
                         {tab.name}
-                        <span className="text-[9px] font-mono px-1.5 py-0.5 rounded-full border border-brand-border/30 text-brand-secondary/40">
+                        <span className="text-[9px] font-mono px-1.5 py-0.5 rounded-full border border-[rgba(212,175,110,0.30)] text-brand-secondary/40">
                           Soon
                         </span>
                       </div>
@@ -280,8 +270,8 @@ export default function SettingsPage() {
                       }}
                       className={`relative pb-3 text-sm font-sans font-semibold transition-colors cursor-pointer whitespace-nowrap ${
                         isActive
-                          ? "text-white"
-                          : "text-brand-secondary hover:text-white"
+                          ? "text-brand-text"
+                          : "text-brand-secondary hover:text-brand-text"
                       }`}
                     >
                       {tab.name}
@@ -312,7 +302,7 @@ export default function SettingsPage() {
                             className={`group relative flex flex-col items-center gap-2 rounded-xl p-2.5 transition-all duration-150 cursor-pointer ${
                               isSelected
                                 ? "ring-2 ring-brand-accent bg-brand-accent/5"
-                                : "ring-1 ring-brand-border/40 hover:ring-brand-border/80 hover:bg-white/[0.03]"
+                                : "ring-1 ring-brand-border/40 hover:ring-brand-border/80 hover:bg-brand-text/[0.03]"
                             }`}
                           >
                             <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg overflow-hidden grid grid-cols-2 grid-rows-2 shadow-inner shadow-black/30">
@@ -321,7 +311,7 @@ export default function SettingsPage() {
                               <div style={{ backgroundColor: theme.dark }} />
                               <div style={{ backgroundColor: theme.light }} />
                             </div>
-                            <span className="text-xs font-sans text-brand-secondary group-hover:text-white transition-colors">
+                            <span className="text-xs font-sans text-brand-secondary group-hover:text-brand-text transition-colors">
                               {theme.name}
                             </span>
                             {isSelected && (
@@ -354,7 +344,7 @@ export default function SettingsPage() {
                             className={`group relative flex flex-col items-center gap-2 rounded-xl p-2.5 transition-all duration-150 cursor-pointer ${
                               isSelected
                                 ? "ring-2 ring-brand-accent bg-brand-accent/5"
-                                : "ring-1 ring-brand-border/40 hover:ring-brand-border/80 hover:bg-white/[0.03]"
+                                : "ring-1 ring-brand-border/40 hover:ring-brand-border/80 hover:bg-brand-text/[0.03]"
                             }`}
                           >
                             <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg bg-[#4d4536] flex items-center justify-center gap-1.5 p-2">
@@ -365,7 +355,7 @@ export default function SettingsPage() {
                                 {set.pieces.wK()}
                               </div>
                             </div>
-                            <span className="text-xs font-sans text-brand-secondary group-hover:text-white transition-colors">
+                            <span className="text-xs font-sans text-brand-secondary group-hover:text-brand-text transition-colors">
                               {set.name}
                             </span>
                             {isSelected && (
@@ -397,7 +387,7 @@ export default function SettingsPage() {
               </div>
 
               {/* Save / Cancel */}
-              <div className="flex items-center justify-end gap-3 mt-8 pt-6 border-t border-brand-border/20">
+              <div className="flex items-center justify-end gap-3 mt-8 pt-6 border-t border-[rgba(212,175,110,0.20)]">
                 {justSaved && (
                   <span className="text-xs font-sans font-semibold text-emerald-400 flex items-center gap-1.5 mr-auto">
                     <Check className="w-3.5 h-3.5" /> Saved
@@ -407,7 +397,7 @@ export default function SettingsPage() {
                   type="button"
                   onClick={handleCancel}
                   disabled={!hasChanges}
-                  className="px-5 py-2.5 rounded-xl font-sans text-sm font-semibold bg-white/5 border border-white/10 text-brand-secondary hover:text-white hover:border-white/20 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                  className="px-5 py-2.5 rounded-xl font-sans text-sm font-semibold bg-brand-text/5 border border-white/10 text-brand-secondary hover:text-brand-text hover:border-white/20 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
                 >
                   Cancel
                 </button>

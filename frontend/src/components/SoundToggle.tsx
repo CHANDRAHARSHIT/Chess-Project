@@ -60,8 +60,8 @@ export default function SoundToggle() {
         'w-8 h-8 rounded-lg',
         'border transition-all duration-200',
         enabled
-          ? 'border-transparent text-brand-secondary hover:text-ivory hover:border-brand-border/40 hover:bg-white/5'
-          : 'border-brand-border/40 bg-white/5 text-ivory/60 hover:text-ivory hover:border-brand-border/70',
+          ? 'border-transparent text-brand-secondary hover:text-ivory hover:border-[rgba(212,175,110,0.40)] hover:bg-brand-text/5'
+          : 'border-[rgba(212,175,110,0.40)] bg-brand-text/5 text-ivory/60 hover:text-ivory hover:border-[rgba(212,175,110,0.70)]',
       ].join(' ')}
     >
       {enabled ? (

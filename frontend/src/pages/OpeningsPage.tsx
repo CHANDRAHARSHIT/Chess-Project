@@ -64,7 +64,7 @@ function OpeningSidebar({
       style={{
         width: "280px",
         height: "calc(100vh - 11rem)",
-        background: "rgba(8,11,20,0.80)",
+        background: "var(--glass-bg)",
         border: "1px solid rgba(212,175,110,0.10)",
         backdropFilter: "blur(12px)",
       }}
@@ -91,7 +91,7 @@ function OpeningSidebar({
       </div>
 
       {/* Search bar */}
-      <div className="px-3 py-2.5" style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+      <div className="px-3 py-2.5" style={{ borderBottom: "1px solid var(--glass-border)" }}>
         <div className="relative">
           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-brand-secondary pointer-events-none" />
           <input
@@ -101,15 +101,15 @@ function OpeningSidebar({
             placeholder="Search by name or ECO…"
             className="w-full pl-8 pr-3 py-2 text-xs font-sans rounded-lg outline-none transition-all duration-200 placeholder:text-brand-secondary/40"
             style={{
-              background: "rgba(255,255,255,0.04)",
-              border: "1px solid rgba(255,255,255,0.08)",
-              color: "#e5dfd5",
+              background: "var(--glass-bg)",
+              border: "1px solid var(--glass-border)",
+              color: "var(--text-primary)",
             }}
             onFocus={(e) => {
               e.currentTarget.style.borderColor = "rgba(212,175,110,0.35)";
             }}
             onBlur={(e) => {
-              e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)";
+              e.currentTarget.style.borderColor = "var(--glass-border)";
             }}
           />
         </div>
@@ -123,7 +123,7 @@ function OpeningSidebar({
               <div
                 key={i}
                 className="h-11 rounded-lg animate-pulse"
-                style={{ background: "rgba(255,255,255,0.04)" }}
+                style={{ background: "var(--glass-bg)" }}
               />
             ))}
           </div>
@@ -174,7 +174,9 @@ function OpeningSidebar({
                   <p
                     className="font-sans text-xs leading-tight truncate mt-0.5 transition-colors duration-150"
                     style={{
-                      color: isSelected ? "#e5dfd5" : "#9ca3af",
+                      color: isSelected 
+                        ? "var(--text-primary)"
+                        : "var(--text-secondary)",
                     }}
                   >
                     {opening.name}
@@ -255,7 +257,7 @@ export default function OpeningsPage() {
             soundManager.playButtonClick();
             navigate(-1);
           }}
-          className="flex items-center gap-1.5 text-brand-secondary hover:text-white text-sm font-sans transition-colors duration-200 cursor-pointer group"
+          className="flex items-center gap-1.5 text-brand-secondary hover:text-brand-text text-sm font-sans transition-colors duration-200 cursor-pointer group"
         >
           <ArrowLeft className="w-4 h-4 transition-transform duration-200 group-hover:-translate-x-0.5" />
           <span>Back</span>
@@ -284,7 +286,7 @@ export default function OpeningsPage() {
             reset();
           }}
           disabled={!selectedOpening}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-brand-secondary hover:text-white text-xs font-mono uppercase tracking-wider hover:bg-white/5 border border-transparent hover:border-brand-border/40 transition-all duration-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-brand-secondary hover:text-brand-text text-xs font-mono uppercase tracking-wider hover:bg-brand-text/5 border border-transparent hover:border-[rgba(212,175,110,0.40)] transition-all duration-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
         >
           <RotateCcw className="w-3.5 h-3.5" />
           <span className="hidden sm:inline">Reset</span>
@@ -320,9 +322,9 @@ export default function OpeningsPage() {
             <select
               className="w-full pl-9 pr-4 py-2.5 text-sm font-sans rounded-xl outline-none cursor-pointer appearance-none"
               style={{
-                background: "rgba(8,11,20,0.80)",
-                border: "1px solid rgba(212,175,110,0.15)",
-                color: "#e5dfd5",
+                background: "var(--glass-bg)",
+                border: "1px solid var(--glass-border-gold)",
+                color: "var(--text-primary)",
               }}
               value={selectedOpening?.id ?? ""}
               onChange={(e) => {
@@ -382,12 +384,12 @@ export default function OpeningsPage() {
                       Incorrect move — try again
                     </span>
                   ) : status === "opponent" ? (
-                    <span className="font-mono uppercase tracking-wider text-xs font-bold text-brand-secondary flex items-center gap-1.5 bg-white/5 border border-white/10 px-3 py-1 rounded-full">
+                    <span className="font-mono uppercase tracking-wider text-xs font-bold text-brand-secondary flex items-center gap-1.5 bg-brand-text/5 border border-white/10 px-3 py-1 rounded-full">
                       <span className="w-2 h-2 rounded-full bg-brand-secondary animate-pulse" />
                       Opponent thinking…
                     </span>
                   ) : status === "idle" ? (
-                    <span className="font-mono uppercase tracking-wider text-xs font-bold text-brand-secondary/50 flex items-center gap-1.5 bg-white/5 border border-white/5 px-3 py-1 rounded-full">
+                    <span className="font-mono uppercase tracking-wider text-xs font-bold text-brand-secondary/50 flex items-center gap-1.5 bg-brand-text/5 border border-white/5 px-3 py-1 rounded-full">
                       Choose an opening to begin
                     </span>
                   ) : (
@@ -406,7 +408,7 @@ export default function OpeningsPage() {
             <div
               className="lg:w-72 xl:w-80 rounded-2xl p-5 flex flex-col shrink-0"
               style={{
-                background: "rgba(8,11,20,0.7)",
+                background: "var(--glass-bg)",
                 border: "1px solid rgba(212,175,110,0.12)",
                 backdropFilter: "blur(12px)",
                 boxShadow: "0 8px 32px rgba(0,0,0,0.4)",
