@@ -110,7 +110,7 @@ export default function BrandSection() {
     <section
       ref={sectionRef}
       id="brand-section"
-      className="relative py-24 md:py-28 overflow-hidden bg-brand-surface"
+      className="relative py-24 md:py-28 overflow-hidden bg-brand-bg"
     >
       {/* Gold ambient glow */}
       <div
