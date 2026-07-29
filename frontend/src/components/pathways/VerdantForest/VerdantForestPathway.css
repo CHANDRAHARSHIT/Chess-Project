@@ -11,7 +11,7 @@
   border: 1px solid rgba(16, 185, 129, 0.35);
   background-color: #051c14;
   user-select: none;
-  box-shadow: 0 25px 50px -12px rgba(5, 28, 20, 0.8);
+  box-shadow: 0 8px 20px -4px rgba(5, 28, 20, 0.35);
 }
 
 .verdant-forest-bg {

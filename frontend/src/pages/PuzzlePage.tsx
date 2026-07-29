@@ -255,31 +255,20 @@ export default function PuzzlePage() {
 
         <button
           id="custom-puzzles-btn"
-          onClick={handleOpenCustomConfig}
-          className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-xs font-mono uppercase tracking-wider font-semibold transition-all duration-300 cursor-pointer"
+          disabled
+          title="Coming Soon"
+          className="relative z-10 w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-xs font-mono uppercase tracking-wider font-semibold transition-all duration-300 opacity-50 cursor-not-allowed select-none"
           style={{
-            background: "linear-gradient(135deg, rgba(212,175,110,0.10) 0%, rgba(184,147,74,0.06) 100%)",
-            border: "1px solid rgba(212,175,110,0.22)",
+            background: "linear-gradient(135deg, rgba(212,175,110,0.06) 0%, rgba(184,147,74,0.03) 100%)",
+            border: "1px solid rgba(212,175,110,0.15)",
             color: "#D4AF6E",
-            boxShadow: "0 2px 12px rgba(212,175,110,0.07)",
-          }}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.background =
-              "linear-gradient(135deg, rgba(212,175,110,0.18) 0%, rgba(184,147,74,0.12) 100%)";
-            (e.currentTarget as HTMLButtonElement).style.boxShadow =
-              "0 4px 20px rgba(212,175,110,0.18)";
-            (e.currentTarget as HTMLButtonElement).style.transform = "translateY(-1px)";
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.background =
-              "linear-gradient(135deg, rgba(212,175,110,0.10) 0%, rgba(184,147,74,0.06) 100%)";
-            (e.currentTarget as HTMLButtonElement).style.boxShadow =
-              "0 2px 12px rgba(212,175,110,0.07)";
-            (e.currentTarget as HTMLButtonElement).style.transform = "translateY(0)";
           }}
         >
-          <Sparkles className="w-3.5 h-3.5" />
-          Custom Puzzles
+          <Sparkles className="w-3.5 h-3.5 opacity-70" />
+          <span>Custom Puzzles</span>
+          <span className="text-[9px] font-mono px-1.5 py-0.5 rounded-full bg-brand-text/10 text-brand-secondary border border-brand-border/40">
+            Soon
+          </span>
         </button>
       </div>
     );
@@ -530,17 +519,20 @@ export default function PuzzlePage() {
                       />
                       <button
                         id="custom-puzzles-btn-mobile"
-                        onClick={handleOpenCustomConfig}
-                        className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-xs font-mono uppercase tracking-wider font-semibold transition-all duration-300 cursor-pointer"
+                        disabled
+                        title="Coming Soon"
+                        className="relative z-10 w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-xs font-mono uppercase tracking-wider font-semibold transition-all duration-300 opacity-50 cursor-not-allowed select-none"
                         style={{
-                          background: "linear-gradient(135deg, rgba(212,175,110,0.10) 0%, rgba(184,147,74,0.06) 100%)",
-                          border: "1px solid rgba(212,175,110,0.22)",
+                          background: "linear-gradient(135deg, rgba(212,175,110,0.06) 0%, rgba(184,147,74,0.03) 100%)",
+                          border: "1px solid rgba(212,175,110,0.15)",
                           color: "#D4AF6E",
-                          boxShadow: "0 2px 12px rgba(212,175,110,0.07)",
                         }}
                       >
-                        <Sparkles className="w-3.5 h-3.5" />
-                        Custom Puzzles
+                        <Sparkles className="w-3.5 h-3.5 opacity-70" />
+                        <span>Custom Puzzles</span>
+                        <span className="text-[9px] font-mono px-1.5 py-0.5 rounded-full bg-brand-text/10 text-brand-secondary border border-brand-border/40">
+                          Soon
+                        </span>
                       </button>
                     </div>
                   );
