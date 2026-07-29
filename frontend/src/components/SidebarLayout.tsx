@@ -295,7 +295,7 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
     { name: "Quick Game", href: "/play", icon: Zap, comingSoon: true },
     { name: "Lessons", href: "/lessons", icon: BookOpen, comingSoon: true },
     { name: "Puzzles", href: "/puzzles", icon: Puzzle },
-    { name: "Variants", href: "/variants", icon: Shuffle, comingSoon: true },
+    { name: "Variants", href: "/variants", icon: Shuffle },
     { name: "Pricing", href: "/pricing", icon: CreditCard },
     { name: "Premium", href: "/premium", icon: Crown },
   ];
