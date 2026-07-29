@@ -52,15 +52,19 @@
 
   /* --- Marble / Stone textures --- */
   --marble-light: rgba(245, 240, 232, 0.04);
-  --marble-line: rgba(212, 175, 110, 0.15);
-  --marble-border: rgba(212, 175, 110, 0.30);
-  --marble-border-strong: rgba(212, 175, 110, 0.50);
+  --marble-line: rgba(212, 175, 110, 0.10);
+  --marble-border: rgba(212, 175, 110, 0.18);
+  --marble-border-strong: rgba(212, 175, 110, 0.30);
 
   /* --- Glassmorphism --- */
   --glass-bg: rgba(12, 16, 32, 0.80);
-  --glass-border: rgba(212, 175, 110, 0.20);
-  --glass-border-gold: rgba(212, 175, 110, 0.35);
+  --glass-border: rgba(212, 175, 110, 0.12);
+  --glass-border-gold: rgba(212, 175, 110, 0.18);
   --glass-blur: saturate(180%) blur(20px);
+
+  /* --- Eval Bar --- */
+  --eval-bar-bg: rgba(12, 16, 32, 0.85);
+  --eval-bar-border: rgba(255, 255, 255, 0.08);
 
   /* --- Shadows --- */
   --shadow-gold: 0 0 12px rgba(212, 175, 110, 0.015), 0 1px 12px rgba(0, 0, 0, 0.6);
@@ -104,6 +108,10 @@
   --glass-bg: rgba(245, 240, 230, 0.90);
   --glass-border: rgba(184, 147, 74, 0.35);
   --glass-border-gold: rgba(184, 147, 74, 0.45);
+
+  /* --- Eval Bar (Light Mode contrast fix) --- */
+  --eval-bar-bg: #1C1917;
+  --eval-bar-border: rgba(184, 147, 74, 0.55);
 
   /* --- Shadows --- */
   --shadow-deep: 0 20px 48px -12px rgba(184, 147, 74, 0.20), 0 4px 16px rgba(0, 0, 0, 0.04);
