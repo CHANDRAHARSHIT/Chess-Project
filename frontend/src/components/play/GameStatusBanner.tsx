@@ -1,6 +1,7 @@
 import { Trophy, ShieldAlert, RotateCcw } from 'lucide-react';
 import { type GameStatus, type GameResult } from '../../types/chess';
 import { soundManager } from '../../utils/SoundManager';
+import { useButtonGlow } from '../../hooks/useButtonGlow';
 
 interface GameStatusBannerProps {
   status: GameStatus;
@@ -15,6 +16,8 @@ export function GameStatusBanner({
   playerColor,
   onNewGame,
 }: GameStatusBannerProps) {
+  const playAgainRef = useButtonGlow<HTMLButtonElement>();
+
   if (status === 'idle' || status === 'playing') return null;
 
   const isPlayerWinner =
@@ -54,13 +57,14 @@ export function GameStatusBanner({
       <p className="text-xs sm:text-sm text-brand-secondary mb-6">{subtitle}</p>
 
       <button
+        ref={playAgainRef}
         onClick={() => {
           soundManager.playButtonClick();
           onNewGame();
         }}
-        className="flex items-center gap-2 py-3 px-6 rounded-xl font-display font-bold text-sm text-black bg-gradient-to-r from-[#D4AF6E] via-[#F3E5AB] to-[#D4AF6E] hover:brightness-110 shadow-[0_0_25px_rgba(212,175,110,0.3)] transition-all duration-300 transform active:scale-95"
+        className="flex items-center gap-2 py-3 px-6 rounded-xl font-mono text-xs uppercase tracking-widest font-bold btn-premium-cta btn-glow-container btn-glow-accent cta-shine cursor-pointer shadow-lg hover:scale-[1.01] active:scale-[0.98] transition-all"
       >
-        <RotateCcw className="w-4 h-4" />
+        <RotateCcw className="w-4 h-4 text-brand-accent" />
         <span>Play Again</span>
       </button>
     </div>

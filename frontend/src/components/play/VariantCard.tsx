@@ -1,5 +1,5 @@
 import { Link } from 'react-router';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight, Shuffle } from 'lucide-react';
 import BoardPreview from '../BoardPreview';
 import { soundManager } from '../../utils/SoundManager';
 
@@ -27,7 +27,7 @@ export function VariantCard({ name, tagline, href }: VariantCardProps) {
           <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono uppercase tracking-wider font-bold bg-brand-accent/15 text-brand-accent border border-brand-accent/30">
             Fischer Random
           </span>
-          <Sparkles className="w-3.5 h-3.5 text-brand-accent" />
+          <Shuffle className="w-3.5 h-3.5 text-brand-accent" />
         </div>
 
         <h3 className="font-display font-bold text-2xl text-white group-hover:text-brand-accent transition-colors">

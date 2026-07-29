@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { X, Sparkles } from 'lucide-react';
+import { X, Shuffle, Play } from 'lucide-react';
 import { DIFFICULTY_CONFIGS, type DifficultyLevel } from '../../types/chess';
 import { type Chess960GameOptions } from '../../hooks/useChess960Game';
 import { soundManager } from '../../utils/SoundManager';
+import { useButtonGlow } from '../../hooks/useButtonGlow';
 
 interface Chess960SetupPanelProps {
   isOpen: boolean;
@@ -17,6 +18,7 @@ export function Chess960SetupPanel({
 }: Chess960SetupPanelProps) {
   const [selectedColor, setSelectedColor] = useState<'w' | 'b' | 'random'>('random');
   const [selectedDifficulty, setSelectedDifficulty] = useState<DifficultyLevel>(3);
+  const startBtnRef = useButtonGlow<HTMLButtonElement>();
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -55,7 +57,7 @@ export function Chess960SetupPanel({
         <div className="flex items-center justify-between border-b border-brand-border/40 pb-4">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-xl bg-brand-accent/10 border border-brand-accent/20 text-brand-accent">
-              <Sparkles className="w-5 h-5" />
+              <Shuffle className="w-5 h-5" />
             </div>
             <div>
               <h2 id="setup-title" className="font-display font-bold text-xl text-white">
@@ -151,10 +153,12 @@ export function Chess960SetupPanel({
           {/* Start CTA */}
           <div className="pt-2">
             <button
+              ref={startBtnRef}
               type="submit"
-              className="w-full py-3.5 px-6 rounded-xl font-display font-bold text-base text-black bg-gradient-to-r from-[#D4AF6E] via-[#F3E5AB] to-[#D4AF6E] hover:brightness-110 shadow-[0_0_25px_rgba(212,175,110,0.3)] transition-all duration-300 transform active:scale-[0.99]"
+              className="w-full py-3.5 px-6 rounded-xl font-mono text-xs uppercase tracking-widest font-bold btn-premium-cta btn-glow-container btn-glow-accent cta-shine cursor-pointer shadow-lg hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2 group"
             >
-              Start Game
+              <Play className="w-4 h-4 text-brand-accent fill-brand-accent/20 group-hover:scale-110 transition-transform" />
+              <span>Start Game</span>
             </button>
           </div>
         </form>

@@ -13,7 +13,7 @@ import {
   BookMarked,
   ChevronDown,
   Dices,
-  Sparkles,
+  Shuffle,
 } from "lucide-react";
 import { useLogoAnimation } from "../hooks/useLogoAnimation";
 import { soundManager } from "../utils/SoundManager";
@@ -72,7 +72,7 @@ export default function SidebarLayout({
       icon: Bot,
       subItems: [
         { name: "Variants", href: "/variants", icon: Dices },
-        { name: "Chess 960", href: "/play/chess960", icon: Sparkles },
+        { name: "Chess 960", href: "/play/chess960", icon: Shuffle },
       ],
     },
     {
