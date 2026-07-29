@@ -29,14 +29,12 @@ function getDevCountryOverride(): string | undefined {
 
 export function usePricing() {
   const [pricing, setPricing] = useState<PricingResponse | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedCountry, setSelectedCountry] = useState<string | undefined>(
     getDevCountryOverride()
   );
 
   const fetchPricing = useCallback(async (countryOverride?: string) => {
-    setLoading(true);
     setError(null);
     try {
       const country =
@@ -54,8 +52,6 @@ export function usePricing() {
       console.warn("[usePricing]: Failed to fetch backend pricing, using fallback NZD pricing.", err);
       setError(err.message || "Failed to load local pricing. Displaying default NZD prices.");
       setPricing(FALLBACK_PRICING);
-    } finally {
-      setLoading(false);
     }
   }, [selectedCountry]);
 

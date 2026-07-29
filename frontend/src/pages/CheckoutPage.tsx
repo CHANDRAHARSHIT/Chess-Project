@@ -99,7 +99,6 @@ export default function CheckoutPage() {
 
   const localMonthly = DIAMOND_USD_MONTHLY * monthlyRate;
   const localYearlyTotal = DIAMOND_USD_YEARLY * yearlyRate;
-  const localYearlyMonthlyEquiv = localYearlyTotal / 12;
 
   const basePriceFormatted = isYearly
     ? `${symbol}${fmt(localMonthly * 12)}`   // full year at monthly rate

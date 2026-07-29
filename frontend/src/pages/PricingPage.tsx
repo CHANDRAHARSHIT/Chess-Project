@@ -437,7 +437,6 @@ export default function PricingPage() {
     return params.get("error") === "payment_expired";
   });
 
-  const diamondPlan = PLANS.find((plan) => plan.id === "diamond");
   const diamondDisplayPrice = getDynamicPlanPrice("diamond", isYearly, pricing);
   const diamondYearlyTotalDisplay = getDynamicYearlyTotal("diamond", pricing);
 
