@@ -36,7 +36,7 @@ export default function VariantsPage() {
             <Dices className="w-6 h-6" />
           </div>
           <div>
-            <h1 className="font-display font-bold text-3xl sm:text-4xl text-white tracking-tight">
+            <h1 className="font-display font-bold text-3xl sm:text-4xl text-brand-text tracking-tight">
               Chess Variants
             </h1>
             <p className="text-sm text-brand-secondary">
@@ -59,7 +59,7 @@ export default function VariantsPage() {
         {searchQuery && (
           <button
             onClick={() => setSearchQuery('')}
-            className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-brand-secondary hover:text-white transition-colors"
+            className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-brand-secondary hover:text-brand-text transition-colors"
           >
             <X className="w-4 h-4" />
           </button>

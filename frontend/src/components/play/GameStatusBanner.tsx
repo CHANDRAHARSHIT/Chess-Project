@@ -42,7 +42,7 @@ export function GameStatusBanner({
       : 'Engine won this round.';
 
   return (
-    <div className="absolute inset-0 z-20 bg-[#080B14]/90 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center animate-fadeIn">
+    <div className="absolute inset-0 z-20 bg-brand-bg/90 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center animate-fadeIn">
       <div className="p-3.5 rounded-2xl bg-brand-accent/10 border border-brand-accent/20 text-brand-accent mb-4">
         {isPlayerWinner ? (
           <Trophy className="w-8 h-8 text-amber-400" />
@@ -51,7 +51,7 @@ export function GameStatusBanner({
         )}
       </div>
 
-      <h2 className="font-display font-bold text-2xl sm:text-3xl text-white mb-1">
+      <h2 className="font-display font-bold text-2xl sm:text-3xl text-brand-text mb-1">
         {title}
       </h2>
       <p className="text-xs sm:text-sm text-brand-secondary mb-6">{subtitle}</p>

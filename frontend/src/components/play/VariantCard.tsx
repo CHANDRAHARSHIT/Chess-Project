@@ -30,7 +30,7 @@ export function VariantCard({ name, tagline, href }: VariantCardProps) {
           <Shuffle className="w-3.5 h-3.5 text-brand-accent" />
         </div>
 
-        <h3 className="font-display font-bold text-2xl text-white group-hover:text-brand-accent transition-colors">
+        <h3 className="font-display font-bold text-2xl text-brand-text group-hover:text-brand-accent transition-colors">
           {name}
         </h3>
 
@@ -40,7 +40,7 @@ export function VariantCard({ name, tagline, href }: VariantCardProps) {
       </div>
 
       {/* Action Arrow */}
-      <div className="shrink-0 p-3 rounded-xl bg-white/5 border border-white/10 group-hover:bg-brand-accent group-hover:border-brand-accent text-brand-secondary group-hover:text-black transition-all duration-300">
+      <div className="shrink-0 p-3 rounded-xl bg-brand-surface/60 border border-brand-border/60 group-hover:bg-brand-accent group-hover:border-brand-accent text-brand-secondary group-hover:text-black transition-all duration-300">
         <ArrowRight className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
       </div>
     </Link>

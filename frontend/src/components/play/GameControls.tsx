@@ -22,7 +22,7 @@ export function GameControls({
   const isPlaying = status === 'playing';
 
   const btnClass =
-    'flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs uppercase tracking-wider font-semibold bg-white/5 border border-white/10 hover:border-brand-accent/40 text-brand-secondary hover:text-white transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-white/10 disabled:hover:text-brand-secondary';
+    'flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs uppercase tracking-wider font-semibold bg-brand-surface/60 border border-brand-border/60 hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-brand-border/60 disabled:hover:text-brand-secondary';
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 p-3 bg-brand-surface/40 border border-brand-border/60 rounded-xl backdrop-blur-md">
