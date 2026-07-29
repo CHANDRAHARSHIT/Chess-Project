@@ -1,4 +1,5 @@
 import HomePage from "../pages/HomePage";
+import ContactPage from "../pages/ContactPage";
 import PuzzlePage from "../pages/PuzzlePage";
 import { Navigate } from "react-router";
 import SettingsPage from "../pages/SettingsPage";
@@ -21,6 +22,7 @@ export interface RouteConfig {
 // Routes that run inside the MainLayout (Navbar + Sidebar + Footer)
 export const mainRoutes: RouteConfig[] = [
   { path: "/", element: <HomePage /> },
+  { path: "/contact", element: <ContactPage /> },
   { path: "/puzzles", element: <PuzzlePage /> },
   { path: "/openings", element: <OpeningsPage /> },
   { path: "/subscriptions", element: <SubscriptionsPage /> },

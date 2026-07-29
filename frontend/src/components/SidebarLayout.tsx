@@ -293,8 +293,15 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
   ];
 
   const footerLinks = [
-    "About", "Copyright", "Contact Us", "Creator", "Advertise",
-    "Developers", "Terms", "Privacy Policy & Safety", "How XLChess works"
+    { name: "About", href: "#", comingSoon: true },
+    { name: "Copyright", href: "#", comingSoon: true },
+    { name: "Contact Us", href: "/contact", comingSoon: false },
+    { name: "Creator", href: "#", comingSoon: true },
+    { name: "Advertise", href: "#", comingSoon: true },
+    { name: "Developers", href: "#", comingSoon: true },
+    { name: "Terms", href: "#", comingSoon: true },
+    { name: "Privacy Policy & Safety", href: "#", comingSoon: true },
+    { name: "How XLChess works", href: "#", comingSoon: true }
   ];
 
   const youSection = [
@@ -684,7 +691,18 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
               <div className="mt-auto px-6 py-4 flex flex-col gap-4 text-[12px] text-brand-secondary font-sans border-t border-[#3F3F3F] pt-6">
                 <div className="flex flex-wrap gap-x-4 gap-y-2.5 font-medium tracking-wide">
                   {footerLinks.map(link => (
-                    <a key={link} href="#" className="hover:text-brand-text transition-colors whitespace-nowrap">{link}</a>
+                    <a
+                      key={link.name}
+                      href={link.comingSoon ? "#" : link.href}
+                      title={link.comingSoon ? "Coming soon" : undefined}
+                      onClick={(e) => {
+                        if (link.comingSoon) e.preventDefault();
+                        else handleLinkClick(link.href, e);
+                      }}
+                      className={`whitespace-nowrap transition-colors ${link.comingSoon ? 'opacity-60 cursor-not-allowed select-none' : 'hover:text-brand-text cursor-pointer'}`}
+                    >
+                      {link.name}
+                    </a>
                   ))}
                 </div>
                 <div className="flex items-center gap-2 mt-4 pt-4 border-t border-[#3F3F3F]">
@@ -868,7 +886,18 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
             <div className="mt-auto px-6 py-4 flex flex-col gap-4 text-[12px] text-brand-secondary font-sans border-t border-[#3F3F3F] pt-6">
               <div className="flex flex-wrap gap-x-4 gap-y-2.5 font-medium tracking-wide">
                 {footerLinks.map(link => (
-                  <a key={link} href="#" className="hover:text-brand-text transition-colors whitespace-nowrap">{link}</a>
+                  <a
+                    key={link.name}
+                    href={link.comingSoon ? "#" : link.href}
+                    title={link.comingSoon ? "Coming soon" : undefined}
+                    onClick={(e) => {
+                      if (link.comingSoon) e.preventDefault();
+                      else handleLinkClick(link.href, e);
+                    }}
+                    className={`whitespace-nowrap transition-colors ${link.comingSoon ? 'opacity-60 cursor-not-allowed select-none' : 'hover:text-brand-text cursor-pointer'}`}
+                  >
+                    {link.name}
+                  </a>
                 ))}
               </div>
               <div className="flex items-center gap-2 mt-4 pt-4 border-t border-[#3F3F3F]">
