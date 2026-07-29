@@ -292,13 +292,13 @@ export function PuzzleBoard({
 
       <div
         ref={boardContainerRef}
-        className={`relative w-full max-w-[500px] sm:max-w-[540px] aspect-square shadow-[0_20px_50px_rgba(212,175,110,0.03)] border overflow-hidden bg-brand-surface transition-all duration-300 z-10 ${
-          isShaking
-            ? "border-rose-500 ring-4 ring-rose-500/25"
-            : puzzleStatus === "solved"
-              ? "border-emerald-500 ring-4 ring-emerald-500/25 animate-pulse"
-              : "border-[rgba(212,175,110,0.80)]"
-        }`}
+        className={`relative w-full max-w-[500px] sm:max-w-[540px] aspect-square shadow-[0_20px_50px_rgba(212,175,110,0.03)] border overflow-hidden bg-brand-surface transition-all duration-300 z-10 ${isShaking
+          ? "border-rose-500 ring-4 ring-rose-500/25"
+          : puzzleStatus === "solved"
+            ? "border-emerald-500 ring-4 ring-emerald-500/25 animate-pulse"
+            : "border-[rgba(212,175,110,0.80)]"
+          }`}
+        style={{ transform: "translateZ(0)" }}
       >
         <ThemedChessboard
           options={{
