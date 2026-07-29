@@ -27,7 +27,7 @@
   /* Section backgrounds */
   --obsidian-light: #111827;
   /* Card surfaces */
-  --obsidian-glass: rgba(11, 15, 30, 0.75);
+  --obsidian-glass: rgba(11, 15, 30, 0.85);
 
   /* --- Gold Accent System --- */
   --gold-bright: #D4AF6E;
@@ -52,14 +52,14 @@
 
   /* --- Marble / Stone textures --- */
   --marble-light: rgba(245, 240, 232, 0.04);
-  --marble-line: rgba(212, 175, 110, 0.12);
-  --marble-border: rgba(212, 175, 110, 0.16);
-  --marble-border-strong: rgba(212, 175, 110, 0.35);
+  --marble-line: rgba(212, 175, 110, 0.15);
+  --marble-border: rgba(212, 175, 110, 0.30);
+  --marble-border-strong: rgba(212, 175, 110, 0.50);
 
   /* --- Glassmorphism --- */
-  --glass-bg: rgba(12, 16, 32, 0.65);
-  --glass-border: rgba(255, 255, 255, 0.06);
-  --glass-border-gold: rgba(214, 174, 96, 0.16);
+  --glass-bg: rgba(12, 16, 32, 0.80);
+  --glass-border: rgba(212, 175, 110, 0.20);
+  --glass-border-gold: rgba(212, 175, 110, 0.35);
   --glass-blur: saturate(180%) blur(20px);
 
   /* --- Shadows --- */
@@ -83,11 +83,11 @@
 }
 
 :root[data-theme="light"] {
-  /* --- Core Palette (Warm Luxury Off-White & Ivory Tones — No Pure White) --- */
-  --obsidian: #FAF7F2;
-  --obsidian-mid: #F4F0E8;
-  --obsidian-light: #EFEAE0;
-  --obsidian-glass: rgba(247, 243, 236, 0.85);
+  /* --- Core Palette (Consistent Warm Luxury Cream & Ivory Tones) --- */
+  --obsidian: #FAF6F0;
+  --obsidian-mid: #F5F0E6;
+  --obsidian-light: #EFE9DC;
+  --obsidian-glass: rgba(245, 240, 230, 0.90);
 
   /* --- Text Hierarchy --- */
   --text-primary: #1C1917;
@@ -96,23 +96,23 @@
 
   /* --- Marble / Stone --- */
   --marble-light: rgba(0, 0, 0, 0.025);
-  --marble-line: rgba(214, 174, 96, 0.18);
-  --marble-border: rgba(214, 174, 96, 0.28);
-  --marble-border-strong: rgba(214, 174, 96, 0.40);
+  --marble-line: rgba(184, 147, 74, 0.22);
+  --marble-border: rgba(184, 147, 74, 0.40);
+  --marble-border-strong: rgba(184, 147, 74, 0.55);
 
-  /* --- Glass & Golden Border System --- */
-  --glass-bg: rgba(244, 240, 232, 0.85);
-  --glass-border: rgba(214, 174, 96, 0.22);
-  --glass-border-gold: rgba(214, 174, 96, 0.28);
+  /* --- Glass & Darker Golden Border System for High Contrast --- */
+  --glass-bg: rgba(245, 240, 230, 0.90);
+  --glass-border: rgba(184, 147, 74, 0.35);
+  --glass-border-gold: rgba(184, 147, 74, 0.45);
 
   /* --- Shadows --- */
-  --shadow-deep: 0 20px 48px -12px rgba(214, 174, 96, 0.16), 0 4px 16px rgba(0, 0, 0, 0.04);
-  --shadow-card: 0 10px 32px -8px rgba(214, 174, 96, 0.18), 0 2px 8px rgba(0, 0, 0, 0.03);
+  --shadow-deep: 0 20px 48px -12px rgba(184, 147, 74, 0.20), 0 4px 16px rgba(0, 0, 0, 0.04);
+  --shadow-card: 0 10px 32px -8px rgba(184, 147, 74, 0.22), 0 2px 8px rgba(0, 0, 0, 0.03);
 
   /* --- RGB-triplet tokens (light) --- */
-  --obsidian-rgb: 250 247 242;
-  --obsidian-mid-rgb: 244 240 232;
-  --obsidian-light-rgb: 239 234 224;
+  --obsidian-rgb: 250 246 240;
+  --obsidian-mid-rgb: 245 240 230;
+  --obsidian-light-rgb: 239 233 220;
   --text-primary-rgb: 28 25 23;
   --text-secondary-rgb: 87 83 78;
   --text-tertiary-rgb: 120 113 108;
@@ -551,7 +551,7 @@ html::-webkit-scrollbar-corner,
   position: relative;
   background: var(--glass-bg);
   border: 1px solid var(--glass-border-gold);
-  border-radius: 24px;
+  border-radius: 2px;
   overflow: hidden;
   box-shadow: var(--shadow-card);
   backdrop-filter: var(--glass-blur);
@@ -739,7 +739,7 @@ html::-webkit-scrollbar-corner,
   position: relative;
   background: var(--obsidian-glass);
   border: 1px solid var(--glass-border-gold);
-  border-radius: 24px;
+  border-radius: 2px;
   overflow: hidden;
   box-shadow: var(--shadow-deep);
 }
@@ -748,7 +748,7 @@ html::-webkit-scrollbar-corner,
   content: '';
   position: absolute;
   inset: -1px;
-  border-radius: 24px;
+  border-radius: 2px;
   background: linear-gradient(135deg,
       rgba(212, 175, 110, 0.15) 0%,
       rgba(139, 111, 58, 0.08) 40%,
@@ -1422,7 +1422,7 @@ html::-webkit-scrollbar-corner,
   max-width: 720px;
   padding: 56px 56px 48px;
   overflow: hidden;
-  border-radius: 24px;
+  border-radius: 2px;
   background: var(--glass-bg);
   border: 1px solid var(--glass-border-gold);
   box-shadow: var(--shadow-card);
@@ -1479,7 +1479,7 @@ html::-webkit-scrollbar-corner,
   border: 1px solid var(--glass-border-gold);
   background: var(--obsidian-glass);
   color: var(--text-primary);
-  border-radius: 12px;
+  border-radius: 2px;
   padding: 14px 18px;
   font: inherit;
   font-size: 15px;
@@ -1521,7 +1521,7 @@ html::-webkit-scrollbar-corner,
   width: 100%;
   margin-top: 12px;
   border: 1px solid rgba(212, 175, 110, 0.3);
-  border-radius: 12px;
+  border-radius: 2px;
   padding: 16px 28px;
   color: #080B14;
   font-size: 13px;

@@ -368,7 +368,7 @@ export default function ProductDemo() {
         {/* Dashboard */}
         <div
           ref={dashboardRef}
-          className="luxury-card rounded-[24px] shadow-2xl p-6 sm:p-8 lg:p-10 max-w-5xl mx-auto"
+          className="luxury-card rounded-sm shadow-2xl p-6 sm:p-8 lg:p-10 max-w-5xl mx-auto"
           style={{ opacity: 0 }}
         >
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:items-stretch">
@@ -383,7 +383,7 @@ export default function ProductDemo() {
 
             {/* ── Col 2: Chessboard ────────────────────────────────────────── */}
             <div className="lg:col-span-7 flex flex-col lg:justify-start justify-center">
-              <div ref={boardContainerRef} className="aspect-square w-full shadow-xl border border-brand-border relative overflow-hidden" style={{ borderRadius: '20px' }}>
+              <div ref={boardContainerRef} className="aspect-square w-full shadow-xl border border-brand-border relative overflow-hidden" style={{ borderRadius: '2px' }}>
 
                 {/* Game Over Overlay */}
                 {gameOverReason && (
