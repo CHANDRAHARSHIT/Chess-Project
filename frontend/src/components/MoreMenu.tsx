@@ -133,7 +133,7 @@ export const MoreMenu: React.FC = () => {
           </div>
 
           {/* ── Divider ───────────────────────────────────────────────────── */}
-          <div className="my-1.5 border-t border-[rgba(212,175,110,0.40)]" role="separator" />
+          <div className="my-1.5 border-t border-brand-text/10" role="separator" />
 
           {/* ── Sound — full-row button ────────────────────────────────────── */}
           <button

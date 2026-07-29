@@ -29,6 +29,7 @@ export default function CheckoutPage() {
 
   // Checkout States
   const [isProcessing, setIsProcessing] = useState(false);
+  const [paymentError, setPaymentError] = useState<string | null>(null);
 
   useEffect(() => {
     const checkPendingSession = async () => {
@@ -81,7 +82,6 @@ export default function CheckoutPage() {
   const { pricing, createCheckout } = usePricing();
   // Auto Calculations
 
-
   const billingCycleLabel = isYearly ? "Premium Yearly" : "Premium Monthly";
 
   const symbol = pricing.symbol;
@@ -116,28 +116,36 @@ export default function CheckoutPage() {
   // Complete checkout flow
   const handleProceedToPayment = async () => {
     setIsProcessing(true);
+    setPaymentError(null);
 
     try {
       const billing = isYearly ? "yearly" : "monthly";
       const response = await createCheckout("premium", billing);
 
-      if (response.status === "success" && (response.url || response.checkoutUrl)) {
+      if (
+        response.status === "success" &&
+        (response.url || response.checkoutUrl)
+      ) {
         if ((response as any).sessionId) {
-          sessionStorage.setItem('pending_checkout_session_id', (response as any).sessionId);
+          sessionStorage.setItem(
+            "pending_checkout_session_id",
+            (response as any).sessionId,
+          );
         }
         // Securely redirect customer to Stripe hosted checkout page
         window.location.href = response.url || response.checkoutUrl!;
       } else {
-        alert(
+        setPaymentError(
           response.message ||
-          "Failed to initialize secure checkout session. Please try again.",
+            "Failed to initialize secure checkout session. Please try again.",
         );
         setIsProcessing(false);
       }
     } catch (error: any) {
       console.error("[CheckoutPage] Payment redirect error:", error);
-      alert(
-        "An unexpected error occurred while establishing a secure billing session. Please try again.",
+      setPaymentError(
+        error?.message ||
+          "An unexpected error occurred while establishing a secure billing session. Please try again.",
       );
       setIsProcessing(false);
     }
@@ -290,12 +298,33 @@ export default function CheckoutPage() {
           </div>
         </section>
 
+        {/* Payment Error Alert Banner */}
+        {paymentError && (
+          <div className="mb-8 p-4 rounded-sm bg-red-500/10 border border-red-500/30 text-red-400 text-sm font-sans flex items-start gap-3 shadow-md">
+            <Info className="w-5 h-5 shrink-0 mt-0.5 text-red-400" />
+            <div className="flex-1 text-left">
+              <p className="font-semibold text-red-300 mb-1">
+                Payment Session Initialization Error
+              </p>
+              <p className="text-xs text-red-400/90 leading-relaxed font-mono">
+                {paymentError}
+              </p>
+            </div>
+            <button
+              onClick={() => setPaymentError(null)}
+              className="text-xs font-mono uppercase font-bold text-red-400 hover:text-white px-2 py-0.5"
+            >
+              Dismiss
+            </button>
+          </div>
+        )}
+
         {/* 2-Column Responsive Layout */}
         <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-16">
           {/* LEFT SIDE COLUMN (65%) */}
           <div className="lg:col-span-8 space-y-6">
             {/* 1. Account Information Card */}
-            <div className="bg-brand-surface/60 backdrop-blur-xl border border-brand-border rounded-2xl p-6 relative overflow-hidden">
+            <div className="bg-brand-surface/60 backdrop-blur-xl border border-brand-border rounded-sm p-6 relative overflow-hidden">
               <div className="absolute top-0 right-0 w-[180px] h-[180px] bg-brand-accent/3 rounded-full blur-[40px] pointer-events-none" />
 
               <div className="flex justify-between items-center mb-6">
@@ -369,7 +398,7 @@ export default function CheckoutPage() {
             </div>
 
             {/* 2. Membership Details Card */}
-            <div className="bg-brand-surface/60 backdrop-blur-xl border border-brand-border rounded-2xl p-6 text-left">
+            <div className="bg-brand-surface/60 backdrop-blur-xl border border-brand-border rounded-sm p-6 text-left">
               <h3 className="text-base sm:text-lg font-display font-medium text-brand-text tracking-wide mb-5">
                 Membership Details
               </h3>
@@ -438,7 +467,7 @@ export default function CheckoutPage() {
           {/* RIGHT SIDE COLUMN (35% - Sticky) */}
           <div className="lg:col-span-4 lg:sticky lg:top-[90px]">
             {/* Sticky Order Summary Card */}
-            <div className="bg-[#0e1428]/90 border border-brand-accent/20 rounded-3xl p-6 text-left shadow-2xl relative overflow-hidden">
+            <div className="bg-brand-surface/90 backdrop-blur-xl border border-brand-border rounded-sm p-6 text-left shadow-xl relative overflow-hidden">
               {/* Radial gradient background accent */}
               <div className="absolute -top-[100px] -right-[100px] w-[200px] h-[200px] bg-brand-accent/5 rounded-full blur-[50px] pointer-events-none" />
 
@@ -466,21 +495,19 @@ export default function CheckoutPage() {
                 <div className="flex justify-between items-center text-xs text-brand-secondary pt-2 border-t border-[rgba(212,175,110,0.20)]">
                   <span>Subtotal</span>
                   <span className="font-mono">{basePriceFormatted}</span>
-                </div >
+                </div>
 
                 {/* Plan discount */}
-                {
-                  isYearly && (
-                    <div className="flex justify-between items-center text-xs text-brand-secondary">
-                      <span className="flex items-center gap-1 text-emerald-400 font-mono">
-                        Plan Savings (66%)
-                      </span>
-                      <span className="font-mono text-emerald-400">
-                        -{planDiscountFormatted}
-                      </span >
-                    </div >
-                  )
-                }
+                {isYearly && (
+                  <div className="flex justify-between items-center text-xs text-brand-secondary">
+                    <span className="flex items-center gap-1 text-emerald-400 font-mono">
+                      Plan Savings (66%)
+                    </span>
+                    <span className="font-mono text-emerald-400">
+                      -{planDiscountFormatted}
+                    </span>
+                  </div>
+                )}
 
                 {/* Total Paid */}
                 <div className="flex justify-between items-baseline pt-4 border-t border-[rgba(212,175,110,0.60)]">
@@ -491,10 +518,10 @@ export default function CheckoutPage() {
                     {grandTotalFormatted}
                   </span>
                 </div>
-              </div >
+              </div>
 
               {/* TOS Notice */}
-              < p className="text-[10px] text-brand-secondary font-sans leading-relaxed text-center mb-6" >
+              <p className="text-[10px] text-brand-secondary font-sans leading-relaxed text-center mb-6">
                 By completing your purchase, you agree to our{" "}
                 <a
                   href="#tos"
@@ -510,16 +537,16 @@ export default function CheckoutPage() {
                   Privacy Policy
                 </a>
                 .
-              </p >
+              </p>
 
               {/* Proceed Button */}
-              < button
+              <button
                 onClick={handleProceedToPayment}
-                className="w-full py-4 px-6 rounded-xl font-mono text-xs uppercase tracking-widest font-bold btn-premium-cta btn-glow-container btn-glow-accent cta-shine cursor-pointer shadow-lg hover:scale-[1.01] flex items-center justify-center gap-2 mb-4"
+                className="w-full py-4 px-6 rounded-sm font-mono text-xs uppercase tracking-widest font-bold btn-premium-cta btn-glow-container btn-glow-accent cta-shine cursor-pointer shadow-lg hover:scale-[1.01] flex items-center justify-center gap-2 mb-4"
               >
                 <span>Proceed to Payment</span>
                 <ArrowRight className="w-4 h-4" />
-              </button >
+              </button>
 
               <div className="text-center text-[10px] font-mono text-brand-secondary flex items-center justify-center gap-1.5 mb-6">
                 <Lock className="w-3 h-3 text-brand-accent" />
@@ -549,12 +576,12 @@ export default function CheckoutPage() {
                   </span>
                 </div>
               </div>
-            </div >
-          </div >
-        </section >
+            </div>
+          </div>
+        </section>
 
         {/* ── PREMIUM BENEFITS SECTION ────────────────────────────────────────── */}
-        < section className="w-full text-left mb-12" >
+        <section className="w-full text-left mb-12">
           <h2 className="text-xl sm:text-2xl font-display font-medium text-brand-text mb-6">
             You're Unlocking
           </h2>
@@ -572,7 +599,7 @@ export default function CheckoutPage() {
             ].map((benefit, idx) => (
               <div
                 key={idx}
-                className="bg-brand-surface/40 border border-[rgba(212,175,110,0.80)] rounded-xl p-4 flex items-start gap-3 hover:border-brand-accent/20 transition-all duration-300"
+                className="bg-brand-surface/40 border border-brand-border rounded-sm p-4 flex items-start gap-3 hover:border-brand-accent/20 transition-all duration-300"
               >
                 <div className="w-5 h-5 rounded-full bg-brand-accent/10 border border-brand-accent/20 text-brand-accent flex items-center justify-center mt-0.5 flex-shrink-0">
                   <Check className="w-3.5 h-3.5" />
@@ -583,8 +610,8 @@ export default function CheckoutPage() {
               </div>
             ))}
           </div>
-        </section >
-      </main >
-    </div >
+        </section>
+      </main>
+    </div>
   );
 }

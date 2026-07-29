@@ -21,21 +21,11 @@ export function OpeningCompletionCard({
 }: OpeningCompletionCardProps) {
   return (
     <div
-      className="w-full max-w-[480px] sm:max-w-[520px] rounded-2xl p-8 flex flex-col items-center gap-6 text-center"
-      style={{
-        background: "rgba(8,11,20,0.85)",
-        border: "1px solid rgba(52,211,153,0.25)",
-        boxShadow:
-          "0 0 40px rgba(52,211,153,0.06), 0 8px 32px rgba(0,0,0,0.5)",
-      }}
+      className="w-full max-w-[480px] sm:max-w-[520px] rounded-2xl p-8 flex flex-col items-center gap-6 text-center bg-brand-surface/85 border border-emerald-500/25 shadow-[0_0_40px_rgba(52,211,153,0.06)] shadow-black/10 dark:shadow-black/50"
     >
       {/* Success icon */}
       <div
-        className="w-16 h-16 rounded-full flex items-center justify-center"
-        style={{
-          background: "rgba(52,211,153,0.12)",
-          border: "2px solid rgba(52,211,153,0.35)",
-        }}
+        className="w-16 h-16 rounded-full flex items-center justify-center bg-emerald-500/10 border-2 border-emerald-500/35"
       >
         <Check className="w-8 h-8 text-emerald-400" strokeWidth={2.5} />
       </div>
@@ -57,8 +47,7 @@ export function OpeningCompletionCard({
 
       {/* Stats */}
       <div
-        className="flex gap-6 px-6 py-3 rounded-xl w-full justify-center"
-        style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}
+        className="flex gap-6 px-6 py-3 rounded-xl w-full justify-center bg-brand-text/5 border border-brand-border"
       >
         <div className="flex flex-col items-center gap-0.5">
           <span className="font-display text-2xl font-bold text-brand-text">
@@ -69,8 +58,7 @@ export function OpeningCompletionCard({
           </span>
         </div>
         <div
-          className="w-px self-stretch"
-          style={{ background: "rgba(255,255,255,0.08)" }}
+          className="w-px self-stretch bg-brand-text/10"
         />
         <div className="flex flex-col items-center gap-0.5">
           <span className="font-display text-2xl font-bold text-emerald-400">
@@ -95,7 +83,7 @@ export function OpeningCompletionCard({
       {/* Action button */}
       <button
         onClick={onPlayAgain}
-        className="flex items-center gap-2 px-6 py-2.5 rounded-xl font-mono text-xs uppercase tracking-wider font-semibold bg-brand-text/5 border border-white/10 hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text transition-all duration-200 cursor-pointer"
+        className="flex items-center gap-2 px-6 py-2.5 rounded-xl font-mono text-xs uppercase tracking-wider font-semibold bg-brand-text/5 border border-brand-border hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text transition-all duration-200 cursor-pointer"
       >
         <RotateCcw className="w-3.5 h-3.5" />
         Play Again

@@ -37,7 +37,7 @@ export function MoveLog({ moves }: MoveLogProps) {
 
   return (
     <div className="flex flex-col h-full bg-brand-surface/40 border border-brand-border/60 rounded-xl overflow-hidden backdrop-blur-md">
-      <div className="px-4 py-3 border-b border-brand-border/40 bg-white/5">
+      <div className="px-4 py-3 border-b border-brand-border/40 bg-brand-surface/60 shrink-0">
         <h3 className="font-display font-semibold text-sm text-brand-text tracking-wide uppercase">
           Move Log
         </h3>
@@ -45,7 +45,11 @@ export function MoveLog({ moves }: MoveLogProps) {
 
       <div
         ref={scrollRef}
-        className="flex-1 p-4 overflow-y-auto font-mono text-xs space-y-1.5 min-h-[140px] max-h-[300px] lg:max-h-full scrollbar-thin scrollbar-thumb-brand-border/40"
+        className={`flex-1 p-3 sm:p-4 font-mono text-xs space-y-1 min-h-0 ${
+          movePairs.length > 0
+            ? 'overflow-y-auto scrollbar-thin scrollbar-thumb-brand-border/40'
+            : 'overflow-hidden'
+        }`}
       >
         {movePairs.length === 0 ? (
           <div className="h-full flex items-center justify-center text-brand-secondary/60 italic text-center py-8">
@@ -55,7 +59,7 @@ export function MoveLog({ moves }: MoveLogProps) {
           movePairs.map((pair) => (
             <div
               key={pair.moveNumber}
-              className="grid grid-cols-[3rem_1fr_1fr] items-center px-2 py-1 rounded hover:bg-white/5 transition-colors"
+              className="grid grid-cols-[3rem_1fr_1fr] items-center px-2 py-1 rounded hover:bg-brand-surface/60 transition-colors"
             >
               <span className="text-brand-secondary/70">{pair.moveNumber}.</span>
               <span className="text-brand-text font-medium">{pair.white}</span>

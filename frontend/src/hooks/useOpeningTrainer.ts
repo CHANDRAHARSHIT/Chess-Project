@@ -53,8 +53,8 @@ const OPPONENT_DELAY_MS = 500;
 
 /** Build highlight styles for the expected next move */
 function buildHintStyles(from: string, to: string): Record<string, React.CSSProperties> {
-  const accentGold = "rgba(212,175,110,0.55)";
-  const accentGoldEdge = "rgba(212,175,110,0.85)";
+  const accentGold = "rgba(200, 132, 16, 0.55)";
+  const accentGoldEdge = "rgba(124, 82, 7, 0.85)";
   return {
     [from]: {
       backgroundColor: accentGold,

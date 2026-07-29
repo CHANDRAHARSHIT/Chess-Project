@@ -292,13 +292,13 @@ export function PuzzleBoard({
 
       <div
         ref={boardContainerRef}
-        className={`relative w-full max-w-[500px] sm:max-w-[540px] aspect-square shadow-[0_20px_50px_rgba(212,175,110,0.03)] border overflow-hidden bg-brand-surface transition-all duration-300 z-10 ${
-          isShaking
-            ? "border-rose-500 ring-4 ring-rose-500/25"
-            : puzzleStatus === "solved"
-              ? "border-emerald-500 ring-4 ring-emerald-500/25 animate-pulse"
-              : "border-[rgba(212,175,110,0.80)]"
-        }`}
+        className={`relative w-full max-w-[500px] sm:max-w-[540px] aspect-square shadow-[0_20px_50px_rgba(212,175,110,0.03)] border overflow-hidden bg-brand-surface transition-all duration-300 z-10 ${isShaking
+          ? "border-rose-500 ring-4 ring-rose-500/25"
+          : puzzleStatus === "solved"
+            ? "border-emerald-500 ring-4 ring-emerald-500/25 animate-pulse"
+            : "border-[rgba(212,175,110,0.80)]"
+          }`}
+        style={{ transform: "translateZ(0)" }}
       >
         <ThemedChessboard
           options={{
@@ -335,17 +335,17 @@ export function PuzzleBoard({
       </div>
 
       {/* Elegant Controls: Hint, Undo, Reset, Next Puzzle */}
-      <div className="flex items-center gap-3 sm:gap-4 pt-2 z-10">
+      <div className="w-full max-w-[500px] sm:max-w-none flex flex-wrap sm:flex-nowrap items-center justify-center gap-2 sm:gap-4 pt-2 z-10">
         <button
           onClick={() => {
             soundManager.playButtonClick();
             handleHint();
           }}
           disabled={puzzleStatus === "solved"}
-          className="px-5 py-2.5 rounded-xl font-mono text-xs uppercase tracking-wider font-semibold bg-brand-text/5 border border-white/10 hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center gap-1.5 shadow-sm"
+          className="flex-1 min-w-[70px] sm:flex-initial px-2.5 sm:px-5 py-2.5 min-h-[44px] justify-center rounded-xl font-mono text-xs uppercase tracking-wider font-semibold bg-brand-text/5 border border-white/10 hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center gap-1.5 shadow-sm"
         >
           <HelpCircle className="w-3.5 h-3.5" />
-          Hint
+          <span>Hint</span>
         </button>
 
         <button
@@ -354,10 +354,10 @@ export function PuzzleBoard({
             handleUndo();
           }}
           disabled={!canUndo}
-          className="px-5 py-2.5 rounded-xl font-mono text-xs uppercase tracking-wider font-semibold bg-white/5 border border-white/10 hover:border-brand-accent/40 text-brand-secondary hover:text-white transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center gap-1.5 shadow-sm"
+          className="flex-1 min-w-[70px] sm:flex-initial px-2.5 sm:px-5 py-2.5 min-h-[44px] justify-center rounded-xl font-mono text-xs uppercase tracking-wider font-semibold bg-white/5 border border-white/10 hover:border-brand-accent/40 text-brand-secondary hover:text-white transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center gap-1.5 shadow-sm"
         >
           <Undo2 className="w-3.5 h-3.5" />
-          Undo
+          <span>Undo</span>
         </button>
 
         <button
@@ -366,10 +366,10 @@ export function PuzzleBoard({
             handleReset();
           }}
           disabled={!canUndo}
-          className="px-5 py-2.5 rounded-xl font-mono text-xs uppercase tracking-wider font-semibold bg-brand-text/5 border border-white/10 hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center gap-1.5 shadow-sm"
+          className="flex-1 min-w-[70px] sm:flex-initial px-2.5 sm:px-5 py-2.5 min-h-[44px] justify-center rounded-xl font-mono text-xs uppercase tracking-wider font-semibold bg-brand-text/5 border border-white/10 hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center gap-1.5 shadow-sm"
         >
           <RotateCcw className="w-3.5 h-3.5" />
-          Reset
+          <span>Reset</span>
         </button>
 
         {onNextPuzzle && (
@@ -378,7 +378,7 @@ export function PuzzleBoard({
               soundManager.playButtonClick();
               onNextPuzzle();
             }}
-            className="px-6 py-2.5 rounded-xl font-mono text-xs uppercase tracking-widest font-bold btn-premium-cta cta-shine cursor-pointer flex items-center gap-1.5 shadow-md shadow-brand-accent/5 hover:scale-[1.02] active:scale-[0.98]"
+            className="w-full sm:w-auto sm:flex-initial px-4 sm:px-6 py-2.5 min-h-[44px] justify-center rounded-xl font-mono text-xs uppercase tracking-widest font-bold btn-premium-cta cta-shine cursor-pointer flex items-center gap-1.5 shadow-md shadow-brand-accent/5 hover:scale-[1.02] active:scale-[0.98]"
           >
             <span>Next Puzzle</span>
             <ArrowRight className="w-3.5 h-3.5" />
