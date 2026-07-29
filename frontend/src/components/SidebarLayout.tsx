@@ -393,9 +393,9 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
               }`}
           >
             {isAvatar ? (
-              <img src={item.avatar} alt={item.name} className="w-6 h-6 rounded-full shrink-0" />
+              <img src={item.avatar} alt={item.name} className={`w-6 h-6 rounded-full shrink-0 ${isDisabled ? "grayscale opacity-50" : ""}`} />
             ) : (
-              <Icon className={`w-5 h-5 shrink-0 ${isActive ? "text-brand-accent" : "text-brand-secondary group-hover/navitem:text-brand-text"}`} />
+              <Icon className={`w-5 h-5 shrink-0 ${isActive ? "text-brand-accent" : `text-brand-secondary ${!isDisabled ? "group-hover/navitem:text-brand-text" : ""}`}`} />
             )}
 
             <span className={`font-sans transition-all ${isExpanded || isMobileOpen
@@ -468,6 +468,7 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
                 <a
                   key={subItem.name}
                   href={subItem.comingSoon ? "#" : subItem.href}
+                  title={subItem.comingSoon ? "Coming soon" : undefined}
                   onClick={(e) => {
                     if (subItem.comingSoon) {
                       e.preventDefault();
@@ -718,6 +719,7 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
                 <a
                   key={subItem.name}
                   href={subItem.comingSoon ? "#" : subItem.href}
+                  title={subItem.comingSoon ? "Coming soon" : undefined}
                   onClick={(e) => {
                     if (subItem.comingSoon) {
                       e.preventDefault();
@@ -733,7 +735,7 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
                       : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06] cursor-pointer"
                     }`}
                 >
-                  <SubIcon className={`w-[18px] h-[18px] shrink-0 ${isSubActive ? "text-brand-accent" : "text-brand-accent/80"}`} />
+                  <SubIcon className={`w-[18px] h-[18px] shrink-0 ${isSubActive ? "text-brand-accent" : subItem.comingSoon ? "text-brand-secondary" : "text-brand-accent/80"}`} />
                   <span className="flex-1 tracking-wide">{subItem.name}</span>
                 </a>
               );
