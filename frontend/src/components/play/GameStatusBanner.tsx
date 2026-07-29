@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+import confetti from 'canvas-confetti';
 import { Trophy, ShieldAlert, RotateCcw } from 'lucide-react';
 import { type GameStatus, type GameResult } from '../../types/chess';
 import { soundManager } from '../../utils/SoundManager';
@@ -18,11 +20,26 @@ export function GameStatusBanner({
 }: GameStatusBannerProps) {
   const playAgainRef = useButtonGlow<HTMLButtonElement>();
 
-  if (status === 'idle' || status === 'playing') return null;
-
   const isPlayerWinner =
     (result === 'white' && playerColor === 'w') ||
     (result === 'black' && playerColor === 'b');
+
+  useEffect(() => {
+    if (status === 'checkmate' && isPlayerWinner) {
+      try {
+        confetti({
+          particleCount: 120,
+          spread: 80,
+          origin: { y: 0.55 },
+          colors: ['#D4AF6E', '#10B981', '#F59E0B', '#FFFFFF', '#3B82F6'],
+        });
+      } catch (e) {
+        console.error('Confetti trigger error:', e);
+      }
+    }
+  }, [status, isPlayerWinner]);
+
+  if (status === 'idle' || status === 'playing') return null;
 
   const isDraw = result === 'draw';
 
