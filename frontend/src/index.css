@@ -27,7 +27,7 @@
   /* Section backgrounds */
   --obsidian-light: #111827;
   /* Card surfaces */
-  --obsidian-glass: rgba(11, 15, 30, 0.75);
+  --obsidian-glass: rgba(11, 15, 30, 0.85);
 
   /* --- Gold Accent System --- */
   --gold-bright: #D4AF6E;
@@ -52,15 +52,19 @@
 
   /* --- Marble / Stone textures --- */
   --marble-light: rgba(245, 240, 232, 0.04);
-  --marble-line: rgba(212, 175, 110, 0.12);
+  --marble-line: rgba(212, 175, 110, 0.10);
   --marble-border: rgba(212, 175, 110, 0.18);
-  --marble-border-strong: rgba(212, 175, 110, 0.35);
+  --marble-border-strong: rgba(212, 175, 110, 0.30);
 
   /* --- Glassmorphism --- */
-  --glass-bg: rgba(12, 16, 32, 0.65);
-  --glass-border: rgba(255, 255, 255, 0.06);
-  --glass-border-gold: rgba(212, 175, 110, 0.12);
+  --glass-bg: rgba(12, 16, 32, 0.80);
+  --glass-border: rgba(212, 175, 110, 0.12);
+  --glass-border-gold: rgba(212, 175, 110, 0.18);
   --glass-blur: saturate(180%) blur(20px);
+
+  /* --- Eval Bar --- */
+  --eval-bar-bg: rgba(12, 16, 32, 0.85);
+  --eval-bar-border: rgba(255, 255, 255, 0.08);
 
   /* --- Shadows --- */
   --shadow-gold: 0 0 12px rgba(212, 175, 110, 0.015), 0 1px 12px rgba(0, 0, 0, 0.6);
@@ -72,13 +76,7 @@
   --ease-cinematic: cubic-bezier(0.25, 0.46, 0.45, 0.94);
   --ease-precise: cubic-bezier(0.4, 0, 0.2, 1);
 
-  /* --- RGB-triplet tokens ───────────────────────────────────────────────
-     These mirror the palette above but as "R G B" triplets so Tailwind can
-     compose them with its opacity modifiers, e.g. rgb(var(--obsidian-rgb) / <alpha-value>).
-     This is what makes utilities like bg-brand-bg, text-brand-text, and
-     text-brand-secondary/70 respond to [data-theme] instead of staying
-     hardcoded to the dark palette. Keep these in sync with the hex tokens
-     above whenever the palette changes. --- */
+  /* --- RGB-triplet tokens --- */
   --obsidian-rgb: 8 11 20;
   --obsidian-mid-rgb: 12 16 32;
   --obsidian-light-rgb: 17 24 39;
@@ -89,39 +87,43 @@
 }
 
 :root[data-theme="light"] {
-  /* --- Core Palette --- */
-  --obsidian: #f8f8f8;
-  --obsidian-mid: #ffffff;
-  --obsidian-light: #f2f2f2;
-  --obsidian-glass: rgba(255, 255, 255, 0.75);
+  /* --- Core Palette (Consistent Warm Luxury Cream & Ivory Tones) --- */
+  --obsidian: #FAF6F0;
+  --obsidian-mid: #F5F0E6;
+  --obsidian-light: #EFE9DC;
+  --obsidian-glass: rgba(245, 240, 230, 0.90);
 
   /* --- Text Hierarchy --- */
-  --text-primary: #111827;
-  --text-secondary: #4b5563;
-  --text-tertiary: #6b7280;
+  --text-primary: #1C1917;
+  --text-secondary: #57534E;
+  --text-tertiary: #78716C;
 
   /* --- Marble / Stone --- */
-  --marble-light: rgba(0, 0, 0, 0.03);
-  --marble-line: rgba(0, 0, 0, 0.08);
-  --marble-border: rgba(0, 0, 0, 0.12);
-  --marble-border-strong: rgba(0, 0, 0, 0.2);
+  --marble-light: rgba(0, 0, 0, 0.025);
+  --marble-line: rgba(184, 147, 74, 0.22);
+  --marble-border: rgba(184, 147, 74, 0.40);
+  --marble-border-strong: rgba(184, 147, 74, 0.55);
 
-  /* --- Glass --- */
-  --glass-bg: rgba(255, 255, 255, 0.75);
-  --glass-border: rgba(0, 0, 0, 0.08);
-  --glass-border-gold: rgba(212, 175, 110, 0.18);
+  /* --- Glass & Darker Golden Border System for High Contrast --- */
+  --glass-bg: rgba(245, 240, 230, 0.90);
+  --glass-border: rgba(184, 147, 74, 0.35);
+  --glass-border-gold: rgba(184, 147, 74, 0.45);
+
+  /* --- Eval Bar (Light Mode contrast fix) --- */
+  --eval-bar-bg: #1C1917;
+  --eval-bar-border: rgba(184, 147, 74, 0.55);
 
   /* --- Shadows --- */
-  --shadow-deep: 0 12px 40px rgba(0, 0, 0, 0.12);
-  --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.08);
+  --shadow-deep: 0 20px 48px -12px rgba(184, 147, 74, 0.20), 0 4px 16px rgba(0, 0, 0, 0.04);
+  --shadow-card: 0 10px 32px -8px rgba(184, 147, 74, 0.22), 0 2px 8px rgba(0, 0, 0, 0.03);
 
   /* --- RGB-triplet tokens (light) --- */
-  --obsidian-rgb: 248 248 248;
-  --obsidian-mid-rgb: 255 255 255;
-  --obsidian-light-rgb: 242 242 242;
-  --text-primary-rgb: 17 24 39;
-  --text-secondary-rgb: 75 85 99;
-  --text-tertiary-rgb: 107 114 128;
+  --obsidian-rgb: 250 246 240;
+  --obsidian-mid-rgb: 245 240 230;
+  --obsidian-light-rgb: 239 233 220;
+  --text-primary-rgb: 28 25 23;
+  --text-secondary-rgb: 87 83 78;
+  --text-tertiary-rgb: 120 113 108;
 }
 
 
@@ -524,15 +526,14 @@ body {
 
 .luxury-card {
   position: relative;
-  background: linear-gradient(145deg,
-      rgba(20, 24, 45, 0.8) 0%,
-      rgba(12, 16, 32, 0.9) 100%);
+  background: var(--glass-bg);
   border: 1px solid var(--glass-border-gold);
   border-radius: 2px;
   overflow: hidden;
   box-shadow: var(--shadow-card);
+  backdrop-filter: var(--glass-blur);
   transform-style: preserve-3d;
-  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+  transition: border-color 0.4s ease, box-shadow 0.4s ease, background-color 0.4s ease;
   will-change: transform;
 }
 
@@ -711,14 +712,13 @@ body {
   animation: orb-float-b 13s ease-in-out infinite;
 }
 
-/* Board card — luxury upgrade */
 .hero-board-card {
   position: relative;
-  /* background: linear-gradient(145deg,
-      rgba(16, 20, 40, 0.9) 0%,
-      rgba(10, 14, 28, 0.95) 100%); */
-  border: 1px solid rgba(212, 175, 110, 0.15);
-
+  background: var(--obsidian-glass);
+  border: 1px solid var(--glass-border-gold);
+  border-radius: 2px;
+  overflow: hidden;
+  box-shadow: var(--shadow-deep);
 }
 
 .hero-board-card::before {
@@ -1396,28 +1396,22 @@ body {
 .contact-card {
   position: relative;
   width: 100%;
-  max-width: 1024px;
-  padding: 84px 96px 72px;
+  max-width: 720px;
+  padding: 56px 56px 48px;
   overflow: hidden;
   border-radius: 2px;
-  background:
-    linear-gradient(135deg, rgba(212, 175, 110, 0.04), transparent 34%),
-    radial-gradient(circle at 0% 0%, rgba(212, 175, 110, 0.06), transparent 28%),
-    rgba(12, 16, 32, 0.85);
-  border: 1px solid rgba(212, 175, 110, 0.12);
-  box-shadow:
-    0 28px 80px rgba(0, 0, 0, 0.55),
-    inset 0 1px 0 rgba(212, 175, 110, 0.06),
-    inset 0 -1px 0 rgba(212, 175, 110, 0.03);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border-gold);
+  box-shadow: var(--shadow-card);
   backdrop-filter: blur(28px);
 }
 
 .contact-card::before {
   content: "♜";
   position: absolute;
-  right: 40px;
-  top: 8px;
-  font-size: 420px;
+  right: 32px;
+  top: 4px;
+  font-size: 320px;
   line-height: 1;
   opacity: 0.025;
   color: var(--gold-bright);
@@ -1426,24 +1420,24 @@ body {
 }
 
 .contact-h2 {
-  margin: 0 0 58px;
+  margin: 0 0 36px;
   text-align: center;
   font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(42px, 5vw, 58px);
+  font-size: clamp(36px, 4vw, 48px);
   font-weight: 600;
-  line-height: 1;
+  line-height: 1.1;
   letter-spacing: -0.02em;
   color: var(--text-primary);
 }
 
 .field {
-  margin-bottom: 34px;
+  margin-bottom: 24px;
 }
 
 .contact-label {
   display: block;
-  margin-bottom: 14px;
-  color: rgba(212, 175, 110, 0.7);
+  margin-bottom: 10px;
+  color: var(--text-secondary);
   font-family: 'DM Mono', monospace;
   font-size: 11px;
   font-weight: 500;
@@ -1459,37 +1453,39 @@ body {
 .contact-input,
 .contact-textarea {
   width: 100%;
-  border: 1px solid rgba(212, 175, 110, 0.12);
-  background: var(--glass-bg);
+  border: 1px solid var(--glass-border-gold);
+  background: var(--obsidian-glass);
   color: var(--text-primary);
   border-radius: 2px;
-  padding: 18px 22px;
+  padding: 14px 18px;
   font: inherit;
-  font-size: 18px;
+  font-size: 15px;
   outline: none;
-  box-shadow: inset 0 0 28px rgba(0, 0, 0, 0.25);
   transition: border-color 200ms ease, box-shadow 200ms ease, background-color 200ms ease;
   box-sizing: border-box;
 }
 
+.contact-input {
+  height: 52px;
+}
+
 .contact-textarea {
-  min-height: 160px;
+  min-height: 140px;
   resize: vertical;
 }
 
 .contact-input::placeholder,
 .contact-textarea::placeholder {
-  color: var(--text-secondary);
-  opacity: 0.6;
+  color: var(--text-tertiary);
+  opacity: 0.7;
 }
 
 .contact-input:focus,
 .contact-textarea:focus {
-  border-color: rgba(212, 175, 110, 0.45);
+  border-color: rgba(212, 175, 110, 0.55);
   box-shadow:
-    0 0 0 3px rgba(212, 175, 110, 0.06),
-    0 0 20px rgba(212, 175, 110, 0.06),
-    inset 0 0 28px rgba(0, 0, 0, 0.25);
+    0 0 0 3px rgba(212, 175, 110, 0.1),
+    0 0 20px rgba(212, 175, 110, 0.08);
 }
 
 .contact-input.error,
@@ -1500,23 +1496,22 @@ body {
 .contact-btn {
   position: relative;
   width: 100%;
-  margin-top: 16px;
-  border: 1px solid rgba(212, 175, 110, 0.25);
+  margin-top: 12px;
+  border: 1px solid rgba(212, 175, 110, 0.3);
   border-radius: 2px;
-  padding: 22px 30px;
-  color: var(--obsidian);
+  padding: 16px 28px;
+  color: #080B14;
   font-size: 13px;
   font-family: 'DM Mono', monospace;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.15em;
   text-transform: uppercase;
   cursor: pointer;
   overflow: hidden;
   background: linear-gradient(135deg, #D4AF6E 0%, #E8C88A 40%, #B8934A 70%, #D4AF6E 100%);
   box-shadow:
-    0 0 24px rgba(212, 175, 110, 0.12),
-    0 8px 32px rgba(0, 0, 0, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    0 0 24px rgba(212, 175, 110, 0.15),
+    0 8px 24px rgba(0, 0, 0, 0.25);
   transition: transform 200ms ease, box-shadow 200ms ease;
 }
 
@@ -1535,9 +1530,8 @@ body {
 .contact-btn:hover {
   transform: translateY(-2px);
   box-shadow:
-    0 0 36px rgba(212, 175, 110, 0.25),
-    0 12px 40px rgba(0, 0, 0, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    0 0 36px rgba(212, 175, 110, 0.3),
+    0 12px 32px rgba(0, 0, 0, 0.3);
 }
 
 @keyframes buttonShine {
@@ -1555,13 +1549,14 @@ body {
 
 @media (max-width: 760px) {
   .contact-card {
-    padding: 48px 24px 40px;
+    padding: 36px 24px 32px;
+    border-radius: 20px;
   }
 
   .contact-input,
   .contact-textarea,
   .contact-btn {
-    font-size: 16px;
+    font-size: 15px;
   }
 }
 

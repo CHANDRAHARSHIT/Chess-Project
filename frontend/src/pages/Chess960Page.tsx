@@ -32,13 +32,13 @@ export default function Chess960Page() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto flex flex-col gap-6">
+    <div className="min-h-[calc(100vh-4rem)] p-3 sm:p-4 lg:p-4 max-w-7xl mx-auto flex flex-col gap-4">
       {/* Top Header Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-4 pb-2 border-b border-brand-border/40">
+      <div className="flex flex-wrap items-center justify-between gap-3 pb-2 border-b border-brand-border/40 shrink-0">
         <div className="flex items-center gap-4">
           <button
             onClick={handleBackToVariants}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-medium text-brand-secondary hover:text-brand-text bg-brand-text/5 hover:bg-brand-text/10 transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-medium text-brand-secondary hover:text-brand-text bg-brand-surface/60 border border-brand-border/40 hover:bg-brand-surface transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Variants</span>
@@ -63,15 +63,17 @@ export default function Chess960Page() {
       </div>
 
       {/* Main Game Section */}
-      <div className="flex flex-col lg:flex-row items-center lg:items-start justify-center gap-6 flex-1">
+      <div className="flex flex-col lg:flex-row items-center lg:items-start justify-center gap-4 lg:gap-6 flex-1">
         {/* Board Container */}
-        <div className="relative flex flex-col items-center justify-center w-full max-w-[540px]">
+        <div className="relative flex flex-col items-center justify-center w-full max-w-[540px] shrink-0">
           <GameBoard
             fen={game.fen}
             boardOrientation={game.boardOrientation}
             onPieceDrop={game.onPieceDrop}
             lastMove={game.lastMove}
             hintSquare={game.hintSquare}
+            hintMove={game.hintMove}
+            checkSquare={game.checkSquare}
             status={game.status}
             isInteractive={!game.isEngineThinking}
           />
@@ -84,7 +86,31 @@ export default function Chess960Page() {
         </div>
 
         {/* Sidebar Controls & History */}
-        <div className="w-full max-w-[540px] lg:max-w-xs xl:max-w-sm flex flex-col gap-4 self-stretch min-h-[360px]">
+        <div className="w-full max-w-[540px] lg:max-w-xs xl:max-w-sm flex flex-col gap-3 lg:h-[540px] lg:max-h-[540px] shrink-0 min-h-0">
+          {/* Turn Indicator Header Card */}
+          {game.status === 'playing' && (
+            <div className="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-brand-surface/40 border border-brand-border/60 backdrop-blur-md text-xs font-mono shrink-0">
+              <div className="flex items-center gap-2">
+                <span
+                  className={`w-2.5 h-2.5 rounded-full border border-brand-border/60 ${
+                    game.turn === 'w' ? 'bg-white' : 'bg-neutral-800'
+                  }`}
+                />
+                <span className="font-medium text-brand-text">
+                  {game.turn === 'w' ? "White to move" : "Black to move"}
+                </span>
+                <span className="text-brand-secondary/70">
+                  ({game.turn === game.playerColor ? "Your turn" : "Engine turn"})
+                </span>
+              </div>
+              {game.difficulty >= 3 && game.isEngineThinking && (
+                <span className="text-brand-accent animate-pulse font-medium">
+                  (Thinking...)
+                </span>
+              )}
+            </div>
+          )}
+
           <GameControls
             status={game.status}
             isEngineThinking={game.isEngineThinking}
@@ -94,7 +120,7 @@ export default function Chess960Page() {
             onHint={game.requestHint}
           />
 
-          <div className="flex-1 min-h-[220px]">
+          <div className="flex-1 min-h-0 overflow-hidden">
             <MoveLog moves={game.moveHistory} />
           </div>
         </div>
