@@ -123,8 +123,8 @@ const PLANS: PlanDef[] = [
     accentBorder: "border-yellow-500/25",
     accentBg: "bg-yellow-500/8",
     glowRgba: "rgba(234,179,8,0.06)",
-    monthlyPrice: "$2.49",
-    yearlyPrice: "$1.99",
+    monthlyPrice: "$1.19",
+    yearlyPrice: "$0.79",
     comingSoonMonthly: true,
     comingSoonYearly: true,
     features: [
@@ -146,8 +146,8 @@ const PLANS: PlanDef[] = [
     accentBorder: "border-slate-400/25",
     accentBg: "bg-slate-400/8",
     glowRgba: "rgba(148,163,184,0.06)",
-    monthlyPrice: "$4.99",
-    yearlyPrice: "$3.99",
+    monthlyPrice: "$2.09",
+    yearlyPrice: "$1.25",
     comingSoonMonthly: true,
     comingSoonYearly: true,
     features: [
@@ -172,9 +172,9 @@ const PLANS: PlanDef[] = [
     glowRgba: "rgba(125,211,252,0.10)",
     // ── EXISTING PRICE ──
     monthlyPrice: "$5.00",
-    yearlyPrice: null,
+    yearlyPrice: "$1.89",
     comingSoonMonthly: false,
-    comingSoonYearly: true,
+    comingSoonYearly: false,
     isHighlighted: true,
     features: DIAMOND_FEATURES.map((f) => ({ label: f, value: true })),
   },
@@ -188,7 +188,7 @@ const PLANS: PlanDef[] = [
     accentBg: "bg-emerald-500/8",
     glowRgba: "rgba(16,185,129,0.06)",
     monthlyPrice: "$12.49",
-    yearlyPrice: "$9.99",
+    yearlyPrice: "$3.25",
     comingSoonMonthly: true,
     comingSoonYearly: true,
     features: [
@@ -300,6 +300,11 @@ export default function PricingPage() {
     const params = new URLSearchParams(location.search);
     return params.get("error") === "payment_expired";
   });
+
+  const diamondPlan = PLANS.find((plan) => plan.id === "diamond");
+  const diamondDisplayPrice = isYearly
+    ? diamondPlan?.yearlyPrice ?? diamondPlan?.monthlyPrice ?? "$5.00"
+    : diamondPlan?.monthlyPrice ?? "$5.00";
 
   const handleNavigateBack = () => {
     const previousPage = getPrevious();
@@ -622,14 +627,14 @@ export default function PricingPage() {
 
                 {/* CTA button */}
                 <button
-                  disabled={!!comingSoon || (isDiamond && isYearly)}
+                  disabled={!!comingSoon}
                   onClick={() => {
-                    if (!comingSoon && isDiamond && !isYearly) {
-                      handleUpgrade("Monthly");
+                    if (!comingSoon && isDiamond) {
+                      handleUpgrade(isYearly ? "Yearly" : "Monthly");
                     }
                   }}
                   className={`w-full py-3 px-4 rounded-xl font-mono text-[11px] uppercase tracking-widest font-semibold transition-all duration-300 relative overflow-hidden ${
-                    comingSoon || (isDiamond && isYearly)
+                    comingSoon
                       ? "bg-brand-text/5 border border-brand-text/10 text-brand-secondary/30 cursor-not-allowed"
                       : isDiamond
                       ? "bg-sky-500 hover:bg-sky-400 text-white border border-sky-300/50 shadow-lg shadow-sky-300/20 hover:scale-[1.01] cursor-pointer active:scale-[0.99]"
@@ -637,7 +642,7 @@ export default function PricingPage() {
                   }`}
                 >
                   <span className="relative z-10 flex items-center justify-center gap-1.5">
-                    {comingSoon || (isDiamond && isYearly) ? (
+                    {comingSoon ? (
                       <>
                         <Clock className="w-3.5 h-3.5" />
                         Coming Soon
@@ -741,7 +746,7 @@ export default function PricingPage() {
                     const comingSoon = isYearly
                       ? p.comingSoonYearly
                       : p.comingSoonMonthly;
-                    const disabled = !!comingSoon || (isDiamond && isYearly);
+                    const disabled = !!comingSoon;
                     return (
                       <td
                         key={p.id}
@@ -752,7 +757,9 @@ export default function PricingPage() {
                         <button
                           disabled={disabled}
                           onClick={() => {
-                            if (!disabled && isDiamond) handleUpgrade("Monthly");
+                            if (!disabled && isDiamond) {
+                              handleUpgrade(isYearly ? "Yearly" : "Monthly");
+                            }
                           }}
                           className={`inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg font-mono text-[10px] uppercase tracking-widest font-semibold transition-all duration-200 ${
                             disabled
@@ -762,9 +769,7 @@ export default function PricingPage() {
                               : "bg-brand-text/5 border border-brand-border hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text cursor-pointer"
                           }`}
                         >
-                          {disabled ? (
-                            "Soon"
-                          ) : (
+                          {disabled ? "Soon" : (
                             <>
                               Select
                               {isDiamond && <ArrowRight className="w-3 h-3" />}
@@ -862,7 +867,7 @@ export default function PricingPage() {
                 onClick={() => handleUpgrade(isYearly ? "Yearly" : "Monthly")}
                 className="w-full sm:w-auto px-8 py-4 rounded-xl font-mono text-xs uppercase tracking-widest font-semibold bg-sky-500 hover:bg-sky-400 text-white border border-sky-300/40 shadow-lg shadow-sky-300/25 cursor-pointer hover:scale-[1.02] active:scale-[0.99] transition-all duration-300 flex items-center justify-center gap-2"
               >
-                <span>Get Diamond — $5.00 / mo</span>
+                  <span>Get Diamond — {diamondDisplayPrice} / mo</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
 
