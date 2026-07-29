@@ -217,7 +217,7 @@ export function useLogoAnimation(): LogoAnimationRefs {
 
     }); // end gsap.context
 
-    return () => { ctx.revert(); };
+    return () => { ctx.kill(); };
 
   }, []); // runs once on mount
 

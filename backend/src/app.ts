@@ -1,3 +1,4 @@
+// Triggering restart to load new Prisma client
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
@@ -7,6 +8,7 @@ import { authRouter } from "./routes/auth.route.js";
 import { userRouter } from "./routes/user.route.js";
 import { paymentRouter } from "./routes/payment.route.js";
 import { openingRouter } from "./routes/opening.route.js";
+import { lessonRouter } from "./routes/lesson.route.js";
 import { errorHandler } from "./middleware/error.middleware.js";
 
 const app = express();
@@ -78,6 +80,7 @@ app.use("/api/auth/*", (req, _res, next) => {
 app.use("/api/users", userRouter);
 app.use("/api/payments", paymentRouter);
 app.use("/api/openings", openingRouter);
+app.use("/api/lessons", lessonRouter);
 
 // Catch-all centralized error handler
 app.use(errorHandler);

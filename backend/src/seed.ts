@@ -190,9 +190,86 @@ async function seedOpenings() {
   console.log(`Finished seeding openings. Imported/Updated records: ${importedCount}`);
 }
 
+async function seedLessons() {
+  console.log("Seeding test course and lesson...");
+  
+  const course = await prisma.course.upsert({
+    where: { slug: "test-course" },
+    update: {},
+    create: {
+      slug: "test-course",
+      title: "Test Course",
+      description: "A course to test the lesson system.",
+      published: true
+    }
+  });
+
+  const lessonContent = {
+    version: 1,
+    title: "Test Lesson",
+    steps: [
+      {
+        id: "step-1",
+        type: "TEXT",
+        title: "Welcome",
+        body: "Welcome to the test lesson.",
+        coachMessage: "Let's learn some chess!"
+      },
+      {
+        id: "step-2",
+        type: "BOARD",
+        fen: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+        expectedMoves: ["e2e4"],
+        successMessage: "Great! e4 is a solid opening move.",
+        failureMessage: "Try moving the e-pawn to e4."
+      },
+      {
+        id: "step-3",
+        type: "QUIZ",
+        question: "What is a good opening move?",
+        options: [
+          { id: "opt-1", text: "e4" },
+          { id: "opt-2", text: "h4" }
+        ],
+        correct: "opt-1",
+        explanation: "e4 controls the center."
+      },
+      {
+        id: "step-4",
+        type: "CALLOUT",
+        body: "Always control the center!"
+      },
+      {
+        id: "step-5",
+        type: "COMPLETION"
+      }
+    ]
+  };
+
+  await prisma.lesson.upsert({
+    where: { slug: "test-lesson" },
+    update: {},
+    create: {
+      courseId: course.id,
+      slug: "test-lesson",
+      title: "Test Lesson",
+      description: "A lesson to test the lesson system.",
+      difficulty: "Beginner",
+      estimatedTime: 5,
+      category: "Openings",
+      published: true,
+      content: lessonContent,
+      settings: {}
+    }
+  });
+
+  console.log("Seeded test course and lesson.");
+}
+
 async function main() {
   await seed();
   await seedOpenings();
+  await seedLessons();
 }
 
 main()

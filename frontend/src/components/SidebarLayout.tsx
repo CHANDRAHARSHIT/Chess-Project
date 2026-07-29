@@ -52,7 +52,7 @@ export default function SidebarLayout({
       href: "/learn",
       icon: GraduationCap,
       subItems: [
-        { name: "Lessons", href: "/lessons", icon: BookOpen, comingSoon: true },
+        { name: "Lessons", href: "/learn", icon: BookOpen },
         { name: "Play Coach", href: "/play-coach", icon: Bot, comingSoon: true },
         { name: "Openings", href: "/openings", icon: BookMarked },
       ],

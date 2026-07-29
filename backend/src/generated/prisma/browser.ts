@@ -72,3 +72,18 @@ export type WebhookEvent = Prisma.WebhookEventModel
  * 
  */
 export type Opening = Prisma.OpeningModel
+/**
+ * Model Course
+ * 
+ */
+export type Course = Prisma.CourseModel
+/**
+ * Model Lesson
+ * 
+ */
+export type Lesson = Prisma.LessonModel
+/**
+ * Model LessonProgress
+ * 
+ */
+export type LessonProgress = Prisma.LessonProgressModel

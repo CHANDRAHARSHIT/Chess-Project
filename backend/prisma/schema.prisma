@@ -24,6 +24,7 @@ model User {
   subscriptions        Subscription[]
   payments          Payment[]
   billingProfile    BillingProfile?
+  lessonProgress    LessonProgress[]
 }
 
 model Account {
@@ -191,4 +192,54 @@ model Opening {
   name  String
   pgn   String
   moves String
+}
+
+model Course {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  description String?  @db.Text
+  thumbnail   String?
+  published   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  lessons     Lesson[]
+}
+
+model Lesson {
+  id            String   @id @default(cuid())
+  courseId      String
+  course        Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  slug          String   @unique
+  title         String
+  description   String?  @db.Text
+  thumbnail     String?
+  difficulty    String?
+  estimatedTime Int      @default(0) // minutes
+  category      String?
+  published     Boolean  @default(false)
+  content       Json
+  settings      Json?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  progress      LessonProgress[]
+}
+
+model LessonProgress {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lessonId    String
+  lesson      Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  currentStep Int      @default(0)
+  completed   Boolean  @default(false)
+  accuracy    Float?
+  mistakes    Int      @default(0)
+  xp          Int      @default(0)
+  timeSpent   Int      @default(0) // seconds
+  updatedAt   DateTime @updatedAt
+
+  @@unique([userId, lessonId])
 }

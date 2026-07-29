@@ -8,6 +8,8 @@ import SuccessfulPage from "../pages/SuccessfulPage";
 import FailedPage from "../pages/FailedPage";
 import PremiumPage from "../pages/PremiumPage";
 import OpeningsPage from "../pages/OpeningsPage";
+import LearnPage from "../pages/LearnPage";
+import LessonPlayerPage from "../pages/LessonPlayerPage";
 import { ProtectedRoute } from "../components/ProtectedRoute";
 
 export interface RouteConfig {
@@ -20,6 +22,8 @@ export const mainRoutes: RouteConfig[] = [
   { path: "/", element: <HomePage /> },
   { path: "/puzzles", element: <PuzzlePage /> },
   { path: "/openings", element: <OpeningsPage /> },
+  { path: "/learn", element: <LearnPage /> },
+  { path: "/learn/:slug", element: <LessonPlayerPage /> },
   {
     path: "/profile",
     element: <Navigate to="/settings?tab=profile" replace />,
