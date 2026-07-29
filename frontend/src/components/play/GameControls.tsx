@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { RotateCcw, Flag, FlipHorizontal, Lightbulb } from 'lucide-react';
 import { type GameStatus } from '../../types/chess';
 import { soundManager } from '../../utils/SoundManager';
@@ -20,12 +21,24 @@ export function GameControls({
   onHint,
 }: GameControlsProps) {
   const isPlaying = status === 'playing';
+  const [isHintActive, setIsHintActive] = useState(false);
 
   const btnClass =
-    'flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs uppercase tracking-wider font-semibold bg-white/5 border border-white/10 hover:border-brand-accent/40 text-brand-secondary hover:text-white transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-white/10 disabled:hover:text-brand-secondary';
+    'flex items-center justify-center gap-1.5 px-2 sm:px-3 py-2 rounded-xl font-mono text-[11px] sm:text-xs uppercase tracking-wider font-semibold bg-brand-surface/60 border border-brand-border/60 hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-brand-border/60 disabled:hover:text-brand-secondary';
+
+  const hintBtnClass = isHintActive
+    ? 'flex items-center justify-center gap-1.5 px-2 sm:px-3 py-2 rounded-xl font-mono text-[11px] sm:text-xs uppercase tracking-wider font-semibold bg-amber-500/20 border-amber-500/80 text-amber-300 shadow-[0_0_15px_rgba(245,158,11,0.35)] animate-pulse transition-all duration-300'
+    : btnClass;
+
+  const handleHintClick = () => {
+    soundManager.playButtonClick();
+    setIsHintActive(true);
+    onHint();
+    setTimeout(() => setIsHintActive(false), 3500);
+  };
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 p-3 bg-brand-surface/40 border border-brand-border/60 rounded-xl backdrop-blur-md">
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-2 sm:p-2.5 bg-brand-surface/40 border border-brand-border/60 rounded-xl backdrop-blur-md shrink-0">
       <button
         onClick={() => {
           soundManager.playButtonClick();
@@ -43,6 +56,7 @@ export function GameControls({
           soundManager.playButtonClick();
           onFlipBoard();
         }}
+        disabled={!isPlaying}
         className={btnClass}
         title="Flip Board View"
       >
@@ -51,16 +65,13 @@ export function GameControls({
       </button>
 
       <button
-        onClick={() => {
-          soundManager.playButtonClick();
-          onHint();
-        }}
+        onClick={handleHintClick}
         disabled={!isPlaying || isEngineThinking}
-        className={btnClass}
+        className={hintBtnClass}
         title="Request Hint"
       >
-        <Lightbulb className="w-4 h-4 text-amber-400" />
-        <span>Hint</span>
+        <Lightbulb className={`w-4 h-4 ${isHintActive ? 'text-amber-300 animate-spin' : 'text-amber-400'}`} />
+        <span>{isHintActive ? 'Hint Active' : 'Hint'}</span>
       </button>
 
       <button

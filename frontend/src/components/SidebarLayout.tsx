@@ -1,11 +1,7 @@
 import { useState, useEffect, useRef } from "react";
-import {
-  Menu, X, Home, Puzzle, CreditCard, CircleUserRound, Crown,
-  GraduationCap, BookOpen, Bot, BookMarked, ChevronDown,
-  Zap, Clock, BarChart2, Flag,
-  Plus, Shuffle, Video, UserCircle2, ExternalLink, Pencil, MoveUp, Archive,
-  Dices, Sparkles
-} from "lucide-react";
+import { Menu, X, Home, Puzzle, CreditCard, CircleUserRound, Crown, GraduationCap, BookOpen, Bot, BookMarked, ChevronDown,
+        Dices, Shuffle, Zap, Clock, BarChart2, Flag, Plus, Video, UserCircle2, ExternalLink, Pencil, MoveUp, Archive,
+        Sparkles } from "lucide-react";
 import { useLogoAnimation } from "../hooks/useLogoAnimation";
 import { soundManager } from "../utils/SoundManager";
 import { useSession } from "../hooks/useSession";
