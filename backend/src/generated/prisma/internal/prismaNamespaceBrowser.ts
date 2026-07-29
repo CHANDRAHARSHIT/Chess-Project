@@ -63,9 +63,9 @@ export const ModelName = {
   WebhookEvent: 'WebhookEvent',
   CuratedPuzzle: 'CuratedPuzzle',
   Opening: 'Opening',
-  Lesson: 'Lesson',
-  Segment: 'Segment',
-  Slide: 'Slide'
+  BuilderLesson: 'BuilderLesson',
+  BuilderSegment: 'BuilderSegment',
+  BuilderSlide: 'BuilderSlide'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -268,7 +268,7 @@ export const OpeningScalarFieldEnum = {
 export type OpeningScalarFieldEnum = (typeof OpeningScalarFieldEnum)[keyof typeof OpeningScalarFieldEnum]
 
 
-export const LessonScalarFieldEnum = {
+export const BuilderLessonScalarFieldEnum = {
   id: 'id',
   title: 'title',
   description: 'description',
@@ -277,24 +277,15 @@ export const LessonScalarFieldEnum = {
   status: 'status',
   coverImage: 'coverImage',
   slug: 'slug',
-  version: 'version',
-  isPremium: 'isPremium',
-  priceAmount: 'priceAmount',
-  isAiGenerated: 'isAiGenerated',
-  aiPrompt: 'aiPrompt',
-  averageRating: 'averageRating',
-  ratingsCount: 'ratingsCount',
-  channelId: 'channelId',
-  metadata: 'metadata',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   publishedAt: 'publishedAt'
 } as const
 
-export type LessonScalarFieldEnum = (typeof LessonScalarFieldEnum)[keyof typeof LessonScalarFieldEnum]
+export type BuilderLessonScalarFieldEnum = (typeof BuilderLessonScalarFieldEnum)[keyof typeof BuilderLessonScalarFieldEnum]
 
 
-export const SegmentScalarFieldEnum = {
+export const BuilderSegmentScalarFieldEnum = {
   id: 'id',
   lessonId: 'lessonId',
   title: 'title',
@@ -304,10 +295,10 @@ export const SegmentScalarFieldEnum = {
   updatedAt: 'updatedAt'
 } as const
 
-export type SegmentScalarFieldEnum = (typeof SegmentScalarFieldEnum)[keyof typeof SegmentScalarFieldEnum]
+export type BuilderSegmentScalarFieldEnum = (typeof BuilderSegmentScalarFieldEnum)[keyof typeof BuilderSegmentScalarFieldEnum]
 
 
-export const SlideScalarFieldEnum = {
+export const BuilderSlideScalarFieldEnum = {
   id: 'id',
   segmentId: 'segmentId',
   order: 'order',
@@ -315,15 +306,11 @@ export const SlideScalarFieldEnum = {
   coachText: 'coachText',
   fen: 'fen',
   annotations: 'annotations',
-  audioUrl: 'audioUrl',
-  audioDuration: 'audioDuration',
-  videoUrl: 'videoUrl',
-  interactiveData: 'interactiveData',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
-export type SlideScalarFieldEnum = (typeof SlideScalarFieldEnum)[keyof typeof SlideScalarFieldEnum]
+export type BuilderSlideScalarFieldEnum = (typeof BuilderSlideScalarFieldEnum)[keyof typeof BuilderSlideScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -340,13 +327,6 @@ export const NullableJsonNullValueInput = {
 } as const
 
 export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
-
-
-export const JsonNullValueInput = {
-  JsonNull: JsonNull
-} as const
-
-export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
 export const QueryMode = {

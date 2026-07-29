@@ -396,9 +396,9 @@ export const ModelName = {
   WebhookEvent: 'WebhookEvent',
   CuratedPuzzle: 'CuratedPuzzle',
   Opening: 'Opening',
-  Lesson: 'Lesson',
-  Segment: 'Segment',
-  Slide: 'Slide'
+  BuilderLesson: 'BuilderLesson',
+  BuilderSegment: 'BuilderSegment',
+  BuilderSlide: 'BuilderSlide'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -414,7 +414,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "account" | "session" | "verificationToken" | "subscription" | "payment" | "billingProfile" | "product" | "productFeature" | "webhookEvent" | "curatedPuzzle" | "opening" | "lesson" | "segment" | "slide"
+    modelProps: "user" | "account" | "session" | "verificationToken" | "subscription" | "payment" | "billingProfile" | "product" | "productFeature" | "webhookEvent" | "curatedPuzzle" | "opening" | "builderLesson" | "builderSegment" | "builderSlide"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1306,225 +1306,225 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    Lesson: {
-      payload: Prisma.$LessonPayload<ExtArgs>
-      fields: Prisma.LessonFieldRefs
+    BuilderLesson: {
+      payload: Prisma.$BuilderLessonPayload<ExtArgs>
+      fields: Prisma.BuilderLessonFieldRefs
       operations: {
         findUnique: {
-          args: Prisma.LessonFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$LessonPayload> | null
+          args: Prisma.BuilderLessonFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BuilderLessonPayload> | null
         }
         findUniqueOrThrow: {
-          args: Prisma.LessonFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$LessonPayload>
+          args: Prisma.BuilderLessonFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BuilderLessonPayload>
         }
         findFirst: {
-          args: Prisma.LessonFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$LessonPayload> | null
+          args: Prisma.BuilderLessonFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BuilderLessonPayload> | null
         }
         findFirstOrThrow: {
-          args: Prisma.LessonFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$LessonPayload>
+          args: Prisma.BuilderLessonFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BuilderLessonPayload>
         }
         findMany: {
-          args: Prisma.LessonFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$LessonPayload>[]
+          args: Prisma.BuilderLessonFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BuilderLessonPayload>[]
         }
         create: {
-          args: Prisma.LessonCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$LessonPayload>
+          args: Prisma.BuilderLessonCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BuilderLessonPayload>
         }
         createMany: {
-          args: Prisma.LessonCreateManyArgs<ExtArgs>
+          args: Prisma.BuilderLessonCreateManyArgs<ExtArgs>
           result: BatchPayload
         }
         createManyAndReturn: {
-          args: Prisma.LessonCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$LessonPayload>[]
+          args: Prisma.BuilderLessonCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BuilderLessonPayload>[]
         }
         delete: {
-          args: Prisma.LessonDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$LessonPayload>
+          args: Prisma.BuilderLessonDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BuilderLessonPayload>
         }
         update: {
-          args: Prisma.LessonUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$LessonPayload>
+          args: Prisma.BuilderLessonUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BuilderLessonPayload>
         }
         deleteMany: {
-          args: Prisma.LessonDeleteManyArgs<ExtArgs>
+          args: Prisma.BuilderLessonDeleteManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateMany: {
-          args: Prisma.LessonUpdateManyArgs<ExtArgs>
+          args: Prisma.BuilderLessonUpdateManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateManyAndReturn: {
-          args: Prisma.LessonUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$LessonPayload>[]
+          args: Prisma.BuilderLessonUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BuilderLessonPayload>[]
         }
         upsert: {
-          args: Prisma.LessonUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$LessonPayload>
+          args: Prisma.BuilderLessonUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BuilderLessonPayload>
         }
         aggregate: {
-          args: Prisma.LessonAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateLesson>
+          args: Prisma.BuilderLessonAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBuilderLesson>
         }
         groupBy: {
-          args: Prisma.LessonGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.LessonGroupByOutputType>[]
+          args: Prisma.BuilderLessonGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BuilderLessonGroupByOutputType>[]
         }
         count: {
-          args: Prisma.LessonCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.LessonCountAggregateOutputType> | number
+          args: Prisma.BuilderLessonCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BuilderLessonCountAggregateOutputType> | number
         }
       }
     }
-    Segment: {
-      payload: Prisma.$SegmentPayload<ExtArgs>
-      fields: Prisma.SegmentFieldRefs
+    BuilderSegment: {
+      payload: Prisma.$BuilderSegmentPayload<ExtArgs>
+      fields: Prisma.BuilderSegmentFieldRefs
       operations: {
         findUnique: {
-          args: Prisma.SegmentFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SegmentPayload> | null
+          args: Prisma.BuilderSegmentFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BuilderSegmentPayload> | null
         }
         findUniqueOrThrow: {
-          args: Prisma.SegmentFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SegmentPayload>
+          args: Prisma.BuilderSegmentFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BuilderSegmentPayload>
         }
         findFirst: {
-          args: Prisma.SegmentFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SegmentPayload> | null
+          args: Prisma.BuilderSegmentFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BuilderSegmentPayload> | null
         }
         findFirstOrThrow: {
-          args: Prisma.SegmentFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SegmentPayload>
+          args: Prisma.BuilderSegmentFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BuilderSegmentPayload>
         }
         findMany: {
-          args: Prisma.SegmentFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SegmentPayload>[]
+          args: Prisma.BuilderSegmentFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BuilderSegmentPayload>[]
         }
         create: {
-          args: Prisma.SegmentCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SegmentPayload>
+          args: Prisma.BuilderSegmentCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BuilderSegmentPayload>
         }
         createMany: {
-          args: Prisma.SegmentCreateManyArgs<ExtArgs>
+          args: Prisma.BuilderSegmentCreateManyArgs<ExtArgs>
           result: BatchPayload
         }
         createManyAndReturn: {
-          args: Prisma.SegmentCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SegmentPayload>[]
+          args: Prisma.BuilderSegmentCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BuilderSegmentPayload>[]
         }
         delete: {
-          args: Prisma.SegmentDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SegmentPayload>
+          args: Prisma.BuilderSegmentDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BuilderSegmentPayload>
         }
         update: {
-          args: Prisma.SegmentUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SegmentPayload>
+          args: Prisma.BuilderSegmentUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BuilderSegmentPayload>
         }
         deleteMany: {
-          args: Prisma.SegmentDeleteManyArgs<ExtArgs>
+          args: Prisma.BuilderSegmentDeleteManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateMany: {
-          args: Prisma.SegmentUpdateManyArgs<ExtArgs>
+          args: Prisma.BuilderSegmentUpdateManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateManyAndReturn: {
-          args: Prisma.SegmentUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SegmentPayload>[]
+          args: Prisma.BuilderSegmentUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BuilderSegmentPayload>[]
         }
         upsert: {
-          args: Prisma.SegmentUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SegmentPayload>
+          args: Prisma.BuilderSegmentUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BuilderSegmentPayload>
         }
         aggregate: {
-          args: Prisma.SegmentAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateSegment>
+          args: Prisma.BuilderSegmentAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBuilderSegment>
         }
         groupBy: {
-          args: Prisma.SegmentGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.SegmentGroupByOutputType>[]
+          args: Prisma.BuilderSegmentGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BuilderSegmentGroupByOutputType>[]
         }
         count: {
-          args: Prisma.SegmentCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.SegmentCountAggregateOutputType> | number
+          args: Prisma.BuilderSegmentCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BuilderSegmentCountAggregateOutputType> | number
         }
       }
     }
-    Slide: {
-      payload: Prisma.$SlidePayload<ExtArgs>
-      fields: Prisma.SlideFieldRefs
+    BuilderSlide: {
+      payload: Prisma.$BuilderSlidePayload<ExtArgs>
+      fields: Prisma.BuilderSlideFieldRefs
       operations: {
         findUnique: {
-          args: Prisma.SlideFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SlidePayload> | null
+          args: Prisma.BuilderSlideFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BuilderSlidePayload> | null
         }
         findUniqueOrThrow: {
-          args: Prisma.SlideFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SlidePayload>
+          args: Prisma.BuilderSlideFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BuilderSlidePayload>
         }
         findFirst: {
-          args: Prisma.SlideFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SlidePayload> | null
+          args: Prisma.BuilderSlideFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BuilderSlidePayload> | null
         }
         findFirstOrThrow: {
-          args: Prisma.SlideFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SlidePayload>
+          args: Prisma.BuilderSlideFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BuilderSlidePayload>
         }
         findMany: {
-          args: Prisma.SlideFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SlidePayload>[]
+          args: Prisma.BuilderSlideFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BuilderSlidePayload>[]
         }
         create: {
-          args: Prisma.SlideCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SlidePayload>
+          args: Prisma.BuilderSlideCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BuilderSlidePayload>
         }
         createMany: {
-          args: Prisma.SlideCreateManyArgs<ExtArgs>
+          args: Prisma.BuilderSlideCreateManyArgs<ExtArgs>
           result: BatchPayload
         }
         createManyAndReturn: {
-          args: Prisma.SlideCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SlidePayload>[]
+          args: Prisma.BuilderSlideCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BuilderSlidePayload>[]
         }
         delete: {
-          args: Prisma.SlideDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SlidePayload>
+          args: Prisma.BuilderSlideDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BuilderSlidePayload>
         }
         update: {
-          args: Prisma.SlideUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SlidePayload>
+          args: Prisma.BuilderSlideUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BuilderSlidePayload>
         }
         deleteMany: {
-          args: Prisma.SlideDeleteManyArgs<ExtArgs>
+          args: Prisma.BuilderSlideDeleteManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateMany: {
-          args: Prisma.SlideUpdateManyArgs<ExtArgs>
+          args: Prisma.BuilderSlideUpdateManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateManyAndReturn: {
-          args: Prisma.SlideUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SlidePayload>[]
+          args: Prisma.BuilderSlideUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BuilderSlidePayload>[]
         }
         upsert: {
-          args: Prisma.SlideUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SlidePayload>
+          args: Prisma.BuilderSlideUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BuilderSlidePayload>
         }
         aggregate: {
-          args: Prisma.SlideAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateSlide>
+          args: Prisma.BuilderSlideAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBuilderSlide>
         }
         groupBy: {
-          args: Prisma.SlideGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.SlideGroupByOutputType>[]
+          args: Prisma.BuilderSlideGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BuilderSlideGroupByOutputType>[]
         }
         count: {
-          args: Prisma.SlideCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.SlideCountAggregateOutputType> | number
+          args: Prisma.BuilderSlideCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BuilderSlideCountAggregateOutputType> | number
         }
       }
     }
@@ -1751,7 +1751,7 @@ export const OpeningScalarFieldEnum = {
 export type OpeningScalarFieldEnum = (typeof OpeningScalarFieldEnum)[keyof typeof OpeningScalarFieldEnum]
 
 
-export const LessonScalarFieldEnum = {
+export const BuilderLessonScalarFieldEnum = {
   id: 'id',
   title: 'title',
   description: 'description',
@@ -1760,24 +1760,15 @@ export const LessonScalarFieldEnum = {
   status: 'status',
   coverImage: 'coverImage',
   slug: 'slug',
-  version: 'version',
-  isPremium: 'isPremium',
-  priceAmount: 'priceAmount',
-  isAiGenerated: 'isAiGenerated',
-  aiPrompt: 'aiPrompt',
-  averageRating: 'averageRating',
-  ratingsCount: 'ratingsCount',
-  channelId: 'channelId',
-  metadata: 'metadata',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   publishedAt: 'publishedAt'
 } as const
 
-export type LessonScalarFieldEnum = (typeof LessonScalarFieldEnum)[keyof typeof LessonScalarFieldEnum]
+export type BuilderLessonScalarFieldEnum = (typeof BuilderLessonScalarFieldEnum)[keyof typeof BuilderLessonScalarFieldEnum]
 
 
-export const SegmentScalarFieldEnum = {
+export const BuilderSegmentScalarFieldEnum = {
   id: 'id',
   lessonId: 'lessonId',
   title: 'title',
@@ -1787,10 +1778,10 @@ export const SegmentScalarFieldEnum = {
   updatedAt: 'updatedAt'
 } as const
 
-export type SegmentScalarFieldEnum = (typeof SegmentScalarFieldEnum)[keyof typeof SegmentScalarFieldEnum]
+export type BuilderSegmentScalarFieldEnum = (typeof BuilderSegmentScalarFieldEnum)[keyof typeof BuilderSegmentScalarFieldEnum]
 
 
-export const SlideScalarFieldEnum = {
+export const BuilderSlideScalarFieldEnum = {
   id: 'id',
   segmentId: 'segmentId',
   order: 'order',
@@ -1798,15 +1789,11 @@ export const SlideScalarFieldEnum = {
   coachText: 'coachText',
   fen: 'fen',
   annotations: 'annotations',
-  audioUrl: 'audioUrl',
-  audioDuration: 'audioDuration',
-  videoUrl: 'videoUrl',
-  interactiveData: 'interactiveData',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
-export type SlideScalarFieldEnum = (typeof SlideScalarFieldEnum)[keyof typeof SlideScalarFieldEnum]
+export type BuilderSlideScalarFieldEnum = (typeof BuilderSlideScalarFieldEnum)[keyof typeof BuilderSlideScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1823,13 +1810,6 @@ export const NullableJsonNullValueInput = {
 } as const
 
 export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
-
-
-export const JsonNullValueInput = {
-  JsonNull: JsonNull
-} as const
-
-export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
 export const QueryMode = {
@@ -1955,16 +1935,16 @@ export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$Prisma
 
 
 /**
- * Reference to a field of type 'LessonStatus'
+ * Reference to a field of type 'BuilderLessonStatus'
  */
-export type EnumLessonStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LessonStatus'>
+export type EnumBuilderLessonStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BuilderLessonStatus'>
     
 
 
 /**
- * Reference to a field of type 'LessonStatus[]'
+ * Reference to a field of type 'BuilderLessonStatus[]'
  */
-export type ListEnumLessonStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LessonStatus[]'>
+export type ListEnumBuilderLessonStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BuilderLessonStatus[]'>
     
 
 
@@ -2103,9 +2083,9 @@ export type GlobalOmitConfig = {
   webhookEvent?: Prisma.WebhookEventOmit
   curatedPuzzle?: Prisma.CuratedPuzzleOmit
   opening?: Prisma.OpeningOmit
-  lesson?: Prisma.LessonOmit
-  segment?: Prisma.SegmentOmit
-  slide?: Prisma.SlideOmit
+  builderLesson?: Prisma.BuilderLessonOmit
+  builderSegment?: Prisma.BuilderSegmentOmit
+  builderSlide?: Prisma.BuilderSlideOmit
 }
 
 /* Types for Logging */

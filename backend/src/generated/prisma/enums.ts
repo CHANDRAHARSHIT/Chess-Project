@@ -32,9 +32,9 @@ export const PaymentStatus = {
 export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus]
 
 
-export const LessonStatus = {
+export const BuilderLessonStatus = {
   DRAFT: 'DRAFT',
   PUBLISHED: 'PUBLISHED'
 } as const
 
-export type LessonStatus = (typeof LessonStatus)[keyof typeof LessonStatus]
+export type BuilderLessonStatus = (typeof BuilderLessonStatus)[keyof typeof BuilderLessonStatus]

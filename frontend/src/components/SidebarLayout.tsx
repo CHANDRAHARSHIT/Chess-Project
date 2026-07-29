@@ -82,13 +82,13 @@ export default function SidebarLayout({
       icon: GraduationCap,
       comingSoon: true,
       subItems: [
-        { name: "Build Your Own Lessons", href: "/lesson-builder", icon: PenTool },
+        { name: "Build Your Own Lessons", href: "/lessons", icon: PenTool },
         { name: "Lessons", href: "/lessons", icon: BookOpen, comingSoon: true },
         { name: "Play Coach", href: "/play-coach", icon: Bot, comingSoon: true },
         { name: "Openings", href: "/openings", icon: BookMarked },
       ],
     },
-    { name: "Build Your Own Lessons", href: "/lesson-builder", icon: PenTool },
+    { name: "Build Your Own Lessons", href: "/lessons", icon: PenTool },
     { name: "Pricing", href: "/pricing", icon: CreditCard },
     { name: "Premium", href: "/premium", icon: Crown },
   ];

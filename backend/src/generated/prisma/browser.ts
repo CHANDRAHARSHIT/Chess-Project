@@ -79,17 +79,17 @@ export type CuratedPuzzle = Prisma.CuratedPuzzleModel
  */
 export type Opening = Prisma.OpeningModel
 /**
- * Model Lesson
+ * Model BuilderLesson
  * 
  */
-export type Lesson = Prisma.LessonModel
+export type BuilderLesson = Prisma.BuilderLessonModel
 /**
- * Model Segment
+ * Model BuilderSegment
  * 
  */
-export type Segment = Prisma.SegmentModel
+export type BuilderSegment = Prisma.BuilderSegmentModel
 /**
- * Model Slide
+ * Model BuilderSlide
  * 
  */
-export type Slide = Prisma.SlideModel
+export type BuilderSlide = Prisma.BuilderSlideModel

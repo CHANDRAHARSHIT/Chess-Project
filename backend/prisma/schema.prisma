@@ -20,12 +20,12 @@ model User {
 
   // Payment integration fields — two separate columns so test-mode and live-mode
   // Stripe customer IDs can coexist in a single shared database.
-  stripeTestCustomerId String?         @unique // Stripe test-mode customer ID (cus_test_*)
-  stripeLiveCustomerId String?         @unique // Stripe live-mode customer ID  (cus_live_*)
+  stripeTestCustomerId String?          @unique // Stripe test-mode customer ID (cus_test_*)
+  stripeLiveCustomerId String?          @unique // Stripe live-mode customer ID  (cus_live_*)
   subscriptions        Subscription[]
   payments             Payment[]
   billingProfile       BillingProfile?
-  lessons              Lesson[]
+  builderLessons       BuilderLesson[]
 }
 
 model Account {
@@ -211,77 +211,57 @@ model Opening {
   moves String
 }
 
-enum LessonStatus {
+enum BuilderLessonStatus {
   DRAFT
   PUBLISHED
 }
 
-model Lesson {
-  id                String       @id @default(cuid())
+model BuilderLesson {
+  id                String              @id @default(cuid())
   title             String
   description       String?
   authorId          String
-  author            User         @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  author            User                @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorDisplayName String?
-  status            LessonStatus @default(DRAFT)
+  status            BuilderLessonStatus @default(DRAFT)
   coverImage        String?
-  slug              String?      @unique
+  slug              String?             @unique
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  publishedAt       DateTime?
 
-  // Extensibility fields (versioning, monetization, creator features, AI generation)
-  version       Int     @default(1)
-  isPremium     Boolean @default(false)
-  priceAmount   Int?
-  isAiGenerated Boolean @default(false)
-  aiPrompt      String?
-  averageRating Float?
-  ratingsCount  Int     @default(0)
-  channelId     String?
-  metadata      Json?
-
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  publishedAt DateTime?
-
-  segments Segment[]
+  segments BuilderSegment[]
 
   @@index([authorId])
   @@index([status])
   @@index([slug])
-  @@index([channelId])
 }
 
-model Segment {
-  id          String  @id @default(cuid())
+model BuilderSegment {
+  id          String        @id @default(cuid())
   lessonId    String
-  lesson      Lesson  @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  lesson      BuilderLesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   title       String
   order       Int
   description String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  slides Slide[]
+  slides BuilderSlide[]
 
   @@unique([lessonId, order])
   @@index([lessonId])
 }
 
-model Slide {
-  id          String  @id @default(cuid())
+model BuilderSlide {
+  id          String         @id @default(cuid())
   segmentId   String
-  segment     Segment @relation(fields: [segmentId], references: [id], onDelete: Cascade)
+  segment     BuilderSegment @relation(fields: [segmentId], references: [id], onDelete: Cascade)
   order       Int
   title       String?
-  coachText   String  @db.Text
+  coachText   String         @db.Text
   fen         String
-  annotations Json
-
-  // Extensibility fields (voice narration, media, interactive challenges)
-  audioUrl        String?
-  audioDuration   Int?
-  videoUrl        String?
-  interactiveData Json?
+  annotations Json?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

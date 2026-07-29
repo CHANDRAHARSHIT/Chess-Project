@@ -211,7 +211,7 @@ export type UserWhereInput = {
   subscriptions?: Prisma.SubscriptionListRelationFilter
   payments?: Prisma.PaymentListRelationFilter
   billingProfile?: Prisma.XOR<Prisma.BillingProfileNullableScalarRelationFilter, Prisma.BillingProfileWhereInput> | null
-  lessons?: Prisma.LessonListRelationFilter
+  builderLessons?: Prisma.BuilderLessonListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -228,7 +228,7 @@ export type UserOrderByWithRelationInput = {
   subscriptions?: Prisma.SubscriptionOrderByRelationAggregateInput
   payments?: Prisma.PaymentOrderByRelationAggregateInput
   billingProfile?: Prisma.BillingProfileOrderByWithRelationInput
-  lessons?: Prisma.LessonOrderByRelationAggregateInput
+  builderLessons?: Prisma.BuilderLessonOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -248,7 +248,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   subscriptions?: Prisma.SubscriptionListRelationFilter
   payments?: Prisma.PaymentListRelationFilter
   billingProfile?: Prisma.XOR<Prisma.BillingProfileNullableScalarRelationFilter, Prisma.BillingProfileWhereInput> | null
-  lessons?: Prisma.LessonListRelationFilter
+  builderLessons?: Prisma.BuilderLessonListRelationFilter
 }, "id" | "email" | "stripeTestCustomerId" | "stripeLiveCustomerId">
 
 export type UserOrderByWithAggregationInput = {
@@ -293,7 +293,7 @@ export type UserCreateInput = {
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
   billingProfile?: Prisma.BillingProfileCreateNestedOneWithoutUserInput
-  lessons?: Prisma.LessonCreateNestedManyWithoutAuthorInput
+  builderLessons?: Prisma.BuilderLessonCreateNestedManyWithoutAuthorInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -310,7 +310,7 @@ export type UserUncheckedCreateInput = {
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
   billingProfile?: Prisma.BillingProfileUncheckedCreateNestedOneWithoutUserInput
-  lessons?: Prisma.LessonUncheckedCreateNestedManyWithoutAuthorInput
+  builderLessons?: Prisma.BuilderLessonUncheckedCreateNestedManyWithoutAuthorInput
 }
 
 export type UserUpdateInput = {
@@ -327,7 +327,7 @@ export type UserUpdateInput = {
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
   billingProfile?: Prisma.BillingProfileUpdateOneWithoutUserNestedInput
-  lessons?: Prisma.LessonUpdateManyWithoutAuthorNestedInput
+  builderLessons?: Prisma.BuilderLessonUpdateManyWithoutAuthorNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -344,7 +344,7 @@ export type UserUncheckedUpdateInput = {
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
   billingProfile?: Prisma.BillingProfileUncheckedUpdateOneWithoutUserNestedInput
-  lessons?: Prisma.LessonUncheckedUpdateManyWithoutAuthorNestedInput
+  builderLessons?: Prisma.BuilderLessonUncheckedUpdateManyWithoutAuthorNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -504,18 +504,18 @@ export type UserUpdateOneRequiredWithoutBillingProfileNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutBillingProfileInput, Prisma.UserUpdateWithoutBillingProfileInput>, Prisma.UserUncheckedUpdateWithoutBillingProfileInput>
 }
 
-export type UserCreateNestedOneWithoutLessonsInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutLessonsInput, Prisma.UserUncheckedCreateWithoutLessonsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutLessonsInput
+export type UserCreateNestedOneWithoutBuilderLessonsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutBuilderLessonsInput, Prisma.UserUncheckedCreateWithoutBuilderLessonsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutBuilderLessonsInput
   connect?: Prisma.UserWhereUniqueInput
 }
 
-export type UserUpdateOneRequiredWithoutLessonsNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutLessonsInput, Prisma.UserUncheckedCreateWithoutLessonsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutLessonsInput
-  upsert?: Prisma.UserUpsertWithoutLessonsInput
+export type UserUpdateOneRequiredWithoutBuilderLessonsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutBuilderLessonsInput, Prisma.UserUncheckedCreateWithoutBuilderLessonsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutBuilderLessonsInput
+  upsert?: Prisma.UserUpsertWithoutBuilderLessonsInput
   connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutLessonsInput, Prisma.UserUpdateWithoutLessonsInput>, Prisma.UserUncheckedUpdateWithoutLessonsInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutBuilderLessonsInput, Prisma.UserUpdateWithoutBuilderLessonsInput>, Prisma.UserUncheckedUpdateWithoutBuilderLessonsInput>
 }
 
 export type UserCreateWithoutAccountsInput = {
@@ -531,7 +531,7 @@ export type UserCreateWithoutAccountsInput = {
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
   billingProfile?: Prisma.BillingProfileCreateNestedOneWithoutUserInput
-  lessons?: Prisma.LessonCreateNestedManyWithoutAuthorInput
+  builderLessons?: Prisma.BuilderLessonCreateNestedManyWithoutAuthorInput
 }
 
 export type UserUncheckedCreateWithoutAccountsInput = {
@@ -547,7 +547,7 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
   billingProfile?: Prisma.BillingProfileUncheckedCreateNestedOneWithoutUserInput
-  lessons?: Prisma.LessonUncheckedCreateNestedManyWithoutAuthorInput
+  builderLessons?: Prisma.BuilderLessonUncheckedCreateNestedManyWithoutAuthorInput
 }
 
 export type UserCreateOrConnectWithoutAccountsInput = {
@@ -579,7 +579,7 @@ export type UserUpdateWithoutAccountsInput = {
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
   billingProfile?: Prisma.BillingProfileUpdateOneWithoutUserNestedInput
-  lessons?: Prisma.LessonUpdateManyWithoutAuthorNestedInput
+  builderLessons?: Prisma.BuilderLessonUpdateManyWithoutAuthorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -595,7 +595,7 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
   billingProfile?: Prisma.BillingProfileUncheckedUpdateOneWithoutUserNestedInput
-  lessons?: Prisma.LessonUncheckedUpdateManyWithoutAuthorNestedInput
+  builderLessons?: Prisma.BuilderLessonUncheckedUpdateManyWithoutAuthorNestedInput
 }
 
 export type UserCreateWithoutSessionsInput = {
@@ -611,7 +611,7 @@ export type UserCreateWithoutSessionsInput = {
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
   billingProfile?: Prisma.BillingProfileCreateNestedOneWithoutUserInput
-  lessons?: Prisma.LessonCreateNestedManyWithoutAuthorInput
+  builderLessons?: Prisma.BuilderLessonCreateNestedManyWithoutAuthorInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -627,7 +627,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
   billingProfile?: Prisma.BillingProfileUncheckedCreateNestedOneWithoutUserInput
-  lessons?: Prisma.LessonUncheckedCreateNestedManyWithoutAuthorInput
+  builderLessons?: Prisma.BuilderLessonUncheckedCreateNestedManyWithoutAuthorInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -659,7 +659,7 @@ export type UserUpdateWithoutSessionsInput = {
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
   billingProfile?: Prisma.BillingProfileUpdateOneWithoutUserNestedInput
-  lessons?: Prisma.LessonUpdateManyWithoutAuthorNestedInput
+  builderLessons?: Prisma.BuilderLessonUpdateManyWithoutAuthorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -675,7 +675,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
   billingProfile?: Prisma.BillingProfileUncheckedUpdateOneWithoutUserNestedInput
-  lessons?: Prisma.LessonUncheckedUpdateManyWithoutAuthorNestedInput
+  builderLessons?: Prisma.BuilderLessonUncheckedUpdateManyWithoutAuthorNestedInput
 }
 
 export type UserCreateWithoutSubscriptionsInput = {
@@ -691,7 +691,7 @@ export type UserCreateWithoutSubscriptionsInput = {
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
   billingProfile?: Prisma.BillingProfileCreateNestedOneWithoutUserInput
-  lessons?: Prisma.LessonCreateNestedManyWithoutAuthorInput
+  builderLessons?: Prisma.BuilderLessonCreateNestedManyWithoutAuthorInput
 }
 
 export type UserUncheckedCreateWithoutSubscriptionsInput = {
@@ -707,7 +707,7 @@ export type UserUncheckedCreateWithoutSubscriptionsInput = {
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
   billingProfile?: Prisma.BillingProfileUncheckedCreateNestedOneWithoutUserInput
-  lessons?: Prisma.LessonUncheckedCreateNestedManyWithoutAuthorInput
+  builderLessons?: Prisma.BuilderLessonUncheckedCreateNestedManyWithoutAuthorInput
 }
 
 export type UserCreateOrConnectWithoutSubscriptionsInput = {
@@ -739,7 +739,7 @@ export type UserUpdateWithoutSubscriptionsInput = {
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
   billingProfile?: Prisma.BillingProfileUpdateOneWithoutUserNestedInput
-  lessons?: Prisma.LessonUpdateManyWithoutAuthorNestedInput
+  builderLessons?: Prisma.BuilderLessonUpdateManyWithoutAuthorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSubscriptionsInput = {
@@ -755,7 +755,7 @@ export type UserUncheckedUpdateWithoutSubscriptionsInput = {
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
   billingProfile?: Prisma.BillingProfileUncheckedUpdateOneWithoutUserNestedInput
-  lessons?: Prisma.LessonUncheckedUpdateManyWithoutAuthorNestedInput
+  builderLessons?: Prisma.BuilderLessonUncheckedUpdateManyWithoutAuthorNestedInput
 }
 
 export type UserCreateWithoutPaymentsInput = {
@@ -771,7 +771,7 @@ export type UserCreateWithoutPaymentsInput = {
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
   billingProfile?: Prisma.BillingProfileCreateNestedOneWithoutUserInput
-  lessons?: Prisma.LessonCreateNestedManyWithoutAuthorInput
+  builderLessons?: Prisma.BuilderLessonCreateNestedManyWithoutAuthorInput
 }
 
 export type UserUncheckedCreateWithoutPaymentsInput = {
@@ -787,7 +787,7 @@ export type UserUncheckedCreateWithoutPaymentsInput = {
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
   billingProfile?: Prisma.BillingProfileUncheckedCreateNestedOneWithoutUserInput
-  lessons?: Prisma.LessonUncheckedCreateNestedManyWithoutAuthorInput
+  builderLessons?: Prisma.BuilderLessonUncheckedCreateNestedManyWithoutAuthorInput
 }
 
 export type UserCreateOrConnectWithoutPaymentsInput = {
@@ -819,7 +819,7 @@ export type UserUpdateWithoutPaymentsInput = {
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
   billingProfile?: Prisma.BillingProfileUpdateOneWithoutUserNestedInput
-  lessons?: Prisma.LessonUpdateManyWithoutAuthorNestedInput
+  builderLessons?: Prisma.BuilderLessonUpdateManyWithoutAuthorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPaymentsInput = {
@@ -835,7 +835,7 @@ export type UserUncheckedUpdateWithoutPaymentsInput = {
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
   billingProfile?: Prisma.BillingProfileUncheckedUpdateOneWithoutUserNestedInput
-  lessons?: Prisma.LessonUncheckedUpdateManyWithoutAuthorNestedInput
+  builderLessons?: Prisma.BuilderLessonUncheckedUpdateManyWithoutAuthorNestedInput
 }
 
 export type UserCreateWithoutBillingProfileInput = {
@@ -851,7 +851,7 @@ export type UserCreateWithoutBillingProfileInput = {
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
-  lessons?: Prisma.LessonCreateNestedManyWithoutAuthorInput
+  builderLessons?: Prisma.BuilderLessonCreateNestedManyWithoutAuthorInput
 }
 
 export type UserUncheckedCreateWithoutBillingProfileInput = {
@@ -867,7 +867,7 @@ export type UserUncheckedCreateWithoutBillingProfileInput = {
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
-  lessons?: Prisma.LessonUncheckedCreateNestedManyWithoutAuthorInput
+  builderLessons?: Prisma.BuilderLessonUncheckedCreateNestedManyWithoutAuthorInput
 }
 
 export type UserCreateOrConnectWithoutBillingProfileInput = {
@@ -899,7 +899,7 @@ export type UserUpdateWithoutBillingProfileInput = {
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
-  lessons?: Prisma.LessonUpdateManyWithoutAuthorNestedInput
+  builderLessons?: Prisma.BuilderLessonUpdateManyWithoutAuthorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutBillingProfileInput = {
@@ -915,10 +915,10 @@ export type UserUncheckedUpdateWithoutBillingProfileInput = {
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
-  lessons?: Prisma.LessonUncheckedUpdateManyWithoutAuthorNestedInput
+  builderLessons?: Prisma.BuilderLessonUncheckedUpdateManyWithoutAuthorNestedInput
 }
 
-export type UserCreateWithoutLessonsInput = {
+export type UserCreateWithoutBuilderLessonsInput = {
   id?: string
   name?: string | null
   email: string
@@ -934,7 +934,7 @@ export type UserCreateWithoutLessonsInput = {
   billingProfile?: Prisma.BillingProfileCreateNestedOneWithoutUserInput
 }
 
-export type UserUncheckedCreateWithoutLessonsInput = {
+export type UserUncheckedCreateWithoutBuilderLessonsInput = {
   id?: string
   name?: string | null
   email: string
@@ -950,23 +950,23 @@ export type UserUncheckedCreateWithoutLessonsInput = {
   billingProfile?: Prisma.BillingProfileUncheckedCreateNestedOneWithoutUserInput
 }
 
-export type UserCreateOrConnectWithoutLessonsInput = {
+export type UserCreateOrConnectWithoutBuilderLessonsInput = {
   where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutLessonsInput, Prisma.UserUncheckedCreateWithoutLessonsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutBuilderLessonsInput, Prisma.UserUncheckedCreateWithoutBuilderLessonsInput>
 }
 
-export type UserUpsertWithoutLessonsInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutLessonsInput, Prisma.UserUncheckedUpdateWithoutLessonsInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutLessonsInput, Prisma.UserUncheckedCreateWithoutLessonsInput>
+export type UserUpsertWithoutBuilderLessonsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutBuilderLessonsInput, Prisma.UserUncheckedUpdateWithoutBuilderLessonsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutBuilderLessonsInput, Prisma.UserUncheckedCreateWithoutBuilderLessonsInput>
   where?: Prisma.UserWhereInput
 }
 
-export type UserUpdateToOneWithWhereWithoutLessonsInput = {
+export type UserUpdateToOneWithWhereWithoutBuilderLessonsInput = {
   where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutLessonsInput, Prisma.UserUncheckedUpdateWithoutLessonsInput>
+  data: Prisma.XOR<Prisma.UserUpdateWithoutBuilderLessonsInput, Prisma.UserUncheckedUpdateWithoutBuilderLessonsInput>
 }
 
-export type UserUpdateWithoutLessonsInput = {
+export type UserUpdateWithoutBuilderLessonsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
@@ -982,7 +982,7 @@ export type UserUpdateWithoutLessonsInput = {
   billingProfile?: Prisma.BillingProfileUpdateOneWithoutUserNestedInput
 }
 
-export type UserUncheckedUpdateWithoutLessonsInput = {
+export type UserUncheckedUpdateWithoutBuilderLessonsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1008,7 +1008,7 @@ export type UserCountOutputType = {
   sessions: number
   subscriptions: number
   payments: number
-  lessons: number
+  builderLessons: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1016,7 +1016,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   sessions?: boolean | UserCountOutputTypeCountSessionsArgs
   subscriptions?: boolean | UserCountOutputTypeCountSubscriptionsArgs
   payments?: boolean | UserCountOutputTypeCountPaymentsArgs
-  lessons?: boolean | UserCountOutputTypeCountLessonsArgs
+  builderLessons?: boolean | UserCountOutputTypeCountBuilderLessonsArgs
 }
 
 /**
@@ -1060,8 +1060,8 @@ export type UserCountOutputTypeCountPaymentsArgs<ExtArgs extends runtime.Types.E
 /**
  * UserCountOutputType without action
  */
-export type UserCountOutputTypeCountLessonsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.LessonWhereInput
+export type UserCountOutputTypeCountBuilderLessonsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BuilderLessonWhereInput
 }
 
 
@@ -1079,7 +1079,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   subscriptions?: boolean | Prisma.User$subscriptionsArgs<ExtArgs>
   payments?: boolean | Prisma.User$paymentsArgs<ExtArgs>
   billingProfile?: boolean | Prisma.User$billingProfileArgs<ExtArgs>
-  lessons?: boolean | Prisma.User$lessonsArgs<ExtArgs>
+  builderLessons?: boolean | Prisma.User$builderLessonsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -1123,7 +1123,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   subscriptions?: boolean | Prisma.User$subscriptionsArgs<ExtArgs>
   payments?: boolean | Prisma.User$paymentsArgs<ExtArgs>
   billingProfile?: boolean | Prisma.User$billingProfileArgs<ExtArgs>
-  lessons?: boolean | Prisma.User$lessonsArgs<ExtArgs>
+  builderLessons?: boolean | Prisma.User$builderLessonsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1137,7 +1137,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     subscriptions: Prisma.$SubscriptionPayload<ExtArgs>[]
     payments: Prisma.$PaymentPayload<ExtArgs>[]
     billingProfile: Prisma.$BillingProfilePayload<ExtArgs> | null
-    lessons: Prisma.$LessonPayload<ExtArgs>[]
+    builderLessons: Prisma.$BuilderLessonPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1547,7 +1547,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   subscriptions<T extends Prisma.User$subscriptionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$subscriptionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SubscriptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   payments<T extends Prisma.User$paymentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$paymentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   billingProfile<T extends Prisma.User$billingProfileArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$billingProfileArgs<ExtArgs>>): Prisma.Prisma__BillingProfileClient<runtime.Types.Result.GetResult<Prisma.$BillingProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  lessons<T extends Prisma.User$lessonsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$lessonsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LessonPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  builderLessons<T extends Prisma.User$builderLessonsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$builderLessonsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BuilderLessonPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2093,27 +2093,27 @@ export type User$billingProfileArgs<ExtArgs extends runtime.Types.Extensions.Int
 }
 
 /**
- * User.lessons
+ * User.builderLessons
  */
-export type User$lessonsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type User$builderLessonsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the Lesson
+   * Select specific fields to fetch from the BuilderLesson
    */
-  select?: Prisma.LessonSelect<ExtArgs> | null
+  select?: Prisma.BuilderLessonSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the Lesson
+   * Omit specific fields from the BuilderLesson
    */
-  omit?: Prisma.LessonOmit<ExtArgs> | null
+  omit?: Prisma.BuilderLessonOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.LessonInclude<ExtArgs> | null
-  where?: Prisma.LessonWhereInput
-  orderBy?: Prisma.LessonOrderByWithRelationInput | Prisma.LessonOrderByWithRelationInput[]
-  cursor?: Prisma.LessonWhereUniqueInput
+  include?: Prisma.BuilderLessonInclude<ExtArgs> | null
+  where?: Prisma.BuilderLessonWhereInput
+  orderBy?: Prisma.BuilderLessonOrderByWithRelationInput | Prisma.BuilderLessonOrderByWithRelationInput[]
+  cursor?: Prisma.BuilderLessonWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.LessonScalarFieldEnum | Prisma.LessonScalarFieldEnum[]
+  distinct?: Prisma.BuilderLessonScalarFieldEnum | Prisma.BuilderLessonScalarFieldEnum[]
 }
 
 /**

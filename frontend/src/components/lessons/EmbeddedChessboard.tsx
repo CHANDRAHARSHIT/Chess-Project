@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, RotateCcw, Palette, Eraser } from "lucide-react";
+import { X, RotateCcw, Palette, Eraser, Trash2 } from "lucide-react";
 import { ThemedChessboard } from "../ThemedChessboard";
 import type { PieceDropHandlerArgs, SquareHandlerArgs } from "react-chessboard";
 import { useBoardSettings } from "../../hooks/useBoardSettings";
@@ -31,6 +31,13 @@ export function EmbeddedChessboard({
   const [showSparePieces, setShowSparePieces] = useState(false);
   const [selectedTool, setSelectedTool] = useState<EditorTool | null>(null);
   const { pieceSet } = useBoardSettings();
+
+  const handleClearBoard = () => {
+    const currentFen = fen || "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    const state = parseFenToEditorState(currentFen);
+    const nextFen = buildFenFromEditorState({ ...state, position: {} });
+    onFenChange?.(nextFen);
+  };
 
   const handlePieceDrop = ({ sourceSquare, targetSquare }: PieceDropHandlerArgs) => {
     const currentFen = fen || "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -167,20 +174,33 @@ export function EmbeddedChessboard({
               })}
 
               {rowIndex === 1 && (
-                <button
-                  type="button"
-                  onClick={() =>
-                    setSelectedTool(selectedTool === "erase" ? null : "erase")
-                  }
-                  title="Eraser (click square to clear)"
-                  className={`w-7 h-7 flex items-center justify-center rounded border transition-all cursor-pointer ${
-                    selectedTool === "erase"
-                      ? "border-red-400 bg-red-400/20 text-red-400 scale-105"
-                      : "border-brand-border/40 hover:border-brand-border text-brand-secondary hover:text-brand-text bg-brand-bg/60"
-                  }`}
-                >
-                  <Eraser className="w-4 h-4" />
-                </button>
+                <>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setSelectedTool(selectedTool === "erase" ? null : "erase")
+                    }
+                    title="Eraser (click square to clear)"
+                    aria-label="Eraser tool"
+                    className={`w-7 h-7 flex items-center justify-center rounded border transition-all cursor-pointer ${
+                      selectedTool === "erase"
+                        ? "border-red-400 bg-red-400/20 text-red-400 scale-105"
+                        : "border-brand-border/40 hover:border-brand-border text-brand-secondary hover:text-brand-text bg-brand-bg/60"
+                    }`}
+                  >
+                    <Eraser className="w-4 h-4" />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleClearBoard}
+                    title="Clear Board"
+                    aria-label="Clear Board"
+                    className="w-7 h-7 flex items-center justify-center rounded border border-brand-border/40 hover:border-red-400/60 text-brand-secondary hover:text-red-400 bg-brand-bg/60 hover:bg-red-400/10 transition-all cursor-pointer"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </>
               )}
             </div>
           ))}

@@ -10,6 +10,7 @@ import PremiumPage from "../pages/PremiumPage";
 import OpeningsPage from "../pages/OpeningsPage";
 import VariantsPage from "../pages/VariantsPage";
 import Chess960Page from "../pages/Chess960Page";
+import LessonDashboardPage from "../pages/LessonDashboardPage";
 import LessonBuilderPage from "../pages/LessonBuilderPage";
 import { ProtectedRoute } from "../components/ProtectedRoute";
 
@@ -25,13 +26,34 @@ export const mainRoutes: RouteConfig[] = [
   { path: "/openings", element: <OpeningsPage /> },
   { path: "/variants", element: <VariantsPage /> },
   { path: "/play/chess960", element: <Chess960Page /> },
-  { path: "/lesson-builder", element: <LessonBuilderPage /> },
+  {
+    path: "/lessons",
+    element: (
+      <ProtectedRoute>
+        <LessonDashboardPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/lesson-builder",
+    element: (
+      <ProtectedRoute>
+        <LessonDashboardPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/lesson-builder/:id",
+    element: (
+      <ProtectedRoute>
+        <LessonBuilderPage />
+      </ProtectedRoute>
+    ),
+  },
   {
     path: "/profile",
     element: <Navigate to="/settings?tab=profile" replace />,
   },
-  // Not behind ProtectedRoute: board/piece preferences are stored in
-  // localStorage (like the Sound toggle) so guests can use them too.
   { path: "/settings", element: <SettingsPage /> },
   {
     path: "/premium",
