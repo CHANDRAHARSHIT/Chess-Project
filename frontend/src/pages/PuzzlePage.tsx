@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { RoyalGoldPathway, ROYAL_GOLD_NODES } from '../components/pathways/RoyalGold/RoyalGoldPathway';
 import { PATHWAY_NODES } from '../components/pathways';
@@ -7,8 +7,8 @@ import { PuzzleBoard } from '../components/PuzzleBoard';
 import { CustomPuzzlePanel } from '../components/CustomPuzzlePanel';
 import { CustomPuzzleSession } from '../components/CustomPuzzleSession';
 import type { PuzzleFilters } from '../types/puzzle';
-import { 
-  HelpCircle, 
+import {
+  HelpCircle,
   Sparkles,
   ArrowLeft,
   ArrowRight,
@@ -16,6 +16,46 @@ import {
 import type { ChessPuzzle } from '../utils/PuzzleLoader';
 import { Chess } from 'chess.js';
 import { Confetti } from '../components/Confetti';
+
+// Tailwind's `lg` breakpoint. Keep in sync with tailwind config if changed.
+const DESKTOP_BREAKPOINT_PX = 1024;
+
+/**
+ * Tracks whether the viewport is at/above the desktop breakpoint.
+ * Used to *actually* mount only one layout tree at a time (desktop vs
+ * mobile), rather than mounting both and hiding one with CSS. Mounting
+ * both simultaneously double-instantiates PuzzleBoard/ThemedChessboard,
+ * which is what was crashing the page on mobile.
+ */
+function useIsDesktop(breakpointPx: number = DESKTOP_BREAKPOINT_PX): boolean {
+  const getMatch = () =>
+    typeof window !== 'undefined'
+      ? window.matchMedia(`(min-width: ${breakpointPx}px)`).matches
+      : true;
+
+  const [isDesktop, setIsDesktop] = useState<boolean>(getMatch);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const mql = window.matchMedia(`(min-width: ${breakpointPx}px)`);
+
+    const handleChange = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
+
+    // Sync immediately in case it changed between initial state and mount
+    setIsDesktop(mql.matches);
+
+    if (mql.addEventListener) {
+      mql.addEventListener('change', handleChange);
+      return () => mql.removeEventListener('change', handleChange);
+    } else {
+      // Safari < 14 fallback
+      mql.addListener(handleChange);
+      return () => mql.removeListener(handleChange);
+    }
+  }, [breakpointPx]);
+
+  return isDesktop;
+}
 
 export default function PuzzlePage() {
   const navigate = useNavigate();
@@ -28,6 +68,9 @@ export default function PuzzlePage() {
 
   // Mobile view state
   const [mobileView, setMobileView] = useState<'pathway' | 'board'>('pathway');
+
+  // Real (not CSS-only) desktop/mobile split — see useIsDesktop above.
+  const isDesktop = useIsDesktop();
 
   const activePathwayNodes = useMemo(() => {
     return ROYAL_GOLD_NODES || PATHWAY_NODES['RoyalGold'];
@@ -143,20 +186,20 @@ export default function PuzzlePage() {
       setCompletedIds(prev => {
         if (prev.includes(selectedNode.id)) return prev;
         const updated = [...prev, selectedNode.id];
-        try { localStorage.setItem('xlchess_completed_puzzles', JSON.stringify(updated)); } catch (e) {}
+        try { localStorage.setItem('xlchess_completed_puzzles', JSON.stringify(updated)); } catch (e) { }
         return updated;
       });
     }
 
     setStreak(prev => {
       const next = prev + 1;
-      try { localStorage.setItem('xlchess_puzzle_streak', next.toString()); } catch (e) {}
+      try { localStorage.setItem('xlchess_puzzle_streak', next.toString()); } catch (e) { }
       return next;
     });
 
     setSolvedCount(prev => {
       const next = prev + 1;
-      try { localStorage.setItem('xlchess_puzzle_solved', next.toString()); } catch (e) {}
+      try { localStorage.setItem('xlchess_puzzle_solved', next.toString()); } catch (e) { }
       return next;
     });
   }, [selectedNode]);
@@ -164,7 +207,7 @@ export default function PuzzlePage() {
   // Failed callback from left puzzle board
   const handleFailed = useCallback(() => {
     setStreak(0);
-    try { localStorage.setItem('xlchess_puzzle_streak', '0'); } catch (e) {}
+    try { localStorage.setItem('xlchess_puzzle_streak', '0'); } catch (e) { }
   }, []);
 
   const handleNavigateHome = useCallback(() => {
@@ -173,23 +216,19 @@ export default function PuzzlePage() {
 
   // ── Custom Puzzle handlers ──────────────────────────────────────────────────
 
-  /** Open inline config panel (replaces pathway in right column) */
   const handleOpenCustomConfig = useCallback(() => {
     setRightPanelMode('config');
   }, []);
 
-  /** Close config panel — revert right panel to pathway */
   const handleCloseCustomConfig = useCallback(() => {
     setRightPanelMode('pathway');
   }, []);
 
-  /** Called when the user clicks "Start Session" in the panel */
   const handleStartCustomSession = useCallback((filters: PuzzleFilters) => {
-    setRightPanelMode('pathway'); // reset for when they exit
+    setRightPanelMode('pathway');
     setCustomFilters(filters);
   }, []);
 
-  /** Called when the user clicks "Exit" inside the custom session */
   const handleExitCustomSession = useCallback(() => {
     setCustomFilters(null);
   }, []);
@@ -207,7 +246,6 @@ export default function PuzzlePage() {
       );
     }
 
-    // Default: pathway + custom puzzles button below it
     return (
       <div className="flex flex-col w-full h-full gap-3">
         <RoyalGoldPathway
@@ -215,7 +253,6 @@ export default function PuzzlePage() {
           onSelectPuzzle={handleSelectNode}
         />
 
-        {/* Custom Puzzles button — below the pathway */}
         <button
           id="custom-puzzles-btn"
           onClick={handleOpenCustomConfig}
@@ -252,13 +289,10 @@ export default function PuzzlePage() {
     <div className="min-h-screen bg-brand-bg text-brand-text flex flex-col relative select-none pb-16 pt-20 sm:pt-8">
       {showConfetti && <Confetti />}
 
-      {/* Ambient Lighting */}
       <div className="absolute top-[15%] left-1/2 -translate-x-1/2 w-[80vw] max-w-[1200px] h-[400px] rounded-full blur-[160px] bg-brand-accent/5 pointer-events-none z-0" />
 
-      {/* Main Container */}
       <main className="relative z-10 flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex flex-col justify-center">
 
-        {/* Top Breadcrumb Header Bar */}
         <div className="mb-4 flex items-center justify-between w-full">
           <button
             onClick={handleNavigateHome}
@@ -270,7 +304,6 @@ export default function PuzzlePage() {
             Back to Home
           </button>
 
-          {/* Exit custom session button (only shown during an active session) */}
           {customFilters && (
             <button
               onClick={handleExitCustomSession}
@@ -292,10 +325,8 @@ export default function PuzzlePage() {
           )}
         </div>
 
-        {/* ── Custom Puzzle Session Mode vs Pathway Mode ─────────────────────── */}
         {customFilters ? (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start w-full">
-            {/* Board area */}
             <div className="lg:col-span-7 flex justify-center w-full">
               <CustomPuzzleSession
                 filters={customFilters}
@@ -303,7 +334,6 @@ export default function PuzzlePage() {
               />
             </div>
 
-            {/* Right panel: custom session info */}
             <div className="lg:col-span-5 flex flex-col space-y-6">
               <div
                 className="rounded-2xl p-6 text-left shadow-2xl relative overflow-hidden"
@@ -364,7 +394,6 @@ export default function PuzzlePage() {
                 )}
               </div>
 
-              {/* Hint card */}
               <div className="bg-brand-surface/30 backdrop-blur-sm border border-brand-border/60 rounded-2xl p-5 text-left flex items-start gap-3.5">
                 <div className="w-8 h-8 rounded-lg bg-brand-accent/10 border border-brand-accent/20 text-brand-accent flex items-center justify-center flex-shrink-0 mt-0.5">
                   <HelpCircle className="w-4 h-4" />
@@ -380,153 +409,144 @@ export default function PuzzlePage() {
               </div>
             </div>
           </div>
-        ) : (
-          /* ── Pathway Mode ──────────────────────────────────────────────────── */
-          <>
-            {/* DESKTOP VIEW */}
-            <div className="hidden lg:grid lg:grid-cols-12 gap-8 items-stretch w-full">
-              {/* Left: puzzle board */}
-              <div className="lg:col-span-7 flex flex-col items-center w-full space-y-6">
-                <div className="w-full bg-brand-surface/70 backdrop-blur-xl border border-brand-border rounded-2xl p-5 text-left shadow-2xl relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h1 className="text-xl sm:text-2xl font-display lining-nums font-semibold text-brand-text tracking-wide">
-                        {selectedNode ? `Level ${selectedNode.levelNumber}: ${selectedNode.title || 'Mate in 1'}` : 'Mate in 1 Tactics'}
-                      </h1>
-                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider bg-amber-500/10 border border-amber-500/30 text-amber-400">
-                        Rating {safeChessPuzzle.rating}
-                      </span>
-                    </div>
-                    <p className="text-xs text-brand-secondary font-sans mt-0.5">
-                      {selectedNode?.description || 'Solve tactics to train your checkmate vision.'}
-                    </p>
+        ) : isDesktop ? (
+          /* ── DESKTOP VIEW (only mounted when isDesktop is true) ──────────── */
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch w-full">
+            <div className="lg:col-span-7 flex flex-col items-center w-full space-y-6">
+              <div className="w-full bg-brand-surface/70 backdrop-blur-xl border border-brand-border rounded-2xl p-5 text-left shadow-2xl relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h1 className="text-xl sm:text-2xl font-display lining-nums font-semibold text-brand-text tracking-wide">
+                      {selectedNode ? `Level ${selectedNode.levelNumber}: ${selectedNode.title || 'Mate in 1'}` : 'Mate in 1 Tactics'}
+                    </h1>
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider bg-amber-500/10 border border-amber-500/30 text-amber-400">
+                      Rating {safeChessPuzzle.rating}
+                    </span>
                   </div>
-
-                  <button
-                    onClick={handleNextPuzzle}
-                    className="px-4 py-2 rounded-xl text-xs font-mono uppercase tracking-wider font-semibold bg-amber-500 text-slate-950 hover:bg-amber-400 transition-all shadow-lg flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
-                  >
-                    <span>Next Level</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
+                  <p className="text-xs text-brand-secondary font-sans mt-0.5">
+                    {selectedNode?.description || 'Solve tactics to train your checkmate vision.'}
+                  </p>
                 </div>
 
-                <div className="flex justify-center w-full">
-                  <PuzzleBoard
-                    boardId="desktop-puzzle-board"
-                    puzzle={safeChessPuzzle}
-                    puzzleNumber={selectedNode?.levelNumber || 1}
-                    onSolved={handleSolved}
-                    onFailed={handleFailed}
-                    onNextPuzzle={handleNextPuzzle}
-                  />
-                </div>
+                <button
+                  onClick={handleNextPuzzle}
+                  className="px-4 py-2 rounded-xl text-xs font-mono uppercase tracking-wider font-semibold bg-amber-500 text-slate-950 hover:bg-amber-400 transition-all shadow-lg flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+                >
+                  <span>Next Level</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
               </div>
 
-              {/* Right: pathway or config panel */}
-              <div className="lg:col-span-5 flex flex-col w-full h-full">
-                {renderRightPanel()}
+              <div className="flex justify-center w-full">
+                <PuzzleBoard
+                  boardId="desktop-puzzle-board"
+                  puzzle={safeChessPuzzle}
+                  puzzleNumber={selectedNode?.levelNumber || 1}
+                  onSolved={handleSolved}
+                  onFailed={handleFailed}
+                  onNextPuzzle={handleNextPuzzle}
+                />
               </div>
             </div>
 
-            {/* MOBILE VIEW */}
-            <div className="lg:hidden w-full flex flex-col">
-              {(() => {
-                switch (mobileView) {
-                  case 'board':
-                    return (
-                      <div className="w-full flex flex-col items-center space-y-6">
-                        {/* Back to Pathway Navigation Button */}
-                        <div className="w-full flex items-center justify-between">
-                          <button
-                            type="button"
-                            onClick={handleReturnToPathway}
-                            className="flex items-center gap-2 text-xs font-mono font-semibold uppercase tracking-wider text-amber-400 hover:text-amber-300 bg-amber-500/10 border border-amber-500/30 px-3.5 py-2 rounded-xl transition-all shadow-md cursor-pointer"
-                          >
-                            <ArrowLeft className="w-4 h-4" />
-                            <span>Back to Pathway</span>
-                          </button>
-                        </div>
-
-                        {/* Mobile Board Header Card */}
-                        <div className="w-full bg-brand-surface/70 backdrop-blur-xl border border-brand-border rounded-2xl p-4 text-left shadow-2xl relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <h1 className="text-lg font-display lining-nums font-semibold text-brand-text tracking-wide">
-                                {selectedNode ? `Level ${selectedNode.levelNumber}: ${selectedNode.title || 'Mate in 1'}` : 'Mate in 1 Tactics'}
-                              </h1>
-                              <span className="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold uppercase tracking-wider bg-amber-500/10 border border-amber-500/30 text-amber-400">
-                                Rating {safeChessPuzzle.rating}
-                              </span>
-                            </div>
-                            <p className="text-xs text-brand-secondary font-sans mt-0.5">
-                              {selectedNode?.description || 'Solve tactics to train your checkmate vision.'}
-                            </p>
-                          </div>
-
-                          <button
-                            type="button"
-                            onClick={handleNextPuzzleMobile}
-                            className="px-3.5 py-2 rounded-xl text-xs font-mono uppercase tracking-wider font-semibold bg-amber-500 text-slate-950 hover:bg-amber-400 transition-all shadow-lg flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
-                          >
-                            <span>Next Level</span>
-                            <ArrowRight className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-
-                        {/* Mobile Interactive Chess Board */}
-                        <div className="flex justify-center w-full">
-                          <PuzzleBoard
-                            boardId="mobile-puzzle-board"
-                            puzzle={safeChessPuzzle}
-                            puzzleNumber={selectedNode?.levelNumber || 1}
-                            onSolved={handleSolved}
-                            onFailed={handleFailed}
-                            onNextPuzzle={handleNextPuzzleMobile}
-                          />
-                        </div>
-                      </div>
-                    );
-
-                  case 'pathway':
-                  default:
-                    if (rightPanelMode === 'config') {
-                      return (
-                        <div className="w-full">
-                          <CustomPuzzlePanel
-                            onStart={handleStartCustomSession}
-                            onClose={handleCloseCustomConfig}
-                          />
-                        </div>
-                      );
-                    }
-                    return (
-                      <div className="w-full flex flex-col gap-3">
-                        <RoyalGoldPathway
-                          playerProgress={playerProgress}
-                          onSelectPuzzle={handleSelectNode}
-                        />
-                        {/* Custom Puzzles button on mobile — below pathway */}
+            <div className="lg:col-span-5 flex flex-col w-full h-full">
+              {renderRightPanel()}
+            </div>
+          </div>
+        ) : (
+          /* ── MOBILE VIEW (only mounted when isDesktop is false) ──────────── */
+          <div className="w-full flex flex-col">
+            {(() => {
+              switch (mobileView) {
+                case 'board':
+                  return (
+                    <div className="w-full flex flex-col items-center space-y-6">
+                      <div className="w-full flex items-center justify-between">
                         <button
-                          id="custom-puzzles-btn-mobile"
-                          onClick={handleOpenCustomConfig}
-                          className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-xs font-mono uppercase tracking-wider font-semibold transition-all duration-300 cursor-pointer"
-                          style={{
-                            background: "linear-gradient(135deg, rgba(212,175,110,0.10) 0%, rgba(184,147,74,0.06) 100%)",
-                            border: "1px solid rgba(212,175,110,0.22)",
-                            color: "#D4AF6E",
-                            boxShadow: "0 2px 12px rgba(212,175,110,0.07)",
-                          }}
+                          type="button"
+                          onClick={handleReturnToPathway}
+                          className="flex items-center gap-2 text-xs font-mono font-semibold uppercase tracking-wider text-amber-400 hover:text-amber-300 bg-amber-500/10 border border-amber-500/30 px-3.5 py-2 rounded-xl transition-all shadow-md cursor-pointer"
                         >
-                          <Sparkles className="w-3.5 h-3.5" />
-                          Custom Puzzles
+                          <ArrowLeft className="w-4 h-4" />
+                          <span>Back to Pathway</span>
                         </button>
                       </div>
+
+                      <div className="w-full bg-brand-surface/70 backdrop-blur-xl border border-brand-border rounded-2xl p-4 text-left shadow-2xl relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <h1 className="text-lg font-display lining-nums font-semibold text-brand-text tracking-wide">
+                              {selectedNode ? `Level ${selectedNode.levelNumber}: ${selectedNode.title || 'Mate in 1'}` : 'Mate in 1 Tactics'}
+                            </h1>
+                            <span className="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold uppercase tracking-wider bg-amber-500/10 border border-amber-500/30 text-amber-400">
+                              Rating {safeChessPuzzle.rating}
+                            </span>
+                          </div>
+                          <p className="text-xs text-brand-secondary font-sans mt-0.5">
+                            {selectedNode?.description || 'Solve tactics to train your checkmate vision.'}
+                          </p>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={handleNextPuzzleMobile}
+                          className="px-3.5 py-2 rounded-xl text-xs font-mono uppercase tracking-wider font-semibold bg-amber-500 text-slate-950 hover:bg-amber-400 transition-all shadow-lg flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+                        >
+                          <span>Next Level</span>
+                          <ArrowRight className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+
+                      <div className="flex justify-center w-full">
+                        <PuzzleBoard
+                          boardId="mobile-puzzle-board"
+                          puzzle={safeChessPuzzle}
+                          puzzleNumber={selectedNode?.levelNumber || 1}
+                          onSolved={handleSolved}
+                          onFailed={handleFailed}
+                          onNextPuzzle={handleNextPuzzleMobile}
+                        />
+                      </div>
+                    </div>
+                  );
+
+                case 'pathway':
+                default:
+                  if (rightPanelMode === 'config') {
+                    return (
+                      <div className="w-full">
+                        <CustomPuzzlePanel
+                          onStart={handleStartCustomSession}
+                          onClose={handleCloseCustomConfig}
+                        />
+                      </div>
                     );
-                }
-              })()}
-            </div>
-          </>
+                  }
+                  return (
+                    <div className="w-full flex flex-col gap-3">
+                      <RoyalGoldPathway
+                        playerProgress={playerProgress}
+                        onSelectPuzzle={handleSelectNode}
+                      />
+                      <button
+                        id="custom-puzzles-btn-mobile"
+                        onClick={handleOpenCustomConfig}
+                        className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-xs font-mono uppercase tracking-wider font-semibold transition-all duration-300 cursor-pointer"
+                        style={{
+                          background: "linear-gradient(135deg, rgba(212,175,110,0.10) 0%, rgba(184,147,74,0.06) 100%)",
+                          border: "1px solid rgba(212,175,110,0.22)",
+                          color: "#D4AF6E",
+                          boxShadow: "0 2px 12px rgba(212,175,110,0.07)",
+                        }}
+                      >
+                        <Sparkles className="w-3.5 h-3.5" />
+                        Custom Puzzles
+                      </button>
+                    </div>
+                  );
+              }
+            })()}
+          </div>
         )}
 
       </main>
