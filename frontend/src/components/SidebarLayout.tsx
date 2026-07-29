@@ -358,6 +358,7 @@ export default function SidebarLayout({
       name: "Learn",
       href: "/learn",
       icon: GraduationCap,
+      comingSoon: true,
       subItems: [
         { name: "Lessons", href: "/lessons", icon: BookOpen, comingSoon: true },
         {
