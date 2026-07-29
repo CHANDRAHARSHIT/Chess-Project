@@ -16,6 +16,8 @@ import {
   Users,
   Clock,
 } from "lucide-react";
+import { usePricing } from "../hooks/usePricing";
+import type { PricingResponse } from "../services/pricingApi";
 import { useNavigate, useLocation } from "react-router";
 import { useNavigationStack } from "../hooks/useNavigationStack";
 
@@ -124,9 +126,9 @@ const PLANS: PlanDef[] = [
     accentBorder: "border-yellow-500/25",
     accentBg: "bg-yellow-500/8",
     glowRgba: "rgba(234,179,8,0.06)",
-    monthlyPrice: "$1.19",
-    yearlyPrice: "$0.40",
-    yearlyTotal: "$4.80",
+    monthlyPrice: "$2.08",
+    yearlyPrice: "$0.71",
+    yearlyTotal: "$8.50",
     comingSoonMonthly: true,
     comingSoonYearly: true,
     features: [
@@ -148,9 +150,9 @@ const PLANS: PlanDef[] = [
     accentBorder: "border-slate-400/25",
     accentBg: "bg-slate-400/8",
     glowRgba: "rgba(148,163,184,0.06)",
-    monthlyPrice: "$2.09",
-    yearlyPrice: "$0.71",
-    yearlyTotal: "$8.52",
+    monthlyPrice: "$3.33",
+    yearlyPrice: "$1.13",
+    yearlyTotal: "$13.60",
     comingSoonMonthly: true,
     comingSoonYearly: true,
     features: [
@@ -191,9 +193,9 @@ const PLANS: PlanDef[] = [
     accentBorder: "border-emerald-500/25",
     accentBg: "bg-emerald-500/8",
     glowRgba: "rgba(16,185,129,0.06)",
-    monthlyPrice: "$12.49",
-    yearlyPrice: "$4.25",
-    yearlyTotal: "$51.00",
+    monthlyPrice: "$15.00",
+    yearlyPrice: "$5.10",
+    yearlyTotal: "$61.20",
     comingSoonMonthly: true,
     comingSoonYearly: true,
     features: [
@@ -323,6 +325,67 @@ const FAQS = [
   },
 ];
 
+// ─── USD base prices for all tiers (ground truth) ─────────────────────────────
+const USD_PRICES: Record<string, { monthly: number; yearly: number }> = {
+  gold:     { monthly: 2.08, yearly: 8.50 },
+  platinum: { monthly: 3.33, yearly: 13.60 },
+  diamond:  { monthly: 5.00, yearly: 20.40 },
+  family:   { monthly: 15.00, yearly: 61.20 },
+};
+
+const DIAMOND_USD_MONTHLY = 5.00;
+const DIAMOND_USD_YEARLY = 20.40;
+
+/**
+ * Formats a converted price: 2 decimals for amounts < 100, integers for >= 100.
+ */
+function formatConvertedPrice(amount: number): string {
+  if (amount >= 100) return Math.round(amount).toString();
+  return amount.toFixed(2);
+}
+
+/**
+ * Converts a tier's price to the user's local currency using the exchange rate
+ * derived from the backend's Diamond pricing response.
+ * Shows per-month price for both monthly and yearly (yearly / 12).
+ */
+function getDynamicPlanPrice(
+  planId: string,
+  isYearly: boolean,
+  pricing: PricingResponse,
+): string {
+  const usdPrices = USD_PRICES[planId];
+  if (!usdPrices) return `${pricing.symbol}0`;
+
+  // Derive exchange rate from backend Diamond pricing
+  const rate = isYearly
+    ? pricing.yearly / DIAMOND_USD_YEARLY
+    : pricing.monthly / DIAMOND_USD_MONTHLY;
+
+  // Per-month display price
+  const usdPerMonth = isYearly
+    ? usdPrices.yearly / 12
+    : usdPrices.monthly;
+
+  const localPrice = Math.max(0.01, usdPerMonth * rate);
+  return `${pricing.symbol}${formatConvertedPrice(localPrice)}`;
+}
+
+/**
+ * Returns the total yearly price in local currency for a given tier.
+ */
+function getDynamicYearlyTotal(
+  planId: string,
+  pricing: PricingResponse,
+): string {
+  const usdPrices = USD_PRICES[planId];
+  if (!usdPrices) return '';
+
+  const rate = pricing.yearly / DIAMOND_USD_YEARLY;
+  const localYearlyTotal = usdPrices.yearly * rate;
+  return `${pricing.symbol}${formatConvertedPrice(localYearlyTotal)}`;
+}
+
 // ─── Comparison cell helper ───────────────────────────────────────────────────
 function CompCell({
   value,
@@ -367,15 +430,15 @@ export default function PricingPage() {
   const [isYearly, setIsYearly] = useState(false);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
 
+  const { pricing } = usePricing();
+
   const [showSessionError, setShowSessionError] = useState(() => {
     const params = new URLSearchParams(location.search);
     return params.get("error") === "payment_expired";
   });
 
-  const diamondPlan = PLANS.find((plan) => plan.id === "diamond");
-  const diamondDisplayPrice = isYearly
-    ? (diamondPlan?.yearlyPrice ?? diamondPlan?.monthlyPrice ?? "$5.00")
-    : (diamondPlan?.monthlyPrice ?? "$5.00");
+  const diamondDisplayPrice = getDynamicPlanPrice("diamond", isYearly, pricing);
+  const diamondYearlyTotalDisplay = getDynamicYearlyTotal("diamond", pricing);
 
   const handleNavigateBack = () => {
     const previousPage = getPrevious();
@@ -389,7 +452,15 @@ export default function PricingPage() {
   };
 
   const handleUpgrade = (planType: "Monthly" | "Yearly") => {
-    navigate(`/payment?plan=${planType.toLowerCase()}`);
+    const billing = planType.toLowerCase();
+    const params = new URLSearchParams();
+    params.set("plan", billing);
+    const currentParams = new URLSearchParams(location.search);
+    const countryOverride = currentParams.get("country") || pricing?.countryCode;
+    if (countryOverride) {
+      params.set("country", countryOverride);
+    }
+    navigate(`/payment?${params.toString()}`);
   };
 
   return (
@@ -562,9 +633,11 @@ export default function PricingPage() {
             const comingSoon = isYearly
               ? plan.comingSoonYearly
               : plan.comingSoonMonthly;
-            const displayPrice = isYearly
-              ? (plan.yearlyPrice ?? plan.monthlyPrice)
-              : plan.monthlyPrice;
+            const displayPrice = getDynamicPlanPrice(
+              plan.id,
+              isYearly,
+              pricing,
+            );
             const isDiamond = plan.id === "diamond";
 
             return (
@@ -644,19 +717,17 @@ export default function PricingPage() {
                   </div>
                   {!comingSoon && isYearly && plan.yearlyPrice && (
                     <span className="text-[11px] font-mono text-emerald-400 mt-0.5">
-                      {plan.yearlyTotal
-                        ? `${plan.yearlyTotal} billed annually (-66%)`
-                        : "billed annually (-66%)"}
+                      {getDynamicYearlyTotal(plan.id, pricing)} billed annually (-66%)
+                    </span>
+                  )}
+                  {comingSoon && isYearly && plan.yearlyPrice && (
+                    <span className="text-[11px] font-mono text-brand-secondary/40 mt-0.5">
+                      {getDynamicYearlyTotal(plan.id, pricing)} billed annually (-66%)
                     </span>
                   )}
                   {comingSoon && (
                     <span className="text-[11px] font-mono text-brand-secondary/40 mt-0.5">
                       Coming Soon
-                    </span>
-                  )}
-                  {isDiamond && isYearly && !plan.yearlyPrice && (
-                    <span className="text-[11px] font-mono text-brand-secondary/40 mt-0.5">
-                      Yearly — Coming Soon
                     </span>
                   )}
                 </div>
@@ -946,7 +1017,7 @@ export default function PricingPage() {
               >
                 <span>
                   Get Diamond — {diamondDisplayPrice} / mo{" "}
-                  {isYearly ? "($20.40/yr)" : ""}
+                  {isYearly ? `(${diamondYearlyTotalDisplay}/yr)` : ""}
                 </span>
                 <ArrowRight className="w-4 h-4" />
               </button>

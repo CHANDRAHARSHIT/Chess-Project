@@ -80,12 +80,12 @@ export type PrismaVersion = {
 }
 
 /**
- * Prisma Client JS version: 7.8.0
- * Query Engine version: 3c6e192761c0362d496ed980de936e2f3cebcd3a
+ * Prisma Client JS version: 7.9.1
+ * Query Engine version: e922089b7d7502aff4249d5da3420f6fa55fc6ad
  */
 export const prismaVersion: PrismaVersion = {
-  client: "7.8.0",
-  engine: "3c6e192761c0362d496ed980de936e2f3cebcd3a"
+  client: "7.9.1",
+  engine: "e922089b7d7502aff4249d5da3420f6fa55fc6ad"
 }
 
 /**
@@ -156,6 +156,19 @@ export type Subset<T, U> = {
 };
 
 /**
+ * Resolved type of the argument passed to the `PrismaClient` constructor.
+ *
+ * When called without a narrower options type (the common case), this resolves
+ * to `PrismaClientOptions` directly, which produces a clear TypeScript error
+ * message (`not assignable to parameter of type 'PrismaClientOptions'`) when
+ * the argument is missing or incomplete. When the user supplies a narrower
+ * options type (e.g. via a literal), it falls back to `Subset` to keep
+ * filtering out unknown properties.
+ */
+export type PrismaClientConstructorArgs<Options extends PrismaClientOptions> =
+  [PrismaClientOptions] extends [Options] ? PrismaClientOptions : Subset<Options, PrismaClientOptions>;
+
+/**
  * SelectSubset
  * @desc From `T` pick properties that exist in `U`. Simple version of Intersection.
  * Additionally, it validates, if both select and include are present. If the case, it errors.
@@ -187,7 +200,7 @@ type Without<T, U> = { [P in Exclude<keyof T, keyof U>]?: never };
 export type XOR<T, U> =
   T extends object ?
   U extends object ?
-    (Without<T, U> & U) | (Without<U, T> & T)
+    ((Without<T, U> & U) | (Without<U, T> & T)) & object
   : U : T
 
 
@@ -395,8 +408,6 @@ export const ModelName = {
   ProductFeature: 'ProductFeature',
   WebhookEvent: 'WebhookEvent',
   Opening: 'Opening',
-  ChessOpening: 'ChessOpening',
-  ChessOpeningStep: 'ChessOpeningStep',
   CuratedPuzzle: 'CuratedPuzzle',
   Course: 'Course',
   Lesson: 'Lesson',
@@ -417,7 +428,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "account" | "session" | "verificationToken" | "subscription" | "payment" | "billingProfile" | "product" | "productFeature" | "webhookEvent" | "opening" | "chessOpening" | "chessOpeningStep" | "curatedPuzzle" | "course" | "lesson" | "lessonProgress" | "customLink"
+    modelProps: "user" | "account" | "session" | "verificationToken" | "subscription" | "payment" | "billingProfile" | "product" | "productFeature" | "webhookEvent" | "opening" | "curatedPuzzle" | "course" | "lesson" | "lessonProgress" | "customLink"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1235,154 +1246,6 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    ChessOpening: {
-      payload: Prisma.$ChessOpeningPayload<ExtArgs>
-      fields: Prisma.ChessOpeningFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.ChessOpeningFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChessOpeningPayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.ChessOpeningFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChessOpeningPayload>
-        }
-        findFirst: {
-          args: Prisma.ChessOpeningFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChessOpeningPayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.ChessOpeningFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChessOpeningPayload>
-        }
-        findMany: {
-          args: Prisma.ChessOpeningFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChessOpeningPayload>[]
-        }
-        create: {
-          args: Prisma.ChessOpeningCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChessOpeningPayload>
-        }
-        createMany: {
-          args: Prisma.ChessOpeningCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        createManyAndReturn: {
-          args: Prisma.ChessOpeningCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChessOpeningPayload>[]
-        }
-        delete: {
-          args: Prisma.ChessOpeningDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChessOpeningPayload>
-        }
-        update: {
-          args: Prisma.ChessOpeningUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChessOpeningPayload>
-        }
-        deleteMany: {
-          args: Prisma.ChessOpeningDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.ChessOpeningUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateManyAndReturn: {
-          args: Prisma.ChessOpeningUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChessOpeningPayload>[]
-        }
-        upsert: {
-          args: Prisma.ChessOpeningUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChessOpeningPayload>
-        }
-        aggregate: {
-          args: Prisma.ChessOpeningAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateChessOpening>
-        }
-        groupBy: {
-          args: Prisma.ChessOpeningGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.ChessOpeningGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.ChessOpeningCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.ChessOpeningCountAggregateOutputType> | number
-        }
-      }
-    }
-    ChessOpeningStep: {
-      payload: Prisma.$ChessOpeningStepPayload<ExtArgs>
-      fields: Prisma.ChessOpeningStepFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.ChessOpeningStepFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChessOpeningStepPayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.ChessOpeningStepFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChessOpeningStepPayload>
-        }
-        findFirst: {
-          args: Prisma.ChessOpeningStepFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChessOpeningStepPayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.ChessOpeningStepFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChessOpeningStepPayload>
-        }
-        findMany: {
-          args: Prisma.ChessOpeningStepFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChessOpeningStepPayload>[]
-        }
-        create: {
-          args: Prisma.ChessOpeningStepCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChessOpeningStepPayload>
-        }
-        createMany: {
-          args: Prisma.ChessOpeningStepCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        createManyAndReturn: {
-          args: Prisma.ChessOpeningStepCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChessOpeningStepPayload>[]
-        }
-        delete: {
-          args: Prisma.ChessOpeningStepDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChessOpeningStepPayload>
-        }
-        update: {
-          args: Prisma.ChessOpeningStepUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChessOpeningStepPayload>
-        }
-        deleteMany: {
-          args: Prisma.ChessOpeningStepDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.ChessOpeningStepUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateManyAndReturn: {
-          args: Prisma.ChessOpeningStepUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChessOpeningStepPayload>[]
-        }
-        upsert: {
-          args: Prisma.ChessOpeningStepUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChessOpeningStepPayload>
-        }
-        aggregate: {
-          args: Prisma.ChessOpeningStepAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateChessOpeningStep>
-        }
-        groupBy: {
-          args: Prisma.ChessOpeningStepGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.ChessOpeningStepGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.ChessOpeningStepCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.ChessOpeningStepCountAggregateOutputType> | number
-        }
-      }
-    }
     CuratedPuzzle: {
       payload: Prisma.$CuratedPuzzlePayload<ExtArgs>
       fields: Prisma.CuratedPuzzleFieldRefs
@@ -1961,40 +1824,6 @@ export const OpeningScalarFieldEnum = {
 export type OpeningScalarFieldEnum = (typeof OpeningScalarFieldEnum)[keyof typeof OpeningScalarFieldEnum]
 
 
-export const ChessOpeningScalarFieldEnum = {
-  id: 'id',
-  slug: 'slug',
-  eco: 'eco',
-  name: 'name',
-  pgn: 'pgn',
-  title: 'title',
-  description: 'description',
-  difficulty: 'difficulty',
-  isActive: 'isActive',
-  displayOrder: 'displayOrder',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type ChessOpeningScalarFieldEnum = (typeof ChessOpeningScalarFieldEnum)[keyof typeof ChessOpeningScalarFieldEnum]
-
-
-export const ChessOpeningStepScalarFieldEnum = {
-  id: 'id',
-  openingId: 'openingId',
-  stepOrder: 'stepOrder',
-  move: 'move',
-  isOpponentMove: 'isOpponentMove',
-  coachMessage: 'coachMessage',
-  highlightFrom: 'highlightFrom',
-  highlightTo: 'highlightTo',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type ChessOpeningStepScalarFieldEnum = (typeof ChessOpeningStepScalarFieldEnum)[keyof typeof ChessOpeningStepScalarFieldEnum]
-
-
 export const CuratedPuzzleScalarFieldEnum = {
   id: 'id',
   fen: 'fen',
@@ -2221,20 +2050,6 @@ export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$Prisma
 
 
 /**
- * Reference to a field of type 'OpeningDifficulty'
- */
-export type EnumOpeningDifficultyFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OpeningDifficulty'>
-    
-
-
-/**
- * Reference to a field of type 'OpeningDifficulty[]'
- */
-export type ListEnumOpeningDifficultyFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OpeningDifficulty[]'>
-    
-
-
-/**
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -2257,19 +2072,10 @@ export type BatchPayload = {
 export const defineExtension = runtime.Extensions.defineExtension as unknown as runtime.Types.Extensions.ExtendsHook<"define", TypeMapCb, runtime.Types.Extensions.DefaultArgs>
 export type DefaultPrismaClient = PrismaClient
 export type ErrorFormat = 'pretty' | 'colorless' | 'minimal'
-export type PrismaClientOptions = ({
-  /**
-   * Instance of a Driver Adapter, e.g., like one provided by `@prisma/adapter-pg`.
-   */
-  adapter: runtime.SqlDriverAdapterFactory
-  accelerateUrl?: never
-} | {
-  /**
-   * Prisma Accelerate URL allowing the client to connect through Accelerate instead of a direct database.
-   */
-  accelerateUrl: string
-  adapter?: never
-}) & {
+/**
+ * Options common to all variants of `PrismaClientOptions`, regardless of whether you connect to your database through a driver adapter or through Prisma Accelerate.
+ */
+export interface PrismaClientBaseOptions {
   /**
    * @default "colorless"
    */
@@ -2356,6 +2162,56 @@ export type PrismaClientOptions = ({
    */
   queryPlanCacheMaxSize?: number
 }
+
+/**
+ * `PrismaClient` options for connecting to your database through Prisma Accelerate instead of a driver adapter.
+ * 
+ * Learn more: https://pris.ly/d/accelerate
+ */
+export interface PrismaClientOptionsWithAccelerateUrl extends PrismaClientBaseOptions {
+  /**
+   * The Prisma Accelerate connection URL. Use this option to connect to your database through Prisma Accelerate instead of using a driver adapter to connect directly.
+   * 
+   * Learn more: https://pris.ly/d/accelerate
+   */
+  accelerateUrl: string
+  adapter?: never
+}
+
+/**
+ * `PrismaClient` options for connecting to your database through a driver adapter. This is the common case in Prisma 7.
+ * 
+ * Learn more: https://pris.ly/d/driver-adapters
+ */
+export interface PrismaClientOptionsWithAdapter extends PrismaClientBaseOptions {
+  /**
+   * A driver adapter that PrismaClient uses to connect to your database, such as the ones provided by `@prisma/adapter-pg`, `@prisma/adapter-libsql`, `@prisma/adapter-planetscale`, etc.
+   * 
+   * A driver adapter is **required** unless you connect to your database through Prisma Accelerate (in which case use `accelerateUrl` instead).
+   * 
+   * Learn more: https://pris.ly/d/driver-adapters
+   * 
+   * @example
+   * ```ts
+   * import { PrismaPg } from '@prisma/adapter-pg'
+   * import { PrismaClient } from './generated/prisma/client'
+   * 
+   * const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL })
+   * const prisma = new PrismaClient({ adapter })
+   * ```
+   */
+  adapter: runtime.SqlDriverAdapterFactory
+  accelerateUrl?: never
+}
+
+/**
+ * Options passed to the `PrismaClient` constructor.
+ * 
+ * A driver adapter (or, alternatively, a Prisma Accelerate URL) is **required**. See {@link PrismaClientOptionsWithAdapter} and {@link PrismaClientOptionsWithAccelerateUrl} for the two variants. All other properties live in {@link PrismaClientBaseOptions} and are optional.
+ * 
+ * Learn more about driver adapters: https://pris.ly/d/driver-adapters
+ */
+export type PrismaClientOptions = PrismaClientOptionsWithAccelerateUrl | PrismaClientOptionsWithAdapter
 export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
   account?: Prisma.AccountOmit
@@ -2368,8 +2224,6 @@ export type GlobalOmitConfig = {
   productFeature?: Prisma.ProductFeatureOmit
   webhookEvent?: Prisma.WebhookEventOmit
   opening?: Prisma.OpeningOmit
-  chessOpening?: Prisma.ChessOpeningOmit
-  chessOpeningStep?: Prisma.ChessOpeningStepOmit
   curatedPuzzle?: Prisma.CuratedPuzzleOmit
   course?: Prisma.CourseOmit
   lesson?: Prisma.LessonOmit

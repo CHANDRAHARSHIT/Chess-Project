@@ -13,6 +13,8 @@ import { useNavigate, useLocation } from "react-router";
 import { useSession } from "../hooks/useSession";
 import { AuthModal } from "../components/AuthModal";
 import { PaymentService } from "../services/payment";
+import { usePricing } from "../hooks/usePricing";
+
 export default function CheckoutPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -77,13 +79,36 @@ export default function CheckoutPage() {
     setAuthModalOpen(true);
   };
 
+  const { pricing } = usePricing();
   // Auto Calculations
-  const basePrice = isYearly ? 60.0 : 5.0;
-  const planDiscount = isYearly ? 39.6 : 0.0; // Base yearly is $60.00 USD (monthly price * 12), plan saves $39.60 USD (66% discount)
+
   const billingCycleLabel = isYearly ? "Premium Yearly" : "Premium Monthly";
 
-  // Final Total
-  const grandTotal = basePrice - planDiscount;
+  // Diamond USD base prices
+  const DIAMOND_USD_MONTHLY = 5.00;
+  const DIAMOND_USD_YEARLY = 20.40;
+
+  const symbol = pricing.symbol;
+
+  // Derive exchange rate from backend Diamond pricing
+  const monthlyRate = pricing.monthly / DIAMOND_USD_MONTHLY;
+  const yearlyRate = pricing.yearly / DIAMOND_USD_YEARLY;
+
+  // Format helper: 2 decimals for < 100, integers for >= 100
+  const fmt = (n: number) => n >= 100 ? Math.round(n).toString() : n.toFixed(2);
+
+  const localMonthly = DIAMOND_USD_MONTHLY * monthlyRate;
+  const localYearlyTotal = DIAMOND_USD_YEARLY * yearlyRate;
+
+  const basePriceFormatted = isYearly
+    ? `${symbol}${fmt(localMonthly * 12)}`   // full year at monthly rate
+    : `${symbol}${fmt(localMonthly)}`;
+  const planDiscountFormatted = isYearly
+    ? `${symbol}${fmt(localMonthly * 12 - localYearlyTotal)}`
+    : `${symbol}0`;
+  const grandTotalFormatted = isYearly
+    ? `${symbol}${fmt(localYearlyTotal)}`
+    : `${symbol}${fmt(localMonthly)}`;
 
   // Next Renewal Date calculation
   const nextRenewalDate = () => {
@@ -100,25 +125,31 @@ export default function CheckoutPage() {
     });
   };
 
-  // Complete checkout flow
+  // Complete checkout flow — uses predefined Stripe products
   const handleProceedToPayment = async () => {
     setIsProcessing(true);
     setPaymentError(null);
 
     try {
-      const plan = isYearly ? "pro_yearly" : "pro_monthly";
-      const response = await PaymentService.createCheckoutSession(plan);
+      const planId = isYearly ? "pro_yearly" : "pro_monthly";
+      const response = await PaymentService.createCheckoutSession(planId);
 
-      if (response.status === "success" && response.checkoutUrl) {
+      if (
+        response.status === "success" &&
+        (response.checkoutUrl)
+      ) {
         if (response.sessionId) {
-          sessionStorage.setItem("pending_checkout_session_id", response.sessionId);
+          sessionStorage.setItem(
+            "pending_checkout_session_id",
+            response.sessionId,
+          );
         }
         // Securely redirect customer to Stripe hosted checkout page
         window.location.href = response.checkoutUrl;
       } else {
         setPaymentError(
           response.message ||
-            "Failed to initialize secure checkout session. Please try again."
+            "Failed to initialize secure checkout session. Please try again.",
         );
         setIsProcessing(false);
       }
@@ -126,7 +157,7 @@ export default function CheckoutPage() {
       console.error("[CheckoutPage] Payment redirect error:", error);
       setPaymentError(
         error?.message ||
-          "An unexpected error occurred while establishing a secure billing session. Please try again."
+          "An unexpected error occurred while establishing a secure billing session. Please try again.",
       );
       setIsProcessing(false);
     }
@@ -284,8 +315,12 @@ export default function CheckoutPage() {
           <div className="mb-8 p-4 rounded-sm bg-red-500/10 border border-red-500/30 text-red-400 text-sm font-sans flex items-start gap-3 shadow-md">
             <Info className="w-5 h-5 shrink-0 mt-0.5 text-red-400" />
             <div className="flex-1 text-left">
-              <p className="font-semibold text-red-300 mb-1">Payment Session Initialization Error</p>
-              <p className="text-xs text-red-400/90 leading-relaxed font-mono">{paymentError}</p>
+              <p className="font-semibold text-red-300 mb-1">
+                Payment Session Initialization Error
+              </p>
+              <p className="text-xs text-red-400/90 leading-relaxed font-mono">
+                {paymentError}
+              </p>
             </div>
             <button
               onClick={() => setPaymentError(null)}
@@ -463,15 +498,15 @@ export default function CheckoutPage() {
                       Unlimited chess tools access
                     </div>
                   </div>
-                  <span className="text-sm font-mono text-brand-text">
-                    ${basePrice.toFixed(2)} USD
+                  <span className="text-sm font-mono text-[#e5dfd5]">
+                    {basePriceFormatted}
                   </span>
                 </div>
 
                 {/* Subtotal */}
                 <div className="flex justify-between items-center text-xs text-brand-secondary pt-2 border-t border-[rgba(212,175,110,0.20)]">
                   <span>Subtotal</span>
-                  <span className="font-mono">${basePrice.toFixed(2)} USD</span>
+                  <span className="font-mono">{basePriceFormatted}</span>
                 </div>
 
                 {/* Plan discount */}
@@ -481,7 +516,7 @@ export default function CheckoutPage() {
                       Plan Savings (66%)
                     </span>
                     <span className="font-mono text-emerald-400">
-                      -${planDiscount.toFixed(2)} USD
+                      -{planDiscountFormatted}
                     </span>
                   </div>
                 )}
@@ -491,8 +526,8 @@ export default function CheckoutPage() {
                   <span className="text-sm font-sans font-semibold text-brand-text">
                     Total
                   </span>
-                  <span className="text-2xl font-display font-bold text-brand-text text-gold-gradient">
-                    ${grandTotal.toFixed(2)} USD
+                  <span className="text-2xl font-display font-bold text-white text-gold-gradient">
+                    {grandTotalFormatted}
                   </span>
                 </div>
               </div>
@@ -545,10 +580,10 @@ export default function CheckoutPage() {
                   <span className="text-[10px] font-mono tracking-tight font-extrabold">
                     AMEX
                   </span>
-                  <span className="text-[10px] font-mono tracking-tight font-extrabold font-sans">
+                  <span className="text-[10px] font-mono tracking-tight font-extrabold ">
                     GPay
                   </span>
-                  <span className="text-[10px] font-mono tracking-tight font-extrabold font-sans">
+                  <span className="text-[10px] font-mono tracking-tight font-extrabold ">
                     Apple Pay
                   </span>
                 </div>
