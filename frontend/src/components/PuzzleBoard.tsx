@@ -298,6 +298,7 @@ export function PuzzleBoard({
             ? "border-emerald-500 ring-4 ring-emerald-500/25 animate-pulse"
             : "border-[rgba(212,175,110,0.80)]"
           }`}
+        style={{ transform: "translateZ(0)" }}
       >
         <ThemedChessboard
           options={{
