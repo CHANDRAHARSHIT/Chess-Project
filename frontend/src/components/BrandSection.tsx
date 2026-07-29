@@ -7,10 +7,10 @@
  * Design: Black & Gold premium — Cormorant Garamond headlines, gold CTA.
  */
 
-import { useRef, useEffect, useCallback } from 'react';
-import { useGSAP } from '../hooks/useGSAP';
-import { gsap, dur } from '../utils/gsapConfig';
-import { ArrowRight } from 'lucide-react';
+import { useRef, useEffect, useCallback } from "react";
+import { useGSAP } from "../hooks/useGSAP";
+import { gsap, dur } from "../utils/gsapConfig";
+import { ArrowRight } from "lucide-react";
 
 export default function BrandSection() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -32,7 +32,7 @@ export default function BrandSection() {
       rotateY: dx * 5,
       scale: 1.12,
       duration: 0.4,
-      ease: 'power2.out',
+      ease: "power2.out",
     });
   }, []);
 
@@ -44,19 +44,22 @@ export default function BrandSection() {
       rotateY: 0,
       scale: 1.1,
       duration: 0.7,
-      ease: 'elastic.out(1, 0.5)',
+      ease: "elastic.out(1, 0.5)",
     });
   }, []);
 
   useEffect(() => {
     const el = artworkRef.current;
     if (!el) return;
-    if (!window.matchMedia('(hover: hover)').matches) return;
-    el.addEventListener('mousemove', handleArtworkMouseMove as EventListener);
-    el.addEventListener('mouseleave', handleArtworkMouseLeave);
+    if (!window.matchMedia("(hover: hover)").matches) return;
+    el.addEventListener("mousemove", handleArtworkMouseMove as EventListener);
+    el.addEventListener("mouseleave", handleArtworkMouseLeave);
     return () => {
-      el.removeEventListener('mousemove', handleArtworkMouseMove as EventListener);
-      el.removeEventListener('mouseleave', handleArtworkMouseLeave);
+      el.removeEventListener(
+        "mousemove",
+        handleArtworkMouseMove as EventListener,
+      );
+      el.removeEventListener("mouseleave", handleArtworkMouseLeave);
     };
   }, [handleArtworkMouseMove, handleArtworkMouseLeave]);
 
@@ -72,13 +75,13 @@ export default function BrandSection() {
           x: 0,
           opacity: 1,
           duration: dur(1),
-          ease: 'power2.out',
+          ease: "power2.out",
           scrollTrigger: {
             trigger: sectionRef.current,
-            start: 'top 80%',
-            toggleActions: 'play none none none',
+            start: "top 80%",
+            toggleActions: "play none none none",
           },
-        }
+        },
       );
 
       // Image — fade left
@@ -90,17 +93,17 @@ export default function BrandSection() {
           opacity: 1,
           duration: dur(1),
           delay: 0.15,
-          ease: 'power2.out',
+          ease: "power2.out",
           scrollTrigger: {
             trigger: sectionRef.current,
-            start: 'top 80%',
-            toggleActions: 'play none none none',
+            start: "top 80%",
+            toggleActions: "play none none none",
           },
-        }
+        },
       );
     },
     sectionRef,
-    []
+    [],
   );
 
   return (
@@ -112,7 +115,7 @@ export default function BrandSection() {
       {/* Gold ambient glow */}
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full blur-[140px] pointer-events-none"
-        style={{ background: 'rgba(212, 175, 110, 0.04)' }}
+        style={{ background: "rgba(212, 175, 110, 0.04)" }}
         aria-hidden="true"
       />
 
@@ -122,35 +125,37 @@ export default function BrandSection() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-
         {/* Top Banner Area */}
         <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
-
           {/* Left — Text Content */}
           <div
             ref={textRef}
             className="w-full lg:w-[55%] space-y-8 text-left"
             style={{ opacity: 0 }}
           >
-            {/* Eyebrow label */}
-            <div className="section-eyebrow">
-              Brand Growth
-            </div>
-
             <div className="space-y-4 max-w-xl">
-              <h2 className="font-display font-semibold text-4xl sm:text-5xl md:text-6xl text-white tracking-tight leading-[1.05]">
-                <span className="block" style={{ color: 'var(--text-primary)' }}>Build More Than</span>
-                <span className="block text-gold-gradient">
-                  Subscribers
+              <h2 className="font-display font-semibold text-4xl sm:text-5xl md:text-6xl text-brand-text tracking-tight leading-[1.05]">
+                <span
+                  className="block"
+                  style={{ color: "var(--text-primary)" }}
+                >
+                  Build More Than
                 </span>
+                <span className="block text-gold-gradient">Subscribers</span>
               </h2>
             </div>
 
-            <div className="space-y-4 max-w-lg">
-              <p className="font-sans text-base sm:text-[19px] leading-relaxed font-light" style={{ color: 'var(--text-secondary)' }}>
+            <div className="space-y-1 max-w-lg">
+              <p
+                className="font-sans text-base sm:text-[19px] leading-relaxed font-light"
+                style={{ color: "var(--text-secondary)" }}
+              >
                 You've already done the hard part: building an audience.
               </p>
-              <p className="font-sans text-base sm:text-[19px] leading-relaxed font-light" style={{ color: 'var(--text-secondary)' }}>
+              <p
+                className="font-sans text-base sm:text-[19px] leading-relaxed font-light"
+                style={{ color: "var(--text-secondary)" }}
+              >
                 Now build a platform around your brand that grows with you.
               </p>
             </div>
@@ -158,10 +163,12 @@ export default function BrandSection() {
             <div className="pt-4">
               <button
                 onClick={() => {
-                  document.getElementById('contact-us')?.scrollIntoView({ behavior: 'smooth' });
+                  document
+                    .getElementById("contact-us")
+                    ?.scrollIntoView({ behavior: "smooth" });
                 }}
                 className="inline-flex items-center justify-center gap-3 font-sans font-medium text-[15px] btn-premium-cta btn-glow-container cta-shine px-8 py-4 rounded-sm group transition-all duration-300"
-                style={{ fontSize: '13px' }}
+                style={{ fontSize: "13px" }}
               >
                 Build Your Platform
                 <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
@@ -173,23 +180,25 @@ export default function BrandSection() {
           <div
             ref={imageRef}
             className="w-full lg:w-[45%] flex justify-center lg:justify-end"
-            style={{ opacity: 0, perspective: '1000px' }}
+            style={{ opacity: 0, perspective: "1000px" }}
           >
             <div
               ref={artworkRef}
               className="luxury-card w-full max-w-[600px] relative scale-100 lg:scale-[1.1] origin-center lg:origin-right p-4 md:p-6 pb-8 mt-8 lg:mt-0"
-              style={{ transformStyle: 'preserve-3d', willChange: 'transform' }}
+              style={{ transformStyle: "preserve-3d", willChange: "transform" }}
             >
               {/* Chess board micropattern */}
               <div className="card-board-pattern" aria-hidden="true" />
 
               {/* Coordinate accent */}
-              <div className="card-coordinate" aria-hidden="true">b1 · b8</div>
+              <div className="card-coordinate" aria-hidden="true">
+                b1 · b8
+              </div>
 
               {/* Gold ambient glow behind image */}
               <div
                 className="absolute inset-0 rounded-full blur-[80px] mix-blend-screen pointer-events-none"
-                style={{ background: 'rgba(212, 175, 110, 0.08)' }}
+                style={{ background: "rgba(212, 175, 110, 0.08)" }}
               />
               <img
                 src="/final%20banner.png"
@@ -199,9 +208,7 @@ export default function BrandSection() {
               />
             </div>
           </div>
-
         </div>
-
       </div>
 
       {/* Subtle section divider at bottom */}

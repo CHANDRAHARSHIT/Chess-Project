@@ -9,6 +9,8 @@ import FailedPage from "../pages/FailedPage";
 import PremiumPage from "../pages/PremiumPage";
 import OpeningsPage from "../pages/OpeningsPage";
 import SubscriptionsPage from "../pages/SubscriptionsPage";
+import VariantsPage from "../pages/VariantsPage";
+import Chess960Page from "../pages/Chess960Page";
 import { ProtectedRoute } from "../components/ProtectedRoute";
 
 export interface RouteConfig {
@@ -22,6 +24,8 @@ export const mainRoutes: RouteConfig[] = [
   { path: "/puzzles", element: <PuzzlePage /> },
   { path: "/openings", element: <OpeningsPage /> },
   { path: "/subscriptions", element: <SubscriptionsPage /> },
+  { path: "/variants", element: <VariantsPage /> },
+  { path: "/play/chess960", element: <Chess960Page /> },
   {
     path: "/profile",
     element: <Navigate to="/settings?tab=profile" replace />,

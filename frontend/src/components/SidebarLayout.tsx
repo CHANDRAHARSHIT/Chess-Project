@@ -3,7 +3,8 @@ import {
   Menu, X, Home, Puzzle, CreditCard, CircleUserRound, Crown,
   GraduationCap, BookOpen, Bot, BookMarked, ChevronDown,
   Zap, Clock, BarChart2, Flag,
-  Plus, Shuffle, Video, UserCircle2, ExternalLink, Pencil, MoveUp, Archive
+  Plus, Shuffle, Video, UserCircle2, ExternalLink, Pencil, MoveUp, Archive,
+  Dices, Sparkles
 } from "lucide-react";
 import { useLogoAnimation } from "../hooks/useLogoAnimation";
 import { soundManager } from "../utils/SoundManager";
@@ -12,6 +13,9 @@ import { AvatarDropdown } from "./AvatarDropdown";
 import { AuthModal } from "./AuthModal";
 import { MoreMenu } from "./MoreMenu";
 import { useNavigate, useLocation } from "react-router";
+import { useNavigationStack } from "../hooks/useNavigationStack";
+
+
 
 // Hook for clicking outside the custom dropdown
 function useOnClickOutside(ref: any, handler: any) {
@@ -66,6 +70,7 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
   const { status } = useSession();
   const navigate = useNavigate();
   const location = useLocation();
+  const { push } = useNavigationStack();
 
   const openModal = (mode: "login" | "register") => {
     setModalMode(mode);
@@ -233,6 +238,23 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
     e.preventDefault();
     soundManager.playButtonClick();
     setIsMobileOpen(false);
+
+    // Going to Membership (Pricing) — remember where we came from.
+    if (href === "/pricing") {
+      const pageLabels: Record<string, string> = {
+        "/": "Home",
+        "/puzzles": "Puzzles",
+        "/settings": "Settings",
+        "/premium": "Premium",
+        "/profile": "Profile",
+      };
+
+      push({
+        label: pageLabels[location.pathname] ?? "Home",
+        path: location.pathname,
+      });
+    }
+
     if (href === "/" && location.pathname === "/") {
       window.scrollTo({ top: 0, behavior: "smooth" });
     } else {
@@ -252,6 +274,15 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
   // Nav Items Data
   const baseSection = [
     { name: "Home", href: "/", icon: Home },
+    {
+      name: "Play",
+      href: "/play",
+      icon: Bot,
+      subItems: [
+        { name: "Variants", href: "/variants", icon: Dices },
+        { name: "Chess 960", href: "/play/chess960", icon: Sparkles },
+      ],
+    },
     {
       name: "Learn",
       href: "/learn",
@@ -477,10 +508,12 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
     <div className="min-h-screen text-brand-text bg-[#080B14] flex flex-col relative select-none">
       {/* ── TOP HEADER ──────────────────────────────────────────────────────── */}
       <header className="fixed top-0 left-0 right-0 h-16 z-40 bg-[#080B14]/95 backdrop-blur-md flex items-center justify-between px-4 md:px-6">
+        {/* Left: Hamburger & Logo */}
         <div className="flex items-center gap-4">
           <button
             onClick={handleToggle}
             className="p-2 text-brand-secondary hover:text-white rounded-full hover:bg-white/10 transition-colors cursor-pointer"
+            aria-label="Toggle Navigation Sidebar"
           >
             <Menu className="w-5 h-5" />
           </button>
@@ -513,6 +546,7 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
           ) : (
             <button
               onClick={() => openModal("login")}
+              aria-label="Sign In"
               className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-border/50 text-brand-accent hover:bg-brand-accent/10 transition-all duration-200 text-xs sm:text-sm font-sans cursor-pointer"
             >
               <CircleUserRound className="w-5 h-5" strokeWidth={1.8} />

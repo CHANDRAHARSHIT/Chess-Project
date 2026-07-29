@@ -7,6 +7,7 @@ import { authRouter } from "./routes/auth.route.js";
 import { userRouter } from "./routes/user.route.js";
 import { customLinksRouter } from "./routes/customLinks.route.js";
 import { paymentRouter } from "./routes/payment.route.js";
+import { puzzleRouter } from "./routes/puzzle.route.js";
 import { openingRouter } from "./routes/opening.route.js";
 import { errorHandler } from "./middleware/error.middleware.js";
 
@@ -79,6 +80,7 @@ app.use("/api/auth/*", (req, _res, next) => {
 app.use("/api/users", userRouter);
 app.use("/api/custom-links", customLinksRouter);
 app.use("/api/payments", paymentRouter);
+app.use("/api/puzzles", puzzleRouter);
 app.use("/api/openings", openingRouter);
 
 // Catch-all centralized error handler
