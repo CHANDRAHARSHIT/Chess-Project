@@ -366,7 +366,7 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
             title={isDisabled ? "Coming soon" : undefined}
             className={`relative w-full flex transition-all duration-200 ${isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'
               } ${isExpanded || isMobileOpen
-                ? `items-center gap-4 px-3 py-2.5 mx-2 rounded-xl ${isDisabled
+                ? `items-center py-2.5 mx-2 rounded-xl ${isDisabled
                   ? "opacity-60 select-none text-brand-secondary"
                   : isActive
                     ? "text-brand-accent bg-brand-text/10 font-medium"
@@ -380,14 +380,16 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
                 }`
               }`}
           >
-            {isAvatar ? (
-              <img src={item.avatar} alt={item.name} className={`w-6 h-6 rounded-full shrink-0 ${isDisabled ? "grayscale opacity-50" : ""}`} />
-            ) : (
-              <Icon className={`w-5 h-5 shrink-0 ${isActive ? "text-brand-accent" : `text-brand-secondary ${!isDisabled ? "group-hover/navitem:text-brand-text" : ""}`}`} />
-            )}
+            <div className={`flex items-center justify-center shrink-0 ${isExpanded || isMobileOpen ? 'w-16' : 'w-full'}`}>
+              {isAvatar ? (
+                <img src={item.avatar} alt={item.name} className={`w-6 h-6 rounded-full shrink-0 ${isDisabled ? "grayscale opacity-50" : ""}`} />
+              ) : (
+                <Icon className={`w-5 h-5 shrink-0 ${isActive ? "text-brand-accent" : `text-brand-secondary ${!isDisabled ? "group-hover/navitem:text-brand-text" : ""}`}`} />
+              )}
+            </div>
 
             <span className={`font-sans transition-all ${isExpanded || isMobileOpen
-              ? "flex-1 text-left text-[13px] tracking-wide truncate"
+              ? "flex-1 text-left text-[14px] pr-4 tracking-wide truncate"
               : "w-full text-center text-[10px] mt-1.5 leading-[1.15] whitespace-normal tracking-normal line-clamp-2 break-words"
               } ${!(isExpanded || isMobileOpen) && isAvatar ? "hidden" : ""}`}>
               {item.name}
@@ -448,7 +450,7 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
 
         {/* Accordion for subitems (Mobile Only) */}
         {hasSubItems && isMobileOpen && (
-          <div className={`transition-all duration-300 overflow-hidden flex flex-col ml-[3.25rem] mr-2 ${isSubOpen ? 'max-h-[500px] mt-1 mb-2 opacity-100' : 'max-h-0 opacity-0'}`}>
+          <div className={`transition-all duration-300 overflow-hidden flex flex-col ml-[72px] mr-2 ${isSubOpen ? 'max-h-[500px] mt-1 mb-2 opacity-100' : 'max-h-0 opacity-0'}`}>
             {item.subItems.map((subItem: any) => {
               const SubIcon = subItem.icon;
               const isSubActive = location.pathname === subItem.href;
@@ -489,16 +491,18 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
   return (
     <div className="min-h-screen text-brand-text bg-brand-bg flex flex-col relative select-none">
       {/* ── TOP HEADER ──────────────────────────────────────────────────────── */}
-      <header className="fixed top-0 left-0 right-0 h-16 z-40 bg-brand-bg/95 backdrop-blur-md flex items-center justify-between px-4 md:px-6">
+      <header className="fixed top-0 left-0 right-0 h-16 z-40 bg-brand-bg/95 backdrop-blur-md flex items-center justify-between pr-4 md:pr-6 border-b border-transparent">
         {/* Left: Hamburger & Logo */}
-        <div className="flex items-center gap-4">
-          <button
-            onClick={handleToggle}
-            className="p-2 text-brand-secondary hover:text-brand-text rounded-full hover:bg-brand-text/10 transition-colors cursor-pointer"
-            aria-label="Toggle Navigation Sidebar"
-          >
-            <Menu className="w-5 h-5" />
-          </button>
+        <div className="flex items-center h-full">
+          <div className="w-20 flex justify-center items-center shrink-0">
+            <button
+              onClick={handleToggle}
+              className="p-2 text-brand-secondary hover:text-brand-text rounded-full hover:bg-brand-text/10 transition-colors cursor-pointer"
+              aria-label="Toggle Navigation Sidebar"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+          </div>
 
           <div
             ref={containerRef}
@@ -741,16 +745,20 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
           className={`fixed top-0 left-0 bottom-0 w-64 z-50 bg-brand-bg flex flex-col py-2 transition-transform duration-300 ease-in-out md:hidden overflow-y-auto ${isMobileOpen ? "translate-x-0" : "-translate-x-full"
             }`}
         >
-          <div className="flex items-center gap-4 px-4 py-2 mb-2">
-            <button
-              onClick={() => setIsMobileOpen(false)}
-              className="p-2 text-brand-secondary hover:text-brand-text rounded-full hover:bg-brand-text/10 transition-colors cursor-pointer"
-            >
-              <Menu className="w-5 h-5" />
-            </button>
+          <div className="flex items-center mb-2 h-14">
+            <div className="w-20 flex justify-center items-center shrink-0">
+              <button
+                onClick={() => setIsMobileOpen(false)}
+                className="p-2 text-brand-secondary hover:text-brand-text rounded-full hover:bg-brand-text/10 transition-colors cursor-pointer"
+              >
+                <Menu className="w-5 h-5" />
+              </button>
+            </div>
             <div className="flex items-center gap-2">
-              <img src="/logo-without-text.png" alt="logo" className="h-6 w-auto" />
-              <span className="font-bold tracking-wide">XLCHESS</span>
+              <img src="/logo-without-text.png" alt="XLChess logo" className="h-8 w-auto object-contain" />
+              <div className="flex flex-col leading-none">
+                <span className="text-lg font-bold tracking-wide text-brand-text">XLCHESS</span>
+              </div>
             </div>
           </div>
 
