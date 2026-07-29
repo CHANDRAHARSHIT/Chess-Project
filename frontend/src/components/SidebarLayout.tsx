@@ -552,7 +552,7 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
       <div className="flex flex-1 pt-16">
         {/* Desktop Sidebar (Fixed) */}
         <aside
-          className={`fixed top-16 left-0 bottom-0 z-30 bg-brand-bg/95 backdrop-blur-md flex flex-col py-2 transition-all duration-300 hidden md:flex overflow-y-auto no-scrollbar pb-6 ${isExpanded ? "w-64" : "w-20"
+          className={`fixed top-16 left-0 bottom-0 z-30 bg-brand-bg/95 backdrop-blur-md flex flex-col py-2 transition-all duration-300 hidden md:flex overflow-y-auto overscroll-contain no-scrollbar pb-6 ${isExpanded ? "w-64" : "w-20"
             }`}
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
@@ -749,7 +749,7 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
           onClick={() => setIsMobileOpen(false)}
         />
         <aside
-          className={`fixed top-0 left-0 bottom-0 w-64 z-50 bg-brand-bg flex flex-col py-2 transition-transform duration-300 ease-in-out md:hidden overflow-y-auto ${isMobileOpen ? "translate-x-0" : "-translate-x-full"
+          className={`fixed top-0 left-0 bottom-0 w-64 z-50 bg-brand-bg flex flex-col py-2 transition-transform duration-300 ease-in-out md:hidden overflow-y-auto overscroll-contain ${isMobileOpen ? "translate-x-0" : "-translate-x-full"
             }`}
         >
           <div className="flex items-center mb-2 h-14">
