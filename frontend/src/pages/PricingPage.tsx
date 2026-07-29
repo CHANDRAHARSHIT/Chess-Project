@@ -107,6 +107,7 @@ interface PlanDef {
   glowRgba: string;
   monthlyPrice: string;
   yearlyPrice: string | null;
+  yearlyTotal?: string;
   features: Array<{ label: string; value: string | boolean }>;
   comingSoonMonthly?: boolean;
   comingSoonYearly?: boolean;
@@ -123,8 +124,9 @@ const PLANS: PlanDef[] = [
     accentBorder: "border-yellow-500/25",
     accentBg: "bg-yellow-500/8",
     glowRgba: "rgba(234,179,8,0.06)",
-    monthlyPrice: "$2.49",
-    yearlyPrice: "$1.99",
+    monthlyPrice: "$1.19",
+    yearlyPrice: "$0.40",
+    yearlyTotal: "$4.80",
     comingSoonMonthly: true,
     comingSoonYearly: true,
     features: [
@@ -146,8 +148,9 @@ const PLANS: PlanDef[] = [
     accentBorder: "border-slate-400/25",
     accentBg: "bg-slate-400/8",
     glowRgba: "rgba(148,163,184,0.06)",
-    monthlyPrice: "$4.99",
-    yearlyPrice: "$3.99",
+    monthlyPrice: "$2.09",
+    yearlyPrice: "$0.71",
+    yearlyTotal: "$8.52",
     comingSoonMonthly: true,
     comingSoonYearly: true,
     features: [
@@ -170,11 +173,12 @@ const PLANS: PlanDef[] = [
     accentBorder: "border-sky-300/40",
     accentBg: "bg-sky-300/12",
     glowRgba: "rgba(125,211,252,0.10)",
-    // ── EXISTING PRICE ──
+    // ── 66% OFF YEARLY ($5.00/mo -> $20.40/yr = $1.70/mo) ──
     monthlyPrice: "$5.00",
-    yearlyPrice: null,
+    yearlyPrice: "$1.70",
+    yearlyTotal: "$20.40",
     comingSoonMonthly: false,
-    comingSoonYearly: true,
+    comingSoonYearly: false,
     isHighlighted: true,
     features: DIAMOND_FEATURES.map((f) => ({ label: f, value: true })),
   },
@@ -188,7 +192,8 @@ const PLANS: PlanDef[] = [
     accentBg: "bg-emerald-500/8",
     glowRgba: "rgba(16,185,129,0.06)",
     monthlyPrice: "$12.49",
-    yearlyPrice: "$9.99",
+    yearlyPrice: "$4.25",
+    yearlyTotal: "$51.00",
     comingSoonMonthly: true,
     comingSoonYearly: true,
     features: [
@@ -211,18 +216,84 @@ const COMPARISON_ROWS: Array<{
   diamond: string | boolean;
   family: string | boolean;
 }> = [
-  { label: "Online Games", gold: "Unlimited", platinum: "Unlimited", diamond: "Unlimited", family: "Unlimited" },
-  { label: "Engine Analysis", gold: "Basic", platinum: "Advanced", diamond: "Unlimited (Deep Stockfish)", family: "Unlimited (Deep Stockfish)" },
-  { label: "Game Reviews / Month", gold: "5", platinum: "25", diamond: "Unlimited", family: "Unlimited" },
-  { label: "Puzzle Training", gold: "50 / day", platinum: "Unlimited", diamond: "Unlimited", family: "Unlimited" },
-  { label: "Opening Explorer", gold: "Limited", platinum: "Advanced", diamond: "Advanced Explorer", family: "Advanced Explorer" },
-  { label: "Performance Insights", gold: false, platinum: true, diamond: true, family: true },
-  { label: "Accuracy Reports", gold: false, platinum: true, diamond: true, family: true },
-  { label: "Premium Themes", gold: "Basic", platinum: true, diamond: true, family: true },
+  {
+    label: "Online Games",
+    gold: "Unlimited",
+    platinum: "Unlimited",
+    diamond: "Unlimited",
+    family: "Unlimited",
+  },
+  {
+    label: "Engine Analysis",
+    gold: "Basic",
+    platinum: "Advanced",
+    diamond: "Unlimited (Deep Stockfish)",
+    family: "Unlimited (Deep Stockfish)",
+  },
+  {
+    label: "Game Reviews / Month",
+    gold: "5",
+    platinum: "25",
+    diamond: "Unlimited",
+    family: "Unlimited",
+  },
+  {
+    label: "Puzzle Training",
+    gold: "50 / day",
+    platinum: "Unlimited",
+    diamond: "Unlimited",
+    family: "Unlimited",
+  },
+  {
+    label: "Opening Explorer",
+    gold: "Limited",
+    platinum: "Advanced",
+    diamond: "Advanced Explorer",
+    family: "Advanced Explorer",
+  },
+  {
+    label: "Performance Insights",
+    gold: false,
+    platinum: true,
+    diamond: true,
+    family: true,
+  },
+  {
+    label: "Accuracy Reports",
+    gold: false,
+    platinum: true,
+    diamond: true,
+    family: true,
+  },
+  {
+    label: "Premium Themes",
+    gold: "Basic",
+    platinum: true,
+    diamond: true,
+    family: true,
+  },
   { label: "Ad Free", gold: true, platinum: true, diamond: true, family: true },
-  { label: "Early Access Features", gold: false, platinum: false, diamond: true, family: true },
-  { label: "Priority Support", gold: false, platinum: false, diamond: true, family: true },
-  { label: "Accounts", gold: "1", platinum: "1", diamond: "1", family: "Up to 5" },
+  {
+    label: "Early Access Features",
+    gold: false,
+    platinum: false,
+    diamond: true,
+    family: true,
+  },
+  {
+    label: "Priority Support",
+    gold: false,
+    platinum: false,
+    diamond: true,
+    family: true,
+  },
+  {
+    label: "Accounts",
+    gold: "1",
+    platinum: "1",
+    diamond: "1",
+    family: "Up to 5",
+  },
 ];
 
 const FAQS = [
@@ -236,7 +307,7 @@ const FAQS = [
   },
   {
     q: "Do yearly plans save money?",
-    a: "Yes. Yearly billing offers significant savings versus monthly. Diamond Yearly details will be available when the yearly cycle launches.",
+    a: "Yes. Yearly billing offers significant savings versus monthly. Diamond Yearly gives you 66% off.",
   },
   {
     q: "Can I upgrade anytime?",
@@ -300,6 +371,11 @@ export default function PricingPage() {
     const params = new URLSearchParams(location.search);
     return params.get("error") === "payment_expired";
   });
+
+  const diamondPlan = PLANS.find((plan) => plan.id === "diamond");
+  const diamondDisplayPrice = isYearly
+    ? (diamondPlan?.yearlyPrice ?? diamondPlan?.monthlyPrice ?? "$5.00")
+    : (diamondPlan?.monthlyPrice ?? "$5.00");
 
   const handleNavigateBack = () => {
     const previousPage = getPrevious();
@@ -475,7 +551,7 @@ export default function PricingPage() {
             </button>
 
             <div className="absolute z-20 top-0 left-3/4 -translate-x-1/2 -translate-y-1/2 sm:left-[calc(100%+14px)] sm:top-1/2 sm:translate-x-0 whitespace-nowrap bg-brand-accent/15 border border-brand-accent/30 text-brand-accent text-[10px] font-mono tracking-wider uppercase px-2 py-0.5 rounded-md">
-              Save up to 40%
+              Save up to 66%
             </div>
           </div>
         </section>
@@ -487,7 +563,7 @@ export default function PricingPage() {
               ? plan.comingSoonYearly
               : plan.comingSoonMonthly;
             const displayPrice = isYearly
-              ? plan.yearlyPrice ?? plan.monthlyPrice
+              ? (plan.yearlyPrice ?? plan.monthlyPrice)
               : plan.monthlyPrice;
             const isDiamond = plan.id === "diamond";
 
@@ -556,8 +632,8 @@ export default function PricingPage() {
                         isDiamond && !comingSoon
                           ? "text-sky-300"
                           : comingSoon
-                          ? "text-brand-text/35"
-                          : "text-brand-text"
+                            ? "text-brand-text/35"
+                            : "text-brand-text"
                       }`}
                     >
                       {displayPrice}
@@ -568,7 +644,9 @@ export default function PricingPage() {
                   </div>
                   {!comingSoon && isYearly && plan.yearlyPrice && (
                     <span className="text-[11px] font-mono text-emerald-400 mt-0.5">
-                      billed annually
+                      {plan.yearlyTotal
+                        ? `${plan.yearlyTotal} billed annually (-66%)`
+                        : "billed annually (-66%)"}
                     </span>
                   )}
                   {comingSoon && (
@@ -598,7 +676,9 @@ export default function PricingPage() {
                       </span>
                       <span
                         className={`text-xs font-sans leading-relaxed ${
-                          comingSoon ? "text-brand-secondary/40" : "text-brand-text"
+                          comingSoon
+                            ? "text-brand-secondary/40"
+                            : "text-brand-text"
                         }`}
                       >
                         {typeof feat.value === "string"
@@ -622,22 +702,22 @@ export default function PricingPage() {
 
                 {/* CTA button */}
                 <button
-                  disabled={!!comingSoon || (isDiamond && isYearly)}
+                  disabled={!!comingSoon}
                   onClick={() => {
-                    if (!comingSoon && isDiamond && !isYearly) {
-                      handleUpgrade("Monthly");
+                    if (!comingSoon && isDiamond) {
+                      handleUpgrade(isYearly ? "Yearly" : "Monthly");
                     }
                   }}
                   className={`w-full py-3 px-4 rounded-xl font-mono text-[11px] uppercase tracking-widest font-semibold transition-all duration-300 relative overflow-hidden ${
-                    comingSoon || (isDiamond && isYearly)
+                    comingSoon
                       ? "bg-brand-text/5 border border-brand-text/10 text-brand-secondary/30 cursor-not-allowed"
                       : isDiamond
-                      ? "bg-sky-500 hover:bg-sky-400 text-white border border-sky-300/50 shadow-lg shadow-sky-300/20 hover:scale-[1.01] cursor-pointer active:scale-[0.99]"
-                      : "bg-brand-text/5 border border-brand-border hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text cursor-pointer active:scale-[0.99]"
+                        ? "bg-sky-500 hover:bg-sky-400 text-white border border-sky-300/50 shadow-lg shadow-sky-300/20 hover:scale-[1.01] cursor-pointer active:scale-[0.99]"
+                        : "bg-brand-text/5 border border-brand-border hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text cursor-pointer active:scale-[0.99]"
                   }`}
                 >
                   <span className="relative z-10 flex items-center justify-center gap-1.5">
-                    {comingSoon || (isDiamond && isYearly) ? (
+                    {comingSoon ? (
                       <>
                         <Clock className="w-3.5 h-3.5" />
                         Coming Soon
@@ -741,7 +821,7 @@ export default function PricingPage() {
                     const comingSoon = isYearly
                       ? p.comingSoonYearly
                       : p.comingSoonMonthly;
-                    const disabled = !!comingSoon || (isDiamond && isYearly);
+                    const disabled = !!comingSoon;
                     return (
                       <td
                         key={p.id}
@@ -752,14 +832,16 @@ export default function PricingPage() {
                         <button
                           disabled={disabled}
                           onClick={() => {
-                            if (!disabled && isDiamond) handleUpgrade("Monthly");
+                            if (!disabled && isDiamond) {
+                              handleUpgrade(isYearly ? "Yearly" : "Monthly");
+                            }
                           }}
                           className={`inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg font-mono text-[10px] uppercase tracking-widest font-semibold transition-all duration-200 ${
                             disabled
                               ? "opacity-25 cursor-not-allowed text-brand-secondary border border-brand-border"
                               : isDiamond
-                              ? "bg-sky-500 hover:bg-sky-400 text-white border border-sky-300/40 shadow shadow-sky-300/20 cursor-pointer hover:scale-[1.02]"
-                              : "bg-brand-text/5 border border-brand-border hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text cursor-pointer"
+                                ? "bg-sky-500 hover:bg-sky-400 text-white border border-sky-300/40 shadow shadow-sky-300/20 cursor-pointer hover:scale-[1.02]"
+                                : "bg-brand-text/5 border border-brand-border hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text cursor-pointer"
                           }`}
                         >
                           {disabled ? (
@@ -862,7 +944,10 @@ export default function PricingPage() {
                 onClick={() => handleUpgrade(isYearly ? "Yearly" : "Monthly")}
                 className="w-full sm:w-auto px-8 py-4 rounded-xl font-mono text-xs uppercase tracking-widest font-semibold bg-sky-500 hover:bg-sky-400 text-white border border-sky-300/40 shadow-lg shadow-sky-300/25 cursor-pointer hover:scale-[1.02] active:scale-[0.99] transition-all duration-300 flex items-center justify-center gap-2"
               >
-                <span>Get Diamond — $5.00 / mo</span>
+                <span>
+                  Get Diamond — {diamondDisplayPrice} / mo{" "}
+                  {isYearly ? "($20.40/yr)" : ""}
+                </span>
                 <ArrowRight className="w-4 h-4" />
               </button>
 
