@@ -31,14 +31,23 @@ export function usePricing() {
   const [pricing, setPricing] = useState<PricingResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedCountry, setSelectedCountry] = useState<string | undefined>(
+    getDevCountryOverride()
+  );
 
   const fetchPricing = useCallback(async (countryOverride?: string) => {
     setLoading(true);
     setError(null);
     try {
-      // In development, ?country=XX URL param overrides auto-detection.
-      // In production the backend detects region from IP/headers automatically.
-      const country = countryOverride || getDevCountryOverride();
+      const country =
+        countryOverride ||
+        selectedCountry ||
+        getDevCountryOverride();
+
+      if (countryOverride) {
+        setSelectedCountry(countryOverride);
+      }
+
       const data = await PricingApi.getPricing(country);
       setPricing(data);
     } catch (err: any) {
@@ -48,7 +57,7 @@ export function usePricing() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [selectedCountry]);
 
   useEffect(() => {
     fetchPricing();
@@ -58,7 +67,7 @@ export function usePricing() {
     async (plan = "premium", billing: "monthly" | "yearly" = "monthly"): Promise<CheckoutResponse> => {
       try {
         // Pass country code so backend creates Stripe session in same currency as displayed
-        const country = getDevCountryOverride() || pricing?.countryCode;
+        const country = selectedCountry || getDevCountryOverride() || pricing?.countryCode;
         return await PricingApi.createCheckout(plan, billing, country);
       } catch (err: any) {
         console.error("[usePricing]: Checkout error:", err);
@@ -68,12 +77,11 @@ export function usePricing() {
         };
       }
     },
-    [pricing?.countryCode]
+    [selectedCountry, pricing?.countryCode]
   );
 
   return {
     pricing: pricing || FALLBACK_PRICING,
-    loading,
     error,
     createCheckout,
     refetchPricing: fetchPricing,

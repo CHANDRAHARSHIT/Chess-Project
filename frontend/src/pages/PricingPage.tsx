@@ -17,6 +17,7 @@ import {
   Clock,
 } from "lucide-react";
 import { usePricing } from "../hooks/usePricing";
+import type { PricingResponse } from "../services/pricingApi";
 import { useNavigate, useLocation } from "react-router";
 import { useNavigationStack } from "../hooks/useNavigationStack";
 
@@ -253,6 +254,41 @@ const FAQS = [
   },
 ];
 
+const TIER_RATIOS: Record<
+  string,
+  { monthly: number; yearly: number }
+> = {
+  gold: { monthly: 0.5, yearly: 0.4 },
+  platinum: { monthly: 0.85, yearly: 0.75 },
+  diamond: { monthly: 1.0, yearly: 0.8 },
+  family: { monthly: 2.5, yearly: 2.0 },
+};
+
+function getDynamicPlanPrice(
+  planId: string,
+  isYearly: boolean,
+  pricing: PricingResponse
+): string {
+  const ratio = TIER_RATIOS[planId] || {
+    monthly: 1,
+    yearly: 1,
+  };
+
+  const basePrice = isYearly
+    ? pricing.yearly / 12
+    : pricing.monthly;
+
+  const calculated = Math.max(
+    1,
+    Math.round(
+      basePrice *
+      (isYearly ? ratio.yearly : ratio.monthly)
+    )
+  );
+
+  return `${pricing.symbol}${calculated}`;
+}
+
 // ─── Comparison cell helper ───────────────────────────────────────────────────
 function CompCell({
   value,
@@ -294,9 +330,10 @@ export default function PricingPage() {
   const { getPrevious } = useNavigationStack();
   const [isYearly, setIsYearly] = useState(false);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
-  const [isRedirecting, setIsRedirecting] = useState(false);
 
-  const { pricing, createCheckout } = usePricing();
+  const {
+    pricing,
+  } = usePricing();
 
   const monthlyPriceFormatted = `${pricing.symbol}${pricing.monthly}`;
   const yearlyPriceFormatted = `${pricing.symbol}${pricing.yearly}`;
@@ -319,20 +356,14 @@ export default function PricingPage() {
     navigate("/");
   };
 
-  const handleUpgrade = async (planType: "Monthly" | "Yearly") => {
-    setIsRedirecting(true);
-    try {
-      const res = await createCheckout("premium", planType.toLowerCase() as "monthly" | "yearly");
-      if (res.status === "success" && (res.url || res.checkoutUrl)) {
-        window.location.href = res.url || res.checkoutUrl!;
-      } else {
-        alert(res.message || "Failed to initialize Stripe Checkout. Please try again.");
-        setIsRedirecting(false);
-      }
-    } catch (err: any) {
-      alert(err.message || "An unexpected error occurred.");
-      setIsRedirecting(false);
+  const handleUpgrade = (planType: "Monthly" | "Yearly") => {
+    const billing = planType.toLowerCase();
+    const params = new URLSearchParams();
+    params.set("plan", billing);
+    if (pricing?.countryCode) {
+      params.set("country", pricing.countryCode);
     }
+    navigate(`/payment?${params.toString()}`);
   };
 
   return (
@@ -460,6 +491,8 @@ export default function PricingPage() {
           </motion.p>
         </section>
 
+
+
         {/* ── BILLING TOGGLE ── */}
         <section className="mb-14 z-20">
           <div className="bg-brand-surface/90 border border-brand-border p-1.5 rounded-2xl flex items-center relative shadow-xl">
@@ -505,9 +538,10 @@ export default function PricingPage() {
             const comingSoon = isYearly
               ? plan.comingSoonYearly
               : plan.comingSoonMonthly;
-            const displayPrice = isYearly
-              ? plan.yearlyPrice ?? plan.monthlyPrice
-              : plan.monthlyPrice;
+            const displayPrice = getDynamicPlanPrice(
+              plan.id,
+              isYearly,
+              pricing);
             const isDiamond = plan.id === "diamond";
 
 
