@@ -38,13 +38,13 @@ export default function Chess960Page() {
         <div className="flex items-center gap-4">
           <button
             onClick={handleBackToVariants}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-medium text-brand-secondary hover:text-white bg-white/5 hover:bg-white/10 transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-medium text-brand-secondary hover:text-brand-text bg-brand-text/5 hover:bg-brand-text/10 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Variants</span>
           </button>
           <div>
-            <h1 className="font-display font-bold text-2xl text-white tracking-tight">
+            <h1 className="font-display font-bold text-2xl text-brand-text tracking-tight">
               Chess 960
             </h1>
             <p className="text-xs text-brand-secondary">
@@ -56,7 +56,7 @@ export default function Chess960Page() {
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-brand-surface/80 border border-brand-border/60 text-xs font-mono">
             <Bot className="w-4 h-4 text-brand-accent" />
-            <span className="text-white font-medium">{diffConfig.name}</span>
+            <span className="text-brand-text font-medium">{diffConfig.name}</span>
             <span className="text-brand-secondary/80">({diffConfig.rating})</span>
           </div>
         </div>
