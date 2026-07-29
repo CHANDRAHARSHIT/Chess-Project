@@ -1,10 +1,10 @@
-import React, { useEffect } from 'react';
-import PartnerCTA from '../components/PartnerCTA';
+import { useEffect } from "react";
+import PartnerCTA from "../components/PartnerCTA";
 
 export default function ContactPage() {
   useEffect(() => {
     window.scrollTo(0, 0);
-    document.title = 'Contact Us | XLChess';
+    document.title = "Contact Us | XLChess";
   }, []);
 
   return (
