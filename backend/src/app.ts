@@ -8,7 +8,7 @@ import { userRouter } from "./routes/user.route.js";
 import { customLinksRouter } from "./routes/customLinks.route.js";
 import { paymentRouter } from "./routes/payment.route.js";
 import { pricingRouter } from "./routes/pricing.route.js";
-import { checkoutRouter } from "./routes/checkout.route.js";
+
 import { puzzleRouter } from "./routes/puzzle.route.js";
 import { openingRouter } from "./routes/opening.route.js";
 import { errorHandler } from "./middleware/error.middleware.js";
@@ -82,7 +82,7 @@ app.use("/api/users", userRouter);
 app.use("/api/custom-links", customLinksRouter);
 app.use("/api/payments", paymentRouter);
 app.use("/api/pricing", pricingRouter);
-app.use("/api/checkout", checkoutRouter);
+
 app.use("/api/puzzles", puzzleRouter);
 app.use("/api/openings", openingRouter);
 

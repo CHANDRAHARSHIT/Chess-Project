@@ -79,24 +79,37 @@ export default function CheckoutPage() {
     setAuthModalOpen(true);
   };
 
-  const { pricing, createCheckout } = usePricing();
+  const { pricing } = usePricing();
   // Auto Calculations
 
   const billingCycleLabel = isYearly ? "Premium Yearly" : "Premium Monthly";
 
+  // Diamond USD base prices
+  const DIAMOND_USD_MONTHLY = 5.00;
+  const DIAMOND_USD_YEARLY = 20.40;
+
   const symbol = pricing.symbol;
-  const monthlyVal = pricing.monthly;
-  const yearlyVal = pricing.yearly;
+
+  // Derive exchange rate from backend Diamond pricing
+  const monthlyRate = pricing.monthly / DIAMOND_USD_MONTHLY;
+  const yearlyRate = pricing.yearly / DIAMOND_USD_YEARLY;
+
+  // Format helper: 2 decimals for < 100, integers for >= 100
+  const fmt = (n: number) => n >= 100 ? Math.round(n).toString() : n.toFixed(2);
+
+  const localMonthly = DIAMOND_USD_MONTHLY * monthlyRate;
+  const localYearlyTotal = DIAMOND_USD_YEARLY * yearlyRate;
+  const localYearlyMonthlyEquiv = localYearlyTotal / 12;
 
   const basePriceFormatted = isYearly
-    ? `${symbol}${monthlyVal * 12}`
-    : `${symbol}${monthlyVal}`;
+    ? `${symbol}${fmt(localMonthly * 12)}`   // full year at monthly rate
+    : `${symbol}${fmt(localMonthly)}`;
   const planDiscountFormatted = isYearly
-    ? `${symbol}${Math.round(monthlyVal * 12 - yearlyVal)}`
+    ? `${symbol}${fmt(localMonthly * 12 - localYearlyTotal)}`
     : `${symbol}0`;
   const grandTotalFormatted = isYearly
-    ? `${symbol}${yearlyVal}`
-    : `${symbol}${monthlyVal}`;
+    ? `${symbol}${fmt(localYearlyTotal)}`
+    : `${symbol}${fmt(localMonthly)}`;
 
   // Next Renewal Date calculation
   const nextRenewalDate = () => {
@@ -113,27 +126,27 @@ export default function CheckoutPage() {
     });
   };
 
-  // Complete checkout flow
+  // Complete checkout flow — uses predefined Stripe products
   const handleProceedToPayment = async () => {
     setIsProcessing(true);
     setPaymentError(null);
 
     try {
-      const billing = isYearly ? "yearly" : "monthly";
-      const response = await createCheckout("premium", billing);
+      const planId = isYearly ? "pro_yearly" : "pro_monthly";
+      const response = await PaymentService.createCheckoutSession(planId);
 
       if (
         response.status === "success" &&
-        (response.url || response.checkoutUrl)
+        (response.checkoutUrl)
       ) {
-        if ((response as any).sessionId) {
+        if (response.sessionId) {
           sessionStorage.setItem(
             "pending_checkout_session_id",
-            (response as any).sessionId,
+            response.sessionId,
           );
         }
         // Securely redirect customer to Stripe hosted checkout page
-        window.location.href = response.url || response.checkoutUrl!;
+        window.location.href = response.checkoutUrl;
       } else {
         setPaymentError(
           response.message ||

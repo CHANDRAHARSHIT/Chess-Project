@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { PricingApi, type PricingResponse, type CheckoutResponse } from "../services/pricingApi";
+import { PricingApi, type PricingResponse } from "../services/pricingApi";
 
 const FALLBACK_PRICING: PricingResponse = {
   country: "New Zealand",
@@ -63,27 +63,10 @@ export function usePricing() {
     fetchPricing();
   }, [fetchPricing]);
 
-  const createCheckout = useCallback(
-    async (plan = "premium", billing: "monthly" | "yearly" = "monthly"): Promise<CheckoutResponse> => {
-      try {
-        // Pass country code so backend creates Stripe session in same currency as displayed
-        const country = selectedCountry || getDevCountryOverride() || pricing?.countryCode;
-        return await PricingApi.createCheckout(plan, billing, country);
-      } catch (err: any) {
-        console.error("[usePricing]: Checkout error:", err);
-        return {
-          status: "fail",
-          message: err.message || "Checkout failed.",
-        };
-      }
-    },
-    [selectedCountry, pricing?.countryCode]
-  );
-
   return {
     pricing: pricing || FALLBACK_PRICING,
     error,
-    createCheckout,
     refetchPricing: fetchPricing,
   };
 }
+
