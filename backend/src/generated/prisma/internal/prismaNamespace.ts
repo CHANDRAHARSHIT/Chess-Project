@@ -393,7 +393,9 @@ export const ModelName = {
   BillingProfile: 'BillingProfile',
   Product: 'Product',
   ProductFeature: 'ProductFeature',
-  WebhookEvent: 'WebhookEvent'
+  WebhookEvent: 'WebhookEvent',
+  CuratedPuzzle: 'CuratedPuzzle',
+  Opening: 'Opening'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -409,7 +411,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "account" | "session" | "verificationToken" | "subscription" | "payment" | "billingProfile" | "product" | "productFeature" | "webhookEvent"
+    modelProps: "user" | "account" | "session" | "verificationToken" | "subscription" | "payment" | "billingProfile" | "product" | "productFeature" | "webhookEvent" | "curatedPuzzle" | "opening"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1153,6 +1155,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    CuratedPuzzle: {
+      payload: Prisma.$CuratedPuzzlePayload<ExtArgs>
+      fields: Prisma.CuratedPuzzleFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CuratedPuzzleFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CuratedPuzzlePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CuratedPuzzleFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CuratedPuzzlePayload>
+        }
+        findFirst: {
+          args: Prisma.CuratedPuzzleFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CuratedPuzzlePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CuratedPuzzleFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CuratedPuzzlePayload>
+        }
+        findMany: {
+          args: Prisma.CuratedPuzzleFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CuratedPuzzlePayload>[]
+        }
+        create: {
+          args: Prisma.CuratedPuzzleCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CuratedPuzzlePayload>
+        }
+        createMany: {
+          args: Prisma.CuratedPuzzleCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CuratedPuzzleCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CuratedPuzzlePayload>[]
+        }
+        delete: {
+          args: Prisma.CuratedPuzzleDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CuratedPuzzlePayload>
+        }
+        update: {
+          args: Prisma.CuratedPuzzleUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CuratedPuzzlePayload>
+        }
+        deleteMany: {
+          args: Prisma.CuratedPuzzleDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CuratedPuzzleUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CuratedPuzzleUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CuratedPuzzlePayload>[]
+        }
+        upsert: {
+          args: Prisma.CuratedPuzzleUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CuratedPuzzlePayload>
+        }
+        aggregate: {
+          args: Prisma.CuratedPuzzleAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCuratedPuzzle>
+        }
+        groupBy: {
+          args: Prisma.CuratedPuzzleGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CuratedPuzzleGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CuratedPuzzleCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CuratedPuzzleCountAggregateOutputType> | number
+        }
+      }
+    }
+    Opening: {
+      payload: Prisma.$OpeningPayload<ExtArgs>
+      fields: Prisma.OpeningFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.OpeningFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpeningPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.OpeningFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpeningPayload>
+        }
+        findFirst: {
+          args: Prisma.OpeningFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpeningPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.OpeningFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpeningPayload>
+        }
+        findMany: {
+          args: Prisma.OpeningFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpeningPayload>[]
+        }
+        create: {
+          args: Prisma.OpeningCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpeningPayload>
+        }
+        createMany: {
+          args: Prisma.OpeningCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.OpeningCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpeningPayload>[]
+        }
+        delete: {
+          args: Prisma.OpeningDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpeningPayload>
+        }
+        update: {
+          args: Prisma.OpeningUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpeningPayload>
+        }
+        deleteMany: {
+          args: Prisma.OpeningDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.OpeningUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.OpeningUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpeningPayload>[]
+        }
+        upsert: {
+          args: Prisma.OpeningUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpeningPayload>
+        }
+        aggregate: {
+          args: Prisma.OpeningAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateOpening>
+        }
+        groupBy: {
+          args: Prisma.OpeningGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OpeningGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.OpeningCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OpeningCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1348,6 +1498,32 @@ export const WebhookEventScalarFieldEnum = {
 } as const
 
 export type WebhookEventScalarFieldEnum = (typeof WebhookEventScalarFieldEnum)[keyof typeof WebhookEventScalarFieldEnum]
+
+
+export const CuratedPuzzleScalarFieldEnum = {
+  id: 'id',
+  fen: 'fen',
+  moves: 'moves',
+  rating: 'rating',
+  ratingDeviation: 'ratingDeviation',
+  popularity: 'popularity',
+  nbPlays: 'nbPlays',
+  themes: 'themes',
+  createdAt: 'createdAt'
+} as const
+
+export type CuratedPuzzleScalarFieldEnum = (typeof CuratedPuzzleScalarFieldEnum)[keyof typeof CuratedPuzzleScalarFieldEnum]
+
+
+export const OpeningScalarFieldEnum = {
+  id: 'id',
+  eco: 'eco',
+  name: 'name',
+  pgn: 'pgn',
+  moves: 'moves'
+} as const
+
+export type OpeningScalarFieldEnum = (typeof OpeningScalarFieldEnum)[keyof typeof OpeningScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1621,6 +1797,8 @@ export type GlobalOmitConfig = {
   product?: Prisma.ProductOmit
   productFeature?: Prisma.ProductFeatureOmit
   webhookEvent?: Prisma.WebhookEventOmit
+  curatedPuzzle?: Prisma.CuratedPuzzleOmit
+  opening?: Prisma.OpeningOmit
 }
 
 /* Types for Logging */

@@ -184,3 +184,27 @@ model WebhookEvent {
   payload        Json?    // Full audit log payload
   createdAt      DateTime @default(now())
 }
+
+/// Curated puzzle dataset sourced from Lichess puzzle database.
+/// Used for the Custom Puzzles feature — filterable by theme and rating range.
+model CuratedPuzzle {
+  id              String   @id                    // Lichess PuzzleId (e.g. "ZEBhn")
+  fen             String                          // FEN of the position before the puzzle starts
+  moves           String                          // Space-separated UCI move list (solution)
+  rating          Int                             // Puzzle difficulty rating
+  ratingDeviation Int                             // Rating deviation (confidence)
+  popularity      Int                             // Lichess popularity score (-100 to 100)
+  nbPlays         Int                             // Total number of times played
+  themes          String[]                        // Array of theme tags (e.g. ["mate", "mateIn1"])
+  createdAt       DateTime @default(now())
+
+  @@index([rating])    // Fast filtering by rating range
+}
+                        
+model Opening {
+  id    String @id @default(cuid())
+  eco   String
+  name  String
+  pgn   String
+  moves String
+}

@@ -29,7 +29,7 @@ const PlatformButton: React.FC<PlatformButtonProps> = ({ name, icon, brandColor 
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onClick={() => alert(`${name} connection coming in the next release!`)}
-      className="flex items-center justify-center gap-2.5 bg-white/5 hover:bg-white/10 active:scale-[0.98] border border-white/10 hover:border-brand-accent/40 rounded-xl py-3 px-4 transition-all duration-200 cursor-pointer text-sm font-sans font-medium text-brand-secondary hover:text-white group relative overflow-hidden w-full"
+      className="flex items-center justify-center gap-2.5 bg-brand-text/5 hover:bg-brand-text/10 active:scale-[0.98] border border-white/10 hover:border-brand-accent/40 rounded-xl py-3 px-4 transition-all duration-200 cursor-pointer text-sm font-sans font-medium text-brand-secondary hover:text-brand-text group relative overflow-hidden w-full"
       style={{
         boxShadow: hovered ? `0 0 12px ${brandColor}15` : 'none',
       }}
@@ -221,8 +221,8 @@ const { signOut } = useSession();
                <>
   {/* LOADING STATE (Skeleton card) */}
           {loadingProfile && (
-            <div className="w-full bg-gradient-to-br from-brand-surface/60 via-brand-surface/40 to-brand-bg/80 border border-brand-border/60 shadow-2xl backdrop-blur-xl rounded-2xl p-6 sm:p-10 relative overflow-hidden animate-pulse">
-              <div className="flex flex-col md:flex-row items-center md:items-start gap-8 pb-8 border-b border-brand-border/20">
+            <div className="w-full bg-gradient-to-br from-brand-surface/60 via-brand-surface/40 to-brand-bg/80 border border-[rgba(212,175,110,0.60)] shadow-2xl backdrop-blur-xl rounded-2xl p-6 sm:p-10 relative overflow-hidden animate-pulse">
+              <div className="flex flex-col md:flex-row items-center md:items-start gap-8 pb-8 border-b border-[rgba(212,175,110,0.20)]">
                 <div className="w-32 h-32 md:w-36 md:h-36 rounded-full bg-brand-surface/80 flex-shrink-0" />
                 <div className="flex-1 w-full flex flex-col items-center md:items-start gap-3 mt-2">
                   <div className="h-9 w-48 bg-brand-surface/80 rounded-lg" />
@@ -232,7 +232,7 @@ const { signOut } = useSession();
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pt-8">
                 {Array.from({ length: 3 }).map((_, i) => (
-                  <div key={i} className="h-28 bg-brand-surface/40 border border-brand-border/10 rounded-xl" />
+                  <div key={i} className="h-28 bg-brand-surface/40 border border-[rgba(212,175,110,0.10)] rounded-xl" />
                 ))}
               </div>
             </div>
@@ -244,11 +244,11 @@ const { signOut } = useSession();
               <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center text-red-400">
                 <AlertCircle className="w-6 h-6" />
               </div>
-              <h3 className="font-sans font-bold text-lg text-white">Could not load profile</h3>
+              <h3 className="font-sans font-bold text-lg text-brand-text">Could not load profile</h3>
               <p className="font-sans text-brand-secondary text-sm max-w-md">{error}</p>
               <button
                 onClick={fetchProfile}
-                className="mt-2 font-sans font-semibold text-sm bg-brand-accent hover:bg-brand-accent/80 text-white px-5 py-2.5 rounded-lg border border-brand-accent/30 transition-all duration-200 active:scale-[0.98] cursor-pointer shadow-md shadow-brand-accent/20"
+                className="mt-2 font-sans font-semibold text-sm bg-brand-accent hover:bg-brand-accent/80 text-brand-text px-5 py-2.5 rounded-lg border border-brand-accent/30 transition-all duration-200 active:scale-[0.98] cursor-pointer shadow-md shadow-brand-accent/20"
               >
                 Try Again
               </button>
@@ -257,13 +257,13 @@ const { signOut } = useSession();
   
           {/* SUCCESS STATE */}
           {!loadingProfile && !error && profile && (
-            <div className="w-full bg-gradient-to-br from-brand-surface/60 via-brand-surface/40 to-brand-bg/80 border border-brand-border/60 shadow-2xl backdrop-blur-xl rounded-2xl p-6 sm:p-10 relative overflow-hidden">
+            <div className="w-full bg-gradient-to-br from-brand-surface/60 via-brand-surface/40 to-brand-bg/80 border border-[rgba(212,175,110,0.60)] shadow-2xl backdrop-blur-xl rounded-2xl p-6 sm:p-10 relative overflow-hidden">
               {/* Background Glows for visual excellence */}
               <div className="absolute top-0 right-0 w-72 h-72 bg-brand-accent/5 rounded-full blur-3xl pointer-events-none" />
               <div className="absolute bottom-0 left-0 w-72 h-72 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none" />
   
               {/* Profile Info Header */}
-              <div className="flex flex-col md:flex-row items-center md:items-start gap-8 pb-8 border-b border-brand-border/20">
+              <div className="flex flex-col md:flex-row items-center md:items-start gap-8 pb-8 border-b border-[rgba(212,175,110,0.20)]">
                 {/* Profile Picture */}
                 <div className="w-32 h-32 md:w-36 md:h-36 rounded-full overflow-hidden border border-brand-accent/40 shadow-lg shadow-brand-bg/80 flex-shrink-0 bg-brand-surface relative group">
                   {profile.image ? (
@@ -275,7 +275,7 @@ const { signOut } = useSession();
                       referrerPolicy="no-referrer"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-brand-accent to-indigo-600 text-white font-sans font-bold text-4xl select-none">
+                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-brand-accent to-indigo-600 text-brand-text font-sans font-bold text-4xl select-none">
                       {profile.name ? profile.name.charAt(0).toUpperCase() : "?"}
                     </div>
                   )}
@@ -286,7 +286,7 @@ const { signOut } = useSession();
                 {/* User detail lines */}
                 <div className="flex-1 text-center md:text-left mt-2 select-text">
                   <div className="flex flex-col md:flex-row items-center justify-center md:justify-start gap-3">
-                    <h2 className="text-3xl sm:text-4xl font-sans font-extrabold text-white tracking-tight leading-none">
+                    <h2 className="text-3xl sm:text-4xl font-sans font-extrabold text-brand-text tracking-tight leading-none">
                       {profile.name || "Anonymous Player"}
                     </h2>
                     {profile.subscriptions?.[0] && (profile.subscriptions[0].status === "ACTIVE" || profile.subscriptions[0].status === "TRIALING") && (
@@ -312,7 +312,7 @@ const { signOut } = useSession();
   
               {/* Future Readiness Placeholder Layout Grid */}
               <div className="pt-8">
-                <h3 className="text-lg font-sans font-bold text-white mb-6 tracking-wide flex flex-col sm:flex-row items-center justify-center md:justify-start gap-2 text-center sm:text-left">
+                <h3 className="text-lg font-sans font-bold text-brand-text mb-6 tracking-wide flex flex-col sm:flex-row items-center justify-center md:justify-start gap-2 text-center sm:text-left">
                   <span>Chess Profile & Statistics</span>
                   <span className="text-[10px] uppercase font-sans font-semibold bg-brand-accent/15 text-brand-accent px-2 py-0.5 rounded-full tracking-wider">
                     Future Upgrades
@@ -322,7 +322,7 @@ const { signOut } = useSession();
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   
                   {/* Membership & Billing Status Card */}
-                  <div className="bg-brand-surface/30 border border-brand-border/40 hover:border-brand-border/80 transition-all duration-200 rounded-xl p-5 relative overflow-hidden group select-none">
+                  <div className="bg-brand-surface/30 border border-[rgba(212,175,110,0.40)] hover:border-[rgba(212,175,110,0.80)] transition-all duration-200 rounded-xl p-5 relative overflow-hidden group select-none">
                     <div className="flex items-center gap-3 mb-3">
                       <div className="w-9 h-9 rounded-lg bg-brand-accent/10 flex items-center justify-center text-brand-accent">
                         <Award className="w-5 h-5" />
@@ -347,7 +347,7 @@ const { signOut } = useSession();
                         </div>
                         <div className="flex items-center justify-between text-xs font-sans">
                           <span className="text-brand-secondary">Renews on</span>
-                          <span className="text-white font-mono text-[10px]">
+                          <span className="text-brand-text font-mono text-[10px]">
                             {new Date(profile.subscriptions[0].currentPeriodEnd).toLocaleDateString("en-US", {
                               day: "numeric",
                               month: "short",
@@ -358,7 +358,7 @@ const { signOut } = useSession();
                         <button
                           onClick={handleManageSubscription}
                           disabled={managingBilling}
-                          className="w-full mt-2 py-2 px-3 bg-brand-accent/15 hover:bg-brand-accent/25 border border-brand-accent/30 text-brand-accent hover:text-white rounded-lg font-mono text-[9px] uppercase tracking-widest font-bold transition-all duration-200 cursor-pointer disabled:opacity-50 text-center"
+                          className="w-full mt-2 py-2 px-3 bg-brand-accent/15 hover:bg-brand-accent/25 border border-brand-accent/30 text-brand-accent hover:text-brand-text rounded-lg font-mono text-[9px] uppercase tracking-widest font-bold transition-all duration-200 cursor-pointer disabled:opacity-50 text-center"
                         >
                           {managingBilling ? "Loading Portal..." : "Manage Billing"}
                         </button>
@@ -367,7 +367,7 @@ const { signOut } = useSession();
                       <div className="space-y-3 mt-4">
                         <div className="flex items-center justify-between text-xs font-sans">
                           <span className="text-brand-secondary">Status</span>
-                          <span className="font-semibold text-brand-secondary/60 font-mono uppercase bg-white/5 px-2 py-0.5 rounded border border-white/5 text-[10px]">
+                          <span className="font-semibold text-brand-secondary/60 font-mono uppercase bg-brand-text/5 px-2 py-0.5 rounded border border-white/5 text-[10px]">
                             Free Tier
                           </span>
                         </div>
@@ -381,7 +381,7 @@ const { signOut } = useSession();
                     )}
                   </div>
                   {/* Rating Placeholder */}
-                  <div className="bg-brand-surface/30 border border-brand-border/40 hover:border-brand-border/80 transition-all duration-200 rounded-xl p-5 relative overflow-hidden group select-none">
+                  <div className="bg-brand-surface/30 border border-[rgba(212,175,110,0.40)] hover:border-[rgba(212,175,110,0.80)] transition-all duration-200 rounded-xl p-5 relative overflow-hidden group select-none">
                     <div className="absolute top-3 right-3 text-brand-secondary/20">
                       <Lock className="w-3.5 h-3.5" />
                     </div>
@@ -395,13 +395,13 @@ const { signOut } = useSession();
                       </div>
                     </div>
                     <div className="flex items-baseline gap-2 mt-2">
-                      <span className="text-2xl font-sans font-bold text-white/50">----</span>
+                      <span className="text-2xl font-sans font-bold text-brand-text/50">----</span>
                       <span className="text-[10px] text-brand-secondary/40 font-mono">ELO</span>
                     </div>
                   </div>
   
                   {/* Game Stats Placeholder */}
-                  <div className="bg-brand-surface/30 border border-brand-border/40 hover:border-brand-border/80 transition-all duration-200 rounded-xl p-5 relative overflow-hidden group select-none">
+                  <div className="bg-brand-surface/30 border border-[rgba(212,175,110,0.40)] hover:border-[rgba(212,175,110,0.80)] transition-all duration-200 rounded-xl p-5 relative overflow-hidden group select-none">
                     <div className="absolute top-3 right-3 text-brand-secondary/20">
                       <Lock className="w-3.5 h-3.5" />
                     </div>
@@ -416,18 +416,18 @@ const { signOut } = useSession();
                     </div>
                     <div className="flex gap-4 mt-2">
                       <div>
-                        <span className="block text-xl font-sans font-bold text-white/50">0</span>
+                        <span className="block text-xl font-sans font-bold text-brand-text/50">0</span>
                         <span className="text-[9px] text-brand-secondary/40 font-sans uppercase">Played</span>
                       </div>
                       <div>
-                        <span className="block text-xl font-sans font-bold text-white/50">0%</span>
+                        <span className="block text-xl font-sans font-bold text-brand-text/50">0%</span>
                         <span className="text-[9px] text-brand-secondary/40 font-sans uppercase">Wins</span>
                       </div>
                     </div>
                   </div>
   
                   {/* Achievements Placeholder */}
-                  <div className="bg-brand-surface/30 border border-brand-border/40 hover:border-brand-border/80 transition-all duration-200 rounded-xl p-5 relative overflow-hidden group select-none">
+                  <div className="bg-brand-surface/30 border border-[rgba(212,175,110,0.40)] hover:border-[rgba(212,175,110,0.80)] transition-all duration-200 rounded-xl p-5 relative overflow-hidden group select-none">
                     <div className="absolute top-3 right-3 text-brand-secondary/20">
                       <Lock className="w-3.5 h-3.5" />
                     </div>
@@ -441,13 +441,13 @@ const { signOut } = useSession();
                       </div>
                     </div>
                     <div className="flex items-baseline gap-2 mt-2">
-                      <span className="text-2xl font-sans font-bold text-white/50">0</span>
+                      <span className="text-2xl font-sans font-bold text-brand-text/50">0</span>
                       <span className="text-xs text-brand-secondary/40 font-sans">unlocked</span>
                     </div>
                   </div>
   
                   {/* Bio & Username Placeholder */}
-                  <div className="bg-brand-surface/30 border border-brand-border/40 hover:border-brand-border/80 transition-all duration-200 rounded-xl p-5 relative overflow-hidden sm:col-span-2 select-none">
+                  <div className="bg-brand-surface/30 border border-[rgba(212,175,110,0.40)] hover:border-[rgba(212,175,110,0.80)] transition-all duration-200 rounded-xl p-5 relative overflow-hidden sm:col-span-2 select-none">
                     <div className="absolute top-3 right-3 text-brand-secondary/20">
                       <Lock className="w-3.5 h-3.5" />
                     </div>
@@ -460,13 +460,13 @@ const { signOut } = useSession();
                         <p className="text-xs text-brand-secondary/50 font-sans mt-0.5">Custom username and chess handle</p>
                       </div>
                     </div>
-                    <div className="mt-3 h-8 border border-dashed border-brand-border/40 rounded flex items-center justify-center text-xs text-brand-secondary/35 italic">
+                    <div className="mt-3 h-8 border border-dashed border-[rgba(212,175,110,0.40)] rounded flex items-center justify-center text-xs text-brand-secondary/35 italic">
                       Configure player profile custom description
                     </div>
                   </div>
   
                   {/* Connected Accounts Placeholder */}
-                  <div className="bg-brand-surface/30 border border-brand-border/40 hover:border-brand-border/80 transition-all duration-200 rounded-xl p-5 relative overflow-hidden group select-none">
+                  <div className="bg-brand-surface/30 border border-[rgba(212,175,110,0.40)] hover:border-[rgba(212,175,110,0.80)] transition-all duration-200 rounded-xl p-5 relative overflow-hidden group select-none">
                     <div className="flex items-center gap-3 mb-3">
                       <div className="w-9 h-9 rounded-lg bg-sky-500/10 flex items-center justify-center text-sky-400">
                         <Link2 className="w-5 h-5" />
@@ -476,7 +476,7 @@ const { signOut } = useSession();
                         <p className="text-xs text-brand-secondary/50 font-sans mt-0.5">Google Sign-In Active</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2 mt-3 bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 w-fit">
+                    <div className="flex items-center gap-2 mt-3 bg-brand-text/5 border border-white/10 rounded-lg px-3 py-1.5 w-fit">
                       {/* Tiny Google Icon */}
                       <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
@@ -484,22 +484,22 @@ const { signOut } = useSession();
                         <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05" />
                         <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335" />
                       </svg>
-                      <span className="text-xs font-sans text-white/70">Google</span>
+                      <span className="text-xs font-sans text-brand-text/70">Google</span>
                     </div>
                   </div>
   
                   {/* Connected Platforms Card */}
-                  <div className="bg-brand-surface/30 border border-brand-border/40 hover:border-brand-border/80 transition-all duration-200 rounded-xl p-5 relative overflow-hidden sm:col-span-2 lg:col-span-3 select-none">
+                  <div className="bg-brand-surface/30 border border-[rgba(212,175,110,0.40)] hover:border-[rgba(212,175,110,0.80)] transition-all duration-200 rounded-xl p-5 relative overflow-hidden sm:col-span-2 lg:col-span-3 select-none">
                     <div className="absolute top-3 right-3 text-brand-secondary/20">
                       <Lock className="w-3.5 h-3.5" />
                     </div>
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5 pb-4 border-b border-brand-border/10">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5 pb-4 border-b border-[rgba(212,175,110,0.10)]">
                       <div className="flex items-center gap-3">
                         <div className="w-9 h-9 rounded-lg bg-violet-500/10 flex items-center justify-center text-violet-400">
                           <Share2 className="w-5 h-5" />
                         </div>
                         <div>
-                          <h4 className="text-sm font-sans font-bold text-white tracking-wide">Connected Platforms</h4>
+                          <h4 className="text-sm font-sans font-bold text-brand-text tracking-wide">Connected Platforms</h4>
                           <p className="text-xs text-brand-secondary/60 font-sans mt-0.5">Connect your favorite gaming and social platforms.</p>
                         </div>
                       </div>
@@ -525,7 +525,7 @@ const { signOut } = useSession();
               </div>
   
               {/* Quick settings link or details */}
-              <div className="mt-8 border-t border-brand-border/20 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="mt-8 border-t border-[rgba(212,175,110,0.20)] pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <p className="text-xs font-sans text-brand-secondary/60">
                   Player Status: <span className="text-brand-accent font-semibold">Active Member</span>
                 </p>
@@ -540,7 +540,7 @@ const { signOut } = useSession();
                   <span className="text-brand-border/40 text-xs hidden sm:inline">|</span>
                   <button
                     onClick={() => navigate("/settings")}
-                    className="font-sans text-xs text-brand-secondary hover:text-white transition-colors duration-150 inline-flex items-center gap-1 cursor-pointer"
+                    className="font-sans text-xs text-brand-secondary hover:text-brand-text transition-colors duration-150 inline-flex items-center gap-1 cursor-pointer"
                   >
                     Configure site preferences <ChevronRight className="w-3.5 h-3.5" />
                   </button>

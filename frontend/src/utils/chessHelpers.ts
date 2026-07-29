@@ -16,6 +16,28 @@ export function formatColor(color: 'w' | 'b'): string {
   return color === 'w' ? 'White' : 'Black';
 }
 
+import { Chess } from 'chess.js';
+import { soundManager } from './SoundManager';
+
+/**
+ * Plays the correct sound for a chess.js move result and current game state.
+ */
+export function playMoveSound(game: Chess, moveFlags: string, captured: boolean): void {
+  if (game.isCheckmate()) {
+    soundManager.playCheckmate();
+  } else if (game.inCheck()) {
+    soundManager.playCheck();
+  } else if (moveFlags.includes('k') || moveFlags.includes('q')) {
+    soundManager.playCastle();
+  } else if (moveFlags.includes('p')) {
+    soundManager.playPromote();
+  } else if (captured) {
+    soundManager.playCapture();
+  } else {
+    soundManager.playMove();
+  }
+}
+
 /**
  * Checks if a game-over reason exists and returns a user-friendly string
  */
