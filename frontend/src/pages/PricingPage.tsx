@@ -453,7 +453,14 @@ export default function PricingPage() {
 
   const handleUpgrade = (planType: "Monthly" | "Yearly") => {
     const billing = planType.toLowerCase();
-    navigate(`/payment?plan=${billing}`);
+    const params = new URLSearchParams();
+    params.set("plan", billing);
+    const currentParams = new URLSearchParams(location.search);
+    const countryOverride = currentParams.get("country") || pricing?.countryCode;
+    if (countryOverride) {
+      params.set("country", countryOverride);
+    }
+    navigate(`/payment?${params.toString()}`);
   };
 
   return (
