@@ -5,7 +5,6 @@ import { rateLimit } from "express-rate-limit";
 import { env } from "./config/env.js";
 import { authRouter } from "./routes/auth.route.js";
 import { userRouter } from "./routes/user.route.js";
-import { customLinksRouter } from "./routes/customLinks.route.js";
 import { paymentRouter } from "./routes/payment.route.js";
 import { puzzleRouter } from "./routes/puzzle.route.js";
 import { openingRouter } from "./routes/opening.route.js";
@@ -78,7 +77,6 @@ app.use("/api/auth/*", (req, _res, next) => {
   next();
 }, authRouter);
 app.use("/api/users", userRouter);
-app.use("/api/custom-links", customLinksRouter);
 app.use("/api/payments", paymentRouter);
 app.use("/api/puzzles", puzzleRouter);
 app.use("/api/openings", openingRouter);

@@ -14,7 +14,8 @@ import type * as Prisma from "../internal/prismaNamespace.js"
 
 /**
  * Model CuratedPuzzle
- * 
+ * Curated puzzle dataset sourced from Lichess puzzle database.
+ * Used for the Custom Puzzles feature — filterable by theme and rating range.
  */
 export type CuratedPuzzleModel = runtime.Types.Result.DefaultSelection<Prisma.$CuratedPuzzlePayload>
 
