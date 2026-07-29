@@ -498,7 +498,7 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
   };
 
   const Divider = () => (
-    <hr className="border-t border-[#3F3F3F] my-3 mx-4" />
+    <hr className="border-t border-brand-text/10 my-3 mx-4" />
   );
 
   return (
@@ -688,7 +688,7 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
 
             {/* FOOTER */}
             {isExpanded && (
-              <div className="mt-auto px-6 py-4 flex flex-col gap-4 text-[12px] text-brand-secondary font-sans border-t border-[#3F3F3F] pt-6">
+              <div className="mt-auto px-6 py-4 flex flex-col gap-4 text-[12px] text-brand-secondary font-sans border-t border-brand-text/10 pt-6">
                 <div className="flex flex-wrap gap-x-4 gap-y-2.5 font-medium tracking-wide">
                   {footerLinks.map(link => (
                     <a
@@ -705,7 +705,7 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
                     </a>
                   ))}
                 </div>
-                <div className="flex items-center gap-2 mt-4 pt-4 border-t border-[#3F3F3F]">
+                <div className="flex items-center gap-2 mt-4 pt-4 border-t border-brand-text/10">
                   <img src="/logo-without-text.png" alt="logo" className="h-4 w-auto opacity-40 grayscale" />
                   <span className="text-brand-text/30 font-medium text-[11px]">© 2026 XLCHESS</span>
                 </div>
@@ -883,7 +883,7 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
             )}
 
             {/* FOOTER (Mobile) */}
-            <div className="mt-auto px-6 py-4 flex flex-col gap-4 text-[12px] text-brand-secondary font-sans border-t border-[#3F3F3F] pt-6">
+            <div className="mt-auto px-6 py-4 flex flex-col gap-4 text-[12px] text-brand-secondary font-sans border-t border-brand-text/10 pt-6">
               <div className="flex flex-wrap gap-x-4 gap-y-2.5 font-medium tracking-wide">
                 {footerLinks.map(link => (
                   <a
@@ -900,7 +900,7 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
                   </a>
                 ))}
               </div>
-              <div className="flex items-center gap-2 mt-4 pt-4 border-t border-[#3F3F3F]">
+              <div className="flex items-center gap-2 mt-4 pt-4 border-t border-brand-text/10">
                 <img src="/logo-without-text.png" alt="logo" className="h-4 w-auto opacity-40 grayscale" />
                 <span className="text-brand-text/30 font-medium text-[11px]">© 2026 XLCHESS</span>
               </div>
