@@ -383,7 +383,10 @@ export default function ProductDemo() {
 
             {/* ── Col 2: Chessboard ────────────────────────────────────────── */}
             <div className="lg:col-span-7 flex flex-col lg:justify-start justify-center">
-              <div ref={boardContainerRef} className="aspect-square w-full shadow-xl border border-brand-border relative overflow-hidden" style={{ borderRadius: '4px' }}>
+              <div ref={boardContainerRef}
+                className="aspect-square w-full shadow-xl border border-brand-border relative overflow-hidden"
+                style={{ borderRadius: '4px', transform: "translateZ(0)" }}
+              >
 
                 {/* Game Over Overlay */}
                 {gameOverReason && (
@@ -425,9 +428,8 @@ export default function ProductDemo() {
               {/* Turn indicator */}
               <div className="mt-3 flex items-center gap-2 text-xs text-brand-secondary px-1">
                 <span
-                  className={`w-2.5 h-2.5 rounded-full border border-brand-border ${
-                    currentTurn === 'w' ? 'bg-white' : 'bg-neutral-800'
-                  }`}
+                  className={`w-2.5 h-2.5 rounded-full border border-brand-border ${currentTurn === 'w' ? 'bg-white' : 'bg-neutral-800'
+                    }`}
                 />
                 <span>
                   {currentTurn === 'w' ? "White's Turn" : "Black's Turn"}
@@ -505,11 +507,10 @@ export default function ProductDemo() {
                       ref={moreButtonRef}
                       onClick={() => { soundManager.playButtonClick(); setShowMoreMenu(prev => !prev); }}
                       title="More options"
-                      className={`w-full flex flex-col items-center justify-center gap-1.5 py-3 px-1 rounded-lg border transition-all duration-200 group cursor-pointer ${
-                        showMoreMenu
-                          ? 'border-[rgba(212,175,110,0.6)] bg-[rgba(212,175,110,0.08)] text-brand-text'
-                          : 'border-brand-border bg-brand-bg hover:bg-brand-text/5 hover:border-[rgba(212,175,110,0.4)] text-brand-secondary hover:text-brand-text'
-                      }`}
+                      className={`w-full flex flex-col items-center justify-center gap-1.5 py-3 px-1 rounded-lg border transition-all duration-200 group cursor-pointer ${showMoreMenu
+                        ? 'border-[rgba(212,175,110,0.6)] bg-[rgba(212,175,110,0.08)] text-brand-text'
+                        : 'border-brand-border bg-brand-bg hover:bg-brand-text/5 hover:border-[rgba(212,175,110,0.4)] text-brand-secondary hover:text-brand-text'
+                        }`}
                     >
                       <MoreHorizontal className="w-5 h-5 group-hover:scale-110 transition-transform" />
                       <span className="text-[10px] font-medium font-sans tracking-wide">More</span>
@@ -576,11 +577,10 @@ export default function ProductDemo() {
                           setShowHint(false);
                         }}
                         title={`${DIFFICULTY_CONFIGS[level].name} (${DIFFICULTY_CONFIGS[level].rating})`}
-                        className={`py-1 rounded text-xs font-mono transition-all duration-200 ${
-                          difficulty === level
-                            ? 'bg-brand-accent text-brand-bg shadow-sm font-bold'
-                            : 'text-brand-secondary hover:bg-brand-text/5'
-                        }`}
+                        className={`py-1 rounded text-xs font-mono transition-all duration-200 ${difficulty === level
+                          ? 'bg-brand-accent text-brand-bg shadow-sm font-bold'
+                          : 'text-brand-secondary hover:bg-brand-text/5'
+                          }`}
                       >
                         {level}
                       </button>
