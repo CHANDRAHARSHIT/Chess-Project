@@ -360,7 +360,7 @@ export default function ProductDemo() {
   const canUndo = history.length > 0 && !gameOverReason;
 
   return (
-    <section id="interactive-demo" className="py-12 md:py-16 relative overflow-hidden">
+    <section id="interactive-demo" className="py-24 md:py-28 relative overflow-hidden bg-obsidian-light">
       <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[600px] h-[600px] bg-[rgba(212,175,110,0.05)] rounded-full blur-[140px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -368,12 +368,12 @@ export default function ProductDemo() {
         {/* Dashboard */}
         <div
           ref={dashboardRef}
-          className="luxury-card rounded-sm shadow-2xl p-4 sm:p-6 lg:p-8 max-w-5xl mx-auto"
+          className="luxury-card rounded-[24px] shadow-2xl p-6 sm:p-8 lg:p-10 max-w-5xl mx-auto"
           style={{ opacity: 0 }}
         >
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:items-stretch">
 
-            {/* â”€â”€ Col 1: Eval Bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+            {/* ── Col 1: Eval Bar ────────────────────────────────────────── */}
             <div
               className="lg:col-span-1 flex lg:flex-col items-center lg:justify-start justify-center gap-0"
               style={{ alignSelf: 'stretch', padding: '0' }}
@@ -383,7 +383,7 @@ export default function ProductDemo() {
 
             {/* ── Col 2: Chessboard ────────────────────────────────────────── */}
             <div className="lg:col-span-7 flex flex-col lg:justify-start justify-center">
-              <div ref={boardContainerRef} className="aspect-square w-full shadow-xl border border-brand-border relative overflow-hidden" style={{ borderRadius: '4px' }}>
+              <div ref={boardContainerRef} className="aspect-square w-full shadow-xl border border-brand-border relative overflow-hidden" style={{ borderRadius: '20px' }}>
 
                 {/* Game Over Overlay */}
                 {gameOverReason && (

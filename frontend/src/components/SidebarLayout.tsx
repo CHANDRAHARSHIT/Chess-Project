@@ -219,24 +219,24 @@ export default function SidebarLayout({
                       }
                     }}
                     title={item.comingSoon ? "Coming Soon" : undefined}
-                    className={`b1 relative flex transition-all duration-200 ${
+                    className={`relative flex transition-all duration-200 ${
                       item.comingSoon
                         ? "opacity-40 cursor-not-allowed select-none"
                         : "cursor-pointer"
                     } ${
                       isExpanded
-                        ? `items-center gap-4 px-4 py-3 mx-3 rounded-xl ${
+                        ? `items-center gap-3.5 px-3.5 py-2.5 mx-2.5 rounded-xl ${
                             isActive
-                              ? "text-brand-accent bg-brand-accent/10 font-medium shadow-[inset_1px_0_0_rgba(212,175,110,0.1)]"
+                              ? "text-brand-accent bg-brand-accent/15 border-l-2 border-brand-accent font-semibold shadow-[0_2px_12px_rgba(212,175,110,0.08)]"
                               : `text-brand-secondary ${
                                   !item.comingSoon
                                     ? "hover:text-brand-text hover:bg-brand-text/5 group-hover/navitem:bg-brand-text/5 group-hover/navitem:text-brand-text"
                                     : ""
                                 }`
                           }`
-                        : `flex-col items-center justify-center py-2.5 mx-2 rounded-lg text-center ${
+                        : `flex-col items-center justify-center py-2.5 mx-2 rounded-xl text-center ${
                             isActive
-                              ? "text-brand-accent bg-brand-accent/10 border-brand-accent font-medium"
+                              ? "text-brand-accent bg-brand-accent/15 border-l-2 border-brand-accent font-semibold"
                               : `text-brand-secondary ${
                                   !item.comingSoon
                                     ? "hover:text-brand-text hover:bg-brand-text/5 group-hover/navitem:bg-brand-text/5 group-hover/navitem:text-brand-text"
@@ -246,8 +246,8 @@ export default function SidebarLayout({
                     }`}
                   >
                     <Icon
-                      className={`w-5 h-5 transition-transform duration-200 ${
-                        !item.comingSoon ? "group-hover/navitem:scale-105" : ""
+                      className={`w-5 h-5 shrink-0 transition-transform duration-200 ${
+                        !item.comingSoon ? "group-hover/navitem:scale-110" : ""
                       } ${
                         isActive
                           ? "text-brand-accent"
@@ -260,7 +260,7 @@ export default function SidebarLayout({
                     />
                     <span
                       className={`font-sans tracking-wide transition-all ${
-                        isExpanded ? "text-sm" : "text-[10px] mt-1"
+                        isExpanded ? "text-sm font-medium" : "text-[10px] mt-1 font-medium"
                       }`}
                     >
                       {item.name}

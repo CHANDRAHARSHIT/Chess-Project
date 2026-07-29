@@ -466,7 +466,7 @@ export default function Hero() {
               <div
                 ref={boardCardRef}
                 className="shadow-deep overflow-hidden hero-board-card"
-                style={{ transformStyle: "preserve-3d", borderRadius: "2px" }}
+                style={{ transformStyle: "preserve-3d", borderRadius: "24px" }}
               >
                 {/* Engraved coordinate decoration — top right corner */}
                 <div
