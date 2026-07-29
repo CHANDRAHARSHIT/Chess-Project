@@ -275,15 +275,6 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
   const baseSection = [
     { name: "Home", href: "/", icon: Home },
     {
-      name: "Play",
-      href: "/play",
-      icon: Bot,
-      subItems: [
-        { name: "Variants", href: "/variants", icon: Dices },
-        { name: "Chess 960", href: "/play/chess960", icon: Sparkles },
-      ],
-    },
-    {
       name: "Learn",
       href: "/learn",
       icon: GraduationCap,
