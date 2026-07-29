@@ -57,8 +57,8 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
   const [modalMode, setModalMode] = useState<"login" | "register">("login");
   const [mobileOpenItem, setMobileOpenItem] = useState<string | null>(null);
   const [isYouOpen, setIsYouOpen] = useState(true);
-  
-  const [hoveredSubMenu, setHoveredSubMenu] = useState<{items: any[], top: number, left: number} | null>(null);
+
+  const [hoveredSubMenu, setHoveredSubMenu] = useState<{ items: any[], top: number, left: number } | null>(null);
   const hoverTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -126,7 +126,7 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
       if (editLinkIndex !== null) {
         const isMore = editLinkSection === 'more';
         const link = isMore ? moreLinks[editLinkIndex] : customLinks[editLinkIndex];
-        
+
         // Optimistic update
         const updatedLink = { ...link, name: newLinkName, url: newLinkUrl };
         if (isMore) {
@@ -229,9 +229,9 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
   };
 
   const MOCK_SUBSCRIPTIONS = [
-    { name: "Hikaru Nakamura", avatar: "https://i.pravatar.cc/150?u=hikaru", href: "/subscriptions" },
-    { name: "GothamChess", avatar: "https://i.pravatar.cc/150?u=gotham", href: "/subscriptions" },
-    { name: "Magnus Carlsen", avatar: "https://i.pravatar.cc/150?u=magnus", href: "/subscriptions" },
+    { name: "Epic Chess", avatar: "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQB-blLJtOasSxbG_PvO7ejDjJEeUGjqKyJe_pUfWfBmQTg2Osx", href: "/subscriptions" },
+    { name: "Epic Chess", avatar: "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQB-blLJtOasSxbG_PvO7ejDjJEeUGjqKyJe_pUfWfBmQTg2Osx", href: "/subscriptions" },
+    { name: "Epic Chess", avatar: "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQB-blLJtOasSxbG_PvO7ejDjJEeUGjqKyJe_pUfWfBmQTg2Osx", href: "/subscriptions" },
   ];
 
   const handleLinkClick = (href: string, e: React.MouseEvent) => {
@@ -305,7 +305,7 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
   ];
 
   const footerLinks = [
-    "About", "Copyright", "Contact Us", "Creator", "Advertise", 
+    "About", "Copyright", "Contact Us", "Creator", "Advertise",
     "Developers", "Terms", "Privacy Policy & Safety", "How XLChess works"
   ];
 
@@ -332,8 +332,8 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
   // section: 'active' = in Explore section, 'more' = in More section
   const renderNavItem = (item: any, customLinkIndex?: number, section: 'active' | 'more' = 'active') => {
     const Icon = item.icon;
-    const isActive = !item.comingSoon && (location.pathname === item.href || (item.subItems?.some((s:any) => location.pathname === s.href)));
-    
+    const isActive = !item.comingSoon && (location.pathname === item.href || (item.subItems?.some((s: any) => location.pathname === s.href)));
+
     const isAvatar = item.avatar !== undefined;
     const isCustomLink = customLinkIndex !== undefined;
     const hasSubItems = Boolean(item.subItems);
@@ -376,50 +376,44 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
               }
             }}
             title={isDisabled ? "Coming soon" : undefined}
-            className={`relative w-full flex transition-all duration-200 ${
-              isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'
-            } ${
-              isExpanded || isMobileOpen
-                ? `items-center gap-4 px-3 py-2.5 mx-2 rounded-xl ${
-                    isDisabled
-                      ? "opacity-60 select-none text-brand-secondary"
-                      : isActive
-                      ? "text-brand-accent bg-brand-text/10 font-medium"
-                      : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 group-hover/navitem:bg-brand-text/5 group-hover/navitem:text-brand-text"
-                  }`
-                : `flex-col items-center justify-center py-[14px] mx-2 rounded-lg text-center ${
-                    isDisabled
-                      ? "opacity-60 select-none text-brand-secondary"
-                      : isActive
-                      ? "text-brand-accent bg-brand-text/10 font-medium"
-                      : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 group-hover/navitem:bg-brand-text/5 group-hover/navitem:text-brand-text"
-                  }`
-            }`}
+            className={`relative w-full flex transition-all duration-200 ${isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'
+              } ${isExpanded || isMobileOpen
+                ? `items-center gap-4 px-3 py-2.5 mx-2 rounded-xl ${isDisabled
+                  ? "opacity-60 select-none text-brand-secondary"
+                  : isActive
+                    ? "text-brand-accent bg-brand-text/10 font-medium"
+                    : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 group-hover/navitem:bg-brand-text/5 group-hover/navitem:text-brand-text"
+                }`
+                : `flex-col items-center justify-center py-[14px] mx-2 rounded-lg text-center ${isDisabled
+                  ? "opacity-60 select-none text-brand-secondary"
+                  : isActive
+                    ? "text-brand-accent bg-brand-text/10 font-medium"
+                    : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 group-hover/navitem:bg-brand-text/5 group-hover/navitem:text-brand-text"
+                }`
+              }`}
           >
             {isAvatar ? (
               <img src={item.avatar} alt={item.name} className="w-6 h-6 rounded-full shrink-0" />
             ) : (
               <Icon className={`w-5 h-5 shrink-0 ${isActive ? "text-brand-accent" : "text-brand-secondary group-hover/navitem:text-brand-text"}`} />
             )}
-            
-            <span className={`font-sans transition-all ${
-              isExpanded || isMobileOpen
-                ? "flex-1 text-left text-[13px] tracking-wide truncate"
-                : "w-full text-center text-[10px] mt-1.5 leading-[1.15] whitespace-normal tracking-normal line-clamp-2 break-words"
-            } ${!(isExpanded || isMobileOpen) && isAvatar ? "hidden" : ""}`}>
+
+            <span className={`font-sans transition-all ${isExpanded || isMobileOpen
+              ? "flex-1 text-left text-[13px] tracking-wide truncate"
+              : "w-full text-center text-[10px] mt-1.5 leading-[1.15] whitespace-normal tracking-normal line-clamp-2 break-words"
+              } ${!(isExpanded || isMobileOpen) && isAvatar ? "hidden" : ""}`}>
               {item.name}
             </span>
-            
+
             {hasSubItems && isMobileOpen && (
-               <ChevronDown className={`w-3.5 h-3.5 opacity-50 group-hover/navitem:opacity-100 transition-transform ${isSubOpen ? 'rotate-180' : ''}`} />
+              <ChevronDown className={`w-3.5 h-3.5 opacity-50 group-hover/navitem:opacity-100 transition-transform ${isSubOpen ? 'rotate-180' : ''}`} />
             )}
           </a>
 
           {/* Custom Link Actions */}
           {isCustomLink && (isExpanded || isMobileOpen) && (
-            <div className={`absolute right-4 flex items-center z-10 bg-brand-bg/80 backdrop-blur-sm rounded-full transition-all ${
-              isMobileOpen ? 'opacity-100' : 'opacity-0 group-hover/navitem:opacity-100'
-            }`}>
+            <div className={`absolute right-4 flex items-center z-10 bg-brand-bg/80 backdrop-blur-sm rounded-full transition-all ${isMobileOpen ? 'opacity-100' : 'opacity-0 group-hover/navitem:opacity-100'
+              }`}>
               {/* Move to More / Move to Active */}
               {section === 'active' ? (
                 <button
@@ -481,13 +475,12 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
                     }
                     handleLinkClick(subItem.href, e);
                   }}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-sans transition-colors duration-150 ${
-                    subItem.comingSoon
-                      ? "opacity-60 cursor-not-allowed select-none"
-                      : isSubActive
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-sans transition-colors duration-150 ${subItem.comingSoon
+                    ? "opacity-60 cursor-not-allowed select-none"
+                    : isSubActive
                       ? "text-brand-accent bg-brand-text/10 font-medium cursor-pointer"
                       : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 cursor-pointer"
-                  }`}
+                    }`}
                 >
                   <SubIcon className={`w-[16px] h-[16px] shrink-0 ${isSubActive ? "text-brand-accent" : "text-brand-secondary"}`} />
                   <span className="tracking-wide">{subItem.name}</span>
@@ -560,9 +553,8 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
       <div className="flex flex-1 pt-16">
         {/* Desktop Sidebar (Fixed) */}
         <aside
-          className={`fixed top-16 left-0 bottom-0 z-30 bg-brand-bg/95 backdrop-blur-md flex flex-col py-2 transition-all duration-300 hidden md:flex overflow-y-auto no-scrollbar pb-6 ${
-            isExpanded ? "w-64" : "w-20"
-          }`}
+          className={`fixed top-16 left-0 bottom-0 z-30 bg-brand-bg/95 backdrop-blur-md flex flex-col py-2 transition-all duration-300 hidden md:flex overflow-y-auto no-scrollbar pb-6 ${isExpanded ? "w-64" : "w-20"
+            }`}
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
           <nav className="flex-1 flex flex-col space-y-1">
@@ -574,7 +566,7 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
             {isExpanded && (
               <div className="flex items-center justify-between px-6 py-2">
                 <span className="text-[15px] font-semibold text-brand-text">Explore</span>
-                <button 
+                <button
                   onClick={() => {
                     if (status !== "authenticated") {
                       openModal("login");
@@ -623,7 +615,7 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
                   </div>
                 )}
                 {MOCK_SUBSCRIPTIONS.length > 0 ? (
-                MOCK_SUBSCRIPTIONS.map(sub => renderNavItem({ ...sub, href: sub.href }))
+                  MOCK_SUBSCRIPTIONS.map(sub => renderNavItem({ ...sub, href: sub.href }))
                 ) : (
                   isExpanded && <div className="px-6 py-2 text-[13px] text-brand-secondary">No subscriptions yet.</div>
                 )}
@@ -631,7 +623,7 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
 
                 {/* YOU SECTION */}
                 {isExpanded && (
-                  <div 
+                  <div
                     className="flex items-center justify-between px-6 py-2 cursor-pointer group"
                     onClick={() => setIsYouOpen(!isYouOpen)}
                   >
@@ -687,7 +679,7 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
                 </button>
               </div>
             )}
-            
+
             {/* FOOTER */}
             {isExpanded && (
               <div className="mt-auto px-6 py-4 flex flex-col gap-4 text-[12px] text-brand-secondary font-sans border-t border-brand-border/30 pt-6">
@@ -734,13 +726,12 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
                     setHoveredSubMenu(null);
                     handleLinkClick(subItem.href, e);
                   }}
-                  className={`w-full flex items-center gap-4 px-5 py-3 text-[14px] font-sans text-left transition-colors duration-150 ${
-                    subItem.comingSoon
-                      ? "opacity-60 cursor-not-allowed select-none"
-                      : isSubActive
+                  className={`w-full flex items-center gap-4 px-5 py-3 text-[14px] font-sans text-left transition-colors duration-150 ${subItem.comingSoon
+                    ? "opacity-60 cursor-not-allowed select-none"
+                    : isSubActive
                       ? "text-brand-accent bg-brand-text/[0.06] cursor-pointer font-medium"
                       : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06] cursor-pointer"
-                  }`}
+                    }`}
                 >
                   <SubIcon className={`w-[18px] h-[18px] shrink-0 ${isSubActive ? "text-brand-accent" : "text-brand-accent/80"}`} />
                   <span className="flex-1 tracking-wide">{subItem.name}</span>
@@ -752,15 +743,13 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
 
         {/* Mobile Sidebar (Slide-out) */}
         <div
-          className={`fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity duration-300 md:hidden ${
-            isMobileOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-          }`}
+          className={`fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity duration-300 md:hidden ${isMobileOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+            }`}
           onClick={() => setIsMobileOpen(false)}
         />
         <aside
-          className={`fixed top-0 left-0 bottom-0 w-64 z-50 bg-brand-bg flex flex-col py-2 transition-transform duration-300 ease-in-out md:hidden overflow-y-auto ${
-            isMobileOpen ? "translate-x-0" : "-translate-x-full"
-          }`}
+          className={`fixed top-0 left-0 bottom-0 w-64 z-50 bg-brand-bg flex flex-col py-2 transition-transform duration-300 ease-in-out md:hidden overflow-y-auto ${isMobileOpen ? "translate-x-0" : "-translate-x-full"
+            }`}
         >
           <div className="flex items-center gap-4 px-4 py-2 mb-2">
             <button
@@ -779,10 +768,10 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
             {/* Base section with accordion for mobile */}
             {baseSection.map((item) => renderNavItem(item))}
             <Divider />
-            
+
             <div className="px-6 py-2 flex items-center justify-between">
               <span className="text-[15px] font-semibold text-brand-text">Explore</span>
-              <button 
+              <button
                 onClick={() => {
                   if (status !== "authenticated") {
                     openModal("login");
@@ -801,7 +790,7 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
             </div>
             {exploreSection.map(item => renderNavItem(item))}
             {customLinks.map((link, index) => renderNavItem({ name: link.name, href: link.url, icon: ExternalLink }, index))}
-            
+
             <Divider />
 
             {status !== "authenticated" ? (
@@ -825,10 +814,10 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
                 ) : (
                   <div className="px-6 py-2 text-[13px] text-brand-secondary">No subscriptions yet.</div>
                 )}
-                
+
                 <Divider />
-                
-                <div 
+
+                <div
                   className="flex items-center justify-between px-6 py-2 cursor-pointer group"
                   onClick={() => setIsYouOpen(!isYouOpen)}
                 >
@@ -897,7 +886,7 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
                   <X className="w-5 h-5" />
                 </button>
               </div>
-              
+
               <form onSubmit={handleAddLink} className="space-y-5">
                 <div>
                   <label className="block text-[13px] font-medium text-brand-secondary mb-2">Link Name</label>
@@ -910,7 +899,7 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
                     className="w-full bg-brand-surface border border-brand-border rounded-xl px-4 py-3 text-[14px] text-brand-text placeholder-brand-text/20 focus:outline-none focus:border-brand-accent transition-colors shadow-inner"
                   />
                 </div>
-                
+
                 <div className="relative" ref={dropdownRef}>
                   <label className="block text-[13px] font-medium text-brand-secondary mb-2">Internal URL</label>
                   <button
@@ -921,7 +910,7 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
                     <span>{urlOptions.find(o => o.value === newLinkUrl)?.label || "Select URL"}</span>
                     <ChevronDown className={`w-4 h-4 text-brand-secondary transition-transform ${isUrlDropdownOpen ? 'rotate-180' : ''}`} />
                   </button>
-                  
+
                   {isUrlDropdownOpen && (
                     <div className="absolute top-[calc(100%+8px)] left-0 w-full bg-brand-surface border border-brand-border rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.8)] z-50 overflow-hidden py-1.5 animate-in fade-in slide-in-from-top-2 duration-200">
                       {urlOptions.map(option => (
@@ -929,11 +918,10 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
                           key={option.value}
                           type="button"
                           onClick={() => { setNewLinkUrl(option.value); setIsUrlDropdownOpen(false); }}
-                          className={`w-full text-left px-4 py-2.5 text-[14px] transition-colors cursor-pointer ${
-                            newLinkUrl === option.value 
-                              ? 'bg-[#2563EB] text-brand-text font-medium' 
-                              : 'text-brand-secondary hover:bg-brand-text/5 hover:text-brand-text'
-                          }`}
+                          className={`w-full text-left px-4 py-2.5 text-[14px] transition-colors cursor-pointer ${newLinkUrl === option.value
+                            ? 'bg-[#2563EB] text-brand-text font-medium'
+                            : 'text-brand-secondary hover:bg-brand-text/5 hover:text-brand-text'
+                            }`}
                         >
                           {option.label}
                         </button>
@@ -951,7 +939,7 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
                     </p>
                   </div>
                 )}
-                
+
                 <div className="flex justify-end pt-2">
                   <button type="submit" className="bg-brand-accent text-brand-bg font-semibold px-5 py-2.5 rounded-xl hover:bg-brand-accent/90 hover:scale-[1.02] transition-all cursor-pointer text-[14px]">
                     {editLinkIndex !== null ? 'Save Changes' : 'Save Link'}
