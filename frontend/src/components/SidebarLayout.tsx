@@ -1,10 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import {
-  Menu, X, Home, Puzzle, CreditCard, CircleUserRound, Crown,
+  Menu, X, Home, Puzzle, CircleUserRound, Crown,
   GraduationCap, BookOpen, Bot, BookMarked, ChevronDown,
   Zap, Clock, BarChart2, Flag,
   Plus, Shuffle, Video, UserCircle2, ExternalLink, Pencil, MoveUp, Archive,
-  Dices, Sparkles
 } from "lucide-react";
 import { useLogoAnimation } from "../hooks/useLogoAnimation";
 import { soundManager } from "../utils/SoundManager";
@@ -245,7 +244,6 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
         "/": "Home",
         "/puzzles": "Puzzles",
         "/settings": "Settings",
-        "/premium": "Premium",
         "/profile": "Profile",
       };
 
@@ -291,8 +289,7 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
     { name: "Lessons", href: "/lessons", icon: BookOpen, comingSoon: true },
     { name: "Puzzles", href: "/puzzles", icon: Puzzle },
     { name: "Variants", href: "/variants", icon: Shuffle, comingSoon: true },
-    { name: "Pricing", href: "/pricing", icon: CreditCard },
-    { name: "Premium", href: "/premium", icon: Crown },
+    { name: "Upgrade", href: "/pricing", icon: Crown },
   ];
 
   const footerLinks = [
