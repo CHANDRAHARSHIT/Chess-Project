@@ -54,7 +54,7 @@ export default function VariantsPage() {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search variants..."
-          className="w-full pl-10 pr-10 py-2.5 text-sm font-sans rounded-xl outline-none transition-all duration-200 placeholder:text-brand-secondary/40 bg-brand-surface/60 border border-brand-border/60 text-brand-text focus:border-brand-accent/50 focus:ring-1 focus:ring-brand-accent/30"
+          className="w-full pl-10 pr-10 py-2.5 text-sm font-sans rounded-xl outline-none transition-all duration-200 placeholder:text-brand-secondary/40 bg-brand-surface/60 border border-brand-border text-brand-text focus:border-brand-accent/50 focus:ring-1 focus:ring-brand-accent/30"
         />
         {searchQuery && (
           <button
