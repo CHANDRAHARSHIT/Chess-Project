@@ -320,7 +320,12 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
   // section: 'active' = in Explore section, 'more' = in More section
   const renderNavItem = (item: any, customLinkIndex?: number, section: 'active' | 'more' = 'active') => {
     const Icon = item.icon;
-    const isActive = !item.comingSoon && (location.pathname === item.href || (item.subItems?.some((s: any) => location.pathname === s.href)));
+    const currentPathWithSearch = location.pathname + location.search;
+    const isActive = !item.comingSoon && (
+      currentPathWithSearch === item.href ||
+      location.pathname === item.href ||
+      (item.subItems?.some((s: any) => currentPathWithSearch === s.href || location.pathname === s.href))
+    );
 
     const isAvatar = item.avatar !== undefined;
     const isCustomLink = customLinkIndex !== undefined;
@@ -453,7 +458,8 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
           <div className={`transition-all duration-300 overflow-hidden flex flex-col ml-[72px] mr-2 ${isSubOpen ? 'max-h-[500px] mt-1 mb-2 opacity-100' : 'max-h-0 opacity-0'}`}>
             {item.subItems.map((subItem: any) => {
               const SubIcon = subItem.icon;
-              const isSubActive = location.pathname === subItem.href;
+              const currentPathWithSearch = location.pathname + location.search;
+              const isSubActive = currentPathWithSearch === subItem.href || location.pathname === subItem.href;
               return (
                 <a
                   key={subItem.name}
@@ -706,7 +712,8 @@ export default function SidebarLayout({ children }: { children: React.ReactNode 
           >
             {hoveredSubMenu.items.map((subItem: any) => {
               const SubIcon = subItem.icon;
-              const isSubActive = location.pathname === subItem.href;
+              const currentPathWithSearch = location.pathname + location.search;
+              const isSubActive = currentPathWithSearch === subItem.href || location.pathname === subItem.href;
               return (
                 <a
                   key={subItem.name}
