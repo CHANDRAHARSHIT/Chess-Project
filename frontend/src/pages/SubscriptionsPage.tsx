@@ -21,7 +21,7 @@ export default function SubscriptionsPage() {
 
       {/* Title */}
       <h1 className="text-4xl md:text-5xl lg:text-6xl tracking-[-0.02em] leading-[1.05] mb-5">
-        <span className="block text-white font-display">
+        <span className="block text-brand-text font-display">
           Subscriptions
         </span>
       </h1>
@@ -42,7 +42,7 @@ export default function SubscriptionsPage() {
 
       <Link 
         to="/"
-        className="flex items-center gap-2 px-6 py-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all text-white/80 hover:text-white group"
+        className="flex items-center gap-2 px-6 py-3 rounded-full bg-brand-text/5 hover:bg-brand-text/10 border border-brand-text/10 hover:border-brand-text/20 transition-all text-brand-text/80 hover:text-brand-text group"
       >
         <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
         <span className="font-medium">Back to Home</span>
