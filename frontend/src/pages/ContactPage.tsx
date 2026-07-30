@@ -22,13 +22,11 @@ export default function ContactPage() {
             soundManager.playButtonClick();
             navigate("/");
           }}
-          className="flex items-center gap-2.5 text-xs text-brand-secondary hover:text-brand-text transition-all duration-300 cursor-pointer uppercase tracking-wider font-mono font-medium group"
+          className="inline-flex items-center gap-2 text-brand-secondary hover:text-brand-text transition-colors duration-200 font-sans text-sm font-semibold cursor-pointer group"
           aria-label="Back to Home"
         >
-          <span className="w-5 h-5 rounded-full border border-brand-border flex items-center justify-center font-bold text-[9px] group-hover:border-brand-accent/50 transition-colors">
-            <ArrowLeft className="w-3 h-3" />
-          </span>
-          Back to Home
+          <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+          <span>Back to Home</span>
         </button>
       </div>
 

@@ -6,6 +6,7 @@ import {
   Sparkles,
   Trophy,
   ArrowRight,
+  ArrowLeft,
   ShieldCheck,
   Gamepad2,
   Info,
@@ -518,12 +519,10 @@ export default function PricingPage() {
         <div className="w-full flex justify-start mb-6">
           <button
             onClick={handleNavigateBack}
-            className="flex items-center gap-2.5 text-xs sm:text-sm text-brand-secondary hover:text-brand-text transition-all duration-300 cursor-pointer uppercase tracking-wider font-mono font-medium"
+            className="inline-flex items-center gap-2 text-brand-secondary hover:text-brand-text transition-colors duration-200 font-sans text-sm font-semibold cursor-pointer group"
           >
-            <span className="w-5 h-5 rounded-full border border-brand-border flex items-center justify-center font-bold text-[9px] hover:border-brand-accent/50">
-              &lt;
-            </span>
-            Back to {getPrevious()?.label ?? "Home"}
+            <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+            <span>Back to {getPrevious()?.label ?? "Home"}</span>
           </button>
         </div>
 

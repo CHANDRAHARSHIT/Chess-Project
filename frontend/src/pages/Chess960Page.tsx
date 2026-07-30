@@ -38,10 +38,10 @@ export default function Chess960Page() {
         <div className="flex items-center gap-4">
           <button
             onClick={handleBackToVariants}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-medium text-brand-secondary hover:text-brand-text bg-brand-surface/60 border border-brand-border/40 hover:bg-brand-surface transition-colors"
+            className="inline-flex items-center gap-2 text-brand-secondary hover:text-brand-text transition-colors duration-200 font-sans text-sm font-semibold cursor-pointer group"
           >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Variants</span>
+            <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+            <span>Back to Variants</span>
           </button>
           <div>
             <h1 className="font-display font-bold text-2xl text-brand-text tracking-tight">
