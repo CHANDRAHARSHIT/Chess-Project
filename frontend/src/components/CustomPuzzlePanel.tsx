@@ -1,11 +1,48 @@
 import { useState, useEffect, useCallback } from "react";
-import { X, Search, Sparkles, ChevronRight } from "lucide-react";
+import { X, Search, SlidersHorizontal, ChevronRight, AlertCircle } from "lucide-react";
 import { PuzzleApiService } from "../services/puzzle.service";
 import type { PuzzleFilters } from "../types/puzzle";
 
 interface CustomPuzzlePanelProps {
   onStart: (filters: PuzzleFilters) => void;
   onClose: () => void;
+}
+
+const RATING_MIN = 400;
+const RATING_MAX = 3000;
+const RATING_STEP = 100;
+
+function snapRating(val: number): number {
+  const rounded = Math.round(val / RATING_STEP) * RATING_STEP;
+  return Math.min(RATING_MAX, Math.max(RATING_MIN, rounded));
+}
+
+function getRatingValidationError(minStr: string, maxStr: string): string | null {
+  if (!minStr.trim() || !maxStr.trim()) {
+    return "Please enter ratings between 400 and 3000.";
+  }
+  const minVal = Number(minStr);
+  const maxVal = Number(maxStr);
+
+  if (isNaN(minVal) || isNaN(maxVal)) {
+    return "Please enter valid rating numbers.";
+  }
+  if (minVal < RATING_MIN || minVal > RATING_MAX) {
+    return `Minimum rating must be between ${RATING_MIN} and ${RATING_MAX}.`;
+  }
+  if (maxVal < RATING_MIN || maxVal > RATING_MAX) {
+    return `Maximum rating must be between ${RATING_MIN} and ${RATING_MAX}.`;
+  }
+  if (minVal % RATING_STEP !== 0) {
+    return `Ratings must be in multiples of 100 (e.g. ${snapRating(minVal)}).`;
+  }
+  if (maxVal % RATING_STEP !== 0) {
+    return `Ratings must be in multiples of 100 (e.g. ${snapRating(maxVal)}).`;
+  }
+  if (minVal > maxVal) {
+    return "Min rating cannot be higher than max rating.";
+  }
+  return null;
 }
 
 // Human-readable labels for Lichess theme tags
@@ -56,7 +93,6 @@ const THEME_LABELS: Record<string, string> = {
   enPassant: "En Passant",
   trappedPiece: "Trapped Piece",
   hangingPiece: "Hanging Piece",
-  capturingDefender: "Capturing Defender",
   master: "Master Game",
   superGM: "Super GM",
   equality: "Equality",
@@ -77,10 +113,12 @@ export function CustomPuzzlePanel({
   const [themes, setThemes] = useState<string[]>([]);
   const [loadingThemes, setLoadingThemes] = useState(false);
   const [selectedThemes, setSelectedThemes] = useState<Set<string>>(new Set());
-  const [minRating, setMinRating] = useState(600);
-  const [maxRating, setMaxRating] = useState(2000);
+  const [minRatingStr, setMinRatingStr] = useState("400");
+  const [maxRatingStr, setMaxRatingStr] = useState("2000");
   const [themeSearch, setThemeSearch] = useState("");
   const [starting, setStarting] = useState(false);
+
+  const ratingError = getRatingValidationError(minRatingStr, maxRatingStr);
 
   // Fetch themes once on mount
   useEffect(() => {
@@ -118,17 +156,56 @@ export function CustomPuzzlePanel({
     }
   }, [selectedThemes, themes]);
 
+  const handleMinBlur = () => {
+    let minVal = parseInt(minRatingStr, 10);
+    if (isNaN(minVal)) minVal = RATING_MIN;
+    const snappedMin = snapRating(minVal);
+
+    let maxVal = parseInt(maxRatingStr, 10);
+    if (isNaN(maxVal)) maxVal = RATING_MAX;
+    let snappedMax = snapRating(maxVal);
+
+    if (snappedMin > snappedMax) {
+      snappedMax = snappedMin;
+    }
+
+    setMinRatingStr(snappedMin.toString());
+    setMaxRatingStr(snappedMax.toString());
+  };
+
+  const handleMaxBlur = () => {
+    let maxVal = parseInt(maxRatingStr, 10);
+    if (isNaN(maxVal)) maxVal = RATING_MAX;
+    const snappedMax = snapRating(maxVal);
+
+    let minVal = parseInt(minRatingStr, 10);
+    if (isNaN(minVal)) minVal = RATING_MIN;
+    let snappedMin = snapRating(minVal);
+
+    if (snappedMin > snappedMax) {
+      snappedMin = snappedMax;
+    }
+
+    setMinRatingStr(snappedMin.toString());
+    setMaxRatingStr(snappedMax.toString());
+  };
+
   const handleStart = useCallback(async () => {
+    const minVal = parseInt(minRatingStr, 10);
+    const maxVal = parseInt(maxRatingStr, 10);
+    const err = getRatingValidationError(minRatingStr, maxRatingStr);
+    if (err || isNaN(minVal) || isNaN(maxVal)) return;
+
     setStarting(true);
     const filters: PuzzleFilters = {
       themes: selectedThemes.size > 0 ? Array.from(selectedThemes) : undefined,
-      minRating,
-      maxRating,
+      minRating: minVal,
+      maxRating: maxVal,
       limit: 50,
     };
     onStart(filters);
     setStarting(false);
-  }, [selectedThemes, minRating, maxRating, onStart]);
+  }, [selectedThemes, minRatingStr, maxRatingStr, onStart]);
 
   const filteredThemes = themes.filter((t) =>
     getThemeLabel(t).toLowerCase().includes(themeSearch.toLowerCase()),
@@ -162,7 +239,7 @@ export function CustomPuzzlePanel({
           <div
             className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 bg-brand-accent/10 border border-brand-accent/20"
           >
-            <Sparkles className="w-3.5 h-3.5 text-brand-accent" />
+            <SlidersHorizontal className="w-3.5 h-3.5 text-brand-accent" />
           </div>
           <div>
             <h2
@@ -192,24 +269,35 @@ export function CustomPuzzlePanel({
       <div className="flex flex-col flex-1 overflow-hidden px-5 py-4 gap-4">
         {/* Rating Range */}
         <div>
-          <label
-            className="block text-[10px] font-mono uppercase tracking-widest mb-2.5 text-brand-secondary"
-          >
-            Rating Range
-          </label>
+          <div className="flex items-baseline justify-between mb-2.5">
+            <label
+              className="text-[10px] font-mono uppercase tracking-widest text-brand-secondary"
+            >
+              Rating Range
+            </label>
+            <span className="text-[9px] font-sans text-brand-secondary/50 tracking-wide">
+              400 – 3000 · steps of 100
+            </span>
+          </div>
           <div className="flex items-center gap-3">
             <div className="flex-1">
               <input
                 id="panel-puzzle-min-rating"
                 type="number"
-                value={minRating}
-                min={400}
-                max={maxRating - 100}
-                step={50}
-                onChange={(e) =>
-                  setMinRating(Math.max(400, parseInt(e.target.value) || 400))
-                }
-                className="w-full text-sm font-mono text-center transition-all duration-200 outline-none rounded-xl py-1.5 px-2.5 bg-brand-bg border border-brand-border/60 text-brand-text focus:border-brand-accent/60"
+                value={minRatingStr}
+                min={RATING_MIN}
+                max={RATING_MAX}
+                step={RATING_STEP}
+                onChange={(e) => {
+                  const cleaned = e.target.value.replace(/\D/g, "").slice(0, 4);
+                  setMinRatingStr(cleaned);
+                }}
+                onBlur={handleMinBlur}
+                className={`w-full text-sm font-mono text-center transition-all duration-200 outline-none rounded-xl py-2 px-3 bg-brand-bg/80 text-brand-text ring-1 ${
+                  ratingError
+                    ? "ring-amber-500/80 focus:ring-amber-400"
+                    : "ring-brand-accent/15 focus:ring-brand-accent/50 shadow-inner"
+                }`}
               />
             </div>
             <span className="text-brand-secondary text-lg">—</span>
@@ -217,17 +305,29 @@ export function CustomPuzzlePanel({
               <input
                 id="panel-puzzle-max-rating"
                 type="number"
-                value={maxRating}
-                min={minRating + 100}
-                max={3000}
-                step={50}
-                onChange={(e) =>
-                  setMaxRating(Math.min(3000, parseInt(e.target.value) || 3000))
-                }
-                className="w-full text-sm font-mono text-center transition-all duration-200 outline-none rounded-xl py-1.5 px-2.5 bg-brand-bg border border-brand-border/60 text-brand-text focus:border-brand-accent/60"
+                value={maxRatingStr}
+                min={RATING_MIN}
+                max={RATING_MAX}
+                step={RATING_STEP}
+                onChange={(e) => {
+                  const cleaned = e.target.value.replace(/\D/g, "").slice(0, 4);
+                  setMaxRatingStr(cleaned);
+                }}
+                onBlur={handleMaxBlur}
+                className={`w-full text-sm font-mono text-center transition-all duration-200 outline-none rounded-xl py-2 px-3 bg-brand-bg/80 text-brand-text ring-1 ${
+                  ratingError
+                    ? "ring-amber-500/80 focus:ring-amber-400"
+                    : "ring-brand-accent/15 focus:ring-brand-accent/50 shadow-inner"
+                }`}
               />
             </div>
           </div>
+          {ratingError && (
+            <div className="mt-2 text-xs font-sans text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-lg px-3 py-1.5 flex items-center gap-1.5 animate-fadeIn">
+              <AlertCircle className="w-3.5 h-3.5 flex-shrink-0 text-amber-400" />
+              <span>{ratingError}</span>
+            </div>
+          )}
         </div>
 
         {/* Theme Search */}
@@ -250,7 +350,7 @@ export function CustomPuzzlePanel({
           {/* Search input */}
           <div className="relative mb-2.5">
             <Search
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-3 h-3 pointer-events-none text-brand-secondary"
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 pointer-events-none text-brand-secondary/70"
             />
             <input
               id="panel-puzzle-theme-search"
@@ -258,13 +358,13 @@ export function CustomPuzzlePanel({
               placeholder="Search themes…"
               value={themeSearch}
               onChange={(e) => setThemeSearch(e.target.value)}
-              className="w-full text-xs pl-8 pr-3 py-2 outline-none transition-all duration-200 rounded-xl bg-brand-bg border border-brand-border/60 text-brand-text placeholder:text-brand-secondary/60 focus:border-brand-accent/50"
+              className="w-full text-xs pl-8 pr-3 py-2 outline-none transition-all duration-200 rounded-full bg-brand-bg/80 ring-1 ring-brand-accent/15 focus:ring-brand-accent/50 text-brand-text placeholder:text-brand-secondary/50 shadow-inner"
             />
           </div>
 
           {/* Theme list */}
           <div
-            className="overflow-y-auto rounded-xl flex-1 bg-brand-bg/50 border border-brand-border/40 min-h-[140px] max-h-[300px]"
+            className="overflow-y-auto rounded-xl flex-1 bg-brand-bg/60 min-h-[140px] max-h-[300px] shadow-inner"
           >
             {loadingThemes ? (
               <div className="flex items-center justify-center py-10">
@@ -278,7 +378,7 @@ export function CustomPuzzlePanel({
                 {!themeSearch && (
                   <button
                     onClick={toggleAllThemes}
-                    className="w-full flex items-center gap-3 px-4 py-2.5 text-left transition-all duration-150 cursor-pointer border-b border-brand-border/40 hover:bg-brand-text/5"
+                    className="w-full flex items-center gap-3 px-4 py-3 text-left transition-all duration-150 cursor-pointer border-b border-brand-border/10 hover:bg-brand-accent/5"
                     style={{
                       background: allSelected
                         ? "var(--gold-whisper)"
@@ -286,11 +386,11 @@ export function CustomPuzzlePanel({
                     }}
                   >
                     <span
-                      className="w-4 h-4 rounded flex-shrink-0 flex items-center justify-center border transition-all duration-150"
+                      className="w-4 h-4 rounded-md flex-shrink-0 flex items-center justify-center border transition-all duration-150"
                       style={{
                         borderColor: allSelected
                           ? "var(--gold-bright)"
-                          : "var(--text-tertiary)",
+                          : "var(--marble-border)",
                         background: allSelected
                           ? "var(--gold-whisper)"
                           : "transparent",
@@ -326,7 +426,7 @@ export function CustomPuzzlePanel({
                     <button
                       key={theme}
                       onClick={() => toggleTheme(theme)}
-                      className="w-full flex items-center gap-3 px-4 py-2 text-left transition-all duration-150 cursor-pointer border-b border-brand-border/30 hover:bg-brand-text/5"
+                      className="w-full flex items-center gap-3 px-4 py-2.5 text-left transition-all duration-150 cursor-pointer hover:bg-brand-accent/5"
                       style={{
                         background: checked
                           ? "var(--gold-whisper)"
@@ -334,11 +434,11 @@ export function CustomPuzzlePanel({
                       }}
                     >
                       <span
-                        className="w-4 h-4 rounded flex-shrink-0 flex items-center justify-center border transition-all duration-150"
+                        className="w-4 h-4 rounded-md flex-shrink-0 flex items-center justify-center border transition-all duration-150"
                         style={{
                           borderColor: checked
                             ? "var(--gold-bright)"
-                            : "var(--text-tertiary)",
+                            : "var(--marble-border)",
                           background: checked
                             ? "var(--gold-whisper)"
                             : "transparent",
@@ -393,7 +493,7 @@ export function CustomPuzzlePanel({
         <button
           id="panel-puzzle-start-btn"
           onClick={handleStart}
-          disabled={starting}
+          disabled={starting || !!ratingError}
           className="w-full py-3.5 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed btn-premium-cta cta-shine shadow-md shadow-brand-accent/10"
         >
           {starting ? (

@@ -1,6 +1,7 @@
 import { useState, useCallback, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import { RoyalGoldPathway, ROYAL_GOLD_NODES } from '../components/pathways/RoyalGold/RoyalGoldPathway';
+import { RoyalGoldPathway } from '../components/pathways/RoyalGold/RoyalGoldPathway';
+import { ROYAL_GOLD_NODES } from '../components/pathways/RoyalGold/royalGoldNodes';
 import { PATHWAY_NODES } from '../components/pathways';
 import type { PathNode, PlayerProgress } from '../types/PuzzlePath';
 import { PuzzleBoard } from '../components/PuzzleBoard';
@@ -9,7 +10,7 @@ import { CustomPuzzleSession } from '../components/CustomPuzzleSession';
 import type { PuzzleFilters } from '../types/puzzle';
 import {
   HelpCircle,
-  Sparkles,
+  SlidersHorizontal,
   ArrowLeft,
   ArrowRight,
 } from 'lucide-react';
@@ -266,40 +267,35 @@ export default function PuzzlePage() {
     }
 
     return (
-      <div className="flex flex-col w-full h-full gap-3">
-        <RoyalGoldPathway
-          playerProgress={playerProgress}
-          onSelectPuzzle={handleSelectNode}
-        />
+      <div className="flex flex-col w-full h-full gap-4 relative">
+        <div className="relative z-10 flex-1 min-h-0">
+          <RoyalGoldPathway
+            playerProgress={playerProgress}
+            onSelectPuzzle={handleSelectNode}
+          />
+        </div>
 
-        <button
-          id="custom-puzzles-btn"
-          onClick={handleOpenCustomConfig}
-          className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-xs font-mono uppercase tracking-wider font-semibold transition-all duration-300 cursor-pointer"
-          style={{
-            background: "linear-gradient(135deg, rgba(212,175,110,0.10) 0%, rgba(184,147,74,0.06) 100%)",
-            border: "1px solid rgba(212,175,110,0.22)",
-            color: "var(--gold-bright)",
-            boxShadow: "0 2px 12px rgba(212,175,110,0.07)",
-          }}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.background =
-              "linear-gradient(135deg, rgba(212,175,110,0.18) 0%, rgba(184,147,74,0.12) 100%)";
-            (e.currentTarget as HTMLButtonElement).style.boxShadow =
-              "0 4px 20px rgba(212,175,110,0.18)";
-            (e.currentTarget as HTMLButtonElement).style.transform = "translateY(-1px)";
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.background =
-              "linear-gradient(135deg, rgba(212,175,110,0.10) 0%, rgba(184,147,74,0.06) 100%)";
-            (e.currentTarget as HTMLButtonElement).style.boxShadow =
-              "0 2px 12px rgba(212,175,110,0.07)";
-            (e.currentTarget as HTMLButtonElement).style.transform = "translateY(0)";
-          }}
-        >
-          <Sparkles className="w-3.5 h-3.5" />
-          Custom Puzzles
-        </button>
+        <div className="relative z-20 flex-shrink-0">
+          <button
+            id="custom-puzzles-btn"
+            onClick={handleOpenCustomConfig}
+            className="w-full flex items-center justify-center gap-2 px-4.5 py-3.5 rounded-xl text-xs font-mono uppercase tracking-wider font-bold transition-all duration-300 cursor-pointer bg-brand-surface border border-brand-accent/35 text-brand-accent hover:border-brand-accent/60 shadow-md shadow-brand-accent/10 hover:shadow-lg hover:shadow-brand-accent/20 hover:-translate-y-0.5"
+            style={{
+              background: "linear-gradient(135deg, rgba(212,175,110,0.14) 0%, rgba(184,147,74,0.08) 100%), var(--obsidian-mid)",
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.background =
+                "linear-gradient(135deg, rgba(212,175,110,0.22) 0%, rgba(184,147,74,0.14) 100%), var(--obsidian-mid)";
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.background =
+                "linear-gradient(135deg, rgba(212,175,110,0.14) 0%, rgba(184,147,74,0.08) 100%), var(--obsidian-mid)";
+            }}
+          >
+            <SlidersHorizontal className="w-3.5 h-3.5 text-brand-accent" />
+            <span>Custom Puzzles</span>
+          </button>
+        </div>
       </div>
     );
   };
@@ -365,7 +361,7 @@ export default function PuzzlePage() {
                 />
                 <div className="flex items-center gap-3 mb-4 pb-4 border-b border-brand-border/40">
                   <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 bg-brand-accent/10 border border-brand-accent/20">
-                    <Sparkles className="w-4 h-4 text-brand-accent" />
+                    <SlidersHorizontal className="w-4 h-4 text-brand-accent" />
                   </div>
                   <div>
                     <h2 className="text-xl font-semibold text-brand-text font-display">
@@ -535,25 +531,34 @@ export default function PuzzlePage() {
                     );
                   }
                   return (
-                    <div className="w-full flex flex-col gap-3">
-                      <RoyalGoldPathway
-                        playerProgress={playerProgress}
-                        onSelectPuzzle={handleSelectNode}
-                      />
-                      <button
-                        id="custom-puzzles-btn-mobile"
-                        onClick={handleOpenCustomConfig}
-                        className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-xs font-mono uppercase tracking-wider font-semibold transition-all duration-300 cursor-pointer"
-                        style={{
-                          background: "linear-gradient(135deg, rgba(212,175,110,0.10) 0%, rgba(184,147,74,0.06) 100%)",
-                          border: "1px solid rgba(212,175,110,0.22)",
-                          color: "var(--gold-bright)",
-                          boxShadow: "0 2px 12px rgba(212,175,110,0.07)",
-                        }}
-                      >
-                        <Sparkles className="w-3.5 h-3.5" />
-                        Custom Puzzles
-                      </button>
+                    <div className="w-full flex flex-col gap-4 relative">
+                      <div className="relative z-10">
+                        <RoyalGoldPathway
+                          playerProgress={playerProgress}
+                          onSelectPuzzle={handleSelectNode}
+                        />
+                      </div>
+                      <div className="relative z-20">
+                        <button
+                          id="custom-puzzles-btn-mobile"
+                          onClick={handleOpenCustomConfig}
+                          className="w-full flex items-center justify-center gap-2 px-4.5 py-3.5 rounded-xl text-xs font-mono uppercase tracking-wider font-bold transition-all duration-300 cursor-pointer bg-brand-surface border border-brand-accent/35 text-brand-accent hover:border-brand-accent/60 shadow-md shadow-brand-accent/10 hover:shadow-lg hover:shadow-brand-accent/20 hover:-translate-y-0.5"
+                          style={{
+                            background: "linear-gradient(135deg, rgba(212,175,110,0.14) 0%, rgba(184,147,74,0.08) 100%), var(--obsidian-mid)",
+                          }}
+                          onMouseEnter={(e) => {
+                            (e.currentTarget as HTMLButtonElement).style.background =
+                              "linear-gradient(135deg, rgba(212,175,110,0.22) 0%, rgba(184,147,74,0.14) 100%), var(--obsidian-mid)";
+                          }}
+                          onMouseLeave={(e) => {
+                            (e.currentTarget as HTMLButtonElement).style.background =
+                              "linear-gradient(135deg, rgba(212,175,110,0.14) 0%, rgba(184,147,74,0.08) 100%), var(--obsidian-mid)";
+                          }}
+                        >
+                          <SlidersHorizontal className="w-3.5 h-3.5 text-brand-accent" />
+                          <span>Custom Puzzles</span>
+                        </button>
+                      </div>
                     </div>
                   );
               }
