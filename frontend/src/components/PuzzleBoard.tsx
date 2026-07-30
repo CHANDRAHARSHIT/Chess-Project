@@ -78,9 +78,12 @@ export function PuzzleBoard({
     resetBoard();
   }, [puzzle.id, puzzle.fen]);
 
-  // Derive active color from the FEN string (2nd space-delimited field) so we
-  // don't read gameRef.current during render (refs must not be read in render).
-  const playerColor = (gameFen.split(" ")[1] ?? "w") as "w" | "b";
+  // Lock orientation to the puzzle's STARTING FEN — not the live gameFen.
+  // gameFen changes color after every half-move, which would flip the board
+  // during the 400ms window between the player's move and the opponent's
+  // auto-reply in multi-move puzzles. puzzle.fen only changes when a new
+  // puzzle loads, so orientation stays stable for the entire puzzle session.
+  const playerColor = (puzzle.fen.split(" ")[1] ?? "w") as "w" | "b";
   const boardOrientation = playerColor === "w" ? "white" : "black";
 
   const onDrop = useCallback(
