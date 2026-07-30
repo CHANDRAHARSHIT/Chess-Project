@@ -1,4 +1,5 @@
 import type { Request } from "express";
+import rollbar from "../config/rollbar.js";
 
 export interface RegionInfo {
   country: string;
@@ -155,11 +156,16 @@ export class RegionService {
             }
           }
         } catch (e) {
-          // Silent fallback to default
+          // Expected on network hiccups/timeouts — the header-based checks above
+          // already covered the common cases, so just log at warning level.
+          rollbar.warning(e as Error, req, { context: "RegionService.detectRegion:ipGeolocation" });
         }
       }
     } catch (error) {
       console.error("[RegionService]: Error detecting region, defaulting to NZ:", error);
+      // Falls back to the NZ default below, so this never surfaces as a 5xx —
+      // report it manually so a broken detection path doesn't go unnoticed.
+      rollbar.error(error as Error, req);
     }
 
     // 6. Default to NZ

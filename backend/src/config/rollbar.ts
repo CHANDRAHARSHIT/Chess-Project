@@ -10,6 +10,9 @@ import { env } from "./env.js";
 const rollbar = new Rollbar({
   accessToken: env.ROLLBAR_ACCESS_TOKEN,
   environment: env.NODE_ENV,
+  // Rollbar only reports in production; local/dev/test runs are a no-op so
+  // engineers don't burn quota or get paged for local errors.
+  enabled: env.NODE_ENV === "production",
   captureUncaught: true,
   captureUnhandledRejections: true,
   // Scrub sensitive fields from payloads before sending to Rollbar

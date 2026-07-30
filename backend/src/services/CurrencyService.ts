@@ -1,4 +1,5 @@
 import { ExchangeRateCache } from "../cache/ExchangeRateCache.js";
+import rollbar from "../config/rollbar.js";
 
 const FALLBACK_NZD_EXCHANGE_RATES: Record<string, number> = {
   NZD: 1.0,
@@ -56,6 +57,9 @@ export class CurrencyService {
       console.warn("[CurrencyService]: Live FX API response invalid, using fallback rates.");
     } catch (error) {
       console.error("[CurrencyService]: FX API request failed:", error);
+      // Falls back to static rates below, so this never surfaces as a 5xx —
+      // report it manually so a prolonged FX outage doesn't go unnoticed.
+      rollbar.error(error as Error, { context: "CurrencyService.getExchangeRates" });
     }
 
     // Cache fallback rates temporarily so repeated failures don't bombard network
