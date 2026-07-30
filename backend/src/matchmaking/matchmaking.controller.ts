@@ -1,0 +1,78 @@
+import type { Request, Response } from "express";
+import { matchmakingQueue } from "./MatchmakingQueue.js";
+
+/**
+ * Thin Express HTTP controller adapter.
+ * Contains no queue iteration or pairing logic — delegates everything to MatchmakingQueue.
+ */
+export function getUserIdFromRequest(req: Request): string {
+  // Use existing auth session user ID if available, otherwise check header (dev fallback)
+  const reqAuth = (req as any).auth;
+  if (reqAuth && typeof reqAuth.user?.id === "string") {
+    return reqAuth.user.id;
+  }
+  const headerUserId = req.headers["x-user-id"];
+  if (typeof headerUserId === "string" && headerUserId.trim() !== "") {
+    return headerUserId.trim();
+  }
+  return "dev-user-anonymous";
+}
+
+export const enqueueTicket = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const userId = getUserIdFromRequest(req);
+    const variantId = typeof req.body?.variantId === "string" ? req.body.variantId : "chess960";
+
+    const { ticket, descriptor } = matchmakingQueue.enqueue(userId, variantId);
+
+    res.status(201).json({
+      ticket,
+      matched: descriptor !== null,
+      matchDescriptor: descriptor ?? undefined,
+    });
+  } catch (err) {
+    res.status(400).json({ error: (err as Error).message });
+  }
+};
+
+export const cancelTicket = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const userId = getUserIdFromRequest(req);
+    const { ticketId } = req.params;
+
+    if (!ticketId) {
+      res.status(400).json({ error: "Missing ticketId parameter." });
+      return;
+    }
+
+    matchmakingQueue.cancel(ticketId, userId);
+    res.status(204).send();
+  } catch (err) {
+    res.status(400).json({ error: (err as Error).message });
+  }
+};
+
+export const getTicketStatus = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { ticketId } = req.params;
+
+    if (!ticketId) {
+      res.status(400).json({ error: "Missing ticketId parameter." });
+      return;
+    }
+
+    const ticket = matchmakingQueue.getTicket(ticketId);
+    if (!ticket) {
+      res.status(404).json({ error: "Ticket not found or expired." });
+      return;
+    }
+
+    res.status(200).json({
+      ticket,
+      status: ticket.status,
+      matchDescriptor: ticket.descriptor ?? undefined,
+    });
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
+  }
+};

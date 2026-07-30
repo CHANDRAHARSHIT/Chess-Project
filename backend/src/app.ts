@@ -11,6 +11,7 @@ import { pricingRouter } from "./routes/pricing.route.js";
 
 import { puzzleRouter } from "./routes/puzzle.route.js";
 import { openingRouter } from "./routes/opening.route.js";
+import { matchmakingRouter } from "./matchmaking/index.js";
 import { errorHandler } from "./middleware/error.middleware.js";
 
 const app = express();
@@ -85,6 +86,7 @@ app.use("/api/pricing", pricingRouter);
 
 app.use("/api/puzzles", puzzleRouter);
 app.use("/api/openings", openingRouter);
+app.use("/api/matchmaking", matchmakingRouter);
 
 // Catch-all centralized error handler
 app.use(errorHandler);

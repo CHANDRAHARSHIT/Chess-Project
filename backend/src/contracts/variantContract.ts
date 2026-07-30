@@ -1,11 +1,9 @@
 /**
- * Variant Contract — Frozen Contract
+ * Variant Contract
  *
  * The rules-only interface that Session delegates to. Session is rules-blind —
  * it never contains chess logic. A Variant implementation answers rules questions
  * and nothing else.
- *
- * CANONICAL REFERENCE: Phase 3.2 §2
  *
  * SESSION ↔ VARIANT RELATIONSHIP
  *   Session orchestrates; Variant adjudicates.
@@ -14,16 +12,16 @@
  *   Session never second-guesses the answer.
  *   Variant never knows it is inside a Session.
  *
- * PURITY (Invariant 7)
+ * PURITY
  *   All VariantContract methods are pure functions.
  *   No I/O, no side effects, no network calls, no database access, no timers.
  *   A Variant receives state and returns state — nothing else.
  *
- * SOLE AUTHORITY (Invariant 2)
+ * SOLE AUTHORITY
  *   Variant is the sole authority on rules. No other domain may contain move
  *   validation, game state interpretation, or terminal detection.
  *
- * EXTENSION RULE (Invariant 8)
+ * EXTENSION RULE
  *   No switch(variantId) may appear in Session, Transport, Matchmaking, or Results.
  *   A new variant is added by implementing this interface — zero foundation changes.
  *

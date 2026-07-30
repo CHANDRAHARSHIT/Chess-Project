@@ -1,10 +1,8 @@
 /**
- * Game Result — Frozen Contract
+ * Game Result Contract
  *
  * The one-way, immutable terminal value emitted by Session when a game ends.
  * Decouples the game lifecycle from rating computation and record-keeping.
- *
- * CANONICAL REFERENCE: Phase 3.2 §3
  *
  * PRODUCER
  *   Session — emits exactly one GameResult per game when a terminal state is reached.
@@ -12,17 +10,17 @@
  * CONSUMER
  *   Results & Rating — the sole consumer. Persists the record and computes ratings.
  *
- * IMMUTABILITY (Invariant 12)
+ * IMMUTABILITY
  *   Once emitted, a GameResult is never modified. Results & Rating may read it,
  *   persist derived data, and compute ratings — but never modifies the value itself.
  *
- * DECOUPLING (Invariant 14)
+ * DECOUPLING
  *   Session emits and forgets. If Results & Rating is slow, unavailable, or fails,
  *   the game is still over. Session never blocks on Results.
  *   Rating computation happens outside the game lifecycle. A rating failure
  *   never loses a game record.
  *
- * RATING INDEPENDENCE (Invariant 13)
+ * RATING INDEPENDENCE
  *   Ratings never affect active games. A rating change during a game has no
  *   effect on that game's outcome, clock, or lifecycle.
  *
@@ -84,9 +82,6 @@ export interface ResultParticipant {
  *
  * Optional fields carry supplementary data for move history, replay, audit,
  * and future tournament aggregation. Results must not error if they are absent.
- *
- * Adding a new optional field is additive and does not require an architecture review.
- * Changing or removing any field — required or optional — requires an architecture review.
  */
 export interface GameResult {
   // ── Required ───────────────────────────────────────────────────────────────

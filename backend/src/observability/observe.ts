@@ -5,8 +5,6 @@
  * Domains never call Rollbar directly — they call emitTransition() or reportError().
  * This keeps the vendor SDK as an implementation detail of this module.
  *
- * CANONICAL REFERENCE: Phase 3.2 §9
- *
  * USAGE IN STATE MACHINES
  *   Call emitTransition() at every state-machine transition:
  *
@@ -17,7 +15,7 @@
  *
  *     reportError({ domain: "matchmaking", error: err, fatal: false });
  *
- * INVARIANT (Phase 3.2 §13, Invariant 17)
+ * INVARIANT
  *   No domain depends on Observability to function correctly.
  *   If Rollbar is down or unconfigured, every domain continues to operate.
  */

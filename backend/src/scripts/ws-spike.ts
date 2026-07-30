@@ -1,45 +1,15 @@
 /**
- * WebSocket Topology Spike — M0 Validation Tool
+ * WebSocket Topology Validation Tool
  *
  * PURPOSE
- *   Proves that WebSocket connections survive the Vercel → Railway topology
- *   before M1 Transport is built. This is a throwaway validation tool, not
- *   production code.
+ *   Proves that WebSocket connections survive the network topology.
+ *   This is an isolated validation tool.
  *
  * WHAT IT TESTS
- *   1. WebSocket handshake succeeds on the Railway direct URL.
- *   2. WebSocket handshake succeeds via a Vercel rewrite to Railway.
- *   3. Echo messages round-trip successfully (no payload corruption).
- *   4. A connection survives 30+ seconds (keepalive / no idle timeout).
- *   5. Reconnection after a deliberate close works.
- *
- * HOW TO RUN (local dev)
- *   cd backend
- *   npx tsx src/scripts/ws-spike.ts
- *   # Echo server starts on ws://localhost:3001/ws-spike
- *
- *   # Connect and test:
- *   npx wscat -c ws://localhost:3001/ws-spike
- *
- * HOW TO RUN (Railway staging)
- *   Deploy temporarily, or add a guarded route to the main app.
- *   Connect via:
- *   npx wscat -c wss://<your-railway-app>.up.railway.app/ws-spike
- *
- *   Then repeat via the Vercel domain that rewrites to Railway:
- *   npx wscat -c wss://<your-vercel-domain>.vercel.app/ws-spike
- *
- * OUTCOME DECISION
- *   PASS (all 5 checks above) → proceed with M1 Transport on Railway.
- *     - WebSocket path: use value of WS_PATH env var (default: /ws).
- *     - Update vercel.json with a rewrite rule for /ws if Vercel allows it.
- *   FAIL (Vercel blocks upgrade) → use direct Railway WebSocket URL.
- *     - Frontend connects to Railway WebSocket URL directly.
- *     - Vercel continues to serve only the HTTP API.
- *   Record the outcome in a short decision note before M1 begins.
- *
- * CLEANUP
- *   Delete or disable this route/file once the topology decision is recorded.
+ *   1. WebSocket handshake succeeds.
+ *   2. Echo messages round-trip successfully.
+ *   3. A connection survives 30+ seconds (keepalive / no idle timeout).
+ *   4. Reconnection after a deliberate close works.
  */
 
 import http from "node:http";
@@ -52,7 +22,7 @@ import { WebSocketServer, WebSocket } from "ws";
 const PORT = parseInt(process.env.WS_SPIKE_PORT ?? "3001", 10);
 const PATH = "/ws-spike";
 
-// Heartbeat interval — detect stale connections (mirrors what M1 Transport will do).
+// Heartbeat interval — detect stale connections
 const HEARTBEAT_INTERVAL_MS = 15_000;
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -123,7 +93,6 @@ wss.on("connection", (socket: ExtendedSocket, req) => {
 });
 
 // Heartbeat loop — send a ping every HEARTBEAT_INTERVAL_MS.
-// Mirrors what M1 Transport will do to detect stale connections.
 const heartbeat = setInterval(() => {
   wss.clients.forEach((raw) => {
     const socket = raw as ExtendedSocket;
@@ -146,7 +115,7 @@ wss.on("close", () => clearInterval(heartbeat));
 httpServer.listen(PORT, () => {
   console.log("");
   console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-  console.log(" XLChess — WebSocket Topology Spike (M0)");
+  console.log(" XLChess — WebSocket Topology Spike");
   console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
   console.log(` Echo server: ws://localhost:${PORT}${PATH}`);
   console.log(" Test with:   npx wscat -c ws://localhost:" + PORT + PATH);

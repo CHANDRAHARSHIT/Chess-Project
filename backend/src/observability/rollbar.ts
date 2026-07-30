@@ -7,7 +7,7 @@
  * GRACEFUL DEGRADATION
  *   When ROLLBAR_TOKEN is absent (local dev, CI), Rollbar is disabled and a
  *   warning is logged. The rest of the application continues normally.
- *   No domain may error-out because Rollbar is unavailable. (Phase 3.2 §13, Invariant 17)
+ *   No domain may error-out because Rollbar is unavailable.
  */
 
 import Rollbar from "rollbar";

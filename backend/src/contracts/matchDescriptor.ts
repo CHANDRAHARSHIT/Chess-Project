@@ -1,25 +1,22 @@
 /**
- * Match Descriptor — Frozen Contract
+ * Match Descriptor Contract
  *
  * The sole handoff value between any intent producer (queue, tournament bracket,
  * lobby, direct invite) and the Session that runs a game.
- *
- * CANONICAL REFERENCE: Phase 3.2 §1
  *
  * OWNERSHIP
  *   This is a value, not a service. The producer emits it and forgets. There is
  *   no callback, no shared state, no ongoing relationship.
  *
  * PRODUCER
- *   Any intent producer. In M1: Matchmaking (FCFS Queue).
- *   Future producers: tournament bracket, lobby, invite, bot match generator.
- *   All producers emit the same shape — this is how substitution works.
+ *   Any intent producer: Matchmaking (FCFS Queue), tournament bracket, lobby,
+ *   invite, or bot match generator. All producers emit the same shape.
  *
  * CONSUMER
  *   Session — the sole consumer. Receives the Descriptor exactly once, uses it
  *   to initialise the game instance, and never communicates back to the producer.
  *
- * IMMUTABILITY (Invariant 11)
+ * IMMUTABILITY
  *   Once created, no domain may modify a Match Descriptor. If it is invalid,
  *   Session rejects it at initialisation — it does not attempt to repair it.
  *
@@ -47,7 +44,7 @@ export interface ParticipantCardinality {
 
 /** Maps one authenticated participant to their side in the game. */
 export interface ParticipantAssignment {
-  /** Authenticated user ID — sourced from the existing Auth layer. */
+  /** Authenticated user ID — sourced from the Auth layer. */
   readonly userId: string;
   /** Zero-indexed side number (0 = first side / White, 1 = second side / Black, …). */
   readonly side: number;
@@ -76,7 +73,7 @@ export interface TimeControl {
  * Flows through the Descriptor → Session → Result for audit and tournament aggregation.
  */
 export type MatchProvenance =
-  | "queue"       // FCFS matchmaking queue (M1 default)
+  | "queue"       // Matchmaking queue
   | "tournament"  // Tournament bracket engine
   | "invite"      // Direct / friend invite
   | "bot"         // Bot match
@@ -91,9 +88,6 @@ export type MatchProvenance =
  *
  * Required fields must always be present and valid before Session initialisation.
  * Optional fields may be absent; consumers must not error on missing optional fields.
- *
- * Adding a new optional field is additive and does not require an architecture review.
- * Changing or removing any field — required or optional — requires an architecture review.
  */
 export interface MatchDescriptor {
   // ── Required ───────────────────────────────────────────────────────────────
@@ -113,7 +107,7 @@ export interface MatchDescriptor {
 
   /**
    * Identifies which Variant implementation to use.
-   * Must correspond to a registered Variant (Phase 3.2 §2).
+   * Must correspond to a registered Variant.
    * Examples: "chess960", "standard".
    */
   readonly variantId: string;
@@ -141,7 +135,7 @@ export interface MatchDescriptor {
 
   /**
    * Rating pool this game belongs to.
-   * Present only when rated = true and rating pools are configured (future feature).
+   * Present only when rated = true and rating pools are configured.
    */
   readonly ratingPoolId?: string;
 
