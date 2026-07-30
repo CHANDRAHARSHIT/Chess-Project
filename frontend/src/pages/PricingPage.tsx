@@ -583,8 +583,7 @@ export default function PricingPage() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-base sm:text-lg text-brand-secondary font-sans leading-relaxed max-w-2xl px-2"
           >
-            Choose the plan that fits your ambitions — from casual learner to
-            elite competitor.
+            Choose the plan that fits your ambitions, from casual learner to elite competitor.
           </motion.p>
         </section>
 
@@ -954,7 +953,9 @@ export default function PricingPage() {
                 >
                   <button
                     onClick={() => setOpenFaqIndex(isOpen ? null : index)}
-                    className="w-full flex items-center justify-between text-left py-5 px-6 font-display font-medium text-base sm:text-lg text-brand-text hover:text-sky-300 transition-colors duration-200 cursor-pointer"
+                    className={`w-full flex items-center justify-between text-left px-5 sm:px-6 font-display font-medium text-base sm:text-lg text-brand-text hover:text-sky-300 transition-colors duration-200 cursor-pointer ${
+                      isOpen ? "pt-4 sm:pt-5 pb-3" : "py-4 sm:py-5"
+                    }`}
                   >
                     <span>{faq.q}</span>
                     <motion.span
@@ -974,7 +975,7 @@ export default function PricingPage() {
                         exit={{ height: 0, opacity: 0 }}
                         transition={{ duration: 0.25, ease: "easeInOut" }}
                       >
-                        <div className="px-6 pb-5 pt-1 text-sm sm:text-base text-brand-secondary font-sans leading-relaxed border-t border-brand-border/40">
+                        <div className="px-5 sm:px-6 pb-4 sm:pb-5 pt-3 text-sm sm:text-base text-brand-secondary font-sans leading-relaxed border-t border-brand-border/40">
                           {faq.a}
                         </div>
                       </motion.div>
@@ -1010,21 +1011,27 @@ export default function PricingPage() {
               their play daily. Elevate your tactical edge now.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 w-full sm:w-auto">
               <button
                 onClick={() => handleUpgrade(isYearly ? "Yearly" : "Monthly")}
-                className="w-full sm:w-auto px-8 py-4 rounded-xl font-mono text-xs uppercase tracking-widest font-semibold bg-sky-500 hover:bg-sky-400 text-white border border-sky-300/40 shadow-lg shadow-sky-300/25 cursor-pointer hover:scale-[1.02] active:scale-[0.99] transition-all duration-300 flex items-center justify-center gap-2"
+                className="w-full sm:w-auto px-4 sm:px-8 py-3.5 sm:py-4 rounded-xl font-mono text-xs uppercase tracking-wider sm:tracking-widest font-semibold bg-sky-500 hover:bg-sky-400 text-white border border-sky-300/40 shadow-lg shadow-sky-300/25 cursor-pointer hover:scale-[1.02] active:scale-[0.99] transition-all duration-300 flex items-center justify-center gap-2"
               >
-                <span>
-                  Get Diamond — {diamondDisplayPrice} / mo{" "}
-                  {isYearly ? `(${diamondYearlyTotalDisplay}/yr)` : ""}
+                <span className="flex flex-wrap items-center justify-center gap-x-1.5 gap-y-0.5 text-center">
+                  <span>Get Diamond</span>
+                  <span className="opacity-50">—</span>
+                  <span className="whitespace-nowrap">{diamondDisplayPrice} / mo</span>
+                  {isYearly && (
+                    <span className="whitespace-nowrap text-[11px] opacity-90 font-normal">
+                      ({diamondYearlyTotalDisplay}/yr)
+                    </span>
+                  )}
                 </span>
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="w-4 h-4 shrink-0" />
               </button>
 
               <button
                 onClick={handleNavigateBack}
-                className="w-full sm:w-auto px-8 py-4 rounded-xl font-mono text-xs uppercase tracking-widest font-semibold bg-brand-text/5 border border-brand-border hover:border-sky-300/40 text-brand-secondary hover:text-brand-text transition-all duration-300 cursor-pointer active:scale-[0.99]"
+                className="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-mono text-xs uppercase tracking-wider sm:tracking-widest font-semibold bg-brand-text/5 border border-brand-border hover:border-sky-300/40 text-brand-secondary hover:text-brand-text transition-all duration-300 cursor-pointer active:scale-[0.99]"
               >
                 Continue Free
               </button>
