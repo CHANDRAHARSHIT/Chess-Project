@@ -11,7 +11,9 @@ import {
   BookOpen,
   Bot,
   BookMarked,
+  Database,
   ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import { useLogoAnimation } from "../hooks/useLogoAnimation";
 import { soundManager } from "../utils/SoundManager";
@@ -31,6 +33,7 @@ export default function SidebarLayout({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<"login" | "register">("login");
   const [mobileOpenItem, setMobileOpenItem] = useState<string | null>(null);
+  const [isMoreExpanded, setIsMoreExpanded] = useState(true);
   const { status } = useSession();
 
   const navigate = useNavigate();
@@ -245,6 +248,43 @@ export default function SidebarLayout({
                 </div>
               );
             })}
+
+            {/* Desktop More Section */}
+            <div className="mt-4 pt-4 border-t border-brand-border/40">
+              {isExpanded ? (
+                <div 
+                  className="flex items-center justify-between px-7 py-2 cursor-pointer text-white group"
+                  onClick={() => setIsMoreExpanded(!isMoreExpanded)}
+                >
+                  <span className="font-sans font-bold text-base">More</span>
+                  <ChevronUp className={`w-4 h-4 transition-transform text-white/70 group-hover:text-white ${isMoreExpanded ? '' : 'rotate-180'}`} />
+                </div>
+              ) : null}
+
+              {(isMoreExpanded || !isExpanded) && (
+                <div className="mt-1 space-y-1">
+                  <a
+                    href="/database"
+                    onClick={(e) => handleLinkClick("/database", e)}
+                    className={`relative flex transition-all duration-200 cursor-pointer ${isExpanded
+                        ? `items-center gap-4 px-4 py-3 mx-3 rounded-xl ${location.pathname === "/database"
+                          ? "text-brand-accent bg-brand-accent/10 font-medium shadow-[inset_1px_0_0_rgba(212,175,110,0.1)]"
+                          : "text-brand-secondary hover:text-white hover:bg-white/5"
+                        }`
+                        : `flex-col items-center justify-center py-2.5 mx-2 rounded-lg text-center ${location.pathname === "/database"
+                          ? "text-brand-accent bg-brand-accent/10 border-brand-accent font-medium"
+                          : "text-brand-secondary hover:text-white hover:bg-white/5"
+                        }`
+                      }`}
+                  >
+                    <Database className={`w-5 h-5 transition-transform duration-200 hover:scale-105 ${location.pathname === "/database" ? "text-brand-accent" : "text-brand-secondary hover:text-white"}`} />
+                    <span className={`font-sans tracking-wide transition-all ${isExpanded ? "text-sm" : "text-[10px] mt-1"}`}>
+                      Database
+                    </span>
+                  </a>
+                </div>
+              )}
+            </div>
           </nav>
         </aside>
 
@@ -363,6 +403,34 @@ export default function SidebarLayout({
                 </div>
               );
             })}
+
+            {/* Mobile More Section */}
+            <div className="mt-4 pt-4 border-t border-brand-border/40 mb-6">
+              <div 
+                className="flex items-center justify-between px-7 py-2 cursor-pointer text-white group"
+                onClick={() => setIsMoreExpanded(!isMoreExpanded)}
+              >
+                <span className="font-sans font-bold text-base">More</span>
+                <ChevronUp className={`w-4 h-4 transition-transform text-white/70 group-hover:text-white ${isMoreExpanded ? '' : 'rotate-180'}`} />
+              </div>
+
+              {isMoreExpanded && (
+                <div className="mt-1 space-y-1">
+                  <a
+                    href="/database"
+                    onClick={(e) => handleLinkClick("/database", e)}
+                    className={`w-full flex items-center gap-4 px-4 py-3 mx-3 rounded-xl transition-all duration-200 cursor-pointer text-left ${location.pathname === "/database"
+                        ? "text-brand-accent bg-brand-accent/10 font-medium"
+                        : "text-brand-secondary hover:text-white hover:bg-white/5"
+                      }`}
+                    style={{ width: "calc(100% - 1.5rem)" }}
+                  >
+                    <Database className={`w-5 h-5 shrink-0 ${location.pathname === "/database" ? "text-brand-accent" : "text-brand-secondary hover:text-white"}`} />
+                    <span className="font-sans text-sm tracking-wide flex-1">Database</span>
+                  </a>
+                </div>
+              )}
+            </div>
           </nav>
         </aside>
 

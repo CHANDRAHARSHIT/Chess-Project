@@ -11,6 +11,9 @@ import OpeningsPage from "../pages/OpeningsPage";
 import { ProtectedRoute } from "../components/ProtectedRoute";
 import OpponentIngestPage from "../pages/OpponentIngestPage";
 import OpponentReportPage from "../pages/OpponentReportPage";
+import DatabasePage from "../pages/DatabasePage";
+import DatabasePlayerPage from "../pages/DatabasePlayerPage";
+import DatabaseGamePage from "../pages/DatabaseGamePage";
 
 export interface RouteConfig {
   path: string;
@@ -22,6 +25,9 @@ export const mainRoutes: RouteConfig[] = [
   { path: "/", element: <HomePage /> },
   { path: "/puzzles", element: <PuzzlePage /> },
   { path: "/openings", element: <OpeningsPage /> },
+  { path: "/database", element: <DatabasePage /> },
+  { path: "/database/:id", element: <DatabasePlayerPage /> },
+  { path: "/database/game/:id", element: <DatabaseGamePage /> },
   { path: "/opponents/add", element: <OpponentIngestPage /> },
   { path: "/opponents/:username", element: <OpponentReportPage /> },
   {

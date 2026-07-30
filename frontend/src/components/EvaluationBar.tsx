@@ -50,11 +50,11 @@ export function EvaluationBar({
         style={{
           width: isDesktop ? "24px" : undefined,
           borderRadius: "0px",
-          height: isDesktop && boardHeight ? `${boardHeight}px` : "16px",
+          height: isDesktop ? (boardHeight ? `${boardHeight}px` : "100%") : "16px",
           background: "rgba(255,255,255,0.04)",
           border: "1px solid rgba(255,255,255,0.08)",
           backdropFilter: "blur(8px)",
-          minHeight: isDesktop && boardHeight ? `${boardHeight}px` : undefined,
+          minHeight: isDesktop ? (boardHeight ? `${boardHeight}px` : "100%") : undefined,
         }}
       >
         <div

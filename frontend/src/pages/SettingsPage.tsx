@@ -76,13 +76,6 @@ const CATEGORIES: SettingsCategory[] = [
     available: true,
     path: "/pricing",
   },
-  {
-    id: "scout-opponent",
-    name: "Scout Opponent",
-    icon: Target,
-    available: true,
-    path: "/opponents/add",
-  },
   { id: "gameplay", name: "Gameplay", icon: Gamepad2, available: false },
   { id: "interface", name: "Interface", icon: Monitor, available: false },
   { id: "notifications", name: "Notifications", icon: Bell, available: false },
