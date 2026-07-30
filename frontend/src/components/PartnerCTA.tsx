@@ -236,7 +236,7 @@ export default function ContactSection() {
                     <img
                       src="/arrow.svg"
                       alt="arrow"
-                      className="arrow w-7 h-7 inline-block"
+                      className="arrow w-5 h-5 inline-block"
                     />
                   </>
                 )}
