@@ -1,5 +1,4 @@
 import { useState, useCallback, useMemo, useEffect } from 'react';
-import { useNavigate } from 'react-router';
 import { RoyalGoldPathway, ROYAL_GOLD_NODES } from '../components/pathways/RoyalGold/RoyalGoldPathway';
 import { PATHWAY_NODES } from '../components/pathways';
 import type { PathNode, PlayerProgress } from '../types/PuzzlePath';
@@ -57,7 +56,6 @@ function useIsDesktop(breakpointPx: number = DESKTOP_BREAKPOINT_PX): boolean {
 }
 
 export default function PuzzlePage() {
-  const navigate = useNavigate();
 
   // ── Right-panel mode: 'pathway' | 'config' ──────────────────────────────────
   const [rightPanelMode, setRightPanelMode] = useState<'pathway' | 'config'>('pathway');
