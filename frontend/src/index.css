@@ -614,6 +614,10 @@ body {
   user-select: none;
 }
 
+:root[data-theme="light"] .card-coordinate {
+  display: none;
+}
+
 /* Engraved chessboard micropattern */
 .card-board-pattern {
   position: absolute;
@@ -732,25 +736,29 @@ body {
 
 .hero-board-card {
   position: relative;
-  background: var(--obsidian-glass);
+  background: var(--glass-bg);
   border: 1px solid var(--glass-border-gold);
   border-radius: 2px;
   overflow: hidden;
-  box-shadow: var(--shadow-deep);
+  box-shadow: var(--shadow-card);
+  backdrop-filter: var(--glass-blur);
 }
 
 .hero-board-card::before {
   content: '';
   position: absolute;
-  inset: -1px;
-  border-radius: 2px;
+  inset: 0;
   background: linear-gradient(135deg,
-      rgba(212, 175, 110, 0.15) 0%,
-      rgba(139, 111, 58, 0.08) 40%,
-      rgba(212, 175, 110, 0.04) 100%);
+      rgba(212, 175, 110, 0.03) 0%,
+      transparent 50%,
+      rgba(212, 175, 110, 0.02) 100%);
   pointer-events: none;
   z-index: 0;
-  animation: board-ring-pulse 5s ease-in-out infinite;
+}
+
+.hero-board-card>* {
+  position: relative;
+  z-index: 2;
 }
 
 @keyframes board-ring-pulse {
@@ -1515,54 +1523,31 @@ body {
   position: relative;
   width: 100%;
   margin-top: 12px;
-  border: 1px solid rgba(212, 175, 110, 0.3);
+  border: 1px solid var(--marble-border);
   border-radius: 2px;
   padding: 16px 28px;
-  color: #080B14;
+  color: var(--gold-bright);
   font-size: 13px;
   font-family: 'DM Mono', monospace;
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: 0.15em;
   text-transform: uppercase;
   cursor: pointer;
   overflow: hidden;
-  background: linear-gradient(135deg, #D4AF6E 0%, #E8C88A 40%, #B8934A 70%, #D4AF6E 100%);
-  box-shadow:
-    0 0 24px rgba(212, 175, 110, 0.15),
-    0 8px 24px rgba(0, 0, 0, 0.25);
-  transition: transform 200ms ease, box-shadow 200ms ease;
-}
-
-.contact-btn::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -40%;
-  width: 30%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
-  transform: skewX(-18deg);
-  animation: buttonShine 5s ease-in-out infinite;
+  background: linear-gradient(135deg, rgba(212, 175, 110, 0.15) 0%, rgba(212, 175, 110, 0.08) 100%);
+  transition: all 0.3s var(--ease-luxury);
 }
 
 .contact-btn:hover {
+  background: linear-gradient(135deg, rgba(212, 175, 110, 0.22) 0%, rgba(212, 175, 110, 0.12) 100%);
+  border-color: var(--marble-border-strong);
+  box-shadow: 0 0 20px var(--gold-whisper), inset 0 1px 0 rgba(212, 175, 110, 0.1);
   transform: translateY(-2px);
-  box-shadow:
-    0 0 36px rgba(212, 175, 110, 0.3),
-    0 12px 32px rgba(0, 0, 0, 0.3);
 }
 
-@keyframes buttonShine {
-
-  0%,
-  35% {
-    left: -42%;
-  }
-
-  65%,
-  100% {
-    left: 115%;
-  }
+.contact-btn img.arrow {
+  transition: filter 0.3s ease;
+  filter: invert(72%) sepia(42%) saturate(548%) hue-rotate(7deg) brightness(95%) contrast(88%);
 }
 
 @media (max-width: 760px) {

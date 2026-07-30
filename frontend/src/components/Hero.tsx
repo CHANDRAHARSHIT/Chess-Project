@@ -483,11 +483,10 @@ export default function Hero() {
                   style={{ top: "12px", right: "14px", bottom: "auto" }}
                   aria-hidden="true"
                 >
-                  e4 · d5
                 </div>
 
                 {/* Board Area */}
-                <div className="p-4 board-cursor-glow bg-brand-bg/95">
+                <div className="p-4 board-cursor-glow">
                   <HeroPuzzle />
                 </div>
               </div>
