@@ -95,7 +95,7 @@ export default function ContactSection() {
     <section
       ref={ctaSectionRef}
       id="contact-us"
-      className="relative z-10 min-h-[calc(100vh-110px)] flex items-center justify-center py-24 px-4 sm:px-6 lg:px-8 overflow-hidden bg-brand-bg"
+      className="relative z-10 w-full flex items-center justify-center py-6 px-4 sm:px-6 lg:px-8 overflow-hidden bg-brand-bg"
     >
       {/* Gold grid background pattern */}
       <div className="contact-page-bg" />
