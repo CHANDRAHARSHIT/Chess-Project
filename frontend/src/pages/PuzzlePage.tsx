@@ -157,12 +157,29 @@ export default function PuzzlePage() {
     setMobileView('pathway');
   }, []);
 
+  const isCurrentNodeCompleted = useMemo(() => {
+    if (!selectedNode) return false;
+    return completedIds.includes(selectedNode.id);
+  }, [selectedNode, completedIds]);
+
+  const currentPathwayIndex = useMemo(() => {
+    if (!selectedNode) return -1;
+    return activePathwayNodes.findIndex(
+      n => n.id === selectedNode.id || n.levelNumber === selectedNode.levelNumber
+    );
+  }, [selectedNode, activePathwayNodes]);
+
+  const hasNextNode = currentPathwayIndex >= 0 && currentPathwayIndex < activePathwayNodes.length - 1;
+  const isNextEnabled = hasNextNode && isCurrentNodeCompleted;
+
   // Advance to next puzzle in active pathway
   const handleNextPuzzle = useCallback(() => {
     if (!selectedNode) {
       if (activePathwayNodes.length > 0) setSelectedNode(activePathwayNodes[0]);
       return;
     }
+    if (!completedIds.includes(selectedNode.id)) return;
+
     const currentIndex = activePathwayNodes.findIndex(
       n => n.id === selectedNode.id || n.levelNumber === selectedNode.levelNumber
     );
@@ -171,13 +188,14 @@ export default function PuzzlePage() {
       setSelectedNode(nextNode);
       setShowConfetti(false);
     }
-  }, [selectedNode, activePathwayNodes]);
+  }, [selectedNode, activePathwayNodes, completedIds]);
 
   // Mobile-specific Next Puzzle (advances + returns to pathway view)
   const handleNextPuzzleMobile = useCallback(() => {
+    if (!selectedNode || !completedIds.includes(selectedNode.id)) return;
     handleNextPuzzle();
     setMobileView('pathway');
-  }, [handleNextPuzzle]);
+  }, [handleNextPuzzle, selectedNode, completedIds]);
 
   // Solve callback from left puzzle board
   const handleSolved = useCallback(() => {
@@ -418,8 +436,10 @@ export default function PuzzlePage() {
                 </div>
 
                 <button
+                  type="button"
                   onClick={handleNextPuzzle}
-                  className="px-4 py-2 rounded-xl text-xs font-mono uppercase tracking-wider font-semibold bg-amber-500 text-slate-950 hover:bg-amber-400 transition-all shadow-lg flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+                  disabled={!isNextEnabled}
+                  className="px-4 py-2 rounded-xl text-xs font-mono uppercase tracking-wider font-semibold bg-amber-500 text-slate-950 hover:bg-amber-400 transition-all shadow-lg flex items-center gap-1.5 cursor-pointer whitespace-nowrap disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-amber-500 disabled:shadow-none"
                 >
                   <span>Next Level</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -434,6 +454,7 @@ export default function PuzzlePage() {
                   onSolved={handleSolved}
                   onFailed={handleFailed}
                   onNextPuzzle={handleNextPuzzle}
+                  isNextDisabled={!isNextEnabled}
                 />
               </div>
             </div>
@@ -479,7 +500,8 @@ export default function PuzzlePage() {
                         <button
                           type="button"
                           onClick={handleNextPuzzleMobile}
-                          className="px-3.5 py-2 rounded-xl text-xs font-mono uppercase tracking-wider font-semibold bg-amber-500 text-slate-950 hover:bg-amber-400 transition-all shadow-lg flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+                          disabled={!isNextEnabled}
+                          className="px-3.5 py-2 rounded-xl text-xs font-mono uppercase tracking-wider font-semibold bg-amber-500 text-slate-950 hover:bg-amber-400 transition-all shadow-lg flex items-center gap-1.5 cursor-pointer whitespace-nowrap disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-amber-500 disabled:shadow-none"
                         >
                           <span>Next Level</span>
                           <ArrowRight className="w-3.5 h-3.5" />
@@ -494,6 +516,7 @@ export default function PuzzlePage() {
                           onSolved={handleSolved}
                           onFailed={handleFailed}
                           onNextPuzzle={handleNextPuzzleMobile}
+                          isNextDisabled={!isNextEnabled}
                         />
                       </div>
                     </div>

@@ -22,6 +22,7 @@ export interface PuzzleBoardProps {
   onSolved?: () => void;
   onFailed?: () => void;
   onNextPuzzle?: () => void;
+  isNextDisabled?: boolean;
 }
 
 export function PuzzleBoard({
@@ -30,6 +31,7 @@ export function PuzzleBoard({
   onSolved,
   onFailed,
   onNextPuzzle,
+  isNextDisabled,
 }: PuzzleBoardProps) {
   const gameRef = useRef<Chess>(new Chess());
   const [gameFen, setGameFen] = useState<string>(puzzle.fen);
@@ -285,6 +287,8 @@ export function PuzzleBoard({
     };
   }
 
+  const isNextBtnDisabled = isNextDisabled !== undefined ? isNextDisabled : (puzzleStatus !== "solved");
+
   return (
     <div className="flex flex-col items-center gap-3 sm:gap-3.5 w-full">
       {/* Top Heading */}
@@ -381,10 +385,16 @@ export function PuzzleBoard({
         {onNextPuzzle && (
           <button
             onClick={() => {
+              if (isNextBtnDisabled) return;
               soundManager.playButtonClick();
               onNextPuzzle();
             }}
-            className="w-full sm:w-auto sm:flex-initial px-4 sm:px-6 py-2.5 min-h-[44px] justify-center rounded-xl font-mono text-xs uppercase tracking-widest font-bold btn-premium-cta cta-shine cursor-pointer flex items-center gap-1.5 shadow-md shadow-brand-accent/5 hover:scale-[1.02] active:scale-[0.98]"
+            disabled={isNextBtnDisabled}
+            className={`w-full sm:w-auto sm:flex-initial px-4 sm:px-6 py-2.5 min-h-[44px] justify-center rounded-xl font-mono text-xs uppercase tracking-widest font-bold transition-all duration-300 flex items-center gap-1.5 shadow-md ${
+              isNextBtnDisabled
+                ? "opacity-40 bg-brand-surface border border-brand-border/60 text-brand-secondary cursor-not-allowed shadow-none"
+                : "btn-premium-cta cta-shine cursor-pointer shadow-brand-accent/5 hover:scale-[1.02] active:scale-[0.98]"
+            }`}
           >
             <span>Next Puzzle</span>
             <ArrowRight className="w-3.5 h-3.5" />
