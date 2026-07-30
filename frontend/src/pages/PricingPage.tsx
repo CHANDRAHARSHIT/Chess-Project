@@ -218,85 +218,85 @@ const COMPARISON_ROWS: Array<{
   diamond: string | boolean;
   family: string | boolean;
 }> = [
-  {
-    label: "Online Games",
-    gold: "Unlimited",
-    platinum: "Unlimited",
-    diamond: "Unlimited",
-    family: "Unlimited",
-  },
-  {
-    label: "Engine Analysis",
-    gold: "Basic",
-    platinum: "Advanced",
-    diamond: "Unlimited (Deep Stockfish)",
-    family: "Unlimited (Deep Stockfish)",
-  },
-  {
-    label: "Game Reviews / Month",
-    gold: "5",
-    platinum: "25",
-    diamond: "Unlimited",
-    family: "Unlimited",
-  },
-  {
-    label: "Puzzle Training",
-    gold: "50 / day",
-    platinum: "Unlimited",
-    diamond: "Unlimited",
-    family: "Unlimited",
-  },
-  {
-    label: "Opening Explorer",
-    gold: "Limited",
-    platinum: "Advanced",
-    diamond: "Advanced Explorer",
-    family: "Advanced Explorer",
-  },
-  {
-    label: "Performance Insights",
-    gold: false,
-    platinum: true,
-    diamond: true,
-    family: true,
-  },
-  {
-    label: "Accuracy Reports",
-    gold: false,
-    platinum: true,
-    diamond: true,
-    family: true,
-  },
-  {
-    label: "Premium Themes",
-    gold: "Basic",
-    platinum: true,
-    diamond: true,
-    family: true,
-  },
-  { label: "Ad Free", gold: true, platinum: true, diamond: true, family: true },
-  {
-    label: "Early Access Features",
-    gold: false,
-    platinum: false,
-    diamond: true,
-    family: true,
-  },
-  {
-    label: "Priority Support",
-    gold: false,
-    platinum: false,
-    diamond: true,
-    family: true,
-  },
-  {
-    label: "Accounts",
-    gold: "1",
-    platinum: "1",
-    diamond: "1",
-    family: "Up to 5",
-  },
-];
+    {
+      label: "Online Games",
+      gold: "Unlimited",
+      platinum: "Unlimited",
+      diamond: "Unlimited",
+      family: "Unlimited",
+    },
+    {
+      label: "Engine Analysis",
+      gold: "Basic",
+      platinum: "Advanced",
+      diamond: "Unlimited (Deep Stockfish)",
+      family: "Unlimited (Deep Stockfish)",
+    },
+    {
+      label: "Game Reviews / Month",
+      gold: "5",
+      platinum: "25",
+      diamond: "Unlimited",
+      family: "Unlimited",
+    },
+    {
+      label: "Puzzle Training",
+      gold: "50 / day",
+      platinum: "Unlimited",
+      diamond: "Unlimited",
+      family: "Unlimited",
+    },
+    {
+      label: "Opening Explorer",
+      gold: "Limited",
+      platinum: "Advanced",
+      diamond: "Advanced Explorer",
+      family: "Advanced Explorer",
+    },
+    {
+      label: "Performance Insights",
+      gold: false,
+      platinum: true,
+      diamond: true,
+      family: true,
+    },
+    {
+      label: "Accuracy Reports",
+      gold: false,
+      platinum: true,
+      diamond: true,
+      family: true,
+    },
+    {
+      label: "Premium Themes",
+      gold: "Basic",
+      platinum: true,
+      diamond: true,
+      family: true,
+    },
+    { label: "Ad Free", gold: true, platinum: true, diamond: true, family: true },
+    {
+      label: "Early Access Features",
+      gold: false,
+      platinum: false,
+      diamond: true,
+      family: true,
+    },
+    {
+      label: "Priority Support",
+      gold: false,
+      platinum: false,
+      diamond: true,
+      family: true,
+    },
+    {
+      label: "Accounts",
+      gold: "1",
+      platinum: "1",
+      diamond: "1",
+      family: "Up to 5",
+    },
+  ];
 
 const FAQS = [
   {
@@ -327,10 +327,10 @@ const FAQS = [
 
 // ─── USD base prices for all tiers (ground truth) ─────────────────────────────
 const USD_PRICES: Record<string, { monthly: number; yearly: number }> = {
-  gold:     { monthly: 2.08, yearly: 8.50 },
+  gold: { monthly: 2.08, yearly: 8.50 },
   platinum: { monthly: 3.33, yearly: 13.60 },
-  diamond:  { monthly: 5.00, yearly: 20.40 },
-  family:   { monthly: 15.00, yearly: 61.20 },
+  diamond: { monthly: 5.00, yearly: 20.40 },
+  family: { monthly: 15.00, yearly: 61.20 },
 };
 
 const DIAMOND_USD_MONTHLY = 5.00;
@@ -397,11 +397,10 @@ function CompCell({
   if (typeof value === "boolean") {
     return value ? (
       <span
-        className={`inline-flex items-center justify-center w-5 h-5 rounded-full ${
-          diamond
-            ? "bg-sky-300/15 text-sky-300"
-            : "bg-emerald-500/10 text-emerald-400"
-        }`}
+        className={`inline-flex items-center justify-center w-5 h-5 rounded-full ${diamond
+          ? "bg-sky-300/15 text-sky-300"
+          : "bg-emerald-500/10 text-emerald-400"
+          }`}
       >
         <Check className="w-3 h-3" />
       </span>
@@ -411,11 +410,10 @@ function CompCell({
   }
   return (
     <span
-      className={`inline-block whitespace-nowrap font-mono text-[11px] px-2 py-0.5 rounded-md border ${
-        diamond
-          ? "bg-sky-300/10 border-sky-300/20 text-sky-300"
-          : "bg-brand-text/5 border-brand-border text-brand-secondary"
-      }`}
+      className={`inline-block whitespace-nowrap font-mono text-[11px] px-2 py-0.5 rounded-md border ${diamond
+        ? "bg-sky-300/10 border-sky-300/20 text-sky-300"
+        : "bg-brand-text/5 border-brand-border text-brand-secondary"
+        }`}
     >
       {value}
     </span>
@@ -621,7 +619,7 @@ export default function PricingPage() {
               Yearly
             </button>
 
-            <div className="absolute z-20 top-0 left-3/4 -translate-x-1/2 -translate-y-1/2 sm:left-[calc(100%+14px)] sm:top-1/2 sm:translate-x-0 whitespace-nowrap bg-brand-accent/15 border border-brand-accent/30 text-brand-accent text-[10px] font-mono tracking-wider uppercase px-2 py-0.5 rounded-md">
+            <div className="absolute z-20 top-0 left-3/4 -translate-x-1/2 -translate-y-1/2 sm:left-[calc(100%+14px)] sm:top-1/2 sm:translate-x-0 whitespace-nowrap bg-brand-accent/15 border border-brand-accent/30 text-[#1a1a1a] dark:text-brand-accent text-[10px] font-mono tracking-wider uppercase px-2 py-0.5 rounded-md">
               Save up to 66%
             </div>
           </div>
@@ -651,11 +649,10 @@ export default function PricingPage() {
                     ? { boxShadow: `0 0 50px ${plan.glowRgba}` }
                     : undefined
                 }
-                className={`relative flex flex-col rounded-2xl border p-5 pt-6 transition-all duration-300 ${
-                  plan.isHighlighted
-                    ? `bg-gradient-to-b from-brand-surface to-brand-bg ${plan.accentBorder}`
-                    : `bg-brand-surface/60 backdrop-blur-sm ${plan.accentBorder}`
-                }`}
+                className={`relative flex flex-col rounded-2xl border p-5 pt-6 transition-all duration-300 ${plan.isHighlighted
+                  ? `bg-gradient-to-b from-brand-surface to-brand-bg ${plan.accentBorder}`
+                  : `bg-brand-surface/60 backdrop-blur-sm ${plan.accentBorder}`
+                  }`}
               >
                 {/* Diamond top glow */}
                 {plan.isHighlighted && (
@@ -701,13 +698,12 @@ export default function PricingPage() {
                 <div className="mb-5 min-h-[64px] flex flex-col justify-center">
                   <div className="flex items-baseline gap-1">
                     <span
-                      className={`text-3xl font-display font-bold ${
-                        isDiamond && !comingSoon
-                          ? "text-sky-300"
-                          : comingSoon
-                            ? "text-brand-text/35"
-                            : "text-brand-text"
-                      }`}
+                      className={`text-3xl font-display font-bold ${isDiamond && !comingSoon
+                        ? "text-sky-300"
+                        : comingSoon
+                          ? "text-brand-text/35"
+                          : "text-brand-text"
+                        }`}
                     >
                       {displayPrice}
                     </span>
@@ -737,20 +733,18 @@ export default function PricingPage() {
                   {plan.features.slice(0, 7).map((feat, fi) => (
                     <li key={fi} className="flex items-start gap-2.5">
                       <span
-                        className={`flex-shrink-0 w-4 h-4 rounded-full flex items-center justify-center mt-0.5 ${
-                          isDiamond && !comingSoon
-                            ? "bg-sky-300/15 text-sky-300"
-                            : "bg-brand-text/5 text-brand-secondary"
-                        }`}
+                        className={`flex-shrink-0 w-4 h-4 rounded-full flex items-center justify-center mt-0.5 ${isDiamond && !comingSoon
+                          ? "bg-sky-300/15 text-sky-300"
+                          : "bg-brand-text/5 text-brand-secondary"
+                          }`}
                       >
                         <Check className="w-2.5 h-2.5" />
                       </span>
                       <span
-                        className={`text-xs font-sans leading-relaxed ${
-                          comingSoon
-                            ? "text-brand-secondary/40"
-                            : "text-brand-text"
-                        }`}
+                        className={`text-xs font-sans leading-relaxed ${comingSoon
+                          ? "text-brand-secondary/40"
+                          : "text-brand-text"
+                          }`}
                       >
                         {typeof feat.value === "string"
                           ? `${feat.label} — ${feat.value}`
@@ -760,11 +754,10 @@ export default function PricingPage() {
                   ))}
                   {plan.features.length > 7 && (
                     <li
-                      className={`text-[11px] font-mono pl-6 ${
-                        comingSoon
-                          ? "text-brand-secondary/30"
-                          : "text-brand-secondary/60"
-                      }`}
+                      className={`text-[11px] font-mono pl-6 ${comingSoon
+                        ? "text-brand-secondary/30"
+                        : "text-brand-secondary/60"
+                        }`}
                     >
                       +{plan.features.length - 7} more features
                     </li>
@@ -779,13 +772,12 @@ export default function PricingPage() {
                       handleUpgrade(isYearly ? "Yearly" : "Monthly");
                     }
                   }}
-                  className={`w-full py-3 px-4 rounded-xl font-mono text-[11px] uppercase tracking-widest font-semibold transition-all duration-300 relative overflow-hidden ${
-                    comingSoon
-                      ? "bg-brand-text/5 border border-brand-text/10 text-brand-secondary/30 cursor-not-allowed"
-                      : isDiamond
-                        ? "bg-sky-500 hover:bg-sky-400 text-white border border-sky-300/50 shadow-lg shadow-sky-300/20 hover:scale-[1.01] cursor-pointer active:scale-[0.99]"
-                        : "bg-brand-text/5 border border-brand-border hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text cursor-pointer active:scale-[0.99]"
-                  }`}
+                  className={`w-full py-3 px-4 rounded-xl font-mono text-[11px] uppercase tracking-widest font-semibold transition-all duration-300 relative overflow-hidden ${comingSoon
+                    ? "bg-brand-text/5 border border-brand-text/10 text-brand-secondary/30 cursor-not-allowed"
+                    : isDiamond
+                      ? "bg-sky-500 hover:bg-sky-400 text-white border border-sky-300/50 shadow-lg shadow-sky-300/20 hover:scale-[1.01] cursor-pointer active:scale-[0.99]"
+                      : "bg-brand-text/5 border border-brand-border hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text cursor-pointer active:scale-[0.99]"
+                    }`}
                 >
                   <span className="relative z-10 flex items-center justify-center gap-1.5">
                     {comingSoon ? (
@@ -834,9 +826,8 @@ export default function PricingPage() {
                     return (
                       <th
                         key={p.id}
-                        className={`py-4 px-4 text-center text-xs font-mono uppercase tracking-wider ${
-                          p.accentText
-                        } ${isDiamond ? "bg-sky-300/[0.05]" : ""}`}
+                        className={`py-4 px-4 text-center text-xs font-mono uppercase tracking-wider ${p.accentText
+                          } ${isDiamond ? "bg-sky-300/[0.05]" : ""}`}
                       >
                         <div className="flex flex-col items-center gap-1">
                           <span
@@ -896,9 +887,8 @@ export default function PricingPage() {
                     return (
                       <td
                         key={p.id}
-                        className={`py-5 px-4 text-center ${
-                          isDiamond ? "bg-sky-300/[0.04]" : ""
-                        }`}
+                        className={`py-5 px-4 text-center ${isDiamond ? "bg-sky-300/[0.04]" : ""
+                          }`}
                       >
                         <button
                           disabled={disabled}
@@ -907,13 +897,12 @@ export default function PricingPage() {
                               handleUpgrade(isYearly ? "Yearly" : "Monthly");
                             }
                           }}
-                          className={`inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg font-mono text-[10px] uppercase tracking-widest font-semibold transition-all duration-200 ${
-                            disabled
-                              ? "opacity-25 cursor-not-allowed text-brand-secondary border border-brand-border"
-                              : isDiamond
-                                ? "bg-sky-500 hover:bg-sky-400 text-white border border-sky-300/40 shadow shadow-sky-300/20 cursor-pointer hover:scale-[1.02]"
-                                : "bg-brand-text/5 border border-brand-border hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text cursor-pointer"
-                          }`}
+                          className={`inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg font-mono text-[10px] uppercase tracking-widest font-semibold transition-all duration-200 ${disabled
+                            ? "opacity-25 cursor-not-allowed text-brand-secondary border border-brand-border"
+                            : isDiamond
+                              ? "bg-sky-500 hover:bg-sky-400 text-white border border-sky-300/40 shadow shadow-sky-300/20 cursor-pointer hover:scale-[1.02]"
+                              : "bg-brand-text/5 border border-brand-border hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text cursor-pointer"
+                            }`}
                         >
                           {disabled ? (
                             "Soon"

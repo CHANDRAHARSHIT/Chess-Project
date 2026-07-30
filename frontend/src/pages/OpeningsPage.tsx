@@ -17,7 +17,7 @@
  *   user selects one → useOpeningTrainer(selectedOpening) → board + coach
  *
  * Caching:
- *   The first visit fetches ~3000 records and stores them in localStorage.
+ *   The first visit fetches ~745 records and stores them in localStorage.
  *   Every subsequent visit (including after a full browser refresh) loads
  *   from the persistent cache synchronously — no spinner, no network wait.
  *   Cache expires after 24 hours.
