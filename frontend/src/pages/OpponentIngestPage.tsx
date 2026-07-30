@@ -109,16 +109,16 @@ export default function OpponentIngestPage() {
               border: "1px solid rgba(212, 175, 110, 0.2)",
             }}
           >
-            <Sparkles className="w-5 h-5" style={{ color: "#D4AF6E" }} />
+            <Sparkles className="w-5 h-5" style={{ color: "var(--gold-bright)" }} />
           </div>
           <div>
             <h1 
               className="text-xl font-semibold tracking-wide"
-              style={{ fontFamily: "'Cormorant Garamond', serif", color: "#F5F0E8" }}
+              style={{ fontFamily: "'Cormorant Garamond', serif", color: "var(--text-primary)" }}
             >
               Add Opponent
             </h1>
-            <p className="text-xs mt-1" style={{ color: "#8E8B82", fontFamily: "Inter, sans-serif" }}>
+            <p className="text-xs mt-1" style={{ color: "var(--text-secondary)", fontFamily: "Inter, sans-serif" }}>
               Extract from FIDE archive or paste PGNs manually
             </p>
           </div>
@@ -134,7 +134,7 @@ export default function OpponentIngestPage() {
 
           {/* FIDE Extraction Section */}
           <div className="p-5 rounded-xl border border-[#D4AF6E]/20 bg-[#D4AF6E]/5">
-            <label className="block text-xs font-mono uppercase tracking-widest mb-3 text-[#D4AF6E]">
+            <label className="block text-xs font-mono uppercase tracking-widest mb-3 text-brand-accent">
               Extract from FIDE Archive
             </label>
             <div className="flex gap-3">
@@ -149,7 +149,7 @@ export default function OpponentIngestPage() {
                   border: "1px solid rgba(212, 175, 110, 0.2)",
                   borderRadius: "10px",
                   padding: "10px 14px",
-                  color: "#F5F0E8",
+                  color: "var(--text-primary)",
                   fontFamily: "Inter, sans-serif"
                 }}
                 onFocus={(e) => {
@@ -182,7 +182,7 @@ export default function OpponentIngestPage() {
           {/* Manual / Review Section */}
           <div className="flex flex-col gap-5">
             <div>
-              <label className="block text-xs font-mono uppercase tracking-widest mb-2 text-[#8E8B82]">
+              <label className="block text-xs font-mono uppercase tracking-widest mb-2 text-brand-secondary">
                 Opponent Username
               </label>
               <input
@@ -196,7 +196,7 @@ export default function OpponentIngestPage() {
                   border: "1px solid rgba(212, 175, 110, 0.2)",
                   borderRadius: "10px",
                   padding: "10px 14px",
-                  color: "#F5F0E8",
+                  color: "var(--text-primary)",
                   fontFamily: "Inter, sans-serif"
                 }}
                 onFocus={(e) => {
@@ -212,11 +212,11 @@ export default function OpponentIngestPage() {
 
             <div>
               <div className="flex justify-between items-center mb-2">
-                <label className="block text-xs font-mono uppercase tracking-widest text-[#8E8B82]">
+                <label className="block text-xs font-mono uppercase tracking-widest text-brand-secondary">
                   PGN Data
                 </label>
                 <label 
-                  className="cursor-pointer flex items-center gap-1.5 text-xs font-mono uppercase tracking-widest text-[#D4AF6E] hover:text-[#F5F0E8] transition-colors"
+                  className="cursor-pointer flex items-center gap-1.5 text-xs font-mono uppercase tracking-widest text-brand-accent hover:text-brand-text transition-colors"
                   title="Upload .pgn files"
                 >
                   <UploadCloud className="w-3.5 h-3.5" />
@@ -241,7 +241,7 @@ export default function OpponentIngestPage() {
                   border: "1px solid rgba(212, 175, 110, 0.2)",
                   borderRadius: "10px",
                   padding: "10px 14px",
-                  color: "#F5F0E8",
+                  color: "var(--text-primary)",
                   fontFamily: "DM Mono, monospace"
                 }}
                 onFocus={(e) => {
@@ -257,7 +257,7 @@ export default function OpponentIngestPage() {
           </div>
 
           {result && (
-            <div className="p-4 rounded-lg bg-[#D4AF6E]/10 border border-[#D4AF6E]/30 text-[#D4AF6E] text-sm">
+            <div className="p-4 rounded-lg bg-[#D4AF6E]/10 border border-[#D4AF6E]/30 text-brand-accent text-sm">
               <div className="font-semibold mb-1">Success</div>
               {(result as any).message && <div>{(result as any).message}</div>}
               {result.ingested !== undefined && result.ingested > 0 && <div>Successfully Ingested: {result.ingested}</div>}
@@ -278,14 +278,14 @@ export default function OpponentIngestPage() {
             style={{
               background: loading ? "rgba(212,175,110,0.4)" : "rgba(255,255,255,0.04)",
               border: "1px solid rgba(212,175,110,0.3)",
-              color: "#F5F0E8",
+              color: "var(--text-primary)",
               fontFamily: "DM Mono, monospace",
             }}
           >
             {loading ? (
               <div className="w-3.5 h-3.5 rounded-full border-2 animate-spin border-[#D4AF6E] border-t-transparent" />
             ) : (
-              <><UploadCloud className="w-4 h-4 text-[#D4AF6E]" /> Ingest Data</>
+              <><UploadCloud className="w-4 h-4 text-brand-accent" /> Ingest Data</>
             )}
           </button>
 
@@ -295,7 +295,7 @@ export default function OpponentIngestPage() {
             className="flex-1 py-3 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed"
             style={{
               background: "linear-gradient(135deg, #D4AF6E 0%, #B8934A 100%)",
-              color: "#080B14",
+              color: "var(--obsidian)",
               boxShadow: "0 4px 20px rgba(212, 175, 110, 0.25)",
               fontFamily: "DM Mono, monospace",
             }}

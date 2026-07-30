@@ -7,10 +7,7 @@ import {
   CircleUserRound,
   Crown,
   BookOpen,
-  Bot,
-  BookMarked,
   Database,
-  ChevronUp,
   ChevronDown,
   Zap,
   Clock,
@@ -86,6 +83,7 @@ export default function SidebarLayout({
   const [modalMode, setModalMode] = useState<"login" | "register">("login");
   const [mobileOpenItem, setMobileOpenItem] = useState<string | null>(null);
   const [isYouOpen, setIsYouOpen] = useState(true);
+  const [isMoreStaticOpen, setIsMoreStaticOpen] = useState(false);
 
   const [hoveredSubMenu, setHoveredSubMenu] = useState<{
     items: { name: string; href?: string; icon?: React.ElementType; comingSoon?: boolean }[];
@@ -144,7 +142,7 @@ export default function SidebarLayout({
 
   useEffect(() => {
     void (async () => { await fetchLinks(); })();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status]);
 
   const [isMoreOpen, setIsMoreOpen] = useState(false);
@@ -409,6 +407,10 @@ export default function SidebarLayout({
     },
   ];
 
+  const moreStaticSection = [
+    { name: "Game Database", href: "/database", icon: Database },
+  ];
+
   const miscSection = [
     { name: "Report", href: "/report", icon: Flag, comingSoon: true },
   ];
@@ -502,25 +504,21 @@ export default function SidebarLayout({
               }
             }}
             title={isDisabled ? "Coming soon" : undefined}
-            className={`relative w-full flex transition-all duration-200 ${
-              isDisabled ? "cursor-not-allowed" : "cursor-pointer"
-            } ${
-              isExpanded || isMobileOpen
-                ? `items-center py-2.5 mx-2 px-3 rounded-xl ${
-                    isDisabled
-                      ? "opacity-60 select-none text-brand-secondary"
-                      : isActive
-                        ? "text-brand-accent bg-brand-text/10 font-medium"
-                        : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 group-hover/navitem:bg-brand-text/5 group-hover/navitem:text-brand-text"
-                  }`
-                : `flex-col items-center justify-center py-[14px] mx-2 rounded-lg text-center ${
-                    isDisabled
-                      ? "opacity-60 select-none text-brand-secondary"
-                      : isActive
-                        ? "text-brand-accent bg-brand-text/10 font-medium"
-                        : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 group-hover/navitem:bg-brand-text/5 group-hover/navitem:text-brand-text"
-                  }`
-            }`}
+            className={`relative w-full flex transition-all duration-200 ${isDisabled ? "cursor-not-allowed" : "cursor-pointer"
+              } ${isExpanded || isMobileOpen
+                ? `items-center py-2.5 mx-2 px-3 rounded-xl ${isDisabled
+                  ? "opacity-60 select-none text-brand-secondary"
+                  : isActive
+                    ? "text-brand-accent bg-brand-text/10 font-medium"
+                    : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 group-hover/navitem:bg-brand-text/5 group-hover/navitem:text-brand-text"
+                }`
+                : `flex-col items-center justify-center py-[14px] mx-2 rounded-lg text-center ${isDisabled
+                  ? "opacity-60 select-none text-brand-secondary"
+                  : isActive
+                    ? "text-brand-accent bg-brand-text/10 font-medium"
+                    : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 group-hover/navitem:bg-brand-text/5 group-hover/navitem:text-brand-text"
+                }`
+              }`}
           >
             <div
               className={`flex items-center justify-center shrink-0 ${isExpanded || isMobileOpen ? "w-10" : "w-full"}`}
@@ -539,8 +537,7 @@ export default function SidebarLayout({
             </div>
 
             <span
-              className={`font-sans transition-all ${
-                isExpanded || isMobileOpen
+              className={`font-sans transition-all ${isExpanded || isMobileOpen
                   ? "flex-1 text-left text-[14px] ml-2 tracking-wide truncate"
                   : "w-full text-center text-[10px] mt-1.5 leading-[1.15] whitespace-normal tracking-normal line-clamp-2 break-words"
                 } ${!(isExpanded || isMobileOpen) && isAvatar ? "hidden" : ""}`}
@@ -559,8 +556,8 @@ export default function SidebarLayout({
           {isCustomLink && (isExpanded || isMobileOpen) && (
             <div
               className={`absolute right-4 flex items-center z-10 bg-brand-bg/80 backdrop-blur-sm rounded-full transition-all ${isMobileOpen
-                  ? "opacity-100"
-                  : "opacity-0 group-hover/navitem:opacity-100"
+                ? "opacity-100"
+                : "opacity-0 group-hover/navitem:opacity-100"
                 }`}
             >
               {/* Move to More / Move to Active */}
@@ -643,10 +640,10 @@ export default function SidebarLayout({
                     handleLinkClick(subItem.href, e);
                   }}
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-sans transition-colors duration-150 ${subItem.comingSoon
-                      ? "opacity-60 cursor-not-allowed select-none"
-                      : isSubActive
-                        ? "text-brand-accent bg-brand-text/10 font-medium cursor-pointer"
-                        : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 cursor-pointer"
+                    ? "opacity-60 cursor-not-allowed select-none"
+                    : isSubActive
+                      ? "text-brand-accent bg-brand-text/10 font-medium cursor-pointer"
+                      : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 cursor-pointer"
                     }`}
                 >
                   {SubIcon && (
@@ -724,9 +721,8 @@ export default function SidebarLayout({
       <div className="flex flex-1 pt-16">
         {/* Desktop Sidebar (Fixed) */}
         <aside
-          className={`fixed top-16 left-0 bottom-0 z-30 bg-brand-bg/95 backdrop-blur-md flex flex-col py-2 transition-all duration-300 hidden md:flex overflow-y-auto overscroll-contain no-scrollbar pb-6 ${
-            isExpanded ? "w-64" : "w-20"
-          }`}
+          className={`fixed top-16 left-0 bottom-0 z-30 bg-brand-bg/95 backdrop-blur-md flex flex-col py-2 transition-all duration-300 hidden md:flex overflow-y-auto overscroll-contain no-scrollbar pb-6 ${isExpanded ? "w-64" : "w-20"
+            }`}
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           <nav className="flex-1 flex flex-col space-y-1">
@@ -825,6 +821,27 @@ export default function SidebarLayout({
                   className={`transition-all duration-300 overflow-hidden ${isYouOpen || !isExpanded ? "max-h-[500px]" : "max-h-0"}`}
                 >
                   {youSection.map((item) => renderNavItem(item))}
+                </div>
+                <Divider />
+
+                {/* MORE STATIC SECTION */}
+                {isExpanded && (
+                  <div
+                    className="flex items-center justify-between px-6 py-2 cursor-pointer group"
+                    onClick={() => setIsMoreStaticOpen(!isMoreStaticOpen)}
+                  >
+                    <span className="text-[15px] font-semibold text-brand-text">
+                      More
+                    </span>
+                    <ChevronDown
+                      className={`w-4 h-4 text-brand-secondary transition-transform duration-300 ${isMoreStaticOpen ? "rotate-180" : ""} group-hover:text-brand-text`}
+                    />
+                  </div>
+                )}
+                <div
+                  className={`transition-all duration-300 overflow-hidden ${isMoreStaticOpen || !isExpanded ? "max-h-[500px]" : "max-h-0"}`}
+                >
+                  {moreStaticSection.map((item) => renderNavItem(item))}
                 </div>
                 <Divider />
               </>
@@ -956,10 +973,10 @@ export default function SidebarLayout({
                     handleLinkClick(subItem.href, e);
                   }}
                   className={`w-full flex items-center gap-4 px-5 py-3 text-[14px] font-sans text-left transition-colors duration-150 ${subItem.comingSoon
-                      ? "opacity-60 cursor-not-allowed select-none"
-                      : isSubActive
-                        ? "text-brand-accent bg-brand-text/[0.06] cursor-pointer font-medium"
-                        : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06] cursor-pointer"
+                    ? "opacity-60 cursor-not-allowed select-none"
+                    : isSubActive
+                      ? "text-brand-accent bg-brand-text/[0.06] cursor-pointer font-medium"
+                      : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06] cursor-pointer"
                     }`}
                 >
                   {SubIcon && (
@@ -1094,6 +1111,25 @@ export default function SidebarLayout({
                 </div>
               </>
             )}
+
+            <Divider />
+
+            <div
+              className="flex items-center justify-between mx-2 px-3 py-2 cursor-pointer group rounded-xl hover:bg-brand-text/5 transition-colors"
+              onClick={() => setIsMoreStaticOpen(!isMoreStaticOpen)}
+            >
+              <span className="text-[15px] font-semibold text-brand-text">
+                More
+              </span>
+              <ChevronDown
+                className={`w-4 h-4 text-brand-secondary transition-transform duration-300 ${isMoreStaticOpen ? "rotate-180" : ""}`}
+              />
+            </div>
+            <div
+              className={`transition-all duration-300 overflow-hidden ${isMoreStaticOpen ? "max-h-[500px]" : "max-h-0"}`}
+            >
+              {moreStaticSection.map((item) => renderNavItem(item))}
+            </div>
 
             <Divider />
             {miscSection.map((item) => renderNavItem(item))}
@@ -1236,8 +1272,8 @@ export default function SidebarLayout({
                             setIsUrlDropdownOpen(false);
                           }}
                           className={`w-full text-left px-4 py-2.5 text-[14px] transition-colors cursor-pointer ${newLinkUrl === option.value
-                              ? "bg-[#2563EB] text-brand-text font-medium"
-                              : "text-brand-secondary hover:bg-brand-text/5 hover:text-brand-text"
+                            ? "bg-[#2563EB] text-brand-text font-medium"
+                            : "text-brand-secondary hover:bg-brand-text/5 hover:text-brand-text"
                             }`}
                         >
                           {option.label}

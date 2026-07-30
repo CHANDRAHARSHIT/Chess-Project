@@ -497,7 +497,7 @@ export default function CheckoutPage() {
                       Unlimited chess tools access
                     </div>
                   </div>
-                  <span className="text-sm font-mono text-[#e5dfd5]">
+                  <span className="text-sm font-mono text-brand-text">
                     {basePriceFormatted}
                   </span>
                 </div>

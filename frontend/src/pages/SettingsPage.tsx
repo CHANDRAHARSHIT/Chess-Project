@@ -17,7 +17,6 @@ import {
   Bell,
   CircleUserRound,
   CreditCard,
-  Target,
   Check,
 } from "lucide-react";
 import { useBoardSettings } from "../hooks/useBoardSettings";
@@ -257,15 +256,7 @@ export default function SettingsPage() {
                     key={cat.id}
                     type="button"
                     aria-current={isActive ? "page" : undefined}
-                    onClick={() => {
-                      soundManager.playButtonClick();
-                      if (cat.path) {
-                        navigate(cat.path);
-                        return;
-                      }
-
-                      setActiveCategory(cat.id);
-                    }}
+                    onClick={() => handleCategorySelect(cat)}
                     className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors duration-150 cursor-pointer ${
                       isActive
                         ? "bg-brand-accent/10 text-brand-accent font-medium ring-1 ring-brand-accent/30"
@@ -401,7 +392,7 @@ export default function SettingsPage() {
                                 : "ring-1 ring-brand-border/40 hover:ring-brand-border/80 hover:bg-brand-text/[0.03]"
                             }`}
                           >
-                            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg bg-[#4d4536] flex items-center justify-center gap-1.5 p-2">
+                            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg bg-brand-accent/30 flex items-center justify-center gap-1.5 p-2">
                               <div className="w-6 h-6 sm:w-7 sm:h-7">
                                 {set.pieces.bK()}
                               </div>

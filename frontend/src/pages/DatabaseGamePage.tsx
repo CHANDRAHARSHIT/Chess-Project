@@ -38,7 +38,7 @@ export default function DatabaseGamePage() {
   }, [currentMoveIndex, history]);
 
   // Stockfish hook
-  const { evaluation, analyzePosition, stopSearch, terminateWorker } = useStockfish();
+  const { analyzePosition, stopSearch, terminateWorker } = useStockfish();
 
   // Trigger analysis when move changes and analysis is enabled
   useEffect(() => {
@@ -58,7 +58,7 @@ export default function DatabaseGamePage() {
 
   if (!game) {
     return (
-      <div className="min-h-screen bg-[#080B14] text-[#F5F0E8] flex items-center justify-center">
+      <div className="min-h-screen bg-brand-bg text-brand-text flex items-center justify-center">
         Game not found
       </div>
     );
@@ -90,11 +90,11 @@ export default function DatabaseGamePage() {
   const blackWon = game.result === "0-1";
 
   return (
-    <div className="md:h-[calc(100vh-64px)] min-h-[calc(100vh-64px)] bg-[#1F1E1B] text-[#F5F0E8] font-sans flex flex-col w-full relative overflow-y-auto md:overflow-hidden">
+    <div className="md:h-[calc(100vh-64px)] min-h-[calc(100vh-64px)] bg-brand-surface text-brand-text font-sans flex flex-col w-full relative overflow-y-auto md:overflow-hidden">
       <div className="flex-1 flex flex-col md:flex-row w-full md:h-full md:overflow-hidden">
         
         {/* Left Area (Board & Players) */}
-        <div className="md:flex-1 flex flex-col items-center justify-center p-4 lg:p-8 relative bg-[#1F1E1B] shrink-0">
+        <div className="md:flex-1 flex flex-col items-center justify-center p-4 lg:p-8 relative bg-brand-surface shrink-0">
           <div className="w-full max-w-[70vh] flex flex-col items-center">
             
             {/* Top Player (Black) */}
@@ -110,7 +110,7 @@ export default function DatabaseGamePage() {
             {/* Board Area */}
             <div className="flex w-full relative items-stretch">
               {/* Chessboard */}
-              <div className="flex-1 aspect-square overflow-hidden shadow-2xl border-[3px] border-[#161512] rounded-sm">
+              <div className="flex-1 aspect-square overflow-hidden shadow-2xl border-[3px] border-brand-border rounded-sm">
                 <ThemedChessboard 
                   options={{ 
                     position: currentFen,
@@ -137,14 +137,14 @@ export default function DatabaseGamePage() {
         </div>
 
         {/* Right Sidebar (Moves, Info, Controls) */}
-        <div className="w-full md:w-[350px] lg:w-[400px] flex flex-col bg-[#1F1E1B] border-t md:border-t-0 md:border-l border-[#262421] md:h-full shrink-0">
+        <div className="w-full md:w-[350px] lg:w-[400px] flex flex-col bg-brand-surface border-t md:border-t-0 md:border-l border-brand-border md:h-full shrink-0">
           
           {/* Tabs */}
-          <div className="flex border-b border-[#262421]">
+          <div className="flex border-b border-brand-border">
             <button 
               onClick={() => setActiveTab("Moves")}
               className={`flex-1 py-4 flex flex-col items-center gap-1 font-semibold text-sm transition-colors
-                ${activeTab === "Moves" ? 'bg-[#262421] text-white border-t-2 border-brand-accent' : 'text-[#8E8B82] hover:bg-white/5'}
+                ${activeTab === "Moves" ? 'bg-brand-surface text-brand-text border-t-2 border-brand-accent' : 'text-brand-secondary hover:bg-brand-text/5'}
               `}
             >
               <div className="w-4 h-4 grid grid-cols-2 grid-rows-2 gap-[1px]">
@@ -156,7 +156,7 @@ export default function DatabaseGamePage() {
             <button 
               onClick={() => setActiveTab("Info")}
               className={`flex-1 py-4 flex flex-col items-center gap-1 font-semibold text-sm transition-colors
-                ${activeTab === "Info" ? 'bg-[#262421] text-white border-t-2 border-brand-accent' : 'text-[#8E8B82] hover:bg-white/5'}
+                ${activeTab === "Info" ? 'bg-brand-surface text-brand-text border-t-2 border-brand-accent' : 'text-brand-secondary hover:bg-brand-text/5'}
               `}
             >
               <Info className="w-4 h-4" />
@@ -165,25 +165,25 @@ export default function DatabaseGamePage() {
           </div>
 
           {/* Tab Content */}
-          <div className="flex-1 overflow-y-auto bg-[#262421]">
+          <div className="flex-1 overflow-y-auto bg-brand-surface">
             {activeTab === "Info" ? (
               <div className="p-4 space-y-4">
                 <div className="bg-white text-black text-center py-2 font-bold rounded shadow-sm">
                   {whiteWon ? "White Won (1-0)" : blackWon ? "Black Won (0-1)" : "Draw (1/2-1/2)"}
                 </div>
-                <div className="text-sm space-y-2 text-[#bababa]">
-                  <p><span className="text-[#8E8B82] mr-2">Date:</span> {game.date || game.year}</p>
-                  <p><span className="text-[#8E8B82] mr-2">Result:</span> {game.result}</p>
-                  <p><span className="text-[#8E8B82] mr-2">Event:</span> {game.event || "Unknown"}</p>
-                  <p><span className="text-[#8E8B82] mr-2">Site:</span> {game.site || "Unknown"}</p>
+                <div className="text-sm space-y-2 text-brand-secondary">
+                  <p><span className="text-brand-secondary mr-2">Date:</span> {game.date || game.year}</p>
+                  <p><span className="text-brand-secondary mr-2">Result:</span> {game.result}</p>
+                  <p><span className="text-brand-secondary mr-2">Event:</span> {game.event || "Unknown"}</p>
+                  <p><span className="text-brand-secondary mr-2">Site:</span> {game.site || "Unknown"}</p>
                 </div>
               </div>
             ) : (
               <div className="flex flex-col">
                 {/* Opening Header */}
-                <div className="flex items-center gap-2 p-3 text-sm border-b border-[#1F1E1B] bg-[#262421]">
+                <div className="flex items-center gap-2 p-3 text-sm border-b border-brand-border bg-brand-surface">
                   <Compass className="w-4 h-4 text-white" />
-                  <span className="font-semibold text-[#bababa] truncate">{game.opening}</span>
+                  <span className="font-semibold text-brand-secondary truncate">{game.opening}</span>
                 </div>
                 
                 {/* Move List */}
@@ -191,13 +191,13 @@ export default function DatabaseGamePage() {
                   <table className="w-full text-center text-sm table-fixed">
                     <tbody>
                       {movePairs.map((pair, idx) => (
-                        <tr key={pair.moveNumber} className={`${idx % 2 === 0 ? 'bg-[#262421]' : 'bg-[#21201D]'} hover:bg-white/5 transition-colors`}>
-                          <td className="w-16 py-3 pl-4 text-[#8E8B82] font-bold text-left">{pair.moveNumber}.</td>
+                        <tr key={pair.moveNumber} className={`${idx % 2 === 0 ? 'bg-brand-surface' : 'bg-brand-bg'} hover:bg-brand-text/5 transition-colors`}>
+                          <td className="w-16 py-3 pl-4 text-brand-secondary font-bold text-left">{pair.moveNumber}.</td>
                           <td 
                             className="py-3 cursor-pointer"
                             onClick={() => handleMoveClick(pair.whiteIndex)}
                           >
-                            <span className={`px-3 py-1 rounded transition-colors ${currentMoveIndex === pair.whiteIndex ? 'bg-[#535353] text-white font-bold' : 'text-[#bababa] hover:text-white font-bold'}`}>
+                            <span className={`px-3 py-1 rounded transition-colors ${currentMoveIndex === pair.whiteIndex ? 'bg-brand-text/10 text-brand-text font-bold' : 'text-brand-secondary hover:text-brand-text font-bold'}`}>
                               {pair.white.san}
                             </span>
                           </td>
@@ -206,7 +206,7 @@ export default function DatabaseGamePage() {
                             onClick={() => pair.black && handleMoveClick(pair.blackIndex)}
                           >
                             {pair.black && (
-                              <span className={`px-3 py-1 rounded transition-colors ${currentMoveIndex === pair.blackIndex ? 'bg-[#535353] text-white font-bold' : 'text-[#bababa] hover:text-white font-bold'}`}>
+                              <span className={`px-3 py-1 rounded transition-colors ${currentMoveIndex === pair.blackIndex ? 'bg-brand-text/10 text-brand-text font-bold' : 'text-brand-secondary hover:text-brand-text font-bold'}`}>
                                 {pair.black.san}
                               </span>
                             )}
@@ -214,8 +214,8 @@ export default function DatabaseGamePage() {
                         </tr>
                       ))}
                       {/* Result at bottom */}
-                      <tr className={`${movePairs.length % 2 === 0 ? 'bg-[#262421]' : 'bg-[#21201D]'}`}>
-                        <td className="py-4 pl-4 font-bold text-[#bababa]" colSpan={3}>
+                      <tr className={`${movePairs.length % 2 === 0 ? 'bg-brand-surface' : 'bg-brand-bg'}`}>
+                        <td className="py-4 pl-4 font-bold text-brand-secondary" colSpan={3}>
                           {game.result}
                         </td>
                       </tr>
@@ -227,20 +227,20 @@ export default function DatabaseGamePage() {
           </div>
 
           {/* Controls Footer */}
-          <div className="bg-[#262421] border-t border-[#1F1E1B] p-4">
+          <div className="bg-brand-surface border-t border-brand-border p-4">
             
             {/* Navigation Buttons */}
             <div className="flex gap-2 justify-between">
-              <button onClick={handleFirstMove} className="flex-1 bg-transparent hover:bg-[#403D39] border border-[#403D39] rounded py-3 flex items-center justify-center text-[#8E8B82] hover:text-white transition-colors">
+              <button onClick={handleFirstMove} className="flex-1 bg-transparent hover:bg-brand-border/40 border border-brand-border/40 rounded py-3 flex items-center justify-center text-brand-secondary hover:text-brand-text transition-colors">
                 <Rewind className="w-5 h-5" />
               </button>
-              <button onClick={handlePrevMove} className="flex-1 bg-transparent hover:bg-[#403D39] border border-[#403D39] rounded py-3 flex items-center justify-center text-[#8E8B82] hover:text-white transition-colors">
+              <button onClick={handlePrevMove} className="flex-1 bg-transparent hover:bg-brand-border/40 border border-brand-border/40 rounded py-3 flex items-center justify-center text-brand-secondary hover:text-brand-text transition-colors">
                 <ChevronLeft className="w-6 h-6" />
               </button>
-              <button onClick={handleNextMove} className="flex-1 bg-transparent hover:bg-[#403D39] border border-[#403D39] rounded py-3 flex items-center justify-center text-[#8E8B82] hover:text-white transition-colors">
+              <button onClick={handleNextMove} className="flex-1 bg-transparent hover:bg-brand-border/40 border border-brand-border/40 rounded py-3 flex items-center justify-center text-brand-secondary hover:text-brand-text transition-colors">
                 <ChevronRight className="w-6 h-6" />
               </button>
-              <button onClick={handleLastMove} className="flex-1 bg-transparent hover:bg-[#403D39] border border-[#403D39] rounded py-3 flex items-center justify-center text-[#8E8B82] hover:text-white transition-colors">
+              <button onClick={handleLastMove} className="flex-1 bg-transparent hover:bg-brand-border/40 border border-brand-border/40 rounded py-3 flex items-center justify-center text-brand-secondary hover:text-brand-text transition-colors">
                 <FastForward className="w-5 h-5" />
               </button>
             </div>
