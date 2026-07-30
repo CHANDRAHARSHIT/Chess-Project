@@ -324,8 +324,9 @@ export default function SidebarLayout({
     },
   ];
 
-  const handleLinkClick = (href: string, e: React.MouseEvent) => {
+  const handleLinkClick = (href: string | undefined, e: React.MouseEvent) => {
     e.preventDefault();
+    if (!href) return;
     soundManager.playButtonClick();
     setIsMobileOpen(false);
 
@@ -440,7 +441,7 @@ export default function SidebarLayout({
   type NavItem = {
     name: string;
     href?: string;
-    icon?: React.ElementType;
+    icon?: React.ComponentType<{ className?: string }>;
     avatar?: string;
     subItems?: NavItem[];
     comingSoon?: boolean;
@@ -465,7 +466,7 @@ export default function SidebarLayout({
 
     const isAvatar = item.avatar !== undefined;
     const isCustomLink = customLinkIndex !== undefined;
-    const hasSubItems = Boolean(item.subItems);
+    const hasSubItems = Boolean(item.subItems && item.subItems.length > 0);
     const isSubOpen = mobileOpenItem === item.name;
     const isDisabled = Boolean(item.comingSoon);
 
@@ -482,7 +483,7 @@ export default function SidebarLayout({
           <a
             href={isDisabled ? "#" : hasSubItems ? "#" : item.href}
             onMouseEnter={(e) => {
-              if (hasSubItems && !isMobileOpen && !isDisabled) {
+              if (hasSubItems && !isMobileOpen && !isDisabled && item.subItems) {
                 if (hoverTimeout.current) clearTimeout(hoverTimeout.current);
                 const rect = e.currentTarget.getBoundingClientRect();
                 setHoveredSubMenu({
@@ -545,11 +546,11 @@ export default function SidebarLayout({
                   alt={item.name}
                   className={`w-6 h-6 rounded-full shrink-0 ${isDisabled ? "grayscale opacity-50" : ""}`}
                 />
-              ) : (
+              ) : Icon ? (
                 <Icon
                   className={`w-5 h-5 shrink-0 ${isActive ? "text-brand-accent" : `text-brand-secondary ${!isDisabled ? "group-hover/navitem:text-brand-text" : ""}`}`}
                 />
-              )}
+              ) : null}
             </div>
 
             <span
@@ -639,7 +640,7 @@ export default function SidebarLayout({
           <div
             className={`transition-all duration-300 overflow-hidden flex flex-col ml-[72px] mr-2 ${isSubOpen ? "max-h-[500px] mt-1 mb-2 opacity-100" : "max-h-0 opacity-0"}`}
           >
-            {item.subItems.map((subItem: NavItem) => {
+            {item.subItems?.map((subItem: NavItem) => {
               const SubIcon = subItem.icon;
               const currentPathWithSearch = location.pathname + location.search;
               const isSubActive =
@@ -665,9 +666,11 @@ export default function SidebarLayout({
                         : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 cursor-pointer"
                   }`}
                 >
-                  <SubIcon
-                    className={`w-[16px] h-[16px] shrink-0 ${isSubActive ? "text-brand-accent" : "text-brand-secondary"}`}
-                  />
+                  {SubIcon && (
+                    <SubIcon
+                      className={`w-[16px] h-[16px] shrink-0 ${isSubActive ? "text-brand-accent" : "text-brand-secondary"}`}
+                    />
+                  )}
                   <span className="tracking-wide">{subItem.name}</span>
                 </a>
               );
@@ -977,9 +980,11 @@ export default function SidebarLayout({
                         : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06] cursor-pointer"
                   }`}
                 >
-                  <SubIcon
-                    className={`w-[18px] h-[18px] shrink-0 ${isSubActive ? "text-brand-accent" : subItem.comingSoon ? "text-brand-secondary" : "text-brand-accent/80"}`}
-                  />
+                  {SubIcon && (
+                    <SubIcon
+                      className={`w-[18px] h-[18px] shrink-0 ${isSubActive ? "text-brand-accent" : subItem.comingSoon ? "text-brand-secondary" : "text-brand-accent/80"}`}
+                    />
+                  )}
                   <span className="flex-1 tracking-wide">{subItem.name}</span>
                 </a>
               );
