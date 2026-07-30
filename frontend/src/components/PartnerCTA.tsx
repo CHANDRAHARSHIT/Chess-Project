@@ -95,7 +95,7 @@ export default function ContactSection() {
     <section
       ref={ctaSectionRef}
       id="contact-us"
-      className="relative z-10 min-h-[calc(100vh-110px)] flex items-center justify-center py-16 px-6 overflow-hidden"
+      className="relative z-10 w-full flex items-center justify-center py-6 px-4 sm:px-6 lg:px-8 overflow-hidden bg-brand-bg"
     >
       {/* Gold grid background pattern */}
       <div className="contact-page-bg" />
@@ -223,7 +223,7 @@ export default function ContactSection() {
                 type="submit"
                 disabled={status === "submitting"}
                 onClick={() => soundManager.playButtonClick()}
-                className="contact-btn font-sans flex items-center justify-center gap-2 disabled:opacity-75 disabled:pointer-events-none"
+                className="contact-btn btn-glow-container cta-shine group font-sans flex items-center justify-center gap-2 disabled:opacity-75 disabled:pointer-events-none"
               >
                 {status === "submitting" ? (
                   <>
@@ -236,7 +236,7 @@ export default function ContactSection() {
                     <img
                       src="/arrow.svg"
                       alt="arrow"
-                      className="arrow w-7 h-7 inline-block"
+                      className="arrow w-5 h-5 inline-block transition-transform duration-300 group-hover:translate-x-1"
                     />
                   </>
                 )}
