@@ -4,6 +4,9 @@ import { requireAuth } from "../middleware/auth.middleware.js";
 
 const router = Router();
 
+// Extract FIDE games
+router.post("/extract", requireAuth, OpponentController.extractFideGames);
+
 // Ingest games for an opponent
 router.post("/ingest", requireAuth, OpponentController.ingestGames);
 

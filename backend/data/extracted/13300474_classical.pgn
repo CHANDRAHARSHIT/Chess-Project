@@ -1,0 +1,379 @@
+[Event "59th Biel GMT Chess960"]
+[Site "Biel SUI"]
+[Date "2026.07.11"]
+[Round "1.1"]
+[White "Aronian,L"]
+[Black "Bluebaum,M"]
+[Result "1-0"]
+[WhiteTitle "GM"]
+[BlackTitle "GM"]
+[WhiteElo "2724"]
+[BlackElo "2694"]
+[WhiteFideId "13300474"]
+[BlackFideId "24651516"]
+[Variant "Chess960"]
+[SetUp "1"]
+[FEN "qnbnrkrb/pppppppp/8/8/8/8/PPPPPPPP/QNBNRKRB w KQkq - 0 1"]
+[EventDate "2026.07.11"]
+
+1. d4 d5 2. Nbc3 b6 3. O-O Ne6 4. g3 Bb7 5. e3 c5 6. f4 cxd4 7. Nb5 Ba6 8. a4 g6
+9. Qa2 Bxb5 10. axb5 Nc7 11. e4 Nxb5 12. f5 Qc6 13. e5 Nc7 14. c3 gxf5 15. Rxf5
+e6 16. Rh5 dxc3 17. Rxh7 Nd7 18. Nxc3 O-O-O 19. Bf4 Bg7 20. Qxa7 Qa8 21. Qxa8+
+Nxa8 22. Nb5 Kb8 23. Nd6 Rdf8 24. h4 Nc7 25. h5 Bxe5 26. Bxe5 Nxe5 27. Rxe5
+Rxg3+ 28. Kh2 Rb3 29. Re2 Nb5 30. Nxb5 Rxb5 31. h6 d4 32. Bf3 Rf5 33. Bg4 Rf6
+34. Rg2 d3 35. Rd2 Rg8 36. Kh3 Rgg6 37. Rxd3 Rxh6+ 38. Rxh6 Rxh6+ 39. Kg3 Kc7
+40. Bf3 e5 41. Be4 Rh5 42. Kg4 Rh2 43. b3 Rf2 44. Rf3 Rb2 45. Rxf7+ Kd6 46. Rf3
+Kc5 47. Kf5 Kb4 48. Bd5 Re2 49. Rh3 b5 50. Rh4+ Kc5 51. Ke6 b4 52. Rc4+ Kb5 53.
+Re4 Rh2 54. Kxe5 Rh5+ 55. Kd4 Rh6 56. Bc4+ Ka5 57. Re5+ Kb6 58. Rb5+ 1-0
+
+[Event "59th Biel GMT Chess960"]
+[Site "Biel SUI"]
+[Date "2026.07.11"]
+[Round "2.3"]
+[White "Le,Quang Liem"]
+[Black "Aronian,L"]
+[Result "0-1"]
+[WhiteTitle "GM"]
+[BlackTitle "GM"]
+[WhiteElo "2731"]
+[BlackElo "2724"]
+[WhiteFideId "12401137"]
+[BlackFideId "13300474"]
+[Variant "Chess960"]
+[SetUp "1"]
+[FEN "nrqbnkbr/pppppppp/8/8/8/8/PPPPPPPP/NRQBNKBR w KQkq - 0 1"]
+[EventDate "2026.07.11"]
+
+1. d4 f6 2. Nb3 d5 3. h4 c6 4. h5 Nb6 5. Nc5 Nd7 6. Ned3 Nxc5 7. Nxc5 b6 8. Nd3
+Nd6 9. c3 Bf7 10. Bc2 Bc7 11. Bh2 Qd7 12. e3 Ne4 13. Qe1 Bxh2 14. Rxh2 Qc7 15.
+Kg1 c5 16. f3 Ng5 17. Rd1 O-O 18. Qh4 Rbd8 19. Ne5 Be8 20. Ng6 Rf7 21. Rf1 h6
+22. f4 Ne4 23. Bxe4 dxe4 24. f5 Bb5 25. Rf2 cxd4 26. exd4 Rxd4 27. Rf1 Rd2 28.
+Re1 Qc5+ 29. Kh1 Qxf5 30. Rh3 e5 31. c4 Bc6 32. Rg3 e3 33. Kh2 Qf2 34. Qh3 Bd7 0-1
+
+[Event "59th Biel GMT Chess960"]
+[Site "Biel SUI"]
+[Date "2026.07.11"]
+[Round "3.1"]
+[White "Aronian,L"]
+[Black "Suleymanli,Aydin"]
+[Result "0-1"]
+[WhiteTitle "GM"]
+[BlackTitle "GM"]
+[WhiteElo "2724"]
+[BlackElo "2657"]
+[WhiteFideId "13300474"]
+[BlackFideId "13413937"]
+[Variant "Chess960"]
+[SetUp "1"]
+[FEN "nrkbnqbr/pppppppp/8/8/8/8/PPPPPPPP/NRKBNQBR w KQkq - 0 1"]
+[EventDate "2026.07.11"]
+
+1. f4 Nb6 2. d3 c6 3. c4 d5 4. cxd5 cxd5 5. e4 dxe4 6. dxe4 Bc7 7. a4 f5 8. e5
+O-O-O 9. Nf3 Kb8 10. Bc2 Bc4 11. Qe1 e6 12. O-O-O Nd5 13. Rd4 Ba6 14. a5 Ka8 15.
+Nb3 Bb8 16. Kb1 Nec7 17. g3 Nb5 18. Rd2 Rc8 19. Rxd5 exd5 20. Nfd4 Nxd4 21. Bxd4
+g6 22. Qd2 Qe7 23. Bc3 d4 24. Nxd4 Rhd8 25. Rd1 Qe8 26. Bb3 Bc4 27. Bxc4 Rxc4
+28. a6 Qd7 29. e6 Qd5 30. Re1 bxa6 31. Qe2 Re8 32. g4 fxg4 33. Qxg4 Bc7 34. f5
+gxf5 35. Qh5 Re7 36. Qg5 Bd6 37. Nc2 Re4 38. Rxe4 Qxe4 39. Qg8+ Kb7 0-1
+
+[Event "59th Biel GMT Chess960"]
+[Site "Biel SUI"]
+[Date "2026.07.11"]
+[Round "4.2"]
+[White "Erdogmus,Yagiz Kaan"]
+[Black "Aronian,L"]
+[Result "1-0"]
+[WhiteTitle "GM"]
+[BlackTitle "GM"]
+[WhiteElo "2713"]
+[BlackElo "2724"]
+[WhiteFideId "44599790"]
+[BlackFideId "13300474"]
+[Variant "Chess960"]
+[SetUp "1"]
+[FEN "rqnnkbbr/pppppppp/8/8/8/8/PPPPPPPP/RQNNKBBR w KQkq - 0 1"]
+[EventDate "2026.07.11"]
+
+1. d4 d5 2. c3 Nd6 3. f3 f6 4. e4 c6 5. Bd3 e5 6. Ne2 Ne6 7. exd5 cxd5 8. Ne3
+exd4 9. cxd4 Qd8 10. Nxd5 Rc8 11. Ndc3 g6 12. Be3 Bg7 13. O-O Bf7 14. Qe1 O-O
+15. Qf2 b6 16. Rad1 f5 17. Ba6 Rc7 18. Nd5 Rd7 19. Bd3 b5 20. Nb4 Nc4 21. Bxc4
+bxc4 22. Nc6 Qc7 23. d5 Nd8 24. Ne7+ Kh8 25. d6 Rxd6 26. Bf4 Nb7 27. Nd5 Qa5 28.
+Bxd6 Nxd6 29. Ndc3 Nb7 30. Nf4 Nc5 31. Qe3 g5 32. Nfe2 f4 33. Qe7 Nd3 34. Ne4
+Qxa2 35. Nxg5 Bg8 36. Ra1 Qxb2 37. Rxa7 h6 38. Rb7 Qf6 39. Qxf6 Bxf6 40. Ne4 Bd5
+41. Rc7 Be5 42. Rd7 Bc6 43. Re7 Rb8 44. h3 Bg7 45. Nd6 Bf8 46. Rc7 Bxd6 47. Rxc6
+Bc5+ 48. Kh2 Rb4 49. Nxf4 Be3 50. Nd5 1-0
+
+[Event "59th Biel GMT Chess960"]
+[Site "Biel SUI"]
+[Date "2026.07.11"]
+[Round "5.1"]
+[White "Aronian,L"]
+[Black "Martinez Alcantara,Jose Eduardo"]
+[Result "0-1"]
+[WhiteTitle "GM"]
+[BlackTitle "GM"]
+[WhiteElo "2724"]
+[BlackElo "2650"]
+[WhiteFideId "13300474"]
+[BlackFideId "3805662"]
+[Variant "Chess960"]
+[SetUp "1"]
+[FEN "brkqnnrb/pppppppp/8/8/8/8/PPPPPPPP/BRKQNNRB w KQkq - 0 1"]
+[EventDate "2026.07.11"]
+
+1. e4 g6 2. d4 b6 3. g3 d5 4. e5 c5 5. b3 Ne6 6. f4 N8c7 7. c3 f6 8. Ne3 fxe5 9.
+fxe5 Bg7 10. Qe2 Qd7 11. Rf1 Bh6 12. Nc2 cxd4 13. cxd4 Bb7 14. Qe1 Ng5 15. O-O-O
+O-O-O 16. Kb1 Kb8 17. Bb2 Ne4 18. Bf3 Rgf8 19. Be2 Ba6 20. Bxa6 Nxa6 21. Qe2
+Bxe3 22. Nxe3 Nc7 23. a4 b5 24. axb5 Nxb5 25. Qd3 Nf2 26. e6 Qb7 27. Rxf2 Rxf2
+28. Ng4 Rff8 29. Ne5 Ka8 30. Nd7 Rf2 31. Nc5 Qc6 32. Qe3 Rxh2 33. Qg5 Qc7 34.
+Rf1 Rh5 35. Qg4 Rf5 36. Rxf5 gxf5 37. Qxf5 Qxg3 38. Qxh7 Qd6 39. Qf7 Rh8 40. Qg7
+Rc8 41. Qf7 a6 42. Ka2 Ka7 43. Qg7 Rc7 44. Qg5 Rc6 45. Kb1 Nc7 46. Qg2 Nxe6 47.
+Na4 Nf4 48. Qh2 Qg6+ 49. Ka2 Nd3 50. Nc5 Nxc5 51. dxc5 Qe6 52. Be5 Kb7 53. b4
+d4+ 54. Ka3 a5 55. Qe2 d3 56. Qb2 Kc8 57. Bf4 Qf6 58. Qg2 Qa1+ 59. Kb3 Qb1+ 60.
+Kc3 Qxb4+ 61. Kxd3 Qb5+ 62. Ke4 Qc4+ 0-1
+
+[Event "59th Biel GMT Chess960"]
+[Site "Biel SUI"]
+[Date "2026.07.11"]
+[Round "7.1"]
+[White "Aronian,L"]
+[Black "Finek,Vaclav"]
+[Result "1-0"]
+[WhiteTitle "GM"]
+[BlackTitle "IM"]
+[WhiteElo "2724"]
+[BlackElo "2593"]
+[WhiteFideId "13300474"]
+[BlackFideId "23718293"]
+[Variant "Chess960"]
+[SetUp "1"]
+[FEN "rkqbrnbn/pppppppp/8/8/8/8/PPPPPPPP/RKQBRNBN w KQkq - 0 1"]
+[EventDate "2026.07.11"]
+
+1. f4 f6 2. e4 e5 3. d3 exf4 4. Qxf4 Nhg6 5. Qg3 Be7 6. Ne3 Bc5 7. Bh5 Re5 8.
+Nf5 Bxg1 9. Rxg1 a5 10. Nf2 a4 11. d4 Rb5 12. d5 Qe8 13. c4 Rb6 14. Rc1 d6 15.
+Nxg7 Qe5 16. Qxe5 fxe5 17. Rc3 Nd7 18. Kc2 Nc5 19. g3 Ka7 20. Rf1 c6 21. Nf5
+cxd5 22. cxd5 Rf8 23. Be2 Bxd5 24. Nxd6 Rxd6 25. exd5 Rxd5 26. Nd3 Rxf1 27. Bxf1
+Ne6 28. Bg2 Rd7 29. Rc4 b5 30. Rc8 Nd4+ 31. Kc3 Nf5 32. Ra8+ Kb6 33. Rb8+ Kc7
+34. Rxb5 Kd6 35. Rd5+ Ke7 36. Rxd7+ Kxd7 37. Bh3 Ke6 38. Nc5+ Kd5 39. Bxf5 1-0
+
+[Event "59th Biel INV Chess960"]
+[Site "Biel SUI"]
+[Date "2026.07.11"]
+[Round "6.2"]
+[White "Xiao,Tong(QD)"]
+[Black "Aronian,L"]
+[Result "0-1"]
+[WhiteTitle "GM"]
+[BlackTitle "GM"]
+[WhiteElo "2599"]
+[BlackElo "2724"]
+[WhiteFideId "8622388"]
+[BlackFideId "13300474"]
+[Variant "Chess960"]
+[SetUp "1"]
+[FEN "bnnrkqrb/pppppppp/8/8/8/8/PPPPPPPP/BNNRKQRB w KQkq - 0 1"]
+[EventDate "2026.07.11"]
+
+1. d4 b6 2. e3 e6 3. c4 c5 4. dxc5 Qxc5 5. b3 O-O 6. Qe2 d5 7. cxd5 Bxd5 8. O-O
+Bb7 9. Rxd8 Rxd8 10. Rd1 Rxd1+ 11. Qxd1 Nd7 12. Ne2 Qc7 13. g3 Bxh1 14. Kxh1 g6
+15. Bxh8 Kxh8 16. Nbc3 Nd6 17. Kg2 Kg7 18. f3 Nf5 19. Kf2 Ne5 20. Nb5 Qc6 21.
+Nbd4 Nxd4 22. Nxd4 Qc3 23. Ke2 Qb2+ 24. Qd2 Qa1 25. h3 Qh1 26. f4 Nf3 27. Qc3
+Kh6 28. Nxf3 Qg2+ 29. Kd3 Qxf3 30. g4 Qxh3 31. Qc7 Qxg4 32. Qxa7 Qd1+ 33. Kc3
+Kg7 34. Qxb6 Qc1+ 35. Kd3 h5 36. Qd4+ Kh7 37. Qf6 Qb1+ 38. Ke2 Qxa2+ 39. Kf3
+Qa8+ 40. Kf2 Kg8 41. b4 Qa2+ 42. Kg3 Qd2 43. b5 Qxe3+ 44. Kh4 Qg1 45. Qd8+ Kg7 0-1
+
+[Event "59th Biel GMT Classical"]
+[Site "Biel SUI"]
+[Date "2026.07.14"]
+[Round "1.1"]
+[White "Suleymanli,Aydin"]
+[Black "Aronian,L"]
+[Result "1/2-1/2"]
+[WhiteTitle "GM"]
+[BlackTitle "GM"]
+[WhiteElo "2657"]
+[BlackElo "2724"]
+[ECO "D16"]
+[Opening "QGD Slav"]
+[Variation "Soultanbeieff variation"]
+[WhiteFideId "13413937"]
+[BlackFideId "13300474"]
+[EventDate "2026.07.14"]
+
+1. d4 d5 2. c4 c6 3. Nf3 Nf6 4. Nc3 dxc4 5. a4 e6 6. e3 c5 7. Bxc4 cxd4 8. exd4
+Nc6 9. O-O Be7 10. Qe2 O-O 11. Rd1 Nb4 12. a5 Bd7 13. d5 exd5 14. Nxd5 Nbxd5 15.
+Bxd5 Nxd5 16. Rxd5 Qe8 17. Re5 Be6 18. Bg5 h6 19. Bxe7 Qxe7 20. Nd4 Rae8 21. Re1
+Qf6 22. Nxe6 Rxe6 23. Rxe6 Qxe6 24. Qxe6 fxe6 25. Rxe6 Rf5 26. a6 Ra5 27. g4 b6
+28. Re7 Rxa6 29. Rb7 Ra4 30. h3 h5 31. b3 Rb4 32. Rxa7 hxg4 33. Ra4 Rxb3 34.
+hxg4 b5 35. Ra8+ Kf7 36. Kg2 Rb4 37. Kg3 Rb3+ 38. Kg2 Rb4 39. Kg3 Rb3+ 40. Kg2 1/2-1/2
+
+[Event "59th Biel GMT Classical"]
+[Site "Biel SUI"]
+[Date "2026.07.15"]
+[Round "2.2"]
+[White "Aronian,L"]
+[Black "Erdogmus,Yagiz Kaan"]
+[Result "1/2-1/2"]
+[WhiteTitle "GM"]
+[BlackTitle "GM"]
+[WhiteElo "2724"]
+[BlackElo "2713"]
+[ECO "E11"]
+[Opening "Bogo-Indian defence"]
+[WhiteFideId "13300474"]
+[BlackFideId "44599790"]
+[EventDate "2026.07.14"]
+
+1. d4 Nf6 2. c4 e6 3. Nf3 Bb4+ 4. Bd2 Bxd2+ 5. Qxd2 d5 6. g3 O-O 7. Bg2 c6 8.
+O-O dxc4 9. a4 b5 10. axb5 cxb5 11. Ne5 Nd5 12. Nc3 f6 13. Ng4 Qd7 14. Ra5 a6
+15. Nxb5 Nc6 16. Raa1 Nde7 17. Na3 Rb8 18. Nc2 e5 19. Nge3 Nxd4 20. Nxd4 Qxd4
+21. Rfd1 Qxd2 22. Rxd2 Rb4 23. h4 g6 24. Ra5 Nf5 25. Nd5 Rb5 26. Ra4 Kg7 27. Nc3
+Rc5 28. e3 Rf7 29. Rb4 Rcc7 30. Bf1 Rfd7 31. Rxd7+ Bxd7 32. Bxc4 a5 33. Nd5 axb4
+34. Nxc7 Nd6 35. Be2 b3 36. Kf1 Bf5 37. Ke1 Kf7 38. Na6 Ne4 39. Bc4+ Be6 40. Bd3
+Nd6 41. Nc5 f5 42. Kd2 f4 43. Kc3 fxg3 44. fxg3 Ke7 45. Kb4 Bf7 46. e4 h6 47.
+Nxb3 Bxb3 48. Kxb3 Kd7 49. Kc3 Kc6 50. Bb1 Kc5 51. Bd3 Kc6 52. Bb1 Kc5 53. Kd3
+Nc4 54. Kc3 Nd6 1/2-1/2
+
+[Event "59th Biel GMT Classical"]
+[Site "Biel SUI"]
+[Date "2026.07.16"]
+[Round "3.1"]
+[White "Martinez Alcantara,Jose Eduardo"]
+[Black "Aronian,L"]
+[Result "1/2-1/2"]
+[WhiteTitle "GM"]
+[BlackTitle "GM"]
+[WhiteElo "2650"]
+[BlackElo "2724"]
+[ECO "C42"]
+[Opening "Petrov"]
+[Variation "classical attack, close variation"]
+[WhiteFideId "3805662"]
+[BlackFideId "13300474"]
+[EventDate "2026.07.14"]
+
+1. e4 e5 2. Nf3 Nf6 3. Nxe5 d6 4. Nf3 Nxe4 5. d3 Nf6 6. d4 d5 7. Bd3 Bd6 8. O-O
+O-O 9. Bg5 Bg4 10. Nbd2 Nbd7 11. Re1 c6 12. c3 Qc7 13. Qc2 Rfe8 14. Bh4 Bh5 15.
+Bg3 Bxg3 16. hxg3 Bg6 17. Bxg6 hxg6 18. a4 a5 19. Qd3 Qd6 20. Ng5 Nf8 21. Ndf3
+Ng4 22. Nh2 Nxh2 23. Kxh2 Nh7 24. Nxh7 Kxh7 25. Kg1 Kg8 26. Kh2 Kh7 27. Kg1 Kg8
+28. Kh2 Kh7 1/2-1/2
+
+[Event "59th Biel GMT Classical"]
+[Site "Biel SUI"]
+[Date "2026.07.17"]
+[Round "4.1"]
+[White "Aronian,L"]
+[Black "Le,Quang Liem"]
+[Result "1/2-1/2"]
+[WhiteTitle "GM"]
+[BlackTitle "GM"]
+[WhiteElo "2724"]
+[BlackElo "2731"]
+[ECO "D37"]
+[Opening "QGD"]
+[Variation "classical variation (5.Bf4)"]
+[WhiteFideId "13300474"]
+[BlackFideId "12401137"]
+[EventDate "2026.07.14"]
+
+1. c4 e6 2. Nc3 d5 3. d4 Be7 4. Nf3 Nf6 5. Bf4 O-O 6. e3 c5 7. dxc5 Bxc5 8. cxd5
+Nxd5 9. Nxd5 exd5 10. Bd3 Bb4+ 11. Nd2 Nc6 12. O-O Be7 13. Rc1 Qb6 14. Nb3 Be6
+15. Re1 Rac8 16. h3 Rfd8 17. Re2 d4 18. Nxd4 Nxd4 19. exd4 Rxc1 20. Qxc1 Qxd4
+21. Bf5 Qd1+ 22. Qxd1 Rxd1+ 23. Kh2 Bxf5 24. Rxe7 Bd7 25. Re2 f6 26. Rd2 Rxd2
+27. Bxd2 Bc6 28. Bc3 Bd7 29. Bd2 Bc6 30. Bc3 Bd7 31. Bd2 1/2-1/2
+
+[Event "59th Biel GMT Classical"]
+[Site "Biel SUI"]
+[Date "2026.07.18"]
+[Round "5.1"]
+[White "Bluebaum,M"]
+[Black "Aronian,L"]
+[Result "1/2-1/2"]
+[WhiteTitle "GM"]
+[BlackTitle "GM"]
+[WhiteElo "2694"]
+[BlackElo "2724"]
+[ECO "D10"]
+[Opening "QGD Slav defence"]
+[Variation "exchange variation"]
+[WhiteFideId "24651516"]
+[BlackFideId "13300474"]
+[EventDate "2026.07.14"]
+
+1. d4 d5 2. c4 c6 3. cxd5 cxd5 4. Bg5 h6 5. Bh4 g6 6. Nc3 Bg7 7. e3 Nf6 8. Bd3
+O-O 9. f4 Nc6 10. h3 Nb4 11. Bb1 Ne4 12. Nxe4 dxe4 13. Bxe4 g5 14. fxg5 hxg5 15.
+Bf2 e5 16. Ne2 exd4 17. exd4 Re8 18. Bf3 Bf5 19. O-O Nd3 20. Bg3 Bg6 21. Qd2 Qe7
+22. Rad1 Rad8 23. Qc3 Nb4 24. Qd2 Nc2 25. Bf2 Ne3 26. Bxe3 Qxe3+ 27. Qxe3 Rxe3
+28. Rd2 Bd3 29. Rfd1 Bxe2 30. Rxe2 Rxe2 31. Bxe2 Rxd4 32. b3 Rxd1+ 33. Bxd1 b6
+34. g4 Bf6 35. Bc2 Bg7 36. Bd1 Bf6 37. Bc2 Bg7 38. Bd1 Bf6 1/2-1/2
+
+[Event "59th Biel GMT Cl Final"]
+[Site "Biel SUI"]
+[Date "2026.07.21"]
+[Round "1.1"]
+[White "Le,Quang Liem"]
+[Black "Aronian,L"]
+[Result "1/2-1/2"]
+[WhiteTitle "GM"]
+[BlackTitle "GM"]
+[WhiteElo "2731"]
+[BlackElo "2724"]
+[ECO "D78"]
+[Opening "Neo-Gruenfeld, 6.O-O c6"]
+[WhiteFideId "12401137"]
+[BlackFideId "13300474"]
+[EventDate "2026.07.21"]
+
+1. d4 d5 2. c4 c6 3. Nf3 Nf6 4. g3 g6 5. Bg2 Bg7 6. O-O O-O 7. Qa4 Nbd7 8. cxd5
+Nb6 9. Qb3 Qxd5 10. Qd1 Rd8 11. a4 Qh5 12. a5 Nbd5 13. Nc3 Bh3 14. Bxh3 Qxh3 15.
+Qb3 Qc8 16. Re1 Nc7 17. e4 Ne6 18. Ra4 b5 19. axb6 axb6 20. Be3 Ng4 21. d5 Nc5
+22. Rxa8 Nxb3 23. Rxc8 Rxc8 24. Bxb6 Bxc3 25. bxc3 cxd5 26. exd5 Nf6 27. Rxe7
+Nxd5 28. Rb7 Nxb6 29. Rxb6 Rxc3 30. Kg2 Nc5 31. Ne5 Nd3 32. Nxd3 Rxd3 33. Ra6
+Kg7 34. Rb6 Kg8 35. Ra6 Kg7 36. Rb6 Kg8 37. Ra6 1/2-1/2
+
+[Event "59th Biel GMT Cl Final"]
+[Site "Biel SUI"]
+[Date "2026.07.22"]
+[Round "2.2"]
+[White "Erdogmus,Yagiz Kaan"]
+[Black "Aronian,L"]
+[Result "1/2-1/2"]
+[WhiteTitle "GM"]
+[BlackTitle "GM"]
+[WhiteElo "2713"]
+[BlackElo "2724"]
+[ECO "D10"]
+[Opening "QGD Slav defence"]
+[WhiteFideId "44599790"]
+[BlackFideId "13300474"]
+[EventDate "2026.07.21"]
+
+1. d4 d5 2. c4 c6 3. Nc3 Nf6 4. e3 Bf5 5. f3 h5 6. Bd3 Bxd3 7. Qxd3 dxc4 8. Qxc4
+Nbd7 9. Nh3 e6 10. O-O Rc8 11. Rd1 b5 12. Qb3 a6 13. e4 c5 14. Be3 cxd4 15. Bxd4
+Bc5 16. Nf2 Qb6 17. Bxc5 Rxc5 18. Rd4 O-O 19. Rad1 Qa7 20. a4 Ne5 21. axb5 axb5
+22. Kh1 Nc6 23. R4d2 b4 24. Ne2 Rb8 25. Qe3 Ra5 26. Qxa7 Rxa7 27. h4 g6 28. Nd3
+Nd7 29. Nxb4 Rxb4 30. Rxd7 Rxb2 31. Rxa7 Nxa7 32. Rd7 Rxe2 33. Rxa7 Re1+ 34. Kh2
+Re2 35. Kh1 Re1+ 36. Kh2 Re2 37. Kh1 1/2-1/2
+
+[Event "59th Biel GMT Cl Final"]
+[Site "Biel SUI"]
+[Date "2026.07.23"]
+[Round "3.1"]
+[White "Aronian,L"]
+[Black "Suleymanli,Aydin"]
+[Result "1/2-1/2"]
+[WhiteTitle "GM"]
+[BlackTitle "GM"]
+[WhiteElo "2724"]
+[BlackElo "2657"]
+[ECO "D38"]
+[Opening "QGD"]
+[Variation "Ragozin variation"]
+[WhiteFideId "13300474"]
+[BlackFideId "13413937"]
+[EventDate "2026.07.21"]
+
+1. d4 Nf6 2. c4 e6 3. Nf3 d5 4. Nc3 Bb4 5. Bg5 h6 6. Bxf6 Qxf6 7. e3 O-O 8. Rc1
+Nc6 9. h3 e5 10. dxe5 Nxe5 11. Nxe5 Qxe5 12. Qxd5 Qf6 13. Qd4 Qg6 14. Bd3 Qxg2
+15. Ke2 Bxc3 16. bxc3 Qc6 17. Rhg1 g6 18. Rg3 Re8 19. Qf4 Kg7 20. Qd4+ Kg8 21.
+Qf4 Kg7 22. Qd4+ Kg8 1/2-1/2

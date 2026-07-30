@@ -395,8 +395,7 @@ export const ModelName = {
   ProductFeature: 'ProductFeature',
   WebhookEvent: 'WebhookEvent',
   CuratedPuzzle: 'CuratedPuzzle',
-  Opening: 'Opening',
-  OpponentGame: 'OpponentGame'
+  Opening: 'Opening'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -412,7 +411,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "account" | "session" | "verificationToken" | "subscription" | "payment" | "billingProfile" | "product" | "productFeature" | "webhookEvent" | "curatedPuzzle" | "opening" | "opponentGame"
+    modelProps: "user" | "account" | "session" | "verificationToken" | "subscription" | "payment" | "billingProfile" | "product" | "productFeature" | "webhookEvent" | "curatedPuzzle" | "opening"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1304,80 +1303,6 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    OpponentGame: {
-      payload: Prisma.$OpponentGamePayload<ExtArgs>
-      fields: Prisma.OpponentGameFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.OpponentGameFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpponentGamePayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.OpponentGameFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpponentGamePayload>
-        }
-        findFirst: {
-          args: Prisma.OpponentGameFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpponentGamePayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.OpponentGameFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpponentGamePayload>
-        }
-        findMany: {
-          args: Prisma.OpponentGameFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpponentGamePayload>[]
-        }
-        create: {
-          args: Prisma.OpponentGameCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpponentGamePayload>
-        }
-        createMany: {
-          args: Prisma.OpponentGameCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        createManyAndReturn: {
-          args: Prisma.OpponentGameCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpponentGamePayload>[]
-        }
-        delete: {
-          args: Prisma.OpponentGameDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpponentGamePayload>
-        }
-        update: {
-          args: Prisma.OpponentGameUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpponentGamePayload>
-        }
-        deleteMany: {
-          args: Prisma.OpponentGameDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.OpponentGameUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateManyAndReturn: {
-          args: Prisma.OpponentGameUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpponentGamePayload>[]
-        }
-        upsert: {
-          args: Prisma.OpponentGameUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpponentGamePayload>
-        }
-        aggregate: {
-          args: Prisma.OpponentGameAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateOpponentGame>
-        }
-        groupBy: {
-          args: Prisma.OpponentGameGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.OpponentGameGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.OpponentGameCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.OpponentGameCountAggregateOutputType> | number
-        }
-      }
-    }
   }
 } & {
   other: {
@@ -1601,20 +1526,6 @@ export const OpeningScalarFieldEnum = {
 export type OpeningScalarFieldEnum = (typeof OpeningScalarFieldEnum)[keyof typeof OpeningScalarFieldEnum]
 
 
-export const OpponentGameScalarFieldEnum = {
-  id: 'id',
-  opponentUsername: 'opponentUsername',
-  opponentColor: 'opponentColor',
-  result: 'result',
-  opponentRating: 'opponentRating',
-  timeControl: 'timeControl',
-  moves: 'moves',
-  createdAt: 'createdAt'
-} as const
-
-export type OpponentGameScalarFieldEnum = (typeof OpponentGameScalarFieldEnum)[keyof typeof OpponentGameScalarFieldEnum]
-
-
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -1629,13 +1540,6 @@ export const NullableJsonNullValueInput = {
 } as const
 
 export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
-
-
-export const JsonNullValueInput = {
-  JsonNull: JsonNull
-} as const
-
-export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
 export const QueryMode = {
@@ -1895,7 +1799,6 @@ export type GlobalOmitConfig = {
   webhookEvent?: Prisma.WebhookEventOmit
   curatedPuzzle?: Prisma.CuratedPuzzleOmit
   opening?: Prisma.OpeningOmit
-  opponentGame?: Prisma.OpponentGameOmit
 }
 
 /* Types for Logging */

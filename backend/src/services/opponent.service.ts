@@ -6,8 +6,8 @@ import { EngineService } from './engine.service.js';
 
 const DATA_FILE = path.join(process.cwd(), 'data', 'opponentGames.json');
 const ECO_FILE = path.join(process.cwd(), 'data', 'ecoOpenings.json');
-const MIN_GAMES = 3;
-const MIN_GAMES_FOR_AVOIDED_OPENINGS = 50;
+const getMinGames = (count: number) => count < 20 ? 1 : 3;
+const MIN_GAMES_FOR_AVOIDED_OPENINGS = 10;
 
 // Ensure data directory exists
 if (!fs.existsSync(path.dirname(DATA_FILE))) {
@@ -88,6 +88,7 @@ function getPhase(fen: string, ply: number): "opening" | "middlegame" | "endgame
 export interface OpponentGame {
   pgnHash: string;
   normalizedUsername: string;
+  fideId?: number | null;
   opponentColor: 'w' | 'b' | 'unknown';
   opponentRating: number | null;
   result: string;
@@ -143,7 +144,7 @@ export const OpponentService = {
     saveMultiPvCache(multiPvCache);
   },
 
-  ingestGames(username: string, pgns: string[]) {
+  ingestGames(username: string, pgns: string[], targetFideId?: number) {
     const normalizedUsername = username.trim().toLowerCase();
     const allGames = loadAllGames();
     
@@ -176,24 +177,46 @@ export const OpponentService = {
 
       const header = chess.header();
       
-      const whitePlayer = (header['White'] || '').toLowerCase();
-      const blackPlayer = (header['Black'] || '').toLowerCase();
-      
       let opponentColor: 'w' | 'b' | 'unknown' = 'unknown';
       let opponentRating: number | null = null;
+      let matchedFideId: number | null = null;
 
-      // Word-based matching: split username into words and check all appear in the player name.
-      // This handles "Nakamura, Hikaru" matching input "Hikaru Nakamura" (reversed/comma-separated).
-      const usernameWords = normalizedUsername.split(/[\s,]+/).filter(Boolean);
-      const playerMatches = (playerName: string) => {
-        // First try exact substring match (handles single-word usernames like "Hikaru")
-        if (playerName.includes(normalizedUsername)) return true;
-        // Then try: every word in the input appears somewhere in the player name
-        return usernameWords.length > 1 && usernameWords.every(word => playerName.includes(word));
-      };
+      const whiteFideId = header['WhiteFideId']?.trim();
+      const blackFideId = header['BlackFideId']?.trim();
+      const targetIdStr = targetFideId ? String(targetFideId) : null;
 
-      const matchesWhite = playerMatches(whitePlayer);
-      const matchesBlack = playerMatches(blackPlayer);
+      let matchesWhite = false;
+      let matchesBlack = false;
+
+      // 1. Try exact FIDE ID match first (if targetFideId is provided)
+      if (targetIdStr) {
+        if (whiteFideId === targetIdStr) {
+          matchesWhite = true;
+          matchedFideId = targetFideId || null;
+        } else if (blackFideId === targetIdStr) {
+          matchesBlack = true;
+          matchedFideId = targetFideId || null;
+        }
+      }
+
+      // 2. Fall back to name-based substring matching if FIDE ID match failed or wasn't provided
+      if (!matchesWhite && !matchesBlack) {
+        const whitePlayer = (header['White'] || '').toLowerCase();
+        const blackPlayer = (header['Black'] || '').toLowerCase();
+
+        // Word-based matching: split username into words and check all appear in the player name.
+        // This handles "Nakamura, Hikaru" matching input "Hikaru Nakamura" (reversed/comma-separated).
+        const usernameWords = normalizedUsername.split(/[\s,]+/).filter(Boolean);
+        const playerMatches = (playerName: string) => {
+          // First try exact substring match (handles single-word usernames like "Hikaru")
+          if (playerName.includes(normalizedUsername)) return true;
+          // Then try: every word in the input appears somewhere in the player name
+          return usernameWords.length > 1 && usernameWords.every(word => playerName.includes(word));
+        };
+
+        matchesWhite = playerMatches(whitePlayer);
+        matchesBlack = playerMatches(blackPlayer);
+      }
 
       if (matchesWhite && !matchesBlack) {
         opponentColor = 'w';
@@ -246,6 +269,7 @@ export const OpponentService = {
       const game: OpponentGame = {
         pgnHash,
         normalizedUsername,
+        fideId: matchedFideId,
         opponentColor,
         opponentRating,
         result: rawResult,
@@ -377,7 +401,8 @@ export const OpponentService = {
       else if (game.opponentResult === 'draw') openingStats[key].draws++;
     }
 
-    const validStats = Object.values(openingStats).filter(s => s.count >= MIN_GAMES);
+    const minGames = getMinGames(games.length);
+    const validStats = Object.values(openingStats).filter(s => s.count >= minGames);
 
     validStats.forEach(s => {
       const decideCount = s.wins + s.losses + s.draws;
@@ -418,7 +443,7 @@ export const OpponentService = {
     const preferredResponses: Record<string, any[]> = {};
     for (const w1 of Object.keys(responses)) {
       const b1Stats = Object.entries(responses[w1])
-        .filter(([_, s]) => s.count >= MIN_GAMES)
+        .filter(([_, s]) => s.count >= minGames)
         .map(([b1, s]) => {
           const decideCount = s.wins + s.losses + s.draws;
           return {
@@ -436,7 +461,7 @@ export const OpponentService = {
     const standardLines = [];
     for (const op of mostFrequent) {
       const openingGames = games.filter(g => g.opening && g.opening.eco === op.eco && g.opening.name === op.name);
-      if (openingGames.length < MIN_GAMES) continue;
+      if (openingGames.length < minGames) continue;
 
       let maxDepth = 0;
       let standardPrefix: string[] = [];
@@ -533,7 +558,7 @@ export const OpponentService = {
     }
 
     const underperformingVariations = Object.entries(variationStats)
-      .filter(([_, s]) => s.count >= MIN_GAMES)
+      .filter(([_, s]) => s.count >= minGames)
       .map(([prefix, s]) => {
         const decideCount = s.wins + s.losses + s.draws;
         return {
@@ -763,7 +788,7 @@ export const OpponentService = {
       totalGames: games.length,
       classifiedGames,
       unclassifiedGames,
-      threshold: MIN_GAMES,
+      threshold: minGames,
       overallScorePercentage: overallScore,
       mostFrequent,
       mostSuccessful,

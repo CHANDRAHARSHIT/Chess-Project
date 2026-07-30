@@ -1,0 +1,27 @@
+[
+  {
+    "fide_id": 1503014,
+    "canonical_name": "Carlsen, Magnus",
+    "aliases": ["Carlsen, Magnus", "Carlsen,Magnus", "Carlsen,M", "Magnus Carlsen", "Carlsen Magnus"]
+  },
+  {
+    "fide_id": 2016192,
+    "canonical_name": "Nakamura, Hikaru",
+    "aliases": ["Nakamura, Hikaru", "Nakamura,Hikaru", "Nakamura,Hi", "Hikaru Nakamura", "Nakamura Hikaru"]
+  },
+  {
+    "fide_id": 25059530,
+    "canonical_name": "Praggnanandhaa, R",
+    "aliases": ["Praggnanandhaa R", "Praggnanandhaa, R", "Praggnanandhaa,R", "Praggnanandhaa R, ", "Praggnanandhaa R,", "R Praggnanandhaa", "Praggnanandhaa, Rameshbabu"]
+  },
+  {
+    "fide_id": 46616543,
+    "canonical_name": "Gukesh, D",
+    "aliases": ["Gukesh D", "Gukesh, D", "Gukesh,D", "D Gukesh", "Gukesh D,", "Gukesh, Dommaraju", "Dommaraju Gukesh"]
+  },
+  {
+    "fide_id": 13300474,
+    "canonical_name": "Aronian, Levon",
+    "aliases": ["Aronian, Levon", "Aronian,Levon", "Aronian,L", "Levon Aronian"]
+  }
+]

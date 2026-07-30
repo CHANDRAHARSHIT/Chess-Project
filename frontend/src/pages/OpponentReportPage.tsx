@@ -106,11 +106,20 @@ export default function OpponentReportPage() {
             <div>
               <h3 className="text-xs font-mono uppercase tracking-widest text-[#8E8B82] mb-2 mt-4">Avoided Openings</h3>
               {Array.isArray(report.avoidedOpenings) ? (
-                <p className="text-sm text-[#F5F0E8]">{report.avoidedOpenings.join(", ")}</p>
+                <>
+                  <p className="text-sm text-[#F5F0E8]">{report.avoidedOpenings.join(", ")}</p>
+                  {report.totalGames < 50 && (
+                    <p className="text-xs text-[#D4AF6E] mt-2 italic">
+                      * Note: A minimum of 50 games is recommended for the best repertoire analysis.
+                    </p>
+                  )}
+                </>
               ) : (
                 <div className="p-3 rounded-lg bg-[rgba(212,175,110,0.1)] border border-[rgba(212,175,110,0.2)]">
                   <p className="text-xs text-[#D4AF6E]">
                     Insufficient Data. Need {report.avoidedOpenings.minGamesRequired} games, only have {report.avoidedOpenings.currentGames}.
+                    <br />
+                    <span className="italic mt-1 block">* Note: A minimum of 50 games is recommended for the best repertoire analysis.</span>
                   </p>
                 </div>
               )}

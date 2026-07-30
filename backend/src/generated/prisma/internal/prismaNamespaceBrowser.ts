@@ -62,8 +62,7 @@ export const ModelName = {
   ProductFeature: 'ProductFeature',
   WebhookEvent: 'WebhookEvent',
   CuratedPuzzle: 'CuratedPuzzle',
-  Opening: 'Opening',
-  OpponentGame: 'OpponentGame'
+  Opening: 'Opening'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -266,20 +265,6 @@ export const OpeningScalarFieldEnum = {
 export type OpeningScalarFieldEnum = (typeof OpeningScalarFieldEnum)[keyof typeof OpeningScalarFieldEnum]
 
 
-export const OpponentGameScalarFieldEnum = {
-  id: 'id',
-  opponentUsername: 'opponentUsername',
-  opponentColor: 'opponentColor',
-  result: 'result',
-  opponentRating: 'opponentRating',
-  timeControl: 'timeControl',
-  moves: 'moves',
-  createdAt: 'createdAt'
-} as const
-
-export type OpponentGameScalarFieldEnum = (typeof OpponentGameScalarFieldEnum)[keyof typeof OpponentGameScalarFieldEnum]
-
-
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -294,13 +279,6 @@ export const NullableJsonNullValueInput = {
 } as const
 
 export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
-
-
-export const JsonNullValueInput = {
-  JsonNull: JsonNull
-} as const
-
-export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
 export const QueryMode = {

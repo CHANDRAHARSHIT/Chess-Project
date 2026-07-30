@@ -11,6 +11,10 @@ export default function OpponentIngestPage() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  const [fideIdInput, setFideIdInput] = useState("");
+  const [targetFideId, setTargetFideId] = useState<number | undefined>();
+  const [extracting, setExtracting] = useState(false);
+
   const handleIngest = async () => {
     if (!username.trim() || !pgnText.trim()) {
       setError("Please provide a username and at least one game PGN.");
@@ -27,12 +31,40 @@ export default function OpponentIngestPage() {
       // or split by [Event to pass array.
       const pgns = pgnText.split(/(?=\[Event )/).map(p => p.trim()).filter(Boolean);
       
-      const res = await OpponentApiService.ingestGames(username, pgns);
+      const res = await OpponentApiService.ingestGames(username, pgns, targetFideId);
       setResult(res);
     } catch (err: any) {
       setError(err.message || "Failed to ingest games");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleExtract = async () => {
+    const parsedId = parseInt(fideIdInput.trim(), 10);
+    if (isNaN(parsedId)) {
+      setError("Please enter a valid numeric FIDE ID.");
+      return;
+    }
+
+    setExtracting(true);
+    setError("");
+    setResult(null);
+
+    try {
+      const res = await OpponentApiService.extractFideGames(parsedId);
+      if (res.games && res.games.length > 0) {
+        setUsername(res.player.canonical_name);
+        setPgnText(res.games.join("\n\n"));
+        setTargetFideId(res.player.fide_id);
+        setResult({ ingested: 0, skipped: 0, duplicate: 0, message: `Extracted ${res.stats.classicalPassed} classical games!` } as any);
+      } else {
+        setError(`Found 0 classical games for this FIDE ID.`);
+      }
+    } catch (err: any) {
+      setError(err.message || "Failed to extract FIDE games");
+    } finally {
+      setExtracting(false);
     }
   };
 
@@ -87,98 +119,149 @@ export default function OpponentIngestPage() {
               Add Opponent
             </h1>
             <p className="text-xs mt-1" style={{ color: "#8E8B82", fontFamily: "Inter, sans-serif" }}>
-              Paste PGNs to generate a scouting report
+              Extract from FIDE archive or paste PGNs manually
             </p>
           </div>
         </div>
 
         {/* Body */}
-        <div className="flex flex-col p-6 gap-5">
+        <div className="flex flex-col p-6 gap-6">
           {error && (
             <div className="p-4 rounded-lg bg-red-900/20 border border-red-500/30 text-red-200 text-sm">
               {error}
             </div>
           )}
 
-          <div>
-            <label className="block text-xs font-mono uppercase tracking-widest mb-2 text-[#8E8B82]">
-              Opponent Username
+          {/* FIDE Extraction Section */}
+          <div className="p-5 rounded-xl border border-[#D4AF6E]/20 bg-[#D4AF6E]/5">
+            <label className="block text-xs font-mono uppercase tracking-widest mb-3 text-[#D4AF6E]">
+              Extract from FIDE Archive
             </label>
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="e.g. Hikaru"
-              className="w-full text-sm transition-all duration-200 outline-none"
-              style={{
-                background: "rgba(8, 11, 20, 0.8)",
-                border: "1px solid rgba(212, 175, 110, 0.2)",
-                borderRadius: "10px",
-                padding: "10px 14px",
-                color: "#F5F0E8",
-                fontFamily: "Inter, sans-serif"
-              }}
-              onFocus={(e) => {
-                e.currentTarget.style.borderColor = "rgba(212,175,110,0.5)";
-                e.currentTarget.style.boxShadow = "0 0 0 2px rgba(212,175,110,0.08)";
-              }}
-              onBlur={(e) => {
-                e.currentTarget.style.borderColor = "rgba(212,175,110,0.2)";
-                e.currentTarget.style.boxShadow = "none";
-              }}
-            />
+            <div className="flex gap-3">
+              <input
+                type="text"
+                value={fideIdInput}
+                onChange={(e) => setFideIdInput(e.target.value)}
+                placeholder="FIDE ID (e.g. 13300474)"
+                className="flex-1 text-sm transition-all duration-200 outline-none"
+                style={{
+                  background: "rgba(8, 11, 20, 0.8)",
+                  border: "1px solid rgba(212, 175, 110, 0.2)",
+                  borderRadius: "10px",
+                  padding: "10px 14px",
+                  color: "#F5F0E8",
+                  fontFamily: "Inter, sans-serif"
+                }}
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(212,175,110,0.5)";
+                  e.currentTarget.style.boxShadow = "0 0 0 2px rgba(212,175,110,0.08)";
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(212,175,110,0.2)";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
+              />
+              <button
+                onClick={handleExtract}
+                disabled={extracting || !fideIdInput.trim()}
+                className="px-6 py-2 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center justify-center transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{
+                  background: "rgba(212,175,110,0.15)",
+                  border: "1px solid rgba(212,175,110,0.4)",
+                  color: "#D4AF6E",
+                  fontFamily: "DM Mono, monospace",
+                }}
+              >
+                {extracting ? "Extracting..." : "Extract"}
+              </button>
+            </div>
           </div>
 
-          <div>
-            <div className="flex justify-between items-center mb-2">
-              <label className="block text-xs font-mono uppercase tracking-widest text-[#8E8B82]">
-                PGN Data
+          <div className="h-[1px] w-full bg-[#D4AF6E]/10" />
+
+          {/* Manual / Review Section */}
+          <div className="flex flex-col gap-5">
+            <div>
+              <label className="block text-xs font-mono uppercase tracking-widest mb-2 text-[#8E8B82]">
+                Opponent Username
               </label>
-              <label 
-                className="cursor-pointer flex items-center gap-1.5 text-xs font-mono uppercase tracking-widest text-[#D4AF6E] hover:text-[#F5F0E8] transition-colors"
-                title="Upload .pgn files"
-              >
-                <UploadCloud className="w-3.5 h-3.5" />
-                <span>Upload</span>
-                <input 
-                  type="file" 
-                  accept=".pgn" 
-                  multiple 
-                  className="hidden" 
-                  onChange={handleFileUpload} 
-                />
-              </label>
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="e.g. Hikaru"
+                className="w-full text-sm transition-all duration-200 outline-none"
+                style={{
+                  background: "rgba(8, 11, 20, 0.8)",
+                  border: "1px solid rgba(212, 175, 110, 0.2)",
+                  borderRadius: "10px",
+                  padding: "10px 14px",
+                  color: "#F5F0E8",
+                  fontFamily: "Inter, sans-serif"
+                }}
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(212,175,110,0.5)";
+                  e.currentTarget.style.boxShadow = "0 0 0 2px rgba(212,175,110,0.08)";
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(212,175,110,0.2)";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
+              />
             </div>
-            <textarea
-              value={pgnText}
-              onChange={(e) => setPgnText(e.target.value)}
-              placeholder="[Event ...]"
-              rows={8}
-              className="w-full text-sm transition-all duration-200 outline-none resize-y"
-              style={{
-                background: "rgba(8, 11, 20, 0.8)",
-                border: "1px solid rgba(212, 175, 110, 0.2)",
-                borderRadius: "10px",
-                padding: "10px 14px",
-                color: "#F5F0E8",
-                fontFamily: "DM Mono, monospace"
-              }}
-              onFocus={(e) => {
-                e.currentTarget.style.borderColor = "rgba(212,175,110,0.5)";
-                e.currentTarget.style.boxShadow = "0 0 0 2px rgba(212,175,110,0.08)";
-              }}
-              onBlur={(e) => {
-                e.currentTarget.style.borderColor = "rgba(212,175,110,0.2)";
-                e.currentTarget.style.boxShadow = "none";
-              }}
-            />
+
+            <div>
+              <div className="flex justify-between items-center mb-2">
+                <label className="block text-xs font-mono uppercase tracking-widest text-[#8E8B82]">
+                  PGN Data
+                </label>
+                <label 
+                  className="cursor-pointer flex items-center gap-1.5 text-xs font-mono uppercase tracking-widest text-[#D4AF6E] hover:text-[#F5F0E8] transition-colors"
+                  title="Upload .pgn files"
+                >
+                  <UploadCloud className="w-3.5 h-3.5" />
+                  <span>Upload</span>
+                  <input 
+                    type="file" 
+                    accept=".pgn" 
+                    multiple 
+                    className="hidden" 
+                    onChange={handleFileUpload} 
+                  />
+                </label>
+              </div>
+              <textarea
+                value={pgnText}
+                onChange={(e) => setPgnText(e.target.value)}
+                placeholder="[Event ...]"
+                rows={8}
+                className="w-full text-sm transition-all duration-200 outline-none resize-y"
+                style={{
+                  background: "rgba(8, 11, 20, 0.8)",
+                  border: "1px solid rgba(212, 175, 110, 0.2)",
+                  borderRadius: "10px",
+                  padding: "10px 14px",
+                  color: "#F5F0E8",
+                  fontFamily: "DM Mono, monospace"
+                }}
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(212,175,110,0.5)";
+                  e.currentTarget.style.boxShadow = "0 0 0 2px rgba(212,175,110,0.08)";
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(212,175,110,0.2)";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
+              />
+            </div>
           </div>
 
           {result && (
             <div className="p-4 rounded-lg bg-[#D4AF6E]/10 border border-[#D4AF6E]/30 text-[#D4AF6E] text-sm">
-              <div className="font-semibold mb-1">Ingestion Complete!</div>
-              <div>Successfully Ingested: {result.ingested}</div>
-              <div>Skipped (Duplicate/Error): {result.skipped}</div>
+              <div className="font-semibold mb-1">Success</div>
+              {(result as any).message && <div>{(result as any).message}</div>}
+              {result.ingested !== undefined && result.ingested > 0 && <div>Successfully Ingested: {result.ingested}</div>}
+              {result.skipped !== undefined && result.skipped > 0 && <div>Skipped (Duplicate/Error): {result.skipped}</div>}
             </div>
           )}
         </div>

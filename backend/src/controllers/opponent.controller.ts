@@ -2,11 +2,27 @@ import { Request, Response } from 'express';
 import { OpponentService } from '../services/opponent.service.js';
 import { EngineService } from '../services/engine.service.js';
 import { Chess } from 'chess.js';
+import { extractFideGames as runFideExtraction } from '../services/fide/extract.js';
 
 export const OpponentController = {
+  extractFideGames: (req: Request, res: Response) => {
+    try {
+      const { fideId } = req.body;
+      if (!fideId || typeof fideId !== 'number') {
+        return res.status(400).json({ error: 'Valid fideId (number) is required' });
+      }
+
+      const result = runFideExtraction(fideId);
+      return res.status(200).json(result);
+    } catch (error: any) {
+      console.error('Error in OpponentController.extractFideGames:', error);
+      return res.status(500).json({ error: error.message || 'Internal server error' });
+    }
+  },
+
   ingestGames: (req: Request, res: Response) => {
     try {
-      const { username, pgns } = req.body;
+      const { username, pgns, targetFideId } = req.body;
 
       if (!username || typeof username !== 'string') {
         return res.status(400).json({ error: 'Valid username is required' });
@@ -16,7 +32,7 @@ export const OpponentController = {
         return res.status(400).json({ error: 'pgns must be an array of strings' });
       }
 
-      const result = OpponentService.ingestGames(username, pgns);
+      const result = OpponentService.ingestGames(username, pgns, targetFideId);
       return res.status(200).json(result);
     } catch (error) {
       console.error('Error in OpponentController.ingestGames:', error);
@@ -69,9 +85,10 @@ export const OpponentController = {
         }
         
         const validRecommendations: any[] = [];
+        const minGames = gamesList.length < 20 ? 1 : 3;
         
         for (const [variationName, groupGames] of Object.entries(openingGames)) {
-          if (groupGames.length < 3) continue; // MIN_GAMES threshold
+          if (groupGames.length < minGames) continue; // MIN_GAMES threshold
           
           let wins = 0, draws = 0, losses = 0;
           for (const g of groupGames) {
