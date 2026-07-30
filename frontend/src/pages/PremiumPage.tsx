@@ -27,9 +27,6 @@ export default function PremiumPage() {
   if (!isPro) {
     return (
       <div className="min-h-[55vh] flex flex-col items-center justify-center p-4 sm:p-6 text-center select-none relative overflow-hidden">
-        {/* Background ambient lighting */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[95vw] max-w-[800px] h-[400px] bg-gradient-to-r from-brand-accent/5 via-amber-500/3 to-transparent rounded-full blur-[140px] pointer-events-none z-0" />
-
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
@@ -45,7 +42,7 @@ export default function PremiumPage() {
           </motion.div>
 
           <div className="flex flex-col items-center gap-3">
-            <h1 className="text-3xl md:text-4xl font-display font-bold text-transparent bg-clip-text bg-gradient-to-b from-white via-[#f0eae1] to-[#aba499] tracking-tight">
+            <h1 className="text-3xl md:text-4xl font-display font-bold text-transparent bg-clip-text bg-gradient-to-b from-brand-text via-brand-text/90 to-brand-secondary tracking-tight">
               Premium Exclusive
             </h1>
             <p className="text-sm md:text-base text-brand-secondary font-sans leading-relaxed max-w-md">
@@ -69,9 +66,6 @@ export default function PremiumPage() {
   // Render Premium Content
   return (
     <div className="min-h-[55vh] flex flex-col items-center justify-center p-4 sm:p-6 text-center select-none relative overflow-hidden">
-      {/* Premium ambient glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[95vw] max-w-[900px] h-[500px] bg-gradient-to-r from-brand-accent/10 via-amber-400/5 to-transparent rounded-full blur-[150px] pointer-events-none z-0" />
-
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -99,7 +93,7 @@ export default function PremiumPage() {
               <Sparkles className="w-3.5 h-3.5" />
               Pro Member Access
             </span>
-            <h1 className="text-4xl md:text-6xl font-display font-extrabold text-transparent bg-clip-text bg-gradient-to-b from-white via-[#f0eae1] to-[#aba499] tracking-tighter filter drop-shadow-[0_0_30px_rgba(212,175,110,0.15)] leading-tight">
+            <h1 className="text-4xl md:text-6xl font-display font-extrabold text-transparent bg-clip-text bg-gradient-to-b from-brand-text via-brand-text/90 to-brand-secondary tracking-tighter filter drop-shadow-[0_0_30px_rgba(212,175,110,0.15)] leading-tight">
               Premium Features<br />Coming Soon
             </h1>
           </motion.div>

@@ -3,7 +3,7 @@ import { useLocation } from 'react-router';
 import Hero from '../components/Hero';
 import BrandSection from '../components/BrandSection';
 import ProductDemo from '../components/ProductDemo';
-import PartnerCTA from '../components/PartnerCTA';
+
 
 export default function HomePage() {
   const location = useLocation();
@@ -36,7 +36,7 @@ export default function HomePage() {
         <ProductDemo />
 
         {/* Section 4: Partner Call to Action */}
-        <PartnerCTA />
+
       </main>
     </div>
   );

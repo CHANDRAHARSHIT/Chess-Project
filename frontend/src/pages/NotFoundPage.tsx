@@ -67,7 +67,7 @@ export default function NotFoundPage() {
             </div>
             <div className="flex-1 min-w-0">
               <span className="block text-[10px] font-mono text-brand-secondary uppercase tracking-wider">Suggested Route</span>
-              <span className="text-xs sm:text-sm font-sans font-bold text-brand-accent group-hover:text-white transition-colors truncate block">
+              <span className="text-xs sm:text-sm font-sans font-bold text-brand-accent group-hover:text-brand-text transition-colors truncate block">
                 Did you mean {suggestion}?
               </span>
             </div>

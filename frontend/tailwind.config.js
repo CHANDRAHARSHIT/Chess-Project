@@ -7,31 +7,38 @@ export default {
   theme: {
     extend: {
       colors: {
+        // NOTE: these all resolve through CSS custom properties defined in
+        // src/index.css (`:root` / `:root[data-theme="light"]`), so they
+        // automatically track the active Theme setting instead of being
+        // pinned to the dark palette. The `rgb(var(...) / <alpha-value>)`
+        // form is required (rather than plain var()) so Tailwind's opacity
+        // modifiers (e.g. bg-brand-bg/50) keep working.
         brand: {
-          bg:        '#080B14',   // obsidian
-          surface:   '#0C1020',   // obsidian-mid
-          accent:    '#D4AF6E',   // gold-bright
-          text:      '#F5F0E8',   // ivory
-          secondary: '#8E8B82',   // warm muted
-          border:    'rgba(212, 175, 110, 0.12)',
+          bg: 'rgb(var(--obsidian-rgb) / <alpha-value>)',
+          surface: 'rgb(var(--obsidian-mid-rgb) / <alpha-value>)',
+          accent: 'rgb(var(--gold-bright-rgb) / <alpha-value>)',
+          text: 'rgb(var(--text-primary-rgb) / <alpha-value>)',
+          secondary: 'rgb(var(--text-secondary-rgb) / <alpha-value>)',
+          border: 'var(--glass-border-gold)',
         },
         gold: {
           DEFAULT: '#D4AF6E',
-          bright:  '#D4AF6E',
-          mid:     '#B8934A',
-          dim:     '#8B6F3A',
+          bright: '#D4AF6E',
+          mid: '#B8934A',
+          dim: '#8B6F3A',
         },
         obsidian: {
-          DEFAULT: '#080B14',
-          mid:     '#0C1020',
-          light:   '#111827',
+          DEFAULT: 'rgb(var(--obsidian-rgb) / <alpha-value>)',
+          mid: 'rgb(var(--obsidian-mid-rgb) / <alpha-value>)',
+          light: 'rgb(var(--obsidian-light-rgb) / <alpha-value>)',
         },
-        ivory: '#F5F0E8',
+        ivory: 'rgb(var(--text-primary-rgb) / <alpha-value>)',
       },
       fontFamily: {
-        sans:    ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        display: ['Playfair Display', 'Georgia', 'serif'],
+        mono: ['DM Mono', 'Courier New', 'monospace'],
         display: ['Cormorant Garamond', 'Georgia', 'serif'],
-        mono:    ['DM Mono', 'Courier New', 'monospace'],
       },
     },
   },

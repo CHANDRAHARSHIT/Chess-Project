@@ -8,7 +8,7 @@ async function seed() {
   const mode = isLive ? "live" : "test";
 
   const monthlyPriceId = process.env.STRIPE_PRICE_PRO_MONTHLY || null;
-  const yearlyPriceId  = process.env.STRIPE_PRICE_PRO_YEARLY  || null;
+  const yearlyPriceId = process.env.STRIPE_PRICE_PRO_YEARLY || null;
 
   // Write price IDs into the correct mode-specific column only.
   // The other column is left unchanged so both environments accumulate over time.
@@ -33,16 +33,16 @@ async function seed() {
   const proMonthly = await prisma.product.upsert({
     where: { identifier: "pro_monthly" },
     update: {
-      priceAmount: 500,
-      currency: "usd",
+      priceAmount: 864, // 8.64 NZD in cents
+      currency: "nzd",
       ...monthlyPriceData,
     },
     create: {
       identifier: "pro_monthly",
       name: "Premium Monthly",
       description: "Access to all premium chess tools billed monthly.",
-      priceAmount: 500,
-      currency: "usd",
+      priceAmount: 864,
+      currency: "nzd",
       billingInterval: "month",
       ...monthlyPriceData,
       isActive: true,
@@ -71,16 +71,16 @@ async function seed() {
   const proYearly = await prisma.product.upsert({
     where: { identifier: "pro_yearly" },
     update: {
-      priceAmount: 2040,
-      currency: "usd",
+      priceAmount: 3525, // 35.25 NZD in cents
+      currency: "nzd",
       ...yearlyPriceData,
     },
     create: {
       identifier: "pro_yearly",
       name: "Premium Yearly",
       description: "Access to all premium chess tools billed yearly.",
-      priceAmount: 2040,
-      currency: "usd",
+      priceAmount: 3525,
+      currency: "nzd",
       billingInterval: "year",
       ...yearlyPriceData,
       isActive: true,
@@ -125,9 +125,9 @@ async function seedOpenings() {
 
   const files = ['a.tsv', 'b.tsv', 'c.tsv', 'd.tsv', 'e.tsv'];
   const baseUrl = "https://raw.githubusercontent.com/lichess-org/chess-openings/master/";
-  
+
   let importedCount = 0;
-  
+
   const existingOpenings = await prisma.opening.findMany();
   const existingNames = new Set(existingOpenings.map(o => o.name));
 
@@ -139,17 +139,17 @@ async function seedOpenings() {
     }
     const text = await response.text();
     const lines = text.split('\n');
-    
+
     for (let i = 1; i < lines.length; i++) {
       const line = lines[i].trim();
       if (!line) continue;
-      
+
       const [eco, name, pgn] = line.split('\t');
-      
+
       if (V1_OPENINGS.includes(name)) {
         // Create space-separated move string by stripping out move numbers (e.g. "1. e4 e5" -> "e4 e5")
         const moves = pgn.replace(/\d+\.\s*/g, '').trim();
-        
+
         if (existingNames.has(name)) {
           // If it exists but we found it again, we just skip it (or we could update the first one)
           // We will update it using findFirst
@@ -175,7 +175,7 @@ async function seedOpenings() {
           existingOpenings.push({ id: '', name, eco, pgn, moves }); // Add placeholder to prevent duplicates
           importedCount++;
         }
-        
+
         // Remove from list so we only import ONE variation for each of the core openings
         // Actually Lichess TSV has multiple lines with the exact same name (e.g. French Defense).
         // Let's only take the first one we encounter.
@@ -186,7 +186,7 @@ async function seedOpenings() {
       }
     }
   }
-  
+
   console.log(`Finished seeding openings. Imported/Updated records: ${importedCount}`);
 }
 
