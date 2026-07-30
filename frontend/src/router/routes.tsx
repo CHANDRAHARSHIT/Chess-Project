@@ -13,8 +13,6 @@ import SubscriptionsPage from "../pages/SubscriptionsPage";
 import VariantsPage from "../pages/VariantsPage";
 import Chess960Page from "../pages/Chess960Page";
 import { ProtectedRoute } from "../components/ProtectedRoute";
-import OpponentIngestPage from "../pages/OpponentIngestPage";
-import OpponentReportPage from "../pages/OpponentReportPage";
 import DatabasePage from "../pages/DatabasePage";
 import DatabasePlayerPage from "../pages/DatabasePlayerPage";
 import DatabaseGamePage from "../pages/DatabaseGamePage";
@@ -33,8 +31,6 @@ export const mainRoutes: RouteConfig[] = [
   { path: "/database", element: <DatabasePage /> },
   { path: "/database/:id", element: <DatabasePlayerPage /> },
   { path: "/database/game/:id", element: <DatabaseGamePage /> },
-  { path: "/opponents/add", element: <OpponentIngestPage /> },
-  { path: "/opponents/:username", element: <OpponentReportPage /> },
   { path: "/subscriptions", element: <SubscriptionsPage /> },
   { path: "/variants", element: <VariantsPage /> },
   { path: "/play/chess960", element: <Chess960Page /> },
