@@ -281,18 +281,6 @@ export default function CheckoutPage() {
 
       {/* Main Container */}
       <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-14 w-full flex-1 flex flex-col">
-        <div className="w-full flex justify-start mb-6">
-          <button
-            onClick={() => navigate("/pricing")}
-            className="flex items-center gap-2.5 text-xs sm:text-sm text-brand-secondary hover:text-brand-text transition-all duration-300 cursor-pointer uppercase tracking-wider font-mono font-medium"
-          >
-            <span className="w-5 h-5 rounded-full border border-brand-border flex items-center justify-center font-bold text-[9px] hover:border-brand-accent/50">
-              &lt;
-            </span>
-            Back to Plans
-          </button>
-        </div>
-
         {/* Checkout Header Title */}
         <section className="mb-10 text-left border-b border-[rgba(212,175,110,0.40)] pb-6 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
           <div>

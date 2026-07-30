@@ -8,7 +8,6 @@
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import {
-  ArrowLeft,
   Settings as SettingsIcon,
   Search,
   Grid3x3,
@@ -128,17 +127,6 @@ export default function SettingsPage() {
   return (
     <div className="min-h-screen text-brand-text flex flex-col bg-transparent selection:bg-brand-accent selection:text-brand-text">
       <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-5 pb-16 relative z-10 flex flex-col gap-6">
-        {/* Back link */}
-        <div className="mt-4">
-          <button
-            onClick={() => navigate("/")}
-            className="inline-flex items-center gap-2 text-brand-secondary hover:text-brand-text transition-colors duration-200 font-sans text-sm font-semibold cursor-pointer group"
-          >
-            <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
-            Back to Play
-          </button>
-        </div>
-
         {/* Page heading */}
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-brand-accent/10 flex items-center justify-center text-brand-accent shrink-0">

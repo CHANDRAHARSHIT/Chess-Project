@@ -1,5 +1,4 @@
-import { Users, ArrowLeft } from "lucide-react";
-import { Link } from "react-router";
+import { Users } from "lucide-react";
 
 /**
  * SubscriptionsPage Component
@@ -40,13 +39,6 @@ export default function SubscriptionsPage() {
         <span className="text-brand-accent text-sm font-medium tracking-wide">Coming Soon</span>
       </div>
 
-      <Link 
-        to="/"
-        className="flex items-center gap-2 px-6 py-3 rounded-full bg-brand-text/5 hover:bg-brand-text/10 border border-brand-text/10 hover:border-brand-text/20 transition-all text-brand-text/80 hover:text-brand-text group"
-      >
-        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-        <span className="font-medium">Back to Home</span>
-      </Link>
     </div>
   );
 }

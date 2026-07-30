@@ -512,19 +512,6 @@ export default function PricingPage() {
       </div>
 
       <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-1 flex flex-col items-center w-full pt-8">
-        {/* ── Back ── */}
-        <div className="w-full flex justify-start mb-6">
-          <button
-            onClick={handleNavigateBack}
-            className="flex items-center gap-2.5 text-xs sm:text-sm text-brand-secondary hover:text-brand-text transition-all duration-300 cursor-pointer uppercase tracking-wider font-mono font-medium"
-          >
-            <span className="w-5 h-5 rounded-full border border-brand-border flex items-center justify-center font-bold text-[9px] hover:border-brand-accent/50">
-              &lt;
-            </span>
-            Back to {getPrevious()?.label ?? "Home"}
-          </button>
-        </div>
-
         {/* ── Session error ── */}
         {showSessionError && (
           <motion.div

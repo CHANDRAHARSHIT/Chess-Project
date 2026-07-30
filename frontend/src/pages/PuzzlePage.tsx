@@ -10,7 +10,6 @@ import type { PuzzleFilters } from '../types/puzzle';
 import {
   HelpCircle,
   Sparkles,
-  ArrowLeft,
   ArrowRight,
 } from 'lucide-react';
 import type { ChessPuzzle } from '../utils/PuzzleLoader';
@@ -151,10 +150,6 @@ export default function PuzzlePage() {
     setMobileView('board');
   }, []);
 
-  // Return to pathway callback (mobile)
-  const handleReturnToPathway = useCallback(() => {
-    setMobileView('pathway');
-  }, []);
 
   // Advance to next puzzle in active pathway
   const handleNextPuzzle = useCallback(() => {
@@ -210,9 +205,6 @@ export default function PuzzlePage() {
     try { localStorage.setItem('xlchess_puzzle_streak', '0'); } catch (e) { }
   }, []);
 
-  const handleNavigateHome = useCallback(() => {
-    navigate('/');
-  }, [navigate]);
 
   // ── Custom Puzzle handlers ──────────────────────────────────────────────────
 
@@ -293,17 +285,7 @@ export default function PuzzlePage() {
 
       <main className="relative z-10 flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex flex-col justify-center">
 
-        <div className="mb-4 flex items-center justify-between w-full">
-          <button
-            onClick={handleNavigateHome}
-            className="flex items-center gap-2.5 text-xs text-brand-secondary hover:text-brand-text transition-all duration-300 cursor-pointer uppercase tracking-wider font-mono font-medium"
-          >
-            <span className="w-5 h-5 rounded-full border border-brand-border flex items-center justify-center font-bold text-[9px] hover:border-brand-accent/50">
-              <ArrowLeft className="w-3 h-3" />
-            </span>
-            Back to Home
-          </button>
-
+        <div className="mb-4 flex items-center justify-end w-full">
           {customFilters && (
             <button
               onClick={handleExitCustomSession}
@@ -461,17 +443,6 @@ export default function PuzzlePage() {
                 case 'board':
                   return (
                     <div className="w-full flex flex-col items-center space-y-6">
-                      <div className="w-full flex items-center justify-between">
-                        <button
-                          type="button"
-                          onClick={handleReturnToPathway}
-                          className="flex items-center gap-2 text-xs font-mono font-semibold uppercase tracking-wider text-amber-400 hover:text-amber-300 bg-amber-500/10 border border-amber-500/30 px-3.5 py-2 rounded-xl transition-all shadow-md cursor-pointer"
-                        >
-                          <ArrowLeft className="w-4 h-4" />
-                          <span>Back to Pathway</span>
-                        </button>
-                      </div>
-
                       <div className="w-full bg-brand-surface/70 backdrop-blur-xl border border-brand-border rounded-2xl p-4 text-left shadow-2xl relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                         <div>
                           <div className="flex items-center gap-2">
