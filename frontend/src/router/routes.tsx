@@ -30,7 +30,7 @@ export const mainRoutes: RouteConfig[] = [
   { path: "/play/chess960", element: <Chess960Page /> },
   {
     path: "/profile",
-    element: <Navigate to="/settings?tab=profile" replace />,
+    element: <Navigate to="/settings?cat=profile" replace />,
   },
   // Not behind ProtectedRoute: board/piece preferences are stored in
   // localStorage (like the Sound toggle) so guests can use them too.

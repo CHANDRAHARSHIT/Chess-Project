@@ -5,7 +5,7 @@
  * (https://www.chess.com/settings) — left-hand category list, right-hand
  * content panel with tabs.
  */
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import {
   ArrowLeft,
@@ -77,28 +77,24 @@ export default function SettingsPage() {
   const { push } = useNavigationStack();
   const { boardTheme, pieceSet, setBoardThemeId, setPieceSetId } =
     useBoardSettings();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // ── Derive active category and tab directly from URL params ────────────────
+  // Category: ?cat=board-pieces (default) or ?cat=profile
+  const activeCategory = CATEGORIES.some((c) => c.id === searchParams.get("cat"))
+    ? searchParams.get("cat")!
+    : "board-pieces";
+
+  // Sub-tab within Board & Pieces: ?tab=boards (default) or ?tab=pieces
+  const VALID_TABS: TabId[] = TABS.filter((t) => t.available).map((t) => t.id);
+  const activeTab: TabId = VALID_TABS.includes(searchParams.get("tab") as TabId)
+    ? (searchParams.get("tab") as TabId)
+    : "boards";
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeTab, setActiveTab] = useState<TabId>("boards");
-  // Honour an optional ?tab= query param so external links (e.g. /profile
-  // redirect) can deep-link directly to a specific settings category.
-  const initialCategory = CATEGORIES.some(
-    (c) => c.id === searchParams.get("tab"),
-  )
-    ? (searchParams.get("tab") as string)
-    : "board-pieces";
-  const [activeCategory, setActiveCategory] = useState(initialCategory);
 
-  useEffect(() => {
-    const tabParam = searchParams.get("tab");
-    if (tabParam && CATEGORIES.some((c) => c.id === tabParam)) {
-      setActiveCategory(tabParam);
-    }
-  }, [searchParams]);
-
-  // Changes are staged locally and only pushed into BoardSettingsContext
-  // (and localStorage) when the player clicks "Save"
+  // Changes are staged locally and pushed into BoardSettingsContext
+  // (and localStorage) only when the player clicks "Save".
   const [pendingBoardThemeId, setPendingBoardThemeId] = useState(boardTheme.id);
   const [pendingPieceSetId, setPendingPieceSetId] = useState(pieceSet.id);
   const [justSaved, setJustSaved] = useState(false);
@@ -209,14 +205,19 @@ export default function SettingsPage() {
                         }
                         navigate(cat.path);
                       } else {
-                        setActiveCategory(cat.id);
+                        // Push a new history entry so the browser Back button
+                        // returns to the previous category.
+                        setSearchParams(
+                          cat.id === "board-pieces"
+                            ? { cat: cat.id, tab: activeTab }
+                            : { cat: cat.id },
+                        );
                       }
                     }}
-                    className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors duration-150 cursor-pointer ${
-                      isActive
-                        ? "bg-brand-accent/10 text-brand-accent font-medium ring-1 ring-brand-accent/30"
-                        : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5"
-                    }`}
+                    className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors duration-150 cursor-pointer ${isActive
+                      ? "bg-brand-accent/10 text-brand-accent font-medium ring-1 ring-brand-accent/30"
+                      : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5"
+                      }`}
                   >
                     <Icon className="w-4 h-4 shrink-0" />
                     <span className="text-sm font-sans flex-1">{cat.name}</span>
@@ -266,13 +267,17 @@ export default function SettingsPage() {
                       type="button"
                       onClick={() => {
                         soundManager.playButtonClick();
-                        setActiveTab(tab.id);
+                        // Replace the current history entry — sub-tab changes
+                        // within a category shouldn't flood the back-stack.
+                        setSearchParams(
+                          { cat: "board-pieces", tab: tab.id },
+                          { replace: true },
+                        );
                       }}
-                      className={`relative pb-3 text-sm font-sans font-semibold transition-colors cursor-pointer whitespace-nowrap ${
-                        isActive
-                          ? "text-brand-text"
-                          : "text-brand-secondary hover:text-brand-text"
-                      }`}
+                      className={`relative pb-3 text-sm font-sans font-semibold transition-colors cursor-pointer whitespace-nowrap ${isActive
+                        ? "text-brand-text"
+                        : "text-brand-secondary hover:text-brand-text"
+                        }`}
                     >
                       {tab.name}
                       {isActive && (
@@ -299,11 +304,10 @@ export default function SettingsPage() {
                               soundManager.playButtonClick();
                               setPendingBoardThemeId(theme.id);
                             }}
-                            className={`group relative flex flex-col items-center gap-2 rounded-xl p-2.5 transition-all duration-150 cursor-pointer ${
-                              isSelected
-                                ? "ring-2 ring-brand-accent bg-brand-accent/5"
-                                : "ring-1 ring-brand-border/40 hover:ring-brand-border/80 hover:bg-brand-text/[0.03]"
-                            }`}
+                            className={`group relative flex flex-col items-center gap-2 rounded-xl p-2.5 transition-all duration-150 cursor-pointer ${isSelected
+                              ? "ring-2 ring-brand-accent bg-brand-accent/5"
+                              : "ring-1 ring-brand-border/40 hover:ring-brand-border/80 hover:bg-brand-text/[0.03]"
+                              }`}
                           >
                             <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg overflow-hidden grid grid-cols-2 grid-rows-2 shadow-inner shadow-black/30">
                               <div style={{ backgroundColor: theme.light }} />
@@ -341,11 +345,10 @@ export default function SettingsPage() {
                               soundManager.playButtonClick();
                               setPendingPieceSetId(set.id);
                             }}
-                            className={`group relative flex flex-col items-center gap-2 rounded-xl p-2.5 transition-all duration-150 cursor-pointer ${
-                              isSelected
-                                ? "ring-2 ring-brand-accent bg-brand-accent/5"
-                                : "ring-1 ring-brand-border/40 hover:ring-brand-border/80 hover:bg-brand-text/[0.03]"
-                            }`}
+                            className={`group relative flex flex-col items-center gap-2 rounded-xl p-2.5 transition-all duration-150 cursor-pointer ${isSelected
+                              ? "ring-2 ring-brand-accent bg-brand-accent/5"
+                              : "ring-1 ring-brand-border/40 hover:ring-brand-border/80 hover:bg-brand-text/[0.03]"
+                              }`}
                           >
                             <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg bg-[#4d4536] flex items-center justify-center gap-1.5 p-2">
                               <div className="w-6 h-6 sm:w-7 sm:h-7">
