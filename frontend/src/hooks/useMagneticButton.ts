@@ -18,6 +18,13 @@ export function useMagneticButton<T extends HTMLElement, C extends HTMLElement>(
 
     if (!target || !container) return;
 
+    // Device capability detection: only run magnetic tracking on pointer devices with fine control
+    const isPointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    if (!isPointer) {
+      gsap.set(target, { x: 0, y: 0 });
+      return;
+    }
+
     let rect: DOMRect | null = null;
     let targetRect: DOMRect | null = null;
     let defaultLeft = 0;
@@ -82,7 +89,7 @@ export function useMagneticButton<T extends HTMLElement, C extends HTMLElement>(
       });
     };
 
-    const onMouseLeave = () => {
+    const resetPosition = () => {
       rect = null;
       targetRect = null;
       gsap.to(target, {
@@ -96,13 +103,18 @@ export function useMagneticButton<T extends HTMLElement, C extends HTMLElement>(
 
     container.addEventListener('mouseenter', onMouseEnter);
     container.addEventListener('mousemove', onMouseMove);
-    container.addEventListener('mouseleave', onMouseLeave);
+    container.addEventListener('mouseleave', resetPosition);
+    container.addEventListener('pointerleave', resetPosition);
+    container.addEventListener('touchcancel', resetPosition);
 
     return () => {
       container.removeEventListener('mouseenter', onMouseEnter);
       container.removeEventListener('mousemove', onMouseMove);
-      container.removeEventListener('mouseleave', onMouseLeave);
+      container.removeEventListener('mouseleave', resetPosition);
+      container.removeEventListener('pointerleave', resetPosition);
+      container.removeEventListener('touchcancel', resetPosition);
       gsap.killTweensOf(target, 'x,y');
+      gsap.set(target, { x: 0, y: 0 });
     };
   }, [targetRef, containerRef, magneticStrength]);
 }

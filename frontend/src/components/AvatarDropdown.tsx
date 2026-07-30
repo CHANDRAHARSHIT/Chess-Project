@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
-import { LogOut, Settings, Palette, Volume2, VolumeX, ChevronLeft, ChevronRight } from "lucide-react";
+import { LogOut, Settings, Palette, Volume2, VolumeX, ChevronRight } from "lucide-react";
 import { useSession } from "../hooks/useSession";
 import { useNavigate } from "react-router";
 import { soundManager } from "../utils/SoundManager";
-import { useTheme } from "../hooks/useTheme";
+import { ThemeSubmenu } from "./ThemeSubmenu";
 
 const STORAGE_KEY = 'sound-enabled';
 
@@ -12,7 +12,6 @@ export const AvatarDropdown: React.FC = () => {
   const [activeMenu, setActiveMenu] = useState<"main" | "theme">("main");
 
   const { session, signOut } = useSession();
-  const { themeMode, setThemeModeId } = useTheme();
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -189,83 +188,14 @@ export const AvatarDropdown: React.FC = () => {
            </>
            )}
           {activeMenu === "theme" && (
-  <>
-    {/* Theme header */}
-    <button
-      type="button"
-      onClick={() => setActiveMenu("main")}
-      className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-sans text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06] text-left transition-colors duration-150 cursor-pointer"
-    >
-      <ChevronLeft className="w-4 h-4" />
-      <span className="font-medium text-brand-text">Theme</span>
-    </button>
-
-    <div className="px-4 pt-2 pb-3">
-      <p className="text-xs text-brand-secondary">
-        Choose your appearance
-      </p>
-    </div>
-
-    <div className="border-t border-brand-text/10" />
-
-    <button
-      type="button"
-      onClick={() => {setThemeModeId("system");
-         setActiveMenu("main");
-         setIsOpen(false);
-      }}
-      className="w-full flex items-center justify-between px-4 py-2.5 text-sm font-sans text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06] transition-colors duration-150"
-    >
-      <div className="w-6 flex justify-center items-center">
-       {themeMode.id === "system" && (
-       <span className="text-brand-text text-base">✓</span>
-      )}
-    </div>
-
-     <span className="flex-1 text-left">
-        Use device theme
-      </span>
-    </button>
-
-    <button
-      type="button"
-      onClick={() => {setThemeModeId("dark");
-         setActiveMenu("main");
-          setIsOpen(false);
-      }}
-      className="w-full flex items-center justify-between px-4 py-2.5 text-sm font-sans text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06] transition-colors duration-150"
-    >
-      <div className="w-6 flex justify-center items-center">
-       {themeMode.id === "dark" && (
-        <span className="text-brand-text text-base">✓</span>
-            )}
-        </div>
-
-      <span className="flex-1 text-left">
-        Dark theme
-       </span>
-    </button>
-
-    <button
-      type="button"
-      onClick={() =>{ setThemeModeId("light");
-         setActiveMenu("main");
-         setIsOpen(false);
-      }}
-      className="w-full flex items-center justify-between px-4 py-2.5 text-sm font-sans text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06] transition-colors duration-150"
-    >
-      <div className="w-6 flex justify-center items-center">
-       {themeMode.id === "light" && (
-      <span className="text-brand-text text-base">✓</span>
-      )}
-     </div>
-
-       <span className="flex-1 text-left">
-        Light theme
-       </span>
-    </button>
-  </>
-)}
+            <ThemeSubmenu
+              onBack={() => setActiveMenu("main")}
+              onSelect={() => {
+                setActiveMenu("main");
+                setIsOpen(false);
+              }}
+            />
+          )}
         </div>
       )}
     </div>

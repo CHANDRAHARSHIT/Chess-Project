@@ -75,20 +75,30 @@ export function CustomPuzzleSession({ filters, onExit }: CustomPuzzleSessionProp
   const [sessionStreak, setSessionStreak] = useState(0);
   const [sessionComplete, setSessionComplete] = useState(false);
 
-  // Fetch puzzles on mount
+  // Fetch puzzles when filters change
   useEffect(() => {
-    setLoading(true);
-    setError(null);
-    PuzzleApiService.getPuzzles(filters)
-      .then((data) => {
+    let cancelled = false;
+
+    async function fetchPuzzles() {
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await PuzzleApiService.getPuzzles(filters);
+        if (cancelled) return;
         if (data.length === 0) {
           setError("No puzzles found for the selected filters. Try adjusting your rating range or themes.");
         } else {
           setPuzzles(data);
         }
-      })
-      .catch(() => setError("Failed to load puzzles. Please check your connection."))
-      .finally(() => setLoading(false));
+      } catch {
+        if (!cancelled) setError("Failed to load puzzles. Please check your connection.");
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+
+    fetchPuzzles();
+    return () => { cancelled = true; };
   }, [filters]);
 
   const handleSolved = useCallback(() => {
@@ -120,13 +130,9 @@ export function CustomPuzzleSession({ filters, onExit }: CustomPuzzleSessionProp
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
         <div
-          className="w-12 h-12 rounded-full border-2 animate-spin"
-          style={{
-            borderColor: "rgba(212,175,110,0.15)",
-            borderTopColor: "#D4AF6E",
-          }}
+          className="w-12 h-12 rounded-full border-2 animate-spin border-brand-accent/20 border-t-brand-accent"
         />
-        <p className="text-sm font-mono uppercase tracking-widest" style={{ color: "#8E8B82" }}>
+        <p className="text-sm font-mono uppercase tracking-widest text-brand-secondary">
           Loading Puzzles…
         </p>
       </div>
@@ -138,28 +144,19 @@ export function CustomPuzzleSession({ filters, onExit }: CustomPuzzleSessionProp
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] gap-6 text-center px-4">
         <div
-          className="w-14 h-14 rounded-2xl flex items-center justify-center"
-          style={{
-            background: "rgba(239, 68, 68, 0.1)",
-            border: "1px solid rgba(239, 68, 68, 0.2)",
-          }}
+          className="w-14 h-14 rounded-2xl flex items-center justify-center bg-rose-500/10 border border-rose-500/20"
         >
-          <BookOpen className="w-6 h-6" style={{ color: "#F87171" }} />
+          <BookOpen className="w-6 h-6 text-rose-400" />
         </div>
         <div>
-          <h3 className="text-white font-semibold mb-2">No Puzzles Found</h3>
-          <p className="text-sm max-w-xs" style={{ color: "#8E8B82" }}>
+          <h3 className="text-brand-text font-semibold mb-2">No Puzzles Found</h3>
+          <p className="text-sm max-w-xs text-brand-secondary">
             {error}
           </p>
         </div>
         <button
           onClick={onExit}
-          className="px-6 py-2.5 rounded-xl text-xs font-mono uppercase tracking-wider cursor-pointer transition-all duration-200"
-          style={{
-            background: "rgba(212,175,110,0.1)",
-            border: "1px solid rgba(212,175,110,0.25)",
-            color: "#D4AF6E",
-          }}
+          className="px-6 py-2.5 rounded-xl text-xs font-mono uppercase tracking-wider cursor-pointer transition-all duration-200 bg-brand-accent/10 border border-brand-accent/30 text-brand-accent hover:bg-brand-accent/20"
         >
           Back to Puzzles
         </button>
@@ -174,25 +171,19 @@ export function CustomPuzzleSession({ filters, onExit }: CustomPuzzleSessionProp
       <div className="flex flex-col items-center justify-center min-h-[400px] gap-8 text-center px-4">
         <div className="relative">
           <div
-            className="w-20 h-20 rounded-2xl flex items-center justify-center"
-            style={{
-              background: "linear-gradient(135deg, rgba(212,175,110,0.15), rgba(184,147,74,0.1))",
-              border: "1px solid rgba(212,175,110,0.3)",
-              boxShadow: "0 0 40px rgba(212,175,110,0.15)",
-            }}
+            className="w-20 h-20 rounded-2xl flex items-center justify-center bg-brand-accent/10 border border-brand-accent/30 shadow-lg shadow-brand-accent/10"
           >
-            <PartyPopper className="w-9 h-9" style={{ color: "#D4AF6E" }} />
+            <PartyPopper className="w-9 h-9 text-brand-accent" />
           </div>
         </div>
 
         <div>
           <h2
-            className="text-3xl font-semibold mb-2"
-            style={{ fontFamily: "'Cormorant Garamond', serif", color: "#F5F0E8" }}
+            className="text-3xl font-semibold mb-2 font-serif text-brand-text"
           >
             Session Complete!
           </h2>
-          <p className="text-sm" style={{ color: "#8E8B82", fontFamily: "Inter, sans-serif" }}>
+          <p className="text-sm text-brand-secondary font-sans">
             You've finished all {puzzles.length} puzzles in this session.
           </p>
         </div>
@@ -200,25 +191,20 @@ export function CustomPuzzleSession({ filters, onExit }: CustomPuzzleSessionProp
         {/* Stats grid */}
         <div className="grid grid-cols-3 gap-3 w-full max-w-xs">
           {[
-            { label: "Solved", value: sessionSolved, icon: <CheckCircle2 className="w-4 h-4" style={{ color: "#34D399" }} /> },
-            { label: "Total", value: puzzles.length, icon: <BookOpen className="w-4 h-4" style={{ color: "#D4AF6E" }} /> },
-            { label: "Accuracy", value: `${accuracy}%`, icon: <Trophy className="w-4 h-4" style={{ color: "#FBBF24" }} /> },
+            { label: "Solved", value: sessionSolved, icon: <CheckCircle2 className="w-4 h-4 text-emerald-400" /> },
+            { label: "Total", value: puzzles.length, icon: <BookOpen className="w-4 h-4 text-brand-accent" /> },
+            { label: "Accuracy", value: `${accuracy}%`, icon: <Trophy className="w-4 h-4 text-amber-400" /> },
           ].map((stat) => (
             <div
               key={stat.label}
-              className="rounded-xl p-3 text-center"
-              style={{
-                background: "rgba(8,11,20,0.6)",
-                border: "1px solid rgba(255,255,255,0.07)",
-              }}
+              className="rounded-xl p-3 text-center bg-brand-surface border border-brand-border/60"
             >
               <span
-                className="block text-[9px] font-mono uppercase tracking-wider mb-1.5"
-                style={{ color: "#8E8B82" }}
+                className="block text-[9px] font-mono uppercase tracking-wider mb-1.5 text-brand-secondary"
               >
                 {stat.label}
               </span>
-              <div className="flex items-center justify-center gap-1 font-bold text-sm" style={{ color: "#F5F0E8" }}>
+              <div className="flex items-center justify-center gap-1 font-bold text-sm text-brand-text">
                 {stat.icon}
                 <span>{stat.value}</span>
               </div>
@@ -229,14 +215,7 @@ export function CustomPuzzleSession({ filters, onExit }: CustomPuzzleSessionProp
         <div className="flex gap-3">
           <button
             onClick={onExit}
-            className="px-5 py-2.5 rounded-xl text-xs font-mono uppercase tracking-wider cursor-pointer transition-all duration-200 flex items-center gap-2"
-            style={{
-              background: "rgba(255,255,255,0.05)",
-              border: "1px solid rgba(255,255,255,0.1)",
-              color: "#8E8B82",
-            }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "#F5F0E8"; }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "#8E8B82"; }}
+            className="px-5 py-2.5 rounded-xl text-xs font-mono uppercase tracking-wider cursor-pointer transition-all duration-200 flex items-center gap-2 bg-brand-text/5 border border-brand-border/40 text-brand-secondary hover:text-brand-text hover:border-brand-accent/40"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             Exit
@@ -248,20 +227,7 @@ export function CustomPuzzleSession({ filters, onExit }: CustomPuzzleSessionProp
               setSessionSolved(0);
               setSessionStreak(0);
             }}
-            className="px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest cursor-pointer transition-all duration-200"
-            style={{
-              background: "linear-gradient(135deg, #D4AF6E 0%, #B8934A 100%)",
-              color: "#080B14",
-              boxShadow: "0 4px 16px rgba(212,175,110,0.2)",
-            }}
-            onMouseEnter={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 6px 24px rgba(212,175,110,0.35)";
-              (e.currentTarget as HTMLButtonElement).style.transform = "translateY(-1px)";
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 4px 16px rgba(212,175,110,0.2)";
-              (e.currentTarget as HTMLButtonElement).style.transform = "translateY(0)";
-            }}
+            className="px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest cursor-pointer transition-all duration-200 btn-premium-cta cta-shine shadow-md shadow-brand-accent/10"
           >
             Play Again
           </button>
@@ -276,36 +242,25 @@ export function CustomPuzzleSession({ filters, onExit }: CustomPuzzleSessionProp
     <div className="flex flex-col gap-6 w-full">
       {/* Session Header — progress + stats */}
       <div
-        className="rounded-2xl p-4 flex items-center justify-between"
-        style={{
-          background: "rgba(12, 16, 32, 0.6)",
-          border: "1px solid rgba(212,175,110,0.12)",
-          backdropFilter: "blur(12px)",
-        }}
+        className="rounded-2xl p-4 flex items-center justify-between bg-brand-surface/80 border border-brand-border/60 backdrop-blur-md"
       >
         <div className="flex items-center gap-4">
           <button
             onClick={onExit}
-            className="flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider cursor-pointer transition-all duration-200"
-            style={{ color: "#8E8B82" }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "#F5F0E8"; }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "#8E8B82"; }}
+            className="flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider cursor-pointer transition-all duration-200 text-brand-secondary hover:text-brand-text"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             Exit
           </button>
           <div
-            className="w-px h-5"
-            style={{ background: "rgba(255,255,255,0.08)" }}
+            className="w-px h-5 bg-brand-border/40"
           />
           <div className="flex items-center gap-1.5">
             <Loader2
-              className="w-3.5 h-3.5"
-              style={{ color: "#D4AF6E" }}
+              className="w-3.5 h-3.5 text-brand-accent"
             />
             <span
-              className="text-xs font-mono"
-              style={{ color: "#D4AF6E" }}
+              className="text-xs font-mono text-brand-accent font-semibold"
             >
               {currentIndex + 1} / {puzzles.length}
             </span>
@@ -313,28 +268,26 @@ export function CustomPuzzleSession({ filters, onExit }: CustomPuzzleSessionProp
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5 text-xs font-mono" style={{ color: "#8E8B82" }}>
-            <CheckCircle2 className="w-3.5 h-3.5" style={{ color: "#34D399" }} />
-            <span style={{ color: "#F5F0E8" }}>{sessionSolved}</span>
+          <div className="flex items-center gap-1.5 text-xs font-mono text-brand-secondary">
+            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+            <span className="text-brand-text font-semibold">{sessionSolved}</span>
           </div>
-          <div className="flex items-center gap-1.5 text-xs font-mono" style={{ color: "#8E8B82" }}>
-            <Zap className="w-3.5 h-3.5 fill-current" style={{ color: "#FBBF24" }} />
-            <span style={{ color: "#F5F0E8" }}>{sessionStreak}</span>
+          <div className="flex items-center gap-1.5 text-xs font-mono text-brand-secondary">
+            <Zap className="w-3.5 h-3.5 fill-current text-amber-400" />
+            <span className="text-brand-text font-semibold">{sessionStreak}</span>
           </div>
         </div>
       </div>
 
       {/* Progress bar */}
       <div
-        className="w-full rounded-full overflow-hidden"
-        style={{ height: "3px", background: "rgba(255,255,255,0.06)" }}
+        className="w-full rounded-full overflow-hidden h-[3px] bg-brand-border/30"
       >
         <div
-          className="h-full transition-all duration-500"
+          className="h-full transition-all duration-500 rounded-full"
           style={{
             width: `${((currentIndex) / puzzles.length) * 100}%`,
-            background: "linear-gradient(90deg, #D4AF6E, #B8934A)",
-            borderRadius: "999px",
+            background: "linear-gradient(90deg, var(--gold-bright), var(--gold-mid))",
           }}
         />
       </div>
@@ -351,18 +304,13 @@ export function CustomPuzzleSession({ filters, onExit }: CustomPuzzleSessionProp
       )}
 
       {/* Theme tags */}
-      {currentRawPuzzle.themes.length > 0 && (
+      {currentRawPuzzle?.themes && currentRawPuzzle.themes.length > 0 && (
         <div className="flex flex-wrap gap-2 items-center">
-          <Tag className="w-3 h-3 flex-shrink-0" style={{ color: "#5C5954" }} />
+          <Tag className="w-3 h-3 flex-shrink-0 text-brand-secondary/70" />
           {currentRawPuzzle.themes.slice(0, 5).map((theme) => (
             <span
               key={theme}
-              className="text-[10px] font-mono px-2 py-0.5 rounded-full"
-              style={{
-                background: "rgba(212,175,110,0.06)",
-                border: "1px solid rgba(212,175,110,0.15)",
-                color: "#8E8B82",
-              }}
+              className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-brand-accent/10 border border-brand-accent/20 text-brand-secondary"
             >
               {formatThemeLabel(theme)}
             </span>
@@ -372,3 +320,4 @@ export function CustomPuzzleSession({ filters, onExit }: CustomPuzzleSessionProp
     </div>
   );
 }
+

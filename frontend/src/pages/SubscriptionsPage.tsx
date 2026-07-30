@@ -42,10 +42,10 @@ export default function SubscriptionsPage() {
 
       <Link 
         to="/"
-        className="flex items-center gap-2 px-6 py-3 rounded-full bg-brand-text/5 hover:bg-brand-text/10 border border-brand-text/10 hover:border-brand-text/20 transition-all text-brand-text/80 hover:text-brand-text group"
+        className="inline-flex items-center gap-2 text-brand-secondary hover:text-brand-text transition-colors duration-200 font-sans text-sm font-semibold cursor-pointer group"
       >
-        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-        <span className="font-medium">Back to Home</span>
+        <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+        <span>Back to Home</span>
       </Link>
     </div>
   );

@@ -608,15 +608,10 @@ export default function ProductDemo() {
                     {showMoreMenu && (
                       <div
                         ref={moreMenuRef}
-                        className="absolute right-0 top-full mt-1.5 z-50 min-w-[160px] animate-fade-in"
+                        className="absolute right-0 top-full mt-1.5 z-50 min-w-[160px] rounded-xl border border-brand-border bg-brand-surface py-1 shadow-2xl backdrop-blur-md animate-fade-in overflow-hidden"
                         style={{
-                          background: "rgba(8, 11, 20, 0.97)",
-                          border: "1px solid rgba(212,175,110,0.2)",
-                          borderRadius: "10px",
                           boxShadow:
-                            "0 8px 32px rgba(0,0,0,0.55), 0 0 0 1px rgba(212,175,110,0.08)",
-                          backdropFilter: "blur(12px)",
-                          overflow: "hidden",
+                            "0 8px 32px rgba(0,0,0,0.3), 0 0 0 1px rgba(212,175,110,0.1)",
                         }}
                       >
                         {/* Chess960 */}
@@ -627,25 +622,19 @@ export default function ProductDemo() {
                             setShowMoreMenu(false);
                           }}
                           disabled={isEditMode}
-                          className="w-full flex items-center gap-3 px-4 py-3 text-sm text-brand-secondary hover:text-brand-text hover:bg-brand-text/10 transition-all duration-150 disabled:opacity-40 group cursor-pointer"
+                          className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-sans text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06] transition-colors duration-150 disabled:opacity-40 group cursor-pointer"
                           style={{
                             cursor: isEditMode ? "not-allowed" : "pointer",
                           }}
                         >
-                          <Shuffle className="w-4 h-4 text-brand-accent group-hover:scale-110 transition-transform" />
+                          <Shuffle className="w-4 h-4 text-brand-accent group-hover:scale-110 transition-transform shrink-0" />
                           <span className="font-sans font-medium">
                             Chess960
                           </span>
                         </button>
 
                         {/* Divider */}
-                        <div
-                          style={{
-                            height: "1px",
-                            background: "rgba(255,255,255,0.06)",
-                            margin: "0 12px",
-                          }}
-                        />
+                        <div className="my-1 border-t border-brand-border/60" />
 
                         {/* Edit Position */}
                         <button
@@ -655,12 +644,12 @@ export default function ProductDemo() {
                             setShowMoreMenu(false);
                           }}
                           disabled={isThinking}
-                          className="w-full flex items-center gap-3 px-4 py-3 text-sm text-brand-secondary hover:text-brand-text hover:bg-brand-text/10 transition-all duration-150 disabled:opacity-40 group cursor-pointer"
+                          className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-sans text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06] transition-colors duration-150 disabled:opacity-40 group cursor-pointer"
                           style={{
                             cursor: isThinking ? "not-allowed" : "pointer",
                           }}
                         >
-                          <Pencil className="w-4 h-4 text-brand-accent group-hover:scale-110 transition-transform" />
+                          <Pencil className="w-4 h-4 text-brand-accent group-hover:scale-110 transition-transform shrink-0" />
                           <span className="font-sans font-medium">
                             Edit Position
                           </span>

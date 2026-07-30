@@ -1,6 +1,7 @@
 import { useState, useCallback, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import { RoyalGoldPathway, ROYAL_GOLD_NODES } from '../components/pathways/RoyalGold/RoyalGoldPathway';
+import { RoyalGoldPathway } from '../components/pathways/RoyalGold/RoyalGoldPathway';
+import { ROYAL_GOLD_NODES } from '../components/pathways/RoyalGold/royalGoldNodes';
 import { PATHWAY_NODES } from '../components/pathways';
 import type { PathNode, PlayerProgress } from '../types/PuzzlePath';
 import { PuzzleBoard } from '../components/PuzzleBoard';
@@ -9,7 +10,7 @@ import { CustomPuzzleSession } from '../components/CustomPuzzleSession';
 import type { PuzzleFilters } from '../types/puzzle';
 import {
   HelpCircle,
-  Sparkles,
+  SlidersHorizontal,
   ArrowLeft,
   ArrowRight,
 } from 'lucide-react';
@@ -42,7 +43,8 @@ function useIsDesktop(breakpointPx: number = DESKTOP_BREAKPOINT_PX): boolean {
     const handleChange = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
 
     // Sync immediately in case it changed between initial state and mount
-    setIsDesktop(mql.matches);
+    function syncState() { setIsDesktop(mql.matches); }
+    syncState();
 
     if (mql.addEventListener) {
       mql.addEventListener('change', handleChange);
@@ -156,12 +158,29 @@ export default function PuzzlePage() {
     setMobileView('pathway');
   }, []);
 
+  const isCurrentNodeCompleted = useMemo(() => {
+    if (!selectedNode) return false;
+    return completedIds.includes(selectedNode.id);
+  }, [selectedNode, completedIds]);
+
+  const currentPathwayIndex = useMemo(() => {
+    if (!selectedNode) return -1;
+    return activePathwayNodes.findIndex(
+      n => n.id === selectedNode.id || n.levelNumber === selectedNode.levelNumber
+    );
+  }, [selectedNode, activePathwayNodes]);
+
+  const hasNextNode = currentPathwayIndex >= 0 && currentPathwayIndex < activePathwayNodes.length - 1;
+  const isNextEnabled = hasNextNode && isCurrentNodeCompleted;
+
   // Advance to next puzzle in active pathway
   const handleNextPuzzle = useCallback(() => {
     if (!selectedNode) {
       if (activePathwayNodes.length > 0) setSelectedNode(activePathwayNodes[0]);
       return;
     }
+    if (!completedIds.includes(selectedNode.id)) return;
+
     const currentIndex = activePathwayNodes.findIndex(
       n => n.id === selectedNode.id || n.levelNumber === selectedNode.levelNumber
     );
@@ -170,13 +189,14 @@ export default function PuzzlePage() {
       setSelectedNode(nextNode);
       setShowConfetti(false);
     }
-  }, [selectedNode, activePathwayNodes]);
+  }, [selectedNode, activePathwayNodes, completedIds]);
 
   // Mobile-specific Next Puzzle (advances + returns to pathway view)
   const handleNextPuzzleMobile = useCallback(() => {
+    if (!selectedNode || !completedIds.includes(selectedNode.id)) return;
     handleNextPuzzle();
     setMobileView('pathway');
-  }, [handleNextPuzzle]);
+  }, [handleNextPuzzle, selectedNode, completedIds]);
 
   // Solve callback from left puzzle board
   const handleSolved = useCallback(() => {
@@ -186,20 +206,20 @@ export default function PuzzlePage() {
       setCompletedIds(prev => {
         if (prev.includes(selectedNode.id)) return prev;
         const updated = [...prev, selectedNode.id];
-        try { localStorage.setItem('xlchess_completed_puzzles', JSON.stringify(updated)); } catch (e) { }
+        try { localStorage.setItem('xlchess_completed_puzzles', JSON.stringify(updated)); } catch { /* empty */ }
         return updated;
       });
     }
 
     setStreak(prev => {
       const next = prev + 1;
-      try { localStorage.setItem('xlchess_puzzle_streak', next.toString()); } catch (e) { }
+      try { localStorage.setItem('xlchess_puzzle_streak', next.toString()); } catch { /* empty */ }
       return next;
     });
 
     setSolvedCount(prev => {
       const next = prev + 1;
-      try { localStorage.setItem('xlchess_puzzle_solved', next.toString()); } catch (e) { }
+      try { localStorage.setItem('xlchess_puzzle_solved', next.toString()); } catch { /* empty */ }
       return next;
     });
   }, [selectedNode]);
@@ -207,7 +227,7 @@ export default function PuzzlePage() {
   // Failed callback from left puzzle board
   const handleFailed = useCallback(() => {
     setStreak(0);
-    try { localStorage.setItem('xlchess_puzzle_streak', '0'); } catch (e) { }
+    try { localStorage.setItem('xlchess_puzzle_streak', '0'); } catch { /* empty */ }
   }, []);
 
   const handleNavigateHome = useCallback(() => {
@@ -247,40 +267,35 @@ export default function PuzzlePage() {
     }
 
     return (
-      <div className="flex flex-col w-full h-full gap-3">
-        <RoyalGoldPathway
-          playerProgress={playerProgress}
-          onSelectPuzzle={handleSelectNode}
-        />
+      <div className="flex flex-col w-full h-full gap-4 relative">
+        <div className="relative z-10 flex-1 min-h-0">
+          <RoyalGoldPathway
+            playerProgress={playerProgress}
+            onSelectPuzzle={handleSelectNode}
+          />
+        </div>
 
-        <button
-          id="custom-puzzles-btn"
-          onClick={handleOpenCustomConfig}
-          className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-xs font-mono uppercase tracking-wider font-semibold transition-all duration-300 cursor-pointer"
-          style={{
-            background: "linear-gradient(135deg, rgba(212,175,110,0.10) 0%, rgba(184,147,74,0.06) 100%)",
-            border: "1px solid rgba(212,175,110,0.22)",
-            color: "#D4AF6E",
-            boxShadow: "0 2px 12px rgba(212,175,110,0.07)",
-          }}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.background =
-              "linear-gradient(135deg, rgba(212,175,110,0.18) 0%, rgba(184,147,74,0.12) 100%)";
-            (e.currentTarget as HTMLButtonElement).style.boxShadow =
-              "0 4px 20px rgba(212,175,110,0.18)";
-            (e.currentTarget as HTMLButtonElement).style.transform = "translateY(-1px)";
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.background =
-              "linear-gradient(135deg, rgba(212,175,110,0.10) 0%, rgba(184,147,74,0.06) 100%)";
-            (e.currentTarget as HTMLButtonElement).style.boxShadow =
-              "0 2px 12px rgba(212,175,110,0.07)";
-            (e.currentTarget as HTMLButtonElement).style.transform = "translateY(0)";
-          }}
-        >
-          <Sparkles className="w-3.5 h-3.5" />
-          Custom Puzzles
-        </button>
+        <div className="relative z-20 flex-shrink-0">
+          <button
+            id="custom-puzzles-btn"
+            onClick={handleOpenCustomConfig}
+            className="w-full flex items-center justify-center gap-2 px-4.5 py-3.5 rounded-xl text-xs font-mono uppercase tracking-wider font-bold transition-all duration-300 cursor-pointer bg-brand-surface border border-brand-accent/35 text-brand-accent hover:border-brand-accent/60 shadow-md shadow-brand-accent/10 hover:shadow-lg hover:shadow-brand-accent/20 hover:-translate-y-0.5"
+            style={{
+              background: "linear-gradient(135deg, rgba(212,175,110,0.14) 0%, rgba(184,147,74,0.08) 100%), var(--obsidian-mid)",
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.background =
+                "linear-gradient(135deg, rgba(212,175,110,0.22) 0%, rgba(184,147,74,0.14) 100%), var(--obsidian-mid)";
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.background =
+                "linear-gradient(135deg, rgba(212,175,110,0.14) 0%, rgba(184,147,74,0.08) 100%), var(--obsidian-mid)";
+            }}
+          >
+            <SlidersHorizontal className="w-3.5 h-3.5 text-brand-accent" />
+            <span>Custom Puzzles</span>
+          </button>
+        </div>
       </div>
     );
   };
@@ -296,12 +311,10 @@ export default function PuzzlePage() {
         <div className="mb-4 flex items-center justify-between w-full">
           <button
             onClick={handleNavigateHome}
-            className="flex items-center gap-2.5 text-xs text-brand-secondary hover:text-brand-text transition-all duration-300 cursor-pointer uppercase tracking-wider font-mono font-medium"
+            className="inline-flex items-center gap-2 text-brand-secondary hover:text-brand-text transition-colors duration-200 font-sans text-sm font-semibold cursor-pointer group"
           >
-            <span className="w-5 h-5 rounded-full border border-brand-border flex items-center justify-center font-bold text-[9px] hover:border-brand-accent/50">
-              <ArrowLeft className="w-3 h-3" />
-            </span>
-            Back to Home
+            <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+            <span>Back to Home</span>
           </button>
 
           {customFilters && (
@@ -336,12 +349,7 @@ export default function PuzzlePage() {
 
             <div className="lg:col-span-5 flex flex-col space-y-6">
               <div
-                className="rounded-2xl p-6 text-left shadow-2xl relative overflow-hidden"
-                style={{
-                  background: "rgba(12, 16, 32, 0.6)",
-                  border: "1px solid rgba(212,175,110,0.15)",
-                  backdropFilter: "blur(20px)",
-                }}
+                className="rounded-2xl p-6 text-left shadow-2xl relative overflow-hidden bg-brand-surface/80 backdrop-blur-xl border border-brand-border/40"
               >
                 <div
                   className="absolute top-0 right-0 w-[150px] h-[150px] pointer-events-none"
@@ -349,15 +357,12 @@ export default function PuzzlePage() {
                     background: "radial-gradient(ellipse at top right, rgba(212,175,110,0.05) 0%, transparent 70%)",
                   }}
                 />
-                <div className="flex items-center gap-3 mb-4 pb-4" style={{ borderBottom: "1px solid rgba(212,175,110,0.12)" }}>
-                  <div
-                    className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-                    style={{ background: "rgba(212,175,110,0.1)", border: "1px solid rgba(212,175,110,0.2)" }}
-                  >
-                    <Sparkles className="w-4 h-4" style={{ color: "#D4AF6E" }} />
+                <div className="flex items-center gap-3 mb-4 pb-4 border-b border-brand-border/40">
+                  <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 bg-brand-accent/10 border border-brand-accent/20">
+                    <SlidersHorizontal className="w-4 h-4 text-brand-accent" />
                   </div>
                   <div>
-                    <h2 className="text-xl font-semibold text-brand-text" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+                    <h2 className="text-xl font-semibold text-brand-text font-display">
                       Custom Session
                     </h2>
                     <p className="text-xs mt-0.5 text-brand-secondary">
@@ -374,12 +379,7 @@ export default function PuzzlePage() {
                       {customFilters.themes.map((t) => (
                         <span
                           key={t}
-                          className="text-[10px] font-mono px-2 py-0.5 rounded-full"
-                          style={{
-                            background: "rgba(212,175,110,0.08)",
-                            border: "1px solid rgba(212,175,110,0.2)",
-                            color: "#D4AF6E",
-                          }}
+                          className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-brand-accent/10 border border-brand-accent/20 text-brand-accent"
                         >
                           {t}
                         </span>
@@ -393,6 +393,7 @@ export default function PuzzlePage() {
                   </p>
                 )}
               </div>
+
 
               <div className="bg-brand-surface/30 backdrop-blur-sm border border-brand-border/60 rounded-2xl p-5 text-left flex items-start gap-3.5">
                 <div className="w-8 h-8 rounded-lg bg-brand-accent/10 border border-brand-accent/20 text-brand-accent flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -429,8 +430,10 @@ export default function PuzzlePage() {
                 </div>
 
                 <button
+                  type="button"
                   onClick={handleNextPuzzle}
-                  className="px-4 py-2 rounded-xl text-xs font-mono uppercase tracking-wider font-semibold bg-amber-500 text-slate-950 hover:bg-amber-400 transition-all shadow-lg flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+                  disabled={!isNextEnabled}
+                  className="px-4 py-2 rounded-xl text-xs font-mono uppercase tracking-wider font-semibold bg-amber-500 text-slate-950 hover:bg-amber-400 transition-all shadow-lg flex items-center gap-1.5 cursor-pointer whitespace-nowrap disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-amber-500 disabled:shadow-none"
                 >
                   <span>Next Level</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -445,6 +448,7 @@ export default function PuzzlePage() {
                   onSolved={handleSolved}
                   onFailed={handleFailed}
                   onNextPuzzle={handleNextPuzzle}
+                  isNextDisabled={!isNextEnabled}
                 />
               </div>
             </div>
@@ -490,7 +494,8 @@ export default function PuzzlePage() {
                         <button
                           type="button"
                           onClick={handleNextPuzzleMobile}
-                          className="px-3.5 py-2 rounded-xl text-xs font-mono uppercase tracking-wider font-semibold bg-amber-500 text-slate-950 hover:bg-amber-400 transition-all shadow-lg flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+                          disabled={!isNextEnabled}
+                          className="px-3.5 py-2 rounded-xl text-xs font-mono uppercase tracking-wider font-semibold bg-amber-500 text-slate-950 hover:bg-amber-400 transition-all shadow-lg flex items-center gap-1.5 cursor-pointer whitespace-nowrap disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-amber-500 disabled:shadow-none"
                         >
                           <span>Next Level</span>
                           <ArrowRight className="w-3.5 h-3.5" />
@@ -505,6 +510,7 @@ export default function PuzzlePage() {
                           onSolved={handleSolved}
                           onFailed={handleFailed}
                           onNextPuzzle={handleNextPuzzleMobile}
+                          isNextDisabled={!isNextEnabled}
                         />
                       </div>
                     </div>
@@ -523,25 +529,34 @@ export default function PuzzlePage() {
                     );
                   }
                   return (
-                    <div className="w-full flex flex-col gap-3">
-                      <RoyalGoldPathway
-                        playerProgress={playerProgress}
-                        onSelectPuzzle={handleSelectNode}
-                      />
-                      <button
-                        id="custom-puzzles-btn-mobile"
-                        onClick={handleOpenCustomConfig}
-                        className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-xs font-mono uppercase tracking-wider font-semibold transition-all duration-300 cursor-pointer"
-                        style={{
-                          background: "linear-gradient(135deg, rgba(212,175,110,0.10) 0%, rgba(184,147,74,0.06) 100%)",
-                          border: "1px solid rgba(212,175,110,0.22)",
-                          color: "#D4AF6E",
-                          boxShadow: "0 2px 12px rgba(212,175,110,0.07)",
-                        }}
-                      >
-                        <Sparkles className="w-3.5 h-3.5" />
-                        Custom Puzzles
-                      </button>
+                    <div className="w-full flex flex-col gap-4 relative">
+                      <div className="relative z-10">
+                        <RoyalGoldPathway
+                          playerProgress={playerProgress}
+                          onSelectPuzzle={handleSelectNode}
+                        />
+                      </div>
+                      <div className="relative z-20">
+                        <button
+                          id="custom-puzzles-btn-mobile"
+                          onClick={handleOpenCustomConfig}
+                          className="w-full flex items-center justify-center gap-2 px-4.5 py-3.5 rounded-xl text-xs font-mono uppercase tracking-wider font-bold transition-all duration-300 cursor-pointer bg-brand-surface border border-brand-accent/35 text-brand-accent hover:border-brand-accent/60 shadow-md shadow-brand-accent/10 hover:shadow-lg hover:shadow-brand-accent/20 hover:-translate-y-0.5"
+                          style={{
+                            background: "linear-gradient(135deg, rgba(212,175,110,0.14) 0%, rgba(184,147,74,0.08) 100%), var(--obsidian-mid)",
+                          }}
+                          onMouseEnter={(e) => {
+                            (e.currentTarget as HTMLButtonElement).style.background =
+                              "linear-gradient(135deg, rgba(212,175,110,0.22) 0%, rgba(184,147,74,0.14) 100%), var(--obsidian-mid)";
+                          }}
+                          onMouseLeave={(e) => {
+                            (e.currentTarget as HTMLButtonElement).style.background =
+                              "linear-gradient(135deg, rgba(212,175,110,0.14) 0%, rgba(184,147,74,0.08) 100%), var(--obsidian-mid)";
+                          }}
+                        >
+                          <SlidersHorizontal className="w-3.5 h-3.5 text-brand-accent" />
+                          <span>Custom Puzzles</span>
+                        </button>
+                      </div>
                     </div>
                   );
               }

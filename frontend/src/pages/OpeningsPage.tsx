@@ -332,9 +332,9 @@ export default function OpeningsPage() {
             soundManager.playButtonClick();
             navigate(-1);
           }}
-          className="flex items-center gap-1.5 text-brand-secondary hover:text-brand-text text-sm font-sans transition-colors duration-200 cursor-pointer group"
+          className="inline-flex items-center gap-2 text-brand-secondary hover:text-brand-text transition-colors duration-200 font-sans text-sm font-semibold cursor-pointer group"
         >
-          <ArrowLeft className="w-4 h-4 transition-transform duration-200 group-hover:-translate-x-0.5" />
+          <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
           <span>Back</span>
         </button>
 
