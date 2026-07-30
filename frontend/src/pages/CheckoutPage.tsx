@@ -7,12 +7,15 @@ import {
   Calendar,
   ShieldCheck,
   ArrowRight,
+  ArrowLeft,
   Info,
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router";
 import { useSession } from "../hooks/useSession";
 import { AuthModal } from "../components/AuthModal";
 import { PaymentService } from "../services/payment";
+import { usePricing } from "../hooks/usePricing";
+
 export default function CheckoutPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -27,25 +30,26 @@ export default function CheckoutPage() {
 
   // Checkout States
   const [isProcessing, setIsProcessing] = useState(false);
+  const [paymentError, setPaymentError] = useState<string | null>(null);
 
   useEffect(() => {
     const checkPendingSession = async () => {
-      const pendingId = sessionStorage.getItem('pending_checkout_session_id');
+      const pendingId = sessionStorage.getItem("pending_checkout_session_id");
       if (!pendingId) return;
 
       setIsProcessing(true); // show overlay briefly while we check
       try {
         const result = await PaymentService.getCheckoutSession(pendingId);
-        if (result?.data?.session?.status !== 'complete') {
-          sessionStorage.removeItem('pending_checkout_session_id');
-          navigate('/payment/failed');
+        if (result?.data?.session?.status !== "complete") {
+          sessionStorage.removeItem("pending_checkout_session_id");
+          navigate("/payment/failed");
           return;
         }
         // completed — clear the pending marker; success_url flow handles the rest
-        sessionStorage.removeItem('pending_checkout_session_id');
+        sessionStorage.removeItem("pending_checkout_session_id");
       } catch (err) {
-        console.error('[CheckoutPage] Session status check failed:', err);
-        sessionStorage.removeItem('pending_checkout_session_id');
+        console.error("[CheckoutPage] Session status check failed:", err);
+        sessionStorage.removeItem("pending_checkout_session_id");
       } finally {
         setIsProcessing(false);
       }
@@ -56,8 +60,8 @@ export default function CheckoutPage() {
     const handlePageShow = (event: PageTransitionEvent) => {
       if (event.persisted) checkPendingSession();
     };
-    window.addEventListener('pageshow', handlePageShow);
-    return () => window.removeEventListener('pageshow', handlePageShow);
+    window.addEventListener("pageshow", handlePageShow);
+    return () => window.removeEventListener("pageshow", handlePageShow);
   }, [navigate]);
   useEffect(() => {
     // Detect plan selection from URL query parameter
@@ -76,13 +80,36 @@ export default function CheckoutPage() {
     setAuthModalOpen(true);
   };
 
+  const { pricing } = usePricing();
   // Auto Calculations
-  const basePrice = isYearly ? 60.0 : 5.0;
-  const planDiscount = isYearly ? 39.6 : 0.0; // Base yearly is $60.00 USD (monthly price * 12), plan saves $39.60 USD (66% discount)
+
   const billingCycleLabel = isYearly ? "Premium Yearly" : "Premium Monthly";
 
-  // Final Total
-  const grandTotal = basePrice - planDiscount;
+  // Diamond USD base prices
+  const DIAMOND_USD_MONTHLY = 5.00;
+  const DIAMOND_USD_YEARLY = 20.40;
+
+  const symbol = pricing.symbol;
+
+  // Derive exchange rate from backend Diamond pricing
+  const monthlyRate = pricing.monthly / DIAMOND_USD_MONTHLY;
+  const yearlyRate = pricing.yearly / DIAMOND_USD_YEARLY;
+
+  // Format helper: 2 decimals for < 100, integers for >= 100
+  const fmt = (n: number) => n >= 100 ? Math.round(n).toString() : n.toFixed(2);
+
+  const localMonthly = DIAMOND_USD_MONTHLY * monthlyRate;
+  const localYearlyTotal = DIAMOND_USD_YEARLY * yearlyRate;
+
+  const basePriceFormatted = isYearly
+    ? `${symbol}${fmt(localMonthly * 12)}`   // full year at monthly rate
+    : `${symbol}${fmt(localMonthly)}`;
+  const planDiscountFormatted = isYearly
+    ? `${symbol}${fmt(localMonthly * 12 - localYearlyTotal)}`
+    : `${symbol}0`;
+  const grandTotalFormatted = isYearly
+    ? `${symbol}${fmt(localYearlyTotal)}`
+    : `${symbol}${fmt(localMonthly)}`;
 
   // Next Renewal Date calculation
   const nextRenewalDate = () => {
@@ -98,31 +125,40 @@ export default function CheckoutPage() {
       year: "numeric",
     });
   };
-  // Complete checkout flow
+
+  // Complete checkout flow — uses predefined Stripe products
   const handleProceedToPayment = async () => {
     setIsProcessing(true);
+    setPaymentError(null);
 
     try {
-      const plan = isYearly ? "pro_yearly" : "pro_monthly";
-      const response = await PaymentService.createCheckoutSession(plan);
+      const planId = isYearly ? "pro_yearly" : "pro_monthly";
+      const response = await PaymentService.createCheckoutSession(planId);
 
-      if (response.status === "success" && response.checkoutUrl) {
+      if (
+        response.status === "success" &&
+        (response.checkoutUrl)
+      ) {
         if (response.sessionId) {
-          sessionStorage.setItem('pending_checkout_session_id', response.sessionId);
+          sessionStorage.setItem(
+            "pending_checkout_session_id",
+            response.sessionId,
+          );
         }
         // Securely redirect customer to Stripe hosted checkout page
         window.location.href = response.checkoutUrl;
       } else {
-        alert(
+        setPaymentError(
           response.message ||
-          "Failed to initialize secure checkout session. Please try again.",
+            "Failed to initialize secure checkout session. Please try again.",
         );
         setIsProcessing(false);
       }
     } catch (error: any) {
       console.error("[CheckoutPage] Payment redirect error:", error);
-      alert(
-        "An unexpected error occurred while establishing a secure billing session. Please try again.",
+      setPaymentError(
+        error?.message ||
+          "An unexpected error occurred while establishing a secure billing session. Please try again.",
       );
       setIsProcessing(false);
     }
@@ -156,13 +192,13 @@ export default function CheckoutPage() {
             initial={{ opacity: 0, scale: 0.92 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
-            className="w-full bg-[#0c1020]/75 backdrop-blur-xl border border-brand-border rounded-3xl p-8 shadow-2xl shadow-brand-bg/50"
+            className="w-full bg-brand-surface/75 backdrop-blur-xl border border-brand-border rounded-3xl p-8 shadow-2xl shadow-brand-bg/50"
           >
             <div className="w-16 h-16 rounded-full bg-brand-accent/10 border border-brand-accent/25 flex items-center justify-center mx-auto mb-6 text-brand-accent shadow-[0_0_15px_rgba(212,175,110,0.1)]">
               <Lock className="w-6 h-6 animate-pulse" />
             </div>
 
-            <h1 className="text-2xl sm:text-3xl font-display font-medium text-white tracking-wide mb-3">
+            <h1 className="text-2xl sm:text-3xl font-display font-medium text-brand-text tracking-wide mb-3">
               Sign in Required
             </h1>
 
@@ -181,7 +217,7 @@ export default function CheckoutPage() {
 
               <button
                 onClick={() => handleOpenAuth("register")}
-                className="w-full py-3 px-6 rounded-xl font-mono text-xs uppercase tracking-widest font-semibold bg-white/5 border border-white/10 hover:border-brand-accent/40 text-brand-secondary hover:text-white transition-all duration-300 cursor-pointer active:scale-[0.99]"
+                className="w-full py-3 px-6 rounded-xl font-mono text-xs uppercase tracking-widest font-semibold bg-brand-text/5 border border-white/10 hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text transition-all duration-300 cursor-pointer active:scale-[0.99]"
               >
                 Create Account
               </button>
@@ -190,7 +226,7 @@ export default function CheckoutPage() {
 
           <button
             onClick={() => navigate("/pricing")}
-            className="mt-6 text-xs font-mono text-brand-secondary hover:text-white uppercase tracking-wider transition-colors duration-200 cursor-pointer"
+            className="mt-6 text-xs font-mono text-brand-secondary hover:text-brand-text uppercase tracking-wider transition-colors duration-200 cursor-pointer"
           >
             ← View Pricing Plans
           </button>
@@ -229,7 +265,7 @@ export default function CheckoutPage() {
                 <Lock className="w-5 h-5 text-brand-accent/50 animate-pulse" />
               </div>
             </div>
-            <h3 className="text-lg font-mono tracking-widest text-white uppercase mb-2 animate-pulse">
+            <h3 className="text-lg font-mono tracking-widest text-brand-text uppercase mb-2 animate-pulse">
               Processing Payment
             </h3>
             <p className="text-xs text-brand-secondary font-sans">
@@ -249,19 +285,17 @@ export default function CheckoutPage() {
         <div className="w-full flex justify-start mb-6">
           <button
             onClick={() => navigate("/pricing")}
-            className="flex items-center gap-2.5 text-xs sm:text-sm text-brand-secondary hover:text-white transition-all duration-300 cursor-pointer uppercase tracking-wider font-mono font-medium"
+            className="inline-flex items-center gap-2 text-brand-secondary hover:text-brand-text transition-colors duration-200 font-sans text-sm font-semibold cursor-pointer group"
           >
-            <span className="w-5 h-5 rounded-full border border-brand-border flex items-center justify-center font-bold text-[9px] hover:border-brand-accent/50">
-              &lt;
-            </span>
-            Back to Plans
+            <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+            <span>Back to Plans</span>
           </button>
         </div>
 
         {/* Checkout Header Title */}
-        <section className="mb-10 text-left border-b border-brand-border/40 pb-6 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+        <section className="mb-10 text-left border-b border-[rgba(212,175,110,0.40)] pb-6 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl sm:text-4xl font-display font-medium text-white tracking-wide mb-2">
+            <h1 className="text-3xl sm:text-4xl font-display font-medium text-brand-text tracking-wide mb-2">
               Checkout
             </h1>
             <p className="text-sm text-brand-secondary font-sans">
@@ -275,16 +309,37 @@ export default function CheckoutPage() {
           </div>
         </section>
 
+        {/* Payment Error Alert Banner */}
+        {paymentError && (
+          <div className="mb-8 p-4 rounded-sm bg-red-500/10 border border-red-500/30 text-red-400 text-sm font-sans flex items-start gap-3 shadow-md">
+            <Info className="w-5 h-5 shrink-0 mt-0.5 text-red-400" />
+            <div className="flex-1 text-left">
+              <p className="font-semibold text-red-300 mb-1">
+                Payment Session Initialization Error
+              </p>
+              <p className="text-xs text-red-400/90 leading-relaxed font-mono">
+                {paymentError}
+              </p>
+            </div>
+            <button
+              onClick={() => setPaymentError(null)}
+              className="text-xs font-mono uppercase font-bold text-red-400 hover:text-white px-2 py-0.5"
+            >
+              Dismiss
+            </button>
+          </div>
+        )}
+
         {/* 2-Column Responsive Layout */}
         <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-16">
           {/* LEFT SIDE COLUMN (65%) */}
           <div className="lg:col-span-8 space-y-6">
             {/* 1. Account Information Card */}
-            <div className="bg-[#0c1020]/60 backdrop-blur-xl border border-brand-border rounded-2xl p-6 relative overflow-hidden">
+            <div className="bg-brand-surface/60 backdrop-blur-xl border border-brand-border rounded-sm p-6 relative overflow-hidden">
               <div className="absolute top-0 right-0 w-[180px] h-[180px] bg-brand-accent/3 rounded-full blur-[40px] pointer-events-none" />
 
               <div className="flex justify-between items-center mb-6">
-                <h3 className="text-base sm:text-lg font-display font-medium text-white tracking-wide">
+                <h3 className="text-base sm:text-lg font-display font-medium text-brand-text tracking-wide">
                   Account Information
                 </h3>
                 <button
@@ -316,7 +371,7 @@ export default function CheckoutPage() {
                     <label className="text-[10px] font-mono text-brand-secondary uppercase tracking-wider block mb-0.5">
                       Username
                     </label>
-                    <div className="text-sm font-sans font-semibold text-white truncate">
+                    <div className="text-sm font-sans font-semibold text-brand-text truncate">
                       {user?.name?.toLowerCase().replace(/\s+/g, "_") ||
                         "grandmaster_user"}
                     </div>
@@ -326,7 +381,7 @@ export default function CheckoutPage() {
                     <label className="text-[10px] font-mono text-brand-secondary uppercase tracking-wider block mb-0.5">
                       Full Name
                     </label>
-                    <div className="text-sm font-sans text-[#e5dfd5] truncate">
+                    <div className="text-sm font-sans text-brand-text truncate">
                       {user?.name || "Premium Member"}
                     </div>
                   </div>
@@ -335,7 +390,7 @@ export default function CheckoutPage() {
                     <label className="text-[10px] font-mono text-brand-secondary uppercase tracking-wider block mb-0.5">
                       Email Address
                     </label>
-                    <div className="text-sm font-sans text-[#e5dfd5] truncate">
+                    <div className="text-sm font-sans text-brand-text truncate">
                       {user?.email || "chess.champ@xlchess.com"}
                     </div>
                   </div>
@@ -354,17 +409,17 @@ export default function CheckoutPage() {
             </div>
 
             {/* 2. Membership Details Card */}
-            <div className="bg-[#0c1020]/60 backdrop-blur-xl border border-brand-border rounded-2xl p-6 text-left">
-              <h3 className="text-base sm:text-lg font-display font-medium text-white tracking-wide mb-5">
+            <div className="bg-brand-surface/60 backdrop-blur-xl border border-brand-border rounded-sm p-6 text-left">
+              <h3 className="text-base sm:text-lg font-display font-medium text-brand-text tracking-wide mb-5">
                 Membership Details
               </h3>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-b border-brand-border/40 pb-5 mb-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-b border-[rgba(212,175,110,0.40)] pb-5 mb-4">
                 <div>
                   <span className="text-xs font-mono text-brand-secondary uppercase tracking-wider block mb-1">
                     Selected Plan
                   </span>
-                  <div className="text-base font-display font-medium text-white text-gold-gradient flex items-center gap-1.5">
+                  <div className="text-base font-display font-medium text-brand-text text-gold-gradient flex items-center gap-1.5">
                     <Trophy className="w-4 h-4 text-brand-accent" />
                     {billingCycleLabel}
                   </div>
@@ -390,7 +445,7 @@ export default function CheckoutPage() {
                   <span className="text-xs font-mono text-brand-secondary uppercase tracking-wider block mb-0.5">
                     Membership Starts
                   </span>
-                  <div className="text-sm font-sans text-[#e5dfd5]">
+                  <div className="text-sm font-sans text-brand-text">
                     {new Date().toLocaleDateString("en-US", {
                       day: "numeric",
                       month: "long",
@@ -403,7 +458,7 @@ export default function CheckoutPage() {
                   <span className="text-xs font-mono text-brand-secondary uppercase tracking-wider block mb-0.5">
                     Next Renewal Date
                   </span>
-                  <div className="text-sm font-sans text-[#e5dfd5]">
+                  <div className="text-sm font-sans text-brand-text">
                     {nextRenewalDate()}
                   </div>
                 </div>
@@ -423,11 +478,11 @@ export default function CheckoutPage() {
           {/* RIGHT SIDE COLUMN (35% - Sticky) */}
           <div className="lg:col-span-4 lg:sticky lg:top-[90px]">
             {/* Sticky Order Summary Card */}
-            <div className="bg-[#0e1428]/90 border border-brand-accent/20 rounded-3xl p-6 text-left shadow-2xl relative overflow-hidden">
+            <div className="bg-brand-surface/90 backdrop-blur-xl border border-brand-border rounded-sm p-6 text-left shadow-xl relative overflow-hidden">
               {/* Radial gradient background accent */}
               <div className="absolute -top-[100px] -right-[100px] w-[200px] h-[200px] bg-brand-accent/5 rounded-full blur-[50px] pointer-events-none" />
 
-              <h3 className="text-base sm:text-lg font-display font-medium text-white tracking-wide mb-5 pb-2 border-b border-brand-border/40">
+              <h3 className="text-base sm:text-lg font-display font-medium text-brand-text tracking-wide mb-5 pb-2 border-b border-[rgba(212,175,110,0.40)]">
                 Order Summary
               </h3>
 
@@ -435,7 +490,7 @@ export default function CheckoutPage() {
                 {/* Plan details */}
                 <div className="flex justify-between items-start">
                   <div>
-                    <div className="text-sm font-sans font-semibold text-white">
+                    <div className="text-sm font-sans font-semibold text-brand-text">
                       {billingCycleLabel}
                     </div>
                     <div className="text-[11px] text-brand-secondary font-sans leading-none mt-1">
@@ -443,14 +498,14 @@ export default function CheckoutPage() {
                     </div>
                   </div>
                   <span className="text-sm font-mono text-[#e5dfd5]">
-                    ${basePrice.toFixed(2)} USD
+                    {basePriceFormatted}
                   </span>
                 </div>
 
                 {/* Subtotal */}
-                <div className="flex justify-between items-center text-xs text-brand-secondary pt-2 border-t border-brand-border/20">
+                <div className="flex justify-between items-center text-xs text-brand-secondary pt-2 border-t border-[rgba(212,175,110,0.20)]">
                   <span>Subtotal</span>
-                  <span className="font-mono">${basePrice.toFixed(2)} USD</span>
+                  <span className="font-mono">{basePriceFormatted}</span>
                 </div>
 
                 {/* Plan discount */}
@@ -460,18 +515,18 @@ export default function CheckoutPage() {
                       Plan Savings (66%)
                     </span>
                     <span className="font-mono text-emerald-400">
-                      -${planDiscount.toFixed(2)} USD
+                      -{planDiscountFormatted}
                     </span>
                   </div>
                 )}
 
                 {/* Total Paid */}
-                <div className="flex justify-between items-baseline pt-4 border-t border-brand-border/60">
-                  <span className="text-sm font-sans font-semibold text-white">
+                <div className="flex justify-between items-baseline pt-4 border-t border-[rgba(212,175,110,0.60)]">
+                  <span className="text-sm font-sans font-semibold text-brand-text">
                     Total
                   </span>
                   <span className="text-2xl font-display font-bold text-white text-gold-gradient">
-                    ${grandTotal.toFixed(2)} USD
+                    {grandTotalFormatted}
                   </span>
                 </div>
               </div>
@@ -498,7 +553,7 @@ export default function CheckoutPage() {
               {/* Proceed Button */}
               <button
                 onClick={handleProceedToPayment}
-                className="w-full py-4 px-6 rounded-xl font-mono text-xs uppercase tracking-widest font-bold btn-premium-cta btn-glow-container btn-glow-accent cta-shine cursor-pointer shadow-lg hover:scale-[1.01] flex items-center justify-center gap-2 mb-4"
+                className="w-full py-4 px-6 rounded-sm font-mono text-xs uppercase tracking-widest font-bold btn-premium-cta btn-glow-container btn-glow-accent cta-shine cursor-pointer shadow-lg hover:scale-[1.01] flex items-center justify-center gap-2 mb-4"
               >
                 <span>Proceed to Payment</span>
                 <ArrowRight className="w-4 h-4" />
@@ -510,7 +565,7 @@ export default function CheckoutPage() {
               </div>
 
               {/* Accepted Payments Grid */}
-              <div className="border-t border-brand-border/40 pt-4 text-center">
+              <div className="border-t border-[rgba(212,175,110,0.40)] pt-4 text-center">
                 <span className="text-[9px] font-mono text-brand-secondary uppercase tracking-widest block mb-2.5">
                   Accepted Payments
                 </span>
@@ -524,10 +579,10 @@ export default function CheckoutPage() {
                   <span className="text-[10px] font-mono tracking-tight font-extrabold">
                     AMEX
                   </span>
-                  <span className="text-[10px] font-mono tracking-tight font-extrabold font-sans">
+                  <span className="text-[10px] font-mono tracking-tight font-extrabold ">
                     GPay
                   </span>
-                  <span className="text-[10px] font-mono tracking-tight font-extrabold font-sans">
+                  <span className="text-[10px] font-mono tracking-tight font-extrabold ">
                     Apple Pay
                   </span>
                 </div>
@@ -538,7 +593,7 @@ export default function CheckoutPage() {
 
         {/* ── PREMIUM BENEFITS SECTION ────────────────────────────────────────── */}
         <section className="w-full text-left mb-12">
-          <h2 className="text-xl sm:text-2xl font-display font-medium text-white mb-6">
+          <h2 className="text-xl sm:text-2xl font-display font-medium text-brand-text mb-6">
             You're Unlocking
           </h2>
 
@@ -555,12 +610,12 @@ export default function CheckoutPage() {
             ].map((benefit, idx) => (
               <div
                 key={idx}
-                className="bg-[#0c1020]/40 border border-brand-border/80 rounded-xl p-4 flex items-start gap-3 hover:border-brand-accent/20 transition-all duration-300"
+                className="bg-brand-surface/40 border border-brand-border rounded-sm p-4 flex items-start gap-3 hover:border-brand-accent/20 transition-all duration-300"
               >
                 <div className="w-5 h-5 rounded-full bg-brand-accent/10 border border-brand-accent/20 text-brand-accent flex items-center justify-center mt-0.5 flex-shrink-0">
                   <Check className="w-3.5 h-3.5" />
                 </div>
-                <span className="text-sm text-[#e5dfd5] font-sans leading-relaxed">
+                <span className="text-sm text-brand-text font-sans leading-relaxed">
                   {benefit}
                 </span>
               </div>

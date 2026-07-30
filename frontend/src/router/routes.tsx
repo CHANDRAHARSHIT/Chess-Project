@@ -1,4 +1,5 @@
 import HomePage from "../pages/HomePage";
+import ContactPage from "../pages/ContactPage";
 import PuzzlePage from "../pages/PuzzlePage";
 import { Navigate } from "react-router";
 import SettingsPage from "../pages/SettingsPage";
@@ -8,6 +9,9 @@ import SuccessfulPage from "../pages/SuccessfulPage";
 import FailedPage from "../pages/FailedPage";
 import PremiumPage from "../pages/PremiumPage";
 import OpeningsPage from "../pages/OpeningsPage";
+import SubscriptionsPage from "../pages/SubscriptionsPage";
+import VariantsPage from "../pages/VariantsPage";
+import Chess960Page from "../pages/Chess960Page";
 import { ProtectedRoute } from "../components/ProtectedRoute";
 import OpponentIngestPage from "../pages/OpponentIngestPage";
 import OpponentReportPage from "../pages/OpponentReportPage";
@@ -23,6 +27,7 @@ export interface RouteConfig {
 // Routes that run inside the MainLayout (Navbar + Sidebar + Footer)
 export const mainRoutes: RouteConfig[] = [
   { path: "/", element: <HomePage /> },
+  { path: "/contact", element: <ContactPage /> },
   { path: "/puzzles", element: <PuzzlePage /> },
   { path: "/openings", element: <OpeningsPage /> },
   { path: "/database", element: <DatabasePage /> },
@@ -30,13 +35,17 @@ export const mainRoutes: RouteConfig[] = [
   { path: "/database/game/:id", element: <DatabaseGamePage /> },
   { path: "/opponents/add", element: <OpponentIngestPage /> },
   { path: "/opponents/:username", element: <OpponentReportPage /> },
+  { path: "/subscriptions", element: <SubscriptionsPage /> },
+  { path: "/variants", element: <VariantsPage /> },
+  { path: "/play/chess960", element: <Chess960Page /> },
   {
     path: "/profile",
-    element: <Navigate to="/settings?tab=profile" replace />,
+    element: <Navigate to="/settings/profile" replace />,
   },
   // Not behind ProtectedRoute: board/piece preferences are stored in
   // localStorage (like the Sound toggle) so guests can use them too.
   { path: "/settings", element: <SettingsPage /> },
+  { path: "/settings/:category", element: <SettingsPage /> },
   {
     path: "/premium",
     element: (

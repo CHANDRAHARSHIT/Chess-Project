@@ -92,13 +92,32 @@ export type ProductFeature = Prisma.ProductFeatureModel
  */
 export type WebhookEvent = Prisma.WebhookEventModel
 /**
- * Model CuratedPuzzle
- * Curated puzzle dataset sourced from Lichess puzzle database.
- * Used for the Custom Puzzles feature — filterable by theme and rating range.
- */
-export type CuratedPuzzle = Prisma.CuratedPuzzleModel
-/**
  * Model Opening
  * 
  */
 export type Opening = Prisma.OpeningModel
+/**
+ * Model CuratedPuzzle
+ * 
+ */
+export type CuratedPuzzle = Prisma.CuratedPuzzleModel
+/**
+ * Model Course
+ * 
+ */
+export type Course = Prisma.CourseModel
+/**
+ * Model Lesson
+ * 
+ */
+export type Lesson = Prisma.LessonModel
+/**
+ * Model LessonProgress
+ * 
+ */
+export type LessonProgress = Prisma.LessonProgressModel
+/**
+ * Model CustomLink
+ * 
+ */
+export type CustomLink = Prisma.CustomLinkModel

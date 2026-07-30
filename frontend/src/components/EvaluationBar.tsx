@@ -72,7 +72,7 @@ export function EvaluationBar({
         <span
           className="font-sans text-xs font-normal leading-none"
           style={{
-            color: "#8E8B82",
+            color: "var(--text-secondary, #8E8B82)",
           }}
         >
           {evalLabel}
