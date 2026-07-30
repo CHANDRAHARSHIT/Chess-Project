@@ -302,21 +302,21 @@ export default function SidebarLayout({
 
   const MOCK_SUBSCRIPTIONS = [
     {
-      name: "Epic Chess",
+      name: "PowerPlayChess",
       avatar:
-        "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQB-blLJtOasSxbG_PvO7ejDjJEeUGjqKyJe_pUfWfBmQTg2Osx",
+        "https://yt3.googleusercontent.com/ytc/AIdro_msERs2yFdyXKdh6MkbVchKiDhLbOh-rWZkMfNDyc5o5A=s160-c-k-c0x00ffffff-no-rj",
       href: "/subscriptions",
     },
     {
-      name: "Epic Chess",
+      name: "PowerPlayChess",
       avatar:
-        "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQB-blLJtOasSxbG_PvO7ejDjJEeUGjqKyJe_pUfWfBmQTg2Osx",
+        "https://yt3.googleusercontent.com/ytc/AIdro_msERs2yFdyXKdh6MkbVchKiDhLbOh-rWZkMfNDyc5o5A=s160-c-k-c0x00ffffff-no-rj",
       href: "/subscriptions",
     },
     {
-      name: "Epic Chess",
+      name: "PowerPlayChess",
       avatar:
-        "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQB-blLJtOasSxbG_PvO7ejDjJEeUGjqKyJe_pUfWfBmQTg2Osx",
+        "https://yt3.googleusercontent.com/ytc/AIdro_msERs2yFdyXKdh6MkbVchKiDhLbOh-rWZkMfNDyc5o5A=s160-c-k-c0x00ffffff-no-rj",
       href: "/subscriptions",
     },
   ];
@@ -539,7 +539,7 @@ export default function SidebarLayout({
                 isExpanded || isMobileOpen
                   ? "flex-1 text-left text-[14px] ml-2 tracking-wide truncate"
                   : "w-full text-center text-[10px] mt-1.5 leading-[1.15] whitespace-normal tracking-normal line-clamp-2 break-words"
-              } ${!(isExpanded || isMobileOpen) && isAvatar ? "hidden" : ""}`}
+                } ${!(isExpanded || isMobileOpen) && isAvatar ? "hidden" : ""}`}
             >
               {item.name}
             </span>
@@ -554,11 +554,10 @@ export default function SidebarLayout({
           {/* Custom Link Actions */}
           {isCustomLink && (isExpanded || isMobileOpen) && (
             <div
-              className={`absolute right-4 flex items-center z-10 bg-brand-bg/80 backdrop-blur-sm rounded-full transition-all ${
-                isMobileOpen
+              className={`absolute right-4 flex items-center z-10 bg-brand-bg/80 backdrop-blur-sm rounded-full transition-all ${isMobileOpen
                   ? "opacity-100"
                   : "opacity-0 group-hover/navitem:opacity-100"
-              }`}
+                }`}
             >
               {/* Move to More / Move to Active */}
               {section === "active" ? (
@@ -639,13 +638,12 @@ export default function SidebarLayout({
                     }
                     handleLinkClick(subItem.href, e);
                   }}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-sans transition-colors duration-150 ${
-                    subItem.comingSoon
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-sans transition-colors duration-150 ${subItem.comingSoon
                       ? "opacity-60 cursor-not-allowed select-none"
                       : isSubActive
                         ? "text-brand-accent bg-brand-text/10 font-medium cursor-pointer"
                         : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 cursor-pointer"
-                  }`}
+                    }`}
                 >
                   {SubIcon && (
                     <SubIcon
@@ -722,7 +720,7 @@ export default function SidebarLayout({
       <div className="flex flex-1 pt-16">
         {/* Desktop Sidebar (Fixed) */}
         <aside
-          className={`fixed top-16 left-0 bottom-0 z-30 bg-brand-bg/95 backdrop-blur-md flex-col py-2 transition-all duration-300 md:flex hidden overflow-y-auto overscroll-contain no-scrollbar pb-6 ${
+          className={`fixed top-16 left-0 bottom-0 z-30 bg-brand-bg/95 backdrop-blur-md flex flex-col py-2 transition-all duration-300 hidden md:flex overflow-y-auto overscroll-contain no-scrollbar pb-6 ${
             isExpanded ? "w-64" : "w-20"
           }`}
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
@@ -796,13 +794,13 @@ export default function SidebarLayout({
                 )}
                 {MOCK_SUBSCRIPTIONS.length > 0
                   ? MOCK_SUBSCRIPTIONS.map((sub) =>
-                      renderNavItem({ ...sub, href: sub.href }),
-                    )
+                    renderNavItem({ ...sub, href: sub.href }),
+                  )
                   : isExpanded && (
-                      <div className="px-6 py-2 text-[13px] text-brand-secondary">
-                        No subscriptions yet.
-                      </div>
-                    )}
+                    <div className="px-6 py-2 text-[13px] text-brand-secondary">
+                      No subscriptions yet.
+                    </div>
+                  )}
                 <Divider />
 
                 {/* YOU SECTION */}
@@ -953,13 +951,12 @@ export default function SidebarLayout({
                     setHoveredSubMenu(null);
                     handleLinkClick(subItem.href, e);
                   }}
-                  className={`w-full flex items-center gap-4 px-5 py-3 text-[14px] font-sans text-left transition-colors duration-150 ${
-                    subItem.comingSoon
+                  className={`w-full flex items-center gap-4 px-5 py-3 text-[14px] font-sans text-left transition-colors duration-150 ${subItem.comingSoon
                       ? "opacity-60 cursor-not-allowed select-none"
                       : isSubActive
                         ? "text-brand-accent bg-brand-text/[0.06] cursor-pointer font-medium"
                         : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06] cursor-pointer"
-                  }`}
+                    }`}
                 >
                   {SubIcon && (
                     <SubIcon
@@ -975,15 +972,13 @@ export default function SidebarLayout({
 
         {/* Mobile Sidebar (Slide-out) */}
         <div
-          className={`fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity duration-300 md:hidden ${
-            isMobileOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-          }`}
+          className={`fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity duration-300 md:hidden ${isMobileOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+            }`}
           onClick={() => setIsMobileOpen(false)}
         />
         <aside
-          className={`fixed top-0 left-0 bottom-0 w-64 z-50 bg-brand-bg flex flex-col py-2 transition-transform duration-300 ease-in-out md:hidden overflow-y-auto overscroll-contain ${
-            isMobileOpen ? "translate-x-0" : "-translate-x-full"
-          }`}
+          className={`fixed top-0 left-0 bottom-0 w-64 z-50 bg-brand-bg flex flex-col py-2 transition-transform duration-300 ease-in-out md:hidden overflow-y-auto overscroll-contain ${isMobileOpen ? "translate-x-0" : "-translate-x-full"
+            }`}
         >
           <div className="flex items-center mb-2 h-14">
             <div className="w-20 flex justify-center items-center shrink-0">
@@ -1236,11 +1231,10 @@ export default function SidebarLayout({
                             setNewLinkUrl(option.value);
                             setIsUrlDropdownOpen(false);
                           }}
-                          className={`w-full text-left px-4 py-2.5 text-[14px] transition-colors cursor-pointer ${
-                            newLinkUrl === option.value
+                          className={`w-full text-left px-4 py-2.5 text-[14px] transition-colors cursor-pointer ${newLinkUrl === option.value
                               ? "bg-[#2563EB] text-brand-text font-medium"
                               : "text-brand-secondary hover:bg-brand-text/5 hover:text-brand-text"
-                          }`}
+                            }`}
                         >
                           {option.label}
                         </button>
