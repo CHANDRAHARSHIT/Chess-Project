@@ -34,7 +34,10 @@ import { useNavigate, useLocation } from "react-router";
 import { useNavigationStack } from "../hooks/useNavigationStack";
 
 // Hook for clicking outside the custom dropdown
-function useOnClickOutside(ref: any, handler: any) {
+function useOnClickOutside(
+  ref: React.RefObject<HTMLElement | null>,
+  handler: (event: MouseEvent | TouchEvent) => void,
+) {
   const handlerRef = useRef(handler);
 
   useEffect(() => {
@@ -42,8 +45,8 @@ function useOnClickOutside(ref: any, handler: any) {
   }, [handler]);
 
   useEffect(() => {
-    const listener = (event: any) => {
-      if (!ref.current || ref.current.contains(event.target)) {
+    const listener = (event: MouseEvent | TouchEvent) => {
+      if (!ref.current || ref.current.contains(event.target as Node)) {
         return;
       }
       handlerRef.current(event);
@@ -56,6 +59,11 @@ function useOnClickOutside(ref: any, handler: any) {
     };
   }, [ref]);
 }
+
+/** Thin horizontal rule dividing sidebar sections */
+const Divider = () => (
+  <hr className="border-t border-brand-text/10 my-3 mx-4" />
+);
 
 /**
  * SidebarLayout Component
@@ -79,7 +87,7 @@ export default function SidebarLayout({
   const [isYouOpen, setIsYouOpen] = useState(true);
 
   const [hoveredSubMenu, setHoveredSubMenu] = useState<{
-    items: any[];
+    items: { name: string; href?: string; icon?: React.ElementType; comingSoon?: boolean }[];
     top: number;
     left: number;
   } | null>(null);
@@ -134,7 +142,8 @@ export default function SidebarLayout({
   };
 
   useEffect(() => {
-    fetchLinks();
+    void (async () => { await fetchLinks(); })();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status]);
 
   const [isMoreOpen, setIsMoreOpen] = useState(false);
@@ -428,8 +437,18 @@ export default function SidebarLayout({
 
   // Helper for rendering a nav link
   // section: 'active' = in Explore section, 'more' = in More section
+  type NavItem = {
+    name: string;
+    href?: string;
+    icon?: React.ElementType;
+    avatar?: string;
+    subItems?: NavItem[];
+    comingSoon?: boolean;
+    [key: string]: unknown;
+  };
+
   const renderNavItem = (
-    item: any,
+    item: NavItem,
     customLinkIndex?: number,
     section: "active" | "more" = "active",
   ) => {
@@ -440,7 +459,7 @@ export default function SidebarLayout({
       (currentPathWithSearch === item.href ||
         location.pathname === item.href ||
         item.subItems?.some(
-          (s: any) =>
+          (s: NavItem) =>
             currentPathWithSearch === s.href || location.pathname === s.href,
         ));
 
@@ -501,7 +520,7 @@ export default function SidebarLayout({
               isDisabled ? "cursor-not-allowed" : "cursor-pointer"
             } ${
               isExpanded || isMobileOpen
-                ? `items-center py-2.5 mx-2 rounded-xl ${
+                ? `items-center py-2.5 mx-2 px-3 rounded-xl ${
                     isDisabled
                       ? "opacity-60 select-none text-brand-secondary"
                       : isActive
@@ -518,7 +537,7 @@ export default function SidebarLayout({
             }`}
           >
             <div
-              className={`flex items-center justify-center shrink-0 ${isExpanded || isMobileOpen ? "w-16" : "w-full"}`}
+              className={`flex items-center justify-center shrink-0 ${isExpanded || isMobileOpen ? "w-10" : "w-full"}`}
             >
               {isAvatar ? (
                 <img
@@ -536,16 +555,16 @@ export default function SidebarLayout({
             <span
               className={`font-sans transition-all ${
                 isExpanded || isMobileOpen
-                  ? "flex-1 text-left text-[14px] pr-4 tracking-wide truncate"
+                  ? "flex-1 text-left text-[14px] ml-2 tracking-wide truncate"
                   : "w-full text-center text-[10px] mt-1.5 leading-[1.15] whitespace-normal tracking-normal line-clamp-2 break-words"
               } ${!(isExpanded || isMobileOpen) && isAvatar ? "hidden" : ""}`}
             >
               {item.name}
             </span>
 
-            {hasSubItems && isMobileOpen && (
+            {hasSubItems && (isMobileOpen || isExpanded) && (
               <ChevronDown
-                className={`w-3.5 h-3.5 opacity-50 group-hover/navitem:opacity-100 transition-transform ${isSubOpen ? "rotate-180" : ""}`}
+                className={`w-4 h-4 text-brand-secondary opacity-60 group-hover/navitem:opacity-100 transition-transform shrink-0 ${isSubOpen ? "rotate-180" : ""}`}
               />
             )}
           </a>
@@ -600,9 +619,11 @@ export default function SidebarLayout({
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  section === "active"
-                    ? removeCustomLink(customLinkIndex!)
-                    : removeMoreLink(customLinkIndex!);
+                  if (section === "active") {
+                    removeCustomLink(customLinkIndex!);
+                  } else {
+                    removeMoreLink(customLinkIndex!);
+                  }
                 }}
                 className="p-1.5 text-brand-secondary hover:text-red-400 hover:bg-red-400/10 rounded-full transition-all cursor-pointer"
                 title="Remove Link"
@@ -618,7 +639,7 @@ export default function SidebarLayout({
           <div
             className={`transition-all duration-300 overflow-hidden flex flex-col ml-[72px] mr-2 ${isSubOpen ? "max-h-[500px] mt-1 mb-2 opacity-100" : "max-h-0 opacity-0"}`}
           >
-            {item.subItems.map((subItem: any) => {
+            {item.subItems.map((subItem: NavItem) => {
               const SubIcon = subItem.icon;
               const currentPathWithSearch = location.pathname + location.search;
               const isSubActive =
@@ -657,9 +678,7 @@ export default function SidebarLayout({
     );
   };
 
-  const Divider = () => (
-    <hr className="border-t border-brand-text/10 my-3 mx-4" />
-  );
+  // Divider is defined above SidebarLayout (hoisted to avoid re-declaration on each render)
 
   return (
     <div className="min-h-screen text-brand-text bg-brand-bg flex flex-col relative select-none">
@@ -719,7 +738,7 @@ export default function SidebarLayout({
       <div className="flex flex-1 pt-16">
         {/* Desktop Sidebar (Fixed) */}
         <aside
-          className={`fixed top-16 left-0 bottom-0 z-30 bg-brand-bg/95 backdrop-blur-md flex flex-col py-2 transition-all duration-300 hidden md:flex overflow-y-auto overscroll-contain no-scrollbar pb-6 ${
+          className={`fixed top-16 left-0 bottom-0 z-30 bg-brand-bg/95 backdrop-blur-md flex-col py-2 transition-all duration-300 md:flex hidden overflow-y-auto overscroll-contain no-scrollbar pb-6 ${
             isExpanded ? "w-64" : "w-20"
           }`}
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
@@ -931,7 +950,7 @@ export default function SidebarLayout({
               }, 150);
             }}
           >
-            {hoveredSubMenu.items.map((subItem: any) => {
+            {hoveredSubMenu.items.map((subItem) => {
               const SubIcon = subItem.icon;
               const currentPathWithSearch = location.pathname + location.search;
               const isSubActive =
@@ -1008,7 +1027,7 @@ export default function SidebarLayout({
             {baseSection.map((item) => renderNavItem(item))}
             <Divider />
 
-            <div className="px-6 py-2 flex items-center justify-between">
+            <div className="mx-2 px-3 py-2 flex items-center justify-between">
               <span className="text-[15px] font-semibold text-brand-text">
                 Explore
               </span>
@@ -1023,7 +1042,7 @@ export default function SidebarLayout({
                     setIsAddLinkModalOpen(true);
                   }
                 }}
-                className="p-1 hover:bg-brand-text/10 rounded-full text-brand-secondary hover:text-brand-text cursor-pointer transition-colors"
+                className="w-4 h-4 hover:bg-brand-text/10 rounded-full text-brand-secondary hover:text-brand-text cursor-pointer transition-colors flex items-center justify-center"
                 title="Add custom link"
               >
                 <Plus className="w-4 h-4" />
@@ -1055,7 +1074,7 @@ export default function SidebarLayout({
               </div>
             ) : (
               <>
-                <div className="px-6 py-2">
+                <div className="mx-2 px-3 py-2">
                   <span className="text-[15px] font-semibold text-brand-text">
                     Subscriptions
                   </span>
@@ -1073,7 +1092,7 @@ export default function SidebarLayout({
                 <Divider />
 
                 <div
-                  className="flex items-center justify-between px-6 py-2 cursor-pointer group"
+                  className="flex items-center justify-between mx-2 px-3 py-2 cursor-pointer group rounded-xl hover:bg-brand-text/5 transition-colors"
                   onClick={() => setIsYouOpen(!isYouOpen)}
                 >
                   <span className="text-[15px] font-semibold text-brand-text">
@@ -1099,7 +1118,7 @@ export default function SidebarLayout({
               <>
                 <Divider />
                 <div
-                  className="flex items-center justify-between px-6 py-2 cursor-pointer group"
+                  className="flex items-center justify-between mx-2 px-3 py-2 cursor-pointer group rounded-xl hover:bg-brand-text/5 transition-colors"
                   onClick={() => setIsMoreOpen(!isMoreOpen)}
                 >
                   <div className="flex items-center gap-2">
