@@ -16,6 +16,7 @@ import {
 } from "../utils/positionEditor";
 import { DIFFICULTY_CONFIGS, type DifficultyLevel } from "../types/chess";
 import { soundManager } from "../utils/SoundManager";
+import rollbar from "../config/rollbar";
 import {
   RotateCcw,
   Lightbulb,
@@ -207,6 +208,7 @@ export default function ProductDemo() {
           }
         } catch (e) {
           console.error("AI tried to make invalid move:", bestMoveStr, e);
+          rollbar.error(e as Error, { context: "ProductDemo.applyEngineMove", bestMoveStr });
         }
       });
     }, 350);

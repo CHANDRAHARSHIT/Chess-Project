@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { type DifficultyLevel, type EngineEvaluation, DIFFICULTY_CONFIGS, type EngineStatus } from '../types/chess';
+import rollbar from '../config/rollbar';
 
 export function useStockfish() {
   const workerRef = useRef<Worker | null>(null);
@@ -33,6 +34,9 @@ export function useStockfish() {
       return worker;
     } catch (e) {
       console.error('Failed to initialize Stockfish worker', e);
+      // Falls back to an "error" engine status below, so this never reaches
+      // the ErrorBoundary — report it manually since it breaks engine play.
+      rollbar.error(e as Error, { context: 'useStockfish.initWorker' });
       setEngineStatus('error');
       return null;
     }

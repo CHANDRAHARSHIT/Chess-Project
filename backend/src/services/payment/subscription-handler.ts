@@ -1,5 +1,6 @@
 import { prisma } from "../../config/prisma.js";
 import { SubscriptionStatus } from "../../generated/prisma/enums.js";
+import rollbar from "../../config/rollbar.js";
 
 export function normalizeSubscriptionStatus(status: string): SubscriptionStatus {
   switch (status) {
@@ -45,14 +46,20 @@ export async function handleSubscriptionCreatedOrUpdated(payload: any) {
   });
 
   if (!user) {
-    console.error(`[SubscriptionHandler]: User with customer ID ${customerId} not found.`);
+    const message = `[SubscriptionHandler]: User with customer ID ${customerId} not found.`;
+    console.error(message);
+    // No throw here (webhook must still 200 back to Stripe), so report manually —
+    // this indicates a customer/user linkage gap that needs investigation.
+    rollbar.error(message, { customerId, gatewaySubscriptionId });
     return;
   }
 
   // Find product by gatewayPriceId (Stripe Price ID)
   const priceId = payload.items?.data[0]?.price?.id;
   if (!priceId) {
-    console.error("[SubscriptionHandler]: No price ID found in subscription payload.");
+    const message = "[SubscriptionHandler]: No price ID found in subscription payload.";
+    console.error(message);
+    rollbar.error(message, { gatewaySubscriptionId, customerId });
     return;
   }
 
@@ -67,7 +74,9 @@ export async function handleSubscriptionCreatedOrUpdated(payload: any) {
   });
 
   if (!product) {
-    console.error(`[SubscriptionHandler]: Product with gatewayPriceId ${priceId} not found.`);
+    const message = `[SubscriptionHandler]: Product with gatewayPriceId ${priceId} not found.`;
+    console.error(message);
+    rollbar.error(message, { priceId, gatewaySubscriptionId, customerId });
     return;
   }
 

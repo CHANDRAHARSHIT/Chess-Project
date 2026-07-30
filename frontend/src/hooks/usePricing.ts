@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { PricingApi, type PricingResponse } from "../services/pricingApi";
+import rollbar from "../config/rollbar";
 
 const FALLBACK_PRICING: PricingResponse = {
   country: "New Zealand",
@@ -50,6 +51,9 @@ export function usePricing() {
       setPricing(data);
     } catch (err: any) {
       console.warn("[usePricing]: Failed to fetch backend pricing, using fallback NZD pricing.", err);
+      // Falls back to NZD pricing below, so this never reaches the
+      // ErrorBoundary — report it manually since it affects checkout pricing.
+      rollbar.error(err, { context: "usePricing.fetchPricing" });
       setError(err.message || "Failed to load local pricing. Displaying default NZD prices.");
       setPricing(FALLBACK_PRICING);
     }

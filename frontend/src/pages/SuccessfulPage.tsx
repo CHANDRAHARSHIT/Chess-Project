@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router';
 import { Confetti } from '../components/Confetti';
 import { useSession } from '../hooks/useSession';
 import { PaymentService } from '../services/payment';
+import rollbar from '../config/rollbar';
 
 interface UpgradeDetails {
   billingCycle: 'Monthly' | 'Yearly';
@@ -65,6 +66,9 @@ export default function SuccessfulPage() {
           }
         } catch (err) {
           console.error("Error fetching checkout status:", err);
+          // Retried by the poll loop below, so this never reaches the
+          // ErrorBoundary — report it manually since it's a payment-confirmation path.
+          rollbar.error(err as Error, { context: "SuccessfulPage.pollCheckoutStatus" });
         }
         return false;
       };
@@ -110,6 +114,9 @@ export default function SuccessfulPage() {
       const parsed = JSON.parse(stored) as UpgradeDetails;
       setDetails(parsed);
     } catch (e) {
+      // A completed payment can't render its success details here, so
+      // report it manually — the customer sees "payment expired" despite paying.
+      rollbar.error(e as Error, { context: "SuccessfulPage.parseUpgradeDetails" });
       navigate('/pricing?error=payment_expired');
     } finally {
       setLoading(false);

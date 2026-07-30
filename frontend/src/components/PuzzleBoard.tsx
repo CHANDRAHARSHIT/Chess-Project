@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { soundManager } from "../utils/SoundManager";
 import { BoardCoordinates } from "./BoardCoordinates";
+import rollbar from "../config/rollbar";
 
 export interface PuzzleBoardProps {
   puzzle: ChessPuzzle;
@@ -65,6 +66,9 @@ export function PuzzleBoard({
         setGameFen(puzzle.fen);
       } catch (e) {
         console.error("Failed to parse FEN in PuzzleBoard:", puzzle.fen, e);
+        // Falls back to a fresh board below, so this never reaches the
+        // ErrorBoundary — report it manually since it points at bad puzzle data.
+        rollbar.error(e as Error, { context: "PuzzleBoard.resetBoard", fen: puzzle.fen });
         gameRef.current = new Chess();
         setGameFen(gameRef.current.fen());
       }
@@ -188,6 +192,12 @@ export function PuzzleBoard({
                       oppMoveStr,
                       e,
                     );
+                    // A genuine bug (bad puzzle solution data or move parsing),
+                    // not user input — report it manually.
+                    rollbar.error(e as Error, {
+                      context: "PuzzleBoard.playOpponentMove",
+                      oppMoveStr,
+                    });
                   }
                   setSolutionIndex(nextIndex + 1);
                 }, 400);

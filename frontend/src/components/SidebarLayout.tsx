@@ -29,6 +29,7 @@ import { AuthModal } from "./AuthModal";
 import { MoreMenu } from "./MoreMenu";
 import { useNavigate, useLocation } from "react-router";
 import { useNavigationStack } from "../hooks/useNavigationStack";
+import rollbar from "../config/rollbar";
 
 // Hook for clicking outside the custom dropdown
 function useOnClickOutside(
@@ -135,6 +136,7 @@ export default function SidebarLayout({
       }
     } catch (err) {
       console.error("Failed to fetch custom links", err);
+      rollbar.error(err as Error, { context: "SidebarLayout.fetchLinks" });
     }
   };
 
@@ -191,6 +193,7 @@ export default function SidebarLayout({
           });
         } catch (err) {
           console.error(err);
+          rollbar.error(err as Error, { context: "SidebarLayout.handleAddLink:update" });
           fetchLinks(); // Revert on error
         }
       } else {
@@ -212,6 +215,7 @@ export default function SidebarLayout({
           }
         } catch (err) {
           console.error(err);
+          rollbar.error(err as Error, { context: "SidebarLayout.handleAddLink:create" });
         }
       }
       setNewLinkName("");
@@ -244,6 +248,7 @@ export default function SidebarLayout({
       });
     } catch (err) {
       console.error(err);
+      rollbar.error(err as Error, { context: "SidebarLayout.removeCustomLink" });
       fetchLinks();
     }
   };
@@ -258,6 +263,7 @@ export default function SidebarLayout({
       });
     } catch (err) {
       console.error(err);
+      rollbar.error(err as Error, { context: "SidebarLayout.removeMoreLink" });
       fetchLinks();
     }
   };
@@ -277,6 +283,7 @@ export default function SidebarLayout({
       });
     } catch (err) {
       console.error(err);
+      rollbar.error(err as Error, { context: "SidebarLayout.moveToMore" });
       fetchLinks();
     }
   };
@@ -296,6 +303,7 @@ export default function SidebarLayout({
       });
     } catch (err) {
       console.error(err);
+      rollbar.error(err as Error, { context: "SidebarLayout.moveToActive" });
       fetchLinks();
     }
   };
