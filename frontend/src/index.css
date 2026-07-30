@@ -1520,25 +1520,11 @@ body {
   transition: all 0.3s var(--ease-luxury);
 }
 
-.contact-btn::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(212, 175, 110, 0.12), transparent);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  pointer-events: none;
-}
-
 .contact-btn:hover {
   background: linear-gradient(135deg, rgba(212, 175, 110, 0.22) 0%, rgba(212, 175, 110, 0.12) 100%);
   border-color: var(--marble-border-strong);
   box-shadow: 0 0 20px var(--gold-whisper), inset 0 1px 0 rgba(212, 175, 110, 0.1);
   transform: translateY(-2px);
-}
-
-.contact-btn:hover::before {
-  opacity: 1;
 }
 
 .contact-btn img.arrow {

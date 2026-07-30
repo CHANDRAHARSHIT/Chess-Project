@@ -223,7 +223,7 @@ export default function ContactSection() {
                 type="submit"
                 disabled={status === "submitting"}
                 onClick={() => soundManager.playButtonClick()}
-                className="contact-btn font-sans flex items-center justify-center gap-2 disabled:opacity-75 disabled:pointer-events-none"
+                className="contact-btn btn-glow-container cta-shine group font-sans flex items-center justify-center gap-2 disabled:opacity-75 disabled:pointer-events-none"
               >
                 {status === "submitting" ? (
                   <>
@@ -236,7 +236,7 @@ export default function ContactSection() {
                     <img
                       src="/arrow.svg"
                       alt="arrow"
-                      className="arrow w-5 h-5 inline-block"
+                      className="arrow w-5 h-5 inline-block transition-transform duration-300 group-hover:translate-x-1"
                     />
                   </>
                 )}
