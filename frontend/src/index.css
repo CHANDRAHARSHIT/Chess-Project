@@ -97,30 +97,40 @@
   --text-primary: #1C1917;
   --text-secondary: #57534E;
   --text-tertiary: #78716C;
+  --text-gold: #8C520D;
+
+  /* --- Gold Accent System (Darker Bronze/Gold for High Contrast on Light Mode) --- */
+  --gold-bright: #945C10;
+  --gold-mid: #7A490B;
+  --gold-dim: #5C3506;
+  --gold-whisper: rgba(148, 92, 16, 0.08);
+  --gold-glow: rgba(148, 92, 16, 0.15);
+  --gold-glow-strong: rgba(148, 92, 16, 0.3);
 
   /* --- Marble / Stone --- */
   --marble-light: rgba(0, 0, 0, 0.025);
-  --marble-line: rgba(184, 147, 74, 0.22);
-  --marble-border: rgba(184, 147, 74, 0.40);
-  --marble-border-strong: rgba(184, 147, 74, 0.55);
+  --marble-line: rgba(148, 92, 16, 0.22);
+  --marble-border: rgba(148, 92, 16, 0.40);
+  --marble-border-strong: rgba(148, 92, 16, 0.55);
 
   /* --- Glass & Darker Golden Border System for High Contrast --- */
   --glass-bg: rgba(245, 240, 230, 0.90);
-  --glass-border: rgba(184, 147, 74, 0.35);
-  --glass-border-gold: rgba(184, 147, 74, 0.45);
+  --glass-border: rgba(148, 92, 16, 0.35);
+  --glass-border-gold: rgba(148, 92, 16, 0.45);
 
   /* --- Eval Bar (Light Mode contrast fix) --- */
   --eval-bar-bg: #1C1917;
-  --eval-bar-border: rgba(184, 147, 74, 0.55);
+  --eval-bar-border: rgba(148, 92, 16, 0.55);
 
   /* --- Shadows --- */
-  --shadow-deep: 0 20px 48px -12px rgba(184, 147, 74, 0.20), 0 4px 16px rgba(0, 0, 0, 0.04);
-  --shadow-card: 0 10px 32px -8px rgba(184, 147, 74, 0.22), 0 2px 8px rgba(0, 0, 0, 0.03);
+  --shadow-deep: 0 20px 48px -12px rgba(148, 92, 16, 0.20), 0 4px 16px rgba(0, 0, 0, 0.04);
+  --shadow-card: 0 10px 32px -8px rgba(148, 92, 16, 0.22), 0 2px 8px rgba(0, 0, 0, 0.03);
 
   /* --- RGB-triplet tokens (light) --- */
   --obsidian-rgb: 250 246 240;
   --obsidian-mid-rgb: 245 240 230;
   --obsidian-light-rgb: 239 233 220;
+  --gold-bright-rgb: 148 92 16;
   --text-primary-rgb: 28 25 23;
   --text-secondary-rgb: 87 83 78;
   --text-tertiary-rgb: 120 113 108;
@@ -232,6 +242,14 @@ body {
 /* Gold gradient text */
 .text-gold-gradient {
   background: linear-gradient(135deg, #E8C88A 0%, var(--gold-bright) 35%, var(--gold-mid) 70%, #C4A35A 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+:root[data-theme="light"] .text-gold-gradient {
+  background: linear-gradient(135deg, #B8781B 0%, #945C10 35%, #7A490B 70%, #5C3506 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;

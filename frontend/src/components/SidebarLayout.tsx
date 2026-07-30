@@ -6,10 +6,7 @@ import {
   Puzzle,
   CircleUserRound,
   Crown,
-  GraduationCap,
   BookOpen,
-  Bot,
-  BookMarked,
   ChevronDown,
   Zap,
   Clock,
@@ -364,22 +361,6 @@ export default function SidebarLayout({
   // Nav Items Data
   const baseSection = [
     { name: "Home", href: "/", icon: Home },
-    {
-      name: "Learn",
-      href: "/learn",
-      icon: GraduationCap,
-      comingSoon: true,
-      subItems: [
-        { name: "Lessons", href: "/lessons", icon: BookOpen, comingSoon: true },
-        {
-          name: "Play Coach",
-          href: "/play-coach",
-          icon: Bot,
-          comingSoon: true,
-        },
-        { name: "Openings", href: "/openings", icon: BookMarked },
-      ],
-    },
   ];
 
   const exploreSection = [
@@ -403,7 +384,7 @@ export default function SidebarLayout({
   ];
 
   const youSection = [
-    { name: "Stats", href: "/settings?tab=profile", icon: BarChart2 },
+    { name: "Stats", href: "/stats", icon: BarChart2, comingSoon: true },
     {
       name: "Complete Later",
       href: "/complete-later",
