@@ -17,6 +17,7 @@ import {
 import type { ChessPuzzle } from '../utils/PuzzleLoader';
 import { Chess } from 'chess.js';
 import { Confetti } from '../components/Confetti';
+import rollbar from '../config/rollbar';
 
 // Tailwind's `lg` breakpoint. Keep in sync with tailwind config if changed.
 const DESKTOP_BREAKPOINT_PX = 1024;
@@ -137,6 +138,9 @@ export default function PuzzlePage() {
       };
     } catch (e) {
       console.error('Invalid FEN in selected puzzle node, falling back to default:', e);
+      // Falls back to the default node below, so this never reaches the
+      // ErrorBoundary — report it manually since it points at bad puzzle data.
+      rollbar.error(e as Error, { context: 'PuzzlePage.safeChessPuzzle', nodeId: targetNode?.id });
       return {
         id: defaultNode?.id || 'placeholder_004',
         fen: defaultNode?.fen || 'rnbqkn1r/ppppp2p/5p2/6p1/4P3/3P4/PPP2PPP/RNBQKBNR w KQkq - 0 3',

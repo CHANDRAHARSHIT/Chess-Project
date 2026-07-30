@@ -15,6 +15,7 @@ import {
 import { useSession } from "../hooks/useSession";
 import { useNavigate } from "react-router";
 import { PaymentService } from "../services/payment";
+import rollbar from "../config/rollbar";
 
 interface PlatformButtonProps {
   name: string;
@@ -142,6 +143,7 @@ const { signOut } = useSession();
       }
     } catch (e) {
       console.error("[ProfilePage] Customer billing portal load error:", e);
+      rollbar.error(e as Error, { context: "ProfileContent.manageBilling" });
       alert("An unexpected error occurred while loading billing portal. Please try again.");
     } finally {
       setManagingBilling(false);
@@ -166,6 +168,7 @@ const { signOut } = useSession();
         }
       } catch (err) {
         console.error(err);
+        rollbar.error(err as Error, { context: "ProfileContent.logoutAll" });
         alert("A network error occurred while signing out from all devices.");
       } finally {
         setLoggingOutAll(false);
@@ -192,6 +195,7 @@ const { signOut } = useSession();
       }
     } catch (err: any) {
       console.error(err);
+      rollbar.error(err, { context: "ProfileContent.loadProfile" });
       setError(err.message || "An unexpected error occurred while loading profile.");
     } finally {
       setLoadingProfile(false);

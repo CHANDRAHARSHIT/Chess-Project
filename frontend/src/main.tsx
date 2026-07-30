@@ -10,17 +10,11 @@ import { NavigationStackProvider } from "./context/NavigationStackContext";
 import ScrollToTop from "./components/ScrollToTop";
 import { Provider as RollbarProvider, ErrorBoundary } from "@rollbar/react";
 import { ThemeProvider } from "./context/ThemeContext";
+import rollbar from "./config/rollbar";
 
 // Restore the user's saved sound preference before the first render.
 // This ensures no sounds fire in the wrong mute state during startup.
 soundManager.initFromStorage();
-
-const rollbarConfig = {
-  accessToken: import.meta.env.VITE_ROLLBAR_ACCESS_TOKEN,
-  environment: import.meta.env.MODE || "development",
-  captureUncaught: true,
-  captureUnhandledRejections: true,
-};
 
 const RollbarFallback = () => (
   <div style={{ padding: "20px", color: "red" }}>
@@ -31,7 +25,7 @@ const RollbarFallback = () => (
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <RollbarProvider config={rollbarConfig}>
+    <RollbarProvider instance={rollbar}>
       <ErrorBoundary fallbackUI={RollbarFallback}>
         <BrowserRouter>
           <ScrollToTop />
