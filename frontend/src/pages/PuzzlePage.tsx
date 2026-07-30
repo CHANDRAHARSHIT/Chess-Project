@@ -42,7 +42,8 @@ function useIsDesktop(breakpointPx: number = DESKTOP_BREAKPOINT_PX): boolean {
     const handleChange = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
 
     // Sync immediately in case it changed between initial state and mount
-    setIsDesktop(mql.matches);
+    function syncState() { setIsDesktop(mql.matches); }
+    syncState();
 
     if (mql.addEventListener) {
       mql.addEventListener('change', handleChange);
@@ -186,20 +187,20 @@ export default function PuzzlePage() {
       setCompletedIds(prev => {
         if (prev.includes(selectedNode.id)) return prev;
         const updated = [...prev, selectedNode.id];
-        try { localStorage.setItem('xlchess_completed_puzzles', JSON.stringify(updated)); } catch (e) { }
+        try { localStorage.setItem('xlchess_completed_puzzles', JSON.stringify(updated)); } catch { /* empty */ }
         return updated;
       });
     }
 
     setStreak(prev => {
       const next = prev + 1;
-      try { localStorage.setItem('xlchess_puzzle_streak', next.toString()); } catch (e) { }
+      try { localStorage.setItem('xlchess_puzzle_streak', next.toString()); } catch { /* empty */ }
       return next;
     });
 
     setSolvedCount(prev => {
       const next = prev + 1;
-      try { localStorage.setItem('xlchess_puzzle_solved', next.toString()); } catch (e) { }
+      try { localStorage.setItem('xlchess_puzzle_solved', next.toString()); } catch { /* empty */ }
       return next;
     });
   }, [selectedNode]);
@@ -207,7 +208,7 @@ export default function PuzzlePage() {
   // Failed callback from left puzzle board
   const handleFailed = useCallback(() => {
     setStreak(0);
-    try { localStorage.setItem('xlchess_puzzle_streak', '0'); } catch (e) { }
+    try { localStorage.setItem('xlchess_puzzle_streak', '0'); } catch { /* empty */ }
   }, []);
 
   const handleNavigateHome = useCallback(() => {
@@ -260,7 +261,7 @@ export default function PuzzlePage() {
           style={{
             background: "linear-gradient(135deg, rgba(212,175,110,0.10) 0%, rgba(184,147,74,0.06) 100%)",
             border: "1px solid rgba(212,175,110,0.22)",
-            color: "#D4AF6E",
+            color: "var(--gold-bright)",
             boxShadow: "0 2px 12px rgba(212,175,110,0.07)",
           }}
           onMouseEnter={(e) => {
@@ -336,12 +337,7 @@ export default function PuzzlePage() {
 
             <div className="lg:col-span-5 flex flex-col space-y-6">
               <div
-                className="rounded-2xl p-6 text-left shadow-2xl relative overflow-hidden"
-                style={{
-                  background: "rgba(12, 16, 32, 0.6)",
-                  border: "1px solid rgba(212,175,110,0.15)",
-                  backdropFilter: "blur(20px)",
-                }}
+                className="rounded-2xl p-6 text-left shadow-2xl relative overflow-hidden bg-brand-surface/80 backdrop-blur-xl border border-brand-border/40"
               >
                 <div
                   className="absolute top-0 right-0 w-[150px] h-[150px] pointer-events-none"
@@ -349,15 +345,12 @@ export default function PuzzlePage() {
                     background: "radial-gradient(ellipse at top right, rgba(212,175,110,0.05) 0%, transparent 70%)",
                   }}
                 />
-                <div className="flex items-center gap-3 mb-4 pb-4" style={{ borderBottom: "1px solid rgba(212,175,110,0.12)" }}>
-                  <div
-                    className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-                    style={{ background: "rgba(212,175,110,0.1)", border: "1px solid rgba(212,175,110,0.2)" }}
-                  >
-                    <Sparkles className="w-4 h-4" style={{ color: "#D4AF6E" }} />
+                <div className="flex items-center gap-3 mb-4 pb-4 border-b border-brand-border/40">
+                  <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 bg-brand-accent/10 border border-brand-accent/20">
+                    <Sparkles className="w-4 h-4 text-brand-accent" />
                   </div>
                   <div>
-                    <h2 className="text-xl font-semibold text-brand-text" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+                    <h2 className="text-xl font-semibold text-brand-text font-display">
                       Custom Session
                     </h2>
                     <p className="text-xs mt-0.5 text-brand-secondary">
@@ -374,12 +367,7 @@ export default function PuzzlePage() {
                       {customFilters.themes.map((t) => (
                         <span
                           key={t}
-                          className="text-[10px] font-mono px-2 py-0.5 rounded-full"
-                          style={{
-                            background: "rgba(212,175,110,0.08)",
-                            border: "1px solid rgba(212,175,110,0.2)",
-                            color: "#D4AF6E",
-                          }}
+                          className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-brand-accent/10 border border-brand-accent/20 text-brand-accent"
                         >
                           {t}
                         </span>
@@ -393,6 +381,7 @@ export default function PuzzlePage() {
                   </p>
                 )}
               </div>
+
 
               <div className="bg-brand-surface/30 backdrop-blur-sm border border-brand-border/60 rounded-2xl p-5 text-left flex items-start gap-3.5">
                 <div className="w-8 h-8 rounded-lg bg-brand-accent/10 border border-brand-accent/20 text-brand-accent flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -535,7 +524,7 @@ export default function PuzzlePage() {
                         style={{
                           background: "linear-gradient(135deg, rgba(212,175,110,0.10) 0%, rgba(184,147,74,0.06) 100%)",
                           border: "1px solid rgba(212,175,110,0.22)",
-                          color: "#D4AF6E",
+                          color: "var(--gold-bright)",
                           boxShadow: "0 2px 12px rgba(212,175,110,0.07)",
                         }}
                       >

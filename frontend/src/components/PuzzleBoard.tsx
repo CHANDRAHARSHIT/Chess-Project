@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { ThemedChessboard } from "./ThemedChessboard";
 import { Chess } from "chess.js";
+import type { Square } from "chess.js";
 import type { ChessPuzzle } from "../utils/PuzzleLoader";
 import { validateMove } from "../utils/PuzzleValidator";
 import {
@@ -26,7 +27,6 @@ export interface PuzzleBoardProps {
 export function PuzzleBoard({
   puzzle,
   puzzleNumber,
-  boardId: _boardId = "puzzle-board",
   onSolved,
   onFailed,
   onNextPuzzle,
@@ -57,24 +57,28 @@ export function PuzzleBoard({
 
   // Reset board and status when the puzzle prop changes
   useEffect(() => {
-    try {
-      gameRef.current = new Chess(puzzle.fen);
-      setGameFen(puzzle.fen);
-    } catch (e) {
-      console.error("Failed to parse FEN in PuzzleBoard:", puzzle.fen, e);
-      gameRef.current = new Chess();
-      setGameFen(gameRef.current.fen());
+    function resetBoard() {
+      try {
+        gameRef.current = new Chess(puzzle.fen);
+        setGameFen(puzzle.fen);
+      } catch (e) {
+        console.error("Failed to parse FEN in PuzzleBoard:", puzzle.fen, e);
+        gameRef.current = new Chess();
+        setGameFen(gameRef.current.fen());
+      }
+      setSolutionIndex(0);
+      setPuzzleStatus("solving");
+      setLastMove(null);
+      setIsShaking(false);
+      setErrorSquares(null);
+      setHintSquare(null);
     }
-    setSolutionIndex(0);
-    setPuzzleStatus("solving");
-    setLastMove(null);
-    setIsShaking(false);
-    setErrorSquares(null);
-    setHintSquare(null);
+    resetBoard();
   }, [puzzle.id, puzzle.fen]);
 
-  // Determine player color and board orientation from active color in FEN
-  const playerColor = gameRef.current.turn(); // 'w' or 'b'
+  // Derive active color from the FEN string (2nd space-delimited field) so we
+  // don't read gameRef.current during render (refs must not be read in render).
+  const playerColor = (gameFen.split(" ")[1] ?? "w") as "w" | "b";
   const boardOrientation = playerColor === "w" ? "white" : "black";
 
   const onDrop = useCallback(
@@ -87,7 +91,7 @@ export function PuzzleBoard({
       const game = gameRef.current;
 
       // 1. Enforce that the piece belongs to the active side
-      const piece = game.get(sourceSquare as any);
+      const piece = game.get(sourceSquare as Square);
       if (!piece || piece.color !== game.turn()) {
         return false;
       }
@@ -228,7 +232,9 @@ export function PuzzleBoard({
     }
   }, [puzzleStatus, puzzle.solution, solutionMoves, solutionIndex]);
 
-  const canUndo = gameRef.current.history().length > 0;
+  // Derive canUndo from state (gameFen) instead of reading the ref during render.
+  // If gameFen differs from the puzzle start FEN, at least one move was made.
+  const canUndo = gameFen !== puzzle.fen;
 
   const handleUndo = useCallback(() => {
     const game = gameRef.current;
@@ -327,7 +333,7 @@ export function PuzzleBoard({
             Incorrect. Try Again
           </span>
         ) : (
-          <span className="font-mono uppercase tracking-wider text-xs font-bold text-brand-text flex items-center gap-1.5 bg-brand-text/5 border border-white/10 px-3 py-1 rounded-full">
+          <span className="font-mono uppercase tracking-wider text-xs font-bold text-brand-text flex items-center gap-1.5 bg-brand-surface border border-brand-border/60 px-3 py-1 rounded-full shadow-sm">
             <Play className="w-3.5 h-3.5 text-brand-accent fill-current" />
             {playerColor === "w" ? "White to Move" : "Black to Move"}
           </span>
@@ -342,9 +348,9 @@ export function PuzzleBoard({
             handleHint();
           }}
           disabled={puzzleStatus === "solved"}
-          className="flex-1 min-w-[70px] sm:flex-initial px-2.5 sm:px-5 py-2.5 min-h-[44px] justify-center rounded-xl font-mono text-xs uppercase tracking-wider font-semibold bg-brand-text/5 border border-white/10 hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center gap-1.5 shadow-sm"
+          className="flex-1 min-w-[70px] sm:flex-initial px-2.5 sm:px-5 py-2.5 min-h-[44px] justify-center rounded-xl font-mono text-xs uppercase tracking-wider font-semibold bg-brand-surface border border-brand-border/60 hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center gap-1.5 shadow-sm"
         >
-          <HelpCircle className="w-3.5 h-3.5" />
+          <HelpCircle className="w-3.5 h-3.5 text-brand-accent" />
           <span>Hint</span>
         </button>
 
@@ -354,9 +360,9 @@ export function PuzzleBoard({
             handleUndo();
           }}
           disabled={!canUndo}
-          className="flex-1 min-w-[70px] sm:flex-initial px-2.5 sm:px-5 py-2.5 min-h-[44px] justify-center rounded-xl font-mono text-xs uppercase tracking-wider font-semibold bg-white/5 border border-white/10 hover:border-brand-accent/40 text-brand-secondary hover:text-white transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center gap-1.5 shadow-sm"
+          className="flex-1 min-w-[70px] sm:flex-initial px-2.5 sm:px-5 py-2.5 min-h-[44px] justify-center rounded-xl font-mono text-xs uppercase tracking-wider font-semibold bg-brand-surface border border-brand-border/60 hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center gap-1.5 shadow-sm"
         >
-          <Undo2 className="w-3.5 h-3.5" />
+          <Undo2 className="w-3.5 h-3.5 text-brand-accent" />
           <span>Undo</span>
         </button>
 
@@ -366,9 +372,9 @@ export function PuzzleBoard({
             handleReset();
           }}
           disabled={!canUndo}
-          className="flex-1 min-w-[70px] sm:flex-initial px-2.5 sm:px-5 py-2.5 min-h-[44px] justify-center rounded-xl font-mono text-xs uppercase tracking-wider font-semibold bg-brand-text/5 border border-white/10 hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center gap-1.5 shadow-sm"
+          className="flex-1 min-w-[70px] sm:flex-initial px-2.5 sm:px-5 py-2.5 min-h-[44px] justify-center rounded-xl font-mono text-xs uppercase tracking-wider font-semibold bg-brand-surface border border-brand-border/60 hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center gap-1.5 shadow-sm"
         >
-          <RotateCcw className="w-3.5 h-3.5" />
+          <RotateCcw className="w-3.5 h-3.5 text-brand-accent" />
           <span>Reset</span>
         </button>
 
