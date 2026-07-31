@@ -143,11 +143,10 @@ export default function DatabasePlayerPage() {
                 {sortedGames.map((game) => (
                   <tr 
                     key={game.id} 
-                    className={`transition-colors ${game.id === 1 ? 'hover:bg-brand-accent/5 cursor-pointer' : 'cursor-not-allowed opacity-50'}`}
-                    onMouseEnter={(e) => game.id === 1 && handleMouseEnter(e, game)}
+                    className="transition-colors hover:bg-brand-accent/5 cursor-pointer"
+                    onMouseEnter={(e) => handleMouseEnter(e, game)}
                     onMouseLeave={handleMouseLeave}
-                    onClick={() => game.id === 1 && navigate(`/database/game/${game.id}`)}
-                    title={game.id !== 1 ? "Coming Soon" : undefined}
+                    onClick={() => navigate(`/database/game/${game.id}`)}
                   >
                     <td className="py-3">
                       <div className="flex flex-col">
