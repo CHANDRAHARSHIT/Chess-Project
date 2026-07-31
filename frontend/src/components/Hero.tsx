@@ -15,33 +15,31 @@ import { AuthModal } from "./AuthModal";
 import { useSearchParams } from "react-router";
 
 export default function Hero() {
-  // Authentication states
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalMode, setModalMode] = useState<"login" | "register">("login");
+  // Authentication states — derive initial values from URL on mount via lazy initialisers
+  // so we never call setState synchronously inside an effect (react-hooks/set-state-in-effect).
   const [searchParams, setSearchParams] = useSearchParams();
+  const [isModalOpen, setIsModalOpen] = useState(() => searchParams.get("login") === "true");
+  const [modalMode] = useState<"login" | "register">("login");
 
+  // Only side effect: remove the ?login=true query param from the URL so it
+  // doesn't persist across refreshes. This runs once on mount.
   useEffect(() => {
     if (searchParams.get("login") === "true") {
-      setModalMode("login");
-      setIsModalOpen(true);
-
       const newParams = new URLSearchParams(searchParams);
       newParams.delete("login");
       setSearchParams(newParams, { replace: true });
     }
-  }, [searchParams, setSearchParams]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // ── Animation refs ────────────────────────────────────────────────────────
   const heroRef = useRef<HTMLElement>(null);
-  const heroLogoRef = useRef<HTMLImageElement>(null);
   const playIconRef = useRef<HTMLImageElement>(null);
   const playTextRef = useRef<HTMLSpanElement>(null);
   const line1Ref = useRef<HTMLSpanElement>(null);
   const line2Ref = useRef<HTMLSpanElement>(null);
-  const eyebrowRef = useRef<HTMLDivElement>(null);
   const ruleRef = useRef<HTMLDivElement>(null);
   const subtitleRef = useRef<HTMLDivElement>(null);
-  const subPara1Ref = useRef<HTMLParagraphElement>(null);
   const subPara2Ref = useRef<HTMLParagraphElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
   const boardColRef = useRef<HTMLDivElement>(null);
@@ -76,17 +74,11 @@ export default function Hero() {
     paused: isDragging,
   });
 
-  const primaryGlowRef = useButtonGlow<HTMLAnchorElement>();
+  // Single caller-owned ref shared between the glow effect and the magnetic button.
+  // Passed directly into useButtonGlow so the hook never returns a ref we'd have
+  // to mutate, satisfying react-hooks/immutability.
   const ctaAnchorRef = useRef<HTMLAnchorElement>(null);
-
-  // Merge glow ref onto the anchor element
-  const mergedPlayRef = (el: HTMLAnchorElement | null) => {
-    (
-      primaryGlowRef as React.MutableRefObject<HTMLAnchorElement | null>
-    ).current = el;
-    (ctaAnchorRef as React.MutableRefObject<HTMLAnchorElement | null>).current =
-      el;
-  };
+  useButtonGlow<HTMLAnchorElement>(ctaAnchorRef);
 
   useMagneticButton({
     targetRef: playIconRef,
@@ -101,19 +93,6 @@ export default function Hero() {
 
       const tl = gsap.timeline({ defaults: { ease: ease.out } });
 
-      // ① Logo — cinematic fade-down
-      tl.fromTo(
-        heroLogoRef.current,
-        { opacity: 0, y: -28, filter: "blur(6px)" },
-        {
-          opacity: 1,
-          y: 0,
-          filter: "blur(0px)",
-          duration: 1.0,
-          ease: "expo.out",
-        },
-        0,
-      );
 
       // Make containers visible
       if (line1Ref.current) line1Ref.current.style.opacity = "1";
@@ -151,20 +130,11 @@ export default function Hero() {
       };
 
       const splitL1 = splitText(line1Ref.current, "word");
-      const splitS1 = splitText(subPara1Ref.current, "word");
       const splitS2 = splitText(subPara2Ref.current, "word");
-
-      // Eyebrow label reveal
-      tl.fromTo(
-        eyebrowRef.current,
-        { opacity: 0, x: -20 },
-        { opacity: 1, x: 0, duration: 0.7, ease: "expo.out" },
-        0.2,
-      );
 
       // ② Headline — cinematic stagger
       tl.fromTo(
-        [...splitL1.spans, line2Ref.current],
+        [...splitL1.spans, line2Ref.current].filter((el): el is HTMLElement => el !== null),
         { opacity: 0, y: 30, rotationX: 25 },
         {
           opacity: 1,
@@ -188,7 +158,7 @@ export default function Hero() {
 
       // ③ Subtitle — word-by-word blur dissolve
       tl.fromTo(
-        [...splitS1.spans, ...splitS2.spans],
+        splitS2.spans,
         { opacity: 0, y: 16, filter: "blur(5px)" },
         {
           opacity: 1,
@@ -402,7 +372,7 @@ export default function Hero() {
               style={{ opacity: 0 }}
             >
               <a
-                ref={mergedPlayRef}
+                ref={ctaAnchorRef}
                 href="#interactive-demo"
                 id="hero-cta-primary"
                 className="
