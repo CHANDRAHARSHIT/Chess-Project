@@ -106,9 +106,7 @@ export class SoundManager {
     }
 
     node.volume = (config.volume ?? 1) * this.globalVolume;
-    node.play().catch((err: Error) => {
-      // AbortError is expected: a second play() interrupted the pending promise of the previous call on the same node. The sound still plays correctly.
-      if (err.name === 'AbortError') return;
+    node.play().catch((err) => {
       console.warn(`SoundManager: unable to play "${name}"`, err);
     });
   }
