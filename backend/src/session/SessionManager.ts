@@ -14,22 +14,49 @@ import type {
   SessionStatus,
   SessionClock,
   ResultEmitter,
+  SessionTransport,
 } from "./types.js";
+import { noOpSessionTransport } from "./types.js";
+
+/** Grace/timeout durations, overridable for tests (mirrors MatchmakingQueue's ticketTtlMs pattern). */
+export interface SessionTimings {
+  readonly participantGraceMs?: number; // one participant disconnected, other(s) remain
+  readonly pauseGraceMs?: number;       // all participants disconnected (PAUSED)
+  readonly waitTimeoutMs?: number;      // WAITING no-show
+}
 
 /**
  * Rules-blind game lifecycle orchestrator.
  * Single state owner of game session state machines, time authority, and move history.
  *
- * LIFECYCLE: CREATED → WAITING → READY → PLAYING → COMPLETED / ABANDONED
+ * LIFECYCLE: CREATED → WAITING → READY → PLAYING → (PAUSED ↔ PLAYING) → COMPLETED / ABANDONED
+ * PAUSED added under M1-AM-01 — see types.ts SessionStatus for rationale.
  */
 export class SessionManager {
+  private readonly participantGraceMs: number;
+  private readonly pauseGraceMs: number;
+  private readonly waitTimeoutMs: number;
+
   private readonly sessions = new Map<string, GameSession>();
+
+  // Runtime-only bookkeeping (never persisted/reconstructed — presence and timers die with the process).
+  private readonly presence = new Map<string, Set<string>>();               // sessionId -> connected userIds
+  private readonly participantGraceTimers = new Map<string, Map<string, NodeJS.Timeout>>(); // sessionId -> userId -> timer
+  private readonly pauseGraceTimers = new Map<string, NodeJS.Timeout>();     // sessionId -> timer
+  private readonly waitTimers = new Map<string, NodeJS.Timeout>();          // sessionId -> timer
+  private readonly userToSession = new Map<string, string>();               // userId -> sessionId
 
   constructor(
     private readonly onResult: ResultEmitter = () => {},
     private readonly variantResolver: (variantId: string) => VariantContract | undefined = (vId) =>
-      variantRegistry.get(vId)
-  ) {}
+      variantRegistry.get(vId),
+    private readonly transport: SessionTransport = noOpSessionTransport,
+    timings: SessionTimings = {}
+  ) {
+    this.participantGraceMs = timings.participantGraceMs ?? 30_000;
+    this.pauseGraceMs = timings.pauseGraceMs ?? 60_000;
+    this.waitTimeoutMs = timings.waitTimeoutMs ?? 60_000;
+  }
 
   /**
    * Initializes a new GameSession from a MatchDescriptor.
@@ -77,6 +104,11 @@ export class SessionManager {
 
     this.sessions.set(sessionId, session);
 
+    for (const p of descriptor.participants) {
+      this.userToSession.set(p.userId, sessionId);
+    }
+    this.presence.set(sessionId, new Set());
+
     emitTransition({
       domain: "session",
       from: "CREATED",
@@ -85,6 +117,7 @@ export class SessionManager {
     });
 
     session.status = "WAITING";
+    this.startWaitTimer(sessionId);
     return session;
   }
 
@@ -117,6 +150,8 @@ export class SessionManager {
     });
 
     session.status = "READY";
+    this.clearWaitTimer(sessionId);
+    this.broadcastState(session);
   }
 
   /**
@@ -193,6 +228,8 @@ export class SessionManager {
     // Check for terminal state
     if (session.variant.isTerminal(nextState)) {
       this.handleTerminal(session, nextState);
+    } else {
+      this.broadcastState(session);
     }
 
     return { legal: true };
@@ -254,6 +291,7 @@ export class SessionManager {
 
     const oldStatus = session.status;
     session.status = "ABANDONED";
+    this.cleanupSession(session);
 
     emitTransition({
       domain: "session",
@@ -261,6 +299,8 @@ export class SessionManager {
       to: "ABANDONED",
       context: { sessionId, matchId: session.matchDescriptor.matchId, forfeitUserId: userId },
     });
+
+    this.broadcastGameOver(session, result);
 
     // Fire-and-forget Result emission
     try {
@@ -320,6 +360,7 @@ export class SessionManager {
         };
 
         session.status = "COMPLETED";
+        this.cleanupSession(session);
 
         emitTransition({
           domain: "session",
@@ -327,6 +368,8 @@ export class SessionManager {
           to: "COMPLETED",
           context: { sessionId: session.sessionId, matchId: session.matchDescriptor.matchId, reason: "timeout", losingSide: turnSide },
         });
+
+        this.broadcastGameOver(session, result);
 
         try {
           this.onResult(result);
@@ -380,6 +423,7 @@ export class SessionManager {
     };
 
     session.status = "COMPLETED";
+    this.cleanupSession(session);
 
     emitTransition({
       domain: "session",
@@ -387,6 +431,8 @@ export class SessionManager {
       to: "COMPLETED",
       context: { sessionId: session.sessionId, matchId: session.matchDescriptor.matchId, reason: terminationReason },
     });
+
+    this.broadcastGameOver(session, result);
 
     try {
       this.onResult(result);
@@ -400,5 +446,255 @@ export class SessionManager {
     const card = session.variant.getCardinality(session.matchDescriptor.variantParams);
     const turnOrder = card.turnOrder;
     return turnOrder[session.moveHistory.length % turnOrder.length];
+  }
+
+  // ───────────────────────────────────────────────────────────────────────────
+  // M2 additions: presence interpretation, grace timers, PAUSED, broadcasts.
+  // Runtime-only bookkeeping — nothing here is persisted or reconstructed (M6 concern).
+  // ───────────────────────────────────────────────────────────────────────────
+
+  /** Returns the sessionId a participant currently belongs to, if any. */
+  getSessionIdForParticipant(userId: string): string | undefined {
+    return this.userToSession.get(userId);
+  }
+
+  /**
+   * Called when Transport reports a participant's wire connection came up.
+   * Session decides what it means: complete a WAITING roster, resume from PAUSED,
+   * or simply clear that participant's grace timer while PLAYING continues.
+   */
+  notifyParticipantConnected(sessionId: string, userId: string): void {
+    const session = this.sessions.get(sessionId);
+    if (!session) return;
+
+    const present = this.presence.get(sessionId) ?? new Set<string>();
+    present.add(userId);
+    this.presence.set(sessionId, present);
+
+    if (session.status === "WAITING") {
+      const allPresent = session.matchDescriptor.participants.every((p) => present.has(p.userId));
+      if (allPresent) {
+        this.notifyAllPresent(sessionId);
+      }
+      return;
+    }
+
+    if (session.status === "PLAYING") {
+      this.clearParticipantGrace(sessionId, userId);
+      return;
+    }
+
+    if (session.status === "PAUSED") {
+      this.clearPauseGrace(sessionId);
+      const oldStatus = session.status;
+      session.status = "PLAYING";
+      // Resume without charging the paused wall-clock time to whoever's turn it is.
+      session.clock = { remainingMs: session.clock.remainingMs, lastMoveAt: Date.now() };
+
+      emitTransition({
+        domain: "session",
+        from: oldStatus,
+        to: "PLAYING",
+        context: { sessionId, matchId: session.matchDescriptor.matchId, reconnectedUserId: userId },
+      });
+
+      this.broadcastState(session);
+    }
+  }
+
+  /**
+   * Called when Transport reports a participant's wire connection dropped.
+   * WAITING: ignored — the WAITING no-show timer already covers this.
+   * READY/PLAYING with someone still present: per-participant grace, expiring into the
+   *   existing forfeit() path unchanged.
+   * PLAYING with nobody present: PAUSED, with a global grace timer (M1-AM-01).
+   */
+  notifyParticipantDisconnected(sessionId: string, userId: string): void {
+    const session = this.sessions.get(sessionId);
+    if (!session) return;
+    if (session.status !== "WAITING" && session.status !== "READY" && session.status !== "PLAYING") return;
+
+    const present = this.presence.get(sessionId);
+    present?.delete(userId);
+
+    if (session.status === "WAITING") return;
+
+    const stillPresent = (present?.size ?? 0) > 0;
+
+    if (session.status === "PLAYING" && !stillPresent) {
+      // The global pause grace supersedes any per-participant timer already counting down
+      // from an earlier, now-superseded single disconnect.
+      this.clearAllParticipantGrace(sessionId);
+
+      const oldStatus = session.status;
+      session.status = "PAUSED";
+
+      emitTransition({
+        domain: "session",
+        from: oldStatus,
+        to: "PAUSED",
+        context: { sessionId, matchId: session.matchDescriptor.matchId },
+      });
+
+      const timer = setTimeout(() => this.handlePauseExpiry(sessionId), this.pauseGraceMs);
+      this.pauseGraceTimers.set(sessionId, timer);
+      return;
+    }
+
+    this.startParticipantGrace(sessionId, userId);
+  }
+
+  /** Per-participant grace: expiry reuses forfeit() unchanged. */
+  private startParticipantGrace(sessionId: string, userId: string): void {
+    let timers = this.participantGraceTimers.get(sessionId);
+    if (!timers) {
+      timers = new Map();
+      this.participantGraceTimers.set(sessionId, timers);
+    }
+    if (timers.has(userId)) return; // already counting down
+
+    const timer = setTimeout(() => {
+      timers!.delete(userId);
+      this.forfeit(sessionId, userId);
+    }, this.participantGraceMs);
+    timers.set(userId, timer);
+  }
+
+  private clearParticipantGrace(sessionId: string, userId: string): void {
+    const timers = this.participantGraceTimers.get(sessionId);
+    const timer = timers?.get(userId);
+    if (timer) {
+      clearTimeout(timer);
+      timers!.delete(userId);
+    }
+  }
+
+  private clearAllParticipantGrace(sessionId: string): void {
+    const timers = this.participantGraceTimers.get(sessionId);
+    if (timers) {
+      for (const t of timers.values()) clearTimeout(t);
+      this.participantGraceTimers.delete(sessionId);
+    }
+  }
+
+  private clearPauseGrace(sessionId: string): void {
+    const timer = this.pauseGraceTimers.get(sessionId);
+    if (timer) {
+      clearTimeout(timer);
+      this.pauseGraceTimers.delete(sessionId);
+    }
+  }
+
+  private startWaitTimer(sessionId: string): void {
+    const timer = setTimeout(() => this.handleWaitTimeout(sessionId), this.waitTimeoutMs);
+    this.waitTimers.set(sessionId, timer);
+  }
+
+  private clearWaitTimer(sessionId: string): void {
+    const timer = this.waitTimers.get(sessionId);
+    if (timer) {
+      clearTimeout(timer);
+      this.waitTimers.delete(sessionId);
+    }
+  }
+
+  /** WAITING no-show: no GameResult — no meaningful gameplay occurred (see M2 plan §Recommendation 3). */
+  private handleWaitTimeout(sessionId: string): void {
+    this.waitTimers.delete(sessionId);
+    const session = this.sessions.get(sessionId);
+    if (!session || session.status !== "WAITING") return;
+
+    const oldStatus = session.status;
+    session.status = "ABANDONED";
+    this.cleanupSession(session);
+
+    emitTransition({
+      domain: "session",
+      from: oldStatus,
+      to: "ABANDONED",
+      context: { sessionId, matchId: session.matchDescriptor.matchId, reason: "wait_timeout" },
+    });
+  }
+
+  /**
+   * Global PAUSED grace expiry (M1-AM-01 invariant): nobody reconnected in time.
+   * Neither side is credited a win — recorded as a mutual forfeit/draw, the only
+   * outcome the frozen GameResult contract permits without a winning side.
+   */
+  private handlePauseExpiry(sessionId: string): void {
+    this.pauseGraceTimers.delete(sessionId);
+    const session = this.sessions.get(sessionId);
+    if (!session || session.status !== "PAUSED") return;
+    if (session.resultEmitted) return;
+    session.resultEmitted = true;
+
+    const result: GameResult = {
+      gameSessionId: session.sessionId,
+      matchId: session.matchDescriptor.matchId,
+      terminationReason: "forfeit",
+      outcome: { kind: "draw" },
+      participants: session.matchDescriptor.participants.map((p) => ({ userId: p.userId, side: p.side })),
+      variantId: session.matchDescriptor.variantId,
+      rated: session.matchDescriptor.rated,
+      provenance: session.matchDescriptor.provenance,
+      endedAt: new Date().toISOString(),
+      moveCount: session.moveHistory.length,
+      moveHistory: session.moveHistory,
+      timeControl: session.matchDescriptor.timeControl,
+      durationSeconds: session.startedAt ? Math.round((Date.now() - session.startedAt) / 1000) : 0,
+      ...(session.matchDescriptor.ratingPoolId ? { ratingPoolId: session.matchDescriptor.ratingPoolId } : {}),
+      ...(session.matchDescriptor.tournamentContext ? { tournamentContext: session.matchDescriptor.tournamentContext } : {}),
+      ...(session.matchDescriptor.metadata ? { metadata: session.matchDescriptor.metadata } : {}),
+    };
+
+    const oldStatus = session.status;
+    session.status = "ABANDONED";
+    this.cleanupSession(session);
+
+    emitTransition({
+      domain: "session",
+      from: oldStatus,
+      to: "ABANDONED",
+      context: { sessionId, matchId: session.matchDescriptor.matchId, reason: "pause_grace_expired" },
+    });
+
+    this.broadcastGameOver(session, result);
+
+    try {
+      this.onResult(result);
+    } catch (err) {
+      reportError({ domain: "session", error: err, fatal: false, context: { sessionId } });
+    }
+  }
+
+  /** Clears all runtime-only bookkeeping for a session that has reached a terminal state. */
+  private cleanupSession(session: GameSession): void {
+    for (const p of session.matchDescriptor.participants) {
+      if (this.userToSession.get(p.userId) === session.sessionId) {
+        this.userToSession.delete(p.userId);
+      }
+    }
+    this.presence.delete(session.sessionId);
+    this.clearWaitTimer(session.sessionId);
+
+    const grace = this.participantGraceTimers.get(session.sessionId);
+    if (grace) {
+      for (const t of grace.values()) clearTimeout(t);
+      this.participantGraceTimers.delete(session.sessionId);
+    }
+    this.clearPauseGrace(session.sessionId);
+  }
+
+  private broadcastState(session: GameSession): void {
+    const userIds = session.matchDescriptor.participants.map((p) => p.userId);
+    this.transport.broadcast(userIds, {
+      type: "state_update",
+      payload: { state: session.currentState, clock: session.clock, status: session.status },
+    });
+  }
+
+  private broadcastGameOver(session: GameSession, result: GameResult): void {
+    const userIds = session.matchDescriptor.participants.map((p) => p.userId);
+    this.transport.broadcast(userIds, { type: "game_over", payload: result });
   }
 }

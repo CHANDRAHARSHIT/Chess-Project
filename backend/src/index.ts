@@ -2,6 +2,8 @@ import { env } from "./config/env.js";
 import { app } from "./app.js";
 import { initRollbar } from "./observability/index.js";
 import { bootstrapTransport } from "./transport/index.js";
+import { SessionManager, ClockTicker, sessionTransportImpl, wireSessionTransportBridge } from "./session/index.js";
+import { createInternalDevRouter } from "./routes/internalDev.route.js";
 
 // Initialise observability first so the very first server error is captured.
 initRollbar();
@@ -18,8 +20,15 @@ export const server = app.listen(env.PORT, () => {
   );
 });
 
-// Transport attaches after server is live, flag-gated.
-// bootstrapTransport receives the server as a parameter — Transport never imports index.ts.
+// Transport + Session attach after server is live, flag-gated.
+// Composition root: SessionManager is constructed here, not exported as a module singleton,
+// so future consumers (Results in M4, real Matchmaking wiring in M3) receive it via injection.
 if (env.MULTIPLAYER_ENABLED) {
-  bootstrapTransport(server);
+  const sessionManager = new SessionManager(undefined, undefined, sessionTransportImpl);
+  const hooks = wireSessionTransportBridge(sessionManager);
+
+  bootstrapTransport(server, hooks);
+  app.use("/api/internal/dev", createInternalDevRouter(sessionManager));
+
+  new ClockTicker(sessionManager).start();
 }

@@ -40,3 +40,15 @@ export interface InboundMessage {
   readonly resumeToken?: ResumeToken;  // present on reconnect handshake
   readonly lastReceivedSeq?: number;   // present on reconnect handshake
 }
+
+/**
+ * Emitted by ConnectionManager whenever a logical connection's wire presence
+ * changes. Facts only (Presence Contract) — Transport never interprets these.
+ */
+export interface ConnectionEvent {
+  readonly kind: "connected" | "disconnected";
+  readonly userId: UserId;
+  readonly connectionId: ConnectionId;
+}
+
+export type ConnectionEventHandler = (event: ConnectionEvent) => void;

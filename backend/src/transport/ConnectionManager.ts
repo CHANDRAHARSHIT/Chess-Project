@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import type { WebSocket } from "ws";
 import { emitTransition, reportError } from "../observability/index.js";
-import type { Connection, ConnectionId, ResumeToken, UserId, OutboundMessage } from "./types.js";
+import type { Connection, ConnectionId, ResumeToken, UserId, OutboundMessage, ConnectionEvent, ConnectionEventHandler } from "./types.js";
 import { ReconnectBuffer } from "./reconnectBuffer.js";
 
 /**
@@ -13,6 +13,19 @@ export class ConnectionManager {
   private readonly userIndex = new Map<UserId, ConnectionId>();
   private readonly resumeIndex = new Map<ResumeToken, ConnectionId>();
   private readonly buffer = new ReconnectBuffer();
+  private readonly eventHandlers: ConnectionEventHandler[] = [];
+
+  /**
+   * Registers a listener for connection presence facts ("connected" / "disconnected").
+   * Transport emits facts only — interpretation belongs to whoever consumes this (Session, via a bridge).
+   */
+  onConnectionEvent(handler: ConnectionEventHandler): void {
+    this.eventHandlers.push(handler);
+  }
+
+  private emitConnectionEvent(event: ConnectionEvent): void {
+    for (const handler of this.eventHandlers) handler(event);
+  }
 
   /**
    * Registers a newly connected WebSocket client.
@@ -43,6 +56,8 @@ export class ConnectionManager {
       to: "CONNECTED",
       context: { connectionId, resumeToken, userId },
     });
+
+    this.emitConnectionEvent({ kind: "connected", userId, connectionId });
 
     return { connectionId, resumeToken };
   }
@@ -89,6 +104,8 @@ export class ConnectionManager {
       context: { connectionId: conn.id, resumeToken, userId: conn.userId },
     });
 
+    this.emitConnectionEvent({ kind: "connected", userId: conn.userId, connectionId: conn.id });
+
     // Replay buffered messages
     const replayMsgs = this.buffer.replay(resumeToken, lastReceivedSeq);
     for (const msg of replayMsgs) {
@@ -124,6 +141,8 @@ export class ConnectionManager {
       to: "DISCONNECTED",
       context: { connectionId, resumeToken: conn.resumeToken, userId: conn.userId },
     });
+
+    this.emitConnectionEvent({ kind: "disconnected", userId: conn.userId, connectionId });
   }
 
   /**

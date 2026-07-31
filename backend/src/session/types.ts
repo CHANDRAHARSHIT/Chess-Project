@@ -9,12 +9,18 @@ import type {
 /**
  * Session status values.
  * CREATED → WAITING → READY → PLAYING → COMPLETED / ABANDONED
+ *
+ * PAUSED (M1-AM-01): added in M2. Phase 3.2 §4 (frozen) always specified this state for the
+ * "all participants disconnected simultaneously" case; M1's SessionManager omitted it while
+ * building the pillar in isolation. Only the PLAYING branch gains a PAUSED detour — every other
+ * transition is unchanged.
  */
 export type SessionStatus =
   | "CREATED"
   | "WAITING"
   | "READY"
   | "PLAYING"
+  | "PAUSED"
   | "COMPLETED"
   | "ABANDONED";
 
@@ -49,3 +55,20 @@ export interface GameSession {
  * Type of callback/listener for fire-and-forget GameResult emission.
  */
 export type ResultEmitter = (result: GameResult) => void;
+
+/**
+ * Session's outbound view of Transport — injected, never imported concretely.
+ * Mirrors the existing ResultEmitter/variantResolver constructor-injection pattern.
+ */
+export interface SessionTransport {
+  send(userId: string, message: { type: string; payload: unknown }): void;
+  broadcast(userIds: string[], message: { type: string; payload: unknown }): void;
+  isConnected(userId: string): boolean;
+}
+
+/** Default no-op transport so SessionManager remains usable (e.g. in unit tests) without one. */
+export const noOpSessionTransport: SessionTransport = {
+  send: () => {},
+  broadcast: () => {},
+  isConnected: () => false,
+};

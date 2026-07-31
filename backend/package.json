@@ -10,7 +10,8 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "db:seed": "tsx src/seed.ts",
-    "db:seed:puzzles": "tsx src/scripts/seed-puzzles.ts"
+    "db:seed:puzzles": "tsx src/scripts/seed-puzzles.ts",
+    "test": "tsx --test src/**/__tests__/*.test.ts"
   },
   "dependencies": {
     "@auth/core": "^0.37.4",
