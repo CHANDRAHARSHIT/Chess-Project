@@ -5,7 +5,7 @@ import { pricingFeatures } from "../../data/pricingFeatures";
 export const MembershipFeaturesSection: React.FC = () => {
   return (
     <div className="w-full flex flex-col items-center">
-      {pricingFeatures.map((feature, index) => (
+      {pricingFeatures.map((feature) => (
         <MembershipFeatureBanner
           key={feature.id}
           title={feature.title}
