@@ -80,12 +80,12 @@ export type PrismaVersion = {
 }
 
 /**
- * Prisma Client JS version: 7.8.0
- * Query Engine version: 3c6e192761c0362d496ed980de936e2f3cebcd3a
+ * Prisma Client JS version: 7.9.1
+ * Query Engine version: e922089b7d7502aff4249d5da3420f6fa55fc6ad
  */
 export const prismaVersion: PrismaVersion = {
-  client: "7.8.0",
-  engine: "3c6e192761c0362d496ed980de936e2f3cebcd3a"
+  client: "7.9.1",
+  engine: "e922089b7d7502aff4249d5da3420f6fa55fc6ad"
 }
 
 /**
@@ -156,6 +156,19 @@ export type Subset<T, U> = {
 };
 
 /**
+ * Resolved type of the argument passed to the `PrismaClient` constructor.
+ *
+ * When called without a narrower options type (the common case), this resolves
+ * to `PrismaClientOptions` directly, which produces a clear TypeScript error
+ * message (`not assignable to parameter of type 'PrismaClientOptions'`) when
+ * the argument is missing or incomplete. When the user supplies a narrower
+ * options type (e.g. via a literal), it falls back to `Subset` to keep
+ * filtering out unknown properties.
+ */
+export type PrismaClientConstructorArgs<Options extends PrismaClientOptions> =
+  [PrismaClientOptions] extends [Options] ? PrismaClientOptions : Subset<Options, PrismaClientOptions>;
+
+/**
  * SelectSubset
  * @desc From `T` pick properties that exist in `U`. Simple version of Intersection.
  * Additionally, it validates, if both select and include are present. If the case, it errors.
@@ -187,7 +200,7 @@ type Without<T, U> = { [P in Exclude<keyof T, keyof U>]?: never };
 export type XOR<T, U> =
   T extends object ?
   U extends object ?
-    (Without<T, U> & U) | (Without<U, T> & T)
+    ((Without<T, U> & U) | (Without<U, T> & T)) & object
   : U : T
 
 
@@ -394,8 +407,12 @@ export const ModelName = {
   Product: 'Product',
   ProductFeature: 'ProductFeature',
   WebhookEvent: 'WebhookEvent',
+  Opening: 'Opening',
   CuratedPuzzle: 'CuratedPuzzle',
-  Opening: 'Opening'
+  Course: 'Course',
+  Lesson: 'Lesson',
+  LessonProgress: 'LessonProgress',
+  CustomLink: 'CustomLink'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -411,7 +428,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "account" | "session" | "verificationToken" | "subscription" | "payment" | "billingProfile" | "product" | "productFeature" | "webhookEvent" | "curatedPuzzle" | "opening"
+    modelProps: "user" | "account" | "session" | "verificationToken" | "subscription" | "payment" | "billingProfile" | "product" | "productFeature" | "webhookEvent" | "opening" | "curatedPuzzle" | "course" | "lesson" | "lessonProgress" | "customLink"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1155,6 +1172,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Opening: {
+      payload: Prisma.$OpeningPayload<ExtArgs>
+      fields: Prisma.OpeningFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.OpeningFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpeningPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.OpeningFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpeningPayload>
+        }
+        findFirst: {
+          args: Prisma.OpeningFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpeningPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.OpeningFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpeningPayload>
+        }
+        findMany: {
+          args: Prisma.OpeningFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpeningPayload>[]
+        }
+        create: {
+          args: Prisma.OpeningCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpeningPayload>
+        }
+        createMany: {
+          args: Prisma.OpeningCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.OpeningCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpeningPayload>[]
+        }
+        delete: {
+          args: Prisma.OpeningDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpeningPayload>
+        }
+        update: {
+          args: Prisma.OpeningUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpeningPayload>
+        }
+        deleteMany: {
+          args: Prisma.OpeningDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.OpeningUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.OpeningUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpeningPayload>[]
+        }
+        upsert: {
+          args: Prisma.OpeningUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpeningPayload>
+        }
+        aggregate: {
+          args: Prisma.OpeningAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateOpening>
+        }
+        groupBy: {
+          args: Prisma.OpeningGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OpeningGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.OpeningCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OpeningCountAggregateOutputType> | number
+        }
+      }
+    }
     CuratedPuzzle: {
       payload: Prisma.$CuratedPuzzlePayload<ExtArgs>
       fields: Prisma.CuratedPuzzleFieldRefs
@@ -1229,77 +1320,299 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    Opening: {
-      payload: Prisma.$OpeningPayload<ExtArgs>
-      fields: Prisma.OpeningFieldRefs
+    Course: {
+      payload: Prisma.$CoursePayload<ExtArgs>
+      fields: Prisma.CourseFieldRefs
       operations: {
         findUnique: {
-          args: Prisma.OpeningFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpeningPayload> | null
+          args: Prisma.CourseFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoursePayload> | null
         }
         findUniqueOrThrow: {
-          args: Prisma.OpeningFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpeningPayload>
+          args: Prisma.CourseFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoursePayload>
         }
         findFirst: {
-          args: Prisma.OpeningFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpeningPayload> | null
+          args: Prisma.CourseFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoursePayload> | null
         }
         findFirstOrThrow: {
-          args: Prisma.OpeningFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpeningPayload>
+          args: Prisma.CourseFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoursePayload>
         }
         findMany: {
-          args: Prisma.OpeningFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpeningPayload>[]
+          args: Prisma.CourseFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoursePayload>[]
         }
         create: {
-          args: Prisma.OpeningCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpeningPayload>
+          args: Prisma.CourseCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoursePayload>
         }
         createMany: {
-          args: Prisma.OpeningCreateManyArgs<ExtArgs>
+          args: Prisma.CourseCreateManyArgs<ExtArgs>
           result: BatchPayload
         }
         createManyAndReturn: {
-          args: Prisma.OpeningCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpeningPayload>[]
+          args: Prisma.CourseCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoursePayload>[]
         }
         delete: {
-          args: Prisma.OpeningDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpeningPayload>
+          args: Prisma.CourseDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoursePayload>
         }
         update: {
-          args: Prisma.OpeningUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpeningPayload>
+          args: Prisma.CourseUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoursePayload>
         }
         deleteMany: {
-          args: Prisma.OpeningDeleteManyArgs<ExtArgs>
+          args: Prisma.CourseDeleteManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateMany: {
-          args: Prisma.OpeningUpdateManyArgs<ExtArgs>
+          args: Prisma.CourseUpdateManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateManyAndReturn: {
-          args: Prisma.OpeningUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpeningPayload>[]
+          args: Prisma.CourseUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoursePayload>[]
         }
         upsert: {
-          args: Prisma.OpeningUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpeningPayload>
+          args: Prisma.CourseUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoursePayload>
         }
         aggregate: {
-          args: Prisma.OpeningAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateOpening>
+          args: Prisma.CourseAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCourse>
         }
         groupBy: {
-          args: Prisma.OpeningGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.OpeningGroupByOutputType>[]
+          args: Prisma.CourseGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CourseGroupByOutputType>[]
         }
         count: {
-          args: Prisma.OpeningCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.OpeningCountAggregateOutputType> | number
+          args: Prisma.CourseCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CourseCountAggregateOutputType> | number
+        }
+      }
+    }
+    Lesson: {
+      payload: Prisma.$LessonPayload<ExtArgs>
+      fields: Prisma.LessonFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.LessonFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LessonPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.LessonFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LessonPayload>
+        }
+        findFirst: {
+          args: Prisma.LessonFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LessonPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.LessonFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LessonPayload>
+        }
+        findMany: {
+          args: Prisma.LessonFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LessonPayload>[]
+        }
+        create: {
+          args: Prisma.LessonCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LessonPayload>
+        }
+        createMany: {
+          args: Prisma.LessonCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.LessonCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LessonPayload>[]
+        }
+        delete: {
+          args: Prisma.LessonDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LessonPayload>
+        }
+        update: {
+          args: Prisma.LessonUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LessonPayload>
+        }
+        deleteMany: {
+          args: Prisma.LessonDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.LessonUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.LessonUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LessonPayload>[]
+        }
+        upsert: {
+          args: Prisma.LessonUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LessonPayload>
+        }
+        aggregate: {
+          args: Prisma.LessonAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateLesson>
+        }
+        groupBy: {
+          args: Prisma.LessonGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.LessonGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.LessonCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.LessonCountAggregateOutputType> | number
+        }
+      }
+    }
+    LessonProgress: {
+      payload: Prisma.$LessonProgressPayload<ExtArgs>
+      fields: Prisma.LessonProgressFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.LessonProgressFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LessonProgressPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.LessonProgressFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LessonProgressPayload>
+        }
+        findFirst: {
+          args: Prisma.LessonProgressFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LessonProgressPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.LessonProgressFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LessonProgressPayload>
+        }
+        findMany: {
+          args: Prisma.LessonProgressFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LessonProgressPayload>[]
+        }
+        create: {
+          args: Prisma.LessonProgressCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LessonProgressPayload>
+        }
+        createMany: {
+          args: Prisma.LessonProgressCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.LessonProgressCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LessonProgressPayload>[]
+        }
+        delete: {
+          args: Prisma.LessonProgressDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LessonProgressPayload>
+        }
+        update: {
+          args: Prisma.LessonProgressUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LessonProgressPayload>
+        }
+        deleteMany: {
+          args: Prisma.LessonProgressDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.LessonProgressUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.LessonProgressUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LessonProgressPayload>[]
+        }
+        upsert: {
+          args: Prisma.LessonProgressUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LessonProgressPayload>
+        }
+        aggregate: {
+          args: Prisma.LessonProgressAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateLessonProgress>
+        }
+        groupBy: {
+          args: Prisma.LessonProgressGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.LessonProgressGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.LessonProgressCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.LessonProgressCountAggregateOutputType> | number
+        }
+      }
+    }
+    CustomLink: {
+      payload: Prisma.$CustomLinkPayload<ExtArgs>
+      fields: Prisma.CustomLinkFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CustomLinkFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomLinkPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CustomLinkFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomLinkPayload>
+        }
+        findFirst: {
+          args: Prisma.CustomLinkFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomLinkPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CustomLinkFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomLinkPayload>
+        }
+        findMany: {
+          args: Prisma.CustomLinkFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomLinkPayload>[]
+        }
+        create: {
+          args: Prisma.CustomLinkCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomLinkPayload>
+        }
+        createMany: {
+          args: Prisma.CustomLinkCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CustomLinkCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomLinkPayload>[]
+        }
+        delete: {
+          args: Prisma.CustomLinkDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomLinkPayload>
+        }
+        update: {
+          args: Prisma.CustomLinkUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomLinkPayload>
+        }
+        deleteMany: {
+          args: Prisma.CustomLinkDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CustomLinkUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CustomLinkUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomLinkPayload>[]
+        }
+        upsert: {
+          args: Prisma.CustomLinkUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomLinkPayload>
+        }
+        aggregate: {
+          args: Prisma.CustomLinkAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCustomLink>
+        }
+        groupBy: {
+          args: Prisma.CustomLinkGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CustomLinkGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CustomLinkCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CustomLinkCountAggregateOutputType> | number
         }
       }
     }
@@ -1464,12 +1777,12 @@ export const ProductScalarFieldEnum = {
   priceAmount: 'priceAmount',
   currency: 'currency',
   billingInterval: 'billingInterval',
-  gatewayTestPriceId: 'gatewayTestPriceId',
-  gatewayLivePriceId: 'gatewayLivePriceId',
   isActive: 'isActive',
   displayOrder: 'displayOrder',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  gatewayTestPriceId: 'gatewayTestPriceId',
+  gatewayLivePriceId: 'gatewayLivePriceId'
 } as const
 
 export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]
@@ -1500,6 +1813,17 @@ export const WebhookEventScalarFieldEnum = {
 export type WebhookEventScalarFieldEnum = (typeof WebhookEventScalarFieldEnum)[keyof typeof WebhookEventScalarFieldEnum]
 
 
+export const OpeningScalarFieldEnum = {
+  id: 'id',
+  eco: 'eco',
+  name: 'name',
+  pgn: 'pgn',
+  moves: 'moves'
+} as const
+
+export type OpeningScalarFieldEnum = (typeof OpeningScalarFieldEnum)[keyof typeof OpeningScalarFieldEnum]
+
+
 export const CuratedPuzzleScalarFieldEnum = {
   id: 'id',
   fen: 'fen',
@@ -1515,15 +1839,69 @@ export const CuratedPuzzleScalarFieldEnum = {
 export type CuratedPuzzleScalarFieldEnum = (typeof CuratedPuzzleScalarFieldEnum)[keyof typeof CuratedPuzzleScalarFieldEnum]
 
 
-export const OpeningScalarFieldEnum = {
+export const CourseScalarFieldEnum = {
   id: 'id',
-  eco: 'eco',
-  name: 'name',
-  pgn: 'pgn',
-  moves: 'moves'
+  slug: 'slug',
+  title: 'title',
+  description: 'description',
+  thumbnail: 'thumbnail',
+  published: 'published',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 } as const
 
-export type OpeningScalarFieldEnum = (typeof OpeningScalarFieldEnum)[keyof typeof OpeningScalarFieldEnum]
+export type CourseScalarFieldEnum = (typeof CourseScalarFieldEnum)[keyof typeof CourseScalarFieldEnum]
+
+
+export const LessonScalarFieldEnum = {
+  id: 'id',
+  courseId: 'courseId',
+  slug: 'slug',
+  title: 'title',
+  description: 'description',
+  thumbnail: 'thumbnail',
+  difficulty: 'difficulty',
+  estimatedTime: 'estimatedTime',
+  category: 'category',
+  published: 'published',
+  content: 'content',
+  settings: 'settings',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type LessonScalarFieldEnum = (typeof LessonScalarFieldEnum)[keyof typeof LessonScalarFieldEnum]
+
+
+export const LessonProgressScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  lessonId: 'lessonId',
+  currentStep: 'currentStep',
+  completed: 'completed',
+  accuracy: 'accuracy',
+  mistakes: 'mistakes',
+  xp: 'xp',
+  timeSpent: 'timeSpent',
+  updatedAt: 'updatedAt'
+} as const
+
+export type LessonProgressScalarFieldEnum = (typeof LessonProgressScalarFieldEnum)[keyof typeof LessonProgressScalarFieldEnum]
+
+
+export const CustomLinkScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  name: 'name',
+  url: 'url',
+  isArchived: 'isArchived',
+  clickCount: 'clickCount',
+  lastClickedAt: 'lastClickedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CustomLinkScalarFieldEnum = (typeof CustomLinkScalarFieldEnum)[keyof typeof CustomLinkScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1540,6 +1918,13 @@ export const NullableJsonNullValueInput = {
 } as const
 
 export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
+export const JsonNullValueInput = {
+  JsonNull: JsonNull
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
 export const QueryMode = {
@@ -1687,19 +2072,10 @@ export type BatchPayload = {
 export const defineExtension = runtime.Extensions.defineExtension as unknown as runtime.Types.Extensions.ExtendsHook<"define", TypeMapCb, runtime.Types.Extensions.DefaultArgs>
 export type DefaultPrismaClient = PrismaClient
 export type ErrorFormat = 'pretty' | 'colorless' | 'minimal'
-export type PrismaClientOptions = ({
-  /**
-   * Instance of a Driver Adapter, e.g., like one provided by `@prisma/adapter-pg`.
-   */
-  adapter: runtime.SqlDriverAdapterFactory
-  accelerateUrl?: never
-} | {
-  /**
-   * Prisma Accelerate URL allowing the client to connect through Accelerate instead of a direct database.
-   */
-  accelerateUrl: string
-  adapter?: never
-}) & {
+/**
+ * Options common to all variants of `PrismaClientOptions`, regardless of whether you connect to your database through a driver adapter or through Prisma Accelerate.
+ */
+export interface PrismaClientBaseOptions {
   /**
    * @default "colorless"
    */
@@ -1786,6 +2162,56 @@ export type PrismaClientOptions = ({
    */
   queryPlanCacheMaxSize?: number
 }
+
+/**
+ * `PrismaClient` options for connecting to your database through Prisma Accelerate instead of a driver adapter.
+ * 
+ * Learn more: https://pris.ly/d/accelerate
+ */
+export interface PrismaClientOptionsWithAccelerateUrl extends PrismaClientBaseOptions {
+  /**
+   * The Prisma Accelerate connection URL. Use this option to connect to your database through Prisma Accelerate instead of using a driver adapter to connect directly.
+   * 
+   * Learn more: https://pris.ly/d/accelerate
+   */
+  accelerateUrl: string
+  adapter?: never
+}
+
+/**
+ * `PrismaClient` options for connecting to your database through a driver adapter. This is the common case in Prisma 7.
+ * 
+ * Learn more: https://pris.ly/d/driver-adapters
+ */
+export interface PrismaClientOptionsWithAdapter extends PrismaClientBaseOptions {
+  /**
+   * A driver adapter that PrismaClient uses to connect to your database, such as the ones provided by `@prisma/adapter-pg`, `@prisma/adapter-libsql`, `@prisma/adapter-planetscale`, etc.
+   * 
+   * A driver adapter is **required** unless you connect to your database through Prisma Accelerate (in which case use `accelerateUrl` instead).
+   * 
+   * Learn more: https://pris.ly/d/driver-adapters
+   * 
+   * @example
+   * ```ts
+   * import { PrismaPg } from '@prisma/adapter-pg'
+   * import { PrismaClient } from './generated/prisma/client'
+   * 
+   * const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL })
+   * const prisma = new PrismaClient({ adapter })
+   * ```
+   */
+  adapter: runtime.SqlDriverAdapterFactory
+  accelerateUrl?: never
+}
+
+/**
+ * Options passed to the `PrismaClient` constructor.
+ * 
+ * A driver adapter (or, alternatively, a Prisma Accelerate URL) is **required**. See {@link PrismaClientOptionsWithAdapter} and {@link PrismaClientOptionsWithAccelerateUrl} for the two variants. All other properties live in {@link PrismaClientBaseOptions} and are optional.
+ * 
+ * Learn more about driver adapters: https://pris.ly/d/driver-adapters
+ */
+export type PrismaClientOptions = PrismaClientOptionsWithAccelerateUrl | PrismaClientOptionsWithAdapter
 export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
   account?: Prisma.AccountOmit
@@ -1797,8 +2223,12 @@ export type GlobalOmitConfig = {
   product?: Prisma.ProductOmit
   productFeature?: Prisma.ProductFeatureOmit
   webhookEvent?: Prisma.WebhookEventOmit
-  curatedPuzzle?: Prisma.CuratedPuzzleOmit
   opening?: Prisma.OpeningOmit
+  curatedPuzzle?: Prisma.CuratedPuzzleOmit
+  course?: Prisma.CourseOmit
+  lesson?: Prisma.LessonOmit
+  lessonProgress?: Prisma.LessonProgressOmit
+  customLink?: Prisma.CustomLinkOmit
 }
 
 /* Types for Logging */

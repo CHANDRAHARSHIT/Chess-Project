@@ -73,3 +73,16 @@ export interface MoveLogEntry {
   piece: string;      // e.g. "p"
   moveNumber: number;
 }
+
+/** High-level lifecycle state for the Chess960 game page */
+export type GameStatus =
+  | 'idle'       // No game started — setup panel is visible
+  | 'playing'    // Game in progress
+  | 'checkmate'
+  | 'stalemate'
+  | 'draw'
+  | 'resigned';
+
+/** Winner from the display layer's perspective */
+export type GameResult = 'white' | 'black' | 'draw' | null;
+

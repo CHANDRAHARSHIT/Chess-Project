@@ -1,4 +1,5 @@
 import { prisma } from "../../config/prisma.js";
+import rollbar from "../../config/rollbar.js";
 
 export async function handleInvoicePaymentSucceeded(payload: any) {
   const customerId = payload.customer;
@@ -20,7 +21,11 @@ export async function handleInvoicePaymentSucceeded(payload: any) {
   });
 
   if (!user) {
-    console.error(`[InvoiceHandler]: User with customer ID ${customerId} not found.`);
+    const message = `[InvoiceHandler]: User with customer ID ${customerId} not found.`;
+    console.error(message);
+    // No throw here (webhook must still 200 back to Stripe), so report manually —
+    // a paid invoice with no matching user means the payment audit trail breaks.
+    rollbar.error(message, { customerId, invoiceId, amountPaid, currency });
     return;
   }
 
@@ -101,7 +106,9 @@ export async function handleInvoicePaymentFailed(payload: any) {
   });
 
   if (!user) {
-    console.error(`[InvoiceHandler]: User with customer ID ${customerId} not found.`);
+    const message = `[InvoiceHandler]: User with customer ID ${customerId} not found.`;
+    console.error(message);
+    rollbar.error(message, { customerId, invoiceId, amountDue, currency });
     return;
   }
 

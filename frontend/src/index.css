@@ -27,7 +27,7 @@
   /* Section backgrounds */
   --obsidian-light: #111827;
   /* Card surfaces */
-  --obsidian-glass: rgba(11, 15, 30, 0.75);
+  --obsidian-glass: rgba(11, 15, 30, 0.85);
 
   /* --- Gold Accent System --- */
   --gold-bright: #D4AF6E;
@@ -52,15 +52,19 @@
 
   /* --- Marble / Stone textures --- */
   --marble-light: rgba(245, 240, 232, 0.04);
-  --marble-line: rgba(212, 175, 110, 0.12);
+  --marble-line: rgba(212, 175, 110, 0.10);
   --marble-border: rgba(212, 175, 110, 0.18);
-  --marble-border-strong: rgba(212, 175, 110, 0.35);
+  --marble-border-strong: rgba(212, 175, 110, 0.30);
 
   /* --- Glassmorphism --- */
-  --glass-bg: rgba(12, 16, 32, 0.65);
-  --glass-border: rgba(255, 255, 255, 0.06);
-  --glass-border-gold: rgba(212, 175, 110, 0.12);
+  --glass-bg: rgba(12, 16, 32, 0.80);
+  --glass-border: rgba(212, 175, 110, 0.12);
+  --glass-border-gold: rgba(212, 175, 110, 0.18);
   --glass-blur: saturate(180%) blur(20px);
+
+  /* --- Eval Bar --- */
+  --eval-bar-bg: rgba(12, 16, 32, 0.85);
+  --eval-bar-border: rgba(255, 255, 255, 0.08);
 
   /* --- Shadows --- */
   --shadow-gold: 0 0 12px rgba(212, 175, 110, 0.015), 0 1px 12px rgba(0, 0, 0, 0.6);
@@ -71,7 +75,67 @@
   --ease-luxury: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-cinematic: cubic-bezier(0.25, 0.46, 0.45, 0.94);
   --ease-precise: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* --- RGB-triplet tokens --- */
+  --obsidian-rgb: 8 11 20;
+  --obsidian-mid-rgb: 12 16 32;
+  --obsidian-light-rgb: 17 24 39;
+  --gold-bright-rgb: 212 175 110;
+  --text-primary-rgb: 245 240 232;
+  --text-secondary-rgb: 142 139 130;
+  --text-tertiary-rgb: 92 89 84;
 }
+
+:root[data-theme="light"] {
+  /* --- Core Palette (Consistent Warm Luxury Cream & Ivory Tones) --- */
+  --obsidian: #FAF6F0;
+  --obsidian-mid: #F5F0E6;
+  --obsidian-light: #EFE9DC;
+  --obsidian-glass: rgba(245, 240, 230, 0.90);
+
+  /* --- Text Hierarchy --- */
+  --text-primary: #1C1917;
+  --text-secondary: #57534E;
+  --text-tertiary: #78716C;
+  --text-gold: #8C520D;
+
+  /* --- Gold Accent System (Darker Bronze/Gold for High Contrast on Light Mode) --- */
+  --gold-bright: #945C10;
+  --gold-mid: #7A490B;
+  --gold-dim: #5C3506;
+  --gold-whisper: rgba(148, 92, 16, 0.08);
+  --gold-glow: rgba(148, 92, 16, 0.15);
+  --gold-glow-strong: rgba(148, 92, 16, 0.3);
+
+  /* --- Marble / Stone --- */
+  --marble-light: rgba(0, 0, 0, 0.025);
+  --marble-line: rgba(148, 92, 16, 0.22);
+  --marble-border: rgba(148, 92, 16, 0.40);
+  --marble-border-strong: rgba(148, 92, 16, 0.55);
+
+  /* --- Glass & Darker Golden Border System for High Contrast --- */
+  --glass-bg: rgba(245, 240, 230, 0.90);
+  --glass-border: rgba(148, 92, 16, 0.35);
+  --glass-border-gold: rgba(148, 92, 16, 0.45);
+
+  /* --- Eval Bar (Light Mode contrast fix) --- */
+  --eval-bar-bg: #1C1917;
+  --eval-bar-border: rgba(148, 92, 16, 0.55);
+
+  /* --- Shadows --- */
+  --shadow-deep: 0 20px 48px -12px rgba(148, 92, 16, 0.20), 0 4px 16px rgba(0, 0, 0, 0.04);
+  --shadow-card: 0 10px 32px -8px rgba(148, 92, 16, 0.22), 0 2px 8px rgba(0, 0, 0, 0.03);
+
+  /* --- RGB-triplet tokens (light) --- */
+  --obsidian-rgb: 250 246 240;
+  --obsidian-mid-rgb: 245 240 230;
+  --obsidian-light-rgb: 239 233 220;
+  --gold-bright-rgb: 148 92 16;
+  --text-primary-rgb: 28 25 23;
+  --text-secondary-rgb: 87 83 78;
+  --text-tertiary-rgb: 120 113 108;
+}
+
 
 /* ─── Base Reset ─────────────────────────────────────────────────────────── */
 html {
@@ -106,65 +170,34 @@ body {
   overflow: visible;
 }
 
-/* ─── Custom Scrollbar — Luxury Edition ───────────────────────────────────── */
-html,
-.overflow-y-auto {
+/* ─── Custom Scrollbar — YouTube Style ───────────────────────────────────── */
+* {
   scrollbar-width: thin;
-  scrollbar-color: var(--gold-mid) var(--obsidian);
+  scrollbar-color: #717171 transparent;
 }
 
-html::-webkit-scrollbar,
-.overflow-y-auto::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
 
-html::-webkit-scrollbar-track,
-.overflow-y-auto::-webkit-scrollbar-track {
-  background: var(--obsidian);
+*::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-html::-webkit-scrollbar-thumb,
-.overflow-y-auto::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, var(--gold-dim) 0%, var(--gold-bright) 50%, var(--gold-dim) 100%);
-  border-radius: 10px;
-  border: 1px solid var(--obsidian);
+*::-webkit-scrollbar-thumb {
+  background-color: #717171;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: content-box;
 }
 
-html::-webkit-scrollbar-thumb:hover,
-.overflow-y-auto::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, var(--gold-bright) 0%, #E8C88A 50%, var(--gold-bright) 100%);
-  box-shadow: 0 0 8px var(--gold-glow);
+*::-webkit-scrollbar-thumb:hover {
+  background-color: #a0a0a0;
 }
 
-html::-webkit-scrollbar-corner,
-.overflow-y-auto::-webkit-scrollbar-corner {
-  background: var(--obsidian);
-}
-
-/* ─── Move History Scrollbar ─────────────────────────────────────────────── */
-.move-history-scroll {
-  scrollbar-width: auto;
-  scrollbar-color: var(--gold-dim) var(--obsidian);
-}
-
-.move-history-scroll::-webkit-scrollbar {
-  width: 5px;
-}
-
-.move-history-scroll::-webkit-scrollbar-track {
-  background: var(--obsidian);
-  border-radius: 4px;
-}
-
-.move-history-scroll::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, var(--gold-dim) 0%, var(--gold-bright) 60%, var(--gold-dim) 100%);
-  border-radius: 4px;
-  min-height: 40px;
-}
-
-.move-history-scroll::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, var(--gold-bright) 0%, #E8C88A 60%, var(--gold-bright) 100%);
+*::-webkit-scrollbar-corner {
+  background: transparent;
 }
 
 /* ─── No Scrollbar Utility ───────────────────────────────────────────────── */
@@ -209,6 +242,14 @@ html::-webkit-scrollbar-corner,
 /* Gold gradient text */
 .text-gold-gradient {
   background: linear-gradient(135deg, #E8C88A 0%, var(--gold-bright) 35%, var(--gold-mid) 70%, #C4A35A 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+:root[data-theme="light"] .text-gold-gradient {
+  background: linear-gradient(135deg, #B8781B 0%, #945C10 35%, #7A490B 70%, #5C3506 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -422,6 +463,66 @@ html::-webkit-scrollbar-corner,
   opacity: 1;
 }
 
+/* Light mode: the translucent gold tint reads as washed-out/low-contrast on a
+   cream background, so CTAs go solid near-black with light text instead
+   (same treatment YouTube uses for its "Join" pill). */
+:root[data-theme="light"] .btn-premium-cta {
+  background: var(--text-primary) !important;
+  border-color: var(--text-primary) !important;
+  color: var(--obsidian) !important;
+}
+
+:root[data-theme="light"] .btn-premium-cta::before {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.10), transparent);
+}
+
+:root[data-theme="light"] .btn-premium-cta:hover {
+  background: #33302B !important;
+  border-color: #33302B !important;
+  box-shadow: 0 4px 14px rgba(28, 25, 23, 0.22);
+}
+
+/* ── Gold CTA buttons (marker classes) ───────────────────────────────────────
+   Applied alongside a button's existing gold Tailwind utilities so dark mode
+   is unchanged; in light mode these override to the same near-black-solid /
+   dark-outline treatment as .btn-premium-cta above, keeping every gold button
+   on one consistent, centrally-controlled look. */
+:root[data-theme="light"] .btn-gold-solid {
+  background: var(--text-primary) !important;
+  border-color: var(--text-primary) !important;
+  color: var(--obsidian) !important;
+}
+
+:root[data-theme="light"] .btn-gold-solid:hover {
+  background: #33302B !important;
+  border-color: #33302B !important;
+  color: var(--obsidian) !important;
+}
+
+:root[data-theme="light"] .btn-gold-outline {
+  background: transparent !important;
+  border-color: var(--text-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+:root[data-theme="light"] .btn-gold-outline:hover {
+  background: rgba(28, 25, 23, 0.06) !important;
+  border-color: var(--text-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Nested icons/text that set their own explicit gold color (rather than
+   inheriting from the button) need the same override. */
+:root[data-theme="light"] .btn-gold-solid .text-brand-accent,
+:root[data-theme="light"] .btn-gold-solid svg {
+  color: var(--obsidian) !important;
+}
+
+:root[data-theme="light"] .btn-gold-outline .text-brand-accent,
+:root[data-theme="light"] .btn-gold-outline svg {
+  color: var(--text-primary) !important;
+}
+
 /* ══════════════════════════════════════════════════════════════════════════
    PREMIUM BUTTON GLOWS
    ══════════════════════════════════════════════════════════════════════════ */
@@ -503,15 +604,14 @@ html::-webkit-scrollbar-corner,
 
 .luxury-card {
   position: relative;
-  background: linear-gradient(145deg,
-      rgba(20, 24, 45, 0.8) 0%,
-      rgba(12, 16, 32, 0.9) 100%);
+  background: var(--glass-bg);
   border: 1px solid var(--glass-border-gold);
   border-radius: 2px;
   overflow: hidden;
   box-shadow: var(--shadow-card);
+  backdrop-filter: var(--glass-blur);
   transform-style: preserve-3d;
-  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+  transition: border-color 0.4s ease, box-shadow 0.4s ease, background-color 0.4s ease;
   will-change: transform;
 }
 
@@ -572,6 +672,10 @@ html::-webkit-scrollbar-corner,
   pointer-events: none;
   z-index: 0;
   user-select: none;
+}
+
+:root[data-theme="light"] .card-coordinate {
+  display: none;
 }
 
 /* Engraved chessboard micropattern */
@@ -690,28 +794,31 @@ html::-webkit-scrollbar-corner,
   animation: orb-float-b 13s ease-in-out infinite;
 }
 
-/* Board card — luxury upgrade */
 .hero-board-card {
   position: relative;
-  /* background: linear-gradient(145deg,
-      rgba(16, 20, 40, 0.9) 0%,
-      rgba(10, 14, 28, 0.95) 100%); */
-  border: 1px solid rgba(212, 175, 110, 0.15);
-
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border-gold);
+  border-radius: 2px;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  backdrop-filter: var(--glass-blur);
 }
 
 .hero-board-card::before {
   content: '';
   position: absolute;
-  inset: -1px;
-  border-radius: 2px;
+  inset: 0;
   background: linear-gradient(135deg,
-      rgba(212, 175, 110, 0.15) 0%,
-      rgba(139, 111, 58, 0.08) 40%,
-      rgba(212, 175, 110, 0.04) 100%);
+      rgba(212, 175, 110, 0.03) 0%,
+      transparent 50%,
+      rgba(212, 175, 110, 0.02) 100%);
   pointer-events: none;
   z-index: 0;
-  animation: board-ring-pulse 5s ease-in-out infinite;
+}
+
+.hero-board-card>* {
+  position: relative;
+  z-index: 2;
 }
 
 @keyframes board-ring-pulse {
@@ -1375,28 +1482,22 @@ html::-webkit-scrollbar-corner,
 .contact-card {
   position: relative;
   width: 100%;
-  max-width: 1024px;
-  padding: 84px 96px 72px;
+  max-width: 720px;
+  padding: 56px 56px 48px;
   overflow: hidden;
   border-radius: 2px;
-  background:
-    linear-gradient(135deg, rgba(212, 175, 110, 0.04), transparent 34%),
-    radial-gradient(circle at 0% 0%, rgba(212, 175, 110, 0.06), transparent 28%),
-    rgba(12, 16, 32, 0.85);
-  border: 1px solid rgba(212, 175, 110, 0.12);
-  box-shadow:
-    0 28px 80px rgba(0, 0, 0, 0.55),
-    inset 0 1px 0 rgba(212, 175, 110, 0.06),
-    inset 0 -1px 0 rgba(212, 175, 110, 0.03);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border-gold);
+  box-shadow: var(--shadow-card);
   backdrop-filter: blur(28px);
 }
 
 .contact-card::before {
   content: "♜";
   position: absolute;
-  right: 40px;
-  top: 8px;
-  font-size: 420px;
+  right: 32px;
+  top: 4px;
+  font-size: 320px;
   line-height: 1;
   opacity: 0.025;
   color: var(--gold-bright);
@@ -1405,24 +1506,24 @@ html::-webkit-scrollbar-corner,
 }
 
 .contact-h2 {
-  margin: 0 0 58px;
+  margin: 0 0 36px;
   text-align: center;
   font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(42px, 5vw, 58px);
+  font-size: clamp(36px, 4vw, 48px);
   font-weight: 600;
-  line-height: 1;
+  line-height: 1.1;
   letter-spacing: -0.02em;
   color: var(--text-primary);
 }
 
 .field {
-  margin-bottom: 34px;
+  margin-bottom: 24px;
 }
 
 .contact-label {
   display: block;
-  margin-bottom: 14px;
-  color: rgba(212, 175, 110, 0.7);
+  margin-bottom: 10px;
+  color: var(--text-secondary);
   font-family: 'DM Mono', monospace;
   font-size: 11px;
   font-weight: 500;
@@ -1438,36 +1539,39 @@ html::-webkit-scrollbar-corner,
 .contact-input,
 .contact-textarea {
   width: 100%;
-  border: 1px solid rgba(212, 175, 110, 0.12);
-  background: rgba(8, 11, 20, 0.8);
+  border: 1px solid var(--glass-border-gold);
+  background: var(--obsidian-glass);
   color: var(--text-primary);
   border-radius: 2px;
-  padding: 18px 22px;
+  padding: 14px 18px;
   font: inherit;
-  font-size: 18px;
+  font-size: 15px;
   outline: none;
-  box-shadow: inset 0 0 28px rgba(0, 0, 0, 0.25);
-  transition: border-color 200ms ease, box-shadow 200ms ease;
+  transition: border-color 200ms ease, box-shadow 200ms ease, background-color 200ms ease;
   box-sizing: border-box;
 }
 
+.contact-input {
+  height: 52px;
+}
+
 .contact-textarea {
-  min-height: 160px;
+  min-height: 140px;
   resize: vertical;
 }
 
 .contact-input::placeholder,
 .contact-textarea::placeholder {
-  color: rgba(255, 255, 255, 0.2);
+  color: var(--text-tertiary);
+  opacity: 0.7;
 }
 
 .contact-input:focus,
 .contact-textarea:focus {
-  border-color: rgba(212, 175, 110, 0.45);
+  border-color: rgba(212, 175, 110, 0.55);
   box-shadow:
-    0 0 0 3px rgba(212, 175, 110, 0.06),
-    0 0 20px rgba(212, 175, 110, 0.06),
-    inset 0 0 28px rgba(0, 0, 0, 0.25);
+    0 0 0 3px rgba(212, 175, 110, 0.1),
+    0 0 20px rgba(212, 175, 110, 0.08);
 }
 
 .contact-input.error,
@@ -1478,11 +1582,11 @@ html::-webkit-scrollbar-corner,
 .contact-btn {
   position: relative;
   width: 100%;
-  margin-top: 16px;
-  border: 1px solid rgba(212, 175, 110, 0.25);
+  margin-top: 12px;
+  border: 1px solid var(--marble-border);
   border-radius: 2px;
-  padding: 22px 30px;
-  color: var(--obsidian);
+  padding: 16px 28px;
+  color: var(--gold-bright);
   font-size: 13px;
   font-family: 'DM Mono', monospace;
   font-weight: 500;
@@ -1490,56 +1594,32 @@ html::-webkit-scrollbar-corner,
   text-transform: uppercase;
   cursor: pointer;
   overflow: hidden;
-  background: linear-gradient(135deg, #D4AF6E 0%, #E8C88A 40%, #B8934A 70%, #D4AF6E 100%);
-  box-shadow:
-    0 0 24px rgba(212, 175, 110, 0.12),
-    0 8px 32px rgba(0, 0, 0, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4);
-  transition: transform 200ms ease, box-shadow 200ms ease;
-}
-
-.contact-btn::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -40%;
-  width: 30%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
-  transform: skewX(-18deg);
-  animation: buttonShine 5s ease-in-out infinite;
+  background: linear-gradient(135deg, rgba(212, 175, 110, 0.15) 0%, rgba(212, 175, 110, 0.08) 100%);
+  transition: all 0.3s var(--ease-luxury);
 }
 
 .contact-btn:hover {
+  background: linear-gradient(135deg, rgba(212, 175, 110, 0.22) 0%, rgba(212, 175, 110, 0.12) 100%);
+  border-color: var(--marble-border-strong);
+  box-shadow: 0 0 20px var(--gold-whisper), inset 0 1px 0 rgba(212, 175, 110, 0.1);
   transform: translateY(-2px);
-  box-shadow:
-    0 0 36px rgba(212, 175, 110, 0.25),
-    0 12px 40px rgba(0, 0, 0, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
-@keyframes buttonShine {
-
-  0%,
-  35% {
-    left: -42%;
-  }
-
-  65%,
-  100% {
-    left: 115%;
-  }
+.contact-btn img.arrow {
+  transition: filter 0.3s ease;
+  filter: invert(72%) sepia(42%) saturate(548%) hue-rotate(7deg) brightness(95%) contrast(88%);
 }
 
 @media (max-width: 760px) {
   .contact-card {
-    padding: 48px 24px 40px;
+    padding: 36px 24px 32px;
+    border-radius: 20px;
   }
 
   .contact-input,
   .contact-textarea,
   .contact-btn {
-    font-size: 16px;
+    font-size: 15px;
   }
 }
 

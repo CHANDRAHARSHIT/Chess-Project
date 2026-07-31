@@ -1,6 +1,7 @@
 import { prisma } from "../config/prisma.js";
 import { env } from "../config/env.js";
 import Stripe from "stripe";
+import { CurrencyFormatter } from "../utils/CurrencyFormatter.js";
 import {
   handleSubscriptionCreatedOrUpdated,
   handleSubscriptionDeleted,
@@ -237,58 +238,84 @@ export class PaymentService {
   }
 
   /**
-   * Retrieves secure details of a checkout session for verification.
+   * Retrieves secure details of a checkout session for the success page.
+   * Reads currency/symbol/amount from Stripe session metadata so the frontend
+   * never needs to perform any currency conversion or formatting.
    */
   static async getCheckoutSessionDetails(sessionId: string, userId: string): Promise<any> {
     console.log(`[Stripe]: Retrieving checkout session details for session ID: ${sessionId}`);
-    const session = await stripe.checkout.sessions.retrieve(sessionId);
+    const session = await stripe.checkout.sessions.retrieve(sessionId, {
+      expand: ["line_items"],
+    });
 
     if (!session) {
       throw new Error("Billing session not found.");
     }
 
-    // Security check: ensure metadata belongs to the authenticated user
-    if (session.metadata?.userId !== userId) {
-      const field = customerIdField();
+    // Security check: session metadata must match the authenticated user.
+    // Also accepts if the customer ID matches (handles edge cases in webhook timing).
+    const metaUserId = session.metadata?.userId;
+    if (metaUserId !== userId) {
       const user = await prisma.user.findUnique({
         where: { id: userId },
         select: { stripeLiveCustomerId: true, stripeTestCustomerId: true },
       });
-      if (!user || user[field] !== session.customer) {
+      const customerMatches =
+        user && (user.stripeLiveCustomerId === session.customer || user.stripeTestCustomerId === session.customer);
+      if (!customerMatches) {
         throw new Error("Access denied. Transaction profile mismatch.");
       }
     }
+    // Read currency context from Stripe metadata (set during checkout session creation)
+    const meta = session.metadata || {};
+    const currency = (session.currency || meta.currency || "nzd").toUpperCase();
+    const symbol = meta.symbol || CurrencyFormatter.getSymbol(currency);
+    const amountRaw = session.amount_total ?? 0;
+    const billing = (meta.billing as "monthly" | "yearly") || "monthly";
 
-    // Retrieve active subscription from the database (synced by webhooks)
+    // Format the total paid. Stripe stores zero-decimal currencies (JPY, KRW, etc.)
+    // in major units already; everything else is stored in minor units (cents).
+    const amountMajor = CurrencyFormatter.isZeroDecimal(currency) ? amountRaw : amountRaw / 100;
+    const totalPaidFormatted = meta.amountFormatted || CurrencyFormatter.format(amountMajor, currency);
+
+    // Retrieve active DB subscription (synced by webhooks — may be slightly delayed)
     const subscription = await prisma.subscription.findFirst({
       where: {
         userId,
         status: { in: ["ACTIVE", "TRIALING"] },
       },
-      include: {
-        product: true,
-      },
+      include: { product: true },
       orderBy: { createdAt: "desc" },
     });
+
+    // Determine billing interval: prefer DB subscription, fall back to Stripe metadata
+    const billingInterval =
+      subscription?.product?.billingInterval ||
+      (billing === "yearly" ? "year" : "month");
 
     return {
       session: {
         id: session.id,
-        paymentStatus: session.payment_status,
         status: session.status,
-        amountTotal: session.amount_total,
-        currency: session.currency,
+        paymentStatus: session.payment_status,
+        amountTotal: amountRaw,
+        amountMajor,
+        currency,
+        symbol,
+        totalPaidFormatted,
         customerEmail: session.customer_details?.email || null,
+        billing,
       },
-      isSubscribed: !!subscription,
-      subscription: subscription ? {
-        id: subscription.id,
-        status: subscription.status,
-        currentPeriodEnd: subscription.currentPeriodEnd,
-        productName: subscription.product.name,
-        priceAmount: subscription.product.priceAmount,
-        billingInterval: subscription.product.billingInterval,
-      } : null,
+      // isSubscribed is true if Stripe payment_status is paid (webhook may not have fired yet)
+      isSubscribed: session.payment_status === "paid" || !!subscription,
+      subscription: {
+        id: subscription?.id || session.id,
+        status: subscription?.status || (session.payment_status === "paid" ? "ACTIVE" : "PENDING"),
+        currentPeriodEnd: subscription?.currentPeriodEnd || null,
+        productName: subscription?.product?.name || "Premium Membership",
+        priceAmount: amountMajor,
+        billingInterval,
+      },
     };
   }
 }

@@ -90,11 +90,34 @@ export function generateChess960Position(): string {
 }
 
 /**
+ * Reads actual king/rook positions from a white back rank string and returns the FEN castling rights.
+ */
+export function deriveCastlingRights(backRank: string): string {
+  if (!isValidChess960Position(backRank)) {
+    return 'KQkq';
+  }
+  const kingSquare = backRank.indexOf('K');
+  let hasKingside = false;
+  let hasQueenside = false;
+
+  for (let i = 0; i < backRank.length; i++) {
+    if (backRank[i] === 'R') {
+      if (i > kingSquare) hasKingside = true;
+      if (i < kingSquare) hasQueenside = true;
+    }
+  }
+
+  let rights = '';
+  if (hasKingside) rights += 'K';
+  if (hasQueenside) rights += 'Q';
+  if (hasKingside) rights += 'k';
+  if (hasQueenside) rights += 'q';
+
+  return rights || '-';
+}
+
+/**
  * Creates a Chess960 starting FEN from a valid white back rank.
- *
- * TODO: chess.js does not implement Chess960 castling semantics for us yet.
- * We keep standard castling rights in the FEN so the position loads cleanly,
- * and can replace this once custom Chess960 castling support is added.
  */
 export function generateChess960FEN(backRank = generateChess960Position()): string {
   if (!isValidChess960Position(backRank)) {
@@ -102,5 +125,5 @@ export function generateChess960FEN(backRank = generateChess960Position()): stri
   }
 
   const blackBackRank = backRank.toLowerCase();
-  return `${blackBackRank}/pppppppp/8/8/8/8/PPPPPPPP/${backRank} w KQkq - 0 1`;
+  return `${blackBackRank}/pppppppp/8/8/8/8/PPPPPPPP/${backRank} w ${deriveCastlingRights(backRank)} - 0 1`;
 }

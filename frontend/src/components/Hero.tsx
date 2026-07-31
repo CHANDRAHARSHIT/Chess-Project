@@ -278,40 +278,49 @@ export default function Hero() {
       const textEl = playTextRef.current;
       if (ctaEl && textEl) {
         const chars = textEl.querySelectorAll(".play-char");
+        const isPointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 
-        const onMouseEnter = () => {
-          gsap.to(chars, {
-            y: -18,
-            opacity: 0,
-            duration: 0.22,
-            stagger: 0.028,
-            ease: "power2.in",
-            overwrite: true,
-          });
-        };
-
-        const onMouseLeave = () => {
-          gsap.fromTo(
-            chars,
-            { y: 16, opacity: 0 },
-            {
-              y: 0,
-              opacity: 1,
-              duration: 0.38,
-              stagger: 0.045,
-              ease: "back.out(1.6)",
+        if (isPointer) {
+          const onMouseEnter = () => {
+            gsap.to(chars, {
+              y: -18,
+              opacity: 0,
+              duration: 0.22,
+              stagger: 0.028,
+              ease: "power2.in",
               overwrite: true,
-            },
-          );
-        };
+            });
+          };
 
-        ctaEl.addEventListener("mouseenter", onMouseEnter);
-        ctaEl.addEventListener("mouseleave", onMouseLeave);
+          const resetChars = () => {
+            gsap.fromTo(
+              chars,
+              { y: 16, opacity: 0 },
+              {
+                y: 0,
+                opacity: 1,
+                duration: 0.38,
+                stagger: 0.045,
+                ease: "back.out(1.6)",
+                overwrite: true,
+              },
+            );
+          };
 
-        return () => {
-          ctaEl.removeEventListener("mouseenter", onMouseEnter);
-          ctaEl.removeEventListener("mouseleave", onMouseLeave);
-        };
+          ctaEl.addEventListener("mouseenter", onMouseEnter);
+          ctaEl.addEventListener("mouseleave", resetChars);
+          ctaEl.addEventListener("pointerleave", resetChars);
+
+          return () => {
+            ctaEl.removeEventListener("mouseenter", onMouseEnter);
+            ctaEl.removeEventListener("mouseleave", resetChars);
+            ctaEl.removeEventListener("pointerleave", resetChars);
+            gsap.set(chars, { y: 0, opacity: 1 });
+          };
+        } else {
+          // Force text visible and positioned properly on non-pointer (mobile/touch) devices
+          gsap.set(chars, { y: 0, opacity: 1 });
+        }
       }
     },
     heroRef,
@@ -474,14 +483,10 @@ export default function Hero() {
                   style={{ top: "12px", right: "14px", bottom: "auto" }}
                   aria-hidden="true"
                 >
-                  e4 · d5
                 </div>
 
                 {/* Board Area */}
-                <div
-                  className="p-4 board-cursor-glow"
-                  style={{ background: "rgba(8, 11, 20, 0.95)" }}
-                >
+                <div className="p-4 board-cursor-glow">
                   <HeroPuzzle />
                 </div>
               </div>

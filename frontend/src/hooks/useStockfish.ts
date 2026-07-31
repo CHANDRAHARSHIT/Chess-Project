@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { type DifficultyLevel, type EngineEvaluation, DIFFICULTY_CONFIGS, type EngineStatus } from '../types/chess';
+import rollbar from '../config/rollbar';
 
 export function useStockfish() {
   const workerRef = useRef<Worker | null>(null);
@@ -33,6 +34,9 @@ export function useStockfish() {
       return worker;
     } catch (e) {
       console.error('Failed to initialize Stockfish worker', e);
+      // Falls back to an "error" engine status below, so this never reaches
+      // the ErrorBoundary — report it manually since it breaks engine play.
+      rollbar.error(e as Error, { context: 'useStockfish.initWorker' });
       setEngineStatus('error');
       return null;
     }
@@ -74,7 +78,7 @@ export function useStockfish() {
   }, []);
 
   // Start search for a FEN position
-  const getEngineMove = useCallback((fen: string, difficulty: DifficultyLevel, onMoveCallback?: (move: string) => void) => {
+  const getEngineMove = useCallback((fen: string, difficulty: DifficultyLevel, onMoveCallback?: (move: string) => void, isChess960?: boolean) => {
     const worker = initWorker();
     if (!worker) return;
 
@@ -88,6 +92,9 @@ export function useStockfish() {
     const isBlackTurn = fen.split(' ')[1] === 'b';
 
     // Configure options
+    if (isChess960) {
+      // CDN Stockfish 10.0.2 does not support UCI_Chess960 option
+    }
     worker.postMessage(`setoption name Skill Level value ${config.skillLevel}`);
     worker.postMessage(`position fen ${fen}`);
 
@@ -159,7 +166,7 @@ export function useStockfish() {
   }, [initWorker, stopSearch]);
 
   // Perform deeper analysis for the "Hint" button
-  const analyzePosition = useCallback((fen: string) => {
+  const analyzePosition = useCallback((fen: string, isChess960?: boolean) => {
     const worker = initWorker();
     if (!worker) return;
 
@@ -171,6 +178,9 @@ export function useStockfish() {
     const isBlackTurn = fen.split(' ')[1] === 'b';
 
     // Set master difficulty options for analysis
+    if (isChess960) {
+      // CDN Stockfish 10.0.2 does not support UCI_Chess960 option
+    }
     worker.postMessage('setoption name Skill Level value 20');
     worker.postMessage(`position fen ${fen}`);
 

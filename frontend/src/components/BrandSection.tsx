@@ -8,6 +8,7 @@
  */
 
 import { useRef, useEffect, useCallback } from "react";
+import { Link } from "react-router";
 import { useGSAP } from "../hooks/useGSAP";
 import { gsap, dur } from "../utils/gsapConfig";
 import { ArrowRight } from "lucide-react";
@@ -110,7 +111,7 @@ export default function BrandSection() {
     <section
       ref={sectionRef}
       id="brand-section"
-      className="relative py-20 md:py-32 overflow-hidden"
+      className="relative py-24 md:py-28 overflow-hidden bg-brand-bg"
     >
       {/* Gold ambient glow */}
       <div
@@ -134,7 +135,7 @@ export default function BrandSection() {
             style={{ opacity: 0 }}
           >
             <div className="space-y-4 max-w-xl">
-              <h2 className="font-display font-semibold text-4xl sm:text-5xl md:text-6xl text-white tracking-tight leading-[1.05]">
+              <h2 className="font-display font-semibold text-4xl sm:text-5xl md:text-6xl text-brand-text tracking-tight leading-[1.05]">
                 <span
                   className="block"
                   style={{ color: "var(--text-primary)" }}
@@ -161,18 +162,14 @@ export default function BrandSection() {
             </div>
 
             <div className="pt-4">
-              <button
-                onClick={() => {
-                  document
-                    .getElementById("contact-us")
-                    ?.scrollIntoView({ behavior: "smooth" });
-                }}
+              <Link
+                to="/contact"
                 className="inline-flex items-center justify-center gap-3 font-sans font-medium text-[15px] btn-premium-cta btn-glow-container cta-shine px-8 py-4 rounded-sm group transition-all duration-300"
                 style={{ fontSize: "13px" }}
               >
                 Build Your Platform
                 <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
-              </button>
+              </Link>
             </div>
           </div>
 
