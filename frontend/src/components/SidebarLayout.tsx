@@ -698,7 +698,7 @@ export default function SidebarLayout({
             <button
               onClick={() => openModal("login")}
               aria-label="Sign In"
-              className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-border/50 text-brand-accent hover:bg-brand-accent/10 transition-all duration-200 text-xs sm:text-sm font-sans cursor-pointer"
+              className="btn-gold-outline flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-border/50 text-brand-accent hover:bg-brand-accent/10 transition-all duration-200 text-xs sm:text-sm font-sans cursor-pointer"
             >
               <CircleUserRound className="w-5 h-5" strokeWidth={1.8} />
               <span>Sign In</span>
@@ -754,7 +754,29 @@ export default function SidebarLayout({
             <Divider />
 
             {/* AUTH / SUBSCRIPTIONS SECTION */}
-            {status !== "authenticated" ? (
+            {status === "loading" ? (
+              <>
+                {isExpanded && (
+                  <div className="flex items-center px-6 py-2">
+                    <span className="h-4 w-28 rounded bg-brand-text/10 animate-pulse" />
+                  </div>
+                )}
+                <div className="flex flex-col w-full">
+                  <div
+                    className={`flex items-center mx-2 rounded-xl ${isExpanded ? "py-2.5 px-3" : "flex-col justify-center py-[14px]"
+                      }`}
+                  >
+                    <div className={`flex items-center justify-center shrink-0 ${isExpanded ? "w-10" : "w-full"}`}>
+                      <div className="w-6 h-6 rounded-full bg-brand-text/10 animate-pulse" />
+                    </div>
+                    {isExpanded && (
+                      <div className="flex-1 h-3.5 ml-2 rounded bg-brand-text/10 animate-pulse" />
+                    )}
+                  </div>
+                </div>
+                <Divider />
+              </>
+            ) : status !== "authenticated" ? (
               isExpanded && (
                 <>
                   <div className="px-6 py-4">
@@ -764,7 +786,7 @@ export default function SidebarLayout({
                     </p>
                     <button
                       onClick={() => openModal("login")}
-                      className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-border/50 text-brand-accent hover:bg-brand-accent/10 transition-all duration-200 text-sm font-sans cursor-pointer w-fit"
+                      className="btn-gold-outline flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-border/50 text-brand-accent hover:bg-brand-accent/10 transition-all duration-200 text-sm font-sans cursor-pointer w-fit"
                     >
                       <CircleUserRound className="w-5 h-5" />
                       <span>Sign In</span>
@@ -1029,7 +1051,19 @@ export default function SidebarLayout({
 
             <Divider />
 
-            {status !== "authenticated" ? (
+            {status === "loading" ? (
+              <>
+                <div className="mx-2 px-3 py-2">
+                  <span className="h-4 w-28 rounded bg-brand-text/10 animate-pulse inline-block" />
+                </div>
+                <div className="flex items-center py-2.5 mx-2 px-3 rounded-xl">
+                  <div className="w-10 flex items-center justify-center shrink-0">
+                    <div className="w-6 h-6 rounded-full bg-brand-text/10 animate-pulse" />
+                  </div>
+                  <div className="flex-1 h-3.5 ml-2 rounded bg-brand-text/10 animate-pulse" />
+                </div>
+              </>
+            ) : status !== "authenticated" ? (
               <div className="px-4 py-2">
                 <p className="text-[13px] text-brand-text/80 mb-3 leading-tight">
                   Sign in to access your stats, play games, and follow your
@@ -1037,7 +1071,7 @@ export default function SidebarLayout({
                 </p>
                 <button
                   onClick={() => openModal("login")}
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-border/50 text-brand-accent hover:bg-brand-accent/10 transition-all duration-200 text-sm cursor-pointer w-fit"
+                  className="btn-gold-outline flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-border/50 text-brand-accent hover:bg-brand-accent/10 transition-all duration-200 text-sm cursor-pointer w-fit"
                 >
                   <CircleUserRound className="w-5 h-5" />
                   <span>Sign In</span>
@@ -1248,7 +1282,7 @@ export default function SidebarLayout({
                 <div className="flex justify-end pt-2">
                   <button
                     type="submit"
-                    className="bg-brand-accent text-brand-bg font-semibold px-5 py-2.5 rounded-xl hover:bg-brand-accent/90 hover:scale-[1.02] transition-all cursor-pointer text-[14px]"
+                    className="btn-gold-solid bg-brand-accent text-brand-bg font-semibold px-5 py-2.5 rounded-xl hover:bg-brand-accent/90 hover:scale-[1.02] transition-all cursor-pointer text-[14px]"
                   >
                     {editLinkIndex !== null ? "Save Changes" : "Save Link"}
                   </button>

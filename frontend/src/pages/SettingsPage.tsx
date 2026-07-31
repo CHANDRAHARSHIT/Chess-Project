@@ -73,7 +73,7 @@ const CATEGORIES: SettingsCategory[] = [
     slug: "membership",
     name: "Membership",
     icon: CreditCard,
-    available: true,
+    available: false,
     path: "/pricing",
   },
   {
@@ -197,7 +197,7 @@ export default function SettingsPage() {
             className="inline-flex items-center gap-2 text-brand-secondary hover:text-brand-text transition-colors duration-200 font-sans text-sm font-semibold cursor-pointer group"
           >
             <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
-            Back to Play
+            Back to Home
           </button>
         </div>
 

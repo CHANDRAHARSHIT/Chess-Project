@@ -283,7 +283,7 @@ export default function PuzzlePage() {
           <button
             id="custom-puzzles-btn"
             onClick={handleOpenCustomConfig}
-            className="w-full flex items-center justify-center gap-2 px-4.5 py-3.5 rounded-xl text-xs font-mono uppercase tracking-wider font-bold transition-all duration-300 cursor-pointer bg-brand-surface border border-brand-accent/35 text-brand-accent hover:border-brand-accent/60 shadow-md shadow-brand-accent/10 hover:shadow-lg hover:shadow-brand-accent/20 hover:-translate-y-0.5"
+            className="btn-gold-outline w-full flex items-center justify-center gap-2 px-4.5 py-3.5 rounded-xl text-xs font-mono uppercase tracking-wider font-bold transition-all duration-300 cursor-pointer bg-brand-surface border border-brand-accent/35 text-brand-accent hover:border-brand-accent/60 shadow-md shadow-brand-accent/10 hover:shadow-lg hover:shadow-brand-accent/20 hover:-translate-y-0.5"
             style={{
               background: "linear-gradient(135deg, rgba(212,175,110,0.14) 0%, rgba(184,147,74,0.08) 100%), var(--obsidian-mid)",
             }}
@@ -544,7 +544,7 @@ export default function PuzzlePage() {
                         <button
                           id="custom-puzzles-btn-mobile"
                           onClick={handleOpenCustomConfig}
-                          className="w-full flex items-center justify-center gap-2 px-4.5 py-3.5 rounded-xl text-xs font-mono uppercase tracking-wider font-bold transition-all duration-300 cursor-pointer bg-brand-surface border border-brand-accent/35 text-brand-accent hover:border-brand-accent/60 shadow-md shadow-brand-accent/10 hover:shadow-lg hover:shadow-brand-accent/20 hover:-translate-y-0.5"
+                          className="btn-gold-outline w-full flex items-center justify-center gap-2 px-4.5 py-3.5 rounded-xl text-xs font-mono uppercase tracking-wider font-bold transition-all duration-300 cursor-pointer bg-brand-surface border border-brand-accent/35 text-brand-accent hover:border-brand-accent/60 shadow-md shadow-brand-accent/10 hover:shadow-lg hover:shadow-brand-accent/20 hover:-translate-y-0.5"
                           style={{
                             background: "linear-gradient(135deg, rgba(212,175,110,0.14) 0%, rgba(184,147,74,0.08) 100%), var(--obsidian-mid)",
                           }}
