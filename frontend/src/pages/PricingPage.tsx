@@ -2,12 +2,9 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Check,
-  ChevronDown,
   Sparkles,
   Trophy,
   ArrowRight,
-  ShieldCheck,
-  Gamepad2,
   Info,
   AlertCircle,
   Star,
@@ -15,9 +12,19 @@ import {
   Crown,
   Users,
   Clock,
+  Puzzle,
+  GraduationCap,
+  Bot,
+  UserCircle,
+  Ban,
+  MessageSquare,
+  BarChart2,
+  BookMarked,
+  X
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router";
 import { useNavigationStack } from "../hooks/useNavigationStack";
+import { MembershipFeaturesSection } from "../components/pricing/MembershipFeaturesSection";
 
 // ─── Decorative floating chess pieces ────────────────────────────────────────
 const PieceSvg: React.FC<{
@@ -204,88 +211,36 @@ const PLANS: PlanDef[] = [
 ];
 
 // ─── Comparison table rows ────────────────────────────────────────────────────
-const COMPARISON_ROWS: Array<{
-  label: string;
-  gold: string | boolean;
-  platinum: string | boolean;
-  diamond: string | boolean;
-  family: string | boolean;
-}> = [
-  { label: "Online Games", gold: "Unlimited", platinum: "Unlimited", diamond: "Unlimited", family: "Unlimited" },
-  { label: "Engine Analysis", gold: "Basic", platinum: "Advanced", diamond: "Unlimited (Deep Stockfish)", family: "Unlimited (Deep Stockfish)" },
-  { label: "Game Reviews / Month", gold: "5", platinum: "25", diamond: "Unlimited", family: "Unlimited" },
-  { label: "Puzzle Training", gold: "50 / day", platinum: "Unlimited", diamond: "Unlimited", family: "Unlimited" },
-  { label: "Opening Explorer", gold: "Limited", platinum: "Advanced", diamond: "Advanced Explorer", family: "Advanced Explorer" },
-  { label: "Performance Insights", gold: false, platinum: true, diamond: true, family: true },
-  { label: "Accuracy Reports", gold: false, platinum: true, diamond: true, family: true },
-  { label: "Premium Themes", gold: "Basic", platinum: true, diamond: true, family: true },
-  { label: "Ad Free", gold: true, platinum: true, diamond: true, family: true },
-  { label: "Early Access Features", gold: false, platinum: false, diamond: true, family: true },
-  { label: "Priority Support", gold: false, platinum: false, diamond: true, family: true },
-  { label: "Accounts", gold: "1", platinum: "1", diamond: "1", family: "Up to 5" },
+const COMPARISON_ROWS = [
+  { label: "Puzzles", icon: <Puzzle className="w-5 h-5 text-orange-500 fill-orange-500" />, gold: true, platinum: true, diamond: true, family: true },
+  { label: "Lessons", icon: <GraduationCap className="w-5 h-5 text-sky-400 fill-sky-400" />, gold: true, platinum: true, diamond: true, family: true },
+  { label: "Bots", icon: <Bot className="w-5 h-5 text-slate-300 fill-slate-300" />, gold: true, platinum: true, diamond: true, family: true },
+  { label: "Play Coach", icon: <UserCircle className="w-5 h-5 text-amber-500 fill-amber-500" />, gold: true, platinum: true, diamond: true, family: true },
+  { label: "No Ads", icon: <Ban className="w-5 h-5 text-red-500" />, gold: true, platinum: true, diamond: true, family: true },
+  { label: "Game Review", icon: <Star className="w-5 h-5 text-green-500 fill-green-500" />, gold: false, platinum: true, diamond: true, family: true },
+  { label: "Move Explanations", icon: <MessageSquare className="w-5 h-5 text-emerald-400 fill-emerald-400" />, gold: false, platinum: false, diamond: true, family: true },
+  { label: "Advanced Stats", icon: <BarChart2 className="w-5 h-5 text-blue-500 fill-blue-500" />, gold: false, platinum: false, diamond: true, family: true },
+  { label: "Courses Perks", icon: <BookMarked className="w-5 h-5 text-orange-400 fill-orange-400" />, gold: false, platinum: false, diamond: true, family: true },
 ];
 
-const FAQS = [
-  {
-    q: "What happens if I cancel?",
-    a: "You will retain access to all Diamond features until the end of your current billing period. After that, your account will revert to the Free tier. Your saved game history, analysis, and custom configurations remain safely stored.",
-  },
-  {
-    q: "Can I switch plans?",
-    a: "Yes! When Gold, Platinum, and Friends & Family plans launch, switching between tiers will be seamless with pro-rated billing.",
-  },
-  {
-    q: "Do yearly plans save money?",
-    a: "Yes. Yearly billing offers significant savings versus monthly. Diamond Yearly details will be available when the yearly cycle launches.",
-  },
-  {
-    q: "Can I upgrade anytime?",
-    a: "Yes — you can instantly upgrade from anywhere on the platform. Billing is prorated so you only pay the difference for the remaining cycle.",
-  },
-  {
-    q: "Is my payment secure?",
-    a: "All payments are processed via Stripe with industry-standard 256-bit encryption. Your card details are never stored on our servers.",
-  },
-  {
-    q: "When will Gold, Platinum and Friends & Family launch?",
-    a: "These tiers are coming soon. Join Diamond now and you'll be the first to hear when new plans become available.",
-  },
-];
-
-// ─── Comparison cell helper ───────────────────────────────────────────────────
 function CompCell({
   value,
   diamond,
 }: {
-  value: string | boolean;
+  value: boolean;
   diamond?: boolean;
 }) {
-  if (typeof value === "boolean") {
-    return value ? (
-      <span
-        className={`inline-flex items-center justify-center w-5 h-5 rounded-full ${
-          diamond
-            ? "bg-sky-300/15 text-sky-300"
-            : "bg-emerald-500/10 text-emerald-400"
-        }`}
-      >
-        <Check className="w-3 h-3" />
-      </span>
-    ) : (
-      <span className="text-brand-secondary/30 text-sm">—</span>
-    );
+  if (value) {
+    if (diamond) {
+      return (
+        <span className="inline-flex items-center justify-center w-[22px] h-[22px] rounded-full bg-sky-500 text-white shadow-md">
+          <Check className="w-3.5 h-3.5 stroke-[3.5]" />
+        </span>
+      );
+    }
+    return <Check className="w-5 h-5 text-white/90 mx-auto stroke-[3]" />;
   }
-  return (
-    <span
-      className={`inline-block whitespace-nowrap font-mono text-[11px] px-2 py-0.5 rounded-md border ${
-        diamond
-          ? "bg-sky-300/10 border-sky-300/20 text-sky-300"
-          : "bg-brand-text/5 border-brand-border text-brand-secondary"
-      }`}
-    >
-      {value}
-    </span>
-  );
+  return <X className="w-5 h-5 text-brand-secondary/30 mx-auto stroke-[3]" />;
 }
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
@@ -294,7 +249,6 @@ export default function PricingPage() {
   const location = useLocation();
   const { getPrevious } = useNavigationStack();
   const [isYearly, setIsYearly] = useState(false);
-  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
 
   const [showSessionError, setShowSessionError] = useState(() => {
     const params = new URLSearchParams(location.search);
@@ -659,238 +613,181 @@ export default function PricingPage() {
 
         {/* ── COMPARISON TABLE ── */}
         <section className="w-full max-w-6xl mb-20 sm:mb-24 z-10">
-          <div className="text-center mb-10">
-            <h2 className="text-2xl sm:text-3xl font-display font-medium text-brand-text mb-3">
-              Compare All Plans
-            </h2>
-            <p className="text-sm text-brand-secondary font-sans">
-              Choose the depth of tools that fits your learning style.
-            </p>
-          </div>
-
           <div className="w-full overflow-x-auto rounded-2xl border border-brand-border bg-brand-surface/60 backdrop-blur-xl shadow-2xl">
-            <table className="w-full text-left border-collapse min-w-[700px]">
+            <table className="w-full text-left border-collapse min-w-[800px]">
+              
+              {/* ── HEADER ROW ── */}
               <thead>
-                <tr className="border-b border-brand-border/60 bg-brand-text/[0.02]">
-                  <th className="py-4 px-5 text-xs font-mono text-brand-secondary uppercase tracking-wider min-w-[180px]">
-                    Feature
-                  </th>
-                  {PLANS.map((p) => {
-                    const isDiamond = p.id === "diamond";
-                    const comingSoon = isYearly
-                      ? p.comingSoonYearly
-                      : p.comingSoonMonthly;
-                    return (
-                      <th
-                        key={p.id}
-                        className={`py-4 px-4 text-center text-xs font-mono uppercase tracking-wider ${
-                          p.accentText
-                        } ${isDiamond ? "bg-sky-300/[0.05]" : ""}`}
+                <tr>
+                  {/* Top Left: Toggle */}
+                  <th className="pt-4 pb-12 px-6 align-top w-64 border-b border-brand-border/60">
+                    <div className="flex items-center gap-6 text-sm font-semibold text-brand-secondary">
+                      <button 
+                        onClick={() => setIsYearly(false)} 
+                        className={`hover:text-brand-text transition-colors flex items-center gap-1.5 ${!isYearly ? "text-brand-text" : ""}`}
                       >
-                        <div className="flex flex-col items-center gap-1">
-                          <span
-                            className={`w-6 h-6 rounded-lg ${p.accentBg} border ${p.accentBorder} flex items-center justify-center ${p.accentText}`}
-                          >
-                            {p.icon}
-                          </span>
-                          <span>{p.name}</span>
-                          {comingSoon && (
-                            <span className="text-[9px] text-brand-secondary/40 font-normal normal-case">
-                              Coming Soon
-                            </span>
-                          )}
-                        </div>
-                      </th>
-                    );
-                  })}
+                        {!isYearly && <Check className="w-4 h-4" />}
+                        Monthly
+                      </button>
+                      <button 
+                        onClick={() => setIsYearly(true)} 
+                        className={`hover:text-brand-text transition-colors flex items-center gap-1.5 ${isYearly ? "text-brand-text" : ""}`}
+                      >
+                        {isYearly && <Check className="w-4 h-4" />}
+                        Yearly <span className="text-brand-secondary/60 font-normal">(save 44%)</span>
+                      </button>
+                    </div>
+                  </th>
+
+                  {/* UNLIMITED Column Header */}
+                  <th className="pt-16 pb-6 px-4 align-bottom text-center w-32 border-b border-brand-border/60 bg-brand-text/[0.02]">
+                    <span className="text-xs font-bold text-brand-secondary uppercase tracking-wider">UNLIMITED</span>
+                  </th>
+
+                  {/* Gold */}
+                  <th className="pt-16 pb-6 px-4 align-bottom text-center w-36 border-b border-brand-border/60 bg-brand-text/[0.02]">
+                    <div className="flex items-center justify-center gap-2 text-lg font-bold">
+                      <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
+                      Gold
+                    </div>
+                  </th>
+
+                  {/* Platinum */}
+                  <th className="pt-16 pb-6 px-4 align-bottom text-center w-36 border-b border-brand-border/60 bg-brand-text/[0.02]">
+                    <div className="flex items-center justify-center gap-2 text-lg font-bold">
+                      <Crown className="w-5 h-5 text-slate-300 fill-slate-300" />
+                      Platinum
+                    </div>
+                  </th>
+
+                  {/* Diamond */}
+                  <th className="relative pt-6 pb-6 px-4 align-bottom text-center w-48 border-t-2 border-l-2 border-r-2 border-sky-400 bg-sky-950/40 rounded-t-2xl shadow-[0_-10px_30px_rgba(56,189,248,0.1)]">
+                    {/* Diamond Illustration Placeholder */}
+                    <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-16 h-16 bg-gradient-to-br from-sky-300 to-sky-600 rounded-lg rotate-45 flex items-center justify-center shadow-[0_0_20px_rgba(56,189,248,0.4)] border-2 border-sky-200">
+                       <div className="w-10 h-10 border border-white/30 rounded-sm" />
+                    </div>
+                    {/* Sparkles */}
+                    <Sparkles className="absolute -top-8 left-10 w-4 h-4 text-white" />
+                    <Sparkles className="absolute -top-2 right-12 w-3 h-3 text-white" />
+                    
+                    <div className="text-[10px] font-bold text-sky-400 tracking-widest uppercase mb-1 mt-6">
+                      Most Popular
+                    </div>
+                    <div className="text-xl font-bold text-brand-text">
+                      Diamond
+                    </div>
+                  </th>
+
+                  {/* Family */}
+                  <th className="pt-14 pb-6 px-4 align-bottom text-center w-40 border-b border-brand-border/60 bg-brand-text/[0.02]">
+                    <div className="flex flex-col items-center justify-center gap-1">
+                      <div className="text-[10px] font-bold text-emerald-400 tracking-widest uppercase mb-1">
+                        Save 70%
+                      </div>
+                      <div className="flex items-center justify-center gap-1.5 text-base font-bold whitespace-nowrap">
+                        <Users className="w-4 h-4 text-emerald-400 fill-emerald-400" />
+                        Friends & Family
+                      </div>
+                      <div className="mt-1 px-2 py-0.5 rounded bg-brand-text/10 text-[9px] font-bold text-brand-secondary tracking-wider">
+                        2-6 MEMBERS
+                      </div>
+                    </div>
+                  </th>
                 </tr>
               </thead>
 
+              {/* ── BODY ROWS ── */}
               <tbody className="divide-y divide-brand-border/30">
                 {COMPARISON_ROWS.map((row, i) => (
-                  <tr
-                    key={i}
-                    className="hover:bg-brand-text/[0.015] transition-colors duration-100"
-                  >
-                    <td className="py-3 px-5 text-sm font-sans font-medium text-brand-text">
+                  <tr key={i} className="hover:bg-brand-text/[0.015] transition-colors duration-100">
+                    {/* Feature Label */}
+                    <td className="py-4 px-6 font-semibold text-[15px] flex items-center gap-3 text-brand-text">
+                      {row.icon}
                       {row.label}
+                      <Info className="w-3.5 h-3.5 text-brand-secondary ml-1 cursor-pointer hover:text-brand-text" />
                     </td>
-                    <td className="py-3 px-4 text-center">
+
+                    {/* UNLIMITED filler (just background) */}
+                    <td className="py-4 px-4 bg-brand-text/[0.02]" />
+
+                    {/* Gold */}
+                    <td className="py-4 px-4 text-center">
                       <CompCell value={row.gold} />
                     </td>
-                    <td className="py-3 px-4 text-center">
+
+                    {/* Platinum */}
+                    <td className="py-4 px-4 text-center">
                       <CompCell value={row.platinum} />
                     </td>
-                    <td className="py-3 px-4 text-center bg-sky-300/[0.04]">
+
+                    {/* Diamond (Highlighted) */}
+                    <td className="py-4 px-4 text-center border-l-2 border-r-2 border-sky-400 bg-sky-950/40">
                       <CompCell value={row.diamond} diamond />
                     </td>
-                    <td className="py-3 px-4 text-center">
+
+                    {/* Family */}
+                    <td className="py-4 px-4 text-center">
                       <CompCell value={row.family} />
                     </td>
                   </tr>
                 ))}
               </tbody>
 
+              {/* ── FOOTER ROW ── */}
               <tfoot>
-                <tr className="border-t border-brand-border/50">
-                  <td className="py-5 px-5 text-xs font-mono text-brand-secondary uppercase tracking-wider">
-                    Get Started
+                <tr className="border-t border-brand-border/60">
+                  <td className="py-8 px-6 text-xs text-brand-secondary/60">
+                    ^When billed yearly<br/><br/>
+                    Prices for all plans include taxes
                   </td>
-                  {PLANS.map((p) => {
-                    const isDiamond = p.id === "diamond";
-                    const comingSoon = isYearly
-                      ? p.comingSoonYearly
-                      : p.comingSoonMonthly;
-                    const disabled = !!comingSoon || (isDiamond && isYearly);
-                    return (
-                      <td
-                        key={p.id}
-                        className={`py-5 px-4 text-center ${
-                          isDiamond ? "bg-sky-300/[0.04]" : ""
-                        }`}
-                      >
-                        <button
-                          disabled={disabled}
-                          onClick={() => {
-                            if (!disabled && isDiamond) handleUpgrade("Monthly");
-                          }}
-                          className={`inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg font-mono text-[10px] uppercase tracking-widest font-semibold transition-all duration-200 ${
-                            disabled
-                              ? "opacity-25 cursor-not-allowed text-brand-secondary border border-brand-border"
-                              : isDiamond
-                              ? "bg-sky-500 hover:bg-sky-400 text-white border border-sky-300/40 shadow shadow-sky-300/20 cursor-pointer hover:scale-[1.02]"
-                              : "bg-brand-text/5 border border-brand-border hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text cursor-pointer"
-                          }`}
-                        >
-                          {disabled ? (
-                            "Soon"
-                          ) : (
-                            <>
-                              Select
-                              {isDiamond && <ArrowRight className="w-3 h-3" />}
-                            </>
-                          )}
-                        </button>
-                      </td>
-                    );
-                  })}
+                  
+                  {/* UNLIMITED filler bottom */}
+                  <td className="bg-brand-text/[0.02]" />
+
+                  {/* Gold Footer */}
+                  <td className="py-8 px-4 text-center bg-brand-text/[0.02]">
+                    <button onClick={() => handleUpgrade("Yearly")} className="w-[120px] py-2.5 rounded-lg bg-brand-text/10 hover:bg-brand-text/15 text-brand-text font-semibold text-sm transition-colors mb-2">
+                      Choose Plan
+                    </button>
+                    <div className="text-[10px] text-brand-secondary/60 line-through mb-0.5">NZ$11.99 / Month</div>
+                    <div className="text-sm font-bold text-brand-text">NZ$7.09/mo*</div>
+                  </td>
+
+                  {/* Platinum Footer */}
+                  <td className="py-8 px-4 text-center bg-brand-text/[0.02]">
+                    <button onClick={() => handleUpgrade("Yearly")} className="w-[120px] py-2.5 rounded-lg bg-brand-text/10 hover:bg-brand-text/15 text-brand-text font-semibold text-sm transition-colors mb-2">
+                      Choose Plan
+                    </button>
+                    <div className="text-[10px] text-brand-secondary/60 line-through mb-0.5">NZ$17.99 / Month</div>
+                    <div className="text-sm font-bold text-brand-text">NZ$10.84/mo*</div>
+                  </td>
+
+                  {/* Diamond Footer */}
+                  <td className="py-8 px-4 text-center border-b-2 border-l-2 border-r-2 border-sky-400 bg-sky-950/40 rounded-b-2xl shadow-[0_10px_30px_rgba(56,189,248,0.1)]">
+                    <button onClick={() => handleUpgrade("Yearly")} className="w-[140px] py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-bold text-sm transition-colors mb-2 shadow-lg shadow-sky-500/20">
+                      Get Full Access
+                    </button>
+                    <div className="text-[10px] text-brand-secondary/60 line-through mb-0.5">NZ$29.99 / Month</div>
+                    <div className="text-sm font-bold text-sky-400">NZ$16.67/mo*</div>
+                  </td>
+
+                  {/* Family Footer */}
+                  <td className="py-8 px-4 text-center bg-brand-text/[0.02]">
+                    <button onClick={() => handleUpgrade("Yearly")} className="w-[140px] py-2.5 rounded-lg bg-brand-text/10 hover:bg-brand-text/15 text-brand-text font-semibold text-sm transition-colors mb-2">
+                      Get Full Access
+                    </button>
+                    <div className="text-[10px] text-transparent mb-0.5">-</div>
+                    <div className="text-sm font-bold text-brand-text">NZ$29.17/mo*</div>
+                  </td>
                 </tr>
               </tfoot>
+              
             </table>
           </div>
         </section>
 
-        {/* ── FAQ ── */}
-        <section className="w-full max-w-3xl px-4 mb-20 sm:mb-28 z-10">
-          <div className="text-center mb-10">
-            <h2 className="text-2xl sm:text-3xl font-display font-medium text-brand-text mb-3">
-              Frequently Asked Questions
-            </h2>
-            <p className="text-sm text-brand-secondary font-sans">
-              Everything you need to know about XLChess memberships.
-            </p>
-          </div>
-
-          <div className="space-y-4">
-            {FAQS.map((faq, index) => {
-              const isOpen = openFaqIndex === index;
-              return (
-                <div
-                  key={index}
-                  className="bg-brand-surface/60 backdrop-blur-xl border border-brand-border rounded-2xl overflow-hidden transition-all duration-300 hover:border-sky-300/20"
-                >
-                  <button
-                    onClick={() => setOpenFaqIndex(isOpen ? null : index)}
-                    className="w-full flex items-center justify-between text-left py-5 px-6 font-display font-medium text-base sm:text-lg text-brand-text hover:text-sky-300 transition-colors duration-200 cursor-pointer"
-                  >
-                    <span>{faq.q}</span>
-                    <motion.span
-                      animate={{ rotate: isOpen ? 180 : 0 }}
-                      transition={{ duration: 0.2 }}
-                      className="text-brand-secondary flex-shrink-0 ml-4"
-                    >
-                      <ChevronDown className="w-5 h-5" />
-                    </motion.span>
-                  </button>
-
-                  <AnimatePresence initial={false}>
-                    {isOpen && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.25, ease: "easeInOut" }}
-                      >
-                        <div className="px-6 pb-5 pt-1 text-sm sm:text-base text-brand-secondary font-sans leading-relaxed border-t border-brand-border/40">
-                          {faq.a}
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              );
-            })}
-          </div>
-        </section>
-
-        {/* ── FINAL CTA ── */}
-        <section className="w-full max-w-4xl px-4 z-10">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.96 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="rounded-3xl p-8 sm:p-12 text-center relative overflow-hidden bg-gradient-to-b from-brand-surface/90 to-brand-bg/95 border border-sky-300/20 shadow-[0_20px_50px_rgba(125,211,252,0.06)]"
-          >
-            {/* Background glows */}
-            <div className="absolute top-[-100px] left-[-100px] w-[200px] h-[200px] bg-sky-300/6 rounded-full blur-3xl pointer-events-none" />
-            <div className="absolute bottom-[-100px] right-[-100px] w-[200px] h-[200px] bg-sky-300/6 rounded-full blur-3xl pointer-events-none" />
-
-            <Trophy className="w-12 h-12 text-sky-300 mx-auto mb-6 drop-shadow-[0_0_12px_rgba(125,211,252,0.4)] animate-pulse" />
-
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-medium text-brand-text mb-4 tracking-tight">
-              Ready to Level Up Your Chess?
-            </h2>
-
-            <p className="text-sm sm:text-base text-brand-secondary font-sans max-w-xl mx-auto mb-8 leading-relaxed">
-              Join thousands of chess players analyzing, learning, and improving
-              their play daily. Elevate your tactical edge now.
-            </p>
-
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <button
-                onClick={() => handleUpgrade(isYearly ? "Yearly" : "Monthly")}
-                className="w-full sm:w-auto px-8 py-4 rounded-xl font-mono text-xs uppercase tracking-widest font-semibold bg-sky-500 hover:bg-sky-400 text-white border border-sky-300/40 shadow-lg shadow-sky-300/25 cursor-pointer hover:scale-[1.02] active:scale-[0.99] transition-all duration-300 flex items-center justify-center gap-2"
-              >
-                <span>Get Diamond — $5.00 / mo</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-
-              <button
-                onClick={handleNavigateBack}
-                className="w-full sm:w-auto px-8 py-4 rounded-xl font-mono text-xs uppercase tracking-widest font-semibold bg-brand-text/5 border border-brand-border hover:border-sky-300/40 text-brand-secondary hover:text-brand-text transition-all duration-300 cursor-pointer active:scale-[0.99]"
-              >
-                Continue Free
-              </button>
-            </div>
-
-            {/* Micro-guarantees */}
-            <div className="flex items-center justify-center gap-6 mt-8 flex-wrap">
-              <div className="flex items-center gap-1.5 text-xs text-brand-secondary">
-                <ShieldCheck className="w-4 h-4 text-sky-300" />
-                Secure Payments
-              </div>
-              <div className="flex items-center gap-1.5 text-xs text-brand-secondary">
-                <Gamepad2 className="w-4 h-4 text-sky-300" />
-                Cancel Anytime
-              </div>
-              <div className="flex items-center gap-1.5 text-xs text-brand-secondary">
-                <Info className="w-4 h-4 text-sky-300" />
-                No Hidden Fees
-              </div>
-            </div>
-          </motion.div>
-        </section>
+        {/* ── Feature Banners ── */}
+        <MembershipFeaturesSection />
       </main>
     </div>
   );
