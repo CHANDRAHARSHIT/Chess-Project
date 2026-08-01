@@ -12,6 +12,7 @@ import { type DifficultyLevel, type GameStatus, type GameResult } from '../types
 import { generateChess960FEN } from '../utils/chess960';
 import { parseUciMove, playMoveSound } from '../utils/chessHelpers';
 import { soundManager } from '../utils/SoundManager';
+import rollbar from '../config/rollbar';
 
 export interface Chess960GameOptions {
   playerColor: 'w' | 'b' | 'random';
@@ -212,6 +213,9 @@ export function useChess960Game(): UseChess960GameReturn {
             }
           } catch (e) {
             console.error('Failed to apply engine move:', moveString, e);
+            // The engine returned an illegal/unparseable move — a real bug,
+            // not user input, so report it manually.
+            rollbar.error(e as Error, { context: 'useChess960Game.applyEngineMove', moveString });
           }
         },
         true

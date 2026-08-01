@@ -29,6 +29,7 @@ import { AuthModal } from "./AuthModal";
 import { MoreMenu } from "./MoreMenu";
 import { useNavigate, useLocation } from "react-router";
 import { useNavigationStack } from "../hooks/useNavigationStack";
+import rollbar from "../config/rollbar";
 
 // Hook for clicking outside the custom dropdown
 function useOnClickOutside(
@@ -135,12 +136,13 @@ export default function SidebarLayout({
       }
     } catch (err) {
       console.error("Failed to fetch custom links", err);
+      rollbar.error(err as Error, { context: "SidebarLayout.fetchLinks" });
     }
   };
 
   useEffect(() => {
     void (async () => { await fetchLinks(); })();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status]);
 
   const [isMoreOpen, setIsMoreOpen] = useState(false);
@@ -191,6 +193,7 @@ export default function SidebarLayout({
           });
         } catch (err) {
           console.error(err);
+          rollbar.error(err as Error, { context: "SidebarLayout.handleAddLink:update" });
           fetchLinks(); // Revert on error
         }
       } else {
@@ -212,6 +215,7 @@ export default function SidebarLayout({
           }
         } catch (err) {
           console.error(err);
+          rollbar.error(err as Error, { context: "SidebarLayout.handleAddLink:create" });
         }
       }
       setNewLinkName("");
@@ -244,6 +248,7 @@ export default function SidebarLayout({
       });
     } catch (err) {
       console.error(err);
+      rollbar.error(err as Error, { context: "SidebarLayout.removeCustomLink" });
       fetchLinks();
     }
   };
@@ -258,6 +263,7 @@ export default function SidebarLayout({
       });
     } catch (err) {
       console.error(err);
+      rollbar.error(err as Error, { context: "SidebarLayout.removeMoreLink" });
       fetchLinks();
     }
   };
@@ -277,6 +283,7 @@ export default function SidebarLayout({
       });
     } catch (err) {
       console.error(err);
+      rollbar.error(err as Error, { context: "SidebarLayout.moveToMore" });
       fetchLinks();
     }
   };
@@ -296,23 +303,12 @@ export default function SidebarLayout({
       });
     } catch (err) {
       console.error(err);
+      rollbar.error(err as Error, { context: "SidebarLayout.moveToActive" });
       fetchLinks();
     }
   };
 
   const MOCK_SUBSCRIPTIONS = [
-    {
-      name: "PowerPlayChess",
-      avatar:
-        "https://yt3.googleusercontent.com/ytc/AIdro_msERs2yFdyXKdh6MkbVchKiDhLbOh-rWZkMfNDyc5o5A=s160-c-k-c0x00ffffff-no-rj",
-      href: "/subscriptions",
-    },
-    {
-      name: "PowerPlayChess",
-      avatar:
-        "https://yt3.googleusercontent.com/ytc/AIdro_msERs2yFdyXKdh6MkbVchKiDhLbOh-rWZkMfNDyc5o5A=s160-c-k-c0x00ffffff-no-rj",
-      href: "/subscriptions",
-    },
     {
       name: "PowerPlayChess",
       avatar:
@@ -498,25 +494,21 @@ export default function SidebarLayout({
               }
             }}
             title={isDisabled ? "Coming soon" : undefined}
-            className={`relative w-full flex transition-all duration-200 ${
-              isDisabled ? "cursor-not-allowed" : "cursor-pointer"
-            } ${
-              isExpanded || isMobileOpen
-                ? `items-center py-2.5 mx-2 px-3 rounded-xl ${
-                    isDisabled
-                      ? "opacity-60 select-none text-brand-secondary"
-                      : isActive
-                        ? "text-brand-accent bg-brand-text/10 font-medium"
-                        : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 group-hover/navitem:bg-brand-text/5 group-hover/navitem:text-brand-text"
-                  }`
-                : `flex-col items-center justify-center py-[14px] mx-2 rounded-lg text-center ${
-                    isDisabled
-                      ? "opacity-60 select-none text-brand-secondary"
-                      : isActive
-                        ? "text-brand-accent bg-brand-text/10 font-medium"
-                        : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 group-hover/navitem:bg-brand-text/5 group-hover/navitem:text-brand-text"
-                  }`
-            }`}
+            className={`relative w-full flex transition-all duration-200 ${isDisabled ? "cursor-not-allowed" : "cursor-pointer"
+              } ${isExpanded || isMobileOpen
+                ? `items-center py-2.5 mx-2 px-3 rounded-xl ${isDisabled
+                  ? "opacity-60 select-none text-brand-secondary"
+                  : isActive
+                    ? "text-brand-accent bg-brand-text/10 font-medium"
+                    : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 group-hover/navitem:bg-brand-text/5 group-hover/navitem:text-brand-text"
+                }`
+                : `flex-col items-center justify-center py-[14px] mx-2 rounded-lg text-center ${isDisabled
+                  ? "opacity-60 select-none text-brand-secondary"
+                  : isActive
+                    ? "text-brand-accent bg-brand-text/10 font-medium"
+                    : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 group-hover/navitem:bg-brand-text/5 group-hover/navitem:text-brand-text"
+                }`
+              }`}
           >
             <div
               className={`flex items-center justify-center shrink-0 ${isExpanded || isMobileOpen ? "w-10" : "w-full"}`}
@@ -535,10 +527,9 @@ export default function SidebarLayout({
             </div>
 
             <span
-              className={`font-sans transition-all ${
-                isExpanded || isMobileOpen
-                  ? "flex-1 text-left text-[14px] ml-2 tracking-wide truncate"
-                  : "w-full text-center text-[10px] mt-1.5 leading-[1.15] whitespace-normal tracking-normal line-clamp-2 break-words"
+              className={`font-sans transition-all ${isExpanded || isMobileOpen
+                ? "flex-1 text-left text-[14px] ml-2 tracking-wide truncate"
+                : "w-full text-center text-[10px] mt-1.5 leading-[1.15] whitespace-normal tracking-normal line-clamp-2 break-words"
                 } ${!(isExpanded || isMobileOpen) && isAvatar ? "hidden" : ""}`}
             >
               {item.name}
@@ -555,8 +546,8 @@ export default function SidebarLayout({
           {isCustomLink && (isExpanded || isMobileOpen) && (
             <div
               className={`absolute right-4 flex items-center z-10 bg-brand-bg/80 backdrop-blur-sm rounded-full transition-all ${isMobileOpen
-                  ? "opacity-100"
-                  : "opacity-0 group-hover/navitem:opacity-100"
+                ? "opacity-100"
+                : "opacity-0 group-hover/navitem:opacity-100"
                 }`}
             >
               {/* Move to More / Move to Active */}
@@ -639,10 +630,10 @@ export default function SidebarLayout({
                     handleLinkClick(subItem.href, e);
                   }}
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-sans transition-colors duration-150 ${subItem.comingSoon
-                      ? "opacity-60 cursor-not-allowed select-none"
-                      : isSubActive
-                        ? "text-brand-accent bg-brand-text/10 font-medium cursor-pointer"
-                        : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 cursor-pointer"
+                    ? "opacity-60 cursor-not-allowed select-none"
+                    : isSubActive
+                      ? "text-brand-accent bg-brand-text/10 font-medium cursor-pointer"
+                      : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 cursor-pointer"
                     }`}
                 >
                   {SubIcon && (
@@ -707,7 +698,7 @@ export default function SidebarLayout({
             <button
               onClick={() => openModal("login")}
               aria-label="Sign In"
-              className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-border/50 text-brand-accent hover:bg-brand-accent/10 transition-all duration-200 text-xs sm:text-sm font-sans cursor-pointer"
+              className="btn-gold-outline flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-border/50 text-brand-accent hover:bg-brand-accent/10 transition-all duration-200 text-xs sm:text-sm font-sans cursor-pointer"
             >
               <CircleUserRound className="w-5 h-5" strokeWidth={1.8} />
               <span>Sign In</span>
@@ -720,9 +711,8 @@ export default function SidebarLayout({
       <div className="flex flex-1 pt-16">
         {/* Desktop Sidebar (Fixed) */}
         <aside
-          className={`fixed top-16 left-0 bottom-0 z-30 bg-brand-bg/95 backdrop-blur-md flex flex-col py-2 transition-all duration-300 hidden md:flex overflow-y-auto overscroll-contain no-scrollbar pb-6 ${
-            isExpanded ? "w-64" : "w-20"
-          }`}
+          className={`fixed top-16 left-0 bottom-0 z-30 bg-brand-bg/95 backdrop-blur-md flex flex-col py-2 transition-all duration-300 hidden md:flex overflow-y-auto overscroll-contain no-scrollbar pb-6 ${isExpanded ? "w-64" : "w-20"
+            }`}
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           <nav className="flex-1 flex flex-col space-y-1">
@@ -764,7 +754,29 @@ export default function SidebarLayout({
             <Divider />
 
             {/* AUTH / SUBSCRIPTIONS SECTION */}
-            {status !== "authenticated" ? (
+            {status === "loading" ? (
+              <>
+                {isExpanded && (
+                  <div className="flex items-center px-6 py-2">
+                    <span className="h-4 w-28 rounded bg-brand-text/10 animate-pulse" />
+                  </div>
+                )}
+                <div className="flex flex-col w-full">
+                  <div
+                    className={`flex items-center mx-2 rounded-xl ${isExpanded ? "py-2.5 px-3" : "flex-col justify-center py-[14px]"
+                      }`}
+                  >
+                    <div className={`flex items-center justify-center shrink-0 ${isExpanded ? "w-10" : "w-full"}`}>
+                      <div className="w-6 h-6 rounded-full bg-brand-text/10 animate-pulse" />
+                    </div>
+                    {isExpanded && (
+                      <div className="flex-1 h-3.5 ml-2 rounded bg-brand-text/10 animate-pulse" />
+                    )}
+                  </div>
+                </div>
+                <Divider />
+              </>
+            ) : status !== "authenticated" ? (
               isExpanded && (
                 <>
                   <div className="px-6 py-4">
@@ -774,7 +786,7 @@ export default function SidebarLayout({
                     </p>
                     <button
                       onClick={() => openModal("login")}
-                      className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-border/50 text-brand-accent hover:bg-brand-accent/10 transition-all duration-200 text-sm font-sans cursor-pointer w-fit"
+                      className="btn-gold-outline flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-border/50 text-brand-accent hover:bg-brand-accent/10 transition-all duration-200 text-sm font-sans cursor-pointer w-fit"
                     >
                       <CircleUserRound className="w-5 h-5" />
                       <span>Sign In</span>
@@ -952,10 +964,10 @@ export default function SidebarLayout({
                     handleLinkClick(subItem.href, e);
                   }}
                   className={`w-full flex items-center gap-4 px-5 py-3 text-[14px] font-sans text-left transition-colors duration-150 ${subItem.comingSoon
-                      ? "opacity-60 cursor-not-allowed select-none"
-                      : isSubActive
-                        ? "text-brand-accent bg-brand-text/[0.06] cursor-pointer font-medium"
-                        : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06] cursor-pointer"
+                    ? "opacity-60 cursor-not-allowed select-none"
+                    : isSubActive
+                      ? "text-brand-accent bg-brand-text/[0.06] cursor-pointer font-medium"
+                      : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06] cursor-pointer"
                     }`}
                 >
                   {SubIcon && (
@@ -1039,7 +1051,19 @@ export default function SidebarLayout({
 
             <Divider />
 
-            {status !== "authenticated" ? (
+            {status === "loading" ? (
+              <>
+                <div className="mx-2 px-3 py-2">
+                  <span className="h-4 w-28 rounded bg-brand-text/10 animate-pulse inline-block" />
+                </div>
+                <div className="flex items-center py-2.5 mx-2 px-3 rounded-xl">
+                  <div className="w-10 flex items-center justify-center shrink-0">
+                    <div className="w-6 h-6 rounded-full bg-brand-text/10 animate-pulse" />
+                  </div>
+                  <div className="flex-1 h-3.5 ml-2 rounded bg-brand-text/10 animate-pulse" />
+                </div>
+              </>
+            ) : status !== "authenticated" ? (
               <div className="px-4 py-2">
                 <p className="text-[13px] text-brand-text/80 mb-3 leading-tight">
                   Sign in to access your stats, play games, and follow your
@@ -1047,7 +1071,7 @@ export default function SidebarLayout({
                 </p>
                 <button
                   onClick={() => openModal("login")}
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-border/50 text-brand-accent hover:bg-brand-accent/10 transition-all duration-200 text-sm cursor-pointer w-fit"
+                  className="btn-gold-outline flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-border/50 text-brand-accent hover:bg-brand-accent/10 transition-all duration-200 text-sm cursor-pointer w-fit"
                 >
                   <CircleUserRound className="w-5 h-5" />
                   <span>Sign In</span>
@@ -1232,8 +1256,8 @@ export default function SidebarLayout({
                             setIsUrlDropdownOpen(false);
                           }}
                           className={`w-full text-left px-4 py-2.5 text-[14px] transition-colors cursor-pointer ${newLinkUrl === option.value
-                              ? "bg-[#2563EB] text-brand-text font-medium"
-                              : "text-brand-secondary hover:bg-brand-text/5 hover:text-brand-text"
+                            ? "bg-[#2563EB] text-brand-text font-medium"
+                            : "text-brand-secondary hover:bg-brand-text/5 hover:text-brand-text"
                             }`}
                         >
                           {option.label}
@@ -1258,7 +1282,7 @@ export default function SidebarLayout({
                 <div className="flex justify-end pt-2">
                   <button
                     type="submit"
-                    className="bg-brand-accent text-brand-bg font-semibold px-5 py-2.5 rounded-xl hover:bg-brand-accent/90 hover:scale-[1.02] transition-all cursor-pointer text-[14px]"
+                    className="btn-gold-solid bg-brand-accent text-brand-bg font-semibold px-5 py-2.5 rounded-xl hover:bg-brand-accent/90 hover:scale-[1.02] transition-all cursor-pointer text-[14px]"
                   >
                     {editLinkIndex !== null ? "Save Changes" : "Save Link"}
                   </button>

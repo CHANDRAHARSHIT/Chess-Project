@@ -28,6 +28,7 @@
  */
 
 import type { Opening, OpeningsListResponse, OpeningResponse } from "../types/opening";
+import rollbar from "../config/rollbar";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -138,6 +139,9 @@ export class OpeningService {
       return openings;
     } catch (error: any) {
       console.error("[OpeningService.refreshCache] Error:", error);
+      // Falls back to the stale cache below, so this never reaches the
+      // ErrorBoundary — report it manually.
+      rollbar.error(error, { context: "OpeningService.refreshCache" });
       // Return whatever is still in memory/storage rather than an empty list
       return OpeningService._memCache ?? OpeningService._readStorage() ?? [];
     }
@@ -174,6 +178,7 @@ export class OpeningService {
       return json.data.opening;
     } catch (error: any) {
       console.error("[OpeningService.getOpeningById] Error:", error);
+      rollbar.error(error, { context: "OpeningService.getOpeningById", id });
       return null;
     }
   }

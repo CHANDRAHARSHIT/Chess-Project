@@ -9,6 +9,7 @@ const requiredEnvs = [
   "AUTH_URL",
   "AUTH_GOOGLE_ID",
   "AUTH_GOOGLE_SECRET",
+  "ROLLBAR_ACCESS_TOKEN",
 ];
 
 const missingEnvs = requiredEnvs.filter((key) => !process.env[key]);
@@ -46,7 +47,6 @@ export const env = {
   //   Must match the Vite dev proxy entry and the Vercel rewrite rule (if applicable).
   WS_PATH: process.env.WS_PATH ?? "/ws",
 
-  // ROLLBAR_TOKEN: Server-side Rollbar access token for error monitoring.
-  //   When absent (local dev, CI), Rollbar is disabled gracefully — no errors are thrown.
-  ROLLBAR_TOKEN: process.env.ROLLBAR_TOKEN as string | undefined,
+  // Rollbar error monitoring
+  ROLLBAR_ACCESS_TOKEN: process.env.ROLLBAR_ACCESS_TOKEN!,
 };

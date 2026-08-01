@@ -15,6 +15,7 @@ import { useSession } from "../hooks/useSession";
 import { AuthModal } from "../components/AuthModal";
 import { PaymentService } from "../services/payment";
 import { usePricing } from "../hooks/usePricing";
+import rollbar from "../config/rollbar";
 
 export default function CheckoutPage() {
   const navigate = useNavigate();
@@ -49,6 +50,7 @@ export default function CheckoutPage() {
         sessionStorage.removeItem("pending_checkout_session_id");
       } catch (err) {
         console.error("[CheckoutPage] Session status check failed:", err);
+        rollbar.error(err as Error, { context: "CheckoutPage.checkPendingSession" });
         sessionStorage.removeItem("pending_checkout_session_id");
       } finally {
         setIsProcessing(false);
@@ -156,6 +158,7 @@ export default function CheckoutPage() {
       }
     } catch (error: any) {
       console.error("[CheckoutPage] Payment redirect error:", error);
+      rollbar.error(error, { context: "CheckoutPage.handleUpgrade" });
       setPaymentError(
         error?.message ||
           "An unexpected error occurred while establishing a secure billing session. Please try again.",

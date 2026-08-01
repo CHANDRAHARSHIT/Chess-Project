@@ -2,6 +2,7 @@ import type { Request } from "express";
 import { RegionService } from "./RegionService.js";
 import { CurrencyService } from "./CurrencyService.js";
 import { CurrencyFormatter } from "../utils/CurrencyFormatter.js";
+import rollbar from "../config/rollbar.js";
 
 export interface PricingDTO {
   country: string;
@@ -29,6 +30,9 @@ export class PricingService {
       return await this.getPricingForRegion(region.currency, region.country, region.countryCode, region.locale);
     } catch (error) {
       console.error("[PricingService]: Error calculating dynamic pricing, returning NZD fallback:", error);
+      // Swallowed here on purpose (fallback pricing keeps the storefront up), so
+      // report it manually — this never bubbles up to the error middleware.
+      rollbar.error(error as Error, req);
       return this.getFallbackNZDPricing();
     }
   }
