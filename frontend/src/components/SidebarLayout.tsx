@@ -30,6 +30,7 @@ import { MoreMenu } from "./MoreMenu";
 import { useNavigate, useLocation } from "react-router";
 import { useNavigationStack } from "../hooks/useNavigationStack";
 import rollbar from "../config/rollbar";
+import finegoldImg from "../assets/FineGold.jpg";
 
 // Hook for clicking outside the custom dropdown
 function useOnClickOutside(
@@ -310,9 +311,8 @@ export default function SidebarLayout({
 
   const MOCK_SUBSCRIPTIONS = [
     {
-      name: "PowerPlayChess",
-      avatar:
-        "https://yt3.googleusercontent.com/ytc/AIdro_msERs2yFdyXKdh6MkbVchKiDhLbOh-rWZkMfNDyc5o5A=s160-c-k-c0x00ffffff-no-rj",
+      name: "GMBenjaminFinegold",
+      avatar: finegoldImg,
       href: "/subscriptions",
     },
   ];
