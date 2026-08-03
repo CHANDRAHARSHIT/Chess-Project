@@ -210,6 +210,40 @@ body {
   scrollbar-width: none;
 }
 
+/* ─── Sidebar Scrollbar (show only on hover) ─────────────────────────────── */
+.sidebar-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-scrollbar::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: 9999px;
+  transition: background-color 0.2s ease;
+}
+
+.sidebar-scrollbar:hover::-webkit-scrollbar-thumb {
+  background-color: #717171;
+}
+
+.sidebar-scrollbar:hover::-webkit-scrollbar-thumb:hover {
+  background-color: #a0a0a0;
+}
+
+/* Firefox */
+.sidebar-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+.sidebar-scrollbar:hover {
+  scrollbar-color: #717171 transparent;
+}
+
+
 /* ══════════════════════════════════════════════════════════════════════════
    TYPOGRAPHY SYSTEM
    ══════════════════════════════════════════════════════════════════════════ */

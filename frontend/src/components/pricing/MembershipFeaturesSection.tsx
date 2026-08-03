@@ -2,7 +2,13 @@ import React from "react";
 import { MembershipFeatureBanner } from "./MembershipFeatureBanner";
 import { pricingFeatures } from "../../data/pricingFeatures";
 
-export const MembershipFeaturesSection: React.FC = () => {
+export interface MembershipFeaturesSectionProps {
+  onChoosePlan?: () => void;
+}
+
+export const MembershipFeaturesSection: React.FC<MembershipFeaturesSectionProps> = ({
+  onChoosePlan,
+}) => {
   return (
     <div className="w-full flex flex-col items-center">
       {pricingFeatures.map((feature) => (
@@ -14,6 +20,7 @@ export const MembershipFeaturesSection: React.FC = () => {
           image={feature.image}
           reverse={feature.reverse}
           buttonText={feature.buttonText}
+          onButtonClick={onChoosePlan}
         />
       ))}
     </div>

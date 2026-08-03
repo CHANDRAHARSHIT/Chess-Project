@@ -464,7 +464,7 @@ export default function PricingPage() {
               Yearly
             </button>
 
-            <div className="absolute z-20 top-0 left-3/4 -translate-x-1/2 -translate-y-1/2 sm:left-[calc(100%+14px)] sm:top-1/2 sm:translate-x-0 whitespace-nowrap bg-brand-accent/15 border border-brand-accent/30 text-brand-accent text-[10px] font-mono tracking-wider uppercase px-2 py-0.5 rounded-md">
+            <div className="absolute z-20 -top-6 left-3/4 -translate-x-1/2 sm:left-[calc(100%+14px)] sm:top-1/2 sm:-translate-y-1/2 sm:translate-x-0 whitespace-nowrap bg-brand-accent/15 border border-brand-accent/30 text-brand-accent text-[10px] font-mono tracking-wider uppercase px-2 py-0.5 rounded-md pointer-events-none shadow-sm">
               Save up to 66%
             </div>
           </div>
@@ -800,7 +800,9 @@ export default function PricingPage() {
         </section>
 
         {/* ─── Feature Banners ─── */}
-        <MembershipFeaturesSection />
+        <MembershipFeaturesSection
+          onChoosePlan={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        />
       </main>
     </div>
   );

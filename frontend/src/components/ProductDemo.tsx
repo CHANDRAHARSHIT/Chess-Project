@@ -440,7 +440,7 @@ export default function ProductDemo() {
                     </div>
                     <div className="text-center">
                       <h4 className="text-lg font-bold text-brand-text">
-                        Game Finished
+                        {gameRef.current.isDraw() ? "Draw!" : gameRef.current.isCheckmate() ? (gameRef.current.turn() === playerColor ? "You Lost!" : "You Won!") : "Game Finished"}
                       </h4>
                       <p className="text-sm text-brand-secondary mt-1">
                         {gameOverReason}

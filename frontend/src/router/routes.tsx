@@ -35,14 +35,15 @@ import {
 export interface RouteConfig {
   path: string;
   element: React.ReactNode;
+  title?: string;
 }
 
 // Routes that run inside the MainLayout (Navbar + Sidebar + Footer)
 export const mainRoutes: RouteConfig[] = [
-  { path: "/", element: <HomePage /> },
-  { path: "/contact", element: <ContactPage /> },
-  { path: "/puzzles", element: <PuzzlePage /> },
-  { path: "/openings", element: <OpeningsPage /> },
+  { path: "/", element: <HomePage />, title: "XLChess - Play Chess Online" },
+  { path: "/contact", element: <ContactPage />, title: "Contact Us | XLChess" },
+  { path: "/puzzles", element: <PuzzlePage />, title: "Chess Puzzles | XLChess" },
+  { path: "/openings", element: <OpeningsPage />, title: "Chess Openings | XLChess" },
   {
     path: "/subscriptions",
     element: (
@@ -52,17 +53,23 @@ export const mainRoutes: RouteConfig[] = [
         icon={Users}
       />
     ),
+    title: "My Subscriptions | XLChess",
   },
-  { path: "/variants", element: <VariantsPage /> },
-  { path: "/play/chess960", element: <Chess960Page /> },
+  { path: "/variants", element: <VariantsPage />, title: "Chess Variants | XLChess" },
+  { path: "/play/chess960", element: <Chess960Page />, title: "Chess 960 | XLChess" },
   {
     path: "/profile",
     element: <Navigate to="/settings/profile" replace />,
+    title: "Profile | XLChess",
   },
   // Not behind ProtectedRoute: board/piece preferences are stored in
   // localStorage (like the Sound toggle) so guests can use them too.
-  { path: "/settings", element: <SettingsPage /> },
-  { path: "/settings/:category", element: <SettingsPage /> },
+  { path: "/settings", element: <SettingsPage />, title: "Settings | XLChess" },
+  {
+    path: "/settings/:category",
+    element: <SettingsPage />,
+    title: "Settings | XLChess",
+  },
   {
     path: "/premium",
     element: (
@@ -70,8 +77,9 @@ export const mainRoutes: RouteConfig[] = [
         <PremiumPage />
       </ProtectedRoute>
     ),
+    title: "XLChess Premium | XLChess",
   },
-  { path: "/pricing", element: <PricingPage /> },
+  { path: "/pricing", element: <PricingPage />, title: "Pricing | XLChess" },
 
   // ── Coming Soon placeholder routes ──────────────────────────────────────
   {
@@ -83,6 +91,7 @@ export const mainRoutes: RouteConfig[] = [
         icon={Zap}
       />
     ),
+    title: "Play Chess | XLChess",
   },
   {
     path: "/lessons",
@@ -93,6 +102,7 @@ export const mainRoutes: RouteConfig[] = [
         icon={BookOpen}
       />
     ),
+    title: "Lessons | XLChess",
   },
   {
     path: "/stats",
@@ -103,6 +113,7 @@ export const mainRoutes: RouteConfig[] = [
         icon={BarChart2}
       />
     ),
+    title: "Stats | XLChess",
   },
   {
     path: "/complete-later",
@@ -113,6 +124,7 @@ export const mainRoutes: RouteConfig[] = [
         icon={Clock}
       />
     ),
+    title: "Complete Later | XLChess",
   },
   {
     path: "/your-content",
@@ -123,6 +135,7 @@ export const mainRoutes: RouteConfig[] = [
         icon={Video}
       />
     ),
+    title: "Your Content | XLChess",
   },
   {
     path: "/channel",
@@ -133,6 +146,7 @@ export const mainRoutes: RouteConfig[] = [
         icon={UserCircle2}
       />
     ),
+    title: "Your Channel | XLChess",
   },
   {
     path: "/report",
@@ -143,6 +157,7 @@ export const mainRoutes: RouteConfig[] = [
         icon={Flag}
       />
     ),
+    title: "Report | XLChess",
   },
 
   // ── Footer page placeholder routes ───────────────────────────────────────
@@ -155,6 +170,7 @@ export const mainRoutes: RouteConfig[] = [
         icon={Info}
       />
     ),
+    title: "About Us | XLChess",
   },
   {
     path: "/copyright",
@@ -165,6 +181,7 @@ export const mainRoutes: RouteConfig[] = [
         icon={Copyright}
       />
     ),
+    title: "Copyright | XLChess",
   },
   {
     path: "/creator",
@@ -175,6 +192,7 @@ export const mainRoutes: RouteConfig[] = [
         icon={Paintbrush}
       />
     ),
+    title: "Creators | XLChess",
   },
   {
     path: "/advertise",
@@ -185,6 +203,7 @@ export const mainRoutes: RouteConfig[] = [
         icon={Megaphone}
       />
     ),
+    title: "Advertise | XLChess",
   },
   {
     path: "/developers",
@@ -195,6 +214,7 @@ export const mainRoutes: RouteConfig[] = [
         icon={Code2}
       />
     ),
+    title: "Developers | XLChess",
   },
   {
     path: "/terms",
@@ -205,6 +225,7 @@ export const mainRoutes: RouteConfig[] = [
         icon={FileText}
       />
     ),
+    title: "Terms of Service | XLChess",
   },
   {
     path: "/privacy",
@@ -215,6 +236,7 @@ export const mainRoutes: RouteConfig[] = [
         icon={Shield}
       />
     ),
+    title: "Privacy Policy | XLChess",
   },
   {
     path: "/how-xlchess-works",
@@ -225,13 +247,26 @@ export const mainRoutes: RouteConfig[] = [
         icon={HelpCircle}
       />
     ),
+    title: "How XLChess Works | XLChess",
   },
 ];
 
 // Routes that run inside the MinimalLayout (Navbar only, no Sidebar/Footer)
 export const minimalRoutes: RouteConfig[] = [
-  { path: "/payment", element: <CheckoutPage /> },
-  { path: "/successful", element: <SuccessfulPage /> },
-  { path: "/payment/success", element: <SuccessfulPage /> },
-  { path: "/payment/failed", element: <FailedPage /> },
+  { path: "/payment", element: <CheckoutPage />, title: "Checkout | XLChess" },
+  {
+    path: "/successful",
+    element: <SuccessfulPage />,
+    title: "Payment Successful | XLChess",
+  },
+  {
+    path: "/payment/success",
+    element: <SuccessfulPage />,
+    title: "Payment Successful | XLChess",
+  },
+  {
+    path: "/payment/failed",
+    element: <FailedPage />,
+    title: "Payment Failed | XLChess",
+  },
 ];
