@@ -12,6 +12,7 @@ import OpeningsPage from "../pages/OpeningsPage";
 import SubscriptionsPage from "../pages/SubscriptionsPage";
 import VariantsPage from "../pages/VariantsPage";
 import Chess960Page from "../pages/Chess960Page";
+import QuickGamePage from "../pages/QuickGamePage";
 import { ProtectedRoute } from "../components/ProtectedRoute";
 
 export interface RouteConfig {
@@ -22,6 +23,7 @@ export interface RouteConfig {
 // Routes that run inside the MainLayout (Navbar + Sidebar + Footer)
 export const mainRoutes: RouteConfig[] = [
   { path: "/", element: <HomePage /> },
+  { path: "/play", element: <QuickGamePage /> },
   { path: "/contact", element: <ContactPage /> },
   { path: "/puzzles", element: <PuzzlePage /> },
   { path: "/openings", element: <OpeningsPage /> },

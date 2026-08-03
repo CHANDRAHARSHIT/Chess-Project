@@ -12,7 +12,7 @@ import { useButtonGlow } from "../hooks/useButtonGlow";
 import { gsap, dur, ease } from "../utils/gsapConfig";
 import HeroPuzzle from "./HeroPuzzle";
 import { AuthModal } from "./AuthModal";
-import { useSearchParams } from "react-router";
+import { useSearchParams, Link } from "react-router";
 
 export default function Hero() {
   // Authentication states
@@ -393,9 +393,9 @@ export default function Hero() {
               className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4"
               style={{ opacity: 0 }}
             >
-              <a
+              <Link
                 ref={primaryGlowRef}
-                href="#interactive-demo"
+                to="/play"
                 id="hero-cta-primary"
                 className="
                   inline-flex items-center justify-center
@@ -442,7 +442,7 @@ export default function Hero() {
                     </span>
                   ))}
                 </span>
-              </a>
+              </Link>
             </div>
           </div>
 

@@ -360,7 +360,7 @@ export default function SidebarLayout({
   ];
 
   const exploreSection = [
-    { name: "Quick Game", href: "/play", icon: Zap, comingSoon: true },
+    { name: "Quick Game", href: "/play", icon: Zap },
     { name: "Lessons", href: "/lessons", icon: BookOpen, comingSoon: true },
     { name: "Puzzles", href: "/puzzles", icon: Puzzle },
     { name: "Variants", href: "/variants", icon: Shuffle, comingSoon: true },
