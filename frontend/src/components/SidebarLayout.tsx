@@ -491,17 +491,13 @@ export default function SidebarLayout({
             }}
             title={isComingSoon ? "Coming soon" : undefined}
             className={`relative w-full flex transition-all duration-200 cursor-pointer ${isExpanded || isMobileOpen
-              ? `items-center py-2.5 mx-2 px-3 rounded-xl ${isComingSoon
-                ? "opacity-60 text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 group-hover/navitem:bg-brand-text/5 group-hover/navitem:text-brand-text hover:opacity-100"
-                : isActive
-                  ? "text-brand-accent bg-brand-text/10 font-medium"
-                  : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 group-hover/navitem:bg-brand-text/5 group-hover/navitem:text-brand-text"
+              ? `items-center py-2.5 mx-2 px-3 rounded-xl ${isActive
+                ? "text-brand-accent bg-brand-text/10 font-medium"
+                : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 group-hover/navitem:bg-brand-text/5 group-hover/navitem:text-brand-text"
               }`
-              : `flex-col items-center justify-center py-[14px] mx-2 rounded-lg text-center ${isComingSoon
-                ? "opacity-60 text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 group-hover/navitem:bg-brand-text/5 group-hover/navitem:text-brand-text hover:opacity-100"
-                : isActive
-                  ? "text-brand-accent bg-brand-text/10 font-medium"
-                  : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 group-hover/navitem:bg-brand-text/5 group-hover/navitem:text-brand-text"
+              : `flex-col items-center justify-center py-[14px] mx-2 rounded-lg text-center ${isActive
+                ? "text-brand-accent bg-brand-text/10 font-medium"
+                : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 group-hover/navitem:bg-brand-text/5 group-hover/navitem:text-brand-text"
               }`
               }`}
           >

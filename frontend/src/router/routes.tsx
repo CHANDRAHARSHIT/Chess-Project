@@ -9,7 +9,6 @@ import SuccessfulPage from "../pages/SuccessfulPage";
 import FailedPage from "../pages/FailedPage";
 import PremiumPage from "../pages/PremiumPage";
 import OpeningsPage from "../pages/OpeningsPage";
-import SubscriptionsPage from "../pages/SubscriptionsPage";
 import VariantsPage from "../pages/VariantsPage";
 import Chess960Page from "../pages/Chess960Page";
 import ComingSoonPage from "../pages/ComingSoonPage";
@@ -21,6 +20,7 @@ import {
   Clock,
   Video,
   UserCircle2,
+  Users,
   Flag,
   Info,
   Copyright,
@@ -43,7 +43,16 @@ export const mainRoutes: RouteConfig[] = [
   { path: "/contact", element: <ContactPage /> },
   { path: "/puzzles", element: <PuzzlePage /> },
   { path: "/openings", element: <OpeningsPage /> },
-  { path: "/subscriptions", element: <SubscriptionsPage /> },
+  {
+    path: "/subscriptions",
+    element: (
+      <ComingSoonPage
+        featureName="Subscriptions"
+        description="Follow your favorite chess creators and stay up to date with their latest content, video analysis, and interactive lessons."
+        icon={Users}
+      />
+    ),
+  },
   { path: "/variants", element: <VariantsPage /> },
   { path: "/play/chess960", element: <Chess960Page /> },
   {
