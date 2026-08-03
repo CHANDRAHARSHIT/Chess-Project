@@ -3,8 +3,11 @@ import MainLayout from '../layouts/MainLayout';
 import MinimalLayout from '../layouts/MinimalLayout';
 import { mainRoutes, minimalRoutes } from './routes';
 import NotFoundPage from '../pages/NotFoundPage';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 
 export default function AppRouter() {
+  useDocumentTitle();
+
   return (
     <Routes>
       {/* Main layout wrapper (Navbar + Sidebar + Footer) */}
