@@ -9,7 +9,6 @@ export default function ContactPage() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    document.title = "Contact Us | XLChess";
   }, []);
 
   return (

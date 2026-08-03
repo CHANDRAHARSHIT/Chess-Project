@@ -17,6 +17,8 @@ MigrationPlan.md
 relocate.ps1
 package-lock.json
 
+backend/supabase
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

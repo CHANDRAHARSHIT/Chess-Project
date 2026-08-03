@@ -27,7 +27,7 @@ export default function SubscriptionsPage() {
       </h1>
 
       {/* Subtitle */}
-      <p className="font-sans text-base sm:text-[17px] leading-relaxed max-w-xl text-brand-secondary text-center mb-8">
+      <p className="font-sans text-base sm:text-lg leading-relaxed max-w-xl text-brand-secondary text-center mb-8">
         Follow your favorite chess creators and stay up to date with their latest content. This feature is coming soon.
       </p>
 

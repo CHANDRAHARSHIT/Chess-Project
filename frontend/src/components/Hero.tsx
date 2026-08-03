@@ -12,19 +12,26 @@ import { useButtonGlow } from "../hooks/useButtonGlow";
 import { gsap, dur, ease } from "../utils/gsapConfig";
 import HeroPuzzle from "./HeroPuzzle";
 import { AuthModal } from "./AuthModal";
-import { useSearchParams } from "react-router";
+import { useSearchParams, Link } from "react-router";
 
 export default function Hero() {
   // Authentication states — derive initial values from URL on mount via lazy initialisers
   // so we never call setState synchronously inside an effect (react-hooks/set-state-in-effect).
   const [searchParams, setSearchParams] = useSearchParams();
-  const [isModalOpen, setIsModalOpen] = useState(() => searchParams.get("login") === "true");
-  const [modalMode] = useState<"login" | "register">("login");
+  const [isModalOpen, setIsModalOpen] = useState(
+    () => searchParams.get("login") === "true",
+  );
+  const [modalMode, setModalMode] = useState<"login" | "register">("login");
 
   // Only side effect: remove the ?login=true query param from the URL so it
   // doesn't persist across refreshes. This runs once on mount.
   useEffect(() => {
     if (searchParams.get("login") === "true") {
+      queueMicrotask(() => {
+        setModalMode("login");
+        setIsModalOpen(true);
+      });
+
       const newParams = new URLSearchParams(searchParams);
       newParams.delete("login");
       setSearchParams(newParams, { replace: true });
@@ -74,15 +81,11 @@ export default function Hero() {
     paused: isDragging,
   });
 
-  // Single caller-owned ref shared between the glow effect and the magnetic button.
-  // Passed directly into useButtonGlow so the hook never returns a ref we'd have
-  // to mutate, satisfying react-hooks/immutability.
-  const ctaAnchorRef = useRef<HTMLAnchorElement>(null);
-  useButtonGlow<HTMLAnchorElement>(ctaAnchorRef);
+  const primaryGlowRef = useButtonGlow<HTMLAnchorElement>();
 
   useMagneticButton({
     targetRef: playIconRef,
-    containerRef: ctaAnchorRef,
+    containerRef: primaryGlowRef,
     magneticStrength: 1.0,
   });
 
@@ -92,7 +95,6 @@ export default function Hero() {
       if (!heroRef.current) return;
 
       const tl = gsap.timeline({ defaults: { ease: ease.out } });
-
 
       // Make containers visible
       if (line1Ref.current) line1Ref.current.style.opacity = "1";
@@ -134,7 +136,9 @@ export default function Hero() {
 
       // ② Headline — cinematic stagger
       tl.fromTo(
-        [...splitL1.spans, line2Ref.current].filter((el): el is HTMLElement => el !== null),
+        [...splitL1.spans, line2Ref.current].filter(
+          (el): el is HTMLElement => el !== null,
+        ),
         { opacity: 0, y: 30, rotationX: 25 },
         {
           opacity: 1,
@@ -244,11 +248,13 @@ export default function Hero() {
       }
 
       // ── CTA text char animation on hover ───────────────────────────────
-      const ctaEl = ctaAnchorRef.current;
+      const ctaEl = primaryGlowRef.current;
       const textEl = playTextRef.current;
       if (ctaEl && textEl) {
         const chars = textEl.querySelectorAll(".play-char");
-        const isPointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+        const isPointer = window.matchMedia(
+          "(hover: hover) and (pointer: fine)",
+        ).matches;
 
         if (isPointer) {
           const onMouseEnter = () => {
@@ -321,9 +327,9 @@ export default function Hero() {
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 lg:items-center">
+        <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
           {/* ── Text Column ────────────────────────────────────────────────── */}
-          <div className="lg:col-span-6 space-y-8 md:space-y-10 text-left">
+          <div className="w-full lg:w-[55%] space-y-8 md:space-y-10 text-left">
             {/* Editorial headline */}
             <h1
               className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-7xl tracking-editorial leading-[0.95]"
@@ -357,7 +363,7 @@ export default function Hero() {
             >
               <p
                 ref={subPara2Ref}
-                className="font-sans text-base sm:text-[17px] leading-relaxed"
+                className="font-sans text-base sm:text-lg leading-relaxed font-normal"
                 style={{ color: "var(--text-secondary)" }}
               >
                 A complete chess platform to play, learn, compete, and grow -
@@ -371,9 +377,9 @@ export default function Hero() {
               className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4"
               style={{ opacity: 0 }}
             >
-              <a
-                ref={ctaAnchorRef}
-                href="#interactive-demo"
+              <Link
+                ref={primaryGlowRef}
+                to="/play"
                 id="hero-cta-primary"
                 className="
                   inline-flex items-center justify-center
@@ -420,14 +426,14 @@ export default function Hero() {
                     </span>
                   ))}
                 </span>
-              </a>
+              </Link>
             </div>
           </div>
 
           {/* ── Chessboard / Puzzle Column ──────────────────────────────────── */}
           <div
             ref={boardColRef}
-            className="lg:col-span-6 flex justify-center"
+            className="w-full lg:w-[45%] flex justify-center lg:justify-end"
             style={{
               opacity: 0,
               perspective: "1000px",
@@ -435,7 +441,7 @@ export default function Hero() {
           >
             <div
               ref={tiltRef}
-              className="w-full max-w-[440px] md:max-w-[480px]"
+              className="w-full max-w-[540px] relative mt-8 lg:mt-0"
               style={{
                 transformStyle: "preserve-3d",
                 willChange: "transform, filter",
@@ -444,7 +450,7 @@ export default function Hero() {
               {/* Board card — luxury obsidian + gold hairline */}
               <div
                 ref={boardCardRef}
-                className="shadow-deep overflow-hidden hero-board-card"
+                className="luxury-card shadow-deep overflow-hidden hero-board-card p-4 md:p-6"
                 style={{ transformStyle: "preserve-3d", borderRadius: "2px" }}
               >
                 {/* Engraved coordinate decoration — top right corner */}
@@ -452,11 +458,10 @@ export default function Hero() {
                   className="card-coordinate"
                   style={{ top: "12px", right: "14px", bottom: "auto" }}
                   aria-hidden="true"
-                >
-                </div>
+                ></div>
 
                 {/* Board Area */}
-                <div className="p-4 board-cursor-glow">
+                <div className="board-cursor-glow">
                   <HeroPuzzle />
                 </div>
               </div>
