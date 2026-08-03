@@ -16,5 +16,5 @@ const rollbar = new Rollbar({
   captureUncaught: true,
   captureUnhandledRejections: true,
 });
-console.log("TOKEN:", import.meta.env.VITE_ROLLBAR_ACCESS_TOKEN);
+
 export default rollbar;
