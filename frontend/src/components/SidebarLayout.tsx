@@ -711,9 +711,8 @@ export default function SidebarLayout({
       <div className="flex flex-1 pt-16">
         {/* Desktop Sidebar (Fixed) */}
         <aside
-          className={`fixed top-16 left-0 bottom-0 z-30 bg-brand-bg/95 backdrop-blur-md flex flex-col py-2 transition-all duration-300 hidden md:flex overflow-y-auto overscroll-contain no-scrollbar pb-6 ${isExpanded ? "w-64" : "w-20"
+          className={`fixed top-16 left-0 bottom-0 z-30 bg-brand-bg/95 backdrop-blur-md flex flex-col py-2 transition-all duration-300 hidden md:flex overflow-y-auto overscroll-contain pb-6 ${isExpanded ? "w-64" : "w-20"
             }`}
-          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           <nav className="flex-1 flex flex-col space-y-1">
             {/* BASE SECTION */}
