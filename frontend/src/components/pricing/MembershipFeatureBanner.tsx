@@ -9,7 +9,6 @@ import {
   Palette,
   ArrowRight
 } from "lucide-react";
-import { useNavigate } from "react-router";
 
 export interface MembershipFeatureBannerProps {
   title: string;
@@ -18,6 +17,7 @@ export interface MembershipFeatureBannerProps {
   image: string;
   reverse: boolean;
   buttonText: string;
+  onButtonClick?: () => void;
 }
 
 export const MembershipFeatureBanner: React.FC<MembershipFeatureBannerProps> = ({
@@ -27,8 +27,8 @@ export const MembershipFeatureBanner: React.FC<MembershipFeatureBannerProps> = (
   image,
   reverse,
   buttonText,
+  onButtonClick,
 }) => {
-  const navigate = useNavigate();
 
   // Helper to render the appropriate Lucide icon as a premium placeholder
   const renderImagePlaceholder = () => {
@@ -45,8 +45,11 @@ export const MembershipFeatureBanner: React.FC<MembershipFeatureBannerProps> = (
   };
 
   const handleUpgradeClick = () => {
-    // Navigate to payment with yearly default for these banners as they are premium features
-    navigate("/payment?plan=yearly");
+    if (onButtonClick) {
+      onButtonClick();
+      return;
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
