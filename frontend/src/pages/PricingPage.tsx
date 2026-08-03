@@ -800,7 +800,9 @@ export default function PricingPage() {
         </section>
 
         {/* ─── Feature Banners ─── */}
-        <MembershipFeaturesSection />
+        <MembershipFeaturesSection
+          onChoosePlan={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        />
       </main>
     </div>
   );

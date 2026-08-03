@@ -387,7 +387,7 @@ export default function Hero() {
             >
               <p
                 ref={subPara2Ref}
-                className="font-sans text-base sm:text-[17px] leading-relaxed"
+                className="font-sans text-base sm:text-lg leading-relaxed font-normal"
                 style={{ color: "var(--text-secondary)" }}
               >
                 A complete chess platform to play, learn, compete, and grow -

@@ -148,13 +148,13 @@ export default function BrandSection() {
 
             <div className="space-y-1 max-w-lg">
               <p
-                className="font-sans text-base sm:text-[19px] leading-relaxed font-light"
+                className="font-sans text-base sm:text-lg leading-relaxed font-normal"
                 style={{ color: "var(--text-secondary)" }}
               >
                 You've already done the hard part: building an audience.
               </p>
               <p
-                className="font-sans text-base sm:text-[19px] leading-relaxed font-light"
+                className="font-sans text-base sm:text-lg leading-relaxed font-normal"
                 style={{ color: "var(--text-secondary)" }}
               >
                 Now build a platform around your brand that grows with you.
