@@ -30,7 +30,7 @@ export default function ComingSoonPage({
         <motion.div
           animate={{ y: [0, -8, 0] }}
           transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-          className="w-16 h-16 rounded-full bg-brand-accent/5 border border-brand-accent/10 text-brand-accent flex items-center justify-center shadow-lg"
+          className="coming-soon-icon w-16 h-16 rounded-full bg-brand-accent/5 border border-brand-accent/10 text-brand-accent flex items-center justify-center"
         >
           <Icon className="w-8 h-8" />
         </motion.div>
@@ -41,7 +41,7 @@ export default function ComingSoonPage({
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.1, duration: 0.5 }}
-            className="text-4xl md:text-5xl font-display font-extrabold text-transparent bg-clip-text bg-gradient-to-b from-white via-[#f0eae1] to-[#aba499] tracking-tight leading-none"
+            className="coming-soon-heading text-4xl md:text-5xl font-display font-extrabold tracking-tight leading-tight"
           >
             {featureName}
           </motion.h1>
