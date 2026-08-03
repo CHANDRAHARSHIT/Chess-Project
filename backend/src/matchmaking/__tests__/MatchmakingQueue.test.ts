@@ -86,3 +86,90 @@ describe("MatchmakingQueue FCFS Pillar", () => {
     assert.equal(shortTtlQueue.getTicket(ticket.ticketId), undefined);
   });
 });
+
+describe("MatchmakingQueue Seam (onMatch / compensateFailedMatch)", () => {
+  test("onMatch fires exactly once, with the produced descriptor, when a pair forms via enqueue()", () => {
+    const queue = new MatchmakingQueue();
+    const seen: unknown[] = [];
+    queue.onMatch((descriptor) => seen.push(descriptor));
+
+    queue.enqueue("user-1", "chess960");
+    assert.equal(seen.length, 0);
+
+    queue.enqueue("user-2", "chess960");
+    assert.equal(seen.length, 1);
+  });
+
+  test("onMatch also fires when tryPair() is invoked directly (the ExpiryTicker's call path)", () => {
+    const queue = new MatchmakingQueue();
+    let fired = 0;
+    queue.onMatch(() => fired++);
+
+    queue.enqueue("user-1", "chess960");
+    queue.enqueue("user-2", "chess960");
+    assert.equal(fired, 1);
+
+    // Nothing left to pair — a direct tryPair() call (as ExpiryTicker performs periodically)
+    // must not re-fire for the same pair.
+    queue.tryPair();
+    assert.equal(fired, 1);
+  });
+
+  test("enqueue() reports the ticket's live post-compensation state, not tryPair()'s raw return value", () => {
+    const queue = new MatchmakingQueue();
+
+    // Simulate a listener whose downstream session creation always fails.
+    queue.onMatch((descriptor) => {
+      queue.compensateFailedMatch(descriptor);
+    });
+
+    queue.enqueue("user-1", "chess960");
+    const { ticket, descriptor } = queue.enqueue("user-2", "chess960");
+
+    // Even though tryPair() itself produced a descriptor, the registered listener
+    // compensated before enqueue() returned — the caller must see the refunded truth.
+    assert.equal(descriptor, null);
+    assert.equal(ticket.status, "WAITING");
+  });
+
+  test("compensateFailedMatch resets both matched tickets to WAITING with a fresh TTL", () => {
+    const queue = new MatchmakingQueue();
+    let captured: import("../../contracts/index.js").MatchDescriptor | null = null;
+    queue.onMatch((d) => (captured = d));
+
+    const { ticket: t1 } = queue.enqueue("user-1", "chess960");
+    const { ticket: t2 } = queue.enqueue("user-2", "chess960");
+
+    assert.notEqual(captured, null);
+    // t2 is stale here since the listener above didn't compensate — re-fetch live state.
+    assert.equal(queue.getTicket(t2.ticketId)?.status, "MATCHED");
+
+    queue.compensateFailedMatch(captured!);
+
+    const refunded1 = queue.getTicket(t1.ticketId);
+    assert.equal(refunded1?.status, "WAITING");
+    assert.equal(refunded1?.matchedAt, null);
+    assert.equal(refunded1?.descriptor, undefined);
+
+    const refunded2 = queue.getTicket(t2.ticketId);
+    assert.equal(refunded2?.status, "WAITING");
+    assert.equal(refunded2?.matchedAt, null);
+    assert.equal(refunded2?.descriptor, undefined);
+  });
+
+  test("compensateFailedMatch is a safe no-op on a second call (nothing left to refund)", () => {
+    const queue = new MatchmakingQueue();
+    let captured: import("../../contracts/index.js").MatchDescriptor | null = null;
+    queue.onMatch((d) => (captured = d));
+
+    queue.enqueue("user-1", "chess960");
+    const { ticket: t2 } = queue.enqueue("user-2", "chess960");
+    assert.notEqual(captured, null);
+
+    queue.compensateFailedMatch(captured!);
+    assert.doesNotThrow(() => queue.compensateFailedMatch(captured!));
+
+    // Ticket is WAITING (refunded once), not left dangling in MATCHED nor double-processed.
+    assert.equal(queue.getTicket(t2.ticketId)?.status, "WAITING");
+  });
+});

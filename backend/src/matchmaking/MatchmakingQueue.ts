@@ -14,8 +14,27 @@ export class MatchmakingQueue {
   private readonly tickets = new Map<string, MatchTicket>();
   // O(1) user -> ticketId lookup for active WAITING/MATCHED tickets
   private readonly userTickets = new Map<string, string>();
+  // Listeners notified synchronously whenever tryPair() produces a MatchDescriptor
+  // (mirrors ConnectionManager.onConnectionEvent). Matchmaking stays unaware of what
+  // a listener does with the descriptor — it only knows a match was produced.
+  private readonly matchHandlers: Array<(descriptor: MatchDescriptor) => void> = [];
 
   constructor(private readonly ticketTtlMs: number = DEFAULT_TICKET_TTL_MS) {}
+
+  /**
+   * Registers a listener invoked synchronously whenever tryPair() successfully pairs
+   * two tickets — regardless of whether tryPair() was triggered by enqueue() or by
+   * the ExpiryTicker's periodic sweep. This is the sole seam Matchmaking exposes to
+   * any consumer; Matchmaking has no knowledge of what a listener does with the
+   * descriptor (session creation, compensation, etc. are the listener's concern).
+   */
+  onMatch(handler: (descriptor: MatchDescriptor) => void): void {
+    this.matchHandlers.push(handler);
+  }
+
+  private emitMatch(descriptor: MatchDescriptor): void {
+    for (const handler of this.matchHandlers) handler(descriptor);
+  }
 
   /**
    * Enqueues a user into the FCFS queue.
@@ -58,8 +77,15 @@ export class MatchmakingQueue {
       context: { ticketId, userId, variantId },
     });
 
-    const descriptor = this.tryPair();
-    return { ticket, descriptor };
+    // tryPair() may synchronously pair this ticket AND synchronously trigger
+    // downstream session creation via emitMatch() — which, on failure, compensates
+    // by resetting the ticket back to WAITING before tryPair() even returns. Re-read
+    // the ticket's live state afterward rather than trusting tryPair()'s return value,
+    // so the caller never reports a "matched" ticket that was already compensated away.
+    this.tryPair();
+    const finalTicket = this.tickets.get(ticketId) ?? ticket;
+    const descriptor = finalTicket.status === "MATCHED" ? finalTicket.descriptor ?? null : null;
+    return { ticket: finalTicket, descriptor };
   }
 
   /**
@@ -171,11 +197,60 @@ export class MatchmakingQueue {
           context: { ticketId: t2.ticketId, userId: t2.userId, matchId },
         });
 
+        // Fires the seam synchronously. A registered listener (the session bridge)
+        // may call back into compensateFailedMatch() before this returns — see enqueue().
+        this.emitMatch(descriptor);
+
         return descriptor;
       }
     }
 
     return null;
+  }
+
+  /**
+   * Reverts a failed match: both tickets belonging to descriptor.matchId are restored
+   * to WAITING with a fresh enqueuedAt/expiresAt, so the normal FCFS flow can re-attempt
+   * pairing them (with each other or with anyone else already queued).
+   *
+   * Called by a downstream listener (the session bridge) when session creation fails
+   * after tickets were already consumed — the "ticket-consumed-but-session-failed"
+   * compensation path (Phase 3.2 Error Contract: "Matchmaking compensates (refund tickets)").
+   *
+   * Safe no-op for any ticket that no longer exists or was independently cancelled/expired
+   * in the meantime (readable as: nothing left to compensate for that participant).
+   */
+  compensateFailedMatch(descriptor: MatchDescriptor): void {
+    const now = Date.now();
+
+    for (const participant of descriptor.participants) {
+      const ticketId = this.userTickets.get(participant.userId);
+      if (!ticketId) continue;
+
+      const ticket = this.tickets.get(ticketId);
+      if (!ticket || ticket.status !== "MATCHED" || ticket.descriptor?.matchId !== descriptor.matchId) {
+        continue;
+      }
+
+      const refunded: MatchTicket = {
+        ticketId: ticket.ticketId,
+        userId: ticket.userId,
+        variantId: ticket.variantId,
+        enqueuedAt: now,
+        expiresAt: now + this.ticketTtlMs,
+        matchedAt: null,
+        status: "WAITING",
+      };
+
+      this.tickets.set(ticketId, refunded);
+
+      emitTransition({
+        domain: "matchmaking",
+        from: "MATCHED",
+        to: "WAITING",
+        context: { ticketId, userId: ticket.userId, matchId: descriptor.matchId, reason: "session_creation_failed" },
+      });
+    }
   }
 
   /**
