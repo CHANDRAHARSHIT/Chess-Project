@@ -360,23 +360,23 @@ export default function SidebarLayout({
   ];
 
   const exploreSection = [
-    { name: "Quick Game", href: "/play", icon: Zap, comingSoon: true },
-    { name: "Lessons", href: "/lessons", icon: BookOpen, comingSoon: true },
+    { name: "Quick Game", href: "/play", icon: Zap },
+    { name: "Lessons", href: "/lessons", icon: BookOpen },
     { name: "Puzzles", href: "/puzzles", icon: Puzzle },
-    { name: "Variants", href: "/variants", icon: Shuffle, comingSoon: true },
+    { name: "Variants", href: "/variants", icon: Shuffle },
     { name: "Upgrade", href: "/pricing", icon: Crown },
   ];
 
   const footerLinks = [
-    { name: "About", href: "#", comingSoon: true },
-    { name: "Copyright", href: "#", comingSoon: true },
-    { name: "Contact Us", href: "/contact", comingSoon: false },
-    { name: "Creator", href: "#", comingSoon: true },
-    { name: "Advertise", href: "#", comingSoon: true },
-    { name: "Developers", href: "#", comingSoon: true },
-    { name: "Terms", href: "#", comingSoon: true },
-    { name: "Privacy Policy & Safety", href: "#", comingSoon: true },
-    { name: "How XLChess works", href: "#", comingSoon: true },
+    { name: "About", href: "/about" },
+    { name: "Copyright", href: "/copyright" },
+    { name: "Contact Us", href: "/contact" },
+    { name: "Creator", href: "/creator" },
+    { name: "Advertise", href: "/advertise" },
+    { name: "Developers", href: "/developers" },
+    { name: "Terms", href: "/terms" },
+    { name: "Privacy Policy & Safety", href: "/privacy" },
+    { name: "How XLChess works", href: "/how-xlchess-works" },
   ];
 
   const youSection = [
@@ -402,7 +402,7 @@ export default function SidebarLayout({
   ];
 
   const miscSection = [
-    { name: "Report", href: "/report", icon: Flag, comingSoon: true },
+    { name: "Report", href: "/report", icon: Flag },
   ];
 
   const urlOptions = [
@@ -432,20 +432,20 @@ export default function SidebarLayout({
   ) => {
     const Icon = item.icon;
     const currentPathWithSearch = location.pathname + location.search;
+    const isComingSoon = Boolean(item.comingSoon);
     const isActive =
-      !item.comingSoon &&
-      (currentPathWithSearch === item.href ||
-        location.pathname === item.href ||
-        item.subItems?.some(
-          (s: NavItem) =>
-            currentPathWithSearch === s.href || location.pathname === s.href,
-        ));
+      currentPathWithSearch === item.href ||
+      location.pathname === item.href ||
+      item.subItems?.some(
+        (s: NavItem) =>
+          currentPathWithSearch === s.href || location.pathname === s.href,
+      );
 
     const isAvatar = item.avatar !== undefined;
     const isCustomLink = customLinkIndex !== undefined;
     const hasSubItems = Boolean(item.subItems && item.subItems.length > 0);
     const isSubOpen = mobileOpenItem === item.name;
-    const isDisabled = Boolean(item.comingSoon);
+    // comingSoon items are still navigable — they route to a placeholder page
 
     return (
       <div
@@ -458,9 +458,9 @@ export default function SidebarLayout({
       >
         <div className="relative group/navitem flex items-center">
           <a
-            href={isDisabled ? "#" : hasSubItems ? "#" : item.href}
+            href={hasSubItems ? "#" : item.href}
             onMouseEnter={(e) => {
-              if (hasSubItems && !isMobileOpen && !isDisabled && item.subItems) {
+              if (hasSubItems && !isMobileOpen && item.subItems) {
                 if (hoverTimeout.current) clearTimeout(hoverTimeout.current);
                 const rect = e.currentTarget.getBoundingClientRect();
                 setHoveredSubMenu({
@@ -478,10 +478,6 @@ export default function SidebarLayout({
               }
             }}
             onClick={(e) => {
-              if (isDisabled) {
-                e.preventDefault();
-                return;
-              }
               if (hasSubItems) {
                 e.preventDefault();
                 if (isMobileOpen) {
@@ -493,21 +489,20 @@ export default function SidebarLayout({
                 handleLinkClick(item.href, e);
               }
             }}
-            title={isDisabled ? "Coming soon" : undefined}
-            className={`relative w-full flex transition-all duration-200 ${isDisabled ? "cursor-not-allowed" : "cursor-pointer"
-              } ${isExpanded || isMobileOpen
-                ? `items-center py-2.5 mx-2 px-3 rounded-xl ${isDisabled
-                  ? "opacity-60 select-none text-brand-secondary"
-                  : isActive
-                    ? "text-brand-accent bg-brand-text/10 font-medium"
-                    : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 group-hover/navitem:bg-brand-text/5 group-hover/navitem:text-brand-text"
-                }`
-                : `flex-col items-center justify-center py-[14px] mx-2 rounded-lg text-center ${isDisabled
-                  ? "opacity-60 select-none text-brand-secondary"
-                  : isActive
-                    ? "text-brand-accent bg-brand-text/10 font-medium"
-                    : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 group-hover/navitem:bg-brand-text/5 group-hover/navitem:text-brand-text"
-                }`
+            title={isComingSoon ? "Coming soon" : undefined}
+            className={`relative w-full flex transition-all duration-200 cursor-pointer ${isExpanded || isMobileOpen
+              ? `items-center py-2.5 mx-2 px-3 rounded-xl ${isComingSoon
+                ? "opacity-60 text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 group-hover/navitem:bg-brand-text/5 group-hover/navitem:text-brand-text hover:opacity-100"
+                : isActive
+                  ? "text-brand-accent bg-brand-text/10 font-medium"
+                  : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 group-hover/navitem:bg-brand-text/5 group-hover/navitem:text-brand-text"
+              }`
+              : `flex-col items-center justify-center py-[14px] mx-2 rounded-lg text-center ${isComingSoon
+                ? "opacity-60 text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 group-hover/navitem:bg-brand-text/5 group-hover/navitem:text-brand-text hover:opacity-100"
+                : isActive
+                  ? "text-brand-accent bg-brand-text/10 font-medium"
+                  : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 group-hover/navitem:bg-brand-text/5 group-hover/navitem:text-brand-text"
+              }`
               }`}
           >
             <div
@@ -517,11 +512,11 @@ export default function SidebarLayout({
                 <img
                   src={item.avatar}
                   alt={item.name}
-                  className={`w-6 h-6 rounded-full shrink-0 ${isDisabled ? "grayscale opacity-50" : ""}`}
+                  className="w-6 h-6 rounded-full shrink-0"
                 />
               ) : Icon ? (
                 <Icon
-                  className={`w-5 h-5 shrink-0 ${isActive ? "text-brand-accent" : `text-brand-secondary ${!isDisabled ? "group-hover/navitem:text-brand-text" : ""}`}`}
+                  className={`w-5 h-5 shrink-0 ${isActive ? "text-brand-accent" : "text-brand-secondary group-hover/navitem:text-brand-text"}`}
                 />
               ) : null}
             </div>
@@ -617,23 +612,20 @@ export default function SidebarLayout({
               const isSubActive =
                 currentPathWithSearch === subItem.href ||
                 location.pathname === subItem.href;
+              const subIsComingSoon = Boolean(subItem.comingSoon);
               return (
                 <a
                   key={subItem.name}
-                  href={subItem.comingSoon ? "#" : subItem.href}
-                  title={subItem.comingSoon ? "Coming soon" : undefined}
+                  href={subItem.href}
+                  title={subIsComingSoon ? "Coming soon" : undefined}
                   onClick={(e) => {
-                    if (subItem.comingSoon) {
-                      e.preventDefault();
-                      return;
-                    }
                     handleLinkClick(subItem.href, e);
                   }}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-sans transition-colors duration-150 ${subItem.comingSoon
-                    ? "opacity-60 cursor-not-allowed select-none"
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-sans transition-colors duration-150 cursor-pointer ${subIsComingSoon
+                    ? "opacity-60 hover:opacity-100 text-brand-secondary hover:text-brand-text hover:bg-brand-text/5"
                     : isSubActive
-                      ? "text-brand-accent bg-brand-text/10 font-medium cursor-pointer"
-                      : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 cursor-pointer"
+                      ? "text-brand-accent bg-brand-text/10 font-medium"
+                      : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5"
                     }`}
                 >
                   {SubIcon && (
@@ -903,13 +895,9 @@ export default function SidebarLayout({
                   {footerLinks.map((link) => (
                     <a
                       key={link.name}
-                      href={link.comingSoon ? "#" : link.href}
-                      title={link.comingSoon ? "Coming soon" : undefined}
-                      onClick={(e) => {
-                        if (link.comingSoon) e.preventDefault();
-                        else handleLinkClick(link.href, e);
-                      }}
-                      className={`whitespace-nowrap transition-colors ${link.comingSoon ? "opacity-60 cursor-not-allowed select-none" : "hover:text-brand-text cursor-pointer"}`}
+                      href={link.href}
+                      onClick={(e) => handleLinkClick(link.href, e)}
+                      className="whitespace-nowrap transition-colors hover:text-brand-text cursor-pointer"
                     >
                       {link.name}
                     </a>
@@ -950,29 +938,26 @@ export default function SidebarLayout({
               const isSubActive =
                 currentPathWithSearch === subItem.href ||
                 location.pathname === subItem.href;
+              const hoverSubIsComingSoon = Boolean(subItem.comingSoon);
               return (
                 <a
                   key={subItem.name}
-                  href={subItem.comingSoon ? "#" : subItem.href}
-                  title={subItem.comingSoon ? "Coming soon" : undefined}
+                  href={subItem.href}
+                  title={hoverSubIsComingSoon ? "Coming soon" : undefined}
                   onClick={(e) => {
-                    if (subItem.comingSoon) {
-                      e.preventDefault();
-                      return;
-                    }
                     setHoveredSubMenu(null);
                     handleLinkClick(subItem.href, e);
                   }}
-                  className={`w-full flex items-center gap-4 px-5 py-3 text-[14px] font-sans text-left transition-colors duration-150 ${subItem.comingSoon
-                    ? "opacity-60 cursor-not-allowed select-none"
+                  className={`w-full flex items-center gap-4 px-5 py-3 text-[14px] font-sans text-left transition-colors duration-150 cursor-pointer ${hoverSubIsComingSoon
+                    ? "opacity-60 hover:opacity-100 text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06]"
                     : isSubActive
-                      ? "text-brand-accent bg-brand-text/[0.06] cursor-pointer font-medium"
-                      : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06] cursor-pointer"
+                      ? "text-brand-accent bg-brand-text/[0.06] font-medium"
+                      : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06]"
                     }`}
                 >
                   {SubIcon && (
                     <SubIcon
-                      className={`w-[18px] h-[18px] shrink-0 ${isSubActive ? "text-brand-accent" : subItem.comingSoon ? "text-brand-secondary" : "text-brand-accent/80"}`}
+                      className={`w-[18px] h-[18px] shrink-0 ${isSubActive ? "text-brand-accent" : "text-brand-accent/80"}`}
                     />
                   )}
                   <span className="flex-1 tracking-wide">{subItem.name}</span>
@@ -1164,13 +1149,9 @@ export default function SidebarLayout({
                 {footerLinks.map((link) => (
                   <a
                     key={link.name}
-                    href={link.comingSoon ? "#" : link.href}
-                    title={link.comingSoon ? "Coming soon" : undefined}
-                    onClick={(e) => {
-                      if (link.comingSoon) e.preventDefault();
-                      else handleLinkClick(link.href, e);
-                    }}
-                    className={`whitespace-nowrap transition-colors ${link.comingSoon ? "opacity-60 cursor-not-allowed select-none" : "hover:text-brand-text cursor-pointer"}`}
+                    href={link.href}
+                    onClick={(e) => handleLinkClick(link.href, e)}
+                    className="whitespace-nowrap transition-colors hover:text-brand-text cursor-pointer"
                   >
                     {link.name}
                   </a>
