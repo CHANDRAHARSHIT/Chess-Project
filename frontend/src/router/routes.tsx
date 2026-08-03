@@ -12,16 +12,19 @@ import OpeningsPage from "../pages/OpeningsPage";
 import SubscriptionsPage from "../pages/SubscriptionsPage";
 import VariantsPage from "../pages/VariantsPage";
 import Chess960Page from "../pages/Chess960Page";
+import QuickGamePage from "../pages/QuickGamePage";
 import { ProtectedRoute } from "../components/ProtectedRoute";
 
 export interface RouteConfig {
   path: string;
   element: React.ReactNode;
+  title?: string;
 }
 
 // Routes that run inside the MainLayout (Navbar + Sidebar + Footer)
 export const mainRoutes: RouteConfig[] = [
   { path: "/", element: <HomePage /> },
+  { path: "/play", element: <QuickGamePage /> },
   { path: "/contact", element: <ContactPage /> },
   { path: "/puzzles", element: <PuzzlePage /> },
   { path: "/openings", element: <OpeningsPage /> },
@@ -34,8 +37,12 @@ export const mainRoutes: RouteConfig[] = [
   },
   // Not behind ProtectedRoute: board/piece preferences are stored in
   // localStorage (like the Sound toggle) so guests can use them too.
-  { path: "/settings", element: <SettingsPage /> },
-  { path: "/settings/:category", element: <SettingsPage /> },
+  { path: "/settings", element: <SettingsPage />, title: "Settings | XLChess" },
+  {
+    path: "/settings/:category",
+    element: <SettingsPage />,
+    title: "Settings | XLChess",
+  },
   {
     path: "/premium",
     element: (
@@ -43,14 +50,27 @@ export const mainRoutes: RouteConfig[] = [
         <PremiumPage />
       </ProtectedRoute>
     ),
+    title: "XLChess Premium | XLChess",
   },
-  { path: "/pricing", element: <PricingPage /> },
+  { path: "/pricing", element: <PricingPage />, title: "Pricing | XLChess" },
 ];
 
 // Routes that run inside the MinimalLayout (Navbar only, no Sidebar/Footer)
 export const minimalRoutes: RouteConfig[] = [
-  { path: "/payment", element: <CheckoutPage /> },
-  { path: "/successful", element: <SuccessfulPage /> },
-  { path: "/payment/success", element: <SuccessfulPage /> },
-  { path: "/payment/failed", element: <FailedPage /> },
+  { path: "/payment", element: <CheckoutPage />, title: "Checkout | XLChess" },
+  {
+    path: "/successful",
+    element: <SuccessfulPage />,
+    title: "Payment Successful | XLChess",
+  },
+  {
+    path: "/payment/success",
+    element: <SuccessfulPage />,
+    title: "Payment Successful | XLChess",
+  },
+  {
+    path: "/payment/failed",
+    element: <FailedPage />,
+    title: "Payment Failed | XLChess",
+  },
 ];

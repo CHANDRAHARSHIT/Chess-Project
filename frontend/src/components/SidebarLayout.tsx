@@ -30,6 +30,7 @@ import { MoreMenu } from "./MoreMenu";
 import { useNavigate, useLocation } from "react-router";
 import { useNavigationStack } from "../hooks/useNavigationStack";
 import rollbar from "../config/rollbar";
+import finegoldImg from "../assets/FineGold.jpg";
 
 // Hook for clicking outside the custom dropdown
 function useOnClickOutside(
@@ -310,9 +311,8 @@ export default function SidebarLayout({
 
   const MOCK_SUBSCRIPTIONS = [
     {
-      name: "PowerPlayChess",
-      avatar:
-        "https://yt3.googleusercontent.com/ytc/AIdro_msERs2yFdyXKdh6MkbVchKiDhLbOh-rWZkMfNDyc5o5A=s160-c-k-c0x00ffffff-no-rj",
+      name: "GMBenjaminFinegold",
+      avatar: finegoldImg,
       href: "/subscriptions",
     },
   ];
@@ -360,7 +360,7 @@ export default function SidebarLayout({
   ];
 
   const exploreSection = [
-    { name: "Quick Game", href: "/play", icon: Zap, comingSoon: true },
+    { name: "Quick Game", href: "/play", icon: Zap },
     { name: "Lessons", href: "/lessons", icon: BookOpen, comingSoon: true },
     { name: "Puzzles", href: "/puzzles", icon: Puzzle },
     { name: "Variants", href: "/variants", icon: Shuffle, comingSoon: true },
@@ -711,9 +711,8 @@ export default function SidebarLayout({
       <div className="flex flex-1 pt-16">
         {/* Desktop Sidebar (Fixed) */}
         <aside
-          className={`fixed top-16 left-0 bottom-0 z-30 bg-brand-bg/95 backdrop-blur-md flex flex-col py-2 transition-all duration-300 hidden md:flex overflow-y-auto overscroll-contain no-scrollbar pb-6 ${isExpanded ? "w-64" : "w-20"
+          className={`fixed top-16 left-0 bottom-0 z-30 bg-brand-bg/95 backdrop-blur-md flex flex-col py-2 transition-all duration-300 hidden md:flex overflow-y-auto overscroll-contain pb-6 ${isExpanded ? "w-64" : "w-20"
             }`}
-          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           <nav className="flex-1 flex flex-col space-y-1">
             {/* BASE SECTION */}

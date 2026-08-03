@@ -49,7 +49,7 @@ export default function NotFoundPage() {
         </div>
 
         {/* Informative description */}
-        <p className="text-sm md:text-base text-brand-secondary font-sans leading-relaxed max-w-md">
+        <p className="text-base sm:text-lg text-brand-secondary font-sans leading-relaxed max-w-md">
           The page you are looking for does not exist, or has been moved to a new destination.
         </p>
 
