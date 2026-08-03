@@ -23,17 +23,18 @@ export interface RouteConfig {
 
 // Routes that run inside the MainLayout (Navbar + Sidebar + Footer)
 export const mainRoutes: RouteConfig[] = [
-  { path: "/", element: <HomePage /> },
-  { path: "/play", element: <QuickGamePage /> },
-  { path: "/contact", element: <ContactPage /> },
-  { path: "/puzzles", element: <PuzzlePage /> },
-  { path: "/openings", element: <OpeningsPage /> },
-  { path: "/subscriptions", element: <SubscriptionsPage /> },
-  { path: "/variants", element: <VariantsPage /> },
-  { path: "/play/chess960", element: <Chess960Page /> },
+  { path: "/", element: <HomePage />, title: "XLChess - Play Chess Online" },
+  { path: "/play", element: <QuickGamePage />, title: "Play Chess | XLChess" },
+  { path: "/contact", element: <ContactPage />, title: "Contact Us | XLChess" },
+  { path: "/puzzles", element: <PuzzlePage />, title: "Chess Puzzles | XLChess" },
+  { path: "/openings", element: <OpeningsPage />, title: "Chess Openings | XLChess" },
+  { path: "/subscriptions", element: <SubscriptionsPage />, title: "My Subscriptions | XLChess" },
+  { path: "/variants", element: <VariantsPage />, title: "Chess Variants | XLChess" },
+  { path: "/play/chess960", element: <Chess960Page />, title: "Chess 960 | XLChess" },
   {
     path: "/profile",
     element: <Navigate to="/settings/profile" replace />,
+    title: "Profile | XLChess",
   },
   // Not behind ProtectedRoute: board/piece preferences are stored in
   // localStorage (like the Sound toggle) so guests can use them too.

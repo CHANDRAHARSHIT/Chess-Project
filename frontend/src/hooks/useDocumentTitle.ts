@@ -13,10 +13,18 @@ export function useDocumentTitle() {
       matchPath({ path: route.path, end: true }, location.pathname)
     );
 
-    if (currentRoute && currentRoute.title) {
-      document.title = currentRoute.title;
-    } else if (location.pathname === "/") {
-      document.title = DEFAULT_TITLE;
+    if (currentRoute) {
+      if (currentRoute.title) {
+        document.title = currentRoute.title;
+      } else if (location.pathname === "/") {
+        document.title = DEFAULT_TITLE;
+      } else {
+        const pathSegment = location.pathname.split("/").filter(Boolean)[0];
+        const formattedName = pathSegment
+          ? pathSegment.charAt(0).toUpperCase() + pathSegment.slice(1)
+          : "XLChess";
+        document.title = `${formattedName} | XLChess`;
+      }
     } else {
       document.title = "Page Not Found | XLChess";
     }
