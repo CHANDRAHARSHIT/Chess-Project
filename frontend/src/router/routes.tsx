@@ -9,18 +9,17 @@ import SuccessfulPage from "../pages/SuccessfulPage";
 import FailedPage from "../pages/FailedPage";
 import PremiumPage from "../pages/PremiumPage";
 import OpeningsPage from "../pages/OpeningsPage";
-import VariantsPage from "../pages/VariantsPage";
 import Chess960Page from "../pages/Chess960Page";
 import ComingSoonPage from "../pages/ComingSoonPage";
 import { ProtectedRoute } from "../components/ProtectedRoute";
 import {
-  Zap,
   BookOpen,
   BarChart2,
   Clock,
   Video,
   UserCircle2,
   Users,
+  Shuffle,
   Flag,
   Info,
   Copyright,
@@ -31,6 +30,7 @@ import {
   Shield,
   HelpCircle,
 } from "lucide-react";
+import QuickGamePage from "../pages/QuickGamePage";
 
 export interface RouteConfig {
   path: string;
@@ -42,8 +42,16 @@ export interface RouteConfig {
 export const mainRoutes: RouteConfig[] = [
   { path: "/", element: <HomePage />, title: "XLChess - Play Chess Online" },
   { path: "/contact", element: <ContactPage />, title: "Contact Us | XLChess" },
-  { path: "/puzzles", element: <PuzzlePage />, title: "Chess Puzzles | XLChess" },
-  { path: "/openings", element: <OpeningsPage />, title: "Chess Openings | XLChess" },
+  {
+    path: "/puzzles",
+    element: <PuzzlePage />,
+    title: "Chess Puzzles | XLChess",
+  },
+  {
+    path: "/openings",
+    element: <OpeningsPage />,
+    title: "Chess Openings | XLChess",
+  },
   {
     path: "/subscriptions",
     element: (
@@ -55,8 +63,22 @@ export const mainRoutes: RouteConfig[] = [
     ),
     title: "My Subscriptions | XLChess",
   },
-  { path: "/variants", element: <VariantsPage />, title: "Chess Variants | XLChess" },
-  { path: "/play/chess960", element: <Chess960Page />, title: "Chess 960 | XLChess" },
+  {
+    path: "/variants",
+    element: (
+      <ComingSoonPage
+        featureName="Chess Variants"
+        description="Explore exciting chess variants like Chess960, King of the Hill, 3-Check, and custom rulesets — bringing fresh strategic challenges and endless fun to the board."
+        icon={Shuffle}
+      />
+    ),
+    title: "Chess Variants | XLChess",
+  },
+  {
+    path: "/play/chess960",
+    element: <Chess960Page />,
+    title: "Chess 960 | XLChess",
+  },
   {
     path: "/profile",
     element: <Navigate to="/settings/profile" replace />,
@@ -84,13 +106,7 @@ export const mainRoutes: RouteConfig[] = [
   // ── Coming Soon placeholder routes ──────────────────────────────────────
   {
     path: "/play",
-    element: (
-      <ComingSoonPage
-        featureName="Quick Game"
-        description="Jump into a live chess game instantly and get matched with an opponent at your skill level. Rated and casual modes will be available."
-        icon={Zap}
-      />
-    ),
+    element: <QuickGamePage />,
     title: "Play Chess | XLChess",
   },
   {
