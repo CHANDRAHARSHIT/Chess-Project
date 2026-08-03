@@ -8,6 +8,7 @@ import { SessionProvider } from "./context/SessionContext";
 import { BoardSettingsProvider } from "./context/BoardSettingsContext";
 import { NavigationStackProvider } from "./context/NavigationStackContext";
 import ScrollToTop from "./components/ScrollToTop";
+import RollbarFallback from "./components/RollbarFallback";
 import { Provider as RollbarProvider, ErrorBoundary } from "@rollbar/react";
 import { ThemeProvider } from "./context/ThemeContext";
 import rollbar from "./config/rollbar";
@@ -16,12 +17,17 @@ import rollbar from "./config/rollbar";
 // This ensures no sounds fire in the wrong mute state during startup.
 soundManager.initFromStorage();
 
-const RollbarFallback = () => (
-  <div style={{ padding: "20px", color: "red" }}>
-    <h2>Oops, something went wrong.</h2>
-    <p>We've been notified and are looking into it.</p>
-  </div>
-);
+// Guard against third-party libraries (e.g. react-chessboard) calling preventDefault()
+// on non-cancelable touch events, which causes Chrome to log [Intervention] warnings.
+if (typeof window !== "undefined") {
+  const nativePreventDefault = Event.prototype.preventDefault;
+  Event.prototype.preventDefault = function (this: Event) {
+    if (!this.cancelable && (this.type === "touchend" || this.type === "touchmove" || this.type === "touchstart")) {
+      return;
+    }
+    return nativePreventDefault.apply(this);
+  };
+}
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

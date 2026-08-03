@@ -1,10 +1,11 @@
-import { useRef, useLayoutEffect } from 'react';
+import { useRef, useLayoutEffect, type RefObject } from 'react';
 import { gsap } from '../utils/gsapConfig';
 import { prefersReducedMotion } from '../utils/gsapConfig';
 
 /**
  * useButtonGlow
  * Reusable React hook that drives an interactive, cursor-tracking radial glow on a button.
+ * Can be called with an external ref `useButtonGlow(ref)` or without arguments `const ref = useButtonGlow()`.
  *
  * Desktop (pointer device):
  *   - Mouse movement is mapped through gsap.utils.interpolate() to set CSS custom properties
@@ -18,8 +19,9 @@ import { prefersReducedMotion } from '../utils/gsapConfig';
  * Accessibility:
  *   - Respects prefers-reduced-motion.
  */
-export function useButtonGlow<T extends HTMLElement>() {
-  const buttonRef = useRef<T | null>(null);
+export function useButtonGlow<T extends HTMLElement>(externalRef?: RefObject<T | null>) {
+  const internalRef = useRef<T | null>(null);
+  const buttonRef = externalRef ?? internalRef;
 
   useLayoutEffect(() => {
     const btn = buttonRef.current;
@@ -133,7 +135,7 @@ export function useButtonGlow<T extends HTMLElement>() {
     return () => {
       ctx.revert();
     };
-  }, []);
+  }, [buttonRef]);
 
   return buttonRef;
 }
