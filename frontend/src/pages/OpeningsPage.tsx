@@ -156,7 +156,7 @@ function OpeningSidebar({
       </div>
 
       {/* List — shows only the current page slice */}
-      <div className="flex-1 overflow-y-auto" style={{ minHeight: 0 }}>
+      <div className="flex-1 overflow-y-auto sidebar-scrollbar" style={{ minHeight: 0 }}>
         {isLoading && (
           <div className="flex flex-col gap-2 p-3">
             {Array.from({ length: 8 }).map((_, i) => (
