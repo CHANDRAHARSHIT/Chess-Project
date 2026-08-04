@@ -290,6 +290,34 @@ body {
   color: transparent;
 }
 
+/* ── Coming Soon page ──────────────────────────────────────────────────────── */
+/* Dark mode: white-to-warm-cream gradient heading */
+.coming-soon-heading {
+  color: transparent;
+  background-clip: text;
+  -webkit-background-clip: text;
+  background-image: linear-gradient(to bottom, #ffffff 0%, #f0eae1 50%, #aba499 100%);
+  padding-bottom: 0.2em;
+  /* prevents bg-clip:text from cutting descenders (g, y, p) */
+}
+
+/* Light mode: dark-brown gradient so the text is clearly visible */
+:root[data-theme="light"] .coming-soon-heading {
+  background-image: linear-gradient(to bottom, #3D2B0E 0%, #7A490B 50%, #5C3506 100%);
+}
+
+/* Dark mode: soft amber glow around the icon bubble */
+.coming-soon-icon {
+  box-shadow: 0 4px 24px rgba(212, 175, 110, 0.18), 0 1px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* Light mode: remove the downward glow that bleeds over the heading */
+:root[data-theme="light"] .coming-soon-icon {
+  box-shadow: 0 2px 8px rgba(148, 92, 16, 0.12), 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+
 .text-ivory {
   color: var(--text-primary);
 }
