@@ -277,7 +277,14 @@ export default function HeroPuzzle({
   onDragStart,
   onDragEnd,
 }: HeroPuzzleProps) {
-  const soundManagerRef = useRef<SoundManager>(SoundManager.createInstance());
+  // Guarded lazy init — useRef's argument is evaluated on every render, so
+  // without the guard SoundManager.createInstance() (which eagerly creates
+  // 11 <audio> elements) would run on every re-render instead of just once,
+  // exhausting the browser's WebMediaPlayer budget.
+  const soundManagerRef = useRef<SoundManager | null>(null);
+  if (!soundManagerRef.current) {
+    soundManagerRef.current = SoundManager.createInstance();
+  }
   const soundManager = soundManagerRef.current;
   const [isMuted, setIsMuted] = useState<boolean>(true);
 
