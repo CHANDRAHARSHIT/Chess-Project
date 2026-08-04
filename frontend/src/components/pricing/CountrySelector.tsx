@@ -15,7 +15,10 @@ const COUNTRIES = [
   { code: "EU", flag: "🇪🇺", name: "Europe", currency: "EUR" },
 ];
 
-export const CountrySelector: React.FC<CountrySelectorProps> = ({ onSelect, disabled }) => {
+export const CountrySelector: React.FC<CountrySelectorProps> = ({
+  onSelect,
+  disabled,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCode, setSelectedCode] = useState<string | null>(null);
@@ -24,7 +27,10 @@ export const CountrySelector: React.FC<CountrySelectorProps> = ({ onSelect, disa
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
@@ -39,7 +45,7 @@ export const CountrySelector: React.FC<CountrySelectorProps> = ({ onSelect, disa
   const filteredCountries = COUNTRIES.filter(
     (c) =>
       c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      c.currency.toLowerCase().includes(searchTerm.toLowerCase())
+      c.currency.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const selectedCountry = COUNTRIES.find((c) => c.code === selectedCode);
@@ -70,16 +76,24 @@ export const CountrySelector: React.FC<CountrySelectorProps> = ({ onSelect, disa
           >
             {selectedCountry ? (
               <div className="flex items-center gap-3">
-                <span className="text-xl leading-none">{selectedCountry.flag}</span>
-                <span className="font-sans text-sm font-medium tracking-wide">{selectedCountry.name}</span>
+                <span className="text-xl leading-none">
+                  {selectedCountry.flag}
+                </span>
+                <span className="font-sans text-sm font-medium tracking-wide">
+                  {selectedCountry.name}
+                </span>
                 <span className="font-mono text-[11px] font-bold text-brand-accent bg-brand-accent/10 border border-brand-accent/20 px-1.5 py-0.5 rounded">
                   {selectedCountry.currency}
                 </span>
               </div>
             ) : (
-              <span className="text-brand-secondary text-sm font-sans">Select region to preview...</span>
+              <span className="text-brand-secondary text-sm font-sans">
+                Select region to preview...
+              </span>
             )}
-            <ChevronDown className={`w-4 h-4 text-brand-secondary group-hover:text-brand-accent transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+            <ChevronDown
+              className={`w-4 h-4 text-brand-secondary group-hover:text-brand-accent transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
+            />
           </button>
 
           {isOpen && (
@@ -103,8 +117,10 @@ export const CountrySelector: React.FC<CountrySelectorProps> = ({ onSelect, disa
                       onClick={() => handleSelect(country.code)}
                       className="w-full flex items-center gap-3 px-4 py-3 hover:bg-brand-accent/10 transition-colors text-left border-l-2 border-transparent hover:border-brand-accent group"
                     >
-                      <span className="text-xl leading-none">{country.flag}</span>
-                      <span className="font-sans text-sm text-[#e5dfd5] group-hover:text-white font-medium flex-1">
+                      <span className="text-xl leading-none">
+                        {country.flag}
+                      </span>
+                      <span className="font-sans text-sm text-brand-text group-hover:text-brand-accent font-medium flex-1">
                         {country.name}
                       </span>
                       <span className="font-mono text-xs text-brand-secondary group-hover:text-brand-accent font-semibold transition-colors">

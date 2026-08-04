@@ -68,7 +68,7 @@ export const mainRoutes: RouteConfig[] = [
     element: (
       <ComingSoonPage
         featureName="Chess Variants"
-        description="Explore exciting chess variants like Chess960, King of the Hill, 3-Check, and custom rulesets — bringing fresh strategic challenges and endless fun to the board."
+        description="Explore exciting chess variants like Chess960, King of the Hill, 3-Check, and custom rulesets, bringing fresh strategic challenges and endless fun to the board."
         icon={Shuffle}
       />
     ),
@@ -114,7 +114,7 @@ export const mainRoutes: RouteConfig[] = [
     element: (
       <ComingSoonPage
         featureName="Lessons"
-        description="Structured, interactive chess lessons designed to sharpen your openings, tactics, endgames, and overall strategic thinking — at every level."
+        description="Structured, interactive chess lessons designed to sharpen your openings, tactics, endgames, and overall strategic thinking at every level."
         icon={BookOpen}
       />
     ),
@@ -125,7 +125,7 @@ export const mainRoutes: RouteConfig[] = [
     element: (
       <ComingSoonPage
         featureName="Your Stats"
-        description="Track your progress with detailed performance analytics — win/loss history, rating trends, puzzle accuracy, and opening success rates."
+        description="Track your progress with detailed performance analytics - win/loss history, rating trends, puzzle accuracy, and opening success rates."
         icon={BarChart2}
       />
     ),
@@ -136,7 +136,7 @@ export const mainRoutes: RouteConfig[] = [
     element: (
       <ComingSoonPage
         featureName="Complete Later"
-        description="Save lessons, puzzles, or games you want to revisit. Your personal queue for picking up where you left off — anytime."
+        description="Save lessons, puzzles, or games you want to revisit. Your personal queue for picking up where you left off anytime."
         icon={Clock}
       />
     ),
@@ -147,7 +147,7 @@ export const mainRoutes: RouteConfig[] = [
     element: (
       <ComingSoonPage
         featureName="Your Content"
-        description="Manage and review all the chess content you've created or saved — annotated games, custom lessons, and video analyses."
+        description="Manage and review all the chess content you've created or saved annotated games, custom lessons, and video analyses."
         icon={Video}
       />
     ),
@@ -182,7 +182,7 @@ export const mainRoutes: RouteConfig[] = [
     element: (
       <ComingSoonPage
         featureName="About"
-        description="Learn about the story behind XLChess — our mission to make high-quality chess education and play accessible to everyone, everywhere."
+        description="Learn about the story behind XLChess - our mission to make high-quality chess education and play accessible to everyone, everywhere."
         icon={Info}
       />
     ),
@@ -259,7 +259,7 @@ export const mainRoutes: RouteConfig[] = [
     element: (
       <ComingSoonPage
         featureName="How XLChess Works"
-        description="A complete guide to XLChess — how to play games, solve puzzles, follow creators, track your progress, and make the most of the platform."
+        description="A complete guide to XLChess - how to play games, solve puzzles, follow creators, track your progress, and make the most of the platform."
         icon={HelpCircle}
       />
     ),
