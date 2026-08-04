@@ -470,6 +470,7 @@ export class SessionManager {
     const present = this.presence.get(sessionId) ?? new Set<string>();
     present.add(userId);
     this.presence.set(sessionId, present);
+    this.broadcastPresence(session, userId, true);
 
     if (session.status === "WAITING") {
       const allPresent = session.matchDescriptor.participants.every((p) => present.has(p.userId));
@@ -516,6 +517,7 @@ export class SessionManager {
 
     const present = this.presence.get(sessionId);
     present?.delete(userId);
+    this.broadcastPresence(session, userId, false);
 
     if (session.status === "WAITING") return;
 
@@ -696,5 +698,22 @@ export class SessionManager {
   private broadcastGameOver(session: GameSession, result: GameResult): void {
     const userIds = session.matchDescriptor.participants.map((p) => p.userId);
     this.transport.broadcast(userIds, { type: "game_over", payload: result });
+  }
+
+  /**
+   * AM-03 (Backend Stabilization, pre-M5): broadcasts the wire-presence fact Session already
+   * derives in notifyParticipantConnected/Disconnected. No new authority, no new state — this
+   * exposes the same `presence` Set this class already owns, to the same participants
+   * broadcastState/broadcastGameOver already reach. Payload is intentionally minimal (just the
+   * userId and whether they're connected); Session's status/grace-timer semantics are not exposed,
+   * only the presence fact itself. Uses the existing generic `{type, payload}` SessionTransport
+   * shape — no change to the SessionTransport interface or any frozen contract.
+   */
+  private broadcastPresence(session: GameSession, userId: string, connected: boolean): void {
+    const userIds = session.matchDescriptor.participants.map((p) => p.userId);
+    this.transport.broadcast(userIds, {
+      type: "presence_update",
+      payload: { userId, connected },
+    });
   }
 }

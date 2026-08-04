@@ -62,13 +62,18 @@ export function bootstrapTransport(server: http.Server, hooks: TransportHooks = 
 
         // Check if this is a reconnection handshake
         if (parsed.resumeToken) {
-          const success = connectionManager.markReconnected(
+          // AM-02 (Backend Stabilization, pre-M5): track the reconnected connection by its real,
+          // persistent ConnectionId (returned by markReconnected), not the ResumeToken. The old
+          // `currentConnId = parsed.resumeToken` assignment meant every subsequent recordPong()/
+          // disconnect() call looked up a key ConnectionManager never indexed connections by —
+          // pongs silently stopped registering, and HeartbeatTicker killed the socket ~30s later.
+          const reconnectedId = connectionManager.markReconnected(
             parsed.resumeToken,
             parsed.lastReceivedSeq ?? 0,
             ws
           );
-          if (success) {
-            currentConnId = parsed.resumeToken;
+          if (reconnectedId) {
+            currentConnId = reconnectedId;
           } else {
             ws.close(4001, "Invalid or expired resume token");
           }

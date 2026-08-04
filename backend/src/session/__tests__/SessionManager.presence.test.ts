@@ -23,6 +23,21 @@ function createDummyDescriptor(): MatchDescriptor {
 // Short overridden timings so these tests don't wait on real 30-60s durations (M1-AM-01 / M2 additions).
 const FAST_TIMINGS = { participantGraceMs: 40, pauseGraceMs: 40, waitTimeoutMs: 40 };
 
+/** Minimal SessionTransport double that records every broadcast() call (AM-03). */
+function createRecordingTransport() {
+  const broadcasts: { userIds: string[]; message: { type: string; payload: unknown } }[] = [];
+  return {
+    transport: {
+      send: () => {},
+      broadcast: (userIds: string[], message: { type: string; payload: unknown }) => {
+        broadcasts.push({ userIds, message });
+      },
+      isConnected: () => false,
+    },
+    broadcasts,
+  };
+}
+
 describe("SessionManager M2: presence, grace timers, PAUSED (M1-AM-01)", () => {
   test("getSessionIdForParticipant resolves both participants after createSession", () => {
     const sm = new SessionManager(undefined, undefined, undefined, FAST_TIMINGS);
@@ -109,6 +124,39 @@ describe("SessionManager M2: presence, grace timers, PAUSED (M1-AM-01)", () => {
 
     sm.notifyParticipantConnected(session.sessionId, "user-w");
     assert.equal(session.status, "PLAYING");
+  });
+
+  test("AM-03 (Backend Stabilization, pre-M5): connect/disconnect broadcast minimal presence_update facts", () => {
+    const { transport, broadcasts } = createRecordingTransport();
+    const sm = new SessionManager(undefined, undefined, transport, FAST_TIMINGS);
+    const session = sm.createSession(createDummyDescriptor());
+
+    sm.notifyParticipantConnected(session.sessionId, "user-w");
+
+    const connectMsg = broadcasts.find(
+      (b) => b.message.type === "presence_update" && (b.message.payload as any).userId === "user-w"
+    );
+    assert.ok(connectMsg, "expected a presence_update broadcast for user-w connecting");
+    assert.deepEqual(connectMsg!.message.payload, { userId: "user-w", connected: true });
+    // Broadcast reaches all participants (Session's existing broadcast pattern), not just the mover.
+    assert.deepEqual([...connectMsg!.userIds].sort(), ["user-b", "user-w"]);
+
+    sm.notifyParticipantConnected(session.sessionId, "user-b"); // WAITING -> READY
+    sm.submitMove(session.sessionId, "user-w", { from: "e2", to: "e4" }); // READY -> PLAYING
+
+    sm.notifyParticipantDisconnected(session.sessionId, "user-b");
+
+    const disconnectMsg = broadcasts.find(
+      (b) =>
+        b.message.type === "presence_update" &&
+        (b.message.payload as any).userId === "user-b" &&
+        (b.message.payload as any).connected === false
+    );
+    assert.ok(disconnectMsg, "expected a presence_update broadcast for user-b disconnecting");
+    assert.deepEqual(disconnectMsg!.message.payload, { userId: "user-b", connected: false });
+
+    // Payload is minimal: exactly userId + connected, nothing else of Session's internal state.
+    assert.deepEqual(Object.keys(disconnectMsg!.message.payload as object).sort(), ["connected", "userId"]);
   });
 
   test("PAUSED with nobody reconnecting expires to ABANDONED with a mutual-draw GameResult", async () => {
