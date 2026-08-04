@@ -97,3 +97,18 @@ export type LessonProgress = Prisma.LessonProgressModel
  * 
  */
 export type CustomLink = Prisma.CustomLinkModel
+/**
+ * Model GameRecord
+ * 
+ */
+export type GameRecord = Prisma.GameRecordModel
+/**
+ * Model GameParticipant
+ * 
+ */
+export type GameParticipant = Prisma.GameParticipantModel
+/**
+ * Model PlayerRating
+ * 
+ */
+export type PlayerRating = Prisma.PlayerRatingModel

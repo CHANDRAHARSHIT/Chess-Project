@@ -66,7 +66,10 @@ export const ModelName = {
   Course: 'Course',
   Lesson: 'Lesson',
   LessonProgress: 'LessonProgress',
-  CustomLink: 'CustomLink'
+  CustomLink: 'CustomLink',
+  GameRecord: 'GameRecord',
+  GameParticipant: 'GameParticipant',
+  PlayerRating: 'PlayerRating'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -332,6 +335,60 @@ export const CustomLinkScalarFieldEnum = {
 } as const
 
 export type CustomLinkScalarFieldEnum = (typeof CustomLinkScalarFieldEnum)[keyof typeof CustomLinkScalarFieldEnum]
+
+
+export const GameRecordScalarFieldEnum = {
+  id: 'id',
+  gameSessionId: 'gameSessionId',
+  matchId: 'matchId',
+  variantId: 'variantId',
+  rated: 'rated',
+  provenance: 'provenance',
+  outcomeKind: 'outcomeKind',
+  winningSide: 'winningSide',
+  terminationReason: 'terminationReason',
+  moveCount: 'moveCount',
+  moveHistory: 'moveHistory',
+  initialSeconds: 'initialSeconds',
+  incrementSeconds: 'incrementSeconds',
+  timeControlLabel: 'timeControlLabel',
+  ratingPoolId: 'ratingPoolId',
+  tournamentContext: 'tournamentContext',
+  metadata: 'metadata',
+  durationSeconds: 'durationSeconds',
+  endedAt: 'endedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type GameRecordScalarFieldEnum = (typeof GameRecordScalarFieldEnum)[keyof typeof GameRecordScalarFieldEnum]
+
+
+export const GameParticipantScalarFieldEnum = {
+  id: 'id',
+  gameRecordId: 'gameRecordId',
+  userId: 'userId',
+  side: 'side',
+  result: 'result',
+  ratingBefore: 'ratingBefore',
+  ratingAfter: 'ratingAfter',
+  ratingDelta: 'ratingDelta'
+} as const
+
+export type GameParticipantScalarFieldEnum = (typeof GameParticipantScalarFieldEnum)[keyof typeof GameParticipantScalarFieldEnum]
+
+
+export const PlayerRatingScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  variantId: 'variantId',
+  rating: 'rating',
+  gamesPlayed: 'gamesPlayed',
+  version: 'version',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PlayerRatingScalarFieldEnum = (typeof PlayerRatingScalarFieldEnum)[keyof typeof PlayerRatingScalarFieldEnum]
 
 
 export const SortOrder = {
