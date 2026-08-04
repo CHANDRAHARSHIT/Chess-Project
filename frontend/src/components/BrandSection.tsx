@@ -30,7 +30,8 @@ export default function BrandSection() {
     gsap.to(el, {
       rotateX: -dy * 5,
       rotateY: dx * 5,
-      scale: 1.02,
+      scaleX: 1.02,
+      scaleY: 1.02,
       duration: 0.4,
       ease: "power2.out",
     });
@@ -42,7 +43,8 @@ export default function BrandSection() {
     gsap.to(el, {
       rotateX: 0,
       rotateY: 0,
-      scale: 1,
+      scaleX: 1,
+      scaleY: 1,
       duration: 0.7,
       ease: "elastic.out(1, 0.5)",
     });
