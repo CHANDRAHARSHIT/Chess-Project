@@ -23,13 +23,13 @@ import { ProtectedRoute } from "../components/ProtectedRoute";
 import DatabasePage from "../pages/DatabasePage";
 import DatabasePlayerPage from "../pages/DatabasePlayerPage";
 import DatabaseGamePage from "../pages/DatabaseGamePage";
+import SubscriptionsPage from "../pages/SubscriptionsPage";
 import {
   BookOpen,
   BarChart2,
   Clock,
   Video,
   UserCircle2,
-  Users,
   Shuffle,
   Flag,
 } from "lucide-react";
@@ -72,13 +72,7 @@ export const mainRoutes: RouteConfig[] = [
   },
   {
     path: "/subscriptions",
-    element: (
-      <ComingSoonPage
-        featureName="Subscriptions"
-        description="Follow your favorite chess creators and stay up to date with their latest content, video analysis, and interactive lessons."
-        icon={Users}
-      />
-    ),
+    element: <SubscriptionsPage />,
     title: "My Subscriptions | XLChess",
   },
   {
