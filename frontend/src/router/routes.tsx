@@ -26,12 +26,15 @@ import DatabaseGamePage from "../pages/DatabaseGamePage";
 import ReportPage from "../pages/ReportPage";
 import CompleteLaterPage from "../pages/CompleteLaterPage";
 import SubscriptionsPage from "../pages/SubscriptionsPage";
+import VariantsPage from "../pages/VariantsPage";
+import LessonsPage from "../pages/LessonsPage";
+import LessonViewerPage from "../pages/LessonViewerPage";
 import {
-  BookOpen,
   BarChart2,
   Video,
   UserCircle2,
   Shuffle,
+  Flag,
 } from "lucide-react";
 import QuickGamePage from "../pages/QuickGamePage";
 
@@ -77,13 +80,7 @@ export const mainRoutes: RouteConfig[] = [
   },
   {
     path: "/variants",
-    element: (
-      <ComingSoonPage
-        featureName="Chess Variants"
-        description="Explore exciting chess variants like Chess960, King of the Hill, 3-Check, and custom rulesets, bringing fresh strategic challenges and endless fun to the board."
-        icon={Shuffle}
-      />
-    ),
+    element: <VariantsPage />,
     title: "Chess Variants | XLChess",
   },
   {
@@ -123,14 +120,18 @@ export const mainRoutes: RouteConfig[] = [
   },
   {
     path: "/lessons",
-    element: (
-      <ComingSoonPage
-        featureName="Lessons"
-        description="Structured, interactive chess lessons designed to sharpen your openings, tactics, endgames, and overall strategic thinking at every level."
-        icon={BookOpen}
-      />
-    ),
-    title: "Lessons | XLChess",
+    element: <LessonsPage />,
+    title: "Lesson Library | XLChess",
+  },
+  {
+    path: "/lessons/:id",
+    element: <LessonViewerPage />,
+    title: "Chess Lesson | XLChess",
+  },
+  {
+    path: "/lesson/:id",
+    element: <LessonViewerPage />,
+    title: "Chess Lesson | XLChess",
   },
   {
     path: "/stats",
