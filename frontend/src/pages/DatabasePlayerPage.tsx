@@ -256,6 +256,7 @@ export default function DatabasePlayerPage() {
       {/* Hover Chessboard Popover — fixed to viewport, clamped to never overflow */}
       {hoveredGame && (
         <div
+          key={hoveredGame.id}
           className="fixed z-50 rounded-xl border border-brand-border/40 shadow-2xl pointer-events-none"
           style={{
             top: popoverPos.top,
@@ -265,12 +266,15 @@ export default function DatabasePlayerPage() {
             background: 'var(--color-brand-bg, #1a1a1a)',
             padding: 6,
             boxSizing: 'border-box',
+            animation: 'board-preview-fadein 150ms 50ms ease-out both',
           }}
         >
           <ThemedChessboard
+            key={hoveredGame.id}
             options={{
               position: hoveredGame.fen,
               showNotation: false,
+              animationDurationInMs: 0,
             }}
           />
         </div>
