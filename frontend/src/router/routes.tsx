@@ -23,17 +23,13 @@ import { ProtectedRoute } from "../components/ProtectedRoute";
 import DatabasePage from "../pages/DatabasePage";
 import DatabasePlayerPage from "../pages/DatabasePlayerPage";
 import DatabaseGamePage from "../pages/DatabaseGamePage";
+import ReportPage from "../pages/ReportPage";
+import CompleteLaterPage from "../pages/CompleteLaterPage";
 import SubscriptionsPage from "../pages/SubscriptionsPage";
 import VariantsPage from "../pages/VariantsPage";
 import LessonsPage from "../pages/LessonsPage";
 import LessonViewerPage from "../pages/LessonViewerPage";
-import {
-  BarChart2,
-  Clock,
-  Video,
-  UserCircle2,
-  Flag,
-} from "lucide-react";
+import { BarChart2, Video, UserCircle2 } from "lucide-react";
 import QuickGamePage from "../pages/QuickGamePage";
 
 export interface RouteConfig {
@@ -144,13 +140,7 @@ export const mainRoutes: RouteConfig[] = [
   },
   {
     path: "/complete-later",
-    element: (
-      <ComingSoonPage
-        featureName="Complete Later"
-        description="Save lessons, puzzles, or games you want to revisit. Your personal queue for picking up where you left off anytime."
-        icon={Clock}
-      />
-    ),
+    element: <CompleteLaterPage />,
     title: "Complete Later | XLChess",
   },
   {
@@ -177,13 +167,7 @@ export const mainRoutes: RouteConfig[] = [
   },
   {
     path: "/report",
-    element: (
-      <ComingSoonPage
-        featureName="Report"
-        description="Help keep the XLChess community safe and fair. Submit reports for unsportsmanlike conduct, cheating, or inappropriate content."
-        icon={Flag}
-      />
-    ),
+    element: <ReportPage />,
     title: "Report | XLChess",
   },
 
