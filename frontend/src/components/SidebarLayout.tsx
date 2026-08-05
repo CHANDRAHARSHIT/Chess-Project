@@ -377,6 +377,7 @@ export default function SidebarLayout({
     { name: "Lessons", href: "/lessons", icon: BookOpen },
     { name: "Puzzles", href: "/puzzles", icon: Puzzle },
     { name: "Variants", href: "/variants", icon: Shuffle },
+    { name: "Games Database", href: "/database", icon: Database },
     { name: "Upgrade", href: "/pricing", icon: Crown },
   ];
 
@@ -506,14 +507,14 @@ export default function SidebarLayout({
             }}
             title={isComingSoon ? "Coming soon" : undefined}
             className={`relative w-full flex transition-all duration-200 cursor-pointer ${isExpanded || isMobileOpen
-                ? `items-center py-2.5 mx-2 px-3 rounded-xl ${isActive
-                  ? "text-brand-accent bg-brand-text/10 font-medium"
-                  : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 group-hover/navitem:bg-brand-text/5 group-hover/navitem:text-brand-text"
-                }`
-                : `flex-col items-center justify-center py-[14px] mx-2 rounded-lg text-center ${isActive
-                  ? "text-brand-accent bg-brand-text/10 font-medium"
-                  : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 group-hover/navitem:bg-brand-text/5 group-hover/navitem:text-brand-text"
-                }`
+              ? `items-center py-2.5 mx-2 px-3 rounded-xl ${isActive
+                ? "text-brand-accent bg-brand-text/10 font-medium"
+                : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 group-hover/navitem:bg-brand-text/5 group-hover/navitem:text-brand-text"
+              }`
+              : `flex-col items-center justify-center py-[14px] mx-2 rounded-lg text-center ${isActive
+                ? "text-brand-accent bg-brand-text/10 font-medium"
+                : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 group-hover/navitem:bg-brand-text/5 group-hover/navitem:text-brand-text"
+              }`
               }`}
           >
             <div
@@ -552,8 +553,8 @@ export default function SidebarLayout({
           {isCustomLink && (isExpanded || isMobileOpen) && (
             <div
               className={`absolute right-4 flex items-center z-10 bg-brand-bg/80 backdrop-blur-sm rounded-full transition-all ${isMobileOpen
-                  ? "opacity-100"
-                  : "opacity-0 group-hover/navitem:opacity-100"
+                ? "opacity-100"
+                : "opacity-0 group-hover/navitem:opacity-100"
                 }`}
             >
               {/* Move to More / Move to Active */}
@@ -633,10 +634,10 @@ export default function SidebarLayout({
                     handleLinkClick(subItem.href, e);
                   }}
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-sans transition-colors duration-150 cursor-pointer ${subIsComingSoon
-                      ? "opacity-60 hover:opacity-100 text-brand-secondary hover:text-brand-text hover:bg-brand-text/5"
-                      : isSubActive
-                        ? "text-brand-accent bg-brand-text/10 font-medium"
-                        : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5"
+                    ? "opacity-60 hover:opacity-100 text-brand-secondary hover:text-brand-text hover:bg-brand-text/5"
+                    : isSubActive
+                      ? "text-brand-accent bg-brand-text/10 font-medium"
+                      : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5"
                     }`}
                 >
                   {SubIcon && (
@@ -984,10 +985,10 @@ export default function SidebarLayout({
                     handleLinkClick(subItem.href, e);
                   }}
                   className={`w-full flex items-center gap-4 px-5 py-3 text-[14px] font-sans text-left transition-colors duration-150 cursor-pointer ${hoverSubIsComingSoon
-                      ? "opacity-60 hover:opacity-100 text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06]"
-                      : isSubActive
-                        ? "text-brand-accent bg-brand-text/[0.06] font-medium"
-                        : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06]"
+                    ? "opacity-60 hover:opacity-100 text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06]"
+                    : isSubActive
+                      ? "text-brand-accent bg-brand-text/[0.06] font-medium"
+                      : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06]"
                     }`}
                 >
                   {SubIcon && (
@@ -1291,8 +1292,8 @@ export default function SidebarLayout({
                             setIsUrlDropdownOpen(false);
                           }}
                           className={`w-full text-left px-4 py-2.5 text-[14px] transition-colors cursor-pointer ${newLinkUrl === option.value
-                              ? "bg-[#2563EB] text-brand-text font-medium"
-                              : "text-brand-secondary hover:bg-brand-text/5 hover:text-brand-text"
+                            ? "bg-[#2563EB] text-brand-text font-medium"
+                            : "text-brand-secondary hover:bg-brand-text/5 hover:text-brand-text"
                             }`}
                         >
                           {option.label}
