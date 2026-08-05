@@ -3,11 +3,12 @@ import { Search, ChevronDown, Settings } from "lucide-react";
 import { useNavigate } from "react-router";
 import { ThemedChessboard } from "../components/ThemedChessboard";
 import { MOCK_GAMES } from "../data/mockGames";
+import type { MockGame } from "../data/mockGames";
 
 export default function DatabasePlayerPage() {
   const navigate = useNavigate();
-  const [hoveredGame, setHoveredGame] = useState<any>(null);
-  const [popoverPos, setPopoverPos] = useState({ top: 0, left: 0 });
+  const [hoveredGame, setHoveredGame] = useState<MockGame | null>(null);
+  const [popoverPos, setPopoverPos] = useState({ top: 0, left: 0, flipLeft: false });
   const [sortOption, setSortOption] = useState("year-desc");
   const [isSortOpen, setIsSortOpen] = useState(false);
 
@@ -21,12 +22,33 @@ export default function DatabasePlayerPage() {
     });
   }, [sortOption]);
 
-  const handleMouseEnter = (e: React.MouseEvent, game: any) => {
+  const POPOVER_SIZE = 240;
+  const POPOVER_MARGIN = 12;
+
+  const handleMouseEnter = (e: React.MouseEvent, game: MockGame) => {
     const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-    setPopoverPos({
-      top: rect.top + window.scrollY - 100,
-      left: rect.right + 20,
-    });
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+
+    // Prefer right of the row; flip to left if there's not enough room.
+    const spaceRight = vw - rect.right;
+    const flipLeft = spaceRight < POPOVER_SIZE + POPOVER_MARGIN;
+    const rawLeft = flipLeft
+      ? rect.left - POPOVER_SIZE - POPOVER_MARGIN
+      : rect.right + POPOVER_MARGIN;
+
+    // Center vertically on the hovered row, then clamp within viewport.
+    const rawTop = rect.top + rect.height / 2 - POPOVER_SIZE / 2;
+    const clampedTop = Math.min(
+      Math.max(rawTop, POPOVER_MARGIN),
+      vh - POPOVER_SIZE - POPOVER_MARGIN
+    );
+    const clampedLeft = Math.min(
+      Math.max(rawLeft, POPOVER_MARGIN),
+      vw - POPOVER_SIZE - POPOVER_MARGIN
+    );
+
+    setPopoverPos({ top: clampedTop, left: clampedLeft, flipLeft });
     setHoveredGame(game);
   };
 
@@ -231,17 +253,25 @@ export default function DatabasePlayerPage() {
 
       </div>
 
-      {/* Hover Chessboard Popover */}
+      {/* Hover Chessboard Popover — fixed to viewport, clamped to never overflow */}
       {hoveredGame && (
-        <div 
-          className="fixed z-50 p-2 bg-brand-bg rounded-lg border border-brand-border/60 shadow-2xl pointer-events-none transition-opacity duration-200"
-          style={{ top: popoverPos.top, left: popoverPos.left, width: 240, height: 240 }}
+        <div
+          className="fixed z-50 rounded-xl border border-brand-border/40 shadow-2xl pointer-events-none"
+          style={{
+            top: popoverPos.top,
+            left: popoverPos.left,
+            width: POPOVER_SIZE,
+            height: POPOVER_SIZE,
+            background: 'var(--color-brand-bg, #1a1a1a)',
+            padding: 6,
+            boxSizing: 'border-box',
+          }}
         >
-          <ThemedChessboard 
-            options={{ 
+          <ThemedChessboard
+            options={{
               position: hoveredGame.fen,
-              showNotation: false
-            }} 
+              showNotation: false,
+            }}
           />
         </div>
       )}
