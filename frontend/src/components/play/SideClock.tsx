@@ -1,11 +1,8 @@
 /**
  * SideClock.tsx — "Flagfall": the clock IS the turn indicator.
  *
- * There is no separate "your turn" badge anywhere in the UI — the side to move renders at
- * full weight over a gold rule; the idle side fades. Below 30s the display switches to
- * tenths; below 10s a hairline sweeps the plate once a second (see .clock-flag-sweep in
- * index.css); at 0 the plate inverts and freezes. The client never declares a flag itself —
- * it only renders the server's `remainingMs`, interpolated between updates (M5 plan §7.2).
+ * Sized and styled with clean glass backdrop, avoiding harsh/opaque fills.
+ * Displays tenths below 30s; below 10s a hairline sweeps the plate.
  */
 import { useEffect, useState } from "react";
 
@@ -26,17 +23,19 @@ function formatClock(ms: number): string {
 interface SideClockProps {
   remainingMs: number;
   lastMoveAt: number | null;
+  gameStartTime?: number | null;
   isLive: boolean;
   label: string;
 }
 
-export function SideClock({ remainingMs, lastMoveAt, isLive, label }: SideClockProps) {
+export function SideClock({ remainingMs, lastMoveAt, gameStartTime, isLive, label }: SideClockProps) {
   const [displayMs, setDisplayMs] = useState(remainingMs);
 
   useEffect(() => {
     let timer: number | null = null;
+    const activeStartAt = lastMoveAt ?? gameStartTime;
 
-    if (!isLive || lastMoveAt === null) {
+    if (!isLive || !activeStartAt) {
       timer = window.setTimeout(() => setDisplayMs(remainingMs), 0);
       return () => {
         if (timer !== null) window.clearTimeout(timer);
@@ -44,7 +43,7 @@ export function SideClock({ remainingMs, lastMoveAt, isLive, label }: SideClockP
     }
 
     const tick = () => {
-      const elapsed = Date.now() - lastMoveAt;
+      const elapsed = Date.now() - activeStartAt;
       const remaining = Math.max(0, remainingMs - elapsed);
       setDisplayMs(remaining);
       if (remaining <= 0) return;
@@ -56,9 +55,9 @@ export function SideClock({ remainingMs, lastMoveAt, isLive, label }: SideClockP
     return () => {
       if (timer !== null) window.clearTimeout(timer);
     };
-  }, [remainingMs, lastMoveAt, isLive]);
+  }, [remainingMs, lastMoveAt, gameStartTime, isLive]);
 
-  const isFlagged = displayMs <= 0;
+  const isFlagged = isLive && displayMs <= 0;
   const isCritical = isLive && displayMs <= CRITICAL_THRESHOLD_MS && !isFlagged;
   const accessibleSeconds = Math.ceil(Math.max(0, displayMs) / 1000);
 
@@ -66,22 +65,22 @@ export function SideClock({ remainingMs, lastMoveAt, isLive, label }: SideClockP
     <div
       role="timer"
       aria-label={`${label}: ${accessibleSeconds} seconds remaining`}
-      className={`relative overflow-hidden rounded-xl border px-4 py-2 min-w-[88px] text-center transition-all duration-[var(--dur-instant)] ${
+      className={`relative overflow-hidden rounded-xl border px-3.5 py-1.5 min-w-[76px] text-center transition-all duration-[var(--dur-instant)] backdrop-blur-md ${
         isFlagged
-          ? "clock-plate--flagged border-rose-500 bg-rose-500/20 text-rose-300 font-bold"
+          ? "clock-plate--flagged border-rose-500 bg-rose-500/20 text-rose-400 font-bold"
           : isLive
-            ? "bg-brand-accent/15 border-brand-accent/60 text-brand-accent shadow-[0_0_12px_rgba(212,175,110,0.2)]"
-            : "bg-brand-bg/60 border-brand-border/40 text-brand-secondary/80"
+            ? "bg-brand-accent/15 border-brand-accent/50 text-brand-accent shadow-[0_0_10px_rgba(212,175,110,0.15)]"
+            : "bg-brand-surface/60 border-white/10 text-brand-secondary/80"
       }`}
     >
       <span
         aria-hidden="true"
         className={`font-mono tabular-nums tracking-wider transition-all duration-[var(--dur-instant)] ${
           isCritical
-            ? "text-xl font-extrabold text-rose-400 animate-pulse"
+            ? "text-lg font-extrabold text-rose-400 animate-pulse"
             : isLive
-              ? "text-lg font-bold text-brand-accent"
-              : "text-base font-medium text-brand-secondary"
+              ? "text-base font-bold text-brand-accent"
+              : "text-sm font-semibold text-brand-secondary"
         }`}
       >
         {formatClock(displayMs)}
