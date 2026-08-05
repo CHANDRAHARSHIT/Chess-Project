@@ -173,6 +173,13 @@ export function PlayChessGame({ onLeave, onFindAnother }: PlayChessGameProps) {
         <ConnectionIndicator state={mapMyConnection(connectionStatus)} title="Your Connection" />
       </div>
 
+      {status === "WAITING" && !waitedTooLong && (
+        <div className="flex items-center gap-3 px-4 py-3 rounded-2xl border border-white/10 bg-brand-surface/50 text-brand-secondary text-sm shadow-md">
+          <span className="h-2 w-2 rounded-full bg-brand-accent animate-pulse shrink-0" />
+          <span>Waiting for your opponent to connect…</span>
+        </div>
+      )}
+
       {waitedTooLong && status === "WAITING" && (
         <div className="flex items-center gap-3 px-4 py-3 rounded-2xl border border-amber-500/30 bg-amber-500/10 text-amber-200 text-sm shadow-md">
           <AlertTriangle className="w-4 h-4 shrink-0" />

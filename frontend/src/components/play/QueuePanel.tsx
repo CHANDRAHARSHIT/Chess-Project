@@ -5,11 +5,22 @@ import BoardPreview from "../BoardPreview";
 import { useMatchmaking } from "../../hooks/useMatchmaking";
 import { soundManager } from "../../utils/SoundManager";
 
-function formatCountdown(ms: number): string {
-  const totalSeconds = Math.max(0, Math.ceil(ms / 1000));
-  const m = Math.floor(totalSeconds / 60);
-  const s = totalSeconds % 60;
-  return `${m}:${s.toString().padStart(2, "0")}`;
+function formatMinSec(totalSeconds: number): string {
+  const s = Math.max(0, totalSeconds);
+  const m = Math.floor(s / 60);
+  return `${m}:${(s % 60).toString().padStart(2, "0")}`;
+}
+
+// elapsed and remaining always sum to exactly the ticket TTL (60s) — floor() on the count-up
+// and ceil() on the count-down keeps that sum exact at every tick. Using the same rounding
+// (e.g. ceil for both) drifts the pair up to 1s apart, e.g. "0:01" elapsed next to "1:00"
+// remaining at the very first tick.
+function formatElapsed(ms: number): string {
+  return formatMinSec(Math.floor(ms / 1000));
+}
+
+function formatRemaining(ms: number): string {
+  return formatMinSec(Math.ceil(ms / 1000));
 }
 
 const primaryBtn =
@@ -120,11 +131,11 @@ export function QueuePanel() {
               <div className="flex items-center justify-between font-mono text-xs pt-1 border-t border-white/5">
                 <span className="text-brand-text flex items-center gap-1.5">
                   <span className="text-brand-secondary">Elapsed:</span>
-                  <span className="font-bold text-brand-accent">{formatCountdown(elapsedMs)}</span>
+                  <span className="font-bold text-brand-accent">{formatElapsed(elapsedMs)}</span>
                 </span>
                 <span className="text-brand-secondary flex items-center gap-1.5">
                   <span>Expires in:</span>
-                  <span className="font-bold text-brand-text">{formatCountdown(remainingMs)}</span>
+                  <span className="font-bold text-brand-text">{formatRemaining(remainingMs)}</span>
                 </span>
               </div>
             </div>
