@@ -150,16 +150,19 @@ export function ExplodedLessonShowcase() {
                 options={{
                   position: currentMove.fen,
                   boardOrientation: "white",
-                  showNotation: false, // Handled cleanly by BoardCoordinates to avoid duplication!
+                  showNotation: false,
                   allowDragging: false,
                 }}
               />
               <BoardCoordinates boardOrientation="white" />
+            </div>
 
-              <div className="absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-rose-950/90 border border-rose-500/50 text-[11px] font-mono text-rose-200 backdrop-blur-md flex items-center gap-1.5 shadow-lg">
+            {/* Most Replayed badge — below board to avoid overlapping pieces */}
+            <div className="flex items-center justify-center mt-2">
+              <span className="px-2.5 py-1 rounded-lg bg-rose-950/90 border border-rose-500/50 text-[11px] font-mono text-rose-200 flex items-center gap-1.5 shadow-lg">
                 <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
                 <span>Most Replayed: Move 7.Ne5!</span>
-              </div>
+              </span>
             </div>
 
             {/* Inline Board Move Controls */}

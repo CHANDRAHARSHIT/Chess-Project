@@ -57,15 +57,18 @@ export function RepertoireCard({ repertoire, isPinned = true }: RepertoireCardPr
               options={{
                 position: repertoire.fens[currentStepIndex] || repertoire.fens[0],
                 boardOrientation: repertoire.side,
-                showNotation: false, // Handled cleanly by BoardCoordinates!
+                showNotation: false,
                 allowDragging: false,
               }}
             />
             <BoardCoordinates boardOrientation={repertoire.side} />
+          </div>
 
-            <div className="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-black/80 border border-white/20 text-[11px] font-mono text-amber-300 font-bold backdrop-blur-md shadow-md">
+          {/* Position counter — below the board to avoid overlapping pieces */}
+          <div className="flex items-center justify-center mt-2">
+            <span className="px-2.5 py-0.5 rounded-lg bg-black/70 border border-white/20 text-[11px] font-mono text-amber-300 font-bold shadow-sm">
               Position {currentStepIndex + 1} of {repertoire.fens.length}
-            </div>
+            </span>
           </div>
 
           {/* Stepper Controls */}
