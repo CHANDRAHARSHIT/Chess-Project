@@ -84,7 +84,7 @@ export const CREATOR_PROFILE: CreatorProfile = {
   name: "Alex Vance",
   role: "Chess Educator & Content Creator",
   handle: "@AlexVanceChess",
-  avatar: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><circle cx='32' cy='32' r='32' fill='%23d4af6e'/><path d='M32 12c-4.4 0-8 3.6-8 8 0 3.3 2 6.2 5 7.4V32h-4v4h14v-4h-4v-4.6c3-1.2 5-4.1 5-7.4 0-4.4-3.6-8-8-8z' fill='%23080b14'/></svg>",
+  avatar: `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='gold' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23FCE8B2'/><stop offset='50%' stop-color='%23D4AF6E'/><stop offset='100%' stop-color='%238A6B2D'/></linearGradient><linearGradient id='bg' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%231A1F2C'/><stop offset='100%' stop-color='%23080B14'/></linearGradient></defs><circle cx='50' cy='50' r='48' fill='url(%23bg)' stroke='url(%23gold)' stroke-width='3'/><path d='M42 22C42 22 47 20 54 22C61 24 68 30 68 38C68 43 65 47 62 49C65 52 70 56 70 63C70 68 64 74 54 74H36C34 74 32 72 32 70V58C32 54 35 50 38 48C36 44 35 38 37 32C38 28 42 22 42 22Z' fill='url(%23gold)'/><circle cx='54' cy='32' r='3' fill='%23080B14'/><path d='M44 40C48 42 54 41 58 38' stroke='%23080B14' stroke-width='2.5' stroke-linecap='round'/></svg>`,
   bannerGradient: "from-amber-950/40 via-obsidian-mid to-obsidian",
   tagline: "Demystifying Grandmaster intuition through interactive structural analysis.",
   specializations: ["Catalan Defense", "Sicilian Najdorf", "Interactive Endgames", "Pawn Structures"],

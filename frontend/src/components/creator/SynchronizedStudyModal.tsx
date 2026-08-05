@@ -3,12 +3,13 @@
  *
  * Hero Showcase Modal for Jimmy's Live Demo.
  * Demonstrates Interactive Lesson Preview (Video + Interactive Board + PGN Move Tree + Position Discussions).
- * Optimized layout: max-w-5xl container with zero awkward empty whitespace.
+ * Fixed: Body scroll lock applied, single scrollbar, rich 4K video canvas thumbnail,
+ * theme-aware text contrast, and framed inside workspace bounds (top-16 md:left-64).
  */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Play, Pause, ChevronRight, MessageSquare, Sparkles, CheckCircle2 } from "lucide-react";
+import { X, Play, Pause, ChevronRight, MessageSquare, Sparkles, CheckCircle2, Volume2 } from "lucide-react";
 import { ThemedChessboard } from "../ThemedChessboard";
 import { BoardCoordinates } from "../BoardCoordinates";
 import { soundManager } from "../../utils/SoundManager";
@@ -20,13 +21,24 @@ interface SynchronizedStudyModalProps {
 }
 
 export function SynchronizedStudyModal({ item, onClose }: SynchronizedStudyModalProps) {
-  if (!item) return null;
-
+  // All hooks must be called unconditionally — before any early return.
   const [isPlaying, setIsPlaying] = useState(false);
   const [activeMoveIndex, setActiveMoveIndex] = useState(0);
   const [replyInput, setReplyInput] = useState("");
-  const [localDiscussions, setLocalDiscussions] = useState(item.positionDiscussion);
+  const [localDiscussions, setLocalDiscussions] = useState(item?.positionDiscussion ?? []);
   const [discussionSent, setDiscussionSent] = useState(false);
+
+  // Prevent background body scrolling while modal is open
+  useEffect(() => {
+    if (item) {
+      document.body.style.overflow = "hidden";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [item]);
+
+  if (!item) return null;
 
   const moves = item.pgn && item.pgn.length > 0
     ? item.pgn
@@ -59,13 +71,14 @@ export function SynchronizedStudyModal({ item, onClose }: SynchronizedStudyModal
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 overflow-y-auto bg-obsidian/85 backdrop-blur-md">
+      {/* Positioned inside workspace frame (top-16 md:left-64) so header & sidebar stay visible */}
+      <div className="fixed top-16 left-0 md:left-64 right-0 bottom-0 z-40 bg-black/75 backdrop-blur-md flex items-center justify-center p-3 sm:p-5">
         <motion.div
           initial={{ opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.96 }}
           transition={{ type: "spring", stiffness: 120, damping: 18 }}
-          className="relative w-full max-w-5xl rounded-3xl border border-brand-accent/30 bg-obsidian-mid p-5 sm:p-7 shadow-[0_24px_60px_rgba(0,0,0,0.85)] space-y-5 max-h-[90vh] overflow-y-auto"
+          className="relative w-full max-w-5xl rounded-3xl border border-brand-accent/40 bg-brand-surface p-5 sm:p-7 shadow-[0_24px_60px_rgba(0,0,0,0.85)] space-y-5 max-h-[85vh] overflow-y-auto"
         >
           {/* Close Button */}
           <button
@@ -92,15 +105,18 @@ export function SynchronizedStudyModal({ item, onClose }: SynchronizedStudyModal
 
           {/* Main 2-Column Responsive Layout */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-            {/* Left Column: Video Player Mockup & Timeline (6 Cols) */}
+            {/* Left Column: Rich 4K Video Player Thumbnail (6 Cols) */}
             <div className="lg:col-span-6 flex flex-col space-y-4">
-              <div className="relative w-full aspect-video rounded-2xl overflow-hidden border border-brand-accent/30 bg-obsidian flex flex-col justify-between p-4 shadow-xl">
+              <div className="relative w-full aspect-video rounded-2xl overflow-hidden border-2 border-brand-accent/40 bg-slate-950 flex flex-col justify-between p-4 shadow-2xl">
+                {/* Background Styling: Subtle chessboard radial gradient */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-slate-950 via-slate-900 to-amber-950/30 opacity-90" />
+
                 {/* Top Video Status */}
-                <div className="flex items-center justify-between text-xs font-mono text-brand-text z-10">
-                  <span className="px-2.5 py-0.5 rounded bg-obsidian/90 border border-brand-text/30 font-medium">
-                    HD Masterclass Video
+                <div className="flex items-center justify-between text-xs font-mono text-white z-10">
+                  <span className="px-2.5 py-0.5 rounded bg-black/80 border border-white/20 font-bold flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" /> 4K HD Stream
                   </span>
-                  <span className="text-brand-accent font-bold">
+                  <span className="text-amber-400 font-bold font-mono">
                     {item.videoDuration}
                   </span>
                 </div>
@@ -114,13 +130,15 @@ export function SynchronizedStudyModal({ item, onClose }: SynchronizedStudyModal
                   {isPlaying ? <Pause className="w-8 h-8 fill-current" /> : <Play className="w-8 h-8 fill-current" />}
                 </button>
 
-                {/* Timeline Markers Linked to PGN Moves */}
+                {/* Sound Wave & Timeline Markers Linked to PGN Moves */}
                 <div className="space-y-2 z-10">
-                  <div className="flex items-center justify-between text-xs font-mono text-stone-300">
-                    <span>Timeline Progress</span>
+                  <div className="flex items-center justify-between text-xs font-mono text-stone-200">
+                    <span className="flex items-center gap-1.5 text-amber-300 font-semibold">
+                      <Volume2 className="w-3.5 h-3.5" /> Audio Stream Synchronized
+                    </span>
                     <span>Move {activeMoveIndex + 1} of {moves.length}</span>
                   </div>
-                  <div className="w-full h-2 rounded-full bg-brand-text/15 overflow-hidden relative">
+                  <div className="w-full h-2 rounded-full bg-white/20 overflow-hidden relative">
                     <div
                       className="h-full bg-brand-accent transition-all duration-300"
                       style={{ width: `${((activeMoveIndex + 1) / moves.length) * 100}%` }}
@@ -131,7 +149,7 @@ export function SynchronizedStudyModal({ item, onClose }: SynchronizedStudyModal
 
               {/* Timeline Chapter Markers List */}
               {item.timelineMarkers && item.timelineMarkers.length > 0 && (
-                <div className="p-3.5 rounded-2xl bg-obsidian-glass border border-brand-text/15 space-y-2">
+                <div className="p-3.5 rounded-2xl bg-brand-text/5 border border-brand-text/15 space-y-2">
                   <span className="text-xs font-mono text-brand-accent font-semibold uppercase tracking-wide">
                     Lesson Chapters:
                   </span>
@@ -140,11 +158,11 @@ export function SynchronizedStudyModal({ item, onClose }: SynchronizedStudyModal
                       <div
                         key={idx}
                         onClick={() => handleSelectMove(marker.moveIndex)}
-                        className="p-2 rounded-xl bg-brand-text/5 hover:bg-brand-accent/15 border border-brand-text/10 text-xs font-sans flex items-center justify-between cursor-pointer transition-colors"
+                        className="p-2 rounded-xl bg-brand-surface hover:bg-brand-accent/15 border border-brand-text/10 text-xs font-sans flex items-center justify-between cursor-pointer transition-colors"
                       >
                         <span className="font-mono text-brand-accent font-bold">{marker.time}</span>
                         <span className="text-brand-text font-medium">{marker.title}</span>
-                        <ChevronRight className="w-4 h-4 text-stone-400" />
+                        <ChevronRight className="w-4 h-4 text-brand-secondary" />
                       </div>
                     ))}
                   </div>
@@ -155,12 +173,12 @@ export function SynchronizedStudyModal({ item, onClose }: SynchronizedStudyModal
             {/* Right Column: Interactive Chessboard & PGN Tree (6 Cols) */}
             <div className="lg:col-span-6 flex flex-col space-y-4">
               {/* Interactive Chessboard Container */}
-              <div className="relative w-full max-w-[340px] aspect-square mx-auto rounded-2xl overflow-hidden border-2 border-brand-accent/40 shadow-[0_16px_40px_rgba(0,0,0,0.7)] bg-obsidian">
+              <div className="relative w-full max-w-[340px] aspect-square mx-auto rounded-2xl overflow-hidden border-2 border-brand-accent/40 shadow-[0_16px_40px_rgba(0,0,0,0.6)] bg-obsidian">
                 <ThemedChessboard
                   options={{
                     position: item.thumbnailFen,
                     boardOrientation: "white",
-                    showNotation: true,
+                    showNotation: false, // Handled by BoardCoordinates cleanly!
                     allowDragging: false,
                   }}
                 />
@@ -169,7 +187,7 @@ export function SynchronizedStudyModal({ item, onClose }: SynchronizedStudyModal
 
               {/* Interactive PGN Moves Grid */}
               <div className="space-y-1.5">
-                <span className="text-xs font-mono text-stone-300 uppercase font-semibold">
+                <span className="text-xs font-mono text-brand-secondary uppercase font-semibold">
                   Interactive Move Tree (Click to jump):
                 </span>
                 <div className="flex flex-wrap gap-1.5">
@@ -191,13 +209,13 @@ export function SynchronizedStudyModal({ item, onClose }: SynchronizedStudyModal
 
               {/* Move Commentary Annotation */}
               {item.annotations && item.annotations[activeMoveIndex] && (
-                <div className="p-3.5 rounded-2xl bg-amber-950/30 border border-brand-accent/40 text-xs font-sans text-brand-text leading-relaxed italic">
+                <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-xs font-sans text-brand-text leading-relaxed italic">
                   "{item.annotations[activeMoveIndex]}"
                 </div>
               )}
 
               {/* Position Discussion Queue */}
-              <div className="p-4 rounded-2xl bg-obsidian-glass border border-brand-text/15 space-y-3">
+              <div className="p-4 rounded-2xl bg-brand-text/5 border border-brand-text/15 space-y-3">
                 <span className="text-xs font-mono text-brand-accent font-semibold uppercase tracking-wide flex items-center gap-1.5">
                   <MessageSquare className="w-4 h-4" />
                   <span>Position Discussions (Move {activeMoveIndex + 1})</span>
@@ -205,12 +223,12 @@ export function SynchronizedStudyModal({ item, onClose }: SynchronizedStudyModal
 
                 <div className="space-y-2 max-h-36 overflow-y-auto">
                   {localDiscussions.map((disc, idx) => (
-                    <div key={idx} className="p-2.5 rounded-xl bg-brand-text/5 text-xs font-sans space-y-1 border border-brand-text/10">
-                      <div className="flex items-center justify-between text-stone-400 font-mono text-[11px]">
+                    <div key={idx} className="p-2.5 rounded-xl bg-brand-surface text-xs font-sans space-y-1 border border-brand-text/10">
+                      <div className="flex items-center justify-between text-brand-secondary font-mono text-[11px]">
                         <span className="text-brand-text font-bold">{disc.studentName}</span>
                         <span>{disc.timeAgo}</span>
                       </div>
-                      <p className="text-brand-text/90 leading-relaxed">{disc.comment}</p>
+                      <p className="text-brand-text leading-relaxed">{disc.comment}</p>
                       {disc.creatorReply && (
                         <p className="text-brand-accent bg-brand-accent/10 p-2 rounded-lg text-xs mt-1 border border-brand-accent/20">
                           <strong>Alex Vance:</strong> {disc.creatorReply}
@@ -227,7 +245,7 @@ export function SynchronizedStudyModal({ item, onClose }: SynchronizedStudyModal
                     value={replyInput}
                     onChange={(e) => setReplyInput(e.target.value)}
                     placeholder="Reply as Alex Vance (Creator)…"
-                    className="flex-1 px-3.5 py-2 text-xs font-sans rounded-xl bg-obsidian border border-brand-text/20 text-brand-text placeholder:text-stone-500 outline-none focus:border-brand-accent/60 transition-colors"
+                    className="flex-1 px-3.5 py-2 text-xs font-sans rounded-xl bg-brand-surface border border-brand-text/20 text-brand-text placeholder:text-brand-secondary outline-none focus:border-brand-accent transition-colors"
                   />
                   <button
                     type="submit"
@@ -238,7 +256,7 @@ export function SynchronizedStudyModal({ item, onClose }: SynchronizedStudyModal
                 </form>
 
                 {discussionSent && (
-                  <span className="text-xs font-mono text-emerald-400 flex items-center gap-1">
+                  <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
                     <CheckCircle2 className="w-3.5 h-3.5" /> Response posted to student thread!
                   </span>
                 )}

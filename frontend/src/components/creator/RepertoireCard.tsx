@@ -1,13 +1,13 @@
 /**
  * RepertoireCard.tsx
  *
- * Pinned Signature Opening Repertoire Card (Spotify Artist Pick style).
- * Features an embedded playable mini-chessboard (<ThemedChessboard>)
- * that allows creators and students to step through variations inline.
+ * Pinned Signature Repertoire card featuring Alex Vance's Catalan Gold Repertoire.
+ * Features an embedded interactive playable mini-chessboard with move stepper controls.
+ * Fully theme-aware for light and dark modes.
  */
 
 import { useState } from "react";
-import { ChevronRight, ChevronLeft, RotateCcw, Bookmark, Sparkles } from "lucide-react";
+import { ChevronRight, ChevronLeft, RotateCcw, Pin, Sparkles } from "lucide-react";
 import { ThemedChessboard } from "../ThemedChessboard";
 import { BoardCoordinates } from "../BoardCoordinates";
 import { soundManager } from "../../utils/SoundManager";
@@ -19,94 +19,84 @@ interface RepertoireCardProps {
 }
 
 export function RepertoireCard({ repertoire, isPinned = true }: RepertoireCardProps) {
-  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const [currentStepIndex, setCurrentStepIndex] = useState(repertoire.fens.length - 1);
 
-  // Cycle through FENs safely
-  const fens = repertoire.fens;
-  const currentFen = fens[currentStepIndex % fens.length];
-
-  const handleNext = () => {
+  const handleStep = (newIndex: number) => {
     soundManager.playButtonClick();
-    setCurrentStepIndex((prev) => (prev + 1) % fens.length);
-  };
-
-  const handlePrev = () => {
-    soundManager.playButtonClick();
-    setCurrentStepIndex((prev) => (prev - 1 + fens.length) % fens.length);
-  };
-
-  const handleReset = () => {
-    soundManager.playButtonClick();
-    setCurrentStepIndex(0);
+    setCurrentStepIndex(newIndex);
   };
 
   return (
-    <div className="relative w-full rounded-3xl border border-brand-accent/25 bg-obsidian-mid p-6 shadow-xl transition-all duration-300 hover:border-brand-accent/50 group">
-      {/* Pinned Creator Pick Header */}
-      {isPinned && (
-        <div className="flex items-center justify-between pb-4 mb-4 border-b border-brand-text/10">
-          <div className="flex items-center gap-2 text-xs font-mono font-semibold text-brand-accent uppercase tracking-wider">
-            <Sparkles className="w-4 h-4" />
-            <span>Creator Pick • Signature Line</span>
-          </div>
-          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono bg-brand-accent/10 border border-brand-accent/30 text-brand-accent">
+    <div className="relative w-full rounded-3xl border border-brand-accent/40 bg-brand-surface p-6 sm:p-8 shadow-2xl space-y-6">
+      {/* Top Banner: Pinned Badge & ECO Code */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-brand-text/10">
+        <div className="flex items-center gap-3">
+          {isPinned && (
+            <span className="px-3 py-1 rounded-full text-xs font-sans font-semibold bg-brand-accent/20 border border-brand-accent/40 text-brand-accent flex items-center gap-1.5 shadow-sm">
+              <Pin className="w-3.5 h-3.5 fill-current" />
+              <span>Pinned Signature Repertoire</span>
+            </span>
+          )}
+          <span className="px-2.5 py-0.5 rounded text-xs font-mono font-bold bg-brand-text/10 text-brand-text">
             ECO {repertoire.eco}
           </span>
         </div>
-      )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-        {/* Left: Interactive Mini Chessboard Container (5 Cols) */}
+        <div className="flex items-center gap-4 text-xs font-mono text-brand-secondary">
+          <span>Mastery: <strong className="text-brand-accent font-bold">{repertoire.masteryRate}%</strong></span>
+          <span>Students: <strong className="text-brand-text font-bold">{repertoire.enrolledStudents.toLocaleString()}</strong></span>
+        </div>
+      </div>
+
+      {/* Main Grid: Interactive Board (Left 5 Cols) + Variation Breakdown (Right 7 Cols) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        {/* Left Column: Playable Mini Chessboard (5 Cols) */}
         <div className="lg:col-span-5 flex flex-col items-center">
-          <div className="relative w-full max-w-[280px] sm:max-w-[320px] aspect-square rounded-2xl overflow-hidden border-2 border-brand-accent/40 shadow-2xl bg-obsidian">
+          <div className="relative w-full max-w-[280px] sm:max-w-[320px] aspect-square rounded-2xl overflow-hidden border-2 border-brand-accent/40 shadow-[0_16px_40px_rgba(0,0,0,0.6)] bg-obsidian">
             <ThemedChessboard
               options={{
-                position: currentFen,
+                position: repertoire.fens[currentStepIndex] || repertoire.fens[0],
                 boardOrientation: repertoire.side,
-                showNotation: false,
+                showNotation: false, // Handled cleanly by BoardCoordinates!
                 allowDragging: false,
-                boardStyle: { borderRadius: "0px" },
               }}
             />
             <BoardCoordinates boardOrientation={repertoire.side} />
 
-            {/* Stepper Overlay Pill */}
-            <div className="absolute bottom-2 right-2 px-2 py-1 rounded-lg bg-obsidian/90 border border-brand-accent/30 text-[10px] font-mono text-brand-accent backdrop-blur-md">
-              Position {currentStepIndex + 1} / {fens.length}
+            <div className="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-black/80 border border-white/20 text-[11px] font-mono text-amber-300 font-bold backdrop-blur-md shadow-md">
+              Position {currentStepIndex + 1} of {repertoire.fens.length}
             </div>
           </div>
 
-          {/* Inline Move Stepper Controls */}
-          <div className="flex items-center justify-center gap-2 mt-4">
+          {/* Stepper Controls */}
+          <div className="flex items-center gap-2 mt-4">
             <button
-              onClick={handleReset}
-              className="p-2 rounded-xl bg-brand-text/5 hover:bg-brand-text/10 text-brand-secondary hover:text-brand-text border border-brand-text/10 transition-colors cursor-pointer"
-              title="Reset position"
+              onClick={() => handleStep(Math.max(0, currentStepIndex - 1))}
+              disabled={currentStepIndex === 0}
+              className="px-3 py-1.5 rounded-xl bg-brand-text/10 hover:bg-brand-text/20 disabled:opacity-40 text-brand-text font-mono text-xs font-bold transition-colors cursor-pointer flex items-center gap-1"
             >
-              <RotateCcw className="w-4 h-4" />
+              <ChevronLeft className="w-4 h-4" /> Prev
             </button>
             <button
-              onClick={handlePrev}
-              className="p-2 rounded-xl bg-brand-text/5 hover:bg-brand-text/10 text-brand-secondary hover:text-brand-text border border-brand-text/10 transition-colors cursor-pointer"
-              title="Previous move"
+              onClick={() => handleStep(0)}
+              className="px-3 py-1.5 rounded-xl bg-brand-text/10 hover:bg-brand-text/20 text-brand-text font-mono text-xs font-bold transition-colors cursor-pointer flex items-center gap-1"
             >
-              <ChevronLeft className="w-4 h-4" />
+              <RotateCcw className="w-3.5 h-3.5" /> Reset
             </button>
             <button
-              onClick={handleNext}
-              className="px-3 py-2 rounded-xl bg-brand-accent/10 hover:bg-brand-accent/20 text-brand-accent border border-brand-accent/30 text-xs font-mono font-medium transition-colors cursor-pointer flex items-center gap-1"
-              title="Next move"
+              onClick={() => handleStep(Math.min(repertoire.fens.length - 1, currentStepIndex + 1))}
+              disabled={currentStepIndex === repertoire.fens.length - 1}
+              className="px-3 py-1.5 rounded-xl bg-brand-accent text-obsidian disabled:opacity-40 font-mono text-xs font-bold transition-colors cursor-pointer flex items-center gap-1"
             >
-              <span>Next Move</span>
-              <ChevronRight className="w-4 h-4" />
+              Next <ChevronRight className="w-4 h-4" />
             </button>
           </div>
         </div>
 
-        {/* Right: Repertoire Commentary & Moves Tree (7 Cols) */}
+        {/* Right Column: Repertoire Details (7 Cols) */}
         <div className="lg:col-span-7 flex flex-col space-y-4">
           <div>
-            <h3 className="text-xl sm:text-2xl font-display font-bold text-brand-text tracking-wide">
+            <h3 className="text-xl sm:text-2xl font-display font-bold text-brand-text">
               {repertoire.title}
             </h3>
             <p className="text-xs sm:text-sm font-sans text-brand-secondary mt-1 leading-relaxed">
@@ -114,42 +104,35 @@ export function RepertoireCard({ repertoire, isPinned = true }: RepertoireCardPr
             </p>
           </div>
 
-          {/* Moves Sequence Pills */}
-          <div className="p-3 rounded-2xl bg-obsidian-glass border border-brand-text/10 flex flex-wrap gap-1.5 items-center">
-            <span className="text-[11px] font-mono text-brand-secondary mr-1">Main Line:</span>
-            {repertoire.moves.map((mv, idx) => (
-              <span
-                key={idx}
-                className={`px-2 py-0.5 rounded text-xs font-mono transition-colors ${
-                  mv.includes("!")
-                    ? "bg-brand-accent/20 text-brand-accent font-bold border border-brand-accent/40"
-                    : "bg-brand-text/5 text-brand-text/90"
-                }`}
-              >
-                {mv}
+          {/* Highlight Move Callout Box */}
+          <div className="p-4 rounded-2xl bg-amber-500/10 border border-brand-accent/40 space-y-1.5">
+            <div className="flex items-center justify-between text-xs font-mono font-bold text-brand-accent">
+              <span className="flex items-center gap-1.5">
+                <Sparkles className="w-4 h-4 text-brand-accent" />
+                <span>Alex's Signature Move: {repertoire.highlightMove}</span>
               </span>
-            ))}
+            </div>
+            <p className="text-xs font-sans text-brand-text leading-relaxed">
+              "{repertoire.highlightNote}"
+            </p>
           </div>
 
-          {/* Highlight Key Move Note */}
-          <div className="p-3.5 rounded-2xl bg-amber-950/20 border border-brand-accent/30 flex items-start gap-3">
-            <div className="p-1.5 rounded-lg bg-brand-accent/20 text-brand-accent shrink-0 mt-0.5">
-              <Bookmark className="w-4 h-4" />
+          {/* Interactive Move Sequence Buttons */}
+          <div className="space-y-1.5">
+            <span className="text-xs font-mono text-brand-secondary uppercase font-semibold">
+              Move Sequence (Click to jump board position):
+            </span>
+            <div className="flex flex-wrap gap-1.5">
+              {repertoire.moves.map((mv, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => handleStep(Math.min(repertoire.fens.length - 1, Math.floor(idx / 3)))}
+                  className="px-2.5 py-1 rounded-lg bg-brand-text/5 hover:bg-brand-accent/20 border border-brand-text/10 text-brand-text font-mono text-xs font-medium transition-colors cursor-pointer"
+                >
+                  {mv}
+                </button>
+              ))}
             </div>
-            <div className="flex flex-col space-y-0.5">
-              <span className="text-xs font-mono font-bold text-brand-accent">
-                Key Repertoire Secret ({repertoire.highlightMove})
-              </span>
-              <p className="text-xs font-sans text-brand-text/80 leading-relaxed">
-                {repertoire.highlightNote}
-              </p>
-            </div>
-          </div>
-
-          {/* Enrollment Stats */}
-          <div className="flex items-center justify-between pt-2 text-xs font-sans text-brand-secondary border-t border-brand-text/10">
-            <span>Enrolled Students: <strong className="text-brand-text font-mono">{repertoire.enrolledStudents.toLocaleString()}</strong></span>
-            <span>Mastery Rate: <strong className="text-brand-accent font-mono">{repertoire.masteryRate}%</strong></span>
           </div>
         </div>
       </div>

@@ -4,6 +4,7 @@
  * Card component for Alex Vance's featured masterclasses.
  * Combines video duration, student completion rate, PGN move counts,
  * and the "Most Replayed Position" heat marker.
+ * Fully theme-aware for light and dark modes.
  */
 
 import { Play, Flame, Eye, ThumbsUp } from "lucide-react";
@@ -25,7 +26,7 @@ export function MasterclassCard({ item, onPreviewClick }: MasterclassCardProps) 
   return (
     <div
       onClick={handleClick}
-      className="group relative w-full rounded-3xl border border-brand-text/15 bg-obsidian-mid p-5 shadow-xl transition-all duration-300 hover:border-brand-accent/50 hover:-translate-y-1 hover:shadow-[0_20px_40px_-15px_rgba(212,175,110,0.15)] cursor-pointer flex flex-col justify-between"
+      className="group relative w-full rounded-3xl border border-brand-text/15 bg-brand-surface p-5 shadow-xl transition-all duration-300 hover:border-brand-accent/50 hover:-translate-y-1 hover:shadow-[0_20px_40px_-15px_rgba(212,175,110,0.15)] cursor-pointer flex flex-col justify-between"
     >
       <div className="space-y-4">
         {/* Top Header: Category & Status */}
@@ -36,8 +37,8 @@ export function MasterclassCard({ item, onPreviewClick }: MasterclassCardProps) 
           <span
             className={`px-2.5 py-0.5 rounded text-[10px] font-mono font-medium ${
               item.status === "Published"
-                ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"
-                : "bg-amber-500/10 text-amber-400 border border-amber-500/30"
+                ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30"
+                : "bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/30"
             }`}
           >
             {item.status}
@@ -58,12 +59,12 @@ export function MasterclassCard({ item, onPreviewClick }: MasterclassCardProps) 
           </div>
 
           {/* Video Duration Chip */}
-          <div className="absolute bottom-2 right-2 px-2.5 py-0.5 rounded-md bg-obsidian/95 border border-brand-text/30 text-[10px] font-mono text-brand-text font-semibold shadow-md">
+          <div className="absolute bottom-2 right-2 px-2.5 py-0.5 rounded-md bg-black/80 border border-white/20 text-[10px] font-mono text-white font-semibold shadow-md">
             {item.videoDuration}
           </div>
 
           {/* Hover Play Button Overlay */}
-          <div className="absolute inset-0 bg-obsidian/50 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
             <div className="p-3.5 rounded-full bg-brand-accent text-obsidian shadow-2xl scale-90 group-hover:scale-100 transition-transform">
               <Play className="w-6 h-6 fill-current" />
             </div>
@@ -75,29 +76,29 @@ export function MasterclassCard({ item, onPreviewClick }: MasterclassCardProps) 
           <h4 className="text-lg font-display font-bold text-brand-text group-hover:text-brand-accent transition-colors line-clamp-2 leading-snug">
             {item.title}
           </h4>
-          <p className="text-xs font-sans text-stone-300 mt-1 line-clamp-2 leading-relaxed">
+          <p className="text-xs font-sans text-brand-secondary mt-1 line-clamp-2 leading-relaxed">
             {item.description}
           </p>
         </div>
 
         {/* Replay Heat Marker Tag */}
         {item.mostReplayedMove && item.mostReplayedMove !== "Draft Mode" && (
-          <div className="p-2.5 rounded-xl bg-rose-950/40 border border-rose-500/40 flex items-center gap-2 text-xs font-mono text-rose-200 shadow-inner">
-            <Flame className="w-4 h-4 text-rose-400 shrink-0 animate-pulse" />
-            <span className="truncate">Most Replayed: <strong className="text-white">{item.mostReplayedMove}</strong></span>
+          <div className="p-2.5 rounded-xl bg-rose-500/15 border border-rose-500/30 flex items-center gap-2 text-xs font-mono text-rose-800 dark:text-rose-200 shadow-sm">
+            <Flame className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0 animate-pulse" />
+            <span className="truncate">Most Replayed: <strong className="font-bold">{item.mostReplayedMove}</strong></span>
           </div>
         )}
       </div>
 
       {/* Footer Stats */}
-      <div className="pt-4 mt-4 border-t border-brand-text/10 flex items-center justify-between text-xs font-sans text-stone-400">
+      <div className="pt-4 mt-4 border-t border-brand-text/10 flex items-center justify-between text-xs font-sans text-brand-secondary">
         <div className="flex items-center gap-3">
           <span className="flex items-center gap-1">
-            <Eye className="w-3.5 h-3.5 text-stone-400" />
+            <Eye className="w-3.5 h-3.5" />
             <strong className="text-brand-text font-mono">{item.views.toLocaleString()}</strong>
           </span>
           <span className="flex items-center gap-1">
-            <ThumbsUp className="w-3.5 h-3.5 text-stone-400" />
+            <ThumbsUp className="w-3.5 h-3.5" />
             <strong className="text-brand-text font-mono">{item.likes.toLocaleString()}</strong>
           </span>
         </div>

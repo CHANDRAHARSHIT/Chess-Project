@@ -1,16 +1,12 @@
 /**
  * ChannelHero.tsx
  *
- * Hero banner component for Alex Vance's Channel Homepage.
- * Features:
- * - Dynamic live status toggle (Recording / Live Masterclass / Offline)
- * - Animated avatar status ring
- * - Creator tagline & specializations
- * - Tactile action triggers with sound feedback
+ * Hero Header Banner for Alex Vance's Channel Showcase (/channel).
+ * Fully theme-aware for light and dark modes.
  */
 
 import { useState } from "react";
-import { Radio, Video, Share2, Sparkles, Award, CheckCircle2 } from "lucide-react";
+import { Radio, Share2, Sparkles, Award } from "lucide-react";
 import { soundManager } from "../../utils/SoundManager";
 import type { CreatorProfile } from "../../data/creatorMockData";
 
@@ -20,169 +16,145 @@ interface ChannelHeroProps {
 
 export function ChannelHero({ profile }: ChannelHeroProps) {
   const [liveStatus, setLiveStatus] = useState<"recording" | "live" | "offline">(profile.liveStatus);
-  const [copied, setCopied] = useState(false);
+  const [sharedToast, setSharedToast] = useState(false);
 
   const toggleStatus = () => {
     soundManager.playButtonClick();
-    if (liveStatus === "recording") setLiveStatus("live");
-    else if (liveStatus === "live") setLiveStatus("offline");
-    else setLiveStatus("recording");
+    const next = liveStatus === "recording" ? "live" : liveStatus === "live" ? "offline" : "recording";
+    setLiveStatus(next);
   };
 
   const handleShare = () => {
     soundManager.playButtonClick();
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    setSharedToast(true);
+    setTimeout(() => setSharedToast(false), 2500);
   };
 
   return (
-    <div className="relative w-full rounded-3xl overflow-hidden border border-brand-border/30 bg-obsidian-mid shadow-2xl transition-all duration-300">
-      {/* Background Banner with Obsidian & Gold Glow */}
-      <div className="absolute inset-0 bg-gradient-to-r from-amber-950/40 via-obsidian-mid to-obsidian opacity-90" />
-      <div className="absolute -top-24 -right-24 w-96 h-96 bg-brand-accent/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
+    <div className="relative w-full rounded-3xl border border-brand-accent/30 bg-brand-surface p-6 sm:p-8 shadow-2xl space-y-6 overflow-hidden">
+      {/* Background ambient lighting */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-brand-accent/10 rounded-full blur-3xl pointer-events-none" />
 
-      {/* Decorative Grid Lines */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(212,175,110,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(212,175,110,0.03)_1px,transparent_1px)] bg-[size:2rem_2rem] pointer-events-none" />
-
-      <div className="relative z-10 p-6 sm:p-8 md:p-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-        {/* Left: Avatar & Identity Details */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
-          {/* Avatar Container with Animated Live Status Ring */}
-          <div className="relative group shrink-0">
-            <div className={`absolute -inset-1 rounded-full blur-sm transition-all duration-500 ${
-              liveStatus === "live"
-                ? "bg-rose-500/80 animate-pulse"
-                : liveStatus === "recording"
-                ? "bg-brand-accent/60"
-                : "bg-brand-border/30"
-            }`} />
-            
+      {/* Main Top Header Grid */}
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative z-10">
+        {/* Left: Avatar & Identity */}
+        <div className="flex items-center gap-5">
+          {/* Avatar with dynamic live status ring */}
+          <div
+            onClick={toggleStatus}
+            className="relative cursor-pointer group shrink-0"
+            title="Click to toggle studio recording status"
+          >
+            <div
+              className={`absolute -inset-1 rounded-full blur-sm transition-all ${
+                liveStatus === "recording"
+                  ? "bg-rose-500/60 animate-pulse"
+                  : liveStatus === "live"
+                  ? "bg-emerald-500/60 animate-pulse"
+                  : "bg-stone-500/30"
+              }`}
+            />
             <img
               src={profile.avatar}
               alt={profile.name}
-              className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover border-2 border-brand-accent/50 shadow-xl bg-obsidian"
+              className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-2 border-brand-accent shadow-xl bg-obsidian"
             />
-
-            {/* Status Pill Badge on Avatar */}
-            <button
-              onClick={toggleStatus}
-              title="Click to toggle live demo status"
-              className={`absolute -bottom-2 left-1/2 -translate-x-1/2 px-2.5 py-0.5 rounded-full text-[10px] font-mono tracking-wider uppercase flex items-center gap-1.5 shadow-lg border backdrop-blur-md cursor-pointer transition-all duration-200 hover:scale-105 active:scale-95 ${
-                liveStatus === "live"
-                  ? "bg-rose-500/90 text-white border-rose-400"
-                  : liveStatus === "recording"
-                  ? "bg-amber-500/90 text-obsidian font-bold border-amber-300"
-                  : "bg-slate-800/90 text-slate-300 border-slate-600"
+            <span
+              className={`absolute -bottom-2 left-1/2 -translate-x-1/2 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider shadow-lg whitespace-nowrap ${
+                liveStatus === "recording"
+                  ? "bg-rose-600 text-white animate-bounce"
+                  : liveStatus === "live"
+                  ? "bg-emerald-600 text-white animate-bounce"
+                  : "bg-stone-700 text-stone-300"
               }`}
             >
-              {liveStatus === "live" && <Radio className="w-3 h-3 animate-ping text-white" />}
-              {liveStatus === "recording" && <Video className="w-3 h-3 text-obsidian animate-bounce" />}
-              <span>{liveStatus === "live" ? "Live Masterclass" : liveStatus === "recording" ? "Recording" : "Offline"}</span>
-            </button>
+              {liveStatus === "recording" ? "Live Masterclass" : liveStatus === "live" ? "Streaming Live" : "Studio Offline"}
+            </span>
           </div>
 
-          {/* Identity Info */}
-          <div className="flex flex-col space-y-2">
-            <div className="flex flex-wrap items-center gap-2.5">
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-brand-text tracking-wide">
+          {/* Name & Title */}
+          <div className="flex flex-col space-y-1">
+            <div className="flex items-center gap-2">
+              <h1 className="text-2xl sm:text-3xl font-display font-bold text-brand-text">
                 {profile.name}
               </h1>
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-sans font-semibold bg-brand-accent/10 border border-brand-accent/30 text-brand-accent">
+              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-sans font-semibold bg-brand-accent/15 border border-brand-accent/40 text-brand-accent flex items-center gap-1">
                 <Award className="w-3.5 h-3.5" />
                 <span>{profile.role}</span>
               </span>
             </div>
-
-            <p className="text-xs sm:text-sm font-mono text-brand-secondary">
+            <span className="text-xs font-mono text-brand-secondary font-medium">
               {profile.handle}
-            </p>
-
-            <p className="text-sm text-brand-text/80 max-w-xl italic font-serif leading-relaxed">
+            </span>
+            <p className="text-xs sm:text-sm font-sans text-brand-secondary italic line-clamp-2 max-w-xl">
               "{profile.tagline}"
             </p>
-
-            {/* Specialization Tags */}
-            <div className="flex flex-wrap items-center gap-2 pt-1">
-              {profile.specializations.map((spec) => (
-                <span
-                  key={spec}
-                  className="px-2.5 py-1 rounded-md text-[11px] font-sans bg-brand-text/5 border border-brand-text/10 text-brand-secondary hover:text-brand-text hover:border-brand-accent/30 transition-colors"
-                >
-                  {spec}
-                </span>
-              ))}
-            </div>
           </div>
         </div>
 
-        {/* Right: Creator Activity & Quick Actions */}
-        <div className="flex flex-col items-start md:items-end space-y-4 w-full md:w-auto border-t md:border-t-0 border-brand-text/10 pt-4 md:pt-0">
-          {/* Current Live Activity Card */}
-          <div className="w-full md:w-64 p-3 rounded-2xl bg-obsidian-glass border border-brand-accent/20 backdrop-blur-md shadow-inner flex flex-col space-y-1">
-            <span className="text-[10px] font-mono text-brand-accent uppercase tracking-wider flex items-center gap-1">
-              <Sparkles className="w-3 h-3" />
-              <span>Active Studio Session</span>
-            </span>
-            <p className="text-xs text-brand-text font-sans font-medium line-clamp-2">
+        {/* Right: Studio Action Buttons */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
+          <div className="p-3.5 rounded-2xl bg-brand-accent/10 border border-brand-accent/30 text-xs font-sans space-y-1">
+            <div className="flex items-center gap-1.5 font-mono text-[11px] font-bold text-brand-accent">
+              <Radio className="w-3.5 h-3.5 animate-pulse" />
+              <span>ACTIVE STUDIO SESSION</span>
+            </div>
+            <p className="text-brand-text font-medium leading-snug">
               {profile.currentActivity}
             </p>
           </div>
 
-          {/* Action Trigger Buttons */}
-          <div className="flex items-center gap-3 w-full md:w-auto">
-            <button
-              onClick={toggleStatus}
-              className="flex-1 md:flex-initial btn-gold flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-sans text-xs font-semibold shadow-lg hover:shadow-brand-accent/20 transition-all duration-200 cursor-pointer active:scale-95"
-            >
-              <Radio className="w-4 h-4" />
-              <span>{liveStatus === "live" ? "Streaming Now" : "Go Live Preview"}</span>
-            </button>
-
+          <div className="flex items-center gap-2">
             <button
               onClick={handleShare}
-              className="px-3.5 py-2.5 rounded-xl border border-brand-border/40 text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 transition-all duration-200 flex items-center gap-2 text-xs font-sans cursor-pointer active:scale-95"
-              title="Share Channel Link"
+              className="px-4 py-2.5 rounded-xl border border-brand-text/20 bg-brand-text/5 hover:bg-brand-text/10 text-brand-text font-sans text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5"
             >
-              {copied ? (
-                <>
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                  <span className="text-emerald-400">Copied!</span>
-                </>
-              ) : (
-                <>
-                  <Share2 className="w-4 h-4" />
-                  <span>Share</span>
-                </>
-              )}
+              <Share2 className="w-4 h-4" />
+              <span>Share</span>
             </button>
           </div>
         </div>
       </div>
 
-      {/* Subtle Reach Indicator Strip */}
-      <div className="relative z-10 px-6 py-3 bg-obsidian-light/80 border-t border-brand-text/10 flex flex-wrap items-center justify-between gap-4 text-xs font-sans text-brand-secondary">
+      {/* Specialization Tags */}
+      <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-brand-text/10">
+        <span className="text-xs font-mono text-brand-secondary font-medium mr-1">Specializations:</span>
+        {profile.specializations.map((spec) => (
+          <span
+            key={spec}
+            className="px-3 py-1 rounded-xl text-xs font-sans font-medium bg-brand-text/5 border border-brand-text/15 text-brand-text"
+          >
+            {spec}
+          </span>
+        ))}
+      </div>
+
+      {/* Channel Stats Footer */}
+      <div className="pt-4 border-t border-brand-text/10 flex flex-wrap items-center justify-between text-xs font-mono text-brand-secondary gap-4">
         <div className="flex items-center gap-6">
-          <div>
-            <span className="text-brand-text font-mono font-bold text-sm">14.25K</span>
-            <span className="ml-1.5 text-brand-secondary">Students Enrolled</span>
-          </div>
-          <div className="hidden sm:block text-brand-text/20">•</div>
-          <div>
-            <span className="text-brand-accent font-mono font-bold text-sm">94.8%</span>
-            <span className="ml-1.5 text-brand-secondary">Completion Rate</span>
-          </div>
-          <div className="hidden sm:block text-brand-text/20">•</div>
-          <div className="flex items-center gap-1">
-            <span className="text-amber-400 font-mono font-bold text-sm">★ 4.98</span>
-            <span className="text-brand-secondary">(1,240 Reviews)</span>
-          </div>
+          <span>
+            <strong className="text-brand-text text-sm font-bold">{profile.stats.studentsCount.toLocaleString()}</strong> Students Enrolled
+          </span>
+          <span>
+            <strong className="text-brand-accent text-sm font-bold">{profile.stats.completionRate}%</strong> Completion Rate
+          </span>
+          <span>
+            <strong className="text-amber-500 text-sm font-bold">★ {profile.stats.reviewRating}</strong> ({profile.stats.totalReviews.toLocaleString()} Reviews)
+          </span>
         </div>
 
-        <div className="text-[11px] font-mono text-brand-accent/80 italic">
+        <span className="text-[11px] text-brand-secondary italic">
           Featured XLChess Partner Studio
-        </div>
+        </span>
       </div>
+
+      {/* Share Toast Notification */}
+      {sharedToast && (
+        <div className="absolute top-4 right-4 z-50 px-4 py-2 rounded-xl bg-brand-accent text-obsidian font-sans text-xs font-bold shadow-xl flex items-center gap-1.5 animate-bounce">
+          <Sparkles className="w-4 h-4 text-obsidian" />
+          <span>Channel Link Copied to Clipboard!</span>
+        </div>
+      )}
     </div>
   );
 }

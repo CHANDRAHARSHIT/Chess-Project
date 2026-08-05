@@ -3,6 +3,7 @@
  *
  * Student Success Stories & Real Human Testimonials.
  * Demonstrates authentic human stories of students mastering openings on XLChess.
+ * Fully theme-aware for light and dark modes.
  */
 
 import { ThemedChessboard } from "../ThemedChessboard";
@@ -20,7 +21,7 @@ export function StudentBreakthroughs({ breakthroughs }: StudentBreakthroughsProp
           <h3 className="text-xl sm:text-2xl font-display font-bold text-brand-text">
             Student Success Stories
           </h3>
-          <p className="text-xs sm:text-sm font-sans text-stone-400 mt-0.5">
+          <p className="text-xs sm:text-sm font-sans text-brand-secondary mt-0.5">
             Real human reactions from chess players studying Alex Vance's interactive masterclasses
           </p>
         </div>
@@ -30,7 +31,7 @@ export function StudentBreakthroughs({ breakthroughs }: StudentBreakthroughsProp
         {breakthroughs.map((item) => (
           <div
             key={item.id}
-            className="rounded-3xl border border-brand-text/15 bg-obsidian-mid p-5 shadow-xl flex flex-col justify-between space-y-4 transition-all duration-300 hover:border-brand-accent/40 hover:-translate-y-1 hover:shadow-[0_20px_40px_-15px_rgba(212,175,110,0.12)]"
+            className="rounded-3xl border border-brand-text/15 bg-brand-surface p-5 shadow-xl flex flex-col justify-between space-y-4 transition-all duration-300 hover:border-brand-accent/40 hover:-translate-y-1 hover:shadow-[0_20px_40px_-15px_rgba(212,175,110,0.12)]"
           >
             <div className="space-y-3">
               {/* Header: Student Avatar & Headline */}
@@ -44,7 +45,7 @@ export function StudentBreakthroughs({ breakthroughs }: StudentBreakthroughsProp
                   <span className="text-sm font-sans font-semibold text-brand-text">
                     {item.studentName}
                   </span>
-                  <span className="text-[11px] font-mono text-brand-accent font-medium">
+                  <span className="text-[11px] font-mono text-brand-accent font-semibold">
                     {item.openingLearned}
                   </span>
                 </div>
@@ -68,12 +69,12 @@ export function StudentBreakthroughs({ breakthroughs }: StudentBreakthroughsProp
               </div>
 
               {/* Testimonial Quote */}
-              <p className="text-xs font-sans text-stone-300 italic leading-relaxed">
+              <p className="text-xs font-sans text-brand-secondary italic leading-relaxed">
                 "{item.testimonial}"
               </p>
             </div>
 
-            <div className="pt-3 border-t border-brand-text/10 text-[10px] font-mono text-stone-400 text-right">
+            <div className="pt-3 border-t border-brand-text/10 text-[10px] font-mono text-brand-secondary text-right">
               {item.date}
             </div>
           </div>
