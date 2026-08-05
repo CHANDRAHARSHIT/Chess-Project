@@ -1,9 +1,7 @@
 /**
  * PlayChessGame.tsx
- * The live game view: header, both player panels (identity + presence + clock merged into one
- * row — the same layout works stacked-mobile and side-by-side-desktop with zero special-casing),
- * the board, move log, action bar, and the result reveal. All state is read from
- * GameSessionContext — this component owns no game state of its own beyond derived display data.
+ * The live game view: header, player panels, board, move log, action bar,
+ * and 3-second match start countdown sync.
  */
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AlertTriangle, Zap, ArrowLeft } from "lucide-react";
@@ -65,6 +63,10 @@ export function PlayChessGame({ onLeave, onFindAnother }: PlayChessGameProps) {
   const [waitedTooLong, setWaitedTooLong] = useState(false);
   const wasMyTurnRef = useRef(false);
 
+  // 3-second Match Sync Countdown (3... 2... 1... PLAY!) & startTime state
+  const [countdown, setCountdown] = useState<number | null>(3);
+  const [gameStartTime, setGameStartTime] = useState<number | null>(null);
+
   useEffect(() => {
     if (sessionState?.status !== "WAITING") return;
     const t = window.setTimeout(() => setWaitedTooLong(true), WAIT_TOO_LONG_MS);
@@ -75,18 +77,44 @@ export function PlayChessGame({ onLeave, onFindAnother }: PlayChessGameProps) {
   const status = sessionState?.status ?? "CREATED";
   const activeSide = fen ? getActiveSideFromFen(fen) : 0;
   const isMyTurn = mySide !== null && activeSide === mySide;
-  const isPlaying = status === "PLAYING";
-  const interactive = connectionStatus === "connected" && (status === "READY" || status === "PLAYING") && !gameResult;
+  const isGameActive = status === "READY" || status === "PLAYING";
+  const activeCountdown = moveLog.length > 0 ? null : countdown;
+  const interactive = connectionStatus === "connected" && isGameActive && !gameResult && activeCountdown === null;
+
+  // Run 3s start countdown on initial match load
+  useEffect(() => {
+    if (!isGameActive || moveLog.length > 0) return;
+
+    let val = 3;
+    soundManager.playButtonClick();
+
+    const interval = window.setInterval(() => {
+      val -= 1;
+      if (val > 0) {
+        setCountdown(val);
+        soundManager.playButtonClick();
+      } else if (val === 0) {
+        setCountdown(0);
+        soundManager.playMove();
+      } else {
+        setCountdown(null);
+        setGameStartTime((prev) => prev ?? Date.now());
+        window.clearInterval(interval);
+      }
+    }, 1000);
+
+    return () => window.clearInterval(interval);
+  }, [isGameActive, moveLog.length]);
 
   useEffect(() => {
-    if (isMyTurn && !wasMyTurnRef.current && isPlaying) {
+    if (isMyTurn && !wasMyTurnRef.current && isGameActive) {
       setPoliteMessage("Your move.");
       document.title = "Your move — XLChess";
-    } else if (!isMyTurn && isPlaying) {
+    } else if (!isMyTurn && isGameActive) {
       document.title = "Opponent's move — XLChess";
     }
     wasMyTurnRef.current = isMyTurn;
-  }, [isMyTurn, isPlaying]);
+  }, [isMyTurn, isGameActive]);
 
   useEffect(() => {
     if (gameResult) document.title = "Game over — XLChess";
@@ -97,6 +125,7 @@ export function PlayChessGame({ onLeave, onFindAnother }: PlayChessGameProps) {
 
   const handleMoveApplied = (move: DerivedMove) => {
     setMoveLog((prev) => [...prev, move.san]);
+    if (!gameStartTime) setGameStartTime(Date.now());
     if (!move.isOwnMove) {
       soundManager.playMove();
       setPoliteMessage(`Opponent played ${move.san}.`);
@@ -116,8 +145,13 @@ export function PlayChessGame({ onLeave, onFindAnother }: PlayChessGameProps) {
     const fallbackMs = descriptor.timeControl.initialSeconds * 1000;
     const remainingMs = sessionState?.clock.remainingMs[side] ?? fallbackMs;
     const lastMoveAt = sessionState?.clock.lastMoveAt ?? null;
-    const isLive = isPlaying && activeSide === side;
-    return { remainingMs, lastMoveAt, isLive };
+    const isLive = isGameActive && activeSide === side;
+    return {
+      remainingMs,
+      lastMoveAt,
+      gameStartTime,
+      isLive,
+    };
   };
 
   const positionId =
@@ -131,11 +165,11 @@ export function PlayChessGame({ onLeave, onFindAnother }: PlayChessGameProps) {
   const boardOrientation = mySideResolved === 1 ? "black" : "white";
 
   return (
-    <div className="max-w-6xl mx-auto flex flex-col gap-5 animate-fade-in">
+    <div className="w-full max-w-6xl mx-auto flex flex-col gap-3.5 animate-fade-in">
       <LiveRegion politeMessage={politeMessage} assertiveMessage={finalAssertiveMessage} />
 
-      {/* Top Session Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-2xl bg-brand-surface/70 border border-white/10 backdrop-blur-xl shadow-md">
+      {/* Top Session Bar - Stretches flush across full arena width */}
+      <div className="w-full flex items-center justify-between gap-3 px-5 py-3 rounded-xl bg-brand-surface/80 border border-white/10 backdrop-blur-xl shadow-md">
         <div className="flex items-center gap-3">
           <button
             onClick={onLeave}
@@ -145,55 +179,37 @@ export function PlayChessGame({ onLeave, onFindAnother }: PlayChessGameProps) {
             <ArrowLeft className="w-4 h-4" />
           </button>
           <div className="flex items-center gap-2">
-            <Zap className="w-4 h-4 text-brand-accent animate-pulse" />
+            <Zap className="w-3.5 h-3.5 text-brand-accent animate-pulse" />
             <span className="font-mono text-xs uppercase tracking-widest text-brand-text font-bold">
-              Chess 960 • {descriptor.timeControl.label}
+              Chess960 • {descriptor.timeControl.label}
             </span>
           </div>
         </div>
-
-        {/* Turn Status Pill */}
-        {(status === "READY" || status === "PLAYING") && !gameResult && (
-          <div
-            className={`inline-flex items-center gap-2 px-3.5 py-1 rounded-full border font-mono text-xs uppercase tracking-wider font-semibold transition-all ${
-              isMyTurn
-                ? "bg-brand-accent/15 border-brand-accent/40 text-brand-accent shadow-[0_0_15px_rgba(212,175,110,0.15)]"
-                : "bg-brand-bg/40 border-white/10 text-brand-secondary"
-            }`}
-          >
-            <span
-              className={`h-2 w-2 rounded-full ${
-                isMyTurn ? "bg-brand-accent animate-ping" : "bg-brand-secondary/40"
-              }`}
-            />
-            {isMyTurn ? "Your Turn" : "Opponent's Turn"}
-          </div>
-        )}
 
         <ConnectionIndicator state={mapMyConnection(connectionStatus)} title="Your Connection" />
       </div>
 
       {status === "WAITING" && !waitedTooLong && (
-        <div className="flex items-center gap-3 px-4 py-3 rounded-2xl border border-white/10 bg-brand-surface/50 text-brand-secondary text-sm shadow-md">
+        <div className="w-full flex items-center gap-3 px-4 py-2 rounded-xl border border-white/10 bg-brand-surface/50 text-brand-secondary text-xs shadow-md">
           <span className="h-2 w-2 rounded-full bg-brand-accent animate-pulse shrink-0" />
           <span>Waiting for your opponent to connect…</span>
         </div>
       )}
 
       {waitedTooLong && status === "WAITING" && (
-        <div className="flex items-center gap-3 px-4 py-3 rounded-2xl border border-amber-500/30 bg-amber-500/10 text-amber-200 text-sm shadow-md">
+        <div className="w-full flex items-center gap-3 px-4 py-2 rounded-xl border border-amber-500/30 bg-amber-500/10 text-amber-200 text-xs shadow-md">
           <AlertTriangle className="w-4 h-4 shrink-0" />
           <span>This is taking longer than expected. Your opponent may not be connecting.</span>
-          <button onClick={onLeave} className="ml-auto font-mono text-xs uppercase tracking-wider underline cursor-pointer">
+          <button onClick={onLeave} className="ml-auto font-mono text-[11px] uppercase tracking-wider underline cursor-pointer">
             Back to Lobby
           </button>
         </div>
       )}
 
-      {/* Main Studio Arena: Board Stack on Left, Controls & Move Log on Right */}
-      <div className="flex flex-col lg:flex-row items-center lg:items-start justify-center gap-5 lg:gap-8">
-        {/* Left Column: Opponent Panel, Board, Player Panel */}
-        <div className="relative flex flex-col items-center justify-center w-full max-w-[540px] shrink-0 gap-3">
+      {/* Main Studio Arena: Board (Left, 450px) + Controls/MoveLog (Right, flex-1) */}
+      <div className="w-full flex flex-col lg:flex-row items-center lg:items-start justify-between gap-5 lg:gap-7">
+        {/* Left Column: Opponent Panel, Board with Countdown, Player Panel */}
+        <div className="relative flex flex-col items-center justify-center w-full max-w-[450px] lg:w-[450px] shrink-0 gap-2">
           {opponentUserId && (
             <div className="w-full">
               <PlayerPanel
@@ -206,7 +222,7 @@ export function PlayChessGame({ onLeave, onFindAnother }: PlayChessGameProps) {
           )}
 
           <div
-            className={`relative w-full ${
+            className={`relative w-full flex justify-center ${
               connectionStatus === "reconnecting" || connectionStatus === "disconnected"
                 ? "opacity-60 pointer-events-none"
                 : ""
@@ -221,6 +237,19 @@ export function PlayChessGame({ onLeave, onFindAnother }: PlayChessGameProps) {
               onSubmitMove={submitMove}
               onMoveApplied={handleMoveApplied}
             />
+
+            {/* 3-Second Match Sync Countdown Overlay */}
+            {activeCountdown !== null && (
+              <div className="absolute inset-0 z-30 flex flex-col items-center justify-center rounded-2xl bg-black/60 backdrop-blur-md animate-fade-in pointer-events-none">
+                <span className="font-mono text-xs uppercase tracking-widest text-brand-accent font-bold mb-2">
+                  Match Syncing
+                </span>
+                <div className="text-6xl font-display font-extrabold text-brand-accent animate-bounce drop-shadow-[0_0_25px_rgba(212,175,110,0.6)]">
+                  {activeCountdown === 0 ? "PLAY!" : activeCountdown}
+                </div>
+              </div>
+            )}
+
             {gameResult && myUserId && (
               <ResultRevealModal
                 result={gameResult}
@@ -236,6 +265,8 @@ export function PlayChessGame({ onLeave, onFindAnother }: PlayChessGameProps) {
               <PlayerPanel
                 userId={myUserId}
                 label="You"
+                name={session?.user?.name ?? undefined}
+                image={session?.user?.image ?? undefined}
                 presenceState={mapMyConnection(connectionStatus)}
                 {...myClock}
               />
@@ -243,8 +274,8 @@ export function PlayChessGame({ onLeave, onFindAnother }: PlayChessGameProps) {
           )}
         </div>
 
-        {/* Right Column: Game Action Controls & Live Move Log */}
-        <div className="w-full max-w-[540px] lg:max-w-xs xl:max-w-sm flex flex-col gap-3 lg:h-[540px] lg:max-h-[540px] shrink-0 min-h-0">
+        {/* Right Column: Game Action Controls & Live Move Log (Expands to fill workspace width) */}
+        <div className="w-full max-w-[450px] lg:max-w-none lg:flex-1 flex flex-col gap-2 lg:h-[550px] lg:max-h-[550px] shrink-0 min-h-0">
           <GameActionBar canAct={interactive && !gameResult} onResign={resign} />
           <div className="flex-1 min-h-0 overflow-hidden">
             <MoveLog moves={historyView} />

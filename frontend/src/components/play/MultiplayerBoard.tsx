@@ -222,7 +222,7 @@ export function MultiplayerBoard({
     <div
       role="application"
       aria-label={`Chess board, ${boardOrientation} orientation, ${isMyTurn ? "your move" : "opponent's move"}`}
-      className={`relative w-full max-w-[480px] sm:max-w-[540px] aspect-square rounded-2xl border-2 overflow-hidden bg-brand-surface shadow-[0_20px_50px_rgba(0,0,0,0.6),0_0_20px_rgba(212,175,110,0.15)] transition-all duration-300 ${
+      className={`relative w-full max-w-[450px] sm:max-w-[480px] aspect-square rounded-2xl border-2 overflow-hidden bg-brand-surface shadow-[0_20px_50px_rgba(0,0,0,0.6),0_0_20px_rgba(212,175,110,0.15)] transition-all duration-300 ${
         shake ? "animate-shake border-rose-500/80" : "border-brand-accent/40 hover:border-brand-accent/60"
       } ${!isMyTurn ? "[&_[data-testid^='piece-']]:!cursor-default" : ""}`}
     >
