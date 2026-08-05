@@ -89,7 +89,7 @@ export default function YourContentPage() {
         <div className="w-full rounded-3xl border border-brand-text/10 bg-obsidian-mid p-12 text-center space-y-3 shadow-xl">
           <span className="text-3xl">♟️</span>
           <h3 className="text-lg font-display font-bold text-brand-text">No content matches your filter</h3>
-          <p className="text-xs sm:text-sm font-sans text-stone-400">
+          <p className="text-xs sm:text-sm font-sans text-brand-secondary">
             Try searching for "Catalan" or "Najdorf" to discover Alex Vance's masterclasses.
           </p>
         </div>

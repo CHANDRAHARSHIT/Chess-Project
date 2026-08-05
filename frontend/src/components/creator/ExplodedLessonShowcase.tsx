@@ -210,15 +210,15 @@ export function ExplodedLessonShowcase() {
                     className={`p-2.5 rounded-xl border text-xs font-mono flex items-center justify-between transition-all cursor-pointer ${
                       selectedMoveIndex === idx
                         ? "bg-brand-accent/20 border-brand-accent text-brand-accent font-bold shadow-md"
-                        : "bg-brand-text/5 border-brand-text/10 text-brand-secondary hover:text-brand-text"
+                        : "bg-brand-text/5 border-brand-text/10 text-brand-text/65 hover:text-brand-text hover:bg-brand-text/10"
                     }`}
                   >
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] text-brand-secondary font-mono">{m.time}</span>
+                      <span className="text-[10px] text-brand-text/50 font-mono">{m.time}</span>
                       <span>{m.move}</span>
                     </div>
                     {m.highlight && (
-                      <span className="px-2 py-0.5 rounded bg-amber-500/20 border border-amber-500/30 text-amber-800 dark:text-amber-300 text-[10px] font-bold">
+                      <span className="px-2 py-0.5 rounded bg-amber-500/30 border border-amber-600/40 text-amber-900 dark:text-amber-300 text-[10px] font-bold">
                         Lethal
                       </span>
                     )}

@@ -38,8 +38,8 @@ export function ContentGridCard({ item, onPreviewClick, onPinClick }: ContentGri
           <span
             className={`px-2.5 py-0.5 rounded text-[10px] font-mono font-medium ${
               item.status === "Published"
-                ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30"
-                : "bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/30"
+                ? "bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-emerald-600/40"
+                : "bg-amber-500/20 text-amber-900 dark:text-amber-300 border border-amber-600/40"
             }`}
           >
             {item.status}
@@ -106,8 +106,8 @@ export function ContentGridCard({ item, onPreviewClick, onPinClick }: ContentGri
 
         {/* Replay Marker Tag */}
         {item.mostReplayedMove && item.mostReplayedMove !== "Draft Mode" && (
-          <div className="p-2.5 rounded-xl bg-rose-500/15 border border-rose-500/30 flex items-center gap-2 text-xs font-mono text-rose-800 dark:text-rose-200 shadow-sm">
-            <Flame className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0 animate-pulse" />
+          <div className="p-2.5 rounded-xl bg-rose-500/15 border border-rose-600/30 flex items-center gap-2 text-xs font-mono text-rose-900 dark:text-rose-200 shadow-sm">
+            <Flame className="w-4 h-4 text-rose-700 dark:text-rose-400 shrink-0 animate-pulse" />
             <span className="truncate">Retention Peak: <strong className="font-bold">{item.mostReplayedMove}</strong></span>
           </div>
         )}

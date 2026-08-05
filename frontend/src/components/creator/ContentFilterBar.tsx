@@ -39,7 +39,7 @@ export function ContentFilterBar({
           <h2 className="text-xl sm:text-2xl font-display font-bold text-brand-text">
             Creator Studio
           </h2>
-          <p className="text-xs sm:text-sm font-sans text-stone-400 mt-0.5">
+          <p className="text-xs sm:text-sm font-sans text-brand-secondary mt-0.5">
             Manage your interactive lessons, video masterclasses, and PGN studies
           </p>
         </div>
@@ -62,13 +62,13 @@ export function ContentFilterBar({
       <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 pt-2 border-t border-brand-text/10">
         {/* Search Bar */}
         <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400 pointer-events-none" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-secondary pointer-events-none" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder="Search lessons, openings, or PGN studies…"
-            className="w-full pl-9 pr-4 py-2 text-xs font-sans rounded-xl outline-none bg-obsidian-glass border border-brand-text/20 text-brand-text placeholder:text-stone-500 focus:border-brand-accent/60 transition-colors"
+            className="w-full pl-9 pr-4 py-2 text-xs font-sans rounded-xl outline-none bg-obsidian-glass border border-brand-text/20 text-brand-text placeholder:text-brand-secondary/70 focus:border-brand-accent/60 transition-colors"
           />
         </div>
 
@@ -83,7 +83,7 @@ export function ContentFilterBar({
                 className={`px-3 py-1.5 rounded-xl text-xs font-sans font-medium transition-all cursor-pointer ${
                   isSelected
                     ? "bg-brand-accent text-obsidian font-bold shadow-md"
-                    : "bg-brand-text/5 text-stone-300 hover:text-brand-text hover:bg-brand-text/10"
+                    : "bg-brand-text/5 text-brand-text/60 hover:text-brand-text hover:bg-brand-text/10"
                 }`}
               >
                 {cat}
