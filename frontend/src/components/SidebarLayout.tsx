@@ -377,7 +377,6 @@ export default function SidebarLayout({
     { name: "Lessons", href: "/lessons", icon: BookOpen },
     { name: "Puzzles", href: "/puzzles", icon: Puzzle },
     { name: "Variants", href: "/variants", icon: Shuffle },
-    { name: "Games Database", href: "/database", icon: Database },
     { name: "Upgrade", href: "/pricing", icon: Crown },
   ];
 
@@ -843,28 +842,29 @@ export default function SidebarLayout({
                 </div>
                 <Divider />
 
-                {/* MORE STATIC SECTION */}
-                {isExpanded && (
-                  <div
-                    className="flex items-center justify-between px-6 py-2 cursor-pointer group"
-                    onClick={() => setIsMoreStaticOpen(!isMoreStaticOpen)}
-                  >
-                    <span className="text-[15px] font-semibold text-brand-text">
-                      More
-                    </span>
-                    <ChevronDown
-                      className={`w-4 h-4 text-brand-secondary transition-transform duration-300 ${isMoreStaticOpen ? "rotate-180" : ""} group-hover:text-brand-text`}
-                    />
-                  </div>
-                )}
-                <div
-                  className={`transition-all duration-300 overflow-hidden ${isMoreStaticOpen || !isExpanded ? "max-h-[500px]" : "max-h-0"}`}
-                >
-                  {moreStaticSection.map((item) => renderNavItem(item))}
-                </div>
-                <Divider />
               </>
             )}
+
+            {/* MORE STATIC SECTION (Visible to all) */}
+            {isExpanded && (
+              <div
+                className="flex items-center justify-between px-6 py-2 cursor-pointer group"
+                onClick={() => setIsMoreStaticOpen(!isMoreStaticOpen)}
+              >
+                <span className="text-[15px] font-semibold text-brand-text">
+                  More
+                </span>
+                <ChevronDown
+                  className={`w-4 h-4 text-brand-secondary transition-transform duration-300 ${isMoreStaticOpen ? "rotate-180" : ""} group-hover:text-brand-text`}
+                />
+              </div>
+            )}
+            <div
+              className={`transition-all duration-300 overflow-hidden ${isMoreStaticOpen || !isExpanded ? "max-h-[500px]" : "max-h-0"}`}
+            >
+              {moreStaticSection.map((item) => renderNavItem(item))}
+            </div>
+            <Divider />
 
             {/* MISC SECTION */}
             {miscSection.map((item) => renderNavItem(item))}
