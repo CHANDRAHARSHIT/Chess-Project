@@ -37,11 +37,11 @@ export function MoveLog({ moves }: MoveLogProps) {
   }, [moves]);
 
   return (
-    <div className="flex flex-col h-full bg-brand-surface/60 border border-white/10 rounded-2xl overflow-hidden backdrop-blur-xl shadow-lg">
-      <div className="px-4 py-3 border-b border-white/10 bg-brand-surface/80 flex items-center justify-between shrink-0">
+    <div className="flex flex-col h-full bg-brand-surface/60 border border-white/10 rounded-xl overflow-hidden backdrop-blur-xl shadow-lg">
+      <div className="px-4 py-2.5 border-b border-white/10 bg-brand-surface/80 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-2">
           <ListOrdered className="w-4 h-4 text-brand-accent" />
-          <h3 className="font-display font-bold text-sm text-brand-text tracking-wide uppercase">
+          <h3 className="font-display font-bold text-xs text-brand-text tracking-wide uppercase">
             Move Notation
           </h3>
         </div>
@@ -74,22 +74,22 @@ export function MoveLog({ moves }: MoveLogProps) {
             return (
               <div
                 key={pair.moveNumber}
-                className="grid grid-cols-[3.2rem_1fr_1fr] items-center px-3 py-1.5 rounded-lg odd:bg-brand-bg/20 hover:bg-brand-surface/50 transition-colors"
+                className="grid grid-cols-[3rem_1fr_1fr] items-center px-3 py-1.5 rounded-lg odd:bg-brand-bg/20 hover:bg-brand-surface/50 transition-colors"
               >
                 <span className="text-brand-secondary/60 font-semibold">{pair.moveNumber}.</span>
                 <span
-                  className={`font-semibold tracking-wide ${
+                  className={`font-semibold tracking-wide justify-self-start ${
                     whiteIsLatest
-                      ? "text-brand-accent bg-brand-accent/15 px-1.5 py-0.5 rounded border border-brand-accent/30"
+                      ? "text-brand-accent bg-brand-accent/10 px-2 py-0.5 rounded border border-brand-accent/25 font-bold shadow-sm"
                       : "text-brand-text"
                   }`}
                 >
                   {pair.white}
                 </span>
                 <span
-                  className={`font-semibold tracking-wide ${
+                  className={`font-semibold tracking-wide justify-self-start ${
                     blackIsLatest
-                      ? "text-brand-accent bg-brand-accent/15 px-1.5 py-0.5 rounded border border-brand-accent/30"
+                      ? "text-brand-accent bg-brand-accent/10 px-2 py-0.5 rounded border border-brand-accent/25 font-bold shadow-sm"
                       : "text-brand-text/80"
                   }`}
                 >

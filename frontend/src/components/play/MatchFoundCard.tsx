@@ -58,7 +58,9 @@ export function MatchFoundCard({ descriptor, onEnter }: MatchFoundCardProps) {
           <span className="font-mono text-[10px] uppercase tracking-wider text-brand-accent font-semibold">
             {mySide === 0 ? "White Side" : "Black Side"}
           </span>
-          <span className="font-sans font-bold text-sm text-brand-text truncate">You</span>
+          <span className="font-sans font-bold text-sm text-brand-text truncate">
+            {session?.user?.name?.trim() || "You"}
+          </span>
         </div>
 
         <div className="flex items-center justify-center w-8 h-8 rounded-full bg-brand-surface border border-brand-border/60 text-brand-accent font-mono text-xs font-bold shrink-0">
@@ -70,7 +72,13 @@ export function MatchFoundCard({ descriptor, onEnter }: MatchFoundCardProps) {
             {mySide === 0 ? "Black Side" : "White Side"}
           </span>
           {opponent ? (
-            <OpponentIdentity userId={opponent.userId} label="Opponent" size={24} />
+            <OpponentIdentity
+              userId={opponent.userId}
+              label="Opponent"
+              name={opponent.name}
+              image={opponent.image}
+              size={24}
+            />
           ) : (
             <span className="font-sans text-xs text-brand-secondary">Opponent</span>
           )}

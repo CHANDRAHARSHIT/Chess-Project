@@ -9,6 +9,8 @@
 export interface ParticipantAssignment {
   userId: string;
   side: number;
+  name?: string;
+  image?: string;
 }
 
 export interface TimeControl {
@@ -43,6 +45,8 @@ export interface MatchTicket {
   matchedAt: number | null;
   status: TicketStatus;
   descriptor?: MatchDescriptor;
+  name?: string;
+  image?: string;
 }
 
 export type SessionStatus = "CREATED" | "WAITING" | "READY" | "PLAYING" | "PAUSED" | "COMPLETED" | "ABANDONED";

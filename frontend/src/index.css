@@ -1829,8 +1829,9 @@ body {
 
 /* Flagfall — the clock plate inverts and freezes when a side's time reaches 0. */
 .clock-plate--flagged {
-  background: var(--gold-bright) !important;
-  color: var(--obsidian) !important;
+  background: rgba(225, 29, 72, 0.15) !important;
+  border-color: rgba(225, 29, 72, 0.5) !important;
+  color: #f43f5e !important;
 }
 
 /* Match-found → live board handoff, and the result reveal growing out of the board. */
