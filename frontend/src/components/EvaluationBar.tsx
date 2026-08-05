@@ -54,7 +54,11 @@ export function EvaluationBar({
           background: "var(--eval-bar-bg, rgba(12,16,32,0.85))",
           border: "1px solid var(--eval-bar-border, rgba(255,255,255,0.08))",
           backdropFilter: "blur(8px)",
-          minHeight: isDesktop && boardHeight ? `${boardHeight}px` : undefined,
+          minHeight: isDesktop
+            ? boardHeight
+              ? `${boardHeight}px`
+              : "100%"
+            : undefined,
         }}
       >
         <div

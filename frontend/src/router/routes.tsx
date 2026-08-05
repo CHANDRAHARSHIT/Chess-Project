@@ -12,6 +12,9 @@ import OpeningsPage from "../pages/OpeningsPage";
 import Chess960Page from "../pages/Chess960Page";
 import ComingSoonPage from "../pages/ComingSoonPage";
 import { ProtectedRoute } from "../components/ProtectedRoute";
+import DatabasePage from "../pages/DatabasePage";
+import DatabasePlayerPage from "../pages/DatabasePlayerPage";
+import DatabaseGamePage from "../pages/DatabaseGamePage";
 import {
   BookOpen,
   BarChart2,
@@ -51,6 +54,21 @@ export const mainRoutes: RouteConfig[] = [
     path: "/openings",
     element: <OpeningsPage />,
     title: "Chess Openings | XLChess",
+  },
+  {
+    path: "/database",
+    element: <DatabasePage />,
+    title: "Chess Database | XLChess",
+  },
+  {
+    path: "/database/:id",
+    element: <DatabasePlayerPage />,
+    title: "Player Database | XLChess",
+  },
+  {
+    path: "/database/game/:id",
+    element: <DatabaseGamePage />,
+    title: "Game Database | XLChess",
   },
   {
     path: "/subscriptions",

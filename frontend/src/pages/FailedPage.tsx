@@ -45,7 +45,7 @@ export default function FailedPage() {
             initial={{ scale: 0, rotate: 30 }}
             animate={{ scale: 1, rotate: 0 }}
             transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.1 }}
-            className="w-20 h-20 rounded-full bg-[#0e1428] border border-rose-500/30 flex items-center justify-center text-rose-500 mx-auto shadow-[0_0_30px_rgba(239,68,68,0.15)] relative z-10"
+            className="w-20 h-20 rounded-full bg-brand-bg border border-rose-500/30 flex items-center justify-center text-rose-500 mx-auto shadow-[0_0_30px_rgba(239,68,68,0.15)] relative z-10"
           >
             <XCircle className="w-10 h-10" />
           </motion.div>
