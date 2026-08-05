@@ -12,7 +12,7 @@ import { ContentGridCard } from "../components/creator/ContentGridCard";
 import { SynchronizedStudyModal } from "../components/creator/SynchronizedStudyModal";
 import { MASTERCLASSES, type MasterclassItem } from "../data/creatorMockData";
 import { soundManager } from "../utils/SoundManager";
-import { Sparkles } from "lucide-react";
+import { CheckCheck } from "lucide-react";
 
 export default function YourContentPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -68,7 +68,7 @@ export default function YourContentPage() {
       {/* Toast Notification Floating Banner */}
       {toastMessage && (
         <div className="fixed top-20 right-6 z-50 px-4 py-3 rounded-2xl bg-brand-accent text-obsidian font-sans text-xs font-bold shadow-2xl flex items-center gap-2 animate-bounce">
-          <Sparkles className="w-4 h-4 text-obsidian" />
+          <CheckCheck className="w-4 h-4 text-obsidian" />
           <span>{toastMessage}</span>
         </div>
       )}

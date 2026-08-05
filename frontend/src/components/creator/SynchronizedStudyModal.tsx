@@ -11,7 +11,7 @@
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Play, Pause, ChevronRight, MessageSquare, Sparkles, CheckCircle2, Volume2 } from "lucide-react";
+import { X, Play, Pause, ChevronRight, MessageSquare, Clapperboard, CheckCircle2, Volume2 } from "lucide-react";
 import { ThemedChessboard } from "../ThemedChessboard";
 import { BoardCoordinates } from "../BoardCoordinates";
 import { soundManager } from "../../utils/SoundManager";
@@ -109,7 +109,7 @@ function ModalContent({ item, onClose }: { item: MasterclassItem; onClose: () =>
           {/* Top Title & Badge */}
           <div className="flex flex-col space-y-1 pr-10">
             <div className="flex items-center gap-2 text-xs font-mono font-semibold text-brand-accent uppercase tracking-wider">
-              <Sparkles className="w-4 h-4 text-brand-accent" />
+              <Clapperboard className="w-4 h-4 text-brand-accent" />
               <span>Interactive Lesson Preview</span>
             </div>
             <h2

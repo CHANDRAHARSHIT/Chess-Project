@@ -7,7 +7,7 @@
  */
 
 import { useState } from "react";
-import { ChevronRight, ChevronLeft, RotateCcw, Pin, Sparkles } from "lucide-react";
+import { ChevronRight, ChevronLeft, RotateCcw, Pin, Star } from "lucide-react";
 import { ThemedChessboard } from "../ThemedChessboard";
 import { BoardCoordinates } from "../BoardCoordinates";
 import { soundManager } from "../../utils/SoundManager";
@@ -111,7 +111,7 @@ export function RepertoireCard({ repertoire, isPinned = true }: RepertoireCardPr
           <div className="p-4 rounded-2xl bg-amber-500/10 border border-brand-accent/40 space-y-1.5">
             <div className="flex items-center justify-between text-xs font-mono font-bold text-brand-accent">
               <span className="flex items-center gap-1.5">
-                <Sparkles className="w-4 h-4 text-brand-accent" />
+                <Star className="w-4 h-4 text-brand-accent fill-current" />
                 <span>Alex's Signature Move: {repertoire.highlightMove}</span>
               </span>
             </div>

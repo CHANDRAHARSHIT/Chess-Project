@@ -10,7 +10,7 @@
  */
 
 import { useState } from "react";
-import { Play, Pause, BookOpen, MessageSquare, Sparkles, ChevronRight, ChevronLeft, RotateCcw, CheckCircle2 } from "lucide-react";
+import { Play, Pause, BookOpen, MessageSquare, Zap, GitBranch, ChevronRight, ChevronLeft, RotateCcw, CheckCircle2 } from "lucide-react";
 import { ThemedChessboard } from "../ThemedChessboard";
 import { BoardCoordinates } from "../BoardCoordinates";
 import { soundManager } from "../../utils/SoundManager";
@@ -51,7 +51,7 @@ export function ExplodedLessonShowcase() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-brand-text/10">
         <div>
           <div className="inline-flex items-center gap-2 text-xs font-mono font-semibold text-brand-accent uppercase tracking-wider mb-1">
-            <Sparkles className="w-4 h-4 text-brand-accent" />
+            <Zap className="w-4 h-4 text-brand-accent" />
             <span>Interactive Lesson Flow</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-display font-bold text-brand-text">
@@ -69,7 +69,7 @@ export function ExplodedLessonShowcase() {
         {[
           { id: "video", label: "1. Video Hook", icon: Play },
           { id: "board", label: "2. Interactive Board", icon: BookOpen },
-          { id: "pgn", label: "3. Move Tree & Notes", icon: Sparkles },
+          { id: "pgn", label: "3. Move Tree & Notes", icon: GitBranch },
           { id: "discussion", label: "4. Position Discussion", icon: MessageSquare },
         ].map((tab) => {
           const Icon = tab.icon;
@@ -218,7 +218,7 @@ export function ExplodedLessonShowcase() {
                       <span>{m.move}</span>
                     </div>
                     {m.highlight && (
-                      <span className="px-2 py-0.5 rounded bg-amber-500/30 border border-amber-600/40 text-amber-900 dark:text-amber-300 text-[10px] font-bold">
+                      <span className="px-2 py-0.5 rounded-md bg-amber-600 text-white text-[10px] font-bold tracking-wide">
                         Lethal
                       </span>
                     )}
