@@ -7,6 +7,7 @@ import {
   CircleUserRound,
   Crown,
   BookOpen,
+  Database,
   ChevronDown,
   Zap,
   Clock,
@@ -84,6 +85,7 @@ export default function SidebarLayout({
   const [modalMode, setModalMode] = useState<"login" | "register">("login");
   const [mobileOpenItem, setMobileOpenItem] = useState<string | null>(null);
   const [isYouOpen, setIsYouOpen] = useState(true);
+  const [isMoreStaticOpen, setIsMoreStaticOpen] = useState(false);
 
   const [hoveredSubMenu, setHoveredSubMenu] = useState<{
     items: {
@@ -412,6 +414,10 @@ export default function SidebarLayout({
     },
   ];
 
+  const moreStaticSection = [
+    { name: "Game Database", href: "/database", icon: Database },
+  ];
+
   const miscSection = [{ name: "Report", href: "/report", icon: Flag }];
 
   const urlOptions = [
@@ -499,19 +505,16 @@ export default function SidebarLayout({
               }
             }}
             title={isComingSoon ? "Coming soon" : undefined}
-            className={`relative w-full flex transition-all duration-200 cursor-pointer ${
-              isExpanded || isMobileOpen
-                ? `items-center py-2.5 mx-2 px-3 rounded-xl ${
-                    isActive
-                      ? "text-brand-accent bg-brand-text/10 font-medium"
-                      : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 group-hover/navitem:bg-brand-text/5 group-hover/navitem:text-brand-text"
-                  }`
-                : `flex-col items-center justify-center py-[14px] mx-2 rounded-lg text-center ${
-                    isActive
-                      ? "text-brand-accent bg-brand-text/10 font-medium"
-                      : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 group-hover/navitem:bg-brand-text/5 group-hover/navitem:text-brand-text"
-                  }`
-            }`}
+            className={`relative w-full flex transition-all duration-200 cursor-pointer ${isExpanded || isMobileOpen
+              ? `items-center py-2.5 mx-2 px-3 rounded-xl ${isActive
+                ? "text-brand-accent bg-brand-text/10 font-medium"
+                : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 group-hover/navitem:bg-brand-text/5 group-hover/navitem:text-brand-text"
+              }`
+              : `flex-col items-center justify-center py-[14px] mx-2 rounded-lg text-center ${isActive
+                ? "text-brand-accent bg-brand-text/10 font-medium"
+                : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 group-hover/navitem:bg-brand-text/5 group-hover/navitem:text-brand-text"
+              }`
+              }`}
           >
             <div
               className={`flex items-center justify-center shrink-0 ${isExpanded || isMobileOpen ? "w-10" : "w-full"}`}
@@ -530,11 +533,10 @@ export default function SidebarLayout({
             </div>
 
             <span
-              className={`font-sans transition-all ${
-                isExpanded || isMobileOpen
-                  ? "flex-1 text-left text-[14px] ml-2 tracking-wide truncate"
-                  : "w-full text-center text-[10px] mt-1.5 leading-[1.15] whitespace-normal tracking-normal line-clamp-2 break-words"
-              } ${!(isExpanded || isMobileOpen) && isAvatar ? "hidden" : ""}`}
+              className={`font-sans transition-all ${isExpanded || isMobileOpen
+                ? "flex-1 text-left text-[14px] ml-2 tracking-wide truncate"
+                : "w-full text-center text-[10px] mt-1.5 leading-[1.15] whitespace-normal tracking-normal line-clamp-2 break-words"
+                } ${!(isExpanded || isMobileOpen) && isAvatar ? "hidden" : ""}`}
             >
               {item.name}
             </span>
@@ -549,11 +551,10 @@ export default function SidebarLayout({
           {/* Custom Link Actions */}
           {isCustomLink && (isExpanded || isMobileOpen) && (
             <div
-              className={`absolute right-4 flex items-center z-10 bg-brand-bg/80 backdrop-blur-sm rounded-full transition-all ${
-                isMobileOpen
-                  ? "opacity-100"
-                  : "opacity-0 group-hover/navitem:opacity-100"
-              }`}
+              className={`absolute right-4 flex items-center z-10 bg-brand-bg/80 backdrop-blur-sm rounded-full transition-all ${isMobileOpen
+                ? "opacity-100"
+                : "opacity-0 group-hover/navitem:opacity-100"
+                }`}
             >
               {/* Move to More / Move to Active */}
               {section === "active" ? (
@@ -631,13 +632,12 @@ export default function SidebarLayout({
                   onClick={(e) => {
                     handleLinkClick(subItem.href, e);
                   }}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-sans transition-colors duration-150 cursor-pointer ${
-                    subIsComingSoon
-                      ? "opacity-60 hover:opacity-100 text-brand-secondary hover:text-brand-text hover:bg-brand-text/5"
-                      : isSubActive
-                        ? "text-brand-accent bg-brand-text/10 font-medium"
-                        : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5"
-                  }`}
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-sans transition-colors duration-150 cursor-pointer ${subIsComingSoon
+                    ? "opacity-60 hover:opacity-100 text-brand-secondary hover:text-brand-text hover:bg-brand-text/5"
+                    : isSubActive
+                      ? "text-brand-accent bg-brand-text/10 font-medium"
+                      : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5"
+                    }`}
                 >
                   {SubIcon && (
                     <SubIcon
@@ -714,9 +714,8 @@ export default function SidebarLayout({
       <div className="flex flex-1 pt-16">
         {/* Desktop Sidebar (Fixed) */}
         <aside
-          className={`fixed top-16 left-0 bottom-0 z-30 bg-brand-bg/95 backdrop-blur-md flex flex-col py-2 transition-all duration-300 hidden md:flex overflow-y-auto overscroll-contain pb-6 sidebar-scrollbar ${
-            isExpanded ? "w-64" : "w-20"
-          }`}
+          className={`fixed top-16 left-0 bottom-0 z-30 bg-brand-bg/95 backdrop-blur-md flex flex-col py-2 transition-all duration-300 hidden md:flex overflow-y-auto overscroll-contain pb-6 sidebar-scrollbar ${isExpanded ? "w-64" : "w-20"
+            }`}
         >
           <nav className="flex-1 flex flex-col space-y-1">
             {/* BASE SECTION */}
@@ -766,11 +765,10 @@ export default function SidebarLayout({
                 )}
                 <div className="flex flex-col w-full">
                   <div
-                    className={`flex items-center mx-2 rounded-xl ${
-                      isExpanded
-                        ? "py-2.5 px-3"
-                        : "flex-col justify-center py-[14px]"
-                    }`}
+                    className={`flex items-center mx-2 rounded-xl ${isExpanded
+                      ? "py-2.5 px-3"
+                      : "flex-col justify-center py-[14px]"
+                      }`}
                   >
                     <div
                       className={`flex items-center justify-center shrink-0 ${isExpanded ? "w-10" : "w-full"}`}
@@ -814,13 +812,13 @@ export default function SidebarLayout({
                 )}
                 {MOCK_SUBSCRIPTIONS.length > 0
                   ? MOCK_SUBSCRIPTIONS.map((sub) =>
-                      renderNavItem({ ...sub, href: sub.href }),
-                    )
+                    renderNavItem({ ...sub, href: sub.href }),
+                  )
                   : isExpanded && (
-                      <div className="px-6 py-2 text-[13px] text-brand-secondary">
-                        No subscriptions yet.
-                      </div>
-                    )}
+                    <div className="px-6 py-2 text-[13px] text-brand-secondary">
+                      No subscriptions yet.
+                    </div>
+                  )}
                 <Divider />
 
                 {/* YOU SECTION */}
@@ -843,8 +841,30 @@ export default function SidebarLayout({
                   {youSection.map((item) => renderNavItem(item))}
                 </div>
                 <Divider />
+
               </>
             )}
+
+            {/* MORE STATIC SECTION (Visible to all) */}
+            {isExpanded && (
+              <div
+                className="flex items-center justify-between px-6 py-2 cursor-pointer group"
+                onClick={() => setIsMoreStaticOpen(!isMoreStaticOpen)}
+              >
+                <span className="text-[15px] font-semibold text-brand-text">
+                  More
+                </span>
+                <ChevronDown
+                  className={`w-4 h-4 text-brand-secondary transition-transform duration-300 ${isMoreStaticOpen ? "rotate-180" : ""} group-hover:text-brand-text`}
+                />
+              </div>
+            )}
+            <div
+              className={`transition-all duration-300 overflow-hidden ${isMoreStaticOpen || !isExpanded ? "max-h-[500px]" : "max-h-0"}`}
+            >
+              {moreStaticSection.map((item) => renderNavItem(item))}
+            </div>
+            <Divider />
 
             {/* MISC SECTION */}
             {miscSection.map((item) => renderNavItem(item))}
@@ -964,13 +984,12 @@ export default function SidebarLayout({
                     setHoveredSubMenu(null);
                     handleLinkClick(subItem.href, e);
                   }}
-                  className={`w-full flex items-center gap-4 px-5 py-3 text-[14px] font-sans text-left transition-colors duration-150 cursor-pointer ${
-                    hoverSubIsComingSoon
-                      ? "opacity-60 hover:opacity-100 text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06]"
-                      : isSubActive
-                        ? "text-brand-accent bg-brand-text/[0.06] font-medium"
-                        : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06]"
-                  }`}
+                  className={`w-full flex items-center gap-4 px-5 py-3 text-[14px] font-sans text-left transition-colors duration-150 cursor-pointer ${hoverSubIsComingSoon
+                    ? "opacity-60 hover:opacity-100 text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06]"
+                    : isSubActive
+                      ? "text-brand-accent bg-brand-text/[0.06] font-medium"
+                      : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06]"
+                    }`}
                 >
                   {SubIcon && (
                     <SubIcon
@@ -986,15 +1005,13 @@ export default function SidebarLayout({
 
         {/* Mobile Sidebar (Slide-out) */}
         <div
-          className={`fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity duration-300 md:hidden ${
-            isMobileOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-          }`}
+          className={`fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity duration-300 md:hidden ${isMobileOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+            }`}
           onClick={() => setIsMobileOpen(false)}
         />
         <aside
-          className={`fixed top-0 left-0 bottom-0 w-64 z-50 bg-brand-bg flex flex-col py-2 transition-transform duration-300 ease-in-out md:hidden overflow-y-auto overscroll-contain sidebar-scrollbar ${
-            isMobileOpen ? "translate-x-0" : "-translate-x-full"
-          }`}
+          className={`fixed top-0 left-0 bottom-0 w-64 z-50 bg-brand-bg flex flex-col py-2 transition-transform duration-300 ease-in-out md:hidden overflow-y-auto overscroll-contain sidebar-scrollbar ${isMobileOpen ? "translate-x-0" : "-translate-x-full"
+            }`}
         >
           <div className="flex items-center mb-2 h-14">
             <div className="w-20 flex justify-center items-center shrink-0">
@@ -1118,6 +1135,25 @@ export default function SidebarLayout({
                 </div>
               </>
             )}
+
+            <Divider />
+
+            <div
+              className="flex items-center justify-between mx-2 px-3 py-2 cursor-pointer group rounded-xl hover:bg-brand-text/5 transition-colors"
+              onClick={() => setIsMoreStaticOpen(!isMoreStaticOpen)}
+            >
+              <span className="text-[15px] font-semibold text-brand-text">
+                More
+              </span>
+              <ChevronDown
+                className={`w-4 h-4 text-brand-secondary transition-transform duration-300 ${isMoreStaticOpen ? "rotate-180" : ""}`}
+              />
+            </div>
+            <div
+              className={`transition-all duration-300 overflow-hidden ${isMoreStaticOpen ? "max-h-[500px]" : "max-h-0"}`}
+            >
+              {moreStaticSection.map((item) => renderNavItem(item))}
+            </div>
 
             <Divider />
             {miscSection.map((item) => renderNavItem(item))}
@@ -1255,11 +1291,10 @@ export default function SidebarLayout({
                             setNewLinkUrl(option.value);
                             setIsUrlDropdownOpen(false);
                           }}
-                          className={`w-full text-left px-4 py-2.5 text-[14px] transition-colors cursor-pointer ${
-                            newLinkUrl === option.value
-                              ? "bg-[#2563EB] text-brand-text font-medium"
-                              : "text-brand-secondary hover:bg-brand-text/5 hover:text-brand-text"
-                          }`}
+                          className={`w-full text-left px-4 py-2.5 text-[14px] transition-colors cursor-pointer ${newLinkUrl === option.value
+                            ? "bg-[#2563EB] text-brand-text font-medium"
+                            : "text-brand-secondary hover:bg-brand-text/5 hover:text-brand-text"
+                            }`}
                         >
                           {option.label}
                         </button>
