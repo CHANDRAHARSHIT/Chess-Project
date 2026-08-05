@@ -47,17 +47,15 @@ export function ContentGridCard({ item, onPreviewClick, onPinClick }: ContentGri
         </div>
 
         {/* Live FEN Mini Board Thumbnail */}
-        <div className="relative w-full aspect-video rounded-2xl overflow-hidden border border-brand-text/20 bg-obsidian flex items-center justify-center group-hover:border-brand-accent/40 transition-colors">
-          <div className="w-[170px] aspect-square">
-            <ThemedChessboard
-              options={{
-                position: item.thumbnailFen,
-                boardOrientation: "white",
-                showNotation: false,
-                allowDragging: false,
-              }}
-            />
-          </div>
+        <div className="relative w-full aspect-square rounded-2xl overflow-hidden border border-brand-text/20 bg-obsidian group-hover:border-brand-accent/40 transition-colors">
+          <ThemedChessboard
+            options={{
+              position: item.thumbnailFen,
+              boardOrientation: "white",
+              showNotation: false,
+              allowDragging: false,
+            }}
+          />
 
           {/* Video Duration & PGN Count */}
           <div className="absolute bottom-2 right-2 px-2.5 py-0.5 rounded-md bg-black/80 border border-white/20 text-[10px] font-mono text-white font-semibold shadow-md">
@@ -106,9 +104,11 @@ export function ContentGridCard({ item, onPreviewClick, onPinClick }: ContentGri
 
         {/* Replay Marker Tag */}
         {item.mostReplayedMove && item.mostReplayedMove !== "Draft Mode" && (
-          <div className="p-2.5 rounded-xl bg-rose-500/15 border border-rose-600/30 flex items-center gap-2 text-xs font-mono text-rose-900 dark:text-rose-200 shadow-sm">
-            <Flame className="w-4 h-4 text-rose-700 dark:text-rose-400 shrink-0 animate-pulse" />
-            <span className="truncate">Retention Peak: <strong className="font-bold">{item.mostReplayedMove}</strong></span>
+          <div className="flex items-center gap-2 py-1">
+            <Flame className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400 shrink-0 animate-pulse" />
+            <span className="px-2.5 py-0.5 rounded-full bg-rose-700 text-white text-[10px] font-mono font-bold truncate shadow-sm">
+              {item.mostReplayedMove}
+            </span>
           </div>
         )}
       </div>
