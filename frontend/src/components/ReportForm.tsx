@@ -77,7 +77,7 @@ export default function ReportForm() {
         body: JSON.stringify({
           access_key: "c47b4f02-f2e3-431d-b3e8-7de73e8e7d45",
           subject: `New Report Submission: ${reportType}`,
-          from_name: "ChessCraft Reports",
+          from_name: "XLChess Reports",
           email: email,
           report_type: reportType,
           reported_user: reportedUser || "N/A",
