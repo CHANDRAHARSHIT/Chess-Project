@@ -314,14 +314,12 @@ export default function DatabasePlayerPage() {
       {hoveredGame && (
         <div
           key={hoveredGame.id}
-          className="fixed z-50 rounded-xl border border-brand-border/40 shadow-2xl pointer-events-none"
+          className="fixed z-50 rounded-xl border border-brand-border/60 bg-brand-surface shadow-2xl pointer-events-none p-1.5 overflow-hidden"
           style={{
             top: popoverPos.top,
             left: popoverPos.left,
             width: POPOVER_SIZE,
             height: POPOVER_SIZE,
-            background: "var(--color-brand-bg, #1a1a1a)",
-            padding: 6,
             boxSizing: "border-box",
             animation: "board-preview-fadein 150ms 50ms ease-out both",
           }}
