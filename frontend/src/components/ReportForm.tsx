@@ -18,7 +18,7 @@ export default function ReportForm() {
   const [reportType, setReportType] = useState("Cheating / Engine Assistance");
   const [reportedUser, setReportedUser] = useState("");
   const [message, setMessage] = useState("");
-  
+
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const reportOptions = [
@@ -75,7 +75,7 @@ export default function ReportForm() {
           Accept: "application/json",
         },
         body: JSON.stringify({
-          access_key: "c47b4f02-f2e3-431d-b3e8-7de73e8e7d45",
+          access_key: import.meta.env.VITE_WEB3FORMS_ACCESS_KEY,
           subject: `New Report Submission: ${reportType}`,
           from_name: "XLChess Reports",
           email: email,
@@ -140,7 +140,7 @@ export default function ReportForm() {
       <div ref={cardRef} className="contact-card" style={{ opacity: 0 }}>
         <div className="relative z-10 max-w-[864px] mx-auto">
           <div className="flex justify-center mb-6">
-             <ShieldAlert className="w-12 h-12 text-brand-secondary" />
+            <ShieldAlert className="w-12 h-12 text-brand-secondary" />
           </div>
           <h1 className="contact-h2 text-center" style={{ marginBottom: "2rem" }}>Report an Issue</h1>
 
@@ -211,6 +211,8 @@ export default function ReportForm() {
                   <button
                     type="button"
                     aria-labelledby="report-type-label"
+                    aria-expanded={isDropdownOpen}
+                    aria-haspopup="listbox"
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                     className={`contact-input font-sans w-full flex items-center justify-between bg-brand-bg/50 text-left transition-colors ${isDropdownOpen ? 'border-[var(--gold-bright)]' : ''}`}
                   >
@@ -227,11 +229,10 @@ export default function ReportForm() {
                             <li key={option}>
                               <button
                                 type="button"
-                                className={`w-full text-left px-4 py-2.5 text-sm transition-colors duration-200 ${
-                                  reportType === option
-                                    ? "bg-brand-accent/15 text-brand-accent font-medium"
-                                    : "text-brand-text hover:bg-white/5 hover:text-brand-accent"
-                                }`}
+                                className={`w-full text-left px-4 py-2.5 text-sm transition-colors duration-200 ${reportType === option
+                                  ? "bg-brand-accent/15 text-brand-accent font-medium"
+                                  : "text-brand-text hover:bg-white/5 hover:text-brand-accent"
+                                  }`}
                                 onClick={() => {
                                   setReportType(option);
                                   setIsDropdownOpen(false);

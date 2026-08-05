@@ -32,15 +32,6 @@ import {
   Video,
   UserCircle2,
   Shuffle,
-  Info,
-  Copyright,
-  Paintbrush,
-  Megaphone,
-  Code2,
-  FileText,
-  Shield,
-  HelpCircle,
-  Flag,
 } from "lucide-react";
 import QuickGamePage from "../pages/QuickGamePage";
 
