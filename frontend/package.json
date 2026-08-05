@@ -10,7 +10,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@hello-pangea/dnd": "^18.0.1",
     "@rollbar/react": "^1.0.0",
     "@tsparticles/engine": "^4.2.0",
     "@tsparticles/preset-confetti": "^4.1.3",
