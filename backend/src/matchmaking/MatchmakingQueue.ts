@@ -43,7 +43,9 @@ export class MatchmakingQueue {
    */
   enqueue(
     userId: string,
-    variantId: string
+    variantId: string,
+    name?: string,
+    image?: string
   ): { ticket: MatchTicket; descriptor: MatchDescriptor | null } {
     // Idempotency check: if user is already queued or matched.
     // Routed through getTicket() (not a raw map read) so a WAITING ticket that's already
@@ -67,6 +69,8 @@ export class MatchmakingQueue {
       expiresAt: now + this.ticketTtlMs,
       matchedAt: null,
       status: "WAITING",
+      name,
+      image,
     };
 
     this.tickets.set(ticketId, ticket);
@@ -164,8 +168,8 @@ export class MatchmakingQueue {
         const descriptor: MatchDescriptor = {
           matchId,
           participants: [
-            { userId: t1.userId, side: p1Side },
-            { userId: t2.userId, side: p2Side },
+            { userId: t1.userId, side: p1Side, name: t1.name, image: t1.image },
+            { userId: t2.userId, side: p2Side, name: t2.name, image: t2.image },
           ],
           cardinality: { sides: 2, perSide: 1 },
           variantId,
@@ -242,6 +246,8 @@ export class MatchmakingQueue {
         expiresAt: now + this.ticketTtlMs,
         matchedAt: null,
         status: "WAITING",
+        name: ticket.name,
+        image: ticket.image,
       };
 
       this.tickets.set(ticketId, refunded);

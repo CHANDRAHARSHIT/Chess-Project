@@ -48,6 +48,10 @@ export interface ParticipantAssignment {
   readonly userId: string;
   /** Zero-indexed side number (0 = first side / White, 1 = second side / Black, …). */
   readonly side: number;
+  /** Display name at match time, sourced from the Auth layer. Absent if the user has none set. */
+  readonly name?: string;
+  /** Avatar URL at match time, sourced from the Auth layer. Absent if the user has none set. */
+  readonly image?: string;
 }
 
 /**

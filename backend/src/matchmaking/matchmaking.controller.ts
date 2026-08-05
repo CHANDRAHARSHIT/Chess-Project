@@ -22,8 +22,10 @@ export const enqueueTicket = async (req: Request, res: Response): Promise<void> 
   try {
     const userId = getUserIdFromRequest(req);
     const variantId = typeof req.body?.variantId === "string" ? req.body.variantId : "chess960";
+    const name = req.user?.name ?? undefined;
+    const image = req.user?.image ?? undefined;
 
-    const { ticket, descriptor } = matchmakingQueue.enqueue(userId, variantId);
+    const { ticket, descriptor } = matchmakingQueue.enqueue(userId, variantId, name, image);
 
     res.status(201).json({
       ticket,

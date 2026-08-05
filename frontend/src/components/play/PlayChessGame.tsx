@@ -63,9 +63,8 @@ export function PlayChessGame({ onLeave, onFindAnother }: PlayChessGameProps) {
   const [waitedTooLong, setWaitedTooLong] = useState(false);
   const wasMyTurnRef = useRef(false);
 
-  // 3-second Match Sync Countdown (3... 2... 1... PLAY!) & startTime state
+  // 3-second Match Sync Countdown (3... 2... 1... PLAY!)
   const [countdown, setCountdown] = useState<number | null>(3);
-  const [gameStartTime, setGameStartTime] = useState<number | null>(null);
 
   useEffect(() => {
     if (sessionState?.status !== "WAITING") return;
@@ -78,12 +77,16 @@ export function PlayChessGame({ onLeave, onFindAnother }: PlayChessGameProps) {
   const activeSide = fen ? getActiveSideFromFen(fen) : 0;
   const isMyTurn = mySide !== null && activeSide === mySide;
   const isGameActive = status === "READY" || status === "PLAYING";
-  const activeCountdown = moveLog.length > 0 ? null : countdown;
+  // Gated on server status, not a local move counter — a mid-game refresh remounts with an
+  // empty local moveLog but a real status of "PLAYING", so this correctly never replays the
+  // countdown over an already-live game; it only ever runs during the genuine pre-first-move
+  // READY window.
+  const activeCountdown = status === "READY" ? countdown : null;
   const interactive = connectionStatus === "connected" && isGameActive && !gameResult && activeCountdown === null;
 
-  // Run 3s start countdown on initial match load
+  // Run the 3s "get ready" countdown once, the first time this session reaches READY.
   useEffect(() => {
-    if (!isGameActive || moveLog.length > 0) return;
+    if (status !== "READY") return;
 
     let val = 3;
     soundManager.playButtonClick();
@@ -98,13 +101,12 @@ export function PlayChessGame({ onLeave, onFindAnother }: PlayChessGameProps) {
         soundManager.playMove();
       } else {
         setCountdown(null);
-        setGameStartTime((prev) => prev ?? Date.now());
         window.clearInterval(interval);
       }
     }, 1000);
 
     return () => window.clearInterval(interval);
-  }, [isGameActive, moveLog.length]);
+  }, [status]);
 
   useEffect(() => {
     if (isMyTurn && !wasMyTurnRef.current && isGameActive) {
@@ -125,7 +127,6 @@ export function PlayChessGame({ onLeave, onFindAnother }: PlayChessGameProps) {
 
   const handleMoveApplied = (move: DerivedMove) => {
     setMoveLog((prev) => [...prev, move.san]);
-    if (!gameStartTime) setGameStartTime(Date.now());
     if (!move.isOwnMove) {
       soundManager.playMove();
       setPoliteMessage(`Opponent played ${move.san}.`);
@@ -146,12 +147,7 @@ export function PlayChessGame({ onLeave, onFindAnother }: PlayChessGameProps) {
     const remainingMs = sessionState?.clock.remainingMs[side] ?? fallbackMs;
     const lastMoveAt = sessionState?.clock.lastMoveAt ?? null;
     const isLive = isGameActive && activeSide === side;
-    return {
-      remainingMs,
-      lastMoveAt,
-      gameStartTime,
-      isLive,
-    };
+    return { remainingMs, lastMoveAt, isLive };
   };
 
   const positionId =
@@ -163,6 +159,10 @@ export function PlayChessGame({ onLeave, onFindAnother }: PlayChessGameProps) {
   const myClock = clockFor(mySideResolved);
   const opponentClock = clockFor(opponentSide);
   const boardOrientation = mySideResolved === 1 ? "black" : "white";
+
+  // Opponent display metadata is sourced from the MatchDescriptor (captured at match time);
+  // own name/avatar comes from the live session since it can change after the match started.
+  const opponentParticipant = descriptor.participants.find((p) => p.userId === opponentUserId);
 
   return (
     <div className="w-full max-w-6xl mx-auto flex flex-col gap-3.5 animate-fade-in">
@@ -215,6 +215,8 @@ export function PlayChessGame({ onLeave, onFindAnother }: PlayChessGameProps) {
               <PlayerPanel
                 userId={opponentUserId}
                 label="Opponent"
+                name={opponentParticipant?.name}
+                image={opponentParticipant?.image}
                 presenceState={mapOpponentPresence(presence[opponentUserId])}
                 {...opponentClock}
               />

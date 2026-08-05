@@ -10,7 +10,6 @@ interface PlayerPanelProps {
   presenceState: PresenceState;
   remainingMs: number;
   lastMoveAt: number | null;
-  gameStartTime?: number | null;
   isLive: boolean;
 }
 
@@ -22,7 +21,6 @@ export function PlayerPanel({
   presenceState,
   remainingMs,
   lastMoveAt,
-  gameStartTime,
   isLive,
 }: PlayerPanelProps) {
   const isYou = label.toLowerCase() === "you";
@@ -59,13 +57,7 @@ export function PlayerPanel({
             {isYou ? "Your Turn" : "Opponent's Turn"}
           </span>
         )}
-        <SideClock
-          remainingMs={remainingMs}
-          lastMoveAt={lastMoveAt}
-          gameStartTime={gameStartTime}
-          isLive={isLive}
-          label={label}
-        />
+        <SideClock remainingMs={remainingMs} lastMoveAt={lastMoveAt} isLive={isLive} label={label} />
       </div>
     </div>
   );

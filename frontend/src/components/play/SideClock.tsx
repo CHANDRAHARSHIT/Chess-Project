@@ -23,19 +23,22 @@ function formatClock(ms: number): string {
 interface SideClockProps {
   remainingMs: number;
   lastMoveAt: number | null;
-  gameStartTime?: number | null;
   isLive: boolean;
   label: string;
 }
 
-export function SideClock({ remainingMs, lastMoveAt, gameStartTime, isLive, label }: SideClockProps) {
+export function SideClock({ remainingMs, lastMoveAt, isLive, label }: SideClockProps) {
   const [displayMs, setDisplayMs] = useState(remainingMs);
 
   useEffect(() => {
     let timer: number | null = null;
-    const activeStartAt = lastMoveAt ?? gameStartTime;
 
-    if (!isLive || !activeStartAt) {
+    // lastMoveAt is the server's own clock anchor — null until the session's first move is
+    // actually submitted (Session never charges time before then). Ticking from anything else
+    // (e.g. a local "match ready" timestamp) would show time elapsing that the server was never
+    // going to deduct, so the display would visibly snap back the instant the real state_update
+    // arrives after the first move.
+    if (!isLive || !lastMoveAt) {
       timer = window.setTimeout(() => setDisplayMs(remainingMs), 0);
       return () => {
         if (timer !== null) window.clearTimeout(timer);
@@ -43,7 +46,7 @@ export function SideClock({ remainingMs, lastMoveAt, gameStartTime, isLive, labe
     }
 
     const tick = () => {
-      const elapsed = Date.now() - activeStartAt;
+      const elapsed = Date.now() - lastMoveAt;
       const remaining = Math.max(0, remainingMs - elapsed);
       setDisplayMs(remaining);
       if (remaining <= 0) return;
@@ -55,7 +58,7 @@ export function SideClock({ remainingMs, lastMoveAt, gameStartTime, isLive, labe
     return () => {
       if (timer !== null) window.clearTimeout(timer);
     };
-  }, [remainingMs, lastMoveAt, gameStartTime, isLive]);
+  }, [remainingMs, lastMoveAt, isLive]);
 
   const isFlagged = isLive && displayMs <= 0;
   const isCritical = isLive && displayMs <= CRITICAL_THRESHOLD_MS && !isFlagged;
