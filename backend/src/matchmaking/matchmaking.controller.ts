@@ -6,10 +6,10 @@ import { matchmakingQueue } from "./MatchmakingQueue.js";
  * Contains no queue iteration or pairing logic — delegates everything to MatchmakingQueue.
  */
 export function getUserIdFromRequest(req: Request): string {
-  // Use existing auth session user ID if available, otherwise check header (dev fallback)
-  const reqAuth = (req as any).auth;
-  if (reqAuth && typeof reqAuth.user?.id === "string") {
-    return reqAuth.user.id;
+  // req.user is populated by requireAuth (see matchmaking.route.ts) — the same field every
+  // other authenticated controller (games, payment, user, customLinks) already reads.
+  if (typeof req.user?.id === "string") {
+    return req.user.id;
   }
   const headerUserId = req.headers["x-user-id"];
   if (typeof headerUserId === "string" && headerUserId.trim() !== "") {

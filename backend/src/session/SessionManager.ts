@@ -468,6 +468,20 @@ export class SessionManager {
     if (!session) return;
 
     const present = this.presence.get(sessionId) ?? new Set<string>();
+
+    // Bootstrap: broadcastPresence() below only reaches sockets that are already registered —
+    // ConnectionManager.send() silently no-ops for anyone not yet connected (see its `if
+    // (!connId) return`). So whichever participant connects first has their "connected" fact
+    // dropped for a peer who hasn't connected yet, and that peer never learns it later since no
+    // further connect event fires for the first participant. Directly send the just-connected
+    // participant a presence fact for everyone already present, so both directions are covered
+    // regardless of connection order.
+    for (const p of session.matchDescriptor.participants) {
+      if (p.userId !== userId && present.has(p.userId)) {
+        this.transport.send(userId, { type: "presence_update", payload: { userId: p.userId, connected: true } });
+      }
+    }
+
     present.add(userId);
     this.presence.set(sessionId, present);
     this.broadcastPresence(session, userId, true);
