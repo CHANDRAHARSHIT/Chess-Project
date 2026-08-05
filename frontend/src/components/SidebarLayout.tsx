@@ -31,7 +31,6 @@ import { MoreMenu } from "./MoreMenu";
 import { useNavigate, useLocation } from "react-router";
 import { useNavigationStack } from "../hooks/useNavigationStack";
 import rollbar from "../config/rollbar";
-import finegoldImg from "../assets/FineGold.jpg";
 
 // Hook for clicking outside the custom dropdown
 function useOnClickOutside(
@@ -85,7 +84,7 @@ export default function SidebarLayout({
   const [modalMode, setModalMode] = useState<"login" | "register">("login");
   const [mobileOpenItem, setMobileOpenItem] = useState<string | null>(null);
   const [isYouOpen, setIsYouOpen] = useState(true);
-  const [isMoreStaticOpen, setIsMoreStaticOpen] = useState(false);
+  const [isMoreStaticOpen, setIsMoreStaticOpen] = useState(true);
 
   const [hoveredSubMenu, setHoveredSubMenu] = useState<{
     items: {
@@ -324,11 +323,25 @@ export default function SidebarLayout({
     }
   };
 
+  const knightAvatar = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><circle cx='32' cy='32' r='32' fill='%236366f1'/><path d='M20 48h24v-4c0-2.2-1.8-4-4-4H24c-2.2 0-4 1.8-4 4v4zm5-10h14c3-4 5-8.5 4-13 0-3.5-1.8-6.8-4.5-9-2.2-1.8-4.5-2-6.5-1-2 1-3 3-4 3.5-1.5-1-3-1.5-4.5-.5-2 1.3-2.5 3.5-1.5 5.5 1.5 3 4 5 5 8.5 1 3.5.5 6.5-2 9.5z' fill='%23ffffff'/></svg>`;
+  const crownAvatar = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><circle cx='32' cy='32' r='32' fill='%23d97706'/><path d='M20 48h24v-4H20v4zm0-6h24l2-16-7 5-5-10-4 6-4-6-5 10-7-5 2 16z' fill='%23ffffff'/></svg>`;
+  const rookAvatar = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><circle cx='32' cy='32' r='32' fill='%230d9488'/><path d='M20 48h24v-4H20v4zm2-6h20l-2-14h2v-6h-5v3h-3v-3h-4v3h-3v-3h-5v6h2l-2 14z' fill='%23ffffff'/></svg>`;
+
   const MOCK_SUBSCRIPTIONS = [
     {
-      name: "GMBenjaminFinegold",
-      avatar: finegoldImg,
-      href: "/subscriptions",
+      name: "Chess Network",
+      avatar: knightAvatar,
+      href: "/subscriptions?c=chess-network",
+    },
+    {
+      name: "Grandmaster Insights",
+      avatar: crownAvatar,
+      href: "/subscriptions?c=grandmaster-insights",
+    },
+    {
+      name: "Endgame Masters",
+      avatar: rookAvatar,
+      href: "/subscriptions?c=endgame-masters",
     },
   ];
 
@@ -450,10 +463,15 @@ export default function SidebarLayout({
     const isComingSoon = Boolean(item.comingSoon);
     const isActive =
       currentPathWithSearch === item.href ||
-      location.pathname === item.href ||
+      (Boolean(item.href) &&
+        !item.href?.includes("?") &&
+        location.pathname === item.href) ||
       item.subItems?.some(
         (s: NavItem) =>
-          currentPathWithSearch === s.href || location.pathname === s.href,
+          currentPathWithSearch === s.href ||
+          (Boolean(s.href) &&
+            !s.href?.includes("?") &&
+            location.pathname === s.href),
       );
 
     const isAvatar = item.avatar !== undefined;
