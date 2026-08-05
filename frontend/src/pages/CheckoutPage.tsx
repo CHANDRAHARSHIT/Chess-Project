@@ -15,6 +15,7 @@ import { useSession } from "../hooks/useSession";
 import { AuthModal } from "../components/AuthModal";
 import { PaymentService } from "../services/payment";
 import { usePricing } from "../hooks/usePricing";
+import rollbar from "../config/rollbar";
 
 export default function CheckoutPage() {
   const navigate = useNavigate();
@@ -49,6 +50,9 @@ export default function CheckoutPage() {
         sessionStorage.removeItem("pending_checkout_session_id");
       } catch (err) {
         console.error("[CheckoutPage] Session status check failed:", err);
+        rollbar.error(err as Error, {
+          context: "CheckoutPage.checkPendingSession",
+        });
         sessionStorage.removeItem("pending_checkout_session_id");
       } finally {
         setIsProcessing(false);
@@ -86,8 +90,8 @@ export default function CheckoutPage() {
   const billingCycleLabel = isYearly ? "Premium Yearly" : "Premium Monthly";
 
   // Diamond USD base prices
-  const DIAMOND_USD_MONTHLY = 5.00;
-  const DIAMOND_USD_YEARLY = 20.40;
+  const DIAMOND_USD_MONTHLY = 5.0;
+  const DIAMOND_USD_YEARLY = 20.4;
 
   const symbol = pricing.symbol;
 
@@ -96,13 +100,14 @@ export default function CheckoutPage() {
   const yearlyRate = pricing.yearly / DIAMOND_USD_YEARLY;
 
   // Format helper: 2 decimals for < 100, integers for >= 100
-  const fmt = (n: number) => n >= 100 ? Math.round(n).toString() : n.toFixed(2);
+  const fmt = (n: number) =>
+    n >= 100 ? Math.round(n).toString() : n.toFixed(2);
 
   const localMonthly = DIAMOND_USD_MONTHLY * monthlyRate;
   const localYearlyTotal = DIAMOND_USD_YEARLY * yearlyRate;
 
   const basePriceFormatted = isYearly
-    ? `${symbol}${fmt(localMonthly * 12)}`   // full year at monthly rate
+    ? `${symbol}${fmt(localMonthly * 12)}` // full year at monthly rate
     : `${symbol}${fmt(localMonthly)}`;
   const planDiscountFormatted = isYearly
     ? `${symbol}${fmt(localMonthly * 12 - localYearlyTotal)}`
@@ -135,10 +140,7 @@ export default function CheckoutPage() {
       const planId = isYearly ? "pro_yearly" : "pro_monthly";
       const response = await PaymentService.createCheckoutSession(planId);
 
-      if (
-        response.status === "success" &&
-        (response.checkoutUrl)
-      ) {
+      if (response.status === "success" && response.checkoutUrl) {
         if (response.sessionId) {
           sessionStorage.setItem(
             "pending_checkout_session_id",
@@ -156,6 +158,7 @@ export default function CheckoutPage() {
       }
     } catch (error: any) {
       console.error("[CheckoutPage] Payment redirect error:", error);
+      rollbar.error(error, { context: "CheckoutPage.handleUpgrade" });
       setPaymentError(
         error?.message ||
           "An unexpected error occurred while establishing a secure billing session. Please try again.",
@@ -401,7 +404,7 @@ export default function CheckoutPage() {
                     </label>
                     <div className="text-sm font-sans text-brand-secondary flex items-center gap-1">
                       <Calendar className="w-3.5 h-3.5 text-brand-accent" />
-                      Active since July 2024
+                      Active since August 2026
                     </div>
                   </div>
                 </div>

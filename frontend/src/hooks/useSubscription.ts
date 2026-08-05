@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import type { UserSubscriptionState, SubscriptionStatus } from "../types/payment";
+import rollbar from "../config/rollbar";
 
 export function useSubscription() {
   const [subscription, setSubscription] = useState<UserSubscriptionState>({
@@ -71,6 +72,9 @@ export function useSubscription() {
       }
     } catch (err: any) {
       console.error(err);
+      // Caught here rather than thrown, so this never reaches the
+      // ErrorBoundary — report it manually since it gates premium features.
+      rollbar.error(err, { context: "useSubscription.fetchSubscription" });
       setError(err.message || "Error synchronizing subscription status.");
     } finally {
       setLoading(false);

@@ -126,15 +126,52 @@ export function CustomPuzzleSession({ filters, onExit }: CustomPuzzleSessionProp
   }, [currentRawPuzzle]);
 
   // ─── Loading State ───────────────────────────────────────────────────────────
+  // Mirrors the full active-puzzle layout (header, progress bar, PuzzleBoard's own
+  // heading/board/status/controls structure) so the container height matches the
+  // loaded state exactly and nothing shifts once puzzles arrive.
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
-        <div
-          className="w-12 h-12 rounded-full border-2 animate-spin border-brand-accent/20 border-t-brand-accent"
-        />
-        <p className="text-sm font-mono uppercase tracking-widest text-brand-secondary">
-          Loading Puzzles…
-        </p>
+      <div className="flex flex-col gap-6 w-full">
+        {/* Session Header skeleton */}
+        <div className="rounded-2xl p-4 flex items-center justify-between bg-brand-surface/80 border border-brand-border/60 backdrop-blur-md">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider text-brand-secondary/40">
+              <ArrowLeft className="w-3.5 h-3.5" />
+              Exit
+            </div>
+            <div className="w-px h-5 bg-brand-border/40" />
+            <div className="h-3.5 w-14 rounded bg-brand-border/30 animate-pulse" />
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="h-3.5 w-8 rounded bg-brand-border/30 animate-pulse" />
+            <div className="h-3.5 w-8 rounded bg-brand-border/30 animate-pulse" />
+          </div>
+        </div>
+
+        {/* Progress bar skeleton */}
+        <div className="w-full rounded-full overflow-hidden h-[3px] bg-brand-border/30" />
+
+        {/* Board stage skeleton — same structure as PuzzleBoard */}
+        <div className="flex flex-col items-center gap-3 sm:gap-3.5 w-full">
+          <div className="h-4 w-24 rounded bg-brand-border/30 animate-pulse" />
+          <div className="relative w-full max-w-[500px] sm:max-w-[540px] aspect-square rounded-sm border border-brand-border/60 bg-brand-surface overflow-hidden">
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
+              <div className="w-12 h-12 rounded-full border-2 animate-spin border-brand-accent/20 border-t-brand-accent" />
+              <p className="text-sm font-mono uppercase tracking-widest text-brand-secondary">
+                Loading Puzzles…
+              </p>
+            </div>
+          </div>
+          <div className="h-8" />
+          <div className="w-full max-w-[500px] sm:max-w-none flex flex-wrap sm:flex-nowrap items-center justify-center gap-2 sm:gap-4 pt-2">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div
+                key={i}
+                className="flex-1 min-w-[70px] sm:flex-initial sm:w-[90px] h-[44px] rounded-xl bg-brand-surface border border-brand-border/60 animate-pulse"
+              />
+            ))}
+          </div>
+        </div>
       </div>
     );
   }
@@ -142,7 +179,7 @@ export function CustomPuzzleSession({ filters, onExit }: CustomPuzzleSessionProp
   // ─── Error State ─────────────────────────────────────────────────────────────
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] gap-6 text-center px-4">
+      <div className="flex flex-col items-center justify-center min-h-[500px] gap-6 text-center px-4">
         <div
           className="w-14 h-14 rounded-2xl flex items-center justify-center bg-rose-500/10 border border-rose-500/20"
         >
@@ -156,7 +193,7 @@ export function CustomPuzzleSession({ filters, onExit }: CustomPuzzleSessionProp
         </div>
         <button
           onClick={onExit}
-          className="px-6 py-2.5 rounded-xl text-xs font-mono uppercase tracking-wider cursor-pointer transition-all duration-200 bg-brand-accent/10 border border-brand-accent/30 text-brand-accent hover:bg-brand-accent/20"
+          className="btn-gold-outline px-6 py-2.5 rounded-xl text-xs font-mono uppercase tracking-wider cursor-pointer transition-all duration-200 bg-brand-accent/10 border border-brand-accent/30 text-brand-accent hover:bg-brand-accent/20"
         >
           Back to Puzzles
         </button>
@@ -168,7 +205,7 @@ export function CustomPuzzleSession({ filters, onExit }: CustomPuzzleSessionProp
   if (sessionComplete) {
     const accuracy = puzzles.length > 0 ? Math.round((sessionSolved / puzzles.length) * 100) : 0;
     return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] gap-8 text-center px-4">
+      <div className="flex flex-col items-center justify-center min-h-[500px] gap-8 text-center px-4">
         <div className="relative">
           <div
             className="w-20 h-20 rounded-2xl flex items-center justify-center bg-brand-accent/10 border border-brand-accent/30 shadow-lg shadow-brand-accent/10"

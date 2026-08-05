@@ -17,6 +17,7 @@ import {
 import type { ChessPuzzle } from '../utils/PuzzleLoader';
 import { Chess } from 'chess.js';
 import { Confetti } from '../components/Confetti';
+import rollbar from '../config/rollbar';
 
 // Tailwind's `lg` breakpoint. Keep in sync with tailwind config if changed.
 const DESKTOP_BREAKPOINT_PX = 1024;
@@ -137,6 +138,9 @@ export default function PuzzlePage() {
       };
     } catch (e) {
       console.error('Invalid FEN in selected puzzle node, falling back to default:', e);
+      // Falls back to the default node below, so this never reaches the
+      // ErrorBoundary — report it manually since it points at bad puzzle data.
+      rollbar.error(e as Error, { context: 'PuzzlePage.safeChessPuzzle', nodeId: targetNode?.id });
       return {
         id: defaultNode?.id || 'placeholder_004',
         fen: defaultNode?.fen || 'rnbqkn1r/ppppp2p/5p2/6p1/4P3/3P4/PPP2PPP/RNBQKBNR w KQkq - 0 3',
@@ -279,7 +283,7 @@ export default function PuzzlePage() {
           <button
             id="custom-puzzles-btn"
             onClick={handleOpenCustomConfig}
-            className="w-full flex items-center justify-center gap-2 px-4.5 py-3.5 rounded-xl text-xs font-mono uppercase tracking-wider font-bold transition-all duration-300 cursor-pointer bg-brand-surface border border-brand-accent/35 text-brand-accent hover:border-brand-accent/60 shadow-md shadow-brand-accent/10 hover:shadow-lg hover:shadow-brand-accent/20 hover:-translate-y-0.5"
+            className="btn-gold-outline w-full flex items-center justify-center gap-2 px-4.5 py-3.5 rounded-xl text-xs font-mono uppercase tracking-wider font-bold transition-all duration-300 cursor-pointer bg-brand-surface border border-brand-accent/35 text-brand-accent hover:border-brand-accent/60 shadow-md shadow-brand-accent/10 hover:shadow-lg hover:shadow-brand-accent/20 hover:-translate-y-0.5"
             style={{
               background: "linear-gradient(135deg, rgba(212,175,110,0.14) 0%, rgba(184,147,74,0.08) 100%), var(--obsidian-mid)",
             }}
@@ -540,7 +544,7 @@ export default function PuzzlePage() {
                         <button
                           id="custom-puzzles-btn-mobile"
                           onClick={handleOpenCustomConfig}
-                          className="w-full flex items-center justify-center gap-2 px-4.5 py-3.5 rounded-xl text-xs font-mono uppercase tracking-wider font-bold transition-all duration-300 cursor-pointer bg-brand-surface border border-brand-accent/35 text-brand-accent hover:border-brand-accent/60 shadow-md shadow-brand-accent/10 hover:shadow-lg hover:shadow-brand-accent/20 hover:-translate-y-0.5"
+                          className="btn-gold-outline w-full flex items-center justify-center gap-2 px-4.5 py-3.5 rounded-xl text-xs font-mono uppercase tracking-wider font-bold transition-all duration-300 cursor-pointer bg-brand-surface border border-brand-accent/35 text-brand-accent hover:border-brand-accent/60 shadow-md shadow-brand-accent/10 hover:shadow-lg hover:shadow-brand-accent/20 hover:-translate-y-0.5"
                           style={{
                             background: "linear-gradient(135deg, rgba(212,175,110,0.14) 0%, rgba(184,147,74,0.08) 100%), var(--obsidian-mid)",
                           }}

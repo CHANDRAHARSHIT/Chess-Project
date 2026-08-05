@@ -9,6 +9,7 @@ const requiredEnvs = [
   "AUTH_URL",
   "AUTH_GOOGLE_ID",
   "AUTH_GOOGLE_SECRET",
+  "ROLLBAR_ACCESS_TOKEN",
 ];
 
 const missingEnvs = requiredEnvs.filter((key) => !process.env[key]);
@@ -38,4 +39,7 @@ export const env = {
   STRIPE_PRICE_PRO_YEARLY: process.env.STRIPE_PRICE_PRO_YEARLY,
   STRIPE_SUCCESS_URL: process.env.STRIPE_SUCCESS_URL,
   STRIPE_CANCEL_URL: process.env.STRIPE_CANCEL_URL,
+
+  // Rollbar error monitoring
+  ROLLBAR_ACCESS_TOKEN: process.env.ROLLBAR_ACCESS_TOKEN!,
 };

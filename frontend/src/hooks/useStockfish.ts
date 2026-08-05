@@ -1,16 +1,32 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { type DifficultyLevel, type EngineEvaluation, DIFFICULTY_CONFIGS, type EngineStatus } from '../types/chess';
+import rollbar from '../config/rollbar';
 
 export function useStockfish() {
   const workerRef = useRef<Worker | null>(null);
   const [evaluation, setEvaluation] = useState<EngineEvaluation>({ type: 'cp', value: 0 });
   const [bestMove, setBestMove] = useState<string | null>(null);
   const [isThinking, setIsThinking] = useState<boolean>(false);
+  // Mirrors isThinking without changing identity on every think/idle flip —
+  // stopSearch/getEngineMove read this instead of the state value so their
+  // own useCallback identities stay stable (see invalidateSearch below).
+  const isThinkingRef = useRef(false);
   const [engineStatus, setEngineStatus] = useState<EngineStatus>('idle');
   const [engineDepth, setEngineDepth] = useState<number>(0);
-  
+
   // Keep track of search timeout to clear if game resets or new move is made
   const searchTimeoutRef = useRef<number | null>(null);
+  // Bumped every time a search is stopped or superseded. A search's onmessage
+  // handler captures the id at launch time and ignores any Stockfish message
+  // that arrives after the id has moved on — this is what prevents a late
+  // 'bestmove' for an old position from being applied to a board that has
+  // since been reset/undone/reshuffled.
+  const searchIdRef = useRef(0);
+
+  const setThinking = useCallback((value: boolean) => {
+    isThinkingRef.current = value;
+    setIsThinking(value);
+  }, []);
 
   // Initialize the worker lazily
   const initWorker = useCallback(() => {
@@ -33,54 +49,65 @@ export function useStockfish() {
       return worker;
     } catch (e) {
       console.error('Failed to initialize Stockfish worker', e);
+      // Falls back to an "error" engine status below, so this never reaches
+      // the ErrorBoundary — report it manually since it breaks engine play.
+      rollbar.error(e as Error, { context: 'useStockfish.initWorker' });
       setEngineStatus('error');
       return null;
     }
   }, []);
 
-  // Terminate worker
-  const terminateWorker = useCallback(() => {
+  // Cancels whatever search is currently in flight. Any onmessage handler
+  // still bound from that search will see searchIdRef has moved past its
+  // captured id and drop late 'info'/'bestmove' messages instead of acting
+  // on them against a board that has since moved on (reset/undo/etc).
+  const invalidateSearch = useCallback(() => {
+    searchIdRef.current += 1;
     if (searchTimeoutRef.current) {
       clearTimeout(searchTimeoutRef.current);
       searchTimeoutRef.current = null;
     }
+    return searchIdRef.current;
+  }, []);
+
+  // Terminate worker
+  const terminateWorker = useCallback(() => {
+    invalidateSearch();
     if (workerRef.current) {
+      workerRef.current.onmessage = null;
       workerRef.current.postMessage('quit');
       workerRef.current.terminate();
       workerRef.current = null;
       setEngineStatus('idle');
-      setIsThinking(false);
+      setThinking(false);
     }
-  }, []);
+  }, [invalidateSearch, setThinking]);
 
   // Stop current search
   const stopSearch = useCallback(() => {
-    if (searchTimeoutRef.current) {
-      clearTimeout(searchTimeoutRef.current);
-      searchTimeoutRef.current = null;
-    }
-    if (workerRef.current && isThinking) {
+    invalidateSearch();
+    if (workerRef.current && isThinkingRef.current) {
       workerRef.current.postMessage('stop');
-      setIsThinking(false);
     }
-  }, [isThinking]);
+    setThinking(false);
+  }, [invalidateSearch, setThinking]);
 
   // Reset evaluation state to starting position (used by handleReset)
   const resetEvaluation = useCallback(() => {
     setEvaluation({ type: 'cp', value: 0 });
     setBestMove(null);
     setEngineDepth(0);
-    setIsThinking(false);
-  }, []);
+    setThinking(false);
+  }, [setThinking]);
 
   // Start search for a FEN position
   const getEngineMove = useCallback((fen: string, difficulty: DifficultyLevel, onMoveCallback?: (move: string) => void, isChess960?: boolean) => {
     const worker = initWorker();
     if (!worker) return;
 
-    // Stop any ongoing search
-    stopSearch();
-    setIsThinking(true);
+    // Cancel any ongoing search and claim a fresh id for this one
+    const thisSearchId = invalidateSearch();
+    setThinking(true);
     setBestMove(null);
     setEngineStatus('thinking');
 
@@ -96,6 +123,10 @@ export function useStockfish() {
 
     // Set message listener
     worker.onmessage = (event: MessageEvent) => {
+      // A newer search superseded this one (stop/reset/undo/new move) —
+      // ignore this message so its callback never fires against a stale board.
+      if (thisSearchId !== searchIdRef.current) return;
+
       const line: string = event.data;
 
       // Parse engine depth and evaluation
@@ -134,9 +165,9 @@ export function useStockfish() {
         if (bestMoveMatch) {
           const move = bestMoveMatch[1];
           setBestMove(move);
-          setIsThinking(false);
+          setThinking(false);
           setEngineStatus('ready');
-          
+
           if (searchTimeoutRef.current) {
             clearTimeout(searchTimeoutRef.current);
             searchTimeoutRef.current = null;
@@ -154,20 +185,20 @@ export function useStockfish() {
 
     // Set a safety timeout to stop Stockfish if it takes too long
     searchTimeoutRef.current = setTimeout(() => {
-      if (workerRef.current) {
-        workerRef.current.postMessage('stop');
+      if (thisSearchId === searchIdRef.current) {
+        workerRef.current?.postMessage('stop');
       }
     }, config.timeLimit) as unknown as number;
 
-  }, [initWorker, stopSearch]);
+  }, [initWorker, invalidateSearch, setThinking]);
 
   // Perform deeper analysis for the "Hint" button
   const analyzePosition = useCallback((fen: string, isChess960?: boolean) => {
     const worker = initWorker();
     if (!worker) return;
 
-    stopSearch();
-    setIsThinking(true);
+    const thisSearchId = invalidateSearch();
+    setThinking(true);
     setBestMove(null);
     setEngineStatus('analyzing');
 
@@ -181,6 +212,8 @@ export function useStockfish() {
     worker.postMessage(`position fen ${fen}`);
 
     worker.onmessage = (event: MessageEvent) => {
+      if (thisSearchId !== searchIdRef.current) return;
+
       const line: string = event.data;
 
       if (line.startsWith('info ')) {
@@ -207,7 +240,7 @@ export function useStockfish() {
         const bestMoveMatch = line.match(/^bestmove\s+(\S+)/);
         if (bestMoveMatch) {
           setBestMove(bestMoveMatch[1]);
-          setIsThinking(false);
+          setThinking(false);
           setEngineStatus('ready');
         }
       }
@@ -215,15 +248,15 @@ export function useStockfish() {
 
     // Perform analysis up to depth 15
     worker.postMessage('go depth 15');
-    
+
     // Auto-stop after 3 seconds if not completed
     searchTimeoutRef.current = setTimeout(() => {
-      if (workerRef.current) {
-        workerRef.current.postMessage('stop');
+      if (thisSearchId === searchIdRef.current) {
+        workerRef.current?.postMessage('stop');
       }
     }, 3000) as unknown as number;
 
-  }, [initWorker, stopSearch]);
+  }, [initWorker, invalidateSearch, setThinking]);
 
   // Clean up on component destroy
   useEffect(() => {

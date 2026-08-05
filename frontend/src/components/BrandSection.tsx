@@ -19,7 +19,6 @@ export default function BrandSection() {
   const imageRef = useRef<HTMLDivElement>(null);
   const artworkRef = useRef<HTMLDivElement>(null);
 
-  // Perspective tilt hover on artwork image (same as Features card)
   const handleArtworkMouseMove = useCallback((e: MouseEvent) => {
     const el = artworkRef.current;
     if (!el) return;
@@ -31,7 +30,8 @@ export default function BrandSection() {
     gsap.to(el, {
       rotateX: -dy * 5,
       rotateY: dx * 5,
-      scale: 1.12,
+      scaleX: 1.02,
+      scaleY: 1.02,
       duration: 0.4,
       ease: "power2.out",
     });
@@ -43,7 +43,8 @@ export default function BrandSection() {
     gsap.to(el, {
       rotateX: 0,
       rotateY: 0,
-      scale: 1.1,
+      scaleX: 1,
+      scaleY: 1,
       duration: 0.7,
       ease: "elastic.out(1, 0.5)",
     });
@@ -148,13 +149,13 @@ export default function BrandSection() {
 
             <div className="space-y-1 max-w-lg">
               <p
-                className="font-sans text-base sm:text-[19px] leading-relaxed font-light"
+                className="font-sans text-base sm:text-lg leading-relaxed font-normal"
                 style={{ color: "var(--text-secondary)" }}
               >
                 You've already done the hard part: building an audience.
               </p>
               <p
-                className="font-sans text-base sm:text-[19px] leading-relaxed font-light"
+                className="font-sans text-base sm:text-lg leading-relaxed font-normal"
                 style={{ color: "var(--text-secondary)" }}
               >
                 Now build a platform around your brand that grows with you.
@@ -181,7 +182,7 @@ export default function BrandSection() {
           >
             <div
               ref={artworkRef}
-              className="luxury-card w-full max-w-[600px] relative scale-100 lg:scale-[1.1] origin-center lg:origin-right p-4 md:p-6 pb-8 mt-8 lg:mt-0"
+              className="luxury-card w-full max-w-[540px] relative mt-8 lg:mt-0 p-4 md:p-6"
               style={{ transformStyle: "preserve-3d", willChange: "transform" }}
             >
               {/* Chess board micropattern */}

@@ -15,6 +15,7 @@ import {
 import { useSession } from "../hooks/useSession";
 import { useNavigate } from "react-router";
 import { PaymentService } from "../services/payment";
+import rollbar from "../config/rollbar";
 
 interface PlatformButtonProps {
   name: string;
@@ -142,6 +143,7 @@ const { signOut } = useSession();
       }
     } catch (e) {
       console.error("[ProfilePage] Customer billing portal load error:", e);
+      rollbar.error(e as Error, { context: "ProfileContent.manageBilling" });
       alert("An unexpected error occurred while loading billing portal. Please try again.");
     } finally {
       setManagingBilling(false);
@@ -166,6 +168,7 @@ const { signOut } = useSession();
         }
       } catch (err) {
         console.error(err);
+        rollbar.error(err as Error, { context: "ProfileContent.logoutAll" });
         alert("A network error occurred while signing out from all devices.");
       } finally {
         setLoggingOutAll(false);
@@ -192,6 +195,7 @@ const { signOut } = useSession();
       }
     } catch (err: any) {
       console.error(err);
+      rollbar.error(err, { context: "ProfileContent.loadProfile" });
       setError(err.message || "An unexpected error occurred while loading profile.");
     } finally {
       setLoadingProfile(false);
@@ -231,9 +235,16 @@ const { signOut } = useSession();
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pt-8">
-                {Array.from({ length: 3 }).map((_, i) => (
-                  <div key={i} className="h-28 bg-brand-surface/40 border border-[rgba(212,175,110,0.10)] rounded-xl" />
+                {/* 4 single-column cards: Membership, Rating, Games, Achievements */}
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="min-h-[176px] bg-brand-surface/40 border border-[rgba(212,175,110,0.10)] rounded-xl" />
                 ))}
+                {/* Bio & Username card (sm:col-span-2) */}
+                <div className="min-h-[176px] bg-brand-surface/40 border border-[rgba(212,175,110,0.10)] rounded-xl sm:col-span-2" />
+                {/* Connected Accounts card */}
+                <div className="min-h-[176px] bg-brand-surface/40 border border-[rgba(212,175,110,0.10)] rounded-xl" />
+                {/* Connected Platforms card (sm:col-span-2 lg:col-span-3) */}
+                <div className="min-h-[300px] sm:min-h-[220px] lg:min-h-[150px] bg-brand-surface/40 border border-[rgba(212,175,110,0.10)] rounded-xl sm:col-span-2 lg:col-span-3" />
               </div>
             </div>
           )}
@@ -248,7 +259,7 @@ const { signOut } = useSession();
               <p className="font-sans text-brand-secondary text-sm max-w-md">{error}</p>
               <button
                 onClick={fetchProfile}
-                className="mt-2 font-sans font-semibold text-sm bg-brand-accent hover:bg-brand-accent/80 text-brand-text px-5 py-2.5 rounded-lg border border-brand-accent/30 transition-all duration-200 active:scale-[0.98] cursor-pointer shadow-md shadow-brand-accent/20"
+                className="btn-gold-solid mt-2 font-sans font-semibold text-sm bg-brand-accent hover:bg-brand-accent/80 text-brand-text px-5 py-2.5 rounded-lg border border-brand-accent/30 transition-all duration-200 active:scale-[0.98] cursor-pointer shadow-md shadow-brand-accent/20"
               >
                 Try Again
               </button>
@@ -322,7 +333,7 @@ const { signOut } = useSession();
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   
                   {/* Membership & Billing Status Card */}
-                  <div className="bg-brand-surface/30 border border-[rgba(212,175,110,0.40)] hover:border-[rgba(212,175,110,0.80)] transition-all duration-200 rounded-xl p-5 relative overflow-hidden group select-none">
+                  <div className="min-h-[176px] bg-brand-surface/30 border border-[rgba(212,175,110,0.40)] hover:border-[rgba(212,175,110,0.80)] transition-all duration-200 rounded-xl p-5 relative overflow-hidden group select-none">
                     <div className="flex items-center gap-3 mb-3">
                       <div className="w-9 h-9 rounded-lg bg-brand-accent/10 flex items-center justify-center text-brand-accent">
                         <Award className="w-5 h-5" />
@@ -358,7 +369,7 @@ const { signOut } = useSession();
                         <button
                           onClick={handleManageSubscription}
                           disabled={managingBilling}
-                          className="w-full mt-2 py-2 px-3 bg-brand-accent/15 hover:bg-brand-accent/25 border border-brand-accent/30 text-brand-accent hover:text-brand-text rounded-lg font-mono text-[9px] uppercase tracking-widest font-bold transition-all duration-200 cursor-pointer disabled:opacity-50 text-center"
+                          className="btn-gold-outline w-full mt-2 py-2 px-3 bg-brand-accent/15 hover:bg-brand-accent/25 border border-brand-accent/30 text-brand-accent hover:text-brand-text rounded-lg font-mono text-[9px] uppercase tracking-widest font-bold transition-all duration-200 cursor-pointer disabled:opacity-50 text-center"
                         >
                           {managingBilling ? "Loading Portal..." : "Manage Billing"}
                         </button>
@@ -373,7 +384,7 @@ const { signOut } = useSession();
                         </div>
                         <button
                           onClick={() => navigate("/pricing")}
-                          className="w-full mt-4 py-2.5 px-3 bg-brand-accent text-brand-bg hover:bg-brand-accent/90 rounded-lg font-mono text-[9px] uppercase tracking-widest font-bold transition-all duration-200 cursor-pointer text-center"
+                          className="btn-gold-solid w-full mt-4 py-2.5 px-3 bg-brand-accent text-brand-bg hover:bg-brand-accent/90 rounded-lg font-mono text-[9px] uppercase tracking-widest font-bold transition-all duration-200 cursor-pointer text-center"
                         >
                           Upgrade to Premium
                         </button>
@@ -381,7 +392,7 @@ const { signOut } = useSession();
                     )}
                   </div>
                   {/* Rating Placeholder */}
-                  <div className="bg-brand-surface/30 border border-[rgba(212,175,110,0.40)] hover:border-[rgba(212,175,110,0.80)] transition-all duration-200 rounded-xl p-5 relative overflow-hidden group select-none">
+                  <div className="min-h-[176px] bg-brand-surface/30 border border-[rgba(212,175,110,0.40)] hover:border-[rgba(212,175,110,0.80)] transition-all duration-200 rounded-xl p-5 relative overflow-hidden group select-none">
                     <div className="absolute top-3 right-3 text-brand-secondary/20">
                       <Lock className="w-3.5 h-3.5" />
                     </div>
@@ -401,7 +412,7 @@ const { signOut } = useSession();
                   </div>
   
                   {/* Game Stats Placeholder */}
-                  <div className="bg-brand-surface/30 border border-[rgba(212,175,110,0.40)] hover:border-[rgba(212,175,110,0.80)] transition-all duration-200 rounded-xl p-5 relative overflow-hidden group select-none">
+                  <div className="min-h-[176px] bg-brand-surface/30 border border-[rgba(212,175,110,0.40)] hover:border-[rgba(212,175,110,0.80)] transition-all duration-200 rounded-xl p-5 relative overflow-hidden group select-none">
                     <div className="absolute top-3 right-3 text-brand-secondary/20">
                       <Lock className="w-3.5 h-3.5" />
                     </div>
@@ -427,7 +438,7 @@ const { signOut } = useSession();
                   </div>
   
                   {/* Achievements Placeholder */}
-                  <div className="bg-brand-surface/30 border border-[rgba(212,175,110,0.40)] hover:border-[rgba(212,175,110,0.80)] transition-all duration-200 rounded-xl p-5 relative overflow-hidden group select-none">
+                  <div className="min-h-[176px] bg-brand-surface/30 border border-[rgba(212,175,110,0.40)] hover:border-[rgba(212,175,110,0.80)] transition-all duration-200 rounded-xl p-5 relative overflow-hidden group select-none">
                     <div className="absolute top-3 right-3 text-brand-secondary/20">
                       <Lock className="w-3.5 h-3.5" />
                     </div>
@@ -447,7 +458,7 @@ const { signOut } = useSession();
                   </div>
   
                   {/* Bio & Username Placeholder */}
-                  <div className="bg-brand-surface/30 border border-[rgba(212,175,110,0.40)] hover:border-[rgba(212,175,110,0.80)] transition-all duration-200 rounded-xl p-5 relative overflow-hidden sm:col-span-2 select-none">
+                  <div className="min-h-[176px] bg-brand-surface/30 border border-[rgba(212,175,110,0.40)] hover:border-[rgba(212,175,110,0.80)] transition-all duration-200 rounded-xl p-5 relative overflow-hidden sm:col-span-2 select-none">
                     <div className="absolute top-3 right-3 text-brand-secondary/20">
                       <Lock className="w-3.5 h-3.5" />
                     </div>
@@ -466,7 +477,7 @@ const { signOut } = useSession();
                   </div>
   
                   {/* Connected Accounts Placeholder */}
-                  <div className="bg-brand-surface/30 border border-[rgba(212,175,110,0.40)] hover:border-[rgba(212,175,110,0.80)] transition-all duration-200 rounded-xl p-5 relative overflow-hidden group select-none">
+                  <div className="min-h-[176px] bg-brand-surface/30 border border-[rgba(212,175,110,0.40)] hover:border-[rgba(212,175,110,0.80)] transition-all duration-200 rounded-xl p-5 relative overflow-hidden group select-none">
                     <div className="flex items-center gap-3 mb-3">
                       <div className="w-9 h-9 rounded-lg bg-sky-500/10 flex items-center justify-center text-sky-400">
                         <Link2 className="w-5 h-5" />
@@ -489,7 +500,7 @@ const { signOut } = useSession();
                   </div>
   
                   {/* Connected Platforms Card */}
-                  <div className="bg-brand-surface/30 border border-[rgba(212,175,110,0.40)] hover:border-[rgba(212,175,110,0.80)] transition-all duration-200 rounded-xl p-5 relative overflow-hidden sm:col-span-2 lg:col-span-3 select-none">
+                  <div className="min-h-[300px] sm:min-h-[220px] lg:min-h-[150px] bg-brand-surface/30 border border-[rgba(212,175,110,0.40)] hover:border-[rgba(212,175,110,0.80)] transition-all duration-200 rounded-xl p-5 relative overflow-hidden sm:col-span-2 lg:col-span-3 select-none">
                     <div className="absolute top-3 right-3 text-brand-secondary/20">
                       <Lock className="w-3.5 h-3.5" />
                     </div>

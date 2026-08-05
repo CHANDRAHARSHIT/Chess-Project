@@ -9,6 +9,7 @@ import { useState, useRef } from "react";
 import { CheckCircle2, AlertCircle } from "lucide-react";
 import { useScrollReveal } from "../hooks/useScrollReveal";
 import { soundManager } from "../utils/SoundManager";
+import rollbar from "../config/rollbar";
 
 type FormStatus = "idle" | "submitting" | "success" | "error";
 
@@ -79,6 +80,7 @@ export default function ContactSection() {
       }
     } catch (err) {
       console.error("Submission failed:", err);
+      rollbar.error(err as Error, { context: "PartnerCTA.handleSubmit" });
       setStatus("error");
     }
   };

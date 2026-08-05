@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { PricingService } from "../services/PricingService.js";
+import rollbar from "../config/rollbar.js";
 
 export class PricingController {
   public static async getPricing(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -17,6 +18,9 @@ export class PricingController {
       });
     } catch (error) {
       console.error("[PricingController]: Error fetching pricing:", error);
+      // Falls back to NZD rather than a 5xx, so this never reaches the global
+      // error middleware — report it manually so the failure stays visible.
+      rollbar.error(error as Error, req);
       // Fallback response to prevent app crashes
       const fallback = PricingService.getFallbackNZDPricing();
       res.status(200).json({

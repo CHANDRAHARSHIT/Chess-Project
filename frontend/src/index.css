@@ -210,6 +210,40 @@ body {
   scrollbar-width: none;
 }
 
+/* ─── Sidebar Scrollbar (show only on hover) ─────────────────────────────── */
+.sidebar-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-scrollbar::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: 9999px;
+  transition: background-color 0.2s ease;
+}
+
+.sidebar-scrollbar:hover::-webkit-scrollbar-thumb {
+  background-color: #717171;
+}
+
+.sidebar-scrollbar:hover::-webkit-scrollbar-thumb:hover {
+  background-color: #a0a0a0;
+}
+
+/* Firefox */
+.sidebar-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+.sidebar-scrollbar:hover {
+  scrollbar-color: #717171 transparent;
+}
+
+
 /* ══════════════════════════════════════════════════════════════════════════
    TYPOGRAPHY SYSTEM
    ══════════════════════════════════════════════════════════════════════════ */
@@ -255,6 +289,34 @@ body {
   -webkit-text-fill-color: transparent;
   color: transparent;
 }
+
+/* ── Coming Soon page ──────────────────────────────────────────────────────── */
+/* Dark mode: white-to-warm-cream gradient heading */
+.coming-soon-heading {
+  color: transparent;
+  background-clip: text;
+  -webkit-background-clip: text;
+  background-image: linear-gradient(to bottom, #ffffff 0%, #f0eae1 50%, #aba499 100%);
+  padding-bottom: 0.2em;
+  /* prevents bg-clip:text from cutting descenders (g, y, p) */
+}
+
+/* Light mode: dark-brown gradient so the text is clearly visible */
+:root[data-theme="light"] .coming-soon-heading {
+  background-image: linear-gradient(to bottom, #3D2B0E 0%, #7A490B 50%, #5C3506 100%);
+}
+
+/* Dark mode: soft amber glow around the icon bubble */
+.coming-soon-icon {
+  box-shadow: 0 4px 24px rgba(212, 175, 110, 0.18), 0 1px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* Light mode: remove the downward glow that bleeds over the heading */
+:root[data-theme="light"] .coming-soon-icon {
+  box-shadow: 0 2px 8px rgba(148, 92, 16, 0.12), 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── */
 
 .text-ivory {
   color: var(--text-primary);
@@ -461,6 +523,66 @@ body {
 
 .btn-premium-cta:hover::before {
   opacity: 1;
+}
+
+/* Light mode: the translucent gold tint reads as washed-out/low-contrast on a
+   cream background, so CTAs go solid near-black with light text instead
+   (same treatment YouTube uses for its "Join" pill). */
+:root[data-theme="light"] .btn-premium-cta {
+  background: var(--text-primary) !important;
+  border-color: var(--text-primary) !important;
+  color: var(--obsidian) !important;
+}
+
+:root[data-theme="light"] .btn-premium-cta::before {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.10), transparent);
+}
+
+:root[data-theme="light"] .btn-premium-cta:hover {
+  background: #33302B !important;
+  border-color: #33302B !important;
+  box-shadow: 0 4px 14px rgba(28, 25, 23, 0.22);
+}
+
+/* ── Gold CTA buttons (marker classes) ───────────────────────────────────────
+   Applied alongside a button's existing gold Tailwind utilities so dark mode
+   is unchanged; in light mode these override to the same near-black-solid /
+   dark-outline treatment as .btn-premium-cta above, keeping every gold button
+   on one consistent, centrally-controlled look. */
+:root[data-theme="light"] .btn-gold-solid {
+  background: var(--text-primary) !important;
+  border-color: var(--text-primary) !important;
+  color: var(--obsidian) !important;
+}
+
+:root[data-theme="light"] .btn-gold-solid:hover {
+  background: #33302B !important;
+  border-color: #33302B !important;
+  color: var(--obsidian) !important;
+}
+
+:root[data-theme="light"] .btn-gold-outline {
+  background: transparent !important;
+  border-color: var(--text-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+:root[data-theme="light"] .btn-gold-outline:hover {
+  background: rgba(28, 25, 23, 0.06) !important;
+  border-color: var(--text-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Nested icons/text that set their own explicit gold color (rather than
+   inheriting from the button) need the same override. */
+:root[data-theme="light"] .btn-gold-solid .text-brand-accent,
+:root[data-theme="light"] .btn-gold-solid svg {
+  color: var(--obsidian) !important;
+}
+
+:root[data-theme="light"] .btn-gold-outline .text-brand-accent,
+:root[data-theme="light"] .btn-gold-outline svg {
+  color: var(--text-primary) !important;
 }
 
 /* ══════════════════════════════════════════════════════════════════════════

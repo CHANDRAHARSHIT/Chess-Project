@@ -42,7 +42,8 @@ function FeatureCard({
     gsap.to(card, {
       rotateX: -dy * 5,
       rotateY: dx * 5,
-      scale: 1.02,
+      scaleX: 1.02,
+      scaleY: 1.02,
       duration: 0.4,
       ease: 'power2.out',
     });
@@ -54,7 +55,8 @@ function FeatureCard({
     gsap.to(card, {
       rotateX: 0,
       rotateY: 0,
-      scale: 1,
+      scaleX: 1,
+      scaleY: 1,
       duration: 0.7,
       ease: 'elastic.out(1, 0.5)',
     });

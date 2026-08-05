@@ -4,6 +4,7 @@ import type {
   GetPuzzlesResponse,
   GetThemesResponse,
 } from "../types/puzzle";
+import rollbar from "../config/rollbar";
 
 // ─── Cache Configuration ───────────────────────────────────────────────────────
 const PUZZLES_TTL_MS = 15 * 60 * 1000; // 15 minutes
@@ -69,6 +70,9 @@ export class PuzzleApiService {
       return themes;
     } catch (error: any) {
       console.error("[PuzzleApiService.getThemes] Error:", error);
+      // Falls back to the stale cache below, so this never reaches the
+      // ErrorBoundary — report it manually.
+      rollbar.error(error, { context: "PuzzleApiService.getThemes" });
       // Return stale cache on error rather than empty, if available
       return themesCache?.themes ?? [];
     }
@@ -121,6 +125,7 @@ export class PuzzleApiService {
       return puzzles;
     } catch (error: any) {
       console.error("[PuzzleApiService.getPuzzles] Error:", error);
+      rollbar.error(error, { context: "PuzzleApiService.getPuzzles", filters });
       // Return stale cache on error rather than empty, if available
       return cached?.puzzles ?? [];
     }

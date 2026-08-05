@@ -101,7 +101,8 @@ export function usePerspectiveTilt<T extends HTMLElement>(
       gsap.to(el, {
         rotateX: 0,
         rotateY: 0,
-        scale: 1,
+        scaleX: 1,
+        scaleY: 1,
         filter: `drop-shadow(0 16px 40px rgba(99,102,241,${restAlpha}))`,
         duration: 0.3,
         ease: 'power2.out',
@@ -124,7 +125,7 @@ export function usePerspectiveTilt<T extends HTMLElement>(
       // ════════════════════════════════════════════════════════════════════════
       if (isPointerDevice) {
         // Seed the element at identity so quickTo has a starting value
-        gsap.set(el, { rotateX: 0, rotateY: 0, scale: 1, transformOrigin: 'center center' });
+        gsap.set(el, { rotateX: 0, rotateY: 0, scaleX: 1, scaleY: 1, transformOrigin: 'center center' });
 
         // quickTo returns a high-performance setter — call it every mousemove
         const setRotateX = gsap.quickTo(el, 'rotateX', {
@@ -135,7 +136,11 @@ export function usePerspectiveTilt<T extends HTMLElement>(
           duration: quickToDuration,
           ease: quickToEase,
         });
-        const setScale = gsap.quickTo(el, 'scale', {
+        const setScaleX = gsap.quickTo(el, 'scaleX', {
+          duration: quickToDuration,
+          ease: quickToEase,
+        });
+        const setScaleY = gsap.quickTo(el, 'scaleY', {
           duration: quickToDuration,
           ease: quickToEase,
         });
@@ -156,7 +161,8 @@ export function usePerspectiveTilt<T extends HTMLElement>(
             // rotateY: positive nx (cursor near right)  → tilt right away from viewer
             setRotateX(-ny * maxRotate);
             setRotateY( nx * maxRotate);
-            setScale(scalePeak);
+            setScaleX(scalePeak);
+            setScaleY(scalePeak);
 
           },
           { signal }
@@ -168,7 +174,8 @@ export function usePerspectiveTilt<T extends HTMLElement>(
             // Smoothly return to identity
             setRotateX(0);
             setRotateY(0);
-            setScale(1);
+            setScaleX(1);
+            setScaleY(1);
           },
           { signal }
         );
