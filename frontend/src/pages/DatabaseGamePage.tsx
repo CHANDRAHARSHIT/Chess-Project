@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
-import { useParams } from "react-router";
+import { useParams, useNavigate } from "react-router";
 import { Chess } from "chess.js";
-import { Info, ChevronLeft, ChevronRight, FastForward, Rewind, Compass } from "lucide-react";
+import { ArrowLeft, Info, ChevronLeft, ChevronRight, FastForward, Rewind, Compass } from "lucide-react";
 import { ThemedChessboard } from "../components/ThemedChessboard";
 
 import { useStockfish } from "../hooks/useStockfish";
@@ -11,6 +11,7 @@ type Tab = "Moves" | "Info";
 
 export default function DatabaseGamePage() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const game = useMemo(() => MOCK_GAMES.find((g) => g.id === Number(id)), [id]);
 
   const [activeTab, setActiveTab] = useState<Tab>("Moves");
@@ -95,6 +96,18 @@ export default function DatabaseGamePage() {
         
         {/* Left Area (Board & Players) */}
         <div className="md:flex-1 flex flex-col items-center justify-center p-4 lg:p-8 relative bg-brand-surface shrink-0">
+
+          {/* Back Navigation */}
+          <div className="w-full max-w-[70vh] mb-3">
+            <button
+              onClick={() => navigate(-1)}
+              className="flex items-center gap-2 text-sm text-brand-secondary hover:text-brand-text transition-colors cursor-pointer group"
+            >
+              <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" />
+              Back to games
+            </button>
+          </div>
+
           <div className="w-full max-w-[70vh] flex flex-col items-center">
             
             {/* Top Player (Black) */}

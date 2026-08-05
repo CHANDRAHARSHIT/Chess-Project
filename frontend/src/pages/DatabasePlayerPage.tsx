@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Search, ChevronDown, Settings } from "lucide-react";
+import { ArrowLeft, Search, ChevronDown, Settings } from "lucide-react";
 import { useNavigate } from "react-router";
 import { ThemedChessboard } from "../components/ThemedChessboard";
 import { MOCK_GAMES } from "../data/mockGames";
@@ -37,12 +37,22 @@ export default function DatabasePlayerPage() {
   return (
     <div className="min-h-screen bg-brand-bg text-brand-text font-sans p-6 md:p-10 lg:p-12 overflow-y-auto w-full relative">
       <div className="max-w-[1200px] mx-auto flex flex-col lg:flex-row gap-10">
-        
+
         {/* Left Content Area (Player Details) */}
         <div className="flex-1 w-full">
+
+          {/* Back Navigation */}
+          <button
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-2 text-sm text-brand-secondary hover:text-brand-text transition-colors mb-6 cursor-pointer group"
+          >
+            <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" />
+            Back to database
+          </button>
+
           {/* Header Profile */}
           <div className="flex flex-col md:flex-row gap-6 mb-10 items-center md:items-start">
-            
+
             {/* Mobile Title */}
             <div className="flex md:hidden items-center gap-3 w-full justify-center">
               <span className="bg-red-600 text-brand-text font-bold px-1.5 py-0.5 rounded text-xs">GM</span>
@@ -50,8 +60,8 @@ export default function DatabasePlayerPage() {
             </div>
 
             <div className="w-56 h-64 md:w-40 md:h-48 rounded-lg overflow-hidden border border-brand-border/40 shrink-0">
-              <img 
-                src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Garri_Kasparow_%2818776605665%29_%28cropped%29_2.jpg/500px-Garri_Kasparow_%2818776605665%29_%28cropped%29_2.jpg" 
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Garri_Kasparow_%2818776605665%29_%28cropped%29_2.jpg/500px-Garri_Kasparow_%2818776605665%29_%28cropped%29_2.jpg"
                 alt="Garry Kasparov"
                 className="w-full h-full object-cover object-top"
               />
@@ -62,7 +72,7 @@ export default function DatabasePlayerPage() {
                 <span className="bg-red-600 text-brand-text font-bold px-1.5 py-0.5 rounded text-xs">GM</span>
                 <h1 className="text-3xl font-display font-semibold">Garry Kasparov</h1>
               </div>
-              
+
               <table className="text-sm text-brand-secondary border-separate border-spacing-y-1 w-full md:w-auto mt-4 md:mt-0">
                 <tbody>
                   <tr>
@@ -99,7 +109,7 @@ export default function DatabasePlayerPage() {
             <div className="flex items-center justify-between mb-4 border-b border-brand-border/40 pb-2">
               <h2 className="text-xl font-display font-semibold text-brand-text">Garry Kasparov Chess Games</h2>
               <div className="relative">
-                <button 
+                <button
                   onClick={() => setIsSortOpen(!isSortOpen)}
                   className="text-sm text-brand-secondary hover:text-brand-accent flex items-center gap-1 transition-colors font-sans"
                 >
@@ -141,8 +151,8 @@ export default function DatabasePlayerPage() {
               </thead>
               <tbody className="text-brand-text divide-y divide-brand-border/20">
                 {sortedGames.map((game) => (
-                  <tr 
-                    key={game.id} 
+                  <tr
+                    key={game.id}
                     className="transition-colors hover:bg-brand-accent/5 cursor-pointer"
                     onMouseEnter={(e) => handleMouseEnter(e, game)}
                     onMouseLeave={handleMouseLeave}
@@ -177,32 +187,32 @@ export default function DatabasePlayerPage() {
               <ChevronDown className="w-4 h-4 text-brand-secondary" />
             </div>
             <p className="text-xs text-brand-secondary mb-3">Select an opening or player to search</p>
-            
+
             <div className="space-y-3">
               <div className="relative flex items-center gap-2 bg-brand-surface border border-brand-border/60 rounded-lg pr-2 focus-within:border-brand-accent/50 transition-colors">
                 <Search className="ml-3 w-4 h-4 text-brand-secondary" />
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   placeholder="Opening"
                   className="w-full bg-transparent py-2 text-sm text-brand-text focus:outline-none"
                 />
               </div>
-              
+
               <div className="relative flex items-center gap-2 bg-brand-surface border border-brand-border/60 rounded-lg pr-2 focus-within:border-brand-accent/50 transition-colors">
                 <Search className="ml-3 w-4 h-4 text-brand-secondary" />
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   placeholder="Garry Kasparov"
                   className="w-full bg-transparent py-2 text-sm text-brand-text focus:outline-none"
                   readOnly
                 />
-                <button className="text-brand-secondary hover:text-brand-text"><Settings className="w-3 h-3"/></button>
+                <button className="text-brand-secondary hover:text-brand-text"><Settings className="w-3 h-3" /></button>
               </div>
 
               <div className="relative flex items-center gap-2 bg-brand-surface border border-brand-border/60 rounded-lg pr-2 focus-within:border-brand-accent/50 transition-colors">
                 <Search className="ml-3 w-4 h-4 text-brand-secondary" />
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   placeholder="Player 2"
                   className="w-full bg-transparent py-2 text-sm text-brand-text focus:outline-none"
                 />
@@ -223,7 +233,7 @@ export default function DatabasePlayerPage() {
               </div>
             </div>
           </div>
-          
+
           <div className="bg-brand-surface px-6 py-2.5 rounded-lg border border-brand-border/40 text-brand-accent font-semibold shadow-xl">
             Coming Soon
           </div>
@@ -233,15 +243,15 @@ export default function DatabasePlayerPage() {
 
       {/* Hover Chessboard Popover */}
       {hoveredGame && (
-        <div 
+        <div
           className="fixed z-50 p-2 bg-brand-bg rounded-lg border border-brand-border/60 shadow-2xl pointer-events-none transition-opacity duration-200"
           style={{ top: popoverPos.top, left: popoverPos.left, width: 240, height: 240 }}
         >
-          <ThemedChessboard 
-            options={{ 
+          <ThemedChessboard
+            options={{
               position: hoveredGame.fen,
               showNotation: false
-            }} 
+            }}
           />
         </div>
       )}
