@@ -15,12 +15,12 @@ import { ProtectedRoute } from "../components/ProtectedRoute";
 import DatabasePage from "../pages/DatabasePage";
 import DatabasePlayerPage from "../pages/DatabasePlayerPage";
 import DatabaseGamePage from "../pages/DatabaseGamePage";
+import YourChannelPage from "../pages/YourChannelPage";
+import YourContentPage from "../pages/YourContentPage";
 import {
   BookOpen,
   BarChart2,
   Clock,
-  Video,
-  UserCircle2,
   Users,
   Shuffle,
   Flag,
@@ -162,24 +162,17 @@ export const mainRoutes: RouteConfig[] = [
   },
   {
     path: "/your-content",
-    element: (
-      <ComingSoonPage
-        featureName="Your Content"
-        description="Manage and review all the chess content you've created or saved annotated games, custom lessons, and video analyses."
-        icon={Video}
-      />
-    ),
+    element: <YourContentPage />,
     title: "Your Content | XLChess",
   },
   {
     path: "/channel",
-    element: (
-      <ComingSoonPage
-        featureName="Your Channel"
-        description="Build your own chess channel to share insights, stream games, and grow a following within the XLChess community."
-        icon={UserCircle2}
-      />
-    ),
+    element: <YourChannelPage />,
+    title: "Your Channel | XLChess",
+  },
+  {
+    path: "/your-channel",
+    element: <YourChannelPage />,
     title: "Your Channel | XLChess",
   },
   {

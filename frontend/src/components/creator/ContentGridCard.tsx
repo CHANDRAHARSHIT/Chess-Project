@@ -1,0 +1,134 @@
+/**
+ * ContentGridCard.tsx
+ *
+ * Content card component for /your-content library view.
+ * Features live FEN mini-board thumbnail, move counts, retention heat marker,
+ * and quick hover actions (Preview, Edit, Pin).
+ */
+
+import { Play, Eye, ThumbsUp, Flame, Pin } from "lucide-react";
+import { ThemedChessboard } from "../ThemedChessboard";
+import { soundManager } from "../../utils/SoundManager";
+import type { MasterclassItem } from "../../data/creatorMockData";
+
+interface ContentGridCardProps {
+  item: MasterclassItem;
+  onPreviewClick: (item: MasterclassItem) => void;
+  onPinClick?: (item: MasterclassItem) => void;
+}
+
+export function ContentGridCard({ item, onPreviewClick, onPinClick }: ContentGridCardProps) {
+  const handleClick = () => {
+    soundManager.playButtonClick();
+    onPreviewClick(item);
+  };
+
+  return (
+    <div
+      onClick={handleClick}
+      className="group relative w-full rounded-3xl border border-brand-text/15 bg-obsidian-mid p-5 shadow-xl transition-all duration-300 hover:border-brand-accent/50 hover:-translate-y-1 hover:shadow-[0_20px_40px_-15px_rgba(212,175,110,0.15)] cursor-pointer flex flex-col justify-between"
+    >
+      <div className="space-y-4">
+        {/* Category & Status */}
+        <div className="flex items-center justify-between">
+          <span className="px-2.5 py-0.5 rounded-full text-[11px] font-sans font-semibold bg-brand-accent/10 border border-brand-accent/30 text-brand-accent">
+            {item.category}
+          </span>
+          <span
+            className={`px-2.5 py-0.5 rounded text-[10px] font-mono font-medium ${
+              item.status === "Published"
+                ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"
+                : "bg-amber-500/10 text-amber-400 border border-amber-500/30"
+            }`}
+          >
+            {item.status}
+          </span>
+        </div>
+
+        {/* Live FEN Mini Board Thumbnail */}
+        <div className="relative w-full aspect-video rounded-2xl overflow-hidden border border-brand-text/20 bg-obsidian flex items-center justify-center group-hover:border-brand-accent/40 transition-colors">
+          <div className="w-[170px] aspect-square">
+            <ThemedChessboard
+              options={{
+                position: item.thumbnailFen,
+                boardOrientation: "white",
+                showNotation: false,
+                allowDragging: false,
+              }}
+            />
+          </div>
+
+          {/* Video Duration & PGN Count */}
+          <div className="absolute bottom-2 right-2 px-2.5 py-0.5 rounded-md bg-obsidian/95 border border-brand-text/30 text-[10px] font-mono text-brand-text font-semibold shadow-md">
+            {item.videoDuration} • {item.moveCount} Moves
+          </div>
+
+          {/* Hover Action Overlay */}
+          <div className="absolute inset-0 bg-obsidian/50 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                soundManager.playButtonClick();
+                onPreviewClick(item);
+              }}
+              className="p-3.5 rounded-full bg-brand-accent text-obsidian shadow-2xl hover:scale-110 active:scale-95 transition-transform"
+              title="Preview Synchronized Lesson"
+            >
+              <Play className="w-5 h-5 fill-current" />
+            </button>
+
+            {onPinClick && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  soundManager.playButtonClick();
+                  onPinClick(item);
+                }}
+                className="p-3 rounded-full bg-obsidian-glass text-brand-accent border border-brand-accent/40 shadow-2xl hover:scale-110 active:scale-95 transition-transform"
+                title="Pin to Channel Featured"
+              >
+                <Pin className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Title & Description */}
+        <div>
+          <h4 className="text-base font-display font-bold text-brand-text group-hover:text-brand-accent transition-colors line-clamp-2 leading-snug">
+            {item.title}
+          </h4>
+          <p className="text-xs font-sans text-stone-300 mt-1 line-clamp-2 leading-relaxed">
+            {item.description}
+          </p>
+        </div>
+
+        {/* Replay Marker Tag */}
+        {item.mostReplayedMove && item.mostReplayedMove !== "Draft Mode" && (
+          <div className="p-2.5 rounded-xl bg-rose-950/40 border border-rose-500/40 flex items-center gap-2 text-xs font-mono text-rose-200 shadow-inner">
+            <Flame className="w-4 h-4 text-rose-400 shrink-0 animate-pulse" />
+            <span className="truncate">Retention Peak: <strong className="text-white">{item.mostReplayedMove}</strong></span>
+          </div>
+        )}
+      </div>
+
+      {/* Footer Performance Metrics */}
+      <div className="pt-3 mt-3 border-t border-brand-text/10 flex items-center justify-between text-xs font-sans text-stone-400">
+        <div className="flex items-center gap-3">
+          <span className="flex items-center gap-1">
+            <Eye className="w-3.5 h-3.5 text-stone-400" />
+            <strong className="text-brand-text font-mono">{item.views.toLocaleString()}</strong>
+          </span>
+          <span className="flex items-center gap-1">
+            <ThumbsUp className="w-3.5 h-3.5 text-stone-400" />
+            <strong className="text-brand-text font-mono">{item.likes.toLocaleString()}</strong>
+          </span>
+        </div>
+
+        <span className="text-brand-accent font-mono font-bold">
+          {item.studentCompletion}% Completion
+        </span>
+      </div>
+    </div>
+  );
+}
