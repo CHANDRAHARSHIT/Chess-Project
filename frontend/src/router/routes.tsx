@@ -29,14 +29,6 @@ import {
   Users,
   Shuffle,
   Flag,
-  Info,
-  Copyright,
-  Paintbrush,
-  Megaphone,
-  Code2,
-  FileText,
-  Shield,
-  HelpCircle,
 } from "lucide-react";
 import QuickGamePage from "../pages/QuickGamePage";
 
