@@ -16,6 +16,7 @@ import DatabasePage from "../pages/DatabasePage";
 import DatabasePlayerPage from "../pages/DatabasePlayerPage";
 import DatabaseGamePage from "../pages/DatabaseGamePage";
 import SubscriptionsPage from "../pages/SubscriptionsPage";
+import StatsPage from "../pages/StatsPage";
 import {
   BookOpen,
   BarChart2,
@@ -134,13 +135,7 @@ export const mainRoutes: RouteConfig[] = [
   },
   {
     path: "/stats",
-    element: (
-      <ComingSoonPage
-        featureName="Your Stats"
-        description="Track your progress with detailed performance analytics - win/loss history, rating trends, puzzle accuracy, and opening success rates."
-        icon={BarChart2}
-      />
-    ),
+    element: <StatsPage />,
     title: "Stats | XLChess",
   },
   {
