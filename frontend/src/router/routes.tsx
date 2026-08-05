@@ -29,13 +29,7 @@ import SubscriptionsPage from "../pages/SubscriptionsPage";
 import VariantsPage from "../pages/VariantsPage";
 import LessonsPage from "../pages/LessonsPage";
 import LessonViewerPage from "../pages/LessonViewerPage";
-import {
-  BarChart2,
-  Video,
-  UserCircle2,
-  Shuffle,
-  Flag,
-} from "lucide-react";
+import { BarChart2, Video, UserCircle2 } from "lucide-react";
 import QuickGamePage from "../pages/QuickGamePage";
 
 export interface RouteConfig {
