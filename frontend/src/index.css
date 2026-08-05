@@ -76,6 +76,12 @@
   --ease-cinematic: cubic-bezier(0.25, 0.46, 0.45, 0.94);
   --ease-precise: cubic-bezier(0.4, 0, 0.2, 1);
 
+  /* --- Motion durations (M5) — reused across every Play Online transition, never one-off --- */
+  --dur-instant: 120ms;
+  --dur-quick: 240ms;
+  --dur-settle: 400ms;
+  --dur-reveal: 800ms;
+
   /* --- RGB-triplet tokens --- */
   --obsidian-rgb: 8 11 20;
   --obsidian-mid-rgb: 12 16 32;
@@ -1798,6 +1804,53 @@ body {
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
+   PLAY ONLINE (M5) — the clock is the turn indicator ("Flagfall")
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* Below 10s: a 1px hairline sweeps the clock plate once a second — the same
+   gradient idiom as .hero-rule / .nav-link::after, just animated. */
+.clock-flag-sweep {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-bright), transparent);
+  animation: clock-flag-sweep 1s linear infinite;
+}
+
+@keyframes clock-flag-sweep {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Flagfall — the clock plate inverts and freezes when a side's time reaches 0. */
+.clock-plate--flagged {
+  background: var(--gold-bright) !important;
+  color: var(--obsidian) !important;
+}
+
+/* Match-found → live board handoff, and the result reveal growing out of the board. */
+@keyframes reveal-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.reveal-in {
+  animation: reveal-in var(--dur-reveal) var(--ease-luxury) forwards;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
    ACCESSIBILITY: REDUCED MOTION
    ══════════════════════════════════════════════════════════════════════════ */
 
@@ -1837,5 +1890,19 @@ body {
   :where([data-testid^="piece-"]):active {
     transform: none !important;
     filter: none !important;
+  }
+
+  /* Flag sweep becomes a static full-width depleting bar — the urgency information
+     (granularity + inversion) survives; only the animated motion is removed. */
+  .clock-flag-sweep {
+    animation: none !important;
+    transform: none !important;
+    width: 100%;
+  }
+
+  .reveal-in {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
   }
 }

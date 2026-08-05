@@ -20,6 +20,7 @@ import {
   Pencil,
   MoveUp,
   Archive,
+  Swords,
 } from "lucide-react";
 import { useLogoAnimation } from "../hooks/useLogoAnimation";
 import { soundManager } from "../utils/SoundManager";
@@ -372,6 +373,7 @@ export default function SidebarLayout({
 
   const exploreSection = [
     { name: "Quick Game", href: "/play", icon: Zap },
+    { name: "Play Online", href: "/play/chess", icon: Swords },
     { name: "Lessons", href: "/lessons", icon: BookOpen },
     { name: "Puzzles", href: "/puzzles", icon: Puzzle },
     { name: "Variants", href: "/variants", icon: Shuffle },
