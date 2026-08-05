@@ -184,7 +184,7 @@ export default function CompleteLaterPage() {
                 <p className="text-brand-text/90 font-medium mb-1">XLChess User</p>
                 
                 <div className="flex items-center text-xs text-brand-secondary mb-4 lg:mb-6 gap-2 font-sans">
-                  <span>{items.length} videos</span>
+                  <span>{items.length} items</span>
                   <span>•</span>
                   <span>Updated today</span>
                 </div>
