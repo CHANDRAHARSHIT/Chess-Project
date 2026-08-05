@@ -1,0 +1,52 @@
+/**
+ * StoryModePage.tsx
+ *
+ * Page wrapper for the Story Mode adventure map feature.
+ * Renders the page title/description and the StoryModeMap component.
+ */
+
+import { motion } from "framer-motion";
+import { Swords } from "lucide-react";
+import StoryModeMap from "../components/story-mode/StoryModeMap";
+
+export default function StoryModePage() {
+  return (
+    <div className="min-h-screen text-brand-text flex flex-col">
+      <main className="flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
+        {/* Header */}
+        <motion.div
+          className="flex flex-col items-center gap-4 mb-8 text-center"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          {/* Icon */}
+          <motion.div
+            className="w-14 h-14 rounded-full bg-brand-accent/8 border border-brand-accent/20 flex items-center justify-center"
+            animate={{ y: [0, -5, 0] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <Swords className="w-7 h-7 text-brand-accent" />
+          </motion.div>
+
+          <div>
+            <h1 className="text-3xl sm:text-4xl font-display font-extrabold tracking-tight">
+              Story Mode
+            </h1>
+            <p className="text-sm text-brand-secondary mt-2 max-w-md leading-relaxed">
+              Embark on a chess adventure! Battle AI opponents, uncover
+              mysteries, and conquer the Dark King. Each victory unlocks the
+              path forward.
+            </p>
+          </div>
+
+          {/* Decorative divider */}
+          <div className="w-32 h-px bg-gradient-to-r from-transparent via-brand-accent/30 to-transparent" />
+        </motion.div>
+
+        {/* Map */}
+        <StoryModeMap />
+      </main>
+    </div>
+  );
+}

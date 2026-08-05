@@ -1,0 +1,261 @@
+/**
+ * StoryModeNodeIcon.tsx
+ *
+ * Renders an individual node on the adventure map.
+ * Each node type gets a unique icon (skull, ?, campfire, crown, player).
+ * The node's visual state (locked, available, completed, active) drives
+ * its opacity, glow, and interactivity.
+ */
+
+import { motion } from "framer-motion";
+import type { StoryNodeType, NodeStatus } from "../../data/storyModeMapData";
+
+interface StoryModeNodeIconProps {
+  id: number;
+  type: StoryNodeType;
+  label: string;
+  status: NodeStatus;
+  x: number;
+  y: number;
+  onClick: () => void;
+}
+
+/** SVG icon per node type */
+function NodeSVG({ type, status }: { type: StoryNodeType; status: NodeStatus }) {
+  const isCompleted = status === "completed";
+  const size = type === "boss" ? 28 : type === "start" ? 26 : 22;
+
+  if (isCompleted) {
+    // Checkmark for completed nodes
+    return (
+      <svg
+        width={size}
+        height={size}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={2.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <polyline points="20 6 9 17 4 12" />
+      </svg>
+    );
+  }
+
+  switch (type) {
+    case "start":
+      // Player pawn silhouette
+      return (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+          <circle cx="12" cy="6" r="3" />
+          <path d="M9 11h6l1.5 5H7.5L9 11z" />
+          <rect x="6" y="17" width="12" height="3" rx="1" />
+        </svg>
+      );
+    case "monster":
+      // Skull icon
+      return (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2C7.58 2 4 5.58 4 10c0 2.76 1.35 5.2 3.42 6.72L7 20h2l.5-2h5l.5 2h2l-.42-3.28C18.65 15.2 20 12.76 20 10c0-4.42-3.58-8-8-8zm-2.5 11a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
+        </svg>
+      );
+    case "mystery":
+      // Question mark
+      return (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+          <text
+            x="12"
+            y="18"
+            textAnchor="middle"
+            fontSize="20"
+            fontWeight="bold"
+            fontFamily="serif"
+          >
+            ?
+          </text>
+        </svg>
+      );
+    case "fireplace":
+      // Campfire flame
+      return (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2c-1 4-4 6-4 10a4 4 0 0 0 8 0c0-4-3-6-4-10z" />
+          <path
+            d="M12 8c-.5 2-2 3-2 5a2 2 0 0 0 4 0c0-2-1.5-3-2-5z"
+            fill="rgba(255,200,50,0.8)"
+          />
+          <path d="M8 19l-2 3h12l-2-3H8z" opacity="0.4" />
+        </svg>
+      );
+    case "boss":
+      // Crown / diamond
+      return (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+          <polygon points="12,2 15,9 22,9 17,14 19,22 12,17 5,22 7,14 2,9 9,9" />
+        </svg>
+      );
+    default:
+      return null;
+  }
+}
+
+/** Color mapping for node type + status */
+function getNodeColors(type: StoryNodeType, status: NodeStatus) {
+  const isLocked = status === "locked";
+  const isCompleted = status === "completed";
+
+  if (isLocked) {
+    return {
+      bg: "rgb(var(--obsidian-mid-rgb) / 0.5)",
+      border: "rgb(var(--text-secondary-rgb) / 0.2)",
+      text: "rgb(var(--text-secondary-rgb) / 0.35)",
+      glow: "transparent",
+      shadow: "none",
+    };
+  }
+
+  if (isCompleted) {
+    return {
+      bg: "rgba(34, 197, 94, 0.15)",
+      border: "rgba(34, 197, 94, 0.5)",
+      text: "#22c55e",
+      glow: "rgba(34, 197, 94, 0.2)",
+      shadow: "0 0 20px rgba(34, 197, 94, 0.3)",
+    };
+  }
+
+  switch (type) {
+    case "start":
+      return {
+        bg: "rgba(99, 102, 241, 0.15)",
+        border: "rgba(99, 102, 241, 0.6)",
+        text: "#818cf8",
+        glow: "rgba(99, 102, 241, 0.3)",
+        shadow: "0 0 25px rgba(99, 102, 241, 0.4)",
+      };
+    case "monster":
+      return {
+        bg: "rgba(239, 68, 68, 0.12)",
+        border: "rgba(239, 68, 68, 0.5)",
+        text: "#f87171",
+        glow: "rgba(239, 68, 68, 0.25)",
+        shadow: "0 0 25px rgba(239, 68, 68, 0.35)",
+      };
+    case "mystery":
+      return {
+        bg: "rgba(168, 85, 247, 0.12)",
+        border: "rgba(168, 85, 247, 0.5)",
+        text: "#c084fc",
+        glow: "rgba(168, 85, 247, 0.25)",
+        shadow: "0 0 25px rgba(168, 85, 247, 0.35)",
+      };
+    case "fireplace":
+      return {
+        bg: "rgba(251, 146, 60, 0.12)",
+        border: "rgba(251, 146, 60, 0.5)",
+        text: "#fb923c",
+        glow: "rgba(251, 146, 60, 0.25)",
+        shadow: "0 0 25px rgba(251, 146, 60, 0.35)",
+      };
+    case "boss":
+      return {
+        bg: "rgba(212, 175, 110, 0.15)",
+        border: "rgba(212, 175, 110, 0.7)",
+        text: "#D4AF6E",
+        glow: "rgba(212, 175, 110, 0.3)",
+        shadow: "0 0 30px rgba(212, 175, 110, 0.5)",
+      };
+    default:
+      return {
+        bg: "rgba(40, 40, 50, 0.6)",
+        border: "rgba(80, 80, 100, 0.3)",
+        text: "#888",
+        glow: "transparent",
+        shadow: "none",
+      };
+  }
+}
+
+export default function StoryModeNodeIcon({
+  type,
+  label,
+  status,
+  x,
+  y,
+  onClick,
+}: StoryModeNodeIconProps) {
+  const colors = getNodeColors(type, status);
+  const isClickable = status === "available" || status === "active";
+  const isAvailable = status === "available";
+  const nodeSize = type === "boss" ? 64 : type === "start" ? 58 : 52;
+
+  return (
+    <motion.button
+      onClick={isClickable ? onClick : undefined}
+      disabled={!isClickable}
+      className="absolute flex flex-col items-center gap-1.5 group"
+      style={{
+        left: `${x}%`,
+        top: `${y}%`,
+        transform: "translate(-50%, -50%)",
+        zIndex: status === "active" ? 20 : 10,
+        cursor: isClickable ? "pointer" : "default",
+      }}
+      initial={{ scale: 0, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      transition={{ delay: 0.1 + y * 0.005, duration: 0.5, type: "spring" }}
+      whileHover={isClickable ? { scale: 1.12 } : undefined}
+      whileTap={isClickable ? { scale: 0.95 } : undefined}
+    >
+      {/* Outer glow ring for available nodes */}
+      {isAvailable && (
+        <motion.div
+          className="absolute rounded-full"
+          style={{
+            width: nodeSize + 16,
+            height: nodeSize + 16,
+            background: colors.glow,
+            filter: "blur(8px)",
+          }}
+          animate={{
+            scale: [1, 1.3, 1],
+            opacity: [0.5, 0.2, 0.5],
+          }}
+          transition={{
+            duration: 2,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+      )}
+
+      {/* Node circle */}
+      <div
+        className="relative flex items-center justify-center rounded-full transition-all duration-300"
+        style={{
+          width: nodeSize,
+          height: nodeSize,
+          background: colors.bg,
+          border: `2px solid ${colors.border}`,
+          color: colors.text,
+          boxShadow: colors.shadow,
+          backdropFilter: "blur(8px)",
+        }}
+      >
+        <NodeSVG type={type} status={status} />
+      </div>
+
+      {/* Label */}
+      <span
+        className="text-[10px] font-mono font-semibold tracking-wide whitespace-nowrap max-w-[100px] truncate text-center transition-opacity duration-300"
+        style={{
+          color: status === "locked" ? "rgb(var(--text-secondary-rgb) / 0.35)" : colors.text,
+          opacity: status === "locked" ? 0.4 : 0.9,
+        }}
+      >
+        {label}
+      </span>
+    </motion.button>
+  );
+}

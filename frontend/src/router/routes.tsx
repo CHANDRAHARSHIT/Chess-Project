@@ -34,6 +34,7 @@ import {
   HelpCircle,
 } from "lucide-react";
 import QuickGamePage from "../pages/QuickGamePage";
+import StoryModePage from "../pages/StoryModePage";
 
 export interface RouteConfig {
   path: string;
@@ -49,6 +50,11 @@ export const mainRoutes: RouteConfig[] = [
     path: "/puzzles",
     element: <PuzzlePage />,
     title: "Chess Puzzles | XLChess",
+  },
+  {
+    path: "/story-mode",
+    element: <StoryModePage />,
+    title: "Story Mode | XLChess",
   },
   {
     path: "/openings",
