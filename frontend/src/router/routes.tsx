@@ -11,6 +11,14 @@ import PremiumPage from "../pages/PremiumPage";
 import OpeningsPage from "../pages/OpeningsPage";
 import Chess960Page from "../pages/Chess960Page";
 import ComingSoonPage from "../pages/ComingSoonPage";
+import AboutPage from "../pages/AboutPage";
+import PrivacyPolicyPage from "../pages/PrivacyPolicyPage";
+import TermsOfServicePage from "../pages/TermsOfServicePage";
+import CopyrightPage from "../pages/CopyrightPage";
+import CreatorPage from "../pages/CreatorPage";
+import AdvertisePage from "../pages/AdvertisePage";
+import DevelopersPage from "../pages/DevelopersPage";
+import HowXLChessWorksPage from "../pages/HowXLChessWorksPage";
 import { ProtectedRoute } from "../components/ProtectedRoute";
 import DatabasePage from "../pages/DatabasePage";
 import DatabasePlayerPage from "../pages/DatabasePlayerPage";
@@ -24,14 +32,6 @@ import {
   Users,
   Shuffle,
   Flag,
-  Info,
-  Copyright,
-  Paintbrush,
-  Megaphone,
-  Code2,
-  FileText,
-  Shield,
-  HelpCircle,
 } from "lucide-react";
 import QuickGamePage from "../pages/QuickGamePage";
 
@@ -197,90 +197,42 @@ export const mainRoutes: RouteConfig[] = [
   // ── Footer page placeholder routes ───────────────────────────────────────
   {
     path: "/about",
-    element: (
-      <ComingSoonPage
-        featureName="About"
-        description="Learn about the story behind XLChess - our mission to make high-quality chess education and play accessible to everyone, everywhere."
-        icon={Info}
-      />
-    ),
+    element: <AboutPage />,
     title: "About Us | XLChess",
   },
   {
     path: "/copyright",
-    element: (
-      <ComingSoonPage
-        featureName="Copyright"
-        description="All content on XLChess, including lessons, graphics, and software, is protected by copyright. Details on permitted use will be published here."
-        icon={Copyright}
-      />
-    ),
+    element: <CopyrightPage />,
     title: "Copyright | XLChess",
   },
   {
     path: "/creator",
-    element: (
-      <ComingSoonPage
-        featureName="Creator"
-        description="Tools, resources, and guidelines for chess creators who want to share their knowledge and build an audience on XLChess."
-        icon={Paintbrush}
-      />
-    ),
+    element: <CreatorPage />,
     title: "Creators | XLChess",
   },
   {
     path: "/advertise",
-    element: (
-      <ComingSoonPage
-        featureName="Advertise"
-        description="Reach a passionate chess community. Information about advertising opportunities and partnerships on XLChess will be available here."
-        icon={Megaphone}
-      />
-    ),
+    element: <AdvertisePage />,
     title: "Advertise | XLChess",
   },
   {
     path: "/developers",
-    element: (
-      <ComingSoonPage
-        featureName="Developers"
-        description="Explore the XLChess API, webhooks, and developer documentation to build integrations and extend the platform."
-        icon={Code2}
-      />
-    ),
+    element: <DevelopersPage />,
     title: "Developers | XLChess",
   },
   {
     path: "/terms",
-    element: (
-      <ComingSoonPage
-        featureName="Terms of Service"
-        description="Our Terms of Service outline the rules and guidelines for using XLChess. Please review them carefully before using the platform."
-        icon={FileText}
-      />
-    ),
+    element: <TermsOfServicePage />,
     title: "Terms of Service | XLChess",
   },
   {
     path: "/privacy",
-    element: (
-      <ComingSoonPage
-        featureName="Privacy Policy & Safety"
-        description="Understand how XLChess collects, uses, and protects your personal data, and what safety measures are in place to keep you secure."
-        icon={Shield}
-      />
-    ),
+    element: <PrivacyPolicyPage />,
     title: "Privacy Policy | XLChess",
   },
   {
     path: "/how-xlchess-works",
-    element: (
-      <ComingSoonPage
-        featureName="How XLChess Works"
-        description="A complete guide to XLChess - how to play games, solve puzzles, follow creators, track your progress, and make the most of the platform."
-        icon={HelpCircle}
-      />
-    ),
+    element: <HowXLChessWorksPage />,
     title: "How XLChess Works | XLChess",
   },
 ];
