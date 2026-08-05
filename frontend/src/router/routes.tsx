@@ -19,7 +19,6 @@ import SubscriptionsPage from "../pages/SubscriptionsPage";
 import StatsPage from "../pages/StatsPage";
 import {
   BookOpen,
-  BarChart2,
   Clock,
   Video,
   UserCircle2,
