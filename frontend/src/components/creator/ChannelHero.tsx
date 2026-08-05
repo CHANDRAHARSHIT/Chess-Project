@@ -6,7 +6,7 @@
  */
 
 import { useState } from "react";
-import { Radio, Share2, Sparkles, Award } from "lucide-react";
+import { Share2, Sparkles, Award, Mic2 } from "lucide-react";
 import { soundManager } from "../../utils/SoundManager";
 import type { CreatorProfile } from "../../data/creatorMockData";
 
@@ -92,27 +92,50 @@ export function ChannelHero({ profile }: ChannelHeroProps) {
           </div>
         </div>
 
-        {/* Right: Studio Action Buttons */}
+        {/* Right: Studio Session Glass Panel + Share — Liquid Glass group */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
-          <div className="p-3.5 rounded-2xl bg-brand-accent/10 border border-brand-accent/30 text-xs font-sans space-y-1">
-            <div className="flex items-center gap-1.5 font-mono text-[11px] font-bold text-brand-accent">
-              <Radio className="w-3.5 h-3.5 animate-pulse" />
-              <span>ACTIVE STUDIO SESSION</span>
+
+          {/* Active Studio Session — liquid glass surface */}
+          <div className="relative overflow-hidden rounded-2xl p-px">
+            {/* Gradient border layer */}
+            <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-brand-accent/60 via-brand-accent/20 to-white/10 pointer-events-none" />
+            {/* Glass body */}
+            <div className="relative rounded-[calc(1rem-1px)] bg-white/[0.07] backdrop-blur-2xl saturate-150 px-4 py-3.5 space-y-1.5">
+              {/* Inner top-edge shimmer */}
+              <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent rounded-t-[calc(1rem-1px)] pointer-events-none" />
+              {/* Status row */}
+              <div className="flex items-center gap-2">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-accent opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-accent" />
+                </span>
+                <div className="flex items-center gap-1.5">
+                  <Mic2 className="w-3.5 h-3.5 text-brand-accent" />
+                  <span className="text-[10px] font-mono font-bold tracking-widest uppercase text-brand-accent">
+                    Active Studio Session
+                  </span>
+                </div>
+              </div>
+              {/* Activity text */}
+              <p className="text-xs font-sans text-brand-text font-medium leading-snug pl-4 max-w-[220px]">
+                {profile.currentActivity}
+              </p>
             </div>
-            <p className="text-brand-text font-medium leading-snug">
-              {profile.currentActivity}
-            </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          {/* Share — interactive glass button */}
+          <div className="relative overflow-hidden rounded-xl p-px">
+            <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/20 via-white/5 to-transparent pointer-events-none" />
             <button
               onClick={handleShare}
-              className="px-4 py-2.5 rounded-xl border border-brand-text/20 bg-brand-text/5 hover:bg-brand-text/10 text-brand-text font-sans text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5"
+              className="relative rounded-[calc(0.75rem-1px)] bg-white/[0.08] backdrop-blur-2xl saturate-150 hover:bg-white/[0.14] active:scale-95 px-5 py-3 text-brand-text font-sans text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 group"
             >
-              <Share2 className="w-4 h-4" />
+              <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent rounded-t-[calc(0.75rem-1px)] pointer-events-none" />
+              <Share2 className="w-3.5 h-3.5 group-hover:scale-110 transition-transform" />
               <span>Share</span>
             </button>
           </div>
+
         </div>
       </div>
 
