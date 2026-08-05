@@ -411,7 +411,6 @@ export default function SidebarLayout({
       name: "Complete Later",
       href: "/complete-later",
       icon: Clock,
-      comingSoon: true,
     },
     {
       name: "Your Content",
