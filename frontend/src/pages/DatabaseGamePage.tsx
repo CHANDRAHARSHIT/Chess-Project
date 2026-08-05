@@ -11,6 +11,7 @@ import {
   Compass,
 } from "lucide-react";
 import { ThemedChessboard } from "../components/ThemedChessboard";
+import { BoardCoordinates } from "../components/BoardCoordinates";
 
 import { useStockfish } from "../hooks/useStockfish";
 import { MOCK_GAMES } from "../data/mockGames";
@@ -133,14 +134,15 @@ export default function DatabaseGamePage() {
             {/* Board Area */}
             <div className="flex w-full relative items-stretch">
               {/* Chessboard */}
-              <div className="flex-1 aspect-square overflow-hidden shadow-2xl border-[3px] border-brand-border rounded-sm">
+              <div className="flex-1 aspect-square overflow-hidden shadow-2xl border-[3px] border-brand-border rounded-sm relative">
                 <ThemedChessboard
                   options={{
                     position: currentFen,
-                    showNotation: true,
+                    showNotation: false,
                     animationDurationInMs: 200,
                   }}
                 />
+                <BoardCoordinates boardOrientation="white" />
               </div>
             </div>
 
