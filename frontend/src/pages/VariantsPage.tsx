@@ -50,7 +50,6 @@ const VARIANTS_LIST: VariantCardProps[] = [
 ];
 
 export default function VariantsPage() {
-  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState<'all' | 'playable' | 'lab'>('all');
 
