@@ -36,6 +36,7 @@
     "vite": "^8.0.12"
   },
   "dependencies": {
-    "@mui/icons-material": "^9.2.0"
+    "@mui/icons-material": "^9.2.0",
+    "chess.js": "^1.4.0"
   }
 }

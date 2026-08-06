@@ -15,7 +15,10 @@ const COUNTRIES = [
   { code: "EU", flag: "🇪🇺", name: "Europe", currency: "EUR" },
 ];
 
-export const CountrySelector: React.FC<CountrySelectorProps> = ({ onSelect, disabled }) => {
+export const CountrySelector: React.FC<CountrySelectorProps> = ({
+  onSelect,
+  disabled,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCode, setSelectedCode] = useState<string | null>(null);
@@ -24,7 +27,10 @@ export const CountrySelector: React.FC<CountrySelectorProps> = ({ onSelect, disa
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
@@ -39,7 +45,7 @@ export const CountrySelector: React.FC<CountrySelectorProps> = ({ onSelect, disa
   const filteredCountries = COUNTRIES.filter(
     (c) =>
       c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      c.currency.toLowerCase().includes(searchTerm.toLowerCase())
+      c.currency.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const selectedCountry = COUNTRIES.find((c) => c.code === selectedCode);
@@ -53,7 +59,7 @@ export const CountrySelector: React.FC<CountrySelectorProps> = ({ onSelect, disa
 
   return (
     <div className="flex flex-col items-center justify-center mb-10 relative z-50 w-full">
-      <div className="bg-[#0c1020]/90 backdrop-blur-xl border border-brand-accent/30 p-5 rounded-2xl max-w-sm w-full shadow-[0_10px_40px_rgba(212,175,110,0.15)] relative">
+      <div className="bg-brand-bg/90 backdrop-blur-xl border border-brand-accent/30 p-5 rounded-2xl max-w-sm w-full shadow-[0_10px_40px_rgba(212,175,110,0.15)] relative">
         <div className="flex items-center gap-2 mb-3 justify-center">
           <Globe className="w-4 h-4 text-brand-accent" />
           <h3 className="text-sm font-display font-medium text-white tracking-wide">
@@ -66,25 +72,33 @@ export const CountrySelector: React.FC<CountrySelectorProps> = ({ onSelect, disa
             type="button"
             disabled={disabled}
             onClick={() => setIsOpen(!isOpen)}
-            className="w-full bg-[#080b14]/80 border border-brand-border hover:border-brand-accent/50 text-white rounded-xl py-3 px-4 flex items-center justify-between transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
+            className="w-full bg-brand-bg/80 border border-brand-border hover:border-brand-accent/50 text-white rounded-xl py-3 px-4 flex items-center justify-between transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
           >
             {selectedCountry ? (
               <div className="flex items-center gap-3">
-                <span className="text-xl leading-none">{selectedCountry.flag}</span>
-                <span className="font-sans text-sm font-medium tracking-wide">{selectedCountry.name}</span>
+                <span className="text-xl leading-none">
+                  {selectedCountry.flag}
+                </span>
+                <span className="font-sans text-sm font-medium tracking-wide">
+                  {selectedCountry.name}
+                </span>
                 <span className="font-mono text-[11px] font-bold text-brand-accent bg-brand-accent/10 border border-brand-accent/20 px-1.5 py-0.5 rounded">
                   {selectedCountry.currency}
                 </span>
               </div>
             ) : (
-              <span className="text-brand-secondary text-sm font-sans">Select region to preview...</span>
+              <span className="text-brand-secondary text-sm font-sans">
+                Select region to preview...
+              </span>
             )}
-            <ChevronDown className={`w-4 h-4 text-brand-secondary group-hover:text-brand-accent transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+            <ChevronDown
+              className={`w-4 h-4 text-brand-secondary group-hover:text-brand-accent transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
+            />
           </button>
 
           {isOpen && (
-            <div className="absolute top-[calc(100%+8px)] left-0 right-0 bg-[#0c1020] border border-brand-accent/40 rounded-xl shadow-2xl overflow-hidden z-[100] animate-in fade-in zoom-in-95 duration-200">
-              <div className="p-2 border-b border-brand-border/50 flex items-center gap-2 bg-[#080b14]/50">
+            <div className="absolute top-[calc(100%+8px)] left-0 right-0 bg-brand-bg border border-brand-accent/40 rounded-xl shadow-2xl overflow-hidden z-[100] animate-in fade-in zoom-in-95 duration-200">
+              <div className="p-2 border-b border-brand-border/50 flex items-center gap-2 bg-brand-bg/50">
                 <Search className="w-4 h-4 text-brand-secondary ml-2" />
                 <input
                   type="text"
@@ -103,8 +117,10 @@ export const CountrySelector: React.FC<CountrySelectorProps> = ({ onSelect, disa
                       onClick={() => handleSelect(country.code)}
                       className="w-full flex items-center gap-3 px-4 py-3 hover:bg-brand-accent/10 transition-colors text-left border-l-2 border-transparent hover:border-brand-accent group"
                     >
-                      <span className="text-xl leading-none">{country.flag}</span>
-                      <span className="font-sans text-sm text-[#e5dfd5] group-hover:text-white font-medium flex-1">
+                      <span className="text-xl leading-none">
+                        {country.flag}
+                      </span>
+                      <span className="font-sans text-sm text-brand-text group-hover:text-brand-accent font-medium flex-1">
                         {country.name}
                       </span>
                       <span className="font-mono text-xs text-brand-secondary group-hover:text-brand-accent font-semibold transition-colors">
