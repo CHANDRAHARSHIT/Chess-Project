@@ -64,6 +64,7 @@ export function ThemedChessboard({ options }: ThemedChessboardProps) {
         darkSquareStyle: { backgroundColor: boardTheme.dark },
         lightSquareStyle: { backgroundColor: boardTheme.light },
         pieces: pieceSet.pieces,
+        allowDragOffBoard: false,
         ...clickOptions,
       }}
     />
