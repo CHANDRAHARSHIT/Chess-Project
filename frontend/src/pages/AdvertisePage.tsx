@@ -1,5 +1,7 @@
 import { motion, type Variants } from "framer-motion";
-import { Megaphone, Target, Users, BarChart2, Globe, Zap } from "lucide-react";
+import { useNavigate } from "react-router";
+import { Megaphone, Target, Users, BarChart2, Globe, Zap, ArrowLeft } from "lucide-react";
+import { soundManager } from "../utils/SoundManager";
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 16 },
@@ -29,7 +31,7 @@ function AdFormatCard({ title, description, tag, index }: AdFormatCardProps) {
       <span className="inline-block text-xs font-mono text-brand-accent uppercase tracking-widest bg-brand-accent/10 border border-brand-accent/20 rounded-full px-2.5 py-0.5 mb-3">
         {tag}
       </span>
-      <h3 className="text-base font-semibold text-brand-text mb-2">{title}</h3>
+      <h3 className="text-base font-display font-semibold text-brand-text mb-2">{title}</h3>
       <p className="text-sm text-brand-secondary leading-relaxed">{description}</p>
     </motion.div>
   );
@@ -82,13 +84,29 @@ const stats = [
 ];
 
 export default function AdvertisePage() {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-brand-bg text-brand-text">
       {/* Hero Banner */}
       <div className="relative overflow-hidden border-b border-brand-border/30">
         <div className="absolute inset-0 bg-gradient-to-br from-brand-accent/5 via-transparent to-brand-accent/3 pointer-events-none" />
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[300px] bg-brand-accent/5 rounded-full blur-[120px] pointer-events-none" />
-        <div className="max-w-4xl mx-auto px-6 py-16 sm:py-20 relative z-10">
+        <div className="max-w-4xl mx-auto px-6 pt-6 pb-16 sm:pb-20 relative z-10">
+          <div className="mb-6">
+            <button
+              type="button"
+              onClick={() => {
+                soundManager.playButtonClick();
+                navigate("/");
+              }}
+              className="inline-flex items-center gap-2 text-brand-secondary hover:text-brand-text transition-colors duration-200 font-sans text-sm font-semibold cursor-pointer group"
+              aria-label="Back to Home"
+            >
+              <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+              <span>Back to Home</span>
+            </button>
+          </div>
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
@@ -100,7 +118,7 @@ export default function AdvertisePage() {
                 Partners
               </span>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-bold mb-4 leading-tight tracking-tight">
+            <h1 className="text-3xl sm:text-4xl font-display font-bold mb-4 leading-tight tracking-tight">
               Advertise on XLChess
             </h1>
             <p className="text-base sm:text-lg text-brand-secondary leading-relaxed max-w-2xl">
@@ -123,7 +141,7 @@ export default function AdvertisePage() {
           animate="visible"
           className="mb-14"
         >
-          <h2 className="text-xl font-semibold mb-6 text-brand-text">
+          <h2 className="text-xl font-display font-semibold mb-6 text-brand-text">
             Our Audience
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
@@ -173,7 +191,7 @@ export default function AdvertisePage() {
             variants={fadeUp}
             initial="hidden"
             animate="visible"
-            className="text-xl font-semibold mb-6 text-brand-text"
+            className="text-xl font-display font-semibold mb-6 text-brand-text"
           >
             Advertising Formats
           </motion.h2>
@@ -194,7 +212,7 @@ export default function AdvertisePage() {
           animate="visible"
           className="mb-14"
         >
-          <h2 className="text-xl font-semibold mb-4 text-brand-text">
+          <h2 className="text-xl font-display font-semibold mb-4 text-brand-text">
             Brand Safety and Values
           </h2>
           <div className="space-y-4 text-brand-secondary leading-relaxed">
@@ -224,7 +242,7 @@ export default function AdvertisePage() {
           className="rounded-2xl border border-brand-accent/20 bg-brand-accent/5 p-8 text-center"
         >
           <Zap className="w-8 h-8 text-brand-accent mx-auto mb-4" />
-          <h2 className="text-xl font-semibold mb-3 text-brand-text">
+          <h2 className="text-xl font-display font-semibold mb-3 text-brand-text">
             Let's Build Something Together
           </h2>
           <p className="text-brand-secondary leading-relaxed mb-6 max-w-xl mx-auto">
