@@ -1,11 +1,48 @@
 import { useState, useEffect, useCallback } from "react";
-import { X, Search, Sparkles, ChevronRight } from "lucide-react";
+import { X, Search, SlidersHorizontal, ChevronRight, AlertCircle } from "lucide-react";
 import { PuzzleApiService } from "../services/puzzle.service";
 import type { PuzzleFilters } from "../types/puzzle";
 
 interface CustomPuzzlePanelProps {
   onStart: (filters: PuzzleFilters) => void;
   onClose: () => void;
+}
+
+const RATING_MIN = 400;
+const RATING_MAX = 3000;
+const RATING_STEP = 100;
+
+function snapRating(val: number): number {
+  const rounded = Math.round(val / RATING_STEP) * RATING_STEP;
+  return Math.min(RATING_MAX, Math.max(RATING_MIN, rounded));
+}
+
+function getRatingValidationError(minStr: string, maxStr: string): string | null {
+  if (!minStr.trim() || !maxStr.trim()) {
+    return "Please enter ratings between 400 and 3000.";
+  }
+  const minVal = Number(minStr);
+  const maxVal = Number(maxStr);
+
+  if (isNaN(minVal) || isNaN(maxVal)) {
+    return "Please enter valid rating numbers.";
+  }
+  if (minVal < RATING_MIN || minVal > RATING_MAX) {
+    return `Minimum rating must be between ${RATING_MIN} and ${RATING_MAX}.`;
+  }
+  if (maxVal < RATING_MIN || maxVal > RATING_MAX) {
+    return `Maximum rating must be between ${RATING_MIN} and ${RATING_MAX}.`;
+  }
+  if (minVal % RATING_STEP !== 0) {
+    return `Ratings must be in multiples of 100 (e.g. ${snapRating(minVal)}).`;
+  }
+  if (maxVal % RATING_STEP !== 0) {
+    return `Ratings must be in multiples of 100 (e.g. ${snapRating(maxVal)}).`;
+  }
+  if (minVal > maxVal) {
+    return "Min rating cannot be higher than max rating.";
+  }
+  return null;
 }
 
 // Human-readable labels for Lichess theme tags
@@ -56,7 +93,6 @@ const THEME_LABELS: Record<string, string> = {
   enPassant: "En Passant",
   trappedPiece: "Trapped Piece",
   hangingPiece: "Hanging Piece",
-  capturingDefender: "Capturing Defender",
   master: "Master Game",
   superGM: "Super GM",
   equality: "Equality",
@@ -77,18 +113,27 @@ export function CustomPuzzlePanel({
   const [themes, setThemes] = useState<string[]>([]);
   const [loadingThemes, setLoadingThemes] = useState(false);
   const [selectedThemes, setSelectedThemes] = useState<Set<string>>(new Set());
-  const [minRating, setMinRating] = useState(600);
-  const [maxRating, setMaxRating] = useState(2000);
+  const [minRatingStr, setMinRatingStr] = useState("400");
+  const [maxRatingStr, setMaxRatingStr] = useState("2000");
   const [themeSearch, setThemeSearch] = useState("");
   const [starting, setStarting] = useState(false);
 
+  const ratingError = getRatingValidationError(minRatingStr, maxRatingStr);
+
   // Fetch themes once on mount
   useEffect(() => {
-    setLoadingThemes(true);
-    PuzzleApiService.getThemes().then((data) => {
-      setThemes(data);
-      setLoadingThemes(false);
-    });
+    async function fetchThemes() {
+      setLoadingThemes(true);
+      try {
+        const data = await PuzzleApiService.getThemes();
+        setThemes(data);
+      } catch {
+        // Backend unavailable — panel stays usable with an empty list
+      } finally {
+        setLoadingThemes(false);
+      }
+    }
+    fetchThemes();
   }, []);
 
   const toggleTheme = useCallback((theme: string) => {
@@ -111,17 +156,56 @@ export function CustomPuzzlePanel({
     }
   }, [selectedThemes, themes]);
 
+  const handleMinBlur = () => {
+    let minVal = parseInt(minRatingStr, 10);
+    if (isNaN(minVal)) minVal = RATING_MIN;
+    const snappedMin = snapRating(minVal);
+
+    let maxVal = parseInt(maxRatingStr, 10);
+    if (isNaN(maxVal)) maxVal = RATING_MAX;
+    let snappedMax = snapRating(maxVal);
+
+    if (snappedMin > snappedMax) {
+      snappedMax = snappedMin;
+    }
+
+    setMinRatingStr(snappedMin.toString());
+    setMaxRatingStr(snappedMax.toString());
+  };
+
+  const handleMaxBlur = () => {
+    let maxVal = parseInt(maxRatingStr, 10);
+    if (isNaN(maxVal)) maxVal = RATING_MAX;
+    const snappedMax = snapRating(maxVal);
+
+    let minVal = parseInt(minRatingStr, 10);
+    if (isNaN(minVal)) minVal = RATING_MIN;
+    let snappedMin = snapRating(minVal);
+
+    if (snappedMin > snappedMax) {
+      snappedMin = snappedMax;
+    }
+
+    setMinRatingStr(snappedMin.toString());
+    setMaxRatingStr(snappedMax.toString());
+  };
+
   const handleStart = useCallback(async () => {
+    const minVal = parseInt(minRatingStr, 10);
+    const maxVal = parseInt(maxRatingStr, 10);
+    const err = getRatingValidationError(minRatingStr, maxRatingStr);
+    if (err || isNaN(minVal) || isNaN(maxVal)) return;
+
     setStarting(true);
     const filters: PuzzleFilters = {
       themes: selectedThemes.size > 0 ? Array.from(selectedThemes) : undefined,
-      minRating,
-      maxRating,
+      minRating: minVal,
+      maxRating: maxVal,
       limit: 50,
     };
     onStart(filters);
     setStarting(false);
-  }, [selectedThemes, minRating, maxRating, onStart]);
+  }, [selectedThemes, minRatingStr, maxRatingStr, onStart]);
 
   const filteredThemes = themes.filter((t) =>
     getThemeLabel(t).toLowerCase().includes(themeSearch.toLowerCase()),
@@ -132,51 +216,39 @@ export function CustomPuzzlePanel({
 
   return (
     <div
-      className="flex flex-col rounded-2xl overflow-hidden shadow-2xl w-full h-full max-h-[685px]"
+      className="relative flex flex-col rounded-2xl overflow-hidden shadow-2xl w-full h-full max-h-[685px] bg-brand-surface border border-brand-border text-brand-text transition-colors duration-200"
       style={{
-        background: "linear-gradient(160deg, #0C1020 0%, #0a0e1a 100%)",
-        border: "1px solid rgba(212, 175, 110, 0.18)",
         boxShadow:
-          "0 24px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(212,175,110,0.06)",
+          "0 24px 60px rgba(0,0,0,0.3), 0 0 0 1px var(--marble-border)",
       }}
     >
       {/* Ambient glow top-right */}
       <div
-        className="absolute top-0 right-0 w-40 h-40 pointer-events-none"
+        className="absolute top-0 right-0 w-40 h-40 pointer-events-none opacity-40"
         style={{
           background:
-            "radial-gradient(ellipse at top right, rgba(212,175,110,0.07) 0%, transparent 70%)",
+            "radial-gradient(ellipse at top right, var(--gold-whisper) 0%, transparent 70%)",
         }}
       />
 
       {/* ── Header ── */}
       <div
-        className="flex items-center justify-between px-5 py-4 flex-shrink-0"
-        style={{ borderBottom: "1px solid rgba(212, 175, 110, 0.12)" }}
+        className="flex items-center justify-between px-5 py-4 flex-shrink-0 border-b border-brand-border/60"
       >
         <div className="flex items-center gap-3">
           <div
-            className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
-            style={{
-              background: "rgba(212, 175, 110, 0.1)",
-              border: "1px solid rgba(212, 175, 110, 0.2)",
-            }}
+            className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 bg-brand-accent/10 border border-brand-accent/20"
           >
-            <Sparkles className="w-3.5 h-3.5" style={{ color: "#D4AF6E" }} />
+            <SlidersHorizontal className="w-3.5 h-3.5 text-brand-accent" />
           </div>
           <div>
             <h2
-              className="text-base font-semibold tracking-wide"
-              style={{
-                fontFamily: "'Cormorant Garamond', serif",
-                color: "#F5F0E8",
-              }}
+              className="text-base font-semibold tracking-wide font-serif text-brand-text"
             >
               Custom Puzzles
             </h2>
             <p
-              className="text-[10px] mt-0.5"
-              style={{ color: "#8E8B82", fontFamily: "Inter, sans-serif" }}
+              className="text-[10px] mt-0.5 text-brand-secondary font-sans"
             >
               Filter by theme &amp; rating range
             </p>
@@ -187,22 +259,7 @@ export function CustomPuzzlePanel({
         <button
           onClick={onClose}
           aria-label="Back to pathway"
-          className="w-7 h-7 rounded-lg flex items-center justify-center transition-all duration-200 cursor-pointer"
-          style={{
-            background: "rgba(255,255,255,0.04)",
-            border: "1px solid rgba(255,255,255,0.08)",
-            color: "#8E8B82",
-          }}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.color = "#F5F0E8";
-            (e.currentTarget as HTMLButtonElement).style.borderColor =
-              "rgba(212,175,110,0.3)";
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.color = "#8E8B82";
-            (e.currentTarget as HTMLButtonElement).style.borderColor =
-              "rgba(255,255,255,0.08)";
-          }}
+          className="w-7 h-7 rounded-lg flex items-center justify-center transition-all duration-200 cursor-pointer bg-brand-text/5 border border-brand-border/40 text-brand-secondary hover:text-brand-text hover:border-brand-accent/40"
         >
           <X className="w-3.5 h-3.5" />
         </button>
@@ -212,94 +269,78 @@ export function CustomPuzzlePanel({
       <div className="flex flex-col flex-1 overflow-hidden px-5 py-4 gap-4">
         {/* Rating Range */}
         <div>
-          <label
-            className="block text-[10px] font-mono uppercase tracking-widest mb-2.5"
-            style={{ color: "#8E8B82" }}
-          >
-            Rating Range
-          </label>
+          <div className="flex items-baseline justify-between mb-2.5">
+            <label
+              className="text-[10px] font-mono uppercase tracking-widest text-brand-secondary"
+            >
+              Rating Range
+            </label>
+            <span className="text-[9px] font-sans text-brand-secondary/50 tracking-wide">
+              400 – 3000 · steps of 100
+            </span>
+          </div>
           <div className="flex items-center gap-3">
             <div className="flex-1">
               <input
                 id="panel-puzzle-min-rating"
                 type="number"
-                value={minRating}
-                min={400}
-                max={maxRating - 100}
-                step={50}
-                onChange={(e) =>
-                  setMinRating(Math.max(400, parseInt(e.target.value) || 400))
-                }
-                className="w-full text-sm font-mono text-center transition-all duration-200 outline-none"
-                style={{
-                  background: "rgba(8, 11, 20, 0.8)",
-                  border: "1px solid rgba(212, 175, 110, 0.2)",
-                  borderRadius: "10px",
-                  padding: "7px 10px",
-                  color: "#F5F0E8",
+                value={minRatingStr}
+                min={RATING_MIN}
+                max={RATING_MAX}
+                step={RATING_STEP}
+                onChange={(e) => {
+                  const cleaned = e.target.value.replace(/\D/g, "").slice(0, 4);
+                  setMinRatingStr(cleaned);
                 }}
-                onFocus={(e) => {
-                  e.currentTarget.style.borderColor = "rgba(212,175,110,0.5)";
-                  e.currentTarget.style.boxShadow =
-                    "0 0 0 2px rgba(212,175,110,0.08)";
-                }}
-                onBlur={(e) => {
-                  e.currentTarget.style.borderColor = "rgba(212,175,110,0.2)";
-                  e.currentTarget.style.boxShadow = "none";
-                }}
+                onBlur={handleMinBlur}
+                className={`w-full text-sm font-mono text-center transition-all duration-200 outline-none rounded-xl py-2 px-3 bg-brand-bg/80 text-brand-text ring-1 ${
+                  ratingError
+                    ? "ring-amber-500/80 focus:ring-amber-400"
+                    : "ring-brand-accent/15 focus:ring-brand-accent/50 shadow-inner"
+                }`}
               />
             </div>
-            <span style={{ color: "#5C5954", fontSize: "18px" }}>—</span>
+            <span className="text-brand-secondary text-lg">—</span>
             <div className="flex-1">
               <input
                 id="panel-puzzle-max-rating"
                 type="number"
-                value={maxRating}
-                min={minRating + 100}
-                max={3000}
-                step={50}
-                onChange={(e) =>
-                  setMaxRating(Math.min(3000, parseInt(e.target.value) || 3000))
-                }
-                className="w-full text-sm font-mono text-center transition-all duration-200 outline-none"
-                style={{
-                  background: "rgba(8, 11, 20, 0.8)",
-                  border: "1px solid rgba(212, 175, 110, 0.2)",
-                  borderRadius: "10px",
-                  padding: "7px 10px",
-                  color: "#F5F0E8",
+                value={maxRatingStr}
+                min={RATING_MIN}
+                max={RATING_MAX}
+                step={RATING_STEP}
+                onChange={(e) => {
+                  const cleaned = e.target.value.replace(/\D/g, "").slice(0, 4);
+                  setMaxRatingStr(cleaned);
                 }}
-                onFocus={(e) => {
-                  e.currentTarget.style.borderColor = "rgba(212,175,110,0.5)";
-                  e.currentTarget.style.boxShadow =
-                    "0 0 0 2px rgba(212,175,110,0.08)";
-                }}
-                onBlur={(e) => {
-                  e.currentTarget.style.borderColor = "rgba(212,175,110,0.2)";
-                  e.currentTarget.style.boxShadow = "none";
-                }}
+                onBlur={handleMaxBlur}
+                className={`w-full text-sm font-mono text-center transition-all duration-200 outline-none rounded-xl py-2 px-3 bg-brand-bg/80 text-brand-text ring-1 ${
+                  ratingError
+                    ? "ring-amber-500/80 focus:ring-amber-400"
+                    : "ring-brand-accent/15 focus:ring-brand-accent/50 shadow-inner"
+                }`}
               />
             </div>
           </div>
+          {ratingError && (
+            <div className="mt-2 text-xs font-sans text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-lg px-3 py-1.5 flex items-center gap-1.5 animate-fadeIn">
+              <AlertCircle className="w-3.5 h-3.5 flex-shrink-0 text-amber-400" />
+              <span>{ratingError}</span>
+            </div>
+          )}
         </div>
 
         {/* Theme Search */}
         <div className="flex flex-col flex-1 overflow-hidden gap-0">
           <div className="flex items-center justify-between mb-2.5">
             <label
-              className="text-[10px] font-mono uppercase tracking-widest"
-              style={{ color: "#8E8B82" }}
+              className="text-[10px] font-mono uppercase tracking-widest text-brand-secondary"
             >
               Select Theme(s)
             </label>
             {selectedThemes.size > 0 && (
               <span
-                className="text-[10px] font-mono px-2 py-0.5 rounded-full"
-                style={{
-                  background: "rgba(212, 175, 110, 0.1)",
-                  border: "1px solid rgba(212, 175, 110, 0.25)",
-                  color: "#D4AF6E",
-                }}
+                className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-brand-accent/10 border border-brand-accent/30 text-brand-accent"
               >
                 {selectedThemes.size} selected
               </span>
@@ -309,8 +350,7 @@ export function CustomPuzzlePanel({
           {/* Search input */}
           <div className="relative mb-2.5">
             <Search
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-3 h-3 pointer-events-none"
-              style={{ color: "#5C5954" }}
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 pointer-events-none text-brand-secondary/70"
             />
             <input
               id="panel-puzzle-theme-search"
@@ -318,41 +358,18 @@ export function CustomPuzzlePanel({
               placeholder="Search themes…"
               value={themeSearch}
               onChange={(e) => setThemeSearch(e.target.value)}
-              className="w-full text-xs pl-8 pr-3 py-2 outline-none transition-all duration-200"
-              style={{
-                background: "rgba(8, 11, 20, 0.6)",
-                border: "1px solid rgba(255,255,255,0.07)",
-                borderRadius: "10px",
-                color: "#F5F0E8",
-                fontFamily: "Inter, sans-serif",
-              }}
-              onFocus={(e) => {
-                e.currentTarget.style.borderColor = "rgba(212,175,110,0.3)";
-              }}
-              onBlur={(e) => {
-                e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)";
-              }}
+              className="w-full text-xs pl-8 pr-3 py-2 outline-none transition-all duration-200 rounded-full bg-brand-bg/80 ring-1 ring-brand-accent/15 focus:ring-brand-accent/50 text-brand-text placeholder:text-brand-secondary/50 shadow-inner"
             />
           </div>
 
           {/* Theme list */}
           <div
-            className="overflow-y-auto rounded-xl flex-1"
-            style={{
-              background: "rgba(8, 11, 20, 0.5)",
-              border: "1px solid rgba(255,255,255,0.06)",
-              minHeight: "140px",
-              maxHeight: "300px",
-            }}
+            className="overflow-y-auto rounded-xl flex-1 bg-brand-bg/60 min-h-[140px] max-h-[300px] shadow-inner"
           >
             {loadingThemes ? (
               <div className="flex items-center justify-center py-10">
                 <div
-                  className="w-5 h-5 rounded-full border-2 animate-spin"
-                  style={{
-                    borderColor: "rgba(212,175,110,0.2)",
-                    borderTopColor: "#D4AF6E",
-                  }}
+                  className="w-5 h-5 rounded-full border-2 animate-spin border-brand-accent/20 border-t-brand-accent"
                 />
               </div>
             ) : (
@@ -361,43 +378,29 @@ export function CustomPuzzlePanel({
                 {!themeSearch && (
                   <button
                     onClick={toggleAllThemes}
-                    className="w-full flex items-center gap-3 px-4 py-2.5 text-left transition-all duration-150 cursor-pointer"
+                    className="w-full flex items-center gap-3 px-4 py-3 text-left transition-all duration-150 cursor-pointer border-b border-brand-border/10 hover:bg-brand-accent/5"
                     style={{
                       background: allSelected
-                        ? "rgba(212, 175, 110, 0.08)"
+                        ? "var(--gold-whisper)"
                         : "transparent",
-                      borderBottom: "1px solid rgba(255,255,255,0.05)",
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!allSelected)
-                        (
-                          e.currentTarget as HTMLButtonElement
-                        ).style.background = "rgba(255,255,255,0.03)";
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!allSelected)
-                        (
-                          e.currentTarget as HTMLButtonElement
-                        ).style.background = "transparent";
                     }}
                   >
                     <span
-                      className="w-4 h-4 rounded flex-shrink-0 flex items-center justify-center"
+                      className="w-4 h-4 rounded-md flex-shrink-0 flex items-center justify-center border transition-all duration-150"
                       style={{
-                        border: allSelected
-                          ? "1.5px solid #D4AF6E"
-                          : "1.5px solid rgba(255,255,255,0.2)",
+                        borderColor: allSelected
+                          ? "var(--gold-bright)"
+                          : "var(--marble-border)",
                         background: allSelected
-                          ? "rgba(212,175,110,0.15)"
+                          ? "var(--gold-whisper)"
                           : "transparent",
-                        transition: "all 0.15s ease",
                       }}
                     >
                       {allSelected && (
                         <svg width="9" height="7" viewBox="0 0 9 7" fill="none">
                           <path
                             d="M1 3.5L3.5 6L8 1"
-                            stroke="#D4AF6E"
+                            stroke="var(--gold-bright)"
                             strokeWidth="1.5"
                             strokeLinecap="round"
                             strokeLinejoin="round"
@@ -406,10 +409,9 @@ export function CustomPuzzlePanel({
                       )}
                     </span>
                     <span
-                      className="text-xs font-medium flex-1"
+                      className="text-xs font-medium flex-1 font-sans"
                       style={{
-                        color: allSelected ? "#D4AF6E" : "#F5F0E8",
-                        fontFamily: "Inter, sans-serif",
+                        color: allSelected ? "var(--gold-bright)" : "var(--text-primary)",
                       }}
                     >
                       All Themes
@@ -424,36 +426,22 @@ export function CustomPuzzlePanel({
                     <button
                       key={theme}
                       onClick={() => toggleTheme(theme)}
-                      className="w-full flex items-center gap-3 px-4 py-2 text-left transition-all duration-150 cursor-pointer"
+                      className="w-full flex items-center gap-3 px-4 py-2.5 text-left transition-all duration-150 cursor-pointer hover:bg-brand-accent/5"
                       style={{
                         background: checked
-                          ? "rgba(212, 175, 110, 0.06)"
+                          ? "var(--gold-whisper)"
                           : "transparent",
-                        borderBottom: "1px solid rgba(255,255,255,0.04)",
-                      }}
-                      onMouseEnter={(e) => {
-                        if (!checked)
-                          (
-                            e.currentTarget as HTMLButtonElement
-                          ).style.background = "rgba(255,255,255,0.025)";
-                      }}
-                      onMouseLeave={(e) => {
-                        if (!checked)
-                          (
-                            e.currentTarget as HTMLButtonElement
-                          ).style.background = "transparent";
                       }}
                     >
                       <span
-                        className="w-4 h-4 rounded flex-shrink-0 flex items-center justify-center"
+                        className="w-4 h-4 rounded-md flex-shrink-0 flex items-center justify-center border transition-all duration-150"
                         style={{
-                          border: checked
-                            ? "1.5px solid #D4AF6E"
-                            : "1.5px solid rgba(255,255,255,0.18)",
+                          borderColor: checked
+                            ? "var(--gold-bright)"
+                            : "var(--marble-border)",
                           background: checked
-                            ? "rgba(212,175,110,0.12)"
+                            ? "var(--gold-whisper)"
                             : "transparent",
-                          transition: "all 0.15s ease",
                         }}
                       >
                         {checked && (
@@ -465,7 +453,7 @@ export function CustomPuzzlePanel({
                           >
                             <path
                               d="M1 3.5L3.5 6L8 1"
-                              stroke="#D4AF6E"
+                              stroke="var(--gold-bright)"
                               strokeWidth="1.5"
                               strokeLinecap="round"
                               strokeLinejoin="round"
@@ -474,10 +462,9 @@ export function CustomPuzzlePanel({
                         )}
                       </span>
                       <span
-                        className="text-xs flex-1"
+                        className="text-xs flex-1 font-sans"
                         style={{
-                          color: checked ? "#D4AF6E" : "#C5BFB5",
-                          fontFamily: "Inter, sans-serif",
+                          color: checked ? "var(--gold-bright)" : "var(--text-secondary)",
                         }}
                       >
                         {getThemeLabel(theme)}
@@ -488,11 +475,7 @@ export function CustomPuzzlePanel({
 
                 {filteredThemes.length === 0 && !loadingThemes && (
                   <div
-                    className="py-8 text-center text-xs"
-                    style={{
-                      color: "#5C5954",
-                      fontFamily: "Inter, sans-serif",
-                    }}
+                    className="py-8 text-center text-xs text-brand-secondary font-sans"
                   >
                     No themes matching "{themeSearch}"
                   </div>
@@ -505,42 +488,18 @@ export function CustomPuzzlePanel({
 
       {/* ── Footer / Start button ── */}
       <div
-        className="px-5 pb-5 pt-3 flex-shrink-0"
-        style={{ borderTop: "1px solid rgba(212,175,110,0.08)" }}
+        className="px-5 pb-5 pt-3 flex-shrink-0 border-t border-brand-border/40"
       >
         <button
           id="panel-puzzle-start-btn"
           onClick={handleStart}
-          disabled={starting}
-          className="w-full py-3.5 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
-          style={{
-            background: starting
-              ? "rgba(212,175,110,0.4)"
-              : "linear-gradient(135deg, #D4AF6E 0%, #B8934A 100%)",
-            color: "#080B14",
-            boxShadow: "0 4px 20px rgba(212, 175, 110, 0.25)",
-            fontFamily: "DM Mono, monospace",
-          }}
-          onMouseEnter={(e) => {
-            if (!starting) {
-              (e.currentTarget as HTMLButtonElement).style.boxShadow =
-                "0 6px 28px rgba(212, 175, 110, 0.4)";
-              (e.currentTarget as HTMLButtonElement).style.transform =
-                "translateY(-1px)";
-            }
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.boxShadow =
-              "0 4px 20px rgba(212, 175, 110, 0.25)";
-            (e.currentTarget as HTMLButtonElement).style.transform =
-              "translateY(0)";
-          }}
+          disabled={starting || !!ratingError}
+          className="w-full py-3.5 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed btn-premium-cta cta-shine shadow-md shadow-brand-accent/10"
         >
           {starting ? (
             <>
               <div
-                className="w-3.5 h-3.5 rounded-full border-2 animate-spin border-current"
-                style={{ borderTopColor: "transparent" }}
+                className="w-3.5 h-3.5 rounded-full border-2 animate-spin border-current border-t-transparent"
               />
               Loading…
             </>
@@ -554,8 +513,7 @@ export function CustomPuzzlePanel({
 
         {selectedThemes.size === 0 && !starting && (
           <p
-            className="text-center text-[10px] mt-1.5"
-            style={{ color: "#5C5954", fontFamily: "Inter, sans-serif" }}
+            className="text-center text-[10px] mt-1.5 text-brand-secondary font-sans"
           >
             No theme selected — all themes will be included
           </p>
@@ -564,3 +522,4 @@ export function CustomPuzzlePanel({
     </div>
   );
 }
+

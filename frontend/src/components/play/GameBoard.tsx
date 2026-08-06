@@ -8,7 +8,9 @@ interface GameBoardProps {
   boardOrientation: 'white' | 'black';
   onPieceDrop: (from: string, to: string) => boolean;
   lastMove: { from: string; to: string } | null;
-  hintSquare: string | null;
+  hintSquare?: string | null;
+  hintMove?: { from: string; to: string } | null;
+  checkSquare?: string | null;
   status: GameStatus;
   isInteractive: boolean;
 }
@@ -19,6 +21,8 @@ export function GameBoard({
   onPieceDrop,
   lastMove,
   hintSquare,
+  hintMove,
+  checkSquare,
   status,
   isInteractive,
 }: GameBoardProps) {
@@ -30,7 +34,26 @@ export function GameBoard({
       styles[lastMove.to] = { backgroundColor: 'rgba(212, 175, 110, 0.35)' };
     }
 
-    if (hintSquare) {
+    if (checkSquare) {
+      styles[checkSquare] = {
+        backgroundColor: 'rgba(239, 68, 68, 0.55)',
+        boxShadow: 'inset 0 0 0 3px #ef4444, 0 0 14px rgba(239, 68, 68, 0.9)',
+        borderRadius: '4px',
+      };
+    }
+
+    if (hintMove) {
+      styles[hintMove.from] = {
+        backgroundColor: 'rgba(34, 197, 94, 0.35)',
+        boxShadow: 'inset 0 0 0 3px #22c55e',
+        borderRadius: '4px',
+      };
+      styles[hintMove.to] = {
+        backgroundColor: 'rgba(34, 197, 94, 0.5)',
+        boxShadow: 'inset 0 0 0 4px #10b981, 0 0 16px rgba(16, 185, 129, 0.6)',
+        borderRadius: '4px',
+      };
+    } else if (hintSquare) {
       styles[hintSquare] = {
         boxShadow: 'inset 0 0 0 4px rgba(34, 197, 94, 0.85)',
         borderRadius: '4px',
@@ -38,7 +61,7 @@ export function GameBoard({
     }
 
     return styles;
-  }, [lastMove, hintSquare]);
+  }, [lastMove, checkSquare, hintSquare, hintMove]);
 
   const borderClass =
     status === 'checkmate'
@@ -49,7 +72,7 @@ export function GameBoard({
 
   return (
     <div
-      className={`relative w-full max-w-[480px] sm:max-w-[540px] aspect-square shadow-[0_20px_50px_rgba(212,175,110,0.03)] border overflow-hidden bg-brand-surface transition-all duration-300 ${borderClass}`}
+      className={`relative w-full max-w-[480px] sm:max-w-[540px] aspect-square shadow-[0_20px_50px_rgba(212,175,110,0.03)] border bg-brand-surface transition-all duration-300 ${borderClass}`}
     >
       <ThemedChessboard
         options={{

@@ -156,7 +156,7 @@ function OpeningSidebar({
       </div>
 
       {/* List — shows only the current page slice */}
-      <div className="flex-1 overflow-y-auto" style={{ minHeight: 0 }}>
+      <div className="flex-1 overflow-y-auto sidebar-scrollbar" style={{ minHeight: 0 }}>
         {isLoading && (
           <div className="flex flex-col gap-2 p-3">
             {Array.from({ length: 8 }).map((_, i) => (
@@ -332,9 +332,9 @@ export default function OpeningsPage() {
             soundManager.playButtonClick();
             navigate(-1);
           }}
-          className="flex items-center gap-1.5 text-brand-secondary hover:text-brand-text text-sm font-sans transition-colors duration-200 cursor-pointer group"
+          className="inline-flex items-center gap-2 text-brand-secondary hover:text-brand-text transition-colors duration-200 font-sans text-sm font-semibold cursor-pointer group"
         >
-          <ArrowLeft className="w-4 h-4 transition-transform duration-200 group-hover:-translate-x-0.5" />
+          <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
           <span>Back</span>
         </button>
 

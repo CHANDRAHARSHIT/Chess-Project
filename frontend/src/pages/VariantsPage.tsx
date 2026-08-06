@@ -1,6 +1,8 @@
 import { useState, useMemo } from 'react';
-import { Search, X, Dices } from 'lucide-react';
+import { useNavigate } from 'react-router';
+import { Search, X, Dices, ArrowLeft } from 'lucide-react';
 import { VariantCard } from '../components/play/VariantCard';
+import { soundManager } from '../utils/SoundManager';
 
 const VARIANTS_LIST = [
   {
@@ -14,6 +16,7 @@ const VARIANTS_LIST = [
 ];
 
 export default function VariantsPage() {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredVariants = useMemo(() => {
@@ -28,7 +31,22 @@ export default function VariantsPage() {
   }, [searchQuery]);
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto space-y-8">
+    <div className="min-h-[calc(100vh-4rem)] p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto space-y-6">
+      {/* Back Navigation */}
+      <div>
+        <button
+          type="button"
+          onClick={() => {
+            soundManager.playButtonClick();
+            navigate("/");
+          }}
+          className="inline-flex items-center gap-2 text-brand-secondary hover:text-brand-text transition-colors duration-200 font-sans text-sm font-semibold cursor-pointer group"
+          aria-label="Back to Home"
+        >
+          <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+          <span>Back to Home</span>
+        </button>
+      </div>
       {/* Header section */}
       <div className="space-y-3">
         <div className="flex items-center gap-3">
@@ -36,7 +54,7 @@ export default function VariantsPage() {
             <Dices className="w-6 h-6" />
           </div>
           <div>
-            <h1 className="font-display font-bold text-3xl sm:text-4xl text-white tracking-tight">
+            <h1 className="font-display font-bold text-3xl sm:text-4xl text-brand-text tracking-tight">
               Chess Variants
             </h1>
             <p className="text-sm text-brand-secondary">
@@ -54,12 +72,12 @@ export default function VariantsPage() {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search variants..."
-          className="w-full pl-10 pr-10 py-2.5 text-sm font-sans rounded-xl outline-none transition-all duration-200 placeholder:text-brand-secondary/40 bg-brand-surface/60 border border-brand-border/60 text-brand-text focus:border-brand-accent/50 focus:ring-1 focus:ring-brand-accent/30"
+          className="w-full pl-10 pr-10 py-2.5 text-sm font-sans rounded-xl outline-none transition-all duration-200 placeholder:text-brand-secondary/40 bg-brand-surface/60 border border-brand-border text-brand-text focus:border-brand-accent/50 focus:ring-1 focus:ring-brand-accent/30"
         />
         {searchQuery && (
           <button
             onClick={() => setSearchQuery('')}
-            className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-brand-secondary hover:text-white transition-colors"
+            className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-brand-secondary hover:text-brand-text transition-colors"
           >
             <X className="w-4 h-4" />
           </button>

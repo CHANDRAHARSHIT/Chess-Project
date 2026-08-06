@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { ThemedChessboard } from "./ThemedChessboard";
 import { Chess } from "chess.js";
+import type { Square } from "chess.js";
 import type { ChessPuzzle } from "../utils/PuzzleLoader";
 import { validateMove } from "../utils/PuzzleValidator";
 import {
@@ -13,6 +14,7 @@ import {
 } from "lucide-react";
 import { soundManager } from "../utils/SoundManager";
 import { BoardCoordinates } from "./BoardCoordinates";
+import rollbar from "../config/rollbar";
 
 export interface PuzzleBoardProps {
   puzzle: ChessPuzzle;
@@ -21,15 +23,16 @@ export interface PuzzleBoardProps {
   onSolved?: () => void;
   onFailed?: () => void;
   onNextPuzzle?: () => void;
+  isNextDisabled?: boolean;
 }
 
 export function PuzzleBoard({
   puzzle,
   puzzleNumber,
-  boardId: _boardId = "puzzle-board",
   onSolved,
   onFailed,
   onNextPuzzle,
+  isNextDisabled,
 }: PuzzleBoardProps) {
   const gameRef = useRef<Chess>(new Chess());
   const [gameFen, setGameFen] = useState<string>(puzzle.fen);
@@ -57,24 +60,34 @@ export function PuzzleBoard({
 
   // Reset board and status when the puzzle prop changes
   useEffect(() => {
-    try {
-      gameRef.current = new Chess(puzzle.fen);
-      setGameFen(puzzle.fen);
-    } catch (e) {
-      console.error("Failed to parse FEN in PuzzleBoard:", puzzle.fen, e);
-      gameRef.current = new Chess();
-      setGameFen(gameRef.current.fen());
+    function resetBoard() {
+      try {
+        gameRef.current = new Chess(puzzle.fen);
+        setGameFen(puzzle.fen);
+      } catch (e) {
+        console.error("Failed to parse FEN in PuzzleBoard:", puzzle.fen, e);
+        // Falls back to a fresh board below, so this never reaches the
+        // ErrorBoundary — report it manually since it points at bad puzzle data.
+        rollbar.error(e as Error, { context: "PuzzleBoard.resetBoard", fen: puzzle.fen });
+        gameRef.current = new Chess();
+        setGameFen(gameRef.current.fen());
+      }
+      setSolutionIndex(0);
+      setPuzzleStatus("solving");
+      setLastMove(null);
+      setIsShaking(false);
+      setErrorSquares(null);
+      setHintSquare(null);
     }
-    setSolutionIndex(0);
-    setPuzzleStatus("solving");
-    setLastMove(null);
-    setIsShaking(false);
-    setErrorSquares(null);
-    setHintSquare(null);
+    resetBoard();
   }, [puzzle.id, puzzle.fen]);
 
-  // Determine player color and board orientation from active color in FEN
-  const playerColor = gameRef.current.turn(); // 'w' or 'b'
+  // Lock orientation to the puzzle's STARTING FEN — not the live gameFen.
+  // gameFen changes color after every half-move, which would flip the board
+  // during the 400ms window between the player's move and the opponent's
+  // auto-reply in multi-move puzzles. puzzle.fen only changes when a new
+  // puzzle loads, so orientation stays stable for the entire puzzle session.
+  const playerColor = (puzzle.fen.split(" ")[1] ?? "w") as "w" | "b";
   const boardOrientation = playerColor === "w" ? "white" : "black";
 
   const onDrop = useCallback(
@@ -87,7 +100,7 @@ export function PuzzleBoard({
       const game = gameRef.current;
 
       // 1. Enforce that the piece belongs to the active side
-      const piece = game.get(sourceSquare as any);
+      const piece = game.get(sourceSquare as Square);
       if (!piece || piece.color !== game.turn()) {
         return false;
       }
@@ -179,6 +192,12 @@ export function PuzzleBoard({
                       oppMoveStr,
                       e,
                     );
+                    // A genuine bug (bad puzzle solution data or move parsing),
+                    // not user input — report it manually.
+                    rollbar.error(e as Error, {
+                      context: "PuzzleBoard.playOpponentMove",
+                      oppMoveStr,
+                    });
                   }
                   setSolutionIndex(nextIndex + 1);
                 }, 400);
@@ -228,7 +247,9 @@ export function PuzzleBoard({
     }
   }, [puzzleStatus, puzzle.solution, solutionMoves, solutionIndex]);
 
-  const canUndo = gameRef.current.history().length > 0;
+  // Derive canUndo from state (gameFen) instead of reading the ref during render.
+  // If gameFen differs from the puzzle start FEN, at least one move was made.
+  const canUndo = gameFen !== puzzle.fen;
 
   const handleUndo = useCallback(() => {
     const game = gameRef.current;
@@ -279,6 +300,8 @@ export function PuzzleBoard({
     };
   }
 
+  const isNextBtnDisabled = isNextDisabled !== undefined ? isNextDisabled : (puzzleStatus !== "solved");
+
   return (
     <div className="flex flex-col items-center gap-3 sm:gap-3.5 w-full">
       {/* Top Heading */}
@@ -292,13 +315,13 @@ export function PuzzleBoard({
 
       <div
         ref={boardContainerRef}
-        className={`relative w-full max-w-[500px] sm:max-w-[540px] aspect-square shadow-[0_20px_50px_rgba(212,175,110,0.03)] border overflow-hidden bg-brand-surface transition-all duration-300 z-10 ${
-          isShaking
-            ? "border-rose-500 ring-4 ring-rose-500/25"
-            : puzzleStatus === "solved"
-              ? "border-emerald-500 ring-4 ring-emerald-500/25 animate-pulse"
-              : "border-[rgba(212,175,110,0.80)]"
-        }`}
+        className={`relative w-full max-w-[500px] sm:max-w-[540px] aspect-square shadow-[0_20px_50px_rgba(212,175,110,0.03)] border overflow-hidden bg-brand-surface transition-all duration-300 z-10 ${isShaking
+          ? "border-rose-500 ring-4 ring-rose-500/25"
+          : puzzleStatus === "solved"
+            ? "border-emerald-500 ring-4 ring-emerald-500/25 animate-pulse"
+            : "border-[rgba(212,175,110,0.80)]"
+          }`}
+        style={{ transform: "translateZ(0)" }}
       >
         <ThemedChessboard
           options={{
@@ -327,7 +350,7 @@ export function PuzzleBoard({
             Incorrect. Try Again
           </span>
         ) : (
-          <span className="font-mono uppercase tracking-wider text-xs font-bold text-brand-text flex items-center gap-1.5 bg-brand-text/5 border border-white/10 px-3 py-1 rounded-full">
+          <span className="font-mono uppercase tracking-wider text-xs font-bold text-brand-text flex items-center gap-1.5 bg-brand-surface border border-brand-border/60 px-3 py-1 rounded-full shadow-sm">
             <Play className="w-3.5 h-3.5 text-brand-accent fill-current" />
             {playerColor === "w" ? "White to Move" : "Black to Move"}
           </span>
@@ -335,17 +358,17 @@ export function PuzzleBoard({
       </div>
 
       {/* Elegant Controls: Hint, Undo, Reset, Next Puzzle */}
-      <div className="flex items-center gap-3 sm:gap-4 pt-2 z-10">
+      <div className="w-full max-w-[500px] sm:max-w-none flex flex-wrap sm:flex-nowrap items-center justify-center gap-2 sm:gap-4 pt-2 z-10">
         <button
           onClick={() => {
             soundManager.playButtonClick();
             handleHint();
           }}
           disabled={puzzleStatus === "solved"}
-          className="px-5 py-2.5 rounded-xl font-mono text-xs uppercase tracking-wider font-semibold bg-brand-text/5 border border-white/10 hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center gap-1.5 shadow-sm"
+          className="flex-1 min-w-[70px] sm:flex-initial px-2.5 sm:px-5 py-2.5 min-h-[44px] justify-center rounded-xl font-mono text-xs uppercase tracking-wider font-semibold bg-brand-surface border border-brand-border/60 hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center gap-1.5 shadow-sm"
         >
-          <HelpCircle className="w-3.5 h-3.5" />
-          Hint
+          <HelpCircle className="w-3.5 h-3.5 text-brand-accent" />
+          <span>Hint</span>
         </button>
 
         <button
@@ -354,10 +377,10 @@ export function PuzzleBoard({
             handleUndo();
           }}
           disabled={!canUndo}
-          className="px-5 py-2.5 rounded-xl font-mono text-xs uppercase tracking-wider font-semibold bg-white/5 border border-white/10 hover:border-brand-accent/40 text-brand-secondary hover:text-white transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center gap-1.5 shadow-sm"
+          className="flex-1 min-w-[70px] sm:flex-initial px-2.5 sm:px-5 py-2.5 min-h-[44px] justify-center rounded-xl font-mono text-xs uppercase tracking-wider font-semibold bg-brand-surface border border-brand-border/60 hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center gap-1.5 shadow-sm"
         >
-          <Undo2 className="w-3.5 h-3.5" />
-          Undo
+          <Undo2 className="w-3.5 h-3.5 text-brand-accent" />
+          <span>Undo</span>
         </button>
 
         <button
@@ -366,19 +389,25 @@ export function PuzzleBoard({
             handleReset();
           }}
           disabled={!canUndo}
-          className="px-5 py-2.5 rounded-xl font-mono text-xs uppercase tracking-wider font-semibold bg-brand-text/5 border border-white/10 hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center gap-1.5 shadow-sm"
+          className="flex-1 min-w-[70px] sm:flex-initial px-2.5 sm:px-5 py-2.5 min-h-[44px] justify-center rounded-xl font-mono text-xs uppercase tracking-wider font-semibold bg-brand-surface border border-brand-border/60 hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center gap-1.5 shadow-sm"
         >
-          <RotateCcw className="w-3.5 h-3.5" />
-          Reset
+          <RotateCcw className="w-3.5 h-3.5 text-brand-accent" />
+          <span>Reset</span>
         </button>
 
         {onNextPuzzle && (
           <button
             onClick={() => {
+              if (isNextBtnDisabled) return;
               soundManager.playButtonClick();
               onNextPuzzle();
             }}
-            className="px-6 py-2.5 rounded-xl font-mono text-xs uppercase tracking-widest font-bold btn-premium-cta cta-shine cursor-pointer flex items-center gap-1.5 shadow-md shadow-brand-accent/5 hover:scale-[1.02] active:scale-[0.98]"
+            disabled={isNextBtnDisabled}
+            className={`w-full sm:w-auto sm:flex-initial px-4 sm:px-6 py-2.5 min-h-[44px] justify-center rounded-xl font-mono text-xs uppercase tracking-widest font-bold transition-all duration-300 flex items-center gap-1.5 shadow-md ${
+              isNextBtnDisabled
+                ? "opacity-40 bg-brand-surface border border-brand-border/60 text-brand-secondary cursor-not-allowed shadow-none"
+                : "btn-premium-cta cta-shine cursor-pointer shadow-brand-accent/5 hover:scale-[1.02] active:scale-[0.98]"
+            }`}
           >
             <span>Next Puzzle</span>
             <ArrowRight className="w-3.5 h-3.5" />

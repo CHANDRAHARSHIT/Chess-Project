@@ -65,7 +65,11 @@ export const ModelName = {
   Opening: 'Opening',
   BuilderLesson: 'BuilderLesson',
   BuilderSegment: 'BuilderSegment',
-  BuilderSlide: 'BuilderSlide'
+  BuilderSlide: 'BuilderSlide',
+  Course: 'Course',
+  Lesson: 'Lesson',
+  LessonProgress: 'LessonProgress',
+  CustomLink: 'CustomLink'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -313,6 +317,71 @@ export const BuilderSlideScalarFieldEnum = {
 export type BuilderSlideScalarFieldEnum = (typeof BuilderSlideScalarFieldEnum)[keyof typeof BuilderSlideScalarFieldEnum]
 
 
+export const CourseScalarFieldEnum = {
+  id: 'id',
+  slug: 'slug',
+  title: 'title',
+  description: 'description',
+  thumbnail: 'thumbnail',
+  published: 'published',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CourseScalarFieldEnum = (typeof CourseScalarFieldEnum)[keyof typeof CourseScalarFieldEnum]
+
+
+export const LessonScalarFieldEnum = {
+  id: 'id',
+  courseId: 'courseId',
+  slug: 'slug',
+  title: 'title',
+  description: 'description',
+  thumbnail: 'thumbnail',
+  difficulty: 'difficulty',
+  estimatedTime: 'estimatedTime',
+  category: 'category',
+  published: 'published',
+  content: 'content',
+  settings: 'settings',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type LessonScalarFieldEnum = (typeof LessonScalarFieldEnum)[keyof typeof LessonScalarFieldEnum]
+
+
+export const LessonProgressScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  lessonId: 'lessonId',
+  currentStep: 'currentStep',
+  completed: 'completed',
+  accuracy: 'accuracy',
+  mistakes: 'mistakes',
+  xp: 'xp',
+  timeSpent: 'timeSpent',
+  updatedAt: 'updatedAt'
+} as const
+
+export type LessonProgressScalarFieldEnum = (typeof LessonProgressScalarFieldEnum)[keyof typeof LessonProgressScalarFieldEnum]
+
+
+export const CustomLinkScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  name: 'name',
+  url: 'url',
+  isArchived: 'isArchived',
+  clickCount: 'clickCount',
+  lastClickedAt: 'lastClickedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CustomLinkScalarFieldEnum = (typeof CustomLinkScalarFieldEnum)[keyof typeof CustomLinkScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -327,6 +396,13 @@ export const NullableJsonNullValueInput = {
 } as const
 
 export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
+export const JsonNullValueInput = {
+  JsonNull: JsonNull
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
 export const QueryMode = {

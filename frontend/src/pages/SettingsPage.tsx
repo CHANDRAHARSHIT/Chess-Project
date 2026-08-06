@@ -6,7 +6,7 @@
  * content panel with tabs.
  */
 import { useState, useEffect } from "react";
-import { useNavigate, useSearchParams } from "react-router";
+import { useNavigate, useSearchParams, useParams } from "react-router";
 import {
   ArrowLeft,
   Settings as SettingsIcon,
@@ -44,6 +44,7 @@ const TABS: SettingsTab[] = [
 
 interface SettingsCategory {
   id: string;
+  slug: string;
   name: string;
   icon: typeof Grid3x3;
   available: boolean;
@@ -55,25 +56,63 @@ interface SettingsCategory {
 const CATEGORIES: SettingsCategory[] = [
   {
     id: "board-pieces",
+    slug: "board-and-pieces",
     name: "Board & Pieces",
     icon: Grid3x3,
     available: true,
   },
-  { id: "profile", name: "Profile", icon: CircleUserRound, available: true },
+  {
+    id: "profile",
+    slug: "profile",
+    name: "Profile",
+    icon: CircleUserRound,
+    available: true,
+  },
   {
     id: "membership",
+    slug: "membership",
     name: "Membership",
     icon: CreditCard,
-    available: true,
+    available: false,
     path: "/pricing",
   },
-  { id: "gameplay", name: "Gameplay", icon: Gamepad2, available: false },
-  { id: "interface", name: "Interface", icon: Monitor, available: false },
-  { id: "notifications", name: "Notifications", icon: Bell, available: false },
+  {
+    id: "gameplay",
+    slug: "gameplay",
+    name: "Gameplay",
+    icon: Gamepad2,
+    available: false,
+  },
+  {
+    id: "interface",
+    slug: "interface",
+    name: "Interface",
+    icon: Monitor,
+    available: false,
+  },
+  {
+    id: "notifications",
+    slug: "notifications",
+    name: "Notifications",
+    icon: Bell,
+    available: false,
+  },
 ];
+
+const resolveCategoryFromSlug = (slugOrId: string | null | undefined): string | null => {
+  if (!slugOrId) return null;
+  if (slugOrId === "board-and-pieces" || slugOrId === "board-pieces") {
+    return "board-pieces";
+  }
+  const match = CATEGORIES.find(
+    (c) => c.slug === slugOrId || c.id === slugOrId
+  );
+  return match ? match.id : null;
+};
 
 export default function SettingsPage() {
   const navigate = useNavigate();
+  const params = useParams<{ category?: string }>();
   const { push } = useNavigationStack();
   const { boardTheme, pieceSet, setBoardThemeId, setPieceSetId } =
     useBoardSettings();
@@ -81,21 +120,40 @@ export default function SettingsPage() {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<TabId>("boards");
-  // Honour an optional ?tab= query param so external links (e.g. /profile
-  // redirect) can deep-link directly to a specific settings category.
-  const initialCategory = CATEGORIES.some(
-    (c) => c.id === searchParams.get("tab"),
-  )
-    ? (searchParams.get("tab") as string)
-    : "board-pieces";
+
+  const initialCategory =
+    resolveCategoryFromSlug(params.category) ||
+    resolveCategoryFromSlug(searchParams.get("tab")) ||
+    "board-pieces";
   const [activeCategory, setActiveCategory] = useState(initialCategory);
 
   useEffect(() => {
-    const tabParam = searchParams.get("tab");
-    if (tabParam && CATEGORIES.some((c) => c.id === tabParam)) {
-      setActiveCategory(tabParam);
+    const resolved =
+      resolveCategoryFromSlug(params.category) ||
+      resolveCategoryFromSlug(searchParams.get("tab"));
+    if (resolved) {
+      setActiveCategory(resolved);
+    } else if (!params.category) {
+      // Default to /settings/board-and-pieces in URL
+      navigate("/settings/board-and-pieces", { replace: true });
     }
-  }, [searchParams]);
+  }, [params.category, searchParams, navigate]);
+
+  const handleCategorySelect = (cat: SettingsCategory) => {
+    soundManager.playButtonClick();
+    if (cat.path) {
+      if (cat.path === "/pricing") {
+        push({
+          label: "Settings",
+          path: `/settings/${cat.slug}`,
+        });
+      }
+      navigate(cat.path);
+    } else {
+      setActiveCategory(cat.id);
+      navigate(`/settings/${cat.slug}`);
+    }
+  };
 
   // Changes are staged locally and only pushed into BoardSettingsContext
   // (and localStorage) when the player clicks "Save"
@@ -139,7 +197,7 @@ export default function SettingsPage() {
             className="inline-flex items-center gap-2 text-brand-secondary hover:text-brand-text transition-colors duration-200 font-sans text-sm font-semibold cursor-pointer group"
           >
             <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
-            Back to Play
+            Back to Home
           </button>
         </div>
 
@@ -198,20 +256,7 @@ export default function SettingsPage() {
                     key={cat.id}
                     type="button"
                     aria-current={isActive ? "page" : undefined}
-                    onClick={() => {
-                      soundManager.playButtonClick();
-                      if (cat.path) {
-                        if (cat.path === "/pricing") {
-                          push({
-                            label: "Settings",
-                            path: "/settings",
-                          });
-                        }
-                        navigate(cat.path);
-                      } else {
-                        setActiveCategory(cat.id);
-                      }
-                    }}
+                    onClick={() => handleCategorySelect(cat)}
                     className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors duration-150 cursor-pointer ${
                       isActive
                         ? "bg-brand-accent/10 text-brand-accent font-medium ring-1 ring-brand-accent/30"
@@ -347,7 +392,7 @@ export default function SettingsPage() {
                                 : "ring-1 ring-brand-border/40 hover:ring-brand-border/80 hover:bg-brand-text/[0.03]"
                             }`}
                           >
-                            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg bg-[#4d4536] flex items-center justify-center gap-1.5 p-2">
+                            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg bg-brand-accent/30 flex items-center justify-center gap-1.5 p-2">
                               <div className="w-6 h-6 sm:w-7 sm:h-7">
                                 {set.pieces.bK()}
                               </div>

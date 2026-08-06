@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect } from "react";
 import type { Session } from "@auth/core/types";
 import { useNavigate } from "react-router";
+import rollbar from "../config/rollbar";
 
 export type AuthStatus = "authenticated" | "unauthenticated" | "loading";
 
@@ -42,6 +43,9 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
       return null;
     } catch (error) {
       console.error("Failed to fetch session:", error);
+      // Falls back to unauthenticated below, so this never reaches the
+      // ErrorBoundary — report it manually.
+      rollbar.error(error as Error, { context: "SessionContext.fetchSession" });
       setSession(null);
       setStatus("unauthenticated");
       return null;
@@ -90,6 +94,7 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
       document.body.removeChild(form);
     } catch (error) {
       console.error("Error during sign in:", error);
+      rollbar.error(error as Error, { context: "SessionContext.signIn", provider });
       setStatus("unauthenticated");
     }
   };
@@ -125,6 +130,7 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
       navigate("/", { replace: true });
     } catch (error) {
       console.error("Error during sign out:", error);
+      rollbar.error(error as Error, { context: "SessionContext.signOut" });
       setSession(null);
       setStatus("unauthenticated");
       navigate("/", { replace: true });

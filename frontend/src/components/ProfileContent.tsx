@@ -10,11 +10,13 @@ import {
   AlertCircle,
   Lock,
   ChevronRight,
-  Share2
+  Share2,
+  ShieldAlert,
 } from "lucide-react";
 import { useSession } from "../hooks/useSession";
 import { useNavigate } from "react-router";
 import { PaymentService } from "../services/payment";
+import rollbar from "../config/rollbar";
 
 interface PlatformButtonProps {
   name: string;
@@ -124,7 +126,7 @@ interface UserProfile {
 }
 export default function ProfileContent() {
   const navigate = useNavigate();
-const { signOut } = useSession();
+  const { signOut, signIn, status } = useSession();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -142,6 +144,7 @@ const { signOut } = useSession();
       }
     } catch (e) {
       console.error("[ProfilePage] Customer billing portal load error:", e);
+      rollbar.error(e as Error, { context: "ProfileContent.manageBilling" });
       alert("An unexpected error occurred while loading billing portal. Please try again.");
     } finally {
       setManagingBilling(false);
@@ -166,6 +169,7 @@ const { signOut } = useSession();
         }
       } catch (err) {
         console.error(err);
+        rollbar.error(err as Error, { context: "ProfileContent.logoutAll" });
         alert("A network error occurred while signing out from all devices.");
       } finally {
         setLoggingOutAll(false);
@@ -174,13 +178,20 @@ const { signOut } = useSession();
   };
 
   const fetchProfile = async () => {
+    // Never attempt an API call when we know the user is not authenticated.
+    // This prevents a guaranteed 401, a spurious Rollbar alert, and the
+    // error boundary from triggering.
+    if (status !== "authenticated") return;
+
     setLoadingProfile(true);
     setError(null);
     try {
       const res = await fetch("/api/users/profile");
       if (!res.ok) {
         if (res.status === 401) {
-          throw new Error("Unauthorized. Please log in.");
+          // 401 while status === "authenticated" means the session expired
+          // mid-session — a real error worth logging.
+          throw new Error("Session expired. Please log in again.");
         }
         throw new Error("Failed to load user profile information.");
       }
@@ -192,6 +203,9 @@ const { signOut } = useSession();
       }
     } catch (err: any) {
       console.error(err);
+      // Only report unexpected errors — a plain 401 for a logged-out user
+      // is not an application error and should never hit Rollbar.
+      rollbar.error(err, { context: "ProfileContent.loadProfile" });
       setError(err.message || "An unexpected error occurred while loading profile.");
     } finally {
       setLoadingProfile(false);
@@ -199,8 +213,18 @@ const { signOut } = useSession();
   };
 
   useEffect(() => {
-    fetchProfile();
-  }, []);
+    // Re-run whenever auth state changes so that:
+    // - If the user signs in while on this page, the profile loads automatically.
+    // - If the user is already authenticated on mount, the fetch fires.
+    // - If status is still "loading" or "unauthenticated", we do nothing.
+    if (status === "authenticated") {
+      void fetchProfile();
+    } else {
+      // Not logged in — ensure we are not showing a stale loading skeleton.
+      setLoadingProfile(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status]);
 
   // Clean date formatter
   const formatJoinDate = (isoString?: string) => {
@@ -216,338 +240,386 @@ const { signOut } = useSession();
       return "Joined July 2026";
     }
   };
-         
-        return (
-               <>
-  {/* LOADING STATE (Skeleton card) */}
-          {loadingProfile && (
-            <div className="w-full bg-gradient-to-br from-brand-surface/60 via-brand-surface/40 to-brand-bg/80 border border-[rgba(212,175,110,0.60)] shadow-2xl backdrop-blur-xl rounded-2xl p-6 sm:p-10 relative overflow-hidden animate-pulse">
-              <div className="flex flex-col md:flex-row items-center md:items-start gap-8 pb-8 border-b border-[rgba(212,175,110,0.20)]">
-                <div className="w-32 h-32 md:w-36 md:h-36 rounded-full bg-brand-surface/80 flex-shrink-0" />
-                <div className="flex-1 w-full flex flex-col items-center md:items-start gap-3 mt-2">
-                  <div className="h-9 w-48 bg-brand-surface/80 rounded-lg" />
-                  <div className="h-5 w-64 bg-brand-surface/80 rounded-lg" />
-                  <div className="h-4 w-36 bg-brand-surface/80 rounded-lg" />
+
+  return (
+    <>
+      {/* LOADING STATE (Skeleton card) */}
+      {loadingProfile && (
+        <div className="w-full bg-gradient-to-br from-brand-surface/60 via-brand-surface/40 to-brand-bg/80 border border-[rgba(212,175,110,0.60)] shadow-2xl backdrop-blur-xl rounded-2xl p-6 sm:p-10 relative overflow-hidden animate-pulse">
+          <div className="flex flex-col md:flex-row items-center md:items-start gap-8 pb-8 border-b border-[rgba(212,175,110,0.20)]">
+            <div className="w-32 h-32 md:w-36 md:h-36 rounded-full bg-brand-surface/80 flex-shrink-0" />
+            <div className="flex-1 w-full flex flex-col items-center md:items-start gap-3 mt-2">
+              <div className="h-9 w-48 bg-brand-surface/80 rounded-lg" />
+              <div className="h-5 w-64 bg-brand-surface/80 rounded-lg" />
+              <div className="h-4 w-36 bg-brand-surface/80 rounded-lg" />
+            </div>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pt-8">
+            {/* 4 single-column cards: Membership, Rating, Games, Achievements */}
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="min-h-[176px] bg-brand-surface/40 border border-[rgba(212,175,110,0.10)] rounded-xl" />
+            ))}
+            {/* Bio & Username card (sm:col-span-2) */}
+            <div className="min-h-[176px] bg-brand-surface/40 border border-[rgba(212,175,110,0.10)] rounded-xl sm:col-span-2" />
+            {/* Connected Accounts card */}
+            <div className="min-h-[176px] bg-brand-surface/40 border border-[rgba(212,175,110,0.10)] rounded-xl" />
+            {/* Connected Platforms card (sm:col-span-2 lg:col-span-3) */}
+            <div className="min-h-[300px] sm:min-h-[220px] lg:min-h-[150px] bg-brand-surface/40 border border-[rgba(212,175,110,0.10)] rounded-xl sm:col-span-2 lg:col-span-3" />
+          </div>
+        </div>
+      )}
+
+      {/* UNAUTHENTICATED STATE */}
+      {!loadingProfile && status !== "authenticated" && (
+        <div className="w-full bg-gradient-to-br from-brand-surface/60 via-brand-surface/40 to-brand-bg/80 border border-[rgba(212,175,110,0.40)] shadow-2xl backdrop-blur-xl rounded-2xl p-10 flex flex-col items-center gap-5 text-center select-none">
+          {/* Icon */}
+          <div className="w-16 h-16 rounded-full bg-brand-accent/10 border border-brand-accent/20 flex items-center justify-center text-brand-accent">
+            <ShieldAlert className="w-8 h-8" />
+          </div>
+
+          {/* Copy */}
+          <div className="flex flex-col gap-2 max-w-sm">
+            <h3 className="font-sans font-bold text-xl text-brand-text">
+              Authentication Required
+            </h3>
+            <p className="font-sans text-brand-secondary text-sm leading-relaxed">
+              You need to be logged in to view and edit your profile
+              settings. Sign in to access your chess profile, membership
+              details, and connected accounts.
+            </p>
+          </div>
+
+          {/* CTA */}
+          <button
+            onClick={() => signIn()}
+            className="mt-2 inline-flex items-center gap-2 px-7 py-3 rounded-xl font-sans text-sm font-bold bg-brand-accent text-brand-bg hover:bg-brand-accent/90 transition-all duration-200 active:scale-[0.98] cursor-pointer shadow-md shadow-brand-accent/20"
+          >
+            Log In
+          </button>
+
+          {/* Subtle hint */}
+          <p className="text-xs text-brand-secondary/50 font-sans">
+            Don't have an account?{" "}
+            <button
+              onClick={() => signIn()}
+              className="text-brand-accent hover:underline cursor-pointer transition-colors"
+            >
+              Sign up for free
+            </button>
+          </p>
+        </div>
+      )}
+
+      {/* GENERIC ERROR STATE (real unexpected errors only, not 401) */}
+      {!loadingProfile && status === "authenticated" && error && (
+        <div className="w-full bg-gradient-to-br from-red-950/20 via-brand-surface/40 to-brand-bg/80 border border-red-500/20 shadow-2xl backdrop-blur-xl rounded-2xl p-8 text-center flex flex-col items-center gap-4">
+          <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center text-red-400">
+            <AlertCircle className="w-6 h-6" />
+          </div>
+          <h3 className="font-sans font-bold text-lg text-brand-text">Could not load profile</h3>
+          <p className="font-sans text-brand-secondary text-sm max-w-md">{error}</p>
+          <button
+            onClick={fetchProfile}
+            className="btn-gold-solid mt-2 font-sans font-semibold text-sm bg-brand-accent hover:bg-brand-accent/80 text-brand-text px-5 py-2.5 rounded-lg border border-brand-accent/30 transition-all duration-200 active:scale-[0.98] cursor-pointer shadow-md shadow-brand-accent/20"
+          >
+            Try Again
+          </button>
+        </div>
+      )}
+
+      {/* SUCCESS STATE */}
+      {!loadingProfile && !error && profile && (
+        <div className="w-full bg-gradient-to-br from-brand-surface/60 via-brand-surface/40 to-brand-bg/80 border border-[rgba(212,175,110,0.60)] shadow-2xl backdrop-blur-xl rounded-2xl p-6 sm:p-10 relative overflow-hidden">
+          {/* Background Glows for visual excellence */}
+          <div className="absolute top-0 right-0 w-72 h-72 bg-brand-accent/5 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-72 h-72 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none" />
+
+          {/* Profile Info Header */}
+          <div className="flex flex-col md:flex-row items-center md:items-start gap-8 pb-8 border-b border-[rgba(212,175,110,0.20)]">
+            {/* Profile Picture */}
+            <div className="w-32 h-32 md:w-36 md:h-36 rounded-full overflow-hidden border border-brand-accent/40 shadow-lg shadow-brand-bg/80 flex-shrink-0 bg-brand-surface relative group">
+              {profile.image ? (
+                <img
+                  src={profile.image}
+                  alt={profile.name || "User Avatar"}
+                  className="w-full h-full object-cover"
+                  draggable={false}
+                  referrerPolicy="no-referrer"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-brand-accent to-indigo-600 text-brand-text font-sans font-bold text-4xl select-none">
+                  {profile.name ? profile.name.charAt(0).toUpperCase() : "?"}
+                </div>
+              )}
+              {/* Visual outline overlay */}
+              <div className="absolute inset-0 border border-brand-accent/20 rounded-full pointer-events-none" />
+            </div>
+
+            {/* User detail lines */}
+            <div className="flex-1 text-center md:text-left mt-2 select-text">
+              <div className="flex flex-col md:flex-row items-center justify-center md:justify-start gap-3">
+                <h2 className="text-3xl sm:text-4xl font-sans font-extrabold text-brand-text tracking-tight leading-none">
+                  {profile.name || "Anonymous Player"}
+                </h2>
+                {profile.subscriptions?.[0] && (profile.subscriptions[0].status === "ACTIVE" || profile.subscriptions[0].status === "TRIALING") && (
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-accent/20 border border-brand-accent/40 text-brand-accent text-[10px] font-mono font-bold tracking-wider uppercase select-none shadow-[0_0_15px_rgba(212,175,110,0.15)] mt-2 md:mt-0">
+                    <Award className="w-3.5 h-3.5 fill-current" />
+                    Premium
+                  </span>
+                )}
+              </div>
+              <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-6 mt-4 justify-center md:justify-start">
+                <div className="flex items-center gap-2 text-brand-secondary font-sans text-sm">
+                  <Mail className="w-4 h-4 text-brand-accent/80" />
+                  <span>{profile.email}</span>
+                </div>
+                <div className="hidden sm:block text-brand-border/40">|</div>
+                <div className="flex items-center gap-2 text-brand-secondary font-sans text-sm">
+                  <Calendar className="w-4 h-4 text-brand-accent/80" />
+                  <span>{formatJoinDate(profile.createdAt)}</span>
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pt-8">
-                {Array.from({ length: 3 }).map((_, i) => (
-                  <div key={i} className="h-28 bg-brand-surface/40 border border-[rgba(212,175,110,0.10)] rounded-xl" />
-                ))}
-              </div>
             </div>
-          )}
-  
-          {/* ERROR STATE */}
-          {!loadingProfile && error && (
-            <div className="w-full bg-gradient-to-br from-red-950/20 via-brand-surface/40 to-brand-bg/80 border border-red-500/20 shadow-2xl backdrop-blur-xl rounded-2xl p-8 text-center flex flex-col items-center gap-4">
-              <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center text-red-400">
-                <AlertCircle className="w-6 h-6" />
+          </div>
+
+          {/* Future Readiness Placeholder Layout Grid */}
+          <div className="pt-8">
+            <h3 className="text-lg font-sans font-bold text-brand-text mb-6 tracking-wide flex flex-col sm:flex-row items-center justify-center md:justify-start gap-2 text-center sm:text-left">
+              <span>Chess Profile & Statistics</span>
+              <span className="text-[10px] uppercase font-sans font-semibold bg-brand-accent/15 text-brand-accent px-2 py-0.5 rounded-full tracking-wider">
+                Future Upgrades
+              </span>
+            </h3>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+              {/* Membership & Billing Status Card */}
+              <div className="min-h-[176px] bg-brand-surface/30 border border-[rgba(212,175,110,0.40)] hover:border-[rgba(212,175,110,0.80)] transition-all duration-200 rounded-xl p-5 relative overflow-hidden group select-none">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-9 h-9 rounded-lg bg-brand-accent/10 flex items-center justify-center text-brand-accent">
+                    <Award className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-sans font-semibold text-brand-secondary uppercase tracking-wider">Membership</h4>
+                    <p className="text-xs text-brand-secondary/50 font-sans mt-0.5">
+                      {profile.subscriptions?.[0] && (profile.subscriptions[0].status === "ACTIVE" || profile.subscriptions[0].status === "TRIALING")
+                        ? `${profile.subscriptions[0].product.name}`
+                        : "Free Plan"}
+                    </p>
+                  </div>
+                </div>
+
+                {profile.subscriptions?.[0] && (profile.subscriptions[0].status === "ACTIVE" || profile.subscriptions[0].status === "TRIALING") ? (
+                  <div className="space-y-3 mt-4">
+                    <div className="flex items-center justify-between text-xs font-sans">
+                      <span className="text-brand-secondary">Status</span>
+                      <span className="font-semibold text-emerald-400 font-mono uppercase bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20 text-[10px]">
+                        {profile.subscriptions[0].status.toLowerCase()}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between text-xs font-sans">
+                      <span className="text-brand-secondary">Renews on</span>
+                      <span className="text-brand-text font-mono text-[10px]">
+                        {new Date(profile.subscriptions[0].currentPeriodEnd).toLocaleDateString("en-US", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        })}
+                      </span>
+                    </div>
+                    <button
+                      onClick={handleManageSubscription}
+                      disabled={managingBilling}
+                      className="btn-gold-outline w-full mt-2 py-2 px-3 bg-brand-accent/15 hover:bg-brand-accent/25 border border-brand-accent/30 text-brand-accent hover:text-brand-text rounded-lg font-mono text-[9px] uppercase tracking-widest font-bold transition-all duration-200 cursor-pointer disabled:opacity-50 text-center"
+                    >
+                      {managingBilling ? "Loading Portal..." : "Manage Billing"}
+                    </button>
+                  </div>
+                ) : (
+                  <div className="space-y-3 mt-4">
+                    <div className="flex items-center justify-between text-xs font-sans">
+                      <span className="text-brand-secondary">Status</span>
+                      <span className="font-semibold text-brand-secondary/60 font-mono uppercase bg-brand-text/5 px-2 py-0.5 rounded border border-white/5 text-[10px]">
+                        Free Tier
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => navigate("/pricing")}
+                      className="btn-gold-solid w-full mt-4 py-2.5 px-3 bg-brand-accent text-brand-bg hover:bg-brand-accent/90 rounded-lg font-mono text-[9px] uppercase tracking-widest font-bold transition-all duration-200 cursor-pointer text-center"
+                    >
+                      Upgrade to Premium
+                    </button>
+                  </div>
+                )}
               </div>
-              <h3 className="font-sans font-bold text-lg text-brand-text">Could not load profile</h3>
-              <p className="font-sans text-brand-secondary text-sm max-w-md">{error}</p>
+              {/* Rating Placeholder */}
+              <div className="min-h-[176px] bg-brand-surface/30 border border-[rgba(212,175,110,0.40)] hover:border-[rgba(212,175,110,0.80)] transition-all duration-200 rounded-xl p-5 relative overflow-hidden group select-none">
+                <div className="absolute top-3 right-3 text-brand-secondary/20">
+                  <Lock className="w-3.5 h-3.5" />
+                </div>
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-9 h-9 rounded-lg bg-yellow-500/10 flex items-center justify-center text-yellow-500">
+                    <Trophy className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-sans font-semibold text-brand-secondary uppercase tracking-wider">Chess Rating</h4>
+                    <p className="text-xs text-brand-secondary/50 font-sans mt-0.5">Rating coming soon</p>
+                  </div>
+                </div>
+                <div className="flex items-baseline gap-2 mt-2">
+                  <span className="text-2xl font-sans font-bold text-brand-text/50">----</span>
+                  <span className="text-[10px] text-brand-secondary/40 font-mono">ELO</span>
+                </div>
+              </div>
+
+              {/* Game Stats Placeholder */}
+              <div className="min-h-[176px] bg-brand-surface/30 border border-[rgba(212,175,110,0.40)] hover:border-[rgba(212,175,110,0.80)] transition-all duration-200 rounded-xl p-5 relative overflow-hidden group select-none">
+                <div className="absolute top-3 right-3 text-brand-secondary/20">
+                  <Lock className="w-3.5 h-3.5" />
+                </div>
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-9 h-9 rounded-lg bg-green-500/10 flex items-center justify-center text-green-400">
+                    <Gamepad2 className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-sans font-semibold text-brand-secondary uppercase tracking-wider">Games Played</h4>
+                    <p className="text-xs text-brand-secondary/50 font-sans mt-0.5">Game logger pending</p>
+                  </div>
+                </div>
+                <div className="flex gap-4 mt-2">
+                  <div>
+                    <span className="block text-xl font-sans font-bold text-brand-text/50">0</span>
+                    <span className="text-[9px] text-brand-secondary/40 font-sans uppercase">Played</span>
+                  </div>
+                  <div>
+                    <span className="block text-xl font-sans font-bold text-brand-text/50">0%</span>
+                    <span className="text-[9px] text-brand-secondary/40 font-sans uppercase">Wins</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Achievements Placeholder */}
+              <div className="min-h-[176px] bg-brand-surface/30 border border-[rgba(212,175,110,0.40)] hover:border-[rgba(212,175,110,0.80)] transition-all duration-200 rounded-xl p-5 relative overflow-hidden group select-none">
+                <div className="absolute top-3 right-3 text-brand-secondary/20">
+                  <Lock className="w-3.5 h-3.5" />
+                </div>
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-9 h-9 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-400">
+                    <Award className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-sans font-semibold text-brand-secondary uppercase tracking-wider">Achievements</h4>
+                    <p className="text-xs text-brand-secondary/50 font-sans mt-0.5">Trophy case locked</p>
+                  </div>
+                </div>
+                <div className="flex items-baseline gap-2 mt-2">
+                  <span className="text-2xl font-sans font-bold text-brand-text/50">0</span>
+                  <span className="text-xs text-brand-secondary/40 font-sans">unlocked</span>
+                </div>
+              </div>
+
+              {/* Bio & Username Placeholder */}
+              <div className="min-h-[176px] bg-brand-surface/30 border border-[rgba(212,175,110,0.40)] hover:border-[rgba(212,175,110,0.80)] transition-all duration-200 rounded-xl p-5 relative overflow-hidden sm:col-span-2 select-none">
+                <div className="absolute top-3 right-3 text-brand-secondary/20">
+                  <Lock className="w-3.5 h-3.5" />
+                </div>
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-9 h-9 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-400">
+                    <Settings className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-sans font-semibold text-brand-secondary uppercase tracking-wider">Personal Bio & Preferences</h4>
+                    <p className="text-xs text-brand-secondary/50 font-sans mt-0.5">Custom username and chess handle</p>
+                  </div>
+                </div>
+                <div className="mt-3 h-8 border border-dashed border-[rgba(212,175,110,0.40)] rounded flex items-center justify-center text-xs text-brand-secondary/35 italic">
+                  Configure player profile custom description
+                </div>
+              </div>
+
+              {/* Connected Accounts Placeholder */}
+              <div className="min-h-[176px] bg-brand-surface/30 border border-[rgba(212,175,110,0.40)] hover:border-[rgba(212,175,110,0.80)] transition-all duration-200 rounded-xl p-5 relative overflow-hidden group select-none">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-9 h-9 rounded-lg bg-sky-500/10 flex items-center justify-center text-sky-400">
+                    <Link2 className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-sans font-semibold text-brand-secondary uppercase tracking-wider">Connected Accounts</h4>
+                    <p className="text-xs text-brand-secondary/50 font-sans mt-0.5">Google Sign-In Active</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 mt-3 bg-brand-text/5 border border-white/10 rounded-lg px-3 py-1.5 w-fit">
+                  {/* Tiny Google Icon */}
+                  <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05" />
+                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335" />
+                  </svg>
+                  <span className="text-xs font-sans text-brand-text/70">Google</span>
+                </div>
+              </div>
+
+              {/* Connected Platforms Card */}
+              <div className="min-h-[300px] sm:min-h-[220px] lg:min-h-[150px] bg-brand-surface/30 border border-[rgba(212,175,110,0.40)] hover:border-[rgba(212,175,110,0.80)] transition-all duration-200 rounded-xl p-5 relative overflow-hidden sm:col-span-2 lg:col-span-3 select-none">
+                <div className="absolute top-3 right-3 text-brand-secondary/20">
+                  <Lock className="w-3.5 h-3.5" />
+                </div>
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5 pb-4 border-b border-[rgba(212,175,110,0.10)]">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-lg bg-violet-500/10 flex items-center justify-center text-violet-400">
+                      <Share2 className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-sans font-bold text-brand-text tracking-wide">Connected Platforms</h4>
+                      <p className="text-xs text-brand-secondary/60 font-sans mt-0.5">Connect your favorite gaming and social platforms.</p>
+                    </div>
+                  </div>
+                  <span className="text-[9px] uppercase font-sans font-semibold bg-violet-500/15 text-violet-400 px-2 py-0.5 rounded-full tracking-wider w-fit">
+                    Social Accounts
+                  </span>
+                </div>
+
+                {/* Platform Buttons grid */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+                  {PLATFORMS.map((platform) => (
+                    <PlatformButton
+                      key={platform.name}
+                      name={platform.name}
+                      icon={platform.icon}
+                      brandColor={platform.brandColor}
+                    />
+                  ))}
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          {/* Quick settings link or details */}
+          <div className="mt-8 border-t border-[rgba(212,175,110,0.20)] pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p className="text-xs font-sans text-brand-secondary/60">
+              Player Status: <span className="text-brand-accent font-semibold">Active Member</span>
+            </p>
+            <div className="flex flex-wrap items-center gap-4 sm:gap-6 justify-center sm:justify-end">
               <button
-                onClick={fetchProfile}
-                className="mt-2 font-sans font-semibold text-sm bg-brand-accent hover:bg-brand-accent/80 text-brand-text px-5 py-2.5 rounded-lg border border-brand-accent/30 transition-all duration-200 active:scale-[0.98] cursor-pointer shadow-md shadow-brand-accent/20"
+                onClick={handleLogoutAll}
+                disabled={loggingOutAll}
+                className="font-sans text-xs text-red-400 hover:text-red-300 transition-colors duration-150 inline-flex items-center gap-1 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Try Again
+                {loggingOutAll ? "Signing out..." : "Sign out from all devices"}
+              </button>
+              <span className="text-brand-border/40 text-xs hidden sm:inline">|</span>
+              <button
+                onClick={() => navigate("/settings")}
+                className="font-sans text-xs text-brand-secondary hover:text-brand-text transition-colors duration-150 inline-flex items-center gap-1 cursor-pointer"
+              >
+                Configure site preferences <ChevronRight className="w-3.5 h-3.5" />
               </button>
             </div>
-          )}
-  
-          {/* SUCCESS STATE */}
-          {!loadingProfile && !error && profile && (
-            <div className="w-full bg-gradient-to-br from-brand-surface/60 via-brand-surface/40 to-brand-bg/80 border border-[rgba(212,175,110,0.60)] shadow-2xl backdrop-blur-xl rounded-2xl p-6 sm:p-10 relative overflow-hidden">
-              {/* Background Glows for visual excellence */}
-              <div className="absolute top-0 right-0 w-72 h-72 bg-brand-accent/5 rounded-full blur-3xl pointer-events-none" />
-              <div className="absolute bottom-0 left-0 w-72 h-72 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none" />
-  
-              {/* Profile Info Header */}
-              <div className="flex flex-col md:flex-row items-center md:items-start gap-8 pb-8 border-b border-[rgba(212,175,110,0.20)]">
-                {/* Profile Picture */}
-                <div className="w-32 h-32 md:w-36 md:h-36 rounded-full overflow-hidden border border-brand-accent/40 shadow-lg shadow-brand-bg/80 flex-shrink-0 bg-brand-surface relative group">
-                  {profile.image ? (
-                    <img
-                      src={profile.image}
-                      alt={profile.name || "User Avatar"}
-                      className="w-full h-full object-cover"
-                      draggable={false}
-                      referrerPolicy="no-referrer"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-brand-accent to-indigo-600 text-brand-text font-sans font-bold text-4xl select-none">
-                      {profile.name ? profile.name.charAt(0).toUpperCase() : "?"}
-                    </div>
-                  )}
-                  {/* Visual outline overlay */}
-                  <div className="absolute inset-0 border border-brand-accent/20 rounded-full pointer-events-none" />
-                </div>
-  
-                {/* User detail lines */}
-                <div className="flex-1 text-center md:text-left mt-2 select-text">
-                  <div className="flex flex-col md:flex-row items-center justify-center md:justify-start gap-3">
-                    <h2 className="text-3xl sm:text-4xl font-sans font-extrabold text-brand-text tracking-tight leading-none">
-                      {profile.name || "Anonymous Player"}
-                    </h2>
-                    {profile.subscriptions?.[0] && (profile.subscriptions[0].status === "ACTIVE" || profile.subscriptions[0].status === "TRIALING") && (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-accent/20 border border-brand-accent/40 text-brand-accent text-[10px] font-mono font-bold tracking-wider uppercase select-none shadow-[0_0_15px_rgba(212,175,110,0.15)] mt-2 md:mt-0">
-                        <Award className="w-3.5 h-3.5 fill-current" />
-                        Premium
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-6 mt-4 justify-center md:justify-start">
-                    <div className="flex items-center gap-2 text-brand-secondary font-sans text-sm">
-                      <Mail className="w-4 h-4 text-brand-accent/80" />
-                      <span>{profile.email}</span>
-                    </div>
-                    <div className="hidden sm:block text-brand-border/40">|</div>
-                    <div className="flex items-center gap-2 text-brand-secondary font-sans text-sm">
-                      <Calendar className="w-4 h-4 text-brand-accent/80" />
-                      <span>{formatJoinDate(profile.createdAt)}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-  
-              {/* Future Readiness Placeholder Layout Grid */}
-              <div className="pt-8">
-                <h3 className="text-lg font-sans font-bold text-brand-text mb-6 tracking-wide flex flex-col sm:flex-row items-center justify-center md:justify-start gap-2 text-center sm:text-left">
-                  <span>Chess Profile & Statistics</span>
-                  <span className="text-[10px] uppercase font-sans font-semibold bg-brand-accent/15 text-brand-accent px-2 py-0.5 rounded-full tracking-wider">
-                    Future Upgrades
-                  </span>
-                </h3>
-  
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  
-                  {/* Membership & Billing Status Card */}
-                  <div className="bg-brand-surface/30 border border-[rgba(212,175,110,0.40)] hover:border-[rgba(212,175,110,0.80)] transition-all duration-200 rounded-xl p-5 relative overflow-hidden group select-none">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="w-9 h-9 rounded-lg bg-brand-accent/10 flex items-center justify-center text-brand-accent">
-                        <Award className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <h4 className="text-xs font-sans font-semibold text-brand-secondary uppercase tracking-wider">Membership</h4>
-                        <p className="text-xs text-brand-secondary/50 font-sans mt-0.5">
-                          {profile.subscriptions?.[0] && (profile.subscriptions[0].status === "ACTIVE" || profile.subscriptions[0].status === "TRIALING") 
-                            ? `${profile.subscriptions[0].product.name}`
-                            : "Free Plan"}
-                        </p>
-                      </div>
-                    </div>
-                    
-                    {profile.subscriptions?.[0] && (profile.subscriptions[0].status === "ACTIVE" || profile.subscriptions[0].status === "TRIALING") ? (
-                      <div className="space-y-3 mt-4">
-                        <div className="flex items-center justify-between text-xs font-sans">
-                          <span className="text-brand-secondary">Status</span>
-                          <span className="font-semibold text-emerald-400 font-mono uppercase bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20 text-[10px]">
-                            {profile.subscriptions[0].status.toLowerCase()}
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between text-xs font-sans">
-                          <span className="text-brand-secondary">Renews on</span>
-                          <span className="text-brand-text font-mono text-[10px]">
-                            {new Date(profile.subscriptions[0].currentPeriodEnd).toLocaleDateString("en-US", {
-                              day: "numeric",
-                              month: "short",
-                              year: "numeric",
-                            })}
-                          </span>
-                        </div>
-                        <button
-                          onClick={handleManageSubscription}
-                          disabled={managingBilling}
-                          className="w-full mt-2 py-2 px-3 bg-brand-accent/15 hover:bg-brand-accent/25 border border-brand-accent/30 text-brand-accent hover:text-brand-text rounded-lg font-mono text-[9px] uppercase tracking-widest font-bold transition-all duration-200 cursor-pointer disabled:opacity-50 text-center"
-                        >
-                          {managingBilling ? "Loading Portal..." : "Manage Billing"}
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="space-y-3 mt-4">
-                        <div className="flex items-center justify-between text-xs font-sans">
-                          <span className="text-brand-secondary">Status</span>
-                          <span className="font-semibold text-brand-secondary/60 font-mono uppercase bg-brand-text/5 px-2 py-0.5 rounded border border-white/5 text-[10px]">
-                            Free Tier
-                          </span>
-                        </div>
-                        <button
-                          onClick={() => navigate("/pricing")}
-                          className="w-full mt-4 py-2.5 px-3 bg-brand-accent text-brand-bg hover:bg-brand-accent/90 rounded-lg font-mono text-[9px] uppercase tracking-widest font-bold transition-all duration-200 cursor-pointer text-center"
-                        >
-                          Upgrade to Premium
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                  {/* Rating Placeholder */}
-                  <div className="bg-brand-surface/30 border border-[rgba(212,175,110,0.40)] hover:border-[rgba(212,175,110,0.80)] transition-all duration-200 rounded-xl p-5 relative overflow-hidden group select-none">
-                    <div className="absolute top-3 right-3 text-brand-secondary/20">
-                      <Lock className="w-3.5 h-3.5" />
-                    </div>
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="w-9 h-9 rounded-lg bg-yellow-500/10 flex items-center justify-center text-yellow-500">
-                        <Trophy className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <h4 className="text-xs font-sans font-semibold text-brand-secondary uppercase tracking-wider">Chess Rating</h4>
-                        <p className="text-xs text-brand-secondary/50 font-sans mt-0.5">Rating coming soon</p>
-                      </div>
-                    </div>
-                    <div className="flex items-baseline gap-2 mt-2">
-                      <span className="text-2xl font-sans font-bold text-brand-text/50">----</span>
-                      <span className="text-[10px] text-brand-secondary/40 font-mono">ELO</span>
-                    </div>
-                  </div>
-  
-                  {/* Game Stats Placeholder */}
-                  <div className="bg-brand-surface/30 border border-[rgba(212,175,110,0.40)] hover:border-[rgba(212,175,110,0.80)] transition-all duration-200 rounded-xl p-5 relative overflow-hidden group select-none">
-                    <div className="absolute top-3 right-3 text-brand-secondary/20">
-                      <Lock className="w-3.5 h-3.5" />
-                    </div>
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="w-9 h-9 rounded-lg bg-green-500/10 flex items-center justify-center text-green-400">
-                        <Gamepad2 className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <h4 className="text-xs font-sans font-semibold text-brand-secondary uppercase tracking-wider">Games Played</h4>
-                        <p className="text-xs text-brand-secondary/50 font-sans mt-0.5">Game logger pending</p>
-                      </div>
-                    </div>
-                    <div className="flex gap-4 mt-2">
-                      <div>
-                        <span className="block text-xl font-sans font-bold text-brand-text/50">0</span>
-                        <span className="text-[9px] text-brand-secondary/40 font-sans uppercase">Played</span>
-                      </div>
-                      <div>
-                        <span className="block text-xl font-sans font-bold text-brand-text/50">0%</span>
-                        <span className="text-[9px] text-brand-secondary/40 font-sans uppercase">Wins</span>
-                      </div>
-                    </div>
-                  </div>
-  
-                  {/* Achievements Placeholder */}
-                  <div className="bg-brand-surface/30 border border-[rgba(212,175,110,0.40)] hover:border-[rgba(212,175,110,0.80)] transition-all duration-200 rounded-xl p-5 relative overflow-hidden group select-none">
-                    <div className="absolute top-3 right-3 text-brand-secondary/20">
-                      <Lock className="w-3.5 h-3.5" />
-                    </div>
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="w-9 h-9 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-400">
-                        <Award className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <h4 className="text-xs font-sans font-semibold text-brand-secondary uppercase tracking-wider">Achievements</h4>
-                        <p className="text-xs text-brand-secondary/50 font-sans mt-0.5">Trophy case locked</p>
-                      </div>
-                    </div>
-                    <div className="flex items-baseline gap-2 mt-2">
-                      <span className="text-2xl font-sans font-bold text-brand-text/50">0</span>
-                      <span className="text-xs text-brand-secondary/40 font-sans">unlocked</span>
-                    </div>
-                  </div>
-  
-                  {/* Bio & Username Placeholder */}
-                  <div className="bg-brand-surface/30 border border-[rgba(212,175,110,0.40)] hover:border-[rgba(212,175,110,0.80)] transition-all duration-200 rounded-xl p-5 relative overflow-hidden sm:col-span-2 select-none">
-                    <div className="absolute top-3 right-3 text-brand-secondary/20">
-                      <Lock className="w-3.5 h-3.5" />
-                    </div>
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="w-9 h-9 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-400">
-                        <Settings className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <h4 className="text-xs font-sans font-semibold text-brand-secondary uppercase tracking-wider">Personal Bio & Preferences</h4>
-                        <p className="text-xs text-brand-secondary/50 font-sans mt-0.5">Custom username and chess handle</p>
-                      </div>
-                    </div>
-                    <div className="mt-3 h-8 border border-dashed border-[rgba(212,175,110,0.40)] rounded flex items-center justify-center text-xs text-brand-secondary/35 italic">
-                      Configure player profile custom description
-                    </div>
-                  </div>
-  
-                  {/* Connected Accounts Placeholder */}
-                  <div className="bg-brand-surface/30 border border-[rgba(212,175,110,0.40)] hover:border-[rgba(212,175,110,0.80)] transition-all duration-200 rounded-xl p-5 relative overflow-hidden group select-none">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="w-9 h-9 rounded-lg bg-sky-500/10 flex items-center justify-center text-sky-400">
-                        <Link2 className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <h4 className="text-xs font-sans font-semibold text-brand-secondary uppercase tracking-wider">Connected Accounts</h4>
-                        <p className="text-xs text-brand-secondary/50 font-sans mt-0.5">Google Sign-In Active</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 mt-3 bg-brand-text/5 border border-white/10 rounded-lg px-3 py-1.5 w-fit">
-                      {/* Tiny Google Icon */}
-                      <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
-                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
-                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05" />
-                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335" />
-                      </svg>
-                      <span className="text-xs font-sans text-brand-text/70">Google</span>
-                    </div>
-                  </div>
-  
-                  {/* Connected Platforms Card */}
-                  <div className="bg-brand-surface/30 border border-[rgba(212,175,110,0.40)] hover:border-[rgba(212,175,110,0.80)] transition-all duration-200 rounded-xl p-5 relative overflow-hidden sm:col-span-2 lg:col-span-3 select-none">
-                    <div className="absolute top-3 right-3 text-brand-secondary/20">
-                      <Lock className="w-3.5 h-3.5" />
-                    </div>
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5 pb-4 border-b border-[rgba(212,175,110,0.10)]">
-                      <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-lg bg-violet-500/10 flex items-center justify-center text-violet-400">
-                          <Share2 className="w-5 h-5" />
-                        </div>
-                        <div>
-                          <h4 className="text-sm font-sans font-bold text-brand-text tracking-wide">Connected Platforms</h4>
-                          <p className="text-xs text-brand-secondary/60 font-sans mt-0.5">Connect your favorite gaming and social platforms.</p>
-                        </div>
-                      </div>
-                      <span className="text-[9px] uppercase font-sans font-semibold bg-violet-500/15 text-violet-400 px-2 py-0.5 rounded-full tracking-wider w-fit">
-                        Social Accounts
-                      </span>
-                    </div>
-  
-                    {/* Platform Buttons grid */}
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-                      {PLATFORMS.map((platform) => (
-                        <PlatformButton
-                          key={platform.name}
-                          name={platform.name}
-                          icon={platform.icon}
-                          brandColor={platform.brandColor}
-                        />
-                      ))}
-                    </div>
-                  </div>
-  
-                </div>
-              </div>
-  
-              {/* Quick settings link or details */}
-              <div className="mt-8 border-t border-[rgba(212,175,110,0.20)] pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <p className="text-xs font-sans text-brand-secondary/60">
-                  Player Status: <span className="text-brand-accent font-semibold">Active Member</span>
-                </p>
-                <div className="flex flex-wrap items-center gap-4 sm:gap-6 justify-center sm:justify-end">
-                  <button
-                    onClick={handleLogoutAll}
-                    disabled={loggingOutAll}
-                    className="font-sans text-xs text-red-400 hover:text-red-300 transition-colors duration-150 inline-flex items-center gap-1 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {loggingOutAll ? "Signing out..." : "Sign out from all devices"}
-                  </button>
-                  <span className="text-brand-border/40 text-xs hidden sm:inline">|</span>
-                  <button
-                    onClick={() => navigate("/settings")}
-                    className="font-sans text-xs text-brand-secondary hover:text-brand-text transition-colors duration-150 inline-flex items-center gap-1 cursor-pointer"
-                  >
-                    Configure site preferences <ChevronRight className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-            </>
-);
+          </div>
+        </div>
+      )}
+    </>
+  );
 }

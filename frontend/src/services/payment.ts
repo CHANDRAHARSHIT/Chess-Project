@@ -1,4 +1,5 @@
 import type { CheckoutSessionResponse, BillingPortalResponse } from "../types/payment";
+import rollbar from "../config/rollbar";
 
 export class PaymentService {
   /**
@@ -22,6 +23,9 @@ export class PaymentService {
       return await response.json();
     } catch (error: any) {
       console.error("[PaymentService.createCheckoutSession] Error:", error);
+      // Swallowed into a "fail" response here rather than thrown, so this
+      // never reaches the ErrorBoundary — report it manually.
+      rollbar.error(error, { context: "PaymentService.createCheckoutSession" });
       return {
         status: "fail",
         message: error.message || "An unexpected error occurred.",
@@ -49,6 +53,7 @@ export class PaymentService {
       return await response.json();
     } catch (error: any) {
       console.error("[PaymentService.createBillingPortalSession] Error:", error);
+      rollbar.error(error, { context: "PaymentService.createBillingPortalSession" });
       return {
         status: "fail",
         message: error.message || "An unexpected error occurred.",
@@ -76,6 +81,7 @@ export class PaymentService {
       return await response.json();
     } catch (error: any) {
       console.error("[PaymentService.getCheckoutSession] Error:", error);
+      rollbar.error(error, { context: "PaymentService.getCheckoutSession" });
       return {
         status: "fail",
         message: error.message || "An unexpected error occurred.",

@@ -51,10 +51,14 @@ export function EvaluationBar({
           width: isDesktop ? "24px" : undefined,
           borderRadius: "0px",
           height: isDesktop && boardHeight ? `${boardHeight}px` : "16px",
-          background: "rgba(255,255,255,0.04)",
-          border: "1px solid rgba(255,255,255,0.08)",
+          background: "var(--eval-bar-bg, rgba(12,16,32,0.85))",
+          border: "1px solid var(--eval-bar-border, rgba(255,255,255,0.08))",
           backdropFilter: "blur(8px)",
-          minHeight: isDesktop && boardHeight ? `${boardHeight}px` : undefined,
+          minHeight: isDesktop
+            ? boardHeight
+              ? `${boardHeight}px`
+              : "100%"
+            : undefined,
         }}
       >
         <div
@@ -72,7 +76,7 @@ export function EvaluationBar({
         <span
           className="font-sans text-xs font-normal leading-none"
           style={{
-            color: "#8E8B82",
+            color: "var(--text-secondary, #8E8B82)",
           }}
         >
           {evalLabel}

@@ -1,31 +1,30 @@
-datasource db {
-  provider = "postgresql"
-}
-
 generator client {
   provider      = "prisma-client"
   output        = "../src/generated/prisma"
   binaryTargets = ["native", "windows", "debian-openssl-3.0.x"]
 }
 
-model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String    @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
-  createdAt     DateTime  @default(now())
+datasource db {
+  provider = "postgresql"
+}
 
-  // Payment integration fields — two separate columns so test-mode and live-mode
-  // Stripe customer IDs can coexist in a single shared database.
-  stripeTestCustomerId String?          @unique // Stripe test-mode customer ID (cus_test_*)
-  stripeLiveCustomerId String?          @unique // Stripe live-mode customer ID  (cus_live_*)
-  subscriptions        Subscription[]
-  payments             Payment[]
+model User {
+  id                   String           @id @default(cuid())
+  name                 String?
+  email                String           @unique
+  emailVerified        DateTime?
+  image                String?
+  createdAt            DateTime         @default(now())
+  stripeTestCustomerId String?          @unique
+  stripeLiveCustomerId String?          @unique
+  accounts             Account[]
   billingProfile       BillingProfile?
   builderLessons       BuilderLesson[]
+  customLinks          CustomLink[]
+  LessonProgress       LessonProgress[]
+  payments             Payment[]
+  sessions             Session[]
+  subscriptions        Subscription[]
 }
 
 model Account {
@@ -34,15 +33,14 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -63,31 +61,12 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-enum SubscriptionStatus {
-  ACTIVE
-  TRIALING
-  PAST_DUE
-  CANCELED
-  UNPAID
-  INCOMPLETE
-  INCOMPLETE_EXPIRED
-}
-
-enum PaymentStatus {
-  PENDING
-  SUCCEEDED
-  FAILED
-  REFUNDED
-}
-
 model Subscription {
   id                    String             @id @default(cuid())
   userId                String
-  user                  User               @relation(fields: [userId], references: [id], onDelete: Cascade)
-  productId             String // References the database Product plan
-  product               Product            @relation(fields: [productId], references: [id])
+  productId             String
   status                SubscriptionStatus
-  gatewaySubscriptionId String?            @unique // Subscription ID from Stripe/PayPal
+  gatewaySubscriptionId String?            @unique
   currentPeriodStart    DateTime
   currentPeriodEnd      DateTime
   cancelAtPeriodEnd     Boolean            @default(false)
@@ -98,42 +77,38 @@ model Subscription {
   createdAt             DateTime           @default(now())
   updatedAt             DateTime           @updatedAt
   payments              Payment[]
+  product               Product            @relation(fields: [productId], references: [id])
+  user                  User               @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Payment {
   id                     String        @id @default(cuid())
   userId                 String
-  user                   User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   subscriptionId         String?
-  subscription           Subscription? @relation(fields: [subscriptionId], references: [id], onDelete: SetNull)
-  amount                 Int // Amount in cents / smallest currency unit
+  amount                 Int
   currency               String        @default("usd")
   status                 PaymentStatus
-  paymentMethod          String? // e.g., card, paypal
-  gatewayPaymentIntentId String?       @unique // Intent or transaction reference
-  gatewayInvoiceId       String? // Invoice reference from gateway
+  paymentMethod          String?
+  gatewayPaymentIntentId String?       @unique
+  gatewayInvoiceId       String?
   receiptUrl             String?
   errorMessage           String?
-
-  // Auditing, support & refund debugging fields
-  provider          String  @default("stripe") // e.g. stripe, paypal, razorpay
-  failureCode       String? // Gateway specific failure code (e.g. card_declined)
-  gatewayCustomerId String? // Customer ID on gateway for secondary verification
-  refundedAmount    Int?    @default(0) // Refunded amount in cents
-  gatewayMetadata   Json? // JSON block mapping gateway details (card brand, user ip etc.)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  provider               String        @default("stripe")
+  failureCode            String?
+  gatewayCustomerId      String?
+  refundedAmount         Int?          @default(0)
+  gatewayMetadata        Json?
+  createdAt              DateTime      @default(now())
+  updatedAt              DateTime      @updatedAt
+  subscription           Subscription? @relation(fields: [subscriptionId], references: [id], onDelete: SetNull)
+  user                   User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model BillingProfile {
-  id           String  @id @default(cuid())
-  userId       String  @unique
-  user         User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           String   @id @default(cuid())
+  userId       String   @unique
   billingEmail String?
   billingName  String?
-
-  // Future invoicing & tax configurations (address lines etc. left as stubs)
   addressLine1 String?
   addressLine2 String?
   city         String?
@@ -141,66 +116,63 @@ model BillingProfile {
   postalCode   String?
   country      String?
   vatId        String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Product {
   id                 String           @id @default(cuid())
-  identifier         String           @unique // e.g. pro_monthly, pro_yearly
+  identifier         String           @unique
   name               String
   description        String?
-  priceAmount        Int // Price in smallest unit (e.g. 999 for $9.99)
+  priceAmount        Int
   currency           String           @default("usd")
-  billingInterval    String // month, year, or one-time
-  // Mode-specific Stripe Price IDs — keep both so the same DB works in test and live mode
-  gatewayTestPriceId String?          @unique // Stripe test-mode Price ID (price_xxx from test key)
-  gatewayLivePriceId String?          @unique // Stripe live-mode Price ID (price_xxx from live key)
+  billingInterval    String
+  gatewayTestPriceId String?          @unique
+  gatewayLivePriceId String?          @unique
   isActive           Boolean          @default(true)
   displayOrder       Int              @default(0)
-  features           ProductFeature[]
-  subscriptions      Subscription[]
   createdAt          DateTime         @default(now())
   updatedAt          DateTime         @updatedAt
+  features           ProductFeature[]
+  subscriptions      Subscription[]
 }
 
 model ProductFeature {
   id           String   @id @default(cuid())
   productId    String
-  product      Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  featureKey   String // e.g. unlimited_puzzles, advanced_analysis
-  featureValue String   @default("true") // true/false or limit strings e.g. "100"
+  featureKey   String
+  featureValue String   @default("true")
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+  product      Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@unique([productId, featureKey])
 }
 
 model WebhookEvent {
   id             String   @id @default(cuid())
-  gatewayEventId String   @unique // External event ID (e.g. Stripe evt_...)
-  provider       String // e.g. stripe, paypal
-  eventType      String // e.g. invoice.payment_succeeded
+  gatewayEventId String   @unique
+  provider       String
+  eventType      String
   processed      Boolean  @default(true)
-  payload        Json? // Full audit log payload
+  payload        Json?
   createdAt      DateTime @default(now())
 }
 
-/// Curated puzzle dataset sourced from Lichess puzzle database.
-/// Used for the Custom Puzzles feature — filterable by theme and rating range.
 model CuratedPuzzle {
-  id              String   @id // Lichess PuzzleId (e.g. "ZEBhn")
-  fen             String // FEN of the position before the puzzle starts
-  moves           String // Space-separated UCI move list (solution)
-  rating          Int // Puzzle difficulty rating
-  ratingDeviation Int // Rating deviation (confidence)
-  popularity      Int // Lichess popularity score (-100 to 100)
-  nbPlays         Int // Total number of times played
-  themes          String[] // Array of theme tags (e.g. ["mate", "mateIn1"])
+  id              String   @id
+  fen             String
+  moves           String
+  rating          Int
+  ratingDeviation Int
+  popularity      Int
+  nbPlays         Int
+  themes          String[] @default([])
   createdAt       DateTime @default(now())
 
-  @@index([rating]) // Fast filtering by rating range
+  @@index([rating])
 }
 
 model Opening {
@@ -209,6 +181,9 @@ model Opening {
   name  String
   pgn   String
   moves String
+
+  @@index([eco])
+  @@index([name])
 }
 
 enum BuilderLessonStatus {
@@ -268,4 +243,82 @@ model BuilderSlide {
 
   @@unique([segmentId, order])
   @@index([segmentId])
+}
+
+model Course {
+  id          String   @id
+  slug        String   @unique
+  title       String
+  description String?
+  thumbnail   String?
+  published   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime
+  Lesson      Lesson[]
+}
+
+model Lesson {
+  id             String           @id
+  courseId       String
+  slug           String           @unique
+  title          String
+  description    String?
+  thumbnail      String?
+  difficulty     String?
+  estimatedTime  Int              @default(0)
+  category       String?
+  published      Boolean          @default(false)
+  content        Json
+  settings       Json?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime
+  Course         Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  LessonProgress LessonProgress[]
+}
+
+model LessonProgress {
+  id          String   @id
+  userId      String
+  lessonId    String
+  currentStep Int      @default(0)
+  completed   Boolean  @default(false)
+  accuracy    Float?
+  mistakes    Int      @default(0)
+  xp          Int      @default(0)
+  timeSpent   Int      @default(0)
+  updatedAt   DateTime
+  Lesson      Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  User        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  TRIALING
+  PAST_DUE
+  CANCELED
+  UNPAID
+  INCOMPLETE
+  INCOMPLETE_EXPIRED
+}
+
+model CustomLink {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name          String
+  url           String
+  isArchived    Boolean   @default(false)
+  clickCount    Int       @default(0)
+  lastClickedAt DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+  REFUNDED
 }

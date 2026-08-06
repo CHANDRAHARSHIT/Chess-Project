@@ -5,13 +5,14 @@
  *    Chess960 castling gesture translation (king-onto-rook) is handled at the UI layer in onPieceDrop.
  */
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { Chess, type Square } from 'chess.js';
 import { useStockfish } from './useStockfish';
 import { type DifficultyLevel, type GameStatus, type GameResult } from '../types/chess';
 import { generateChess960FEN } from '../utils/chess960';
 import { parseUciMove, playMoveSound } from '../utils/chessHelpers';
 import { soundManager } from '../utils/SoundManager';
+import rollbar from '../config/rollbar';
 
 export interface Chess960GameOptions {
   playerColor: 'w' | 'b' | 'random';
@@ -21,6 +22,7 @@ export interface Chess960GameOptions {
 export interface UseChess960GameReturn {
   fen: string;
   boardOrientation: 'white' | 'black';
+  turn: 'w' | 'b';
   status: GameStatus;
   result: GameResult;
   moveHistory: ReturnType<Chess['history']>;
@@ -30,6 +32,8 @@ export interface UseChess960GameReturn {
   difficulty: DifficultyLevel;
   playerColor: 'w' | 'b';
   hintSquare: string | null;
+  hintMove: { from: string; to: string } | null;
+  checkSquare: string | null;
   onPieceDrop: (sourceSquare: string, targetSquare: string) => boolean;
   startNewGame: (options: Chess960GameOptions) => void;
   resign: () => void;
@@ -60,6 +64,8 @@ export function useChess960Game(): UseChess960GameReturn {
   const [result, setResult] = useState<GameResult>(null);
   const [lastMove, setLastMove] = useState<{ from: string; to: string } | null>(null);
   const [hintSquare, setHintSquare] = useState<string | null>(null);
+  const [hintMove, setHintMove] = useState<{ from: string; to: string } | null>(null);
+  const [isHintRequested, setIsHintRequested] = useState<boolean>(false);
   const [moveHistory, setMoveHistory] = useState<ReturnType<Chess['history']>>([]);
 
   // Helper to process game over logic
@@ -75,9 +81,10 @@ export function useChess960Game(): UseChess960GameReturn {
       setStatus('draw');
       setResult('draw');
     }
+    soundManager.playGameEnd();
   }, []);
 
-  // Start a new game with given options
+  // Start new game setup
   const startNewGame = useCallback(
     (options: Chess960GameOptions) => {
       searchIdRef.current += 1;
@@ -88,7 +95,9 @@ export function useChess960Game(): UseChess960GameReturn {
         clearTimeout(hintTimeoutRef.current);
         hintTimeoutRef.current = null;
       }
+      setIsHintRequested(false);
       setHintSquare(null);
+      setHintMove(null);
 
       const resolvedColor: 'w' | 'b' =
         options.playerColor === 'random'
@@ -147,7 +156,9 @@ export function useChess960Game(): UseChess960GameReturn {
           clearTimeout(hintTimeoutRef.current);
           hintTimeoutRef.current = null;
         }
+        setIsHintRequested(false);
         setHintSquare(null);
+        setHintMove(null);
 
         playMoveSound(game, move.flags, Boolean(move.captured));
         setFen(game.fen());
@@ -166,7 +177,7 @@ export function useChess960Game(): UseChess960GameReturn {
     [status, playerColor, isEngineThinking, handleGameOver]
   );
 
-  // Trigger engine move when it's engine's turn
+  // Trigger engine move when it's engine's turn with human breathing buffer delay
   useEffect(() => {
     if (status !== 'playing') return;
 
@@ -175,36 +186,43 @@ export function useChess960Game(): UseChess960GameReturn {
 
     const currentSearchId = searchIdRef.current;
 
-    getEngineMove(
-      game.fen(),
-      difficulty,
-      (moveString: string) => {
-        if (searchIdRef.current !== currentSearchId || status !== 'playing') return;
+    const timer = setTimeout(() => {
+      getEngineMove(
+        game.fen(),
+        difficulty,
+        (moveString: string) => {
+          if (searchIdRef.current !== currentSearchId || status !== 'playing') return;
 
-        const { from, to, promotion } = parseUciMove(moveString);
-        try {
-          const moveResult = game.move({
-            from: from as Square,
-            to: to as Square,
-            promotion: promotion || 'q',
-          });
+          const { from, to, promotion } = parseUciMove(moveString);
+          try {
+            const moveResult = game.move({
+              from: from as Square,
+              to: to as Square,
+              promotion: promotion || 'q',
+            });
 
-          if (moveResult) {
-            playMoveSound(game, moveResult.flags, Boolean(moveResult.captured));
-            setFen(game.fen());
-            setMoveHistory(game.history({ verbose: true }));
-            setLastMove({ from, to });
+            if (moveResult) {
+              playMoveSound(game, moveResult.flags, Boolean(moveResult.captured));
+              setFen(game.fen());
+              setMoveHistory(game.history({ verbose: true }));
+              setLastMove({ from, to });
 
-            if (game.isGameOver()) {
-              handleGameOver();
+              if (game.isGameOver()) {
+                handleGameOver();
+              }
             }
+          } catch (e) {
+            console.error('Failed to apply engine move:', moveString, e);
+            // The engine returned an illegal/unparseable move — a real bug,
+            // not user input, so report it manually.
+            rollbar.error(e as Error, { context: 'useChess960Game.applyEngineMove', moveString });
           }
-        } catch (e) {
-          console.error('Failed to apply engine move:', moveString, e);
-        }
-      },
-      true
-    );
+        },
+        true
+      );
+    }, 600);
+
+    return () => clearTimeout(timer);
   }, [status, fen, playerColor, difficulty, isEngineThinking, getEngineMove, handleGameOver]);
 
   // Resign active game
@@ -224,15 +242,19 @@ export function useChess960Game(): UseChess960GameReturn {
   // Request hint from engine
   const requestHint = useCallback(() => {
     if (status !== 'playing' || isEngineThinking) return;
+    setIsHintRequested(true);
     analyzePosition(gameRef.current.fen(), true);
   }, [status, isEngineThinking, analyzePosition]);
 
-  // Update hint square when bestMove is received from analyzePosition
+  // Update hint square & path when bestMove is received from analyzePosition
   useEffect(() => {
-    if (bestMove && status === 'playing') {
-      const hintSrc = bestMove.slice(0, 2);
+    if (bestMove && status === 'playing' && isHintRequested) {
+      const from = bestMove.slice(0, 2);
+      const to = bestMove.slice(2, 4);
       const timer = setTimeout(() => {
-        setHintSquare(hintSrc);
+        setIsHintRequested(false);
+        setHintSquare(from);
+        setHintMove({ from, to });
       }, 0);
 
       if (hintTimeoutRef.current) {
@@ -240,15 +262,37 @@ export function useChess960Game(): UseChess960GameReturn {
       }
       hintTimeoutRef.current = setTimeout(() => {
         setHintSquare(null);
-      }, 4000) as unknown as number;
+        setHintMove(null);
+      }, 4500) as unknown as number;
 
       return () => clearTimeout(timer);
     }
-  }, [bestMove, status]);
+  }, [bestMove, status, isHintRequested]);
+
+  // Calculate checkSquare for checked king
+  const checkSquare = useMemo(() => {
+    if (!fen) return null;
+    const game = new Chess(fen);
+    if (!game.inCheck()) return null;
+    const turn = game.turn();
+    const board = game.board();
+    for (let r = 0; r < 8; r++) {
+      for (let c = 0; c < 8; c++) {
+        const piece = board[r][c];
+        if (piece && piece.type === 'k' && piece.color === turn) {
+          const file = String.fromCharCode(97 + c);
+          const rank = String(8 - r);
+          return `${file}${rank}`;
+        }
+      }
+    }
+    return null;
+  }, [fen]);
 
   return {
     fen,
     boardOrientation,
+    turn: (fen.split(' ')[1] as 'w' | 'b') || 'w',
     status,
     result,
     moveHistory,
@@ -258,6 +302,8 @@ export function useChess960Game(): UseChess960GameReturn {
     difficulty,
     playerColor,
     hintSquare,
+    hintMove,
+    checkSquare,
     onPieceDrop,
     startNewGame,
     resign,

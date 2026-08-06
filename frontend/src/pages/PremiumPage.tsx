@@ -45,7 +45,7 @@ export default function PremiumPage() {
             <h1 className="text-3xl md:text-4xl font-display font-bold text-transparent bg-clip-text bg-gradient-to-b from-brand-text via-brand-text/90 to-brand-secondary tracking-tight">
               Premium Exclusive
             </h1>
-            <p className="text-sm md:text-base text-brand-secondary font-sans leading-relaxed max-w-md">
+            <p className="text-base sm:text-lg text-brand-secondary font-sans leading-relaxed max-w-md">
               This section is reserved for Premium members. Unlock advanced features, personalized analytics, and exclusive content.
             </p>
           </div>
@@ -102,7 +102,7 @@ export default function PremiumPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.5 }}
-            className="text-sm md:text-base text-brand-secondary font-sans leading-relaxed max-w-lg mt-2"
+            className="text-base sm:text-lg text-brand-secondary font-sans leading-relaxed max-w-lg mt-2"
           >
             We are crafting an exclusive experience for our premium members. Expect advanced board analysis, custom themes, and unparalleled chess tools shortly.
           </motion.p>
