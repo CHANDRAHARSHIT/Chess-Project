@@ -23,12 +23,16 @@ export function GameControls({
   const isPlaying = status === 'playing';
   const [isHintActive, setIsHintActive] = useState(false);
 
-  const btnClass =
-    'flex items-center justify-center gap-1.5 px-2 sm:px-3 py-2 rounded-xl font-mono text-[11px] sm:text-xs uppercase tracking-wider font-semibold bg-brand-surface/60 border border-brand-border/60 hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-brand-border/60 disabled:hover:text-brand-secondary';
+  const btnBaseClass =
+    'flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl font-mono text-[11px] sm:text-xs uppercase tracking-wider font-bold transition-all duration-200 cursor-pointer shadow-sm disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:shadow-none';
+
+  const defaultBtnClass = `${btnBaseClass} bg-brand-surface/80 border border-white/[0.08] text-brand-secondary hover:text-brand-text hover:bg-brand-surface hover:-translate-y-0.5`;
 
   const hintBtnClass = isHintActive
-    ? 'flex items-center justify-center gap-1.5 px-2 sm:px-3 py-2 rounded-xl font-mono text-[11px] sm:text-xs uppercase tracking-wider font-semibold bg-amber-500/20 border-amber-500/80 text-amber-300 shadow-[0_0_15px_rgba(245,158,11,0.35)] animate-pulse transition-all duration-300'
-    : btnClass;
+    ? `${btnBaseClass} bg-amber-500/20 border border-amber-500/40 text-amber-500 dark:text-amber-300 shadow-[0_0_15px_rgba(245,158,11,0.25)] animate-pulse`
+    : `${btnBaseClass} bg-amber-500/10 border border-amber-500/30 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 hover:-translate-y-0.5`;
+
+  const resignBtnClass = `${btnBaseClass} bg-rose-500/10 border border-rose-500/30 text-rose-600 dark:text-rose-400 hover:bg-rose-500/20 hover:-translate-y-0.5`;
 
   const handleHintClick = () => {
     soundManager.playButtonClick();
@@ -38,16 +42,17 @@ export function GameControls({
   };
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-2 sm:p-2.5 bg-brand-surface/40 border border-brand-border/60 rounded-xl backdrop-blur-md shrink-0">
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-2 sm:p-2.5 bg-brand-surface/60 border border-white/[0.07] rounded-2xl backdrop-blur-md shrink-0 shadow-sm">
+
       <button
         onClick={() => {
           soundManager.playButtonClick();
           onNewGame();
         }}
-        className={btnClass}
+        className={defaultBtnClass}
         title="New Game Setup"
       >
-        <RotateCcw className="w-4 h-4 text-brand-accent" />
+        <RotateCcw className="w-3.5 h-3.5 text-brand-accent" />
         <span>New Game</span>
       </button>
 
@@ -57,10 +62,10 @@ export function GameControls({
           onFlipBoard();
         }}
         disabled={!isPlaying}
-        className={btnClass}
+        className={defaultBtnClass}
         title="Flip Board View"
       >
-        <FlipHorizontal className="w-4 h-4" />
+        <FlipHorizontal className="w-3.5 h-3.5 text-brand-secondary" />
         <span>Flip</span>
       </button>
 
@@ -70,8 +75,8 @@ export function GameControls({
         className={hintBtnClass}
         title="Request Hint"
       >
-        <Lightbulb className={`w-4 h-4 ${isHintActive ? 'text-amber-300 animate-spin' : 'text-amber-400'}`} />
-        <span>{isHintActive ? 'Hint Active' : 'Hint'}</span>
+        <Lightbulb className={`w-3.5 h-3.5 ${isHintActive ? 'animate-bounce text-amber-300' : 'text-amber-400'}`} />
+        <span>{isHintActive ? 'Hinting...' : 'Hint'}</span>
       </button>
 
       <button
@@ -80,10 +85,10 @@ export function GameControls({
           onResign();
         }}
         disabled={!isPlaying}
-        className={btnClass}
+        className={resignBtnClass}
         title="Resign Current Game"
       >
-        <Flag className="w-4 h-4 text-rose-400" />
+        <Flag className="w-3.5 h-3.5 text-rose-400" />
         <span>Resign</span>
       </button>
     </div>
