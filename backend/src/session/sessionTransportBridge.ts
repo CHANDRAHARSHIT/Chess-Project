@@ -12,6 +12,7 @@ import { reportError } from "../observability/index.js";
 import type { Move } from "../contracts/index.js";
 import type { SessionManager } from "./SessionManager.js";
 import type { SessionTransport } from "./types.js";
+import { maybePlayBotTurn } from "../bot/botPlayer.js";
 
 /** Session's outbound view of Transport — a thin pass-through to the ConnectionManager singleton. */
 export const sessionTransportImpl: SessionTransport = {
@@ -34,6 +35,7 @@ export function wireSessionTransportBridge(sessionManager: SessionManager): Tran
 
     if (event.kind === "connected") {
       sessionManager.notifyParticipantConnected(sessionId, event.userId);
+      maybePlayBotTurn(sessionManager, sessionId);
     } else {
       sessionManager.notifyParticipantDisconnected(sessionId, event.userId);
     }
@@ -66,7 +68,10 @@ export function wireSessionTransportBridge(sessionManager: SessionManager): Tran
       const result = sessionManager.submitMove(sessionId, userId, message.payload as Move);
       if (!result.legal) {
         connectionManager.send(userId, { type: "move_rejected", payload: { reason: result.reason } });
+        return;
       }
+
+      maybePlayBotTurn(sessionManager, sessionId);
     },
   };
 }

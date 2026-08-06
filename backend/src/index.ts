@@ -1,6 +1,6 @@
 import { env } from "./config/env.js";
 import { app } from "./app.js";
-import { initRollbar } from "./observability/index.js";
+import { initRollbar, reportError } from "./observability/index.js";
 import { bootstrapTransport } from "./transport/index.js";
 import {
   SessionManager,
@@ -11,6 +11,8 @@ import {
 } from "./session/index.js";
 import { matchmakingQueue, ExpiryTicker } from "./matchmaking/index.js";
 import { handleGameResult } from "./results/index.js";
+import { attachBot, acquireBot, releaseBot } from "./bot/botPlayer.js";
+import type { GameResult, ParticipantAssignment } from "./contracts/index.js";
 
 // Initialise observability first so the very first server error is captured.
 initRollbar();
@@ -41,7 +43,16 @@ server.on("error", (err: any) => {
 // Composition root: SessionManager is constructed here, not exported as a module singleton,
 // so future consumers (Results in M4) receive it via injection.
 if (env.MULTIPLAYER_ENABLED) {
-  const sessionManager = new SessionManager(handleGameResult, undefined, sessionTransportImpl);
+  // M7: releases a terminal result's participating bot (safe no-op for humans) before
+  // forwarding to the existing, unmodified handleGameResult.
+  const onResult = (result: GameResult) => {
+    for (const participant of result.participants) {
+      releaseBot(participant.userId);
+    }
+    handleGameResult(result);
+  };
+
+  const sessionManager = new SessionManager(onResult, undefined, sessionTransportImpl);
   const hooks = wireSessionTransportBridge(sessionManager);
   wireMatchmakingSessionBridge(matchmakingQueue, sessionManager);
 
@@ -52,5 +63,44 @@ if (env.MULTIPLAYER_ENABLED) {
   // M1-AM-02: ExpiryTicker existed since M1 but was never started, so ticket TTL
   // expiry and MATCHED-ticket pruning never ran. Gap-fill, not a redesign — see
   // matchmaking_README.md M3 section.
-  new ExpiryTicker().start();
+  //
+  // M7: the ~1s sweep interval and bot-fallback callback are only used once the bot
+  // roster has attached successfully, and only when BOT_FALLBACK_ENABLED — otherwise
+  // this reproduces the pre-M7 30s ticker with no callback exactly.
+  if (env.BOT_FALLBACK_ENABLED) {
+    attachBot(sessionManager).then(
+      (attached) => {
+        if (!attached) {
+          reportError({
+            domain: "bot",
+            error: new Error("Bot fallback disabled for this process: roster attach failed."),
+            fatal: false,
+          });
+          new ExpiryTicker(30_000).start();
+          return;
+        }
+
+        new ExpiryTicker(1_000).start(() => {
+          let bot: ParticipantAssignment | null = null;
+
+          try {
+            bot = acquireBot();
+            if (!bot) return;
+
+            const descriptor = matchmakingQueue.matchStaleTicketWithBot(bot, env.BOT_FALLBACK_DELAY_MS);
+            if (!descriptor) releaseBot(bot.userId);
+          } catch (err) {
+            if (bot) releaseBot(bot.userId);
+            reportError({ domain: "bot", error: err, fatal: false });
+          }
+        });
+      },
+      (err) => {
+        reportError({ domain: "bot", error: err, fatal: true, context: { reason: "attach_bot_threw" } });
+        new ExpiryTicker(30_000).start();
+      }
+    );
+  } else {
+    new ExpiryTicker(30_000).start();
+  }
 }
