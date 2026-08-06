@@ -33,11 +33,11 @@ export function SideClock({ remainingMs, lastMoveAt, isLive, label }: SideClockP
   useEffect(() => {
     let timer: number | null = null;
 
-    // lastMoveAt is the server's own clock anchor — null until the session's first move is
-    // actually submitted (Session never charges time before then). Ticking from anything else
-    // (e.g. a local "match ready" timestamp) would show time elapsing that the server was never
-    // going to deduct, so the display would visibly snap back the instant the real state_update
-    // arrives after the first move.
+    // lastMoveAt is the server's own clock anchor — null until the session reaches READY (M6:
+    // the side to move first is charged from game start, not just from their first move).
+    // Ticking from anything else (e.g. a local "match ready" timestamp) would show time elapsing
+    // that the server was never going to deduct, so the display would visibly snap back the
+    // instant a real state_update arrives with the server's own value.
     if (!isLive || !lastMoveAt) {
       timer = window.setTimeout(() => setDisplayMs(remainingMs), 0);
       return () => {

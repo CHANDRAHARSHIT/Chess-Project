@@ -886,3 +886,199 @@ GET /play/chess  (ProtectedRoute-gated)
 - **Not addressed, still open, unchanged from the Backend Stabilization section above**: draw offers (**B2**), rated matchmaking (**B6**), opponent display name/avatar (**B8**), premove (**B10**) — all four are backend/feature work, not frontend gaps.
 - **Simplifications made deliberately in this pass** (documented so they're not mistaken for oversights): no landscape-specific breakpoint (portrait/desktop stacking covers narrow viewports); the move log does not collapse into a mobile bottom sheet (it scrolls inline at all widths); no spoken 30s/10s countdown announcements beyond the turn/check/result ones already implemented; the "opponent never connected" banner is a client-side soft timeout (65s) rather than a hard signal, because `SessionManager.handleWaitTimeout()` sends no message to the client on that path at all.
 - **`Course`/`Lesson`/`LessonProgress`/`CustomLink` migrations and the `Opening` schema drift** (flagged since M4 §1.6) remain untouched and unrelated to M5.
+
+---
+
+## Post-M5 Live-Play Stabilization
+
+- **Status**: Completed & Verified
+- **Primary Goal**: Close five bugs and glitches found live-testing M5 with two real signed-in accounts — a matchmaking-timer desync/overrun, an opponent-presence gap, and three live-game display bugs (missing identity, a clock that visibly rewinds after the first move, and a "match syncing" countdown that replays over an already-in-progress game on refresh). Continues the AM- numbering from the Backend Stabilization (Pre-M5) section above, since these are the same kind of amendment: verified defects in already-frozen code, not new design.
+
+### 1. Summary of Implementation
+
+1. **AM-06 — Matchmaking Ticket Lazy Expiry (`backend/src/matchmaking/MatchmakingQueue.ts`)**:
+   - **Problem**: `getTicket(ticketId)` — read by both `GET /api/matchmaking/queue/:ticketId` and `enqueue()`'s idempotency check — returned the raw ticket from the map with no expiry check. The only place that ever flipped a stale `WAITING` ticket to `EXPIRED` was `ExpiryTicker`'s 30s periodic sweep, so a client polling right after its own countdown hit `0:00` could still be told `WAITING` for up to ~30s longer: the search UI kept "scanning" well past the advertised 60s TTL.
+   - **Fix**: extracted the mark/emit/delete logic `expireStale()` already had into a shared private `expireTicket(ticket)`, and `getTicket()` now calls it lazily — if a `WAITING` ticket is read past its `expiresAt`, it's expired on the spot before being returned. `enqueue()`'s idempotency lookup now routes through `getTicket()` too, so re-enqueuing never silently reattaches to an already-stale ticket. `expireStale()`'s periodic sweep is unchanged and still covers tickets nobody is actively polling (e.g. a closed tab).
+   - **Scope discipline**: `ExpiryTicker`, `MATCHED_RETENTION_MS`/`pruneMatched()`, and the ticket TTL value itself are untouched — this only changes *when* expiry is detected, not the deadline itself.
+
+2. **AM-07 — Presence Bootstrap for the Second-Connecting Participant (`backend/src/session/SessionManager.ts`)**:
+   - **Problem (verified defect)**: AM-03's `broadcastPresence()` fires at the instant a participant's socket registers, via `SessionTransport.send()` → `ConnectionManager.send()`, which silently no-ops for any recipient not yet registered (`if (!connId) return`). Since presence is only ever broadcast *at the moment of connection*, whichever participant connects **second** never receives the **first** participant's "connected" fact — there's no catch-up snapshot, and no further connect event ever fires for the first participant to correct it. That participant's opponent-presence indicator stayed "Unknown" for the rest of the game, every game, for whichever side happened to connect second.
+   - **Fix**: `notifyParticipantConnected()` now, before adding the new participant to `presence` and broadcasting their own fact, directly `send()`s the just-connected participant a `presence_update` for every *other* participant already in the `presence` Set. Same message shape AM-03 already defined (`{userId, connected: true}`), sent once per already-present peer, directly to the newcomer only (not a broadcast). Both directions are now covered regardless of connection order.
+   - **Scope discipline**: no new message type, no `SessionTransport` interface change, no new state — reads the same `presence` Set `notifyParticipantConnected`/`broadcastPresence` already own.
+
+3. **AM-08 — Queue Timer Rounding & Waiting Feedback (frontend)**:
+   - **Problem**: `QueuePanel.tsx`'s single `formatCountdown()` applied `Math.ceil()` to both the count-up "Searching" timer and the count-down "Expires in" timer. Since the two always sum to exactly 60s as real numbers, `ceil(x) + ceil(60-x)` overshoots to 61 whenever `x` isn't an exact integer second (true almost always) — e.g. "0:01" next to "1:00" on the very first tick. Separately, `PlayChessGame.tsx` had no feedback at all for the normal 0–65s `WAITING` window (only a 65s+ "taking longer than expected" warning), so a player who'd already connected had no indication the game was waiting on their opponent.
+   - **Fix**: `QueuePanel.tsx` now has `formatElapsed()` (`Math.floor`) and `formatRemaining()` (`Math.ceil`) built on a shared `formatMinSec()` — algebraically `floor(x) + ceil(60-x) = 60` for all `x`, so the pair never drifts. `PlayChessGame.tsx` gained a "Waiting for your opponent to connect…" banner shown whenever `status === "WAITING"` and the existing 65s+ banner hasn't fired yet.
+   - **Scope discipline**: no backend change; purely display-layer fixes in the two components that already owned this UI.
+
+4. **AM-09 — Participant Display Identity: Real Name & Avatar (closes B8)**:
+   - **Problem**: `m5_implementation_plan.md` §0 **B8** ("opponent display name/avatar") was deliberately deferred at M5 time because no public user-lookup endpoint existed, so `OpponentIdentity.tsx` rendered a hashed-crest pseudonym and a static "Opponent"/"You" label for every participant — a real product decision to revisit, explicitly flagged as still-open in both the Backend Stabilization and M5 sections above.
+   - **Fix**: rather than adding a new lookup endpoint, the participant's `name`/`image` — already known to the server at enqueue time via the same Auth.js session `requireAuth` already populates (`req.user.name`/`req.user.image`) — are carried through the existing hand-off path: `ParticipantAssignment` (`backend/src/contracts/matchDescriptor.ts`) gains optional `name?`/`image?`; `MatchTicket` (`backend/src/matchmaking/types.ts`) gains the same, captured once in `enqueue()` and copied into `MatchDescriptor.participants` by `tryPair()` (and preserved through `compensateFailedMatch()`'s ticket rebuild). `matchmaking.controller.ts`'s `enqueueTicket` reads `req.user?.name`/`req.user?.image` and passes them through. On the frontend, `OpponentIdentity.tsx` renders the real avatar (`referrerPolicy="no-referrer"` so Google's CDN doesn't block the hotlink, `onError` falling back to the original hashed crest) and real name, falling back to the pseudonym only for a participant with neither set. `PlayerPanel.tsx`, `PlayChessGame.tsx`, and `MatchFoundCard.tsx` thread the values through from `descriptor.participants` (opponent) and the live session (`session.user`, own).
+   - **Both `ParticipantAssignment` fields are additive-only** — every existing required field is untouched, and both are optional, so no existing consumer (Results, Session, any M0–M4 test constructing a bare descriptor) needs to change.
+   - **Scope discipline**: no new HTTP endpoint was added — B8 is closed via the hand-off path Matchmaking already owns, not a new user-lookup surface. `VariantContract` and `GameResult` are untouched.
+
+5. **AM-10 — Live-Game Clock & Sync-Countdown Correctness (frontend)**:
+   - **Problem A (clock rewind)**: a "3…2…1…PLAY!" match-sync overlay (added during M5 polish, after the Backend Stabilization pass) set a local `gameStartTime` once it finished, and `SideClock.tsx` used `lastMoveAt ?? gameStartTime` as its ticking anchor. `SessionManager.submitMove()` never charges any time for the pre-first-move `READY` window by design (`lastMoveAt` stays `null` until the first move lands, and that first move deducts nothing). So the mover's clock visibly ticked down locally as soon as the overlay finished, then snapped back up to the server's true (unchanged) `remainingMs` the instant the first move's real `state_update` arrived — a visible rewind.
+   - **Problem B (countdown replay on refresh)**: the same overlay was gated on a local `moveLog.length === 0` check. `moveLog` is component-local state that always starts empty on mount, so a page refresh mid-game (a real game already in `PLAYING`, moves already made) remounted with `moveLog.length === 0` and replayed the fake "Match Syncing" countdown over an already-live game, freezing `interactive` (and blocking real moves) for ~3 seconds after every refresh.
+   - **Fix**: `SideClock.tsx` now ticks only from `lastMoveAt` (the server's own anchor) — the `gameStartTime` prop is removed entirely from `SideClock`/`PlayerPanel`/`PlayChessGame`. The countdown in `PlayChessGame.tsx` is now gated on server `status === "READY"` (the genuine pre-first-move window) instead of `moveLog.length`, so a fresh match still gets the 3-2-1 animation exactly once, and a mid-game refresh — which mounts directly into `status === "PLAYING"` — never sees it.
+   - **Scope discipline**: no backend change; `SessionManager`'s clock-authority behavior (no time charged before the first move) was the correctness reference, not something to change.
+
+### 2. Acceptance Criteria
+
+1. **AM-06**: `GET /api/matchmaking/queue/:ticketId` and `enqueue()`'s idempotency path never report a `WAITING` ticket past its own `expiresAt`, independent of `ExpiryTicker`'s 30s cadence.
+2. **AM-07**: both participants' opponent-presence indicator reaches "Live" regardless of which of the two connects first — verified by tracing both connection orderings against `notifyParticipantConnected()`.
+3. **AM-08**: `QueuePanel`'s "Searching"/"Expires in" pair always sums to exactly 60 at any instant; a `WAITING` game shows an immediate banner, not just the 65s+ warning.
+4. **AM-09**: a real, matched game shows each participant's actual name and avatar (with graceful fallback to the pre-existing pseudonym for a participant with neither set); `ParticipantAssignment`'s two new fields are optional and don't affect any existing construction site.
+5. **AM-10**: a side's clock never visibly counts down before that side's `lastMoveAt` is real (i.e. never before their own first move lands); the 3-2-1 sync overlay never appears on a page refresh mid-`PLAYING` game.
+6. **Zero regression**: all 53 pre-existing backend tests pass unmodified; `npm run build`/`tsc --noEmit` clean on both `backend/` and `frontend/`.
+
+### 3. Key Architectural & Implementation Decisions
+
+- **All five are amendments, not redesigns** — same standard as AM-01–AM-05: each closes one verified gap, preserves all existing behavior otherwise, and is documented here per this document's own standards.
+- **AM-09 deliberately reuses the existing hand-off path instead of adding a lookup endpoint** — `MatchDescriptor` was already the one-way, immutable value carrying everything a match's downstream consumers need; adding two optional display fields to it is a smaller, more consistent surface than a new authenticated `GET /api/users/:id` endpoint would have been, and avoids exposing user lookup beyond "the person you're currently matched with."
+- **AM-10 removes code rather than patching it** — once `SideClock` no longer needs a client-fabricated anchor, `gameStartTime` had no remaining purpose anywhere in the component tree and was deleted rather than left as dead state, per this codebase's stated preference for deleting confirmed-unused code over leaving compatibility shims.
+
+### 4. Regression Guard
+
+- **`MatchmakingQueue.getTicket()`'s lazy-expiry behavior is now load-bearing** — any future read path added to `MatchmakingQueue` that needs a live ticket should call `getTicket()`, not read the `tickets` map directly, or it reopens AM-06.
+- **Presence bootstrap in `notifyParticipantConnected()` must stay a direct `send()` to the newcomer, not folded into `broadcastPresence()`'s broadcast** — the two serve different recipients (existing participants vs. the one just connecting) and merging them would silently drop one side again.
+- **`ParticipantAssignment.name`/`.image` are optional and must stay that way** — no consumer may assume they're present; `OpponentIdentity.tsx`'s pseudonym fallback is the permanent behavior for a participant with neither set, not a temporary state.
+- **`SideClock` must never accept a client-only time anchor again** — its only valid ticking anchor is `lastMoveAt`, which mirrors `SessionManager`'s own clock authority exactly. Any future "feels alive" polish (e.g. a pre-move animation) must not feed `SideClock` a timestamp the server isn't also using to compute `remainingMs`.
+- **The sync countdown must stay gated on server `status`, never on local move/render state** — anything client-only (a counter, a mount flag) breaks on refresh/reconnect, which is exactly what AM-10 fixed.
+
+### 5. Public APIs & Frozen Contracts
+
+```typescript
+// AM-09 — ParticipantAssignment: additive-only (backend/src/contracts/matchDescriptor.ts)
+interface ParticipantAssignment {
+  readonly userId: string;
+  readonly side: number;
+  readonly name?: string;   // new
+  readonly image?: string;  // new
+}
+
+// AM-09 — MatchmakingQueue.enqueue: two new optional trailing params
+matchmakingQueue.enqueue(userId, variantId, name?, image?)
+
+// AM-07 — no interface change; SessionTransport.send() (already existed) is now also called
+// from notifyParticipantConnected() to bootstrap a newcomer's view of existing presence.
+```
+
+### 6. Consumed By / Dependency Map
+
+| Component | Consumed By (Downstream) |
+|---|---|
+| **AM-06 lazy `getTicket()` expiry** | `matchmaking.controller.ts`'s `getTicketStatus`/`enqueue` — every matchmaking HTTP read |
+| **AM-07 presence bootstrap** | `PlayChessGame.tsx`'s opponent `ConnectionIndicator` |
+| **AM-08 timer/banner fixes** | `QueuePanel.tsx`, `PlayChessGame.tsx` |
+| **AM-09 `name`/`image`** | `OpponentIdentity.tsx`, `PlayerPanel.tsx`, `PlayChessGame.tsx`, `MatchFoundCard.tsx` |
+| **AM-10 `SideClock`/countdown fixes** | `PlayerPanel.tsx`, `PlayChessGame.tsx` |
+
+### 7. Primary File References
+
+| File Path | Description |
+|---|---|
+| [`backend/src/matchmaking/MatchmakingQueue.ts`](file:///d:/XLchess/Chess-Project/backend/src/matchmaking/MatchmakingQueue.ts) | AM-06: shared `expireTicket()`, lazy expiry in `getTicket()`; AM-09: `enqueue()`/`tryPair()`/`compensateFailedMatch()` carry `name`/`image` |
+| [`backend/src/matchmaking/types.ts`](file:///d:/XLchess/Chess-Project/backend/src/matchmaking/types.ts) | AM-09: `MatchTicket.name`/`.image` |
+| [`backend/src/matchmaking/matchmaking.controller.ts`](file:///d:/XLchess/Chess-Project/backend/src/matchmaking/matchmaking.controller.ts) | AM-09: `enqueueTicket` reads `req.user?.name`/`.image` |
+| [`backend/src/contracts/matchDescriptor.ts`](file:///d:/XLchess/Chess-Project/backend/src/contracts/matchDescriptor.ts) | AM-09: `ParticipantAssignment.name`/`.image` (additive) |
+| [`backend/src/session/SessionManager.ts`](file:///d:/XLchess/Chess-Project/backend/src/session/SessionManager.ts) | AM-07: presence bootstrap in `notifyParticipantConnected()` |
+| [`frontend/src/types/multiplayer.ts`](file:///d:/XLchess/Chess-Project/frontend/src/types/multiplayer.ts) | AM-09: mirrors `name`/`.image` on `ParticipantAssignment`/`MatchTicket` |
+| [`frontend/src/components/play/QueuePanel.tsx`](file:///d:/XLchess/Chess-Project/frontend/src/components/play/QueuePanel.tsx) | AM-08: `formatElapsed`/`formatRemaining` |
+| [`frontend/src/components/play/PlayChessGame.tsx`](file:///d:/XLchess/Chess-Project/frontend/src/components/play/PlayChessGame.tsx) | AM-08: waiting banner; AM-09: opponent/own identity wiring; AM-10: status-gated countdown, `gameStartTime` removed |
+| [`frontend/src/components/play/OpponentIdentity.tsx`](file:///d:/XLchess/Chess-Project/frontend/src/components/play/OpponentIdentity.tsx) | AM-09: real avatar/name rendering with pseudonym fallback |
+| [`frontend/src/components/play/PlayerPanel.tsx`](file:///d:/XLchess/Chess-Project/frontend/src/components/play/PlayerPanel.tsx) | AM-09: threads `name`/`image`; AM-10: `gameStartTime` prop removed |
+| [`frontend/src/components/play/SideClock.tsx`](file:///d:/XLchess/Chess-Project/frontend/src/components/play/SideClock.tsx) | AM-10: ticks from `lastMoveAt` only |
+| [`frontend/src/components/play/MatchFoundCard.tsx`](file:///d:/XLchess/Chess-Project/frontend/src/components/play/MatchFoundCard.tsx) | AM-09: real opponent/own identity on the handoff card |
+
+### 8. Upcoming Milestone Handoff / Follow-up Work (M6)
+
+- **B8 is now closed** — remove it from the "not addressed" lists in the Backend Stabilization and M5 sections above the next time either is touched for an unrelated reason (not rewritten now, per this document's "never rewrite previous milestone history" rule).
+- **Still open, unchanged**: draw offers (**B2**), rated matchmaking (**B6**), premove (**B10**).
+- **Live two-client verification with real credentials remains the first thing to do** — this pass was verified by code tracing, type-checking, and the full backend test suite, not a live two-browser session.
+
+---
+
+## Milestone M6 — Hardening & Rollout Expansion
+
+- **Status**: In Progress
+- **Primary Goal**: Close verified defects found in live two-client play — a reconnect indicator that never clears, a state-resync gap for a participant reconnecting mid-game, and a clock-fairness bug that let a player bank unlimited free thinking time before their first move. Continues the AM- numbering from the Backend Stabilization and Post-M5 sections above, since these are the same kind of amendment: verified defects in already-frozen code, not new design.
+
+### 1. Summary of Implementation
+
+1. **AM-11 — Reconnect Confirmation Never Sent (`backend/src/transport/TransportServer.ts`)**:
+   - **Problem (verified defect)**: `GameSessionContext.tsx`'s `connectionStatus` only ever transitions out of `"reconnecting"` when it receives a WS message of `type: "connected"` (`handleMessage()`'s `case "connected"` is the only branch that calls `setConnectionStatus("connected")` and resets the backoff counter). The fresh-connection handshake branch in `TransportServer.ts` sends exactly that message after `connectionManager.register()`. The reconnect-handshake branch, however, called `connectionManager.markReconnected()` and — on success — sent nothing back at all; it only forwarded whatever the `ReconnectBuffer` had queued. A reconnect could succeed completely at the transport level (new socket registered, presence/state flowing again) while the client's own UI stayed on "RECONNECTING" forever, since the one message type that clears it was never sent on this path.
+   - **Fix**: on a successful `markReconnected()`, the reconnect branch now sends the same `{type: "connected", payload: {connectionId, resumeToken}}` shape the fresh-handshake branch already sends, routed through `connectionManager.send()` (not a raw `ws.send()`) so it gets a proper monotonic `seq` stamp and buffering like every other outbound message on the logical connection, instead of an out-of-band unstamped message that could confuse `lastReceivedSeq` bookkeeping on the next reconnect.
+   - **Scope discipline**: no new message type, no `OutboundMessage`/`InboundMessage` contract change — reuses the exact `"connected"` shape the client already handles.
+
+2. **AM-12 — Reconnect Mid-`PLAYING` Resync Gap (`backend/src/session/SessionManager.ts`)**:
+   - **Problem (verified defect)**: `ConnectionManager.send()` no-ops for any user not currently in `userIndex` (`if (!connId) return`), and `disconnect()` removes the user from `userIndex` immediately. Combined, this means `ReconnectBuffer.push()` — only ever called from inside `send()` — never buffers anything addressed to a participant while they're offline; there is nothing for `markReconnected()`'s replay to replay. `notifyParticipantConnected()`'s `PLAYING` branch (a single participant reconnecting while the other stayed connected) only cleared that participant's grace timer and returned — it never sent them a fresh snapshot. Net effect: a participant reconnecting mid-game whose opponent had moved during the gap would never learn about that move; their board could sit permanently stale relative to the live game.
+   - **Fix**: the `PLAYING` branch of `notifyParticipantConnected()` now also directly `send()`s the reconnecting participant a `state_update` with the session's current `currentState`/`clock`/`status` — a direct send to just that user, not a broadcast (the opponent already has the latest state). Same payload shape `broadcastState()` already sends on every move; no new message type.
+   - **Scope discipline**: `ReconnectBuffer`, `ConnectionManager`'s send/disconnect semantics, and the `PAUSED` resume path (already broadcasts full state on resume) are all untouched — this closes the one gap where reconnect happened without any full-state handoff.
+
+3. **AM-13 — Clock Starts at Game-Ready, Not First Move (`backend/src/session/SessionManager.ts`, `types.ts`)**:
+   - **Problem (verified defect, previously documented as intentional design)**: M1's acceptance criteria and the Post-M5 AM-10 entry both explicitly recorded "clocks start strictly on first move" as correct, frozen behavior — `notifyAllPresent()` (`WAITING → READY`) left `clock.lastMoveAt` at `null`, and `tickClocks()` skipped `READY` entirely. In practice this let the side to move first bank unlimited free thinking time before ever moving (e.g. sit idle for the opponent's entire 5-minute budget and still show `5:00` on their first move) at the opponent's direct expense — not how any standard chess clock behaves, and reported as unfair.
+   - **Also found while fixing the above**: `submitMove()` deducted `now - lastMoveAt` from the mover's remaining time on every move, but `tickClocks()` (driven by `ClockTicker` every 100ms with real wall-clock elapsed) was *already* continuously decrementing that same side's `remainingMs` for the same span, silently, without ever broadcasting the intermediate value. The two mechanisms independently charged the same elapsed time, so every move past the first double-charged the mover — the clock a client actually saw update after a move reflected roughly 2x the real time spent, minus increment.
+   - **Fix**: `notifyAllPresent()` now sets `clock.lastMoveAt = Date.now()` when transitioning to `READY`, and `tickClocks()`'s guard now includes `READY` alongside `PLAYING` — the side to move first is charged from the moment both participants are present, exactly like a physical chess clock started at the board. `submitMove()` no longer independently deducts `now - lastMoveAt`; `tickClocks()` is now the single source of truth for decrementing a running clock, and `submitMove()` only credits the increment and resets the `lastMoveAt` anchor both `tickClocks()` and the frontend's `SideClock` use going forward. A timeout can now also fire during `READY` (a player who never makes a single move before their clock runs out) — `tickClocks()`'s timeout branch now logs the actual prior status (`READY` or `PLAYING`) instead of a hardcoded `"PLAYING"`.
+   - **Frontend**: no logic change was needed — `SideClock.tsx` already ticks from `lastMoveAt` whenever it's non-null, and `PlayChessGame.tsx`'s `isGameActive`/`isLive` already treat `READY` as a live state (it already runs the "3…2…1…PLAY!" sync countdown during `READY`). Setting `lastMoveAt` earlier on the backend was sufficient to make the display tick from game start; only a stale comment in `SideClock.tsx` (claiming `lastMoveAt` stays `null` until the first move) was updated to match.
+   - **Scope discipline**: this supersedes M1's "clocks start strictly on first move" acceptance criterion and AM-10's characterization of that behavior as the correctness reference — both are amended by this entry, not silently reinterpreted. `SessionClock`'s shape, the `GameResult` contract, and `ClockTicker`'s own code are untouched.
+
+### 2. Acceptance Criteria
+
+1. **AM-11**: a client whose WebSocket drops and successfully reconnects (valid, unexpired `resumeToken`) always receives a `"connected"` message on the new socket and its `connectionStatus` returns to `"connected"`, matching the fresh-connection handshake.
+2. **AM-12**: a participant who disconnects and reconnects mid-`PLAYING` always receives a `state_update` reflecting the session's current state, regardless of whether their opponent moved during the gap.
+3. **AM-13**: the side to move first has their `remainingMs` decrementing from the instant both participants are present (`READY`), not from their first move; a full game's total time charged to a side matches real elapsed wall-clock time for that side's turns (not ~2x); a player who never moves and lets their clock expire during `READY` ends the game with a `timeout` `GameResult` exactly like a `PLAYING` timeout does.
+4. **Zero regression**: all 55 pre-existing + newly added backend tests pass; `npm run build` (backend) and `tsc --noEmit` (frontend) are both clean.
+
+### 3. Key Architectural & Implementation Decisions
+
+- **All three are amendments, not redesigns** — same standard as AM-01–AM-10: each closes one verified gap, preserves all existing behavior otherwise, and is documented here per this document's own standards.
+- **AM-13 deliberately overturns a previously-documented "correct" behavior** — M1's acceptance criteria and AM-10 both called the old first-move-only charging intentional. This is recorded explicitly (not silently reinterpreted) because a future reader tracing clock behavior through this document should find the amendment, not conclude the current code contradicts frozen milestone history.
+- **`tickClocks()` becomes the single decrementing authority** rather than fixing the double-charge by instead removing `tickClocks()`'s own mutation — `submitMove()`'s elapsed-based deduction was the redundant one, since `tickClocks()` already runs continuously and is what a timeout-without-a-move now also depends on for `READY`.
+- **AM-12's fix is a direct `send()`, not a change to `ReconnectBuffer` or `ConnectionManager`** — Session already owns "what does this participant need to see right now" for the `PAUSED` resume case; extending that same authority to the `PLAYING` single-side-reconnect case is more consistent than teaching Transport to buffer for offline users (a larger, riskier change to already-tested M1 transport code).
+
+### 4. Regression Guard
+
+- **`submitMove()` must not reintroduce an elapsed-time deduction** — `tickClocks()` is now the sole mechanism that decrements a running clock; re-adding a `now - lastMoveAt` subtraction in `submitMove()` reopens the AM-13 double-charge.
+- **`notifyAllPresent()` must keep setting `clock.lastMoveAt` on the `WAITING → READY` transition** — removing it regresses to the pre-AM-13 free-time bug the user explicitly reported.
+- **`tickClocks()`'s `READY` guard must stay alongside `PLAYING`** — removing `READY` from the guard silently reintroduces the same bug even if `lastMoveAt` is still set at `READY`, since nothing would then be decrementing `remainingMs` before the first move.
+- **The AM-11 reconnect confirmation must go through `connectionManager.send()`, not a raw `ws.send()`** — routing around `send()` would skip the `seq` stamp and `ReconnectBuffer` bookkeeping every other outbound message on the connection relies on.
+- **AM-12's resync `send()` must stay a direct `send()` to the reconnecting `userId` only** — broadcasting it would re-send the opponent their own already-current state on every reconnect, which is harmless but pointless traffic; keep the asymmetry intentional.
+
+### 5. Public APIs & Frozen Contracts
+
+```typescript
+// AM-13 — SessionClock: no shape change, only when lastMoveAt first becomes non-null
+// (backend/src/session/types.ts)
+interface SessionClock {
+  readonly remainingMs: readonly number[];
+  readonly lastMoveAt: number | null; // now set at READY, not at the first move
+}
+
+// AM-11 / AM-12 — no interface change; both reuse the existing SessionTransport.send()
+// and the existing "connected" / "state_update" OutboundMessage shapes.
+```
+
+### 6. Consumed By / Dependency Map
+
+| Component | Consumed By (Downstream) |
+|---|---|
+| **AM-11 reconnect confirmation** | `GameSessionContext.tsx`'s `connectionStatus` state machine |
+| **AM-12 mid-`PLAYING` resync** | Any reconnecting participant's board/clock via `sessionState` |
+| **AM-13 clock-start-at-READY** | `SideClock.tsx`, `PlayChessGame.tsx`'s `isLive`/clock derivation (no code change needed there) |
+
+### 7. Primary File References
+
+| File Path | Description |
+|---|---|
+| [`backend/src/transport/TransportServer.ts`](file:///d:/XLchess/Chess-Project/backend/src/transport/TransportServer.ts) | AM-11: sends `"connected"` confirmation on successful reconnect |
+| [`backend/src/session/SessionManager.ts`](file:///d:/XLchess/Chess-Project/backend/src/session/SessionManager.ts) | AM-12: `PLAYING`-branch resync send in `notifyParticipantConnected()`; AM-13: `notifyAllPresent()` starts the clock, `submitMove()` no longer double-deducts, `tickClocks()` runs during `READY` and logs the real prior status on timeout |
+| [`backend/src/session/types.ts`](file:///d:/XLchess/Chess-Project/backend/src/session/types.ts) | AM-13: `SessionClock` doc comment updated |
+| [`frontend/src/components/play/SideClock.tsx`](file:///d:/XLchess/Chess-Project/frontend/src/components/play/SideClock.tsx) | AM-13: stale comment updated (no logic change — already ticks from `lastMoveAt`) |
+| [`backend/src/session/__tests__/SessionManager.test.ts`](file:///d:/XLchess/Chess-Project/backend/src/session/__tests__/SessionManager.test.ts) | AM-13: updated clock-start/tick tests, new READY-timeout test |
+| [`backend/src/session/__tests__/SessionManager.presence.test.ts`](file:///d:/XLchess/Chess-Project/backend/src/session/__tests__/SessionManager.presence.test.ts) | AM-12: new mid-`PLAYING` resync test; recording transport double extended to record `send()` calls |
+
+### 8. Upcoming Milestone Handoff / Follow-up Work
+
+- **Live two-client verification with real credentials is still the first thing to do for M6** — this pass (AM-11/12/13) was verified by code tracing, the full backend test suite, and type-checking on both packages, not a live two-browser session with an actual network interruption.
+- **Still open, unchanged from prior sections**: draw offers (**B2**), rated matchmaking (**B6**), premove (**B10**).

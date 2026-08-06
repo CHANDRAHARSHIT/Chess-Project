@@ -27,11 +27,13 @@ export type SessionStatus =
 /**
  * Clock state for a session.
  * Side-indexed, rules-blind.
- * Clocks do not run during WAITING or READY.
+ * Clocks do not run during CREATED, WAITING, PAUSED, or a terminal state.
+ * M6: the side to move first is charged from READY (game start) onward, not just from
+ * PLAYING (their first move) — see SessionManager.notifyAllPresent()'s M6 comment.
  */
 export interface SessionClock {
   readonly remainingMs: readonly number[]; // index = side number
-  readonly lastMoveAt: number | null;      // wall-clock ms; null = not yet PLAYING
+  readonly lastMoveAt: number | null;      // wall-clock ms; null = not yet READY
 }
 
 /**
