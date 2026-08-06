@@ -10,7 +10,6 @@ import FailedPage from "../pages/FailedPage";
 import PremiumPage from "../pages/PremiumPage";
 import OpeningsPage from "../pages/OpeningsPage";
 import Chess960Page from "../pages/Chess960Page";
-import ComingSoonPage from "../pages/ComingSoonPage";
 import AboutPage from "../pages/AboutPage";
 import PrivacyPolicyPage from "../pages/PrivacyPolicyPage";
 import TermsOfServicePage from "../pages/TermsOfServicePage";
@@ -31,8 +30,8 @@ import SubscriptionsPage from "../pages/SubscriptionsPage";
 import VariantsPage from "../pages/VariantsPage";
 import LessonsPage from "../pages/LessonsPage";
 import LessonViewerPage from "../pages/LessonViewerPage";
-import { BarChart2 } from "lucide-react";
 import QuickGamePage from "../pages/QuickGamePage";
+import StatsPage from "../pages/StatsPage";
 
 export interface RouteConfig {
   path: string;
@@ -131,13 +130,7 @@ export const mainRoutes: RouteConfig[] = [
   },
   {
     path: "/stats",
-    element: (
-      <ComingSoonPage
-        featureName="Your Stats"
-        description="Track your progress with detailed performance analytics - win/loss history, rating trends, puzzle accuracy, and opening success rates."
-        icon={BarChart2}
-      />
-    ),
+    element: <StatsPage />,
     title: "Stats | XLChess",
   },
   {
