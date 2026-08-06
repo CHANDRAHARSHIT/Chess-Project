@@ -93,7 +93,8 @@ export function useLogoAnimation(): LogoAnimationRefs {
       if (!isPointer) {
         // Scale pulse every 5 seconds — subtle, battery-friendly
         const pulseTween = gsap.to(logo, {
-          scale: 1.04,
+          scaleX: 1.04,
+          scaleY: 1.04,
           duration: 0.5,
           ease: 'elastic.out(1, 0.5)',
           repeat: -1,
@@ -119,7 +120,8 @@ export function useLogoAnimation(): LogoAnimationRefs {
       // ── quickTo setters for silky 60fps ────────────────────────────────
       const setRotateX  = gsap.quickTo(logo, 'rotateX', { duration: QUICK_DURATION, ease: QUICK_EASE });
       const setRotateY  = gsap.quickTo(logo, 'rotateY', { duration: QUICK_DURATION, ease: QUICK_EASE });
-      const setScale    = gsap.quickTo(logo, 'scale',   { duration: 0.35,           ease: 'back.out(2)' });
+      const setScaleX   = gsap.quickTo(logo, 'scaleX',  { duration: 0.35,           ease: 'back.out(2)' });
+      const setScaleY   = gsap.quickTo(logo, 'scaleY',  { duration: 0.35,           ease: 'back.out(2)' });
       const setBrightness = (val: number) =>
         gsap.to(logo, { filter: `brightness(${val}) drop-shadow(0 0 ${val > 1 ? 10 : 0}px rgba(99,102,241,${val > 1 ? 0.45 : 0}))`, duration: 0.3, overwrite: 'auto' });
 
@@ -192,7 +194,8 @@ export function useLogoAnimation(): LogoAnimationRefs {
 
       // ── mouseenter: hover energy boost ────────────────────────────────
       container.addEventListener('mouseenter', () => {
-        setScale(SCALE_HOVER);
+        setScaleX(SCALE_HOVER);
+        setScaleY(SCALE_HOVER);
         setBrightness(1.15);
         // Pause float briefly so it doesn't fight the scale
         floatTween.timeScale(0.4);
@@ -202,7 +205,8 @@ export function useLogoAnimation(): LogoAnimationRefs {
       container.addEventListener('mouseleave', () => {
         setRotateX(0);
         setRotateY(0);
-        setScale(SCALE_REST);
+        setScaleX(SCALE_REST);
+        setScaleY(SCALE_REST);
         setBrightness(1);
         floatTween.timeScale(1); // restore float speed
         lastTime = 0; // reset velocity tracking

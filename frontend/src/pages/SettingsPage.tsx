@@ -392,7 +392,7 @@ export default function SettingsPage() {
                                 : "ring-1 ring-brand-border/40 hover:ring-brand-border/80 hover:bg-brand-text/[0.03]"
                             }`}
                           >
-                            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg bg-[#4d4536] flex items-center justify-center gap-1.5 p-2">
+                            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg bg-brand-accent/30 flex items-center justify-center gap-1.5 p-2">
                               <div className="w-6 h-6 sm:w-7 sm:h-7">
                                 {set.pieces.bK()}
                               </div>
