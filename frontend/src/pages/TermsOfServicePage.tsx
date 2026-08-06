@@ -46,26 +46,19 @@ export default function TermsOfServicePage() {
   }, []);
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] bg-brand-bg text-brand-text flex flex-col pt-6 pb-12">
-      {/* Back to Home */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full mb-6 sm:mb-8">
-        <button
-          type="button"
-          onClick={() => { soundManager.playButtonClick(); navigate("/"); }}
-          className="inline-flex items-center gap-2 text-brand-secondary hover:text-brand-text transition-colors duration-200 font-sans text-sm font-semibold cursor-pointer group"
-          aria-label="Back to Home"
-        >
-          <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
-          <span>Back to Home</span>
-        </button>
-      </div>
-      <div className="flex-1">
+    <div className="min-h-[calc(100vh-4rem)] bg-brand-bg text-brand-text flex flex-col">
       {/* Hero Banner */}
-      <div className="relative overflow-hidden border-b border-brand-border/30">
-        <div className="absolute inset-0 bg-gradient-to-br from-brand-accent/5 via-transparent to-brand-accent/3 pointer-events-none" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[250px] bg-brand-accent/5 rounded-full blur-[100px] pointer-events-none" />
-        <div className="max-w-4xl mx-auto px-6 py-14 sm:py-18 relative z-10">
-          <motion.div
+      <div className="relative overflow-hidden border-b border-brand-border/30">        <div className="max-w-4xl mx-auto px-6 py-14 sm:py-18 relative z-10">
+          <button
+              type="button"
+              onClick={() => { soundManager.playButtonClick(); navigate("/"); }}
+              className="inline-flex items-center gap-2 text-brand-secondary hover:text-brand-text transition-colors duration-200 font-sans text-sm font-semibold cursor-pointer group mb-8"
+              aria-label="Back to Home"
+            >
+              <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+              <span>Back to Home</span>
+            </button>
+            <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -266,7 +259,6 @@ export default function TermsOfServicePage() {
             business days.
           </p>
         </Section>
-      </div>
       </div>
     </div>
   );

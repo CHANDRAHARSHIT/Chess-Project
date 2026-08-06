@@ -8,19 +8,15 @@ datasource db {
 }
 
 model User {
-  id                   String           @id @default(cuid())
+  id                   String         @id @default(cuid())
   name                 String?
-  email                String           @unique
+  email                String         @unique
   emailVerified        DateTime?
   image                String?
-  createdAt            DateTime         @default(now())
-  stripeTestCustomerId String?          @unique
-  stripeLiveCustomerId String?          @unique
+  createdAt            DateTime       @default(now())
+  stripeTestCustomerId String?        @unique
+  stripeLiveCustomerId String?        @unique
   accounts             Account[]
-  billingProfile       BillingProfile?
-  customLinks          CustomLink[]
-  LessonProgress       LessonProgress[]
-  payments             Payment[]
   sessions             Session[]
   subscriptions        Subscription[]
 }
@@ -99,7 +95,6 @@ model Payment {
   createdAt              DateTime      @default(now())
   updatedAt              DateTime      @updatedAt
   subscription           Subscription? @relation(fields: [subscriptionId], references: [id])
-  user                   User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model BillingProfile {
@@ -116,24 +111,22 @@ model BillingProfile {
   vatId        String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Product {
-  id                 String           @id @default(cuid())
-  identifier         String           @unique
+  id                 String         @id @default(cuid())
+  identifier         String         @unique
   name               String
   description        String?
   priceAmount        Int
-  currency           String           @default("usd")
+  currency           String         @default("usd")
   billingInterval    String
-  isActive           Boolean          @default(true)
-  displayOrder       Int              @default(0)
-  createdAt          DateTime         @default(now())
-  updatedAt          DateTime         @updatedAt
-  gatewayTestPriceId String?          @unique
-  gatewayLivePriceId String?          @unique
-  features           ProductFeature[]
+  isActive           Boolean        @default(true)
+  displayOrder       Int            @default(0)
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+  gatewayTestPriceId String?        @unique
+  gatewayLivePriceId String?        @unique
   subscriptions      Subscription[]
 }
 
@@ -144,7 +137,6 @@ model ProductFeature {
   featureValue String   @default("true")
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-  product      Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@unique([productId, featureKey])
 }
@@ -159,7 +151,6 @@ model WebhookEvent {
   createdAt      DateTime @default(now())
 }
 
-                        
 model Opening {
   id    String @id @default(cuid())
   eco   String
@@ -194,26 +185,23 @@ model Course {
   published   Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime
-  Lesson      Lesson[]
 }
 
 model Lesson {
-  id             String           @id
-  courseId       String
-  slug           String           @unique
-  title          String
-  description    String?
-  thumbnail      String?
-  difficulty     String?
-  estimatedTime  Int              @default(0)
-  category       String?
-  published      Boolean          @default(false)
-  content        Json
-  settings       Json?
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime
-  Course         Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  LessonProgress LessonProgress[]
+  id            String   @id
+  courseId      String
+  slug          String   @unique
+  title         String
+  description   String?
+  thumbnail     String?
+  difficulty    String?
+  estimatedTime Int      @default(0)
+  category      String?
+  published     Boolean  @default(false)
+  content       Json
+  settings      Json?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime
 }
 
 model LessonProgress {
@@ -227,10 +215,20 @@ model LessonProgress {
   xp          Int      @default(0)
   timeSpent   Int      @default(0)
   updatedAt   DateTime
-  Lesson      Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  User        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, lessonId])
+}
+
+model CustomLink {
+  id            String    @id @default(cuid())
+  userId        String
+  name          String
+  url           String
+  isArchived    Boolean   @default(false)
+  clickCount    Int       @default(0)
+  lastClickedAt DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }
 
 enum SubscriptionStatus {
@@ -241,19 +239,6 @@ enum SubscriptionStatus {
   UNPAID
   INCOMPLETE
   INCOMPLETE_EXPIRED
-}
-
-model CustomLink {
-  id            String    @id @default(cuid())
-  userId        String
-  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  name          String
-  url           String
-  isArchived    Boolean   @default(false)
-  clickCount    Int       @default(0)
-  lastClickedAt DateTime?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
 }
 
 enum PaymentStatus {
