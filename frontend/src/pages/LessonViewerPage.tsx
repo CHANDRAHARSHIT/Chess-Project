@@ -342,7 +342,7 @@ export default function LessonViewerPage() {
                   className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-accent to-amber-500 hover:brightness-110 text-brand-bg font-extrabold text-xs sm:text-sm transition-all duration-200 shadow-lg shadow-brand-accent/20 cursor-pointer animate-pulse"
                 >
                   <span>
-                    {isLastSegment ? "Complete Lesson" : "Move to Next Segment"}
+                    {isLastSegment ? "Complete Lesson" : "Next Segment"}
                   </span>
                   <ChevronRight className="w-4 h-4" />
                 </button>
