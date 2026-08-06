@@ -33,7 +33,8 @@ export type ObservabilityDomain =
   | "transport"
   | "variant"
   | "results"
-  | "http";
+  | "http"
+  | "bot";
 
 /**
  * A state-machine transition event.

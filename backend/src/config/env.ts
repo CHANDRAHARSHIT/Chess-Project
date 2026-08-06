@@ -47,6 +47,13 @@ export const env = {
   //   Must match the Vite dev proxy entry and the Vercel rewrite rule (if applicable).
   WS_PATH: process.env.WS_PATH ?? "/ws",
 
+  // Bot fallback (all optional — BOT_FALLBACK_ENABLED=false keeps current matchmaking behavior)
+  BOT_FALLBACK_ENABLED: process.env.BOT_FALLBACK_ENABLED === "true",
+  BOT_FALLBACK_DELAY_MS: (() => {
+    const parsed = Number(process.env.BOT_FALLBACK_DELAY_MS);
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : 10_000;
+  })(),
+
   // Rollbar error monitoring
   ROLLBAR_ACCESS_TOKEN: process.env.ROLLBAR_ACCESS_TOKEN!,
 };
