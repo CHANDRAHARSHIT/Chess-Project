@@ -31,3 +31,19 @@ backend/supabase
 *.sw?
 *.env
 /src/generated/prisma
+database_architecture_audit.md
+developer_handoff.md
+m4_implementation_plan.md
+m5_implementation_plan.md
+Phase 2.5.txt
+phase 3.1.md
+phase 3.2.md
+Phase 3.txt
+XLChess Phase 1.5.txt
+backend/src/contracts/README.md
+.claude/launch.json
+supabase/config.toml
+supabase/.gitignore
+.claude/settings.json
+matchmaking_README.md
+
