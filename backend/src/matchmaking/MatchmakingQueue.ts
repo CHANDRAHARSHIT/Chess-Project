@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import type { MatchDescriptor } from "../contracts/index.js";
+import type { MatchDescriptor, ParticipantAssignment } from "../contracts/index.js";
 import { emitTransition, reportError } from "../observability/index.js";
 import type { MatchTicket } from "./types.js";
 
@@ -212,6 +212,69 @@ export class MatchmakingQueue {
     }
 
     return null;
+  }
+
+  /**
+   * Matches the oldest WAITING ticket whose queue age is at least fallbackDelayMs with an
+   * already-acquired bot assignment. Bot selection and ticket ownership stay separate: the
+   * caller acquires and (on a null return) releases the bot — this method never creates a
+   * ticket for it, only consumes one existing human ticket.
+   *
+   * Mirrors tryPair()'s side/position/time-control generation and emitMatch() seam exactly,
+   * except only the human ticket transitions to MATCHED and provenance/rated reflect a bot game.
+   * Returns null without mutating anything if no ticket is old enough yet.
+   */
+  matchStaleTicketWithBot(bot: ParticipantAssignment, fallbackDelayMs: number): MatchDescriptor | null {
+    const now = Date.now();
+
+    let oldest: MatchTicket | null = null;
+    for (const ticket of this.tickets.values()) {
+      if (ticket.status !== "WAITING") continue;
+      if (now - ticket.enqueuedAt < fallbackDelayMs) continue;
+      if (!oldest || ticket.enqueuedAt < oldest.enqueuedAt) oldest = ticket;
+    }
+
+    if (!oldest) return null;
+
+    const matchId = crypto.randomUUID();
+
+    // Random side assignment (0 = White, 1 = Black)
+    const side0First = crypto.randomInt(0, 2) === 0;
+    const humanSide = side0First ? 0 : 1;
+    const botSide = side0First ? 1 : 0;
+
+    // Generate positionId 0..959 for Chess960
+    const positionId = crypto.randomInt(0, 960);
+
+    const descriptor: MatchDescriptor = {
+      matchId,
+      participants: [
+        { userId: oldest.userId, side: humanSide, name: oldest.name, image: oldest.image },
+        { userId: bot.userId, side: botSide, name: bot.name, image: bot.image },
+      ],
+      cardinality: { sides: 2, perSide: 1 },
+      variantId: oldest.variantId,
+      variantParams: { positionId },
+      timeControl: { initialSeconds: 300, incrementSeconds: 3, label: "5+3 Blitz" },
+      rated: false,
+      provenance: "bot",
+      createdAt: new Date(now).toISOString(),
+    };
+
+    oldest.status = "MATCHED";
+    oldest.matchedAt = now;
+    oldest.descriptor = descriptor;
+
+    emitTransition({
+      domain: "matchmaking",
+      from: "WAITING",
+      to: "MATCHED",
+      context: { ticketId: oldest.ticketId, userId: oldest.userId, matchId },
+    });
+
+    this.emitMatch(descriptor);
+
+    return descriptor;
   }
 
   /**
