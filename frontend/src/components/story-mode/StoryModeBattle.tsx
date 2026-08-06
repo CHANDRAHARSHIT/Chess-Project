@@ -48,7 +48,7 @@ interface StoryModeBattleProps {
   nodeId: number;
   difficulty: DifficultyLevel;
   onVictory: () => void;
-  onDefeat: () => void;
+  onDefeat?: () => void;
   onRetreat: () => void;
 }
 
@@ -451,8 +451,6 @@ export default function StoryModeBattle({
                   squareStyles: customSquareStyles,
                   boardStyle: { borderRadius: "0px" },
                   showNotation: false,
-                  customArrows,
-                  customArrowColor: "rgba(34,197,94,0.6)",
                   arePiecesDraggable: battleResult === "playing" && !isEditMode,
                 }}
               />
@@ -708,7 +706,7 @@ export default function StoryModeBattle({
                   </button>
                 )}
                 <button
-                  onClick={battleResult === "victory" ? onVictory : onRetreat}
+                  onClick={battleResult === "victory" ? onVictory : (onDefeat || onRetreat)}
                   className="flex items-center gap-2 px-5 py-2.5 rounded-xl border text-sm font-medium cursor-pointer transition-all"
                   style={{
                     borderColor: battleResult === "victory" ? "rgba(34, 197, 94, 0.4)" : "rgba(120,120,140,0.4)",
