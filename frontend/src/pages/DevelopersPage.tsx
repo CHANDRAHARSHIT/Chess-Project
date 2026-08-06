@@ -1,5 +1,7 @@
 import { motion, type Variants } from "framer-motion";
-import { Code2, Zap, Shield, BookOpen, GitBranch, Globe } from "lucide-react";
+import { useNavigate } from "react-router";
+import { Code2, Zap, Shield, BookOpen, GitBranch, Globe, ArrowLeft } from "lucide-react";
+import { soundManager } from "../utils/SoundManager";
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 16 },
@@ -106,13 +108,29 @@ const capabilities = [
 ];
 
 export default function DevelopersPage() {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-brand-bg text-brand-text">
       {/* Hero Banner */}
       <div className="relative overflow-hidden border-b border-brand-border/30">
         <div className="absolute inset-0 bg-gradient-to-br from-brand-accent/5 via-transparent to-brand-accent/3 pointer-events-none" />
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[300px] bg-brand-accent/5 rounded-full blur-[120px] pointer-events-none" />
-        <div className="max-w-4xl mx-auto px-6 py-16 sm:py-20 relative z-10">
+        <div className="max-w-4xl mx-auto px-6 pt-6 pb-16 sm:pb-20 relative z-10">
+          <div className="mb-6">
+            <button
+              type="button"
+              onClick={() => {
+                soundManager.playButtonClick();
+                navigate("/");
+              }}
+              className="inline-flex items-center gap-2 text-brand-secondary hover:text-brand-text transition-colors duration-200 font-sans text-sm font-semibold cursor-pointer group"
+              aria-label="Back to Home"
+            >
+              <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+              <span>Back to Home</span>
+            </button>
+          </div>
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}

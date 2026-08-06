@@ -4,7 +4,9 @@
  * V1 placeholder dashboard for /stats.
  * All data is hardcoded — no backend integration required.
  */
-import { Swords, TrendingUp, Target, Trophy, ChevronRight } from "lucide-react";
+import { useNavigate } from "react-router";
+import { Swords, TrendingUp, Target, Trophy, ChevronRight, ArrowLeft } from "lucide-react";
+import { soundManager } from "../utils/SoundManager";
 
 // ─── Dummy Data ───────────────────────────────────────────────────────────────
 
@@ -230,9 +232,27 @@ function MatchRow({ match }: { match: (typeof RECENT_MATCHES)[number] }) {
 // ─── Page ────────────────────────────────────────────────────────────────────
 
 export default function StatsPage() {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-brand-bg text-brand-text font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 flex flex-col gap-8">
+        {/* Back Navigation */}
+        <div>
+          <button
+            type="button"
+            onClick={() => {
+              soundManager.playButtonClick();
+              navigate("/");
+            }}
+            className="inline-flex items-center gap-2 text-brand-secondary hover:text-brand-text transition-colors duration-200 font-sans text-sm font-semibold cursor-pointer group"
+            aria-label="Back to Home"
+          >
+            <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+            <span>Back to Home</span>
+          </button>
+        </div>
+
         {/* ── Page Header ───────────────────────────────────────────── */}
         <div className="flex items-center justify-between">
           <div className="flex flex-col gap-1">
