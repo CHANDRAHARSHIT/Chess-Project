@@ -2,12 +2,12 @@
  * StoryModeRestSite.tsx
  *
  * Fireplace / rest site screen shown when the player lands on a campfire node.
- * This is a "Coming Soon" placeholder with an animated campfire visual.
- * Future versions will have healing, upgrade, and strategy review mechanics.
+ * Features an interactive resting sequence with healing animations before continuing.
  */
 
-import { motion } from "framer-motion";
-import { Flame, Clock, ArrowRight, RotateCcw } from "lucide-react";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Flame, ArrowRight, RotateCcw, Heart, Sparkles } from "lucide-react";
 
 interface StoryModeRestSiteProps {
   nodeLabel: string;
@@ -22,6 +22,18 @@ export default function StoryModeRestSite({
   onComplete,
   onRetreat,
 }: StoryModeRestSiteProps) {
+  const [isResting, setIsResting] = useState(false);
+  const [hasRested, setHasRested] = useState(false);
+
+  const handleRest = () => {
+    setIsResting(true);
+    // Simulate rest sequence duration
+    setTimeout(() => {
+      setIsResting(false);
+      setHasRested(true);
+    }, 2000);
+  };
+
   return (
     <motion.div
       className="min-h-[60vh] flex items-center justify-center p-4 sm:p-6"
@@ -31,16 +43,22 @@ export default function StoryModeRestSite({
       transition={{ duration: 0.5 }}
     >
       {/* Warm ambient glow */}
-      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] max-w-[700px] h-[400px] bg-gradient-to-t from-orange-500/10 via-amber-500/5 to-transparent rounded-full blur-[120px] pointer-events-none z-0" />
+      <div
+        className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] max-w-[700px] h-[400px] bg-gradient-to-t from-orange-500/10 via-amber-500/5 to-transparent rounded-full blur-[120px] pointer-events-none z-0"
+        style={{
+          opacity: isResting ? 0.8 : hasRested ? 0.4 : 0.6,
+          transition: "opacity 2s ease",
+        }}
+      />
 
       <motion.div
-        className="relative z-10 max-w-lg w-full flex flex-col items-center gap-6 py-8 px-6 rounded-2xl border border-orange-500/20 bg-orange-500/5 backdrop-blur-sm"
+        className="relative z-10 max-w-lg w-full flex flex-col items-center gap-6 py-8 px-4 sm:px-6 rounded-2xl border border-orange-500/20 bg-orange-500/5 backdrop-blur-sm mx-auto"
         initial={{ scale: 0.9, y: 20 }}
         animate={{ scale: 1, y: 0 }}
         transition={{ duration: 0.5, type: "spring" }}
       >
         {/* Location tag */}
-        <span className="text-xs font-mono text-orange-400/70 tracking-widest uppercase">
+        <span className="text-xs font-mono text-orange-400/70 tracking-widest uppercase text-center">
           {nodeLabel}
         </span>
 
@@ -69,79 +87,101 @@ export default function StoryModeRestSite({
             </motion.div>
           </motion.div>
 
-          {/* Floating embers */}
-          {[...Array(4)].map((_, i) => (
+          {/* Floating embers / healing particles */}
+          {[...Array(isResting ? 12 : 4)].map((_, i) => (
             <motion.div
               key={i}
-              className="absolute w-1 h-1 rounded-full bg-orange-400/60"
+              className="absolute w-1.5 h-1.5 rounded-full"
               style={{
-                left: `${40 + Math.random() * 20}%`,
-                bottom: "60%",
+                left: `${30 + Math.random() * 40}%`,
+                bottom: "50%",
+                backgroundColor: isResting ? "#4ade80" : "#fb923c",
               }}
+              initial={{ opacity: 0, scale: 0 }}
               animate={{
-                y: [0, -40 - Math.random() * 30],
-                x: [0, (Math.random() - 0.5) * 20],
+                y: [0, -60 - Math.random() * 60],
+                x: [0, (Math.random() - 0.5) * 40],
                 opacity: [0.8, 0],
-                scale: [1, 0.3],
+                scale: [1, 0.2],
               }}
               transition={{
-                duration: 1.5 + Math.random(),
+                duration: isResting ? 1 + Math.random() : 1.5 + Math.random(),
                 repeat: Infinity,
-                delay: i * 0.4,
+                delay: i * (isResting ? 0.1 : 0.4),
                 ease: "easeOut",
               }}
             />
           ))}
         </div>
 
-        {/* Heading */}
-        <h2 className="text-2xl font-display font-bold text-brand-text">
-          Rest Site
-        </h2>
+        <AnimatePresence mode="wait">
+          {!hasRested ? (
+            <motion.div
+              key="resting-state"
+              className="flex flex-col items-center gap-4 w-full"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+            >
+              <h2 className="text-2xl font-display font-bold text-brand-text">
+                Rest Site
+              </h2>
+              <p className="text-sm text-brand-secondary text-center leading-relaxed max-w-sm px-2">
+                {isResting
+                  ? "You rest by the fire, letting the warmth heal your weary spirit…"
+                  : nodeDescription}
+              </p>
 
-        {/* Description */}
-        <p className="text-sm text-brand-secondary text-center leading-relaxed max-w-sm">
-          {nodeDescription}
-        </p>
+              {/* Divider */}
+              <div className="w-24 h-px bg-gradient-to-r from-transparent via-orange-500/30 to-transparent my-2" />
 
-        {/* Coming Soon badge */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.3, duration: 0.4 }}
-          className="flex items-center gap-1.5 px-3 py-1 rounded-full border border-orange-500/30 bg-orange-500/5"
-        >
-          <Clock className="w-3 h-3 text-orange-400" />
-          <span className="text-xs font-mono text-orange-400 uppercase tracking-widest font-semibold">
-            Coming Soon
-          </span>
-        </motion.div>
+              {/* Actions */}
+              <div className="flex gap-3 flex-wrap justify-center w-full">
+                <button
+                  onClick={onRetreat}
+                  disabled={isResting}
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-brand-border/60 text-brand-secondary hover:text-brand-text hover:border-brand-accent/40 transition-all duration-200 text-sm font-medium cursor-pointer disabled:opacity-30"
+                >
+                  <RotateCcw className="w-4 h-4" />
+                  Retreat
+                </button>
+                <button
+                  onClick={handleRest}
+                  disabled={isResting}
+                  className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-orange-500/20 border border-orange-500/40 text-orange-300 hover:bg-orange-500/30 hover:border-orange-500/60 transition-all duration-200 text-sm font-medium cursor-pointer disabled:opacity-30 disabled:scale-95"
+                >
+                  <Heart className={`w-4 h-4 ${isResting ? "animate-pulse" : ""}`} />
+                  {isResting ? "Resting…" : "Rest"}
+                </button>
+              </div>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="rested-state"
+              className="flex flex-col items-center gap-4 w-full"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <h2 className="text-2xl font-display font-bold text-green-400 flex items-center gap-2">
+                <Sparkles className="w-6 h-6" /> Rested
+              </h2>
+              <p className="text-sm text-brand-secondary text-center leading-relaxed max-w-sm px-2">
+                Your focus is renewed. You are ready to face the challenges ahead.
+              </p>
 
-        <p className="text-xs text-brand-secondary/60 text-center max-w-xs">
-          Healing, strategy review, and upgrade mechanics will be added in a
-          future update.
-        </p>
+              {/* Divider */}
+              <div className="w-24 h-px bg-gradient-to-r from-transparent via-green-500/30 to-transparent my-2" />
 
-        {/* Divider */}
-        <div className="w-24 h-px bg-gradient-to-r from-transparent via-orange-500/30 to-transparent" />
-
-        {/* Actions */}
-        <div className="flex gap-3">
-          <button
-            onClick={onRetreat}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-brand-border/60 text-brand-secondary hover:text-brand-text hover:border-brand-accent/40 transition-all duration-200 text-sm font-medium cursor-pointer"
-          >
-            <RotateCcw className="w-4 h-4" />
-            Back to Map
-          </button>
-          <button
-            onClick={onComplete}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-orange-500/20 border border-orange-500/40 text-orange-300 hover:bg-orange-500/30 hover:border-orange-500/60 transition-all duration-200 text-sm font-medium cursor-pointer"
-          >
-            Rest & Continue
-            <ArrowRight className="w-4 h-4" />
-          </button>
-        </div>
+              <button
+                onClick={onComplete}
+                className="flex items-center gap-2 px-6 py-3 rounded-xl bg-green-500/20 border border-green-500/40 text-green-300 hover:bg-green-500/30 hover:border-green-500/60 transition-all duration-200 text-sm font-medium cursor-pointer"
+              >
+                Continue Journey
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.div>
     </motion.div>
   );

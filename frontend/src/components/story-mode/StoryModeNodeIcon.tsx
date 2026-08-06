@@ -23,7 +23,7 @@ interface StoryModeNodeIconProps {
 /** SVG icon per node type */
 function NodeSVG({ type, status }: { type: StoryNodeType; status: NodeStatus }) {
   const isCompleted = status === "completed";
-  const size = type === "boss" ? 28 : type === "start" ? 26 : 22;
+  const size = type === "boss" ? 40 : type === "start" ? 38 : 32;
 
   if (isCompleted) {
     // Checkmark for completed nodes
@@ -105,6 +105,13 @@ function getNodeColors(type: StoryNodeType, status: NodeStatus) {
   const isLocked = status === "locked";
   const isCompleted = status === "completed";
 
+  // Base golden colors for all unlocked/completed icons
+  const baseGolden = {
+    text: "#D4AF6E",
+    border: "rgba(212, 175, 110, 0.7)",
+    bg: "rgba(212, 175, 110, 0.15)",
+  };
+
   if (isLocked) {
     return {
       bg: "rgb(var(--obsidian-mid-rgb) / 0.5)",
@@ -115,66 +122,39 @@ function getNodeColors(type: StoryNodeType, status: NodeStatus) {
     };
   }
 
+  // Determine glow color based on type
+  let glowColor = "rgba(212, 175, 110, 0.4)";
+  let shadow = "0 0 25px rgba(212, 175, 110, 0.5)";
+
   if (isCompleted) {
-    return {
-      bg: "rgba(34, 197, 94, 0.15)",
-      border: "rgba(34, 197, 94, 0.5)",
-      text: "#22c55e",
-      glow: "rgba(34, 197, 94, 0.2)",
-      shadow: "0 0 20px rgba(34, 197, 94, 0.3)",
-    };
+    glowColor = "rgba(34, 197, 94, 0.4)"; // Green
+    shadow = "0 0 25px rgba(34, 197, 94, 0.5)";
+  } else {
+    switch (type) {
+      case "monster":
+        glowColor = "rgba(245, 158, 11, 0.4)"; // Amber
+        shadow = "0 0 25px rgba(245, 158, 11, 0.6)";
+        break;
+      case "mystery":
+        glowColor = "rgba(168, 85, 247, 0.4)"; // Purple
+        shadow = "0 0 25px rgba(168, 85, 247, 0.6)";
+        break;
+      case "fireplace":
+        glowColor = "rgba(6, 182, 212, 0.4)"; // Cyan
+        shadow = "0 0 25px rgba(6, 182, 212, 0.6)";
+        break;
+      case "boss":
+        glowColor = "rgba(239, 68, 68, 0.4)"; // Red
+        shadow = "0 0 30px rgba(239, 68, 68, 0.7)";
+        break;
+    }
   }
 
-  switch (type) {
-    case "start":
-      return {
-        bg: "rgba(99, 102, 241, 0.15)",
-        border: "rgba(99, 102, 241, 0.6)",
-        text: "#818cf8",
-        glow: "rgba(99, 102, 241, 0.3)",
-        shadow: "0 0 25px rgba(99, 102, 241, 0.4)",
-      };
-    case "monster":
-      return {
-        bg: "rgba(239, 68, 68, 0.12)",
-        border: "rgba(239, 68, 68, 0.5)",
-        text: "#f87171",
-        glow: "rgba(239, 68, 68, 0.25)",
-        shadow: "0 0 25px rgba(239, 68, 68, 0.35)",
-      };
-    case "mystery":
-      return {
-        bg: "rgba(168, 85, 247, 0.12)",
-        border: "rgba(168, 85, 247, 0.5)",
-        text: "#c084fc",
-        glow: "rgba(168, 85, 247, 0.25)",
-        shadow: "0 0 25px rgba(168, 85, 247, 0.35)",
-      };
-    case "fireplace":
-      return {
-        bg: "rgba(251, 146, 60, 0.12)",
-        border: "rgba(251, 146, 60, 0.5)",
-        text: "#fb923c",
-        glow: "rgba(251, 146, 60, 0.25)",
-        shadow: "0 0 25px rgba(251, 146, 60, 0.35)",
-      };
-    case "boss":
-      return {
-        bg: "rgba(212, 175, 110, 0.15)",
-        border: "rgba(212, 175, 110, 0.7)",
-        text: "#D4AF6E",
-        glow: "rgba(212, 175, 110, 0.3)",
-        shadow: "0 0 30px rgba(212, 175, 110, 0.5)",
-      };
-    default:
-      return {
-        bg: "rgba(40, 40, 50, 0.6)",
-        border: "rgba(80, 80, 100, 0.3)",
-        text: "#888",
-        glow: "transparent",
-        shadow: "none",
-      };
-  }
+  return {
+    ...baseGolden,
+    glow: glowColor,
+    shadow,
+  };
 }
 
 export default function StoryModeNodeIcon({
@@ -188,74 +168,94 @@ export default function StoryModeNodeIcon({
   const colors = getNodeColors(type, status);
   const isClickable = status === "available" || status === "active";
   const isAvailable = status === "available";
-  const nodeSize = type === "boss" ? 64 : type === "start" ? 58 : 52;
+  const nodeSize = type === "boss" ? 76 : type === "start" ? 70 : 64;
 
   return (
-    <motion.button
-      onClick={isClickable ? onClick : undefined}
-      disabled={!isClickable}
-      className="absolute flex flex-col items-center gap-1.5 group"
+    <div
+      className="absolute"
       style={{
         left: `${x}%`,
         top: `${y}%`,
         transform: "translate(-50%, -50%)",
         zIndex: status === "active" ? 20 : 10,
-        cursor: isClickable ? "pointer" : "default",
       }}
-      initial={{ scale: 0, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      transition={{ delay: 0.1 + y * 0.005, duration: 0.5, type: "spring" }}
-      whileHover={isClickable ? { scale: 1.12 } : undefined}
-      whileTap={isClickable ? { scale: 0.95 } : undefined}
     >
-      {/* Outer glow ring for available nodes */}
-      {isAvailable && (
+      <motion.button
+        onClick={isClickable ? onClick : undefined}
+        disabled={!isClickable}
+        className="flex flex-col items-center gap-1.5 group"
+        style={{
+          cursor: isClickable ? "pointer" : "default",
+        }}
+        initial={{ scale: 0, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ delay: 0.1 + y * 0.005, duration: 0.5, type: "spring" }}
+        whileHover={isClickable ? { scale: 1.12 } : undefined}
+        whileTap={isClickable ? { scale: 0.95 } : undefined}
+      >
         <motion.div
-          className="absolute rounded-full"
-          style={{
-            width: nodeSize + 16,
-            height: nodeSize + 16,
-            background: colors.glow,
-            filter: "blur(8px)",
-          }}
-          animate={{
-            scale: [1, 1.3, 1],
-            opacity: [0.5, 0.2, 0.5],
-          }}
-          transition={{
-            duration: 2,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
-      )}
+          className="flex flex-col items-center gap-1.5"
+          animate={isAvailable || status === "active" ? { y: [0, -4, 0] } : {}}
+          transition={
+            isAvailable || status === "active"
+              ? { duration: 3, repeat: Infinity, ease: "easeInOut", delay: Math.random() }
+              : {}
+          }
+        >
+          {/* Outer glow ring for available nodes */}
+          {isAvailable && (
+            <motion.div
+              className="absolute rounded-full"
+              style={{
+                width: nodeSize + 16,
+                height: nodeSize + 16,
+                background: colors.glow,
+                filter: "blur(8px)",
+                top: "50%",
+                left: "50%",
+                x: "-50%",
+                y: "-50%",
+              }}
+              animate={{
+                scale: [1, 1.3, 1],
+                opacity: [0.5, 0.2, 0.5],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            />
+          )}
 
-      {/* Node circle */}
-      <div
-        className="relative flex items-center justify-center rounded-full transition-all duration-300"
-        style={{
-          width: nodeSize,
-          height: nodeSize,
-          background: colors.bg,
-          border: `2px solid ${colors.border}`,
-          color: colors.text,
-          boxShadow: colors.shadow,
-          backdropFilter: "blur(8px)",
-        }}
-      >
-        <NodeSVG type={type} status={status} />
-      </div>
+          {/* Node circle */}
+          <div
+            className="relative flex items-center justify-center rounded-full transition-all duration-300"
+            style={{
+              width: nodeSize,
+              height: nodeSize,
+              background: colors.bg,
+              border: `2px solid ${colors.border}`,
+              color: colors.text,
+              boxShadow: colors.shadow,
+              backdropFilter: "blur(8px)",
+            }}
+          >
+            <NodeSVG type={type} status={status} />
+          </div>
 
-      {/* Label */}
-      <span
-        className="text-[10px] font-mono font-semibold tracking-wide whitespace-nowrap max-w-[100px] truncate text-center transition-opacity duration-300"
-        style={{
-          color: status === "locked" ? "rgb(var(--text-secondary-rgb) / 0.35)" : colors.text,
-          opacity: status === "locked" ? 0.4 : 0.9,
-        }}
-      >
-        {label}
-      </span>
-    </motion.button>
+          {/* Label */}
+          <span
+            className="text-[10px] font-mono font-semibold tracking-wide whitespace-nowrap max-w-[100px] truncate text-center transition-opacity duration-300"
+            style={{
+              color: status === "locked" ? "rgb(var(--text-secondary-rgb) / 0.35)" : colors.text,
+              opacity: status === "locked" ? 0.4 : 0.9,
+            }}
+          >
+            {label}
+          </span>
+        </motion.div>
+      </motion.button>
+    </div>
   );
 }

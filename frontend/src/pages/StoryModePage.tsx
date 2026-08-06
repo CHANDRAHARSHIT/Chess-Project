@@ -6,13 +6,27 @@
  */
 
 import { motion } from "framer-motion";
-import { Swords } from "lucide-react";
+import { Swords, ArrowLeft } from "lucide-react";
 import StoryModeMap from "../components/story-mode/StoryModeMap";
+import { useNavigate } from "react-router";
 
 export default function StoryModePage() {
+  const navigate = useNavigate();
+
   return (
-    <div className="min-h-screen text-brand-text flex flex-col">
-      <main className="flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
+    <div className="min-h-screen text-brand-text flex flex-col relative">
+      {/* Back button */}
+      <div className="absolute top-6 left-4 sm:left-8 z-10">
+        <button
+          onClick={() => navigate("/")}
+          className="flex items-center gap-2 text-brand-secondary hover:text-brand-text transition-all text-sm font-mono cursor-pointer"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to Home
+        </button>
+      </div>
+
+      <main className="flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 py-12 sm:py-10">
         {/* Header */}
         <motion.div
           className="flex flex-col items-center gap-4 mb-8 text-center"
@@ -31,7 +45,7 @@ export default function StoryModePage() {
 
           <div>
             <h1 className="text-3xl sm:text-4xl font-display font-extrabold tracking-tight">
-              Story Mode
+              Odyssey
             </h1>
             <p className="text-sm text-brand-secondary mt-2 max-w-md leading-relaxed">
               Embark on a chess adventure! Battle AI opponents, uncover

@@ -6,7 +6,7 @@
  * rest site screens. Manages game state (current node, completed nodes).
  */
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { RotateCcw, Map } from "lucide-react";
 import {
@@ -18,6 +18,7 @@ import StoryModeMapCanvas from "./StoryModeMapCanvas";
 import StoryModeBattle from "./StoryModeBattle";
 import StoryModeEncounter from "./StoryModeEncounter";
 import StoryModeRestSite from "./StoryModeRestSite";
+import { useSession } from "../../hooks/useSession";
 
 type ActiveView =
   | { kind: "map" }
@@ -26,26 +27,80 @@ type ActiveView =
   | { kind: "rest"; nodeId: number };
 
 export default function StoryModeMap() {
-  // ── Game state persisted in component (resets on page refresh) ─────────
-  const [completedNodes, setCompletedNodes] = useState<Set<number>>(
-    new Set([0]) // Start node is always completed
-  );
-  const [currentNodeId, setCurrentNodeId] = useState<number>(0);
+  const { session, status } = useSession();
+
+  // ── Game state persisted in component (resets on page refresh for guests) ──
+  const [completedNodes, setCompletedNodes] = useState<Set<number>>(new Set());
+  const [currentNodeId, setCurrentNodeId] = useState<number>(-1);
   const [activeView, setActiveView] = useState<ActiveView>({ kind: "map" });
   const [journeyComplete, setJourneyComplete] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  // ── Persistence Logic ────────────────────────────────────────────────
+  useEffect(() => {
+    if (status === "loading") return;
+
+    if (status === "authenticated" && session?.user?.id) {
+      const stored = localStorage.getItem(`storyProgress_${session.user.id}`);
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          setCompletedNodes(new Set(parsed.completedNodes || []));
+          setCurrentNodeId(parsed.currentNodeId ?? -1);
+          setJourneyComplete(parsed.journeyComplete ?? false);
+        } catch (e) {
+          console.error("Failed to parse story progress", e);
+        }
+      }
+    } else {
+      // Unauthenticated or guest: reset progress
+      setCompletedNodes(new Set());
+      setCurrentNodeId(-1);
+      setJourneyComplete(false);
+    }
+    setIsLoaded(true);
+  }, [status, session?.user?.id]);
+
+  useEffect(() => {
+    if (!isLoaded) return;
+
+    if (status === "authenticated" && session?.user?.id) {
+      const key = `storyProgress_${session.user.id}`;
+      localStorage.setItem(
+        key,
+        JSON.stringify({
+          completedNodes: Array.from(completedNodes),
+          currentNodeId,
+          journeyComplete,
+        })
+      );
+    }
+  }, [completedNodes, currentNodeId, journeyComplete, status, session?.user?.id, isLoaded]);
 
   // ── Node status calculation ───────────────────────────────────────────
   const getNodeStatus = useCallback(
     (id: number): NodeStatus => {
-      if (id === currentNodeId && !completedNodes.has(id)) return "active";
       if (completedNodes.has(id)) return "completed";
 
-      // Available if any of its predecessor nodes is completed
-      // (A node is a predecessor of this node if that node has this node in its edges)
-      const isReachable = STORY_MAP_NODES.some(
-        (n) => completedNodes.has(n.id) && n.edges.includes(id)
-      );
-      if (isReachable) return "available";
+      // If no nodes are completed, only the start node (0) is available
+      if (completedNodes.size === 0) {
+        if (id === 0) {
+          return id === currentNodeId ? "active" : "available";
+        }
+        return "locked";
+      }
+
+      if (id === currentNodeId) return "active";
+
+      // Single Path Logic:
+      // You can ONLY progress to edges of your current node,
+      // and ONLY if your current node has been completed!
+      if (currentNodeId !== -1 && completedNodes.has(currentNodeId)) {
+        const currentNode = STORY_MAP_NODES.find((n) => n.id === currentNodeId);
+        if (currentNode?.edges.includes(id)) {
+          return "available";
+        }
+      }
 
       return "locked";
     },
@@ -65,7 +120,7 @@ export default function StoryModeMap() {
 
       switch (node.type) {
         case "start":
-          // Start node — just mark as current and completed
+          // Legacy start node handling, though we now use monster as node 0
           setCompletedNodes((prev) => new Set([...prev, nodeId]));
           break;
         case "monster":
@@ -121,17 +176,23 @@ export default function StoryModeMap() {
 
   // ── Reset adventure ───────────────────────────────────────────────────
   const handleReset = useCallback(() => {
-    setCompletedNodes(new Set([0]));
-    setCurrentNodeId(0);
-    setActiveView({ kind: "map" });
-    setJourneyComplete(false);
-  }, []);
+    if (window.confirm("Are you sure you want to abandon this run and start over?")) {
+      setCompletedNodes(new Set());
+      setCurrentNodeId(-1);
+      setActiveView({ kind: "map" });
+      setJourneyComplete(false);
+      
+      // Explicitly clear from local storage immediately so it doesn't rely solely on the effect
+      if (status === "authenticated" && session?.user?.id) {
+        localStorage.removeItem(`storyProgress_${session.user.id}`);
+      }
+    }
+  }, [status, session?.user?.id]);
 
   // ── Progress ──────────────────────────────────────────────────────────
   const progress = useMemo(() => {
-    // Don't count start node
-    const totalNodes = STORY_MAP_NODES.length - 1;
-    const completedCount = completedNodes.size - 1; // minus start node
+    const totalNodes = STORY_MAP_NODES.length;
+    const completedCount = completedNodes.size;
     return Math.round((completedCount / totalNodes) * 100);
   }, [completedNodes]);
 
@@ -174,74 +235,78 @@ export default function StoryModeMap() {
               </button>
             </div>
 
-            {/* Map container */}
-            <div
-              className="relative w-full rounded-2xl border border-brand-border/30 overflow-hidden shadow-lg"
-              style={{
-                aspectRatio: "3 / 4",
-                background:
-                  "radial-gradient(ellipse at 50% 80%, rgba(99,102,241,0.06) 0%, transparent 60%), radial-gradient(ellipse at 20% 30%, rgba(168,85,247,0.04) 0%, transparent 50%), radial-gradient(ellipse at 80% 20%, rgba(212,175,110,0.06) 0%, transparent 50%), rgb(var(--obsidian-mid-rgb) / 0.4)",
-              }}
-            >
-              {/* Fog / atmosphere layers */}
+            {/* Map wrapper for scrolling */}
+            <div className="w-full h-[75vh] min-h-[500px] rounded-2xl border border-[#D4AF6E]/40 overflow-y-auto overflow-x-hidden shadow-lg relative bg-[rgb(var(--obsidian-mid-rgb)/0.4)] custom-scrollbar">
               <div
-                className="absolute inset-0 pointer-events-none"
+                className="relative w-full min-h-[900px] sm:min-h-[1100px] overflow-hidden"
                 style={{
-                  background:
-                    "linear-gradient(180deg, transparent 0%, rgb(var(--obsidian-rgb) / 0.08) 50%, rgb(var(--obsidian-rgb) / 0.18) 100%)",
+                  backgroundImage:
+                    "radial-gradient(ellipse at 50% 80%, rgba(99,102,241,0.15) 0%, transparent 60%), radial-gradient(ellipse at 20% 30%, rgba(168,85,247,0.1) 0%, transparent 50%), radial-gradient(ellipse at 80% 20%, rgba(212,175,110,0.15) 0%, transparent 50%), url('/map-bg.jpg')",
+                  backgroundSize: "auto, auto, auto, 400px",
+                  backgroundRepeat: "no-repeat, no-repeat, no-repeat, repeat",
+                  backgroundBlendMode: "screen, screen, screen, normal",
                 }}
-              />
-
-              {/* Animated ambient particles */}
-              {[...Array(8)].map((_, i) => (
-                <motion.div
-                  key={`particle-${i}`}
-                  className="absolute w-0.5 h-0.5 rounded-full bg-brand-accent/20"
+              >
+                {/* Fog / atmosphere layers */}
+                <div
+                  className="absolute inset-0 pointer-events-none"
                   style={{
-                    left: `${10 + Math.random() * 80}%`,
-                    top: `${10 + Math.random() * 80}%`,
-                  }}
-                  animate={{
-                    y: [0, -20, 0],
-                    opacity: [0, 0.6, 0],
-                  }}
-                  transition={{
-                    duration: 4 + Math.random() * 3,
-                    repeat: Infinity,
-                    delay: i * 0.7,
-                    ease: "easeInOut",
+                    background:
+                      "linear-gradient(180deg, transparent 0%, rgb(var(--obsidian-rgb) / 0.08) 50%, rgb(var(--obsidian-rgb) / 0.18) 100%)",
                   }}
                 />
-              ))}
 
-              {/* SVG path lines */}
-              <StoryModeMapCanvas
-                nodes={STORY_MAP_NODES}
-                getNodeStatus={getNodeStatus}
-              />
+                {/* Animated ambient particles */}
+                {[...Array(8)].map((_, i) => (
+                  <motion.div
+                    key={`particle-${i}`}
+                    className="absolute w-0.5 h-0.5 rounded-full bg-brand-accent/20"
+                    style={{
+                      left: `${10 + Math.random() * 80}%`,
+                      top: `${10 + Math.random() * 80}%`,
+                    }}
+                    animate={{
+                      y: [0, -20, 0],
+                      opacity: [0, 0.6, 0],
+                    }}
+                    transition={{
+                      duration: 4 + Math.random() * 3,
+                      repeat: Infinity,
+                      delay: i * 0.7,
+                      ease: "easeInOut",
+                    }}
+                  />
+                ))}
 
-              {/* Node icons */}
-              {STORY_MAP_NODES.map((node) => (
-                <StoryModeNodeIcon
-                  key={node.id}
-                  id={node.id}
-                  type={node.type}
-                  label={node.label}
-                  status={getNodeStatus(node.id)}
-                  x={node.x}
-                  y={node.y}
-                  onClick={() => handleNodeClick(node.id)}
+                {/* SVG path lines */}
+                <StoryModeMapCanvas
+                  nodes={STORY_MAP_NODES}
+                  getNodeStatus={getNodeStatus}
                 />
-              ))}
+
+                {/* Node icons */}
+                {STORY_MAP_NODES.map((node) => (
+                  <StoryModeNodeIcon
+                    key={node.id}
+                    id={node.id}
+                    type={node.type}
+                    label={node.label}
+                    status={getNodeStatus(node.id)}
+                    x={node.x}
+                    y={node.y}
+                    onClick={() => handleNodeClick(node.id)}
+                  />
+                ))}
+              </div>
             </div>
 
             {/* Legend */}
             <div className="flex flex-wrap items-center justify-center gap-4 mt-4 px-2">
               {[
-                { color: "#f87171", label: "Monster" },
-                { color: "#c084fc", label: "Mystery" },
-                { color: "#fb923c", label: "Rest Site" },
-                { color: "#D4AF6E", label: "Boss" },
+                { color: "#f59e0b", label: "Monster" },
+                { color: "#a855f7", label: "Mystery" },
+                { color: "#06b6d4", label: "Rest Site" },
+                { color: "#ef4444", label: "Boss" },
                 { color: "#22c55e", label: "Completed" },
               ].map((item) => (
                 <div

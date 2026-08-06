@@ -88,7 +88,7 @@ export default function StoryModeEncounter({
               <p className="text-sm text-brand-secondary text-center leading-relaxed">
                 Something stirs in the shadows. Do you dare to look closer?
               </p>
-              <div className="flex gap-3 mt-2">
+              <div className="flex gap-3 mt-2 flex-wrap justify-center">
                 <button
                   onClick={onRetreat}
                   className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-brand-border/60 text-brand-secondary hover:text-brand-text hover:border-brand-accent/40 transition-all duration-200 text-sm font-medium cursor-pointer"

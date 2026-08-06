@@ -109,21 +109,21 @@ export default function StoryModeMapCanvas({
         switch (edge.status) {
           case "completed":
             stroke = "#D4AF6E";
-            opacity = 0.8;
+            opacity = 0.9;
             filter = "url(#story-path-glow-gold)";
-            strokeWidth = 0.4;
+            strokeWidth = 0.6;
             break;
           case "available":
-            stroke = "rgba(255,255,255,0.6)";
-            opacity = 0.6;
-            filter = "url(#story-path-glow-white)";
-            strokeWidth = 0.3;
+            stroke = "#D4AF6E";
+            opacity = 0.8;
+            filter = "url(#story-path-glow-gold)";
+            strokeWidth = 0.5;
             break;
           default:
-            stroke = "rgb(var(--text-secondary-rgb) / 0.25)";
-            opacity = 0.4;
+            stroke = "rgba(212, 175, 110, 0.4)";
+            opacity = 0.5;
             filter = undefined;
-            strokeWidth = 0.2;
+            strokeWidth = 0.3;
         }
 
         return (
@@ -135,13 +135,29 @@ export default function StoryModeMapCanvas({
             y2={edge.toY}
             stroke={stroke}
             strokeWidth={strokeWidth}
-            strokeDasharray="1.2 0.8"
+            strokeDasharray="2 2"
             strokeLinecap="round"
             opacity={opacity}
             filter={filter}
-            initial={{ pathLength: 0, opacity: 0 }}
-            animate={{ pathLength: 1, opacity }}
-            transition={{ duration: 1.2, delay: 0.3 }}
+            initial={{ pathLength: 0, opacity: 0, strokeDashoffset: 10 }}
+            animate={
+              edge.status === "available"
+                ? { pathLength: 1, opacity, strokeDashoffset: [10, 0] }
+                : { pathLength: 1, opacity, strokeDashoffset: 0 }
+            }
+            transition={
+              edge.status === "available"
+                ? {
+                    pathLength: { duration: 1.2, delay: 0.3 },
+                    opacity: { duration: 1.2, delay: 0.3 },
+                    strokeDashoffset: {
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "linear",
+                    },
+                  }
+                : { duration: 1.2, delay: 0.3 }
+            }
           />
         );
       })}
