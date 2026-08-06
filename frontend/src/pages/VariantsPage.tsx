@@ -138,7 +138,7 @@ export default function VariantsPage() {
       {/* Control Bar: Search & Category Filter */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
         {/* Category Tabs */}
-        <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-brand-surface/60 border border-white/5 backdrop-blur-md">
+        <div className="grid grid-cols-3 sm:flex items-center gap-1 sm:gap-1.5 p-1 rounded-2xl bg-brand-surface/60 border border-white/5 backdrop-blur-md w-full sm:w-auto">
           {(
             [
               { id: 'all', label: 'All Variants' },
@@ -149,7 +149,7 @@ export default function VariantsPage() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all duration-200 cursor-pointer ${
+              className={`px-2 sm:px-4 py-2 rounded-xl text-[11px] sm:text-xs font-mono font-bold transition-all duration-200 cursor-pointer flex items-center justify-center text-center truncate ${
                 activeTab === tab.id
                   ? 'bg-brand-accent text-black shadow-md shadow-brand-accent/20'
                   : 'text-brand-secondary hover:text-brand-text hover:bg-brand-surface/60'

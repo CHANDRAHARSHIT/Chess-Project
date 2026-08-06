@@ -12,11 +12,11 @@ interface Chess960SetupPanelProps {
 }
 
 const ELO_TIER_COLORS: Record<number, { bg: string; text: string; border: string }> = {
-  1: { bg: 'bg-emerald-500/15', text: 'text-emerald-400', border: 'border-emerald-500/30' },
-  2: { bg: 'bg-sky-500/15', text: 'text-sky-400', border: 'border-sky-500/30' },
-  3: { bg: 'bg-amber-500/15', text: 'text-amber-400', border: 'border-amber-500/30' },
-  4: { bg: 'bg-rose-500/15', text: 'text-rose-400', border: 'border-rose-500/30' },
-  5: { bg: 'bg-purple-500/15', text: 'text-purple-400', border: 'border-purple-500/30' },
+  1: { bg: 'bg-emerald-500', text: 'text-emerald-950 font-black', border: 'border-emerald-400' },
+  2: { bg: 'bg-sky-500', text: 'text-sky-950 font-black', border: 'border-sky-400' },
+  3: { bg: 'bg-amber-400', text: 'text-amber-950 font-black', border: 'border-amber-300' },
+  4: { bg: 'bg-rose-500', text: 'text-rose-950 font-black', border: 'border-rose-400' },
+  5: { bg: 'bg-purple-500', text: 'text-purple-950 font-black', border: 'border-purple-400' },
 };
 
 export function Chess960SetupPanel({
@@ -65,36 +65,39 @@ export function Chess960SetupPanel({
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-72 h-36 bg-brand-accent/10 rounded-full blur-3xl pointer-events-none -z-10" />
 
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-white/10 pb-5">
-          <div className="flex items-center gap-3.5">
-            <div className="p-3 rounded-2xl bg-brand-accent/15 text-brand-accent shadow-md">
-              <Shuffle className="w-6 h-6" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h2 id="setup-title" className="font-display font-bold text-2xl text-brand-text tracking-tight">
-                  Chess 960 Setup
-                </h2>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-brand-accent/15 text-brand-accent">
-                  Fischer Random
-                </span>
+        <div className="relative border-b border-white/10 pb-4 sm:pb-5 space-y-3">
+          {/* Top Bar: Variant Icon + Badge (Left) and Close Cross (Right) */}
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="p-2.5 sm:p-3 rounded-2xl bg-brand-accent/15 text-brand-accent shadow-md shrink-0">
+                <Shuffle className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
-              <p className="text-xs text-brand-secondary/90 mt-0.5">
-                Randomized piece back-ranks • 960 symmetrical starting positions
-              </p>
+              <span className="px-2.5 py-1 rounded-full text-[10px] sm:text-xs font-mono font-bold bg-brand-accent/15 text-brand-accent border border-brand-accent/20 truncate">
+                Fischer Random
+              </span>
             </div>
+
+            <button
+              onClick={() => {
+                soundManager.playButtonClick();
+                onClose();
+              }}
+              className="p-2 rounded-xl text-brand-secondary hover:text-brand-text hover:bg-brand-surface/80 border border-transparent transition-all cursor-pointer shrink-0"
+              title="Close setup"
+            >
+              <X className="w-5 h-5" />
+            </button>
           </div>
 
-          <button
-            onClick={() => {
-              soundManager.playButtonClick();
-              onClose();
-            }}
-            className="p-2 rounded-xl text-brand-secondary hover:text-brand-text hover:bg-brand-surface/80 border border-transparent transition-all cursor-pointer"
-            title="Close setup"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          {/* Title & Subtitle */}
+          <div>
+            <h2 id="setup-title" className="font-display font-bold text-xl sm:text-2xl text-brand-text tracking-tight">
+              Chess 960 Setup
+            </h2>
+            <p className="text-xs text-brand-secondary/90 mt-1 leading-relaxed">
+              Randomized piece back-ranks • 960 symmetrical starting positions
+            </p>
+          </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -124,7 +127,7 @@ export function Chess960SetupPanel({
                       soundManager.playButtonClick();
                       setSelectedColor(opt.id as 'w' | 'b' | 'random');
                     }}
-                    className={`relative flex flex-col items-center justify-center p-4 rounded-2xl border transition-all duration-200 cursor-pointer ${
+                    className={`relative flex flex-col items-center justify-center p-3 sm:p-4 rounded-2xl border transition-all duration-200 cursor-pointer ${
                       isActive
                         ? 'bg-brand-accent/15 border-brand-accent text-brand-text shadow-[0_0_20px_rgba(212,175,110,0.15)] scale-[1.02]'
                         : 'bg-brand-surface/50 border-white/5 text-brand-secondary hover:border-white/10 hover:text-brand-text hover:bg-brand-surface/80'
