@@ -25,14 +25,13 @@ import DatabasePlayerPage from "../pages/DatabasePlayerPage";
 import DatabaseGamePage from "../pages/DatabaseGamePage";
 import YourChannelPage from "../pages/YourChannelPage";
 import YourContentPage from "../pages/YourContentPage";
-import {BookOpen, BarChart2, Clock, Users, Shuffle, Flag, Info, Copyright,Paintbrush, Megaphone, Code2, FileText, Shield, HelpCircle,} from "lucide-react";
 import ReportPage from "../pages/ReportPage";
 import CompleteLaterPage from "../pages/CompleteLaterPage";
 import SubscriptionsPage from "../pages/SubscriptionsPage";
 import VariantsPage from "../pages/VariantsPage";
 import LessonsPage from "../pages/LessonsPage";
 import LessonViewerPage from "../pages/LessonViewerPage";
-import { BarChart2, Video, UserCircle2 } from "lucide-react";
+import { BarChart2 } from "lucide-react";
 import QuickGamePage from "../pages/QuickGamePage";
 
 export interface RouteConfig {
