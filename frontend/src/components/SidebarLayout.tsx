@@ -411,19 +411,16 @@ export default function SidebarLayout({
       name: "Complete Later",
       href: "/complete-later",
       icon: Clock,
-      comingSoon: true,
     },
     {
       name: "Your Content",
       href: "/your-content",
       icon: Video,
-      comingSoon: true,
     },
     {
       name: "Your Channel",
       href: "/channel",
       icon: UserCircle2,
-      comingSoon: true,
     },
   ];
 

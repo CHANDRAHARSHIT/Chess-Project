@@ -1,6 +1,8 @@
 import { useState, useMemo } from 'react';
-import { Search, X, Dices } from 'lucide-react';
+import { useNavigate } from 'react-router';
+import { Search, X, Dices, ArrowLeft } from 'lucide-react';
 import { VariantCard } from '../components/play/VariantCard';
+import { soundManager } from '../utils/SoundManager';
 
 const VARIANTS_LIST = [
   {
@@ -14,6 +16,7 @@ const VARIANTS_LIST = [
 ];
 
 export default function VariantsPage() {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredVariants = useMemo(() => {
@@ -28,7 +31,22 @@ export default function VariantsPage() {
   }, [searchQuery]);
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto space-y-8">
+    <div className="min-h-[calc(100vh-4rem)] p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto space-y-6">
+      {/* Back Navigation */}
+      <div>
+        <button
+          type="button"
+          onClick={() => {
+            soundManager.playButtonClick();
+            navigate("/");
+          }}
+          className="inline-flex items-center gap-2 text-brand-secondary hover:text-brand-text transition-colors duration-200 font-sans text-sm font-semibold cursor-pointer group"
+          aria-label="Back to Home"
+        >
+          <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+          <span>Back to Home</span>
+        </button>
+      </div>
       {/* Header section */}
       <div className="space-y-3">
         <div className="flex items-center gap-3">
