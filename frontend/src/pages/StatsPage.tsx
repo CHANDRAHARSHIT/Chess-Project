@@ -63,11 +63,36 @@ const OPENINGS = [
 ];
 
 const RECENT_MATCHES = [
-  { opponent: "Magnus_Fan88", result: "Win", ratingChange: "+8", timeControl: "10+0" },
-  { opponent: "ChessWizard99", result: "Loss", ratingChange: "-5", timeControl: "10+0" },
-  { opponent: "NightKnight42", result: "Win", ratingChange: "+9", timeControl: "5+3" },
-  { opponent: "QueenGambit22", result: "Draw", ratingChange: "+1", timeControl: "10+0" },
-  { opponent: "TacticsKing7", result: "Win", ratingChange: "+10", timeControl: "15+10" },
+  {
+    opponent: "Magnus_Fan88",
+    result: "Win",
+    ratingChange: "+8",
+    timeControl: "10+0",
+  },
+  {
+    opponent: "ChessWizard99",
+    result: "Loss",
+    ratingChange: "-5",
+    timeControl: "10+0",
+  },
+  {
+    opponent: "NightKnight42",
+    result: "Win",
+    ratingChange: "+9",
+    timeControl: "5+3",
+  },
+  {
+    opponent: "QueenGambit22",
+    result: "Draw",
+    ratingChange: "+1",
+    timeControl: "10+0",
+  },
+  {
+    opponent: "TacticsKing7",
+    result: "Win",
+    ratingChange: "+10",
+    timeControl: "15+10",
+  },
 ];
 
 // ─── SVG Rating Line ──────────────────────────────────────────────────────────
@@ -77,11 +102,7 @@ const CHART_POINTS =
 
 // ─── Sub-components ──────────────────────────────────────────────────────────
 
-function OverviewCard({
-  card,
-}: {
-  card: (typeof OVERVIEW_CARDS)[number];
-}) {
+function OverviewCard({ card }: { card: (typeof OVERVIEW_CARDS)[number] }) {
   const Icon = card.icon;
   return (
     <div
@@ -97,7 +118,9 @@ function OverviewCard({
           <Icon className="w-4.5 h-4.5" />
         </div>
       </div>
-      <p className={`text-2xl font-bold font-sans tracking-tight ${card.accent}`}>
+      <p
+        className={`text-2xl font-bold font-sans tracking-tight ${card.accent}`}
+      >
         {card.value}
       </p>
       <p
@@ -133,13 +156,15 @@ function OpeningBar({ opening }: { opening: (typeof OPENINGS)[number] }) {
           <span className="text-brand-secondary/60 text-xs font-mono">
             {opening.games} games
           </span>
-          <span className={`font-mono font-bold text-xs ${
-            opening.winRate >= 60
-              ? "text-emerald-400"
-              : opening.winRate >= 50
-                ? "text-brand-accent"
-                : "text-red-400"
-          }`}>
+          <span
+            className={`font-mono font-bold text-xs ${
+              opening.winRate >= 60
+                ? "text-emerald-400"
+                : opening.winRate >= 50
+                  ? "text-brand-accent"
+                  : "text-red-400"
+            }`}
+          >
             {opening.winRate}%
           </span>
         </div>
@@ -191,7 +216,9 @@ function MatchRow({ match }: { match: (typeof RECENT_MATCHES)[number] }) {
         >
           {match.result}
         </span>
-        <span className={`text-sm font-mono font-bold w-8 text-right ${changeStyle}`}>
+        <span
+          className={`text-sm font-mono font-bold w-8 text-right ${changeStyle}`}
+        >
           {match.ratingChange}
         </span>
         <ChevronRight className="w-3.5 h-3.5 text-brand-border/40 group-hover:text-brand-accent transition-colors" />
@@ -206,12 +233,11 @@ export default function StatsPage() {
   return (
     <div className="min-h-screen bg-brand-bg text-brand-text font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 flex flex-col gap-8">
-
         {/* ── Page Header ───────────────────────────────────────────── */}
         <div className="flex items-center justify-between">
           <div className="flex flex-col gap-1">
             <h1 className="text-3xl font-bold text-brand-text tracking-tight">
-              Your Stats
+              Your Stats (Coming Soon)
             </h1>
             <p className="text-sm text-brand-secondary font-sans">
               Performance overview for your account
@@ -290,8 +316,16 @@ export default function StatsPage() {
               {/* Area fill under the line */}
               <defs>
                 <linearGradient id="chartFill" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="rgb(212,175,110)" stopOpacity="0.25" />
-                  <stop offset="100%" stopColor="rgb(212,175,110)" stopOpacity="0" />
+                  <stop
+                    offset="0%"
+                    stopColor="rgb(212,175,110)"
+                    stopOpacity="0.25"
+                  />
+                  <stop
+                    offset="100%"
+                    stopColor="rgb(212,175,110)"
+                    stopOpacity="0"
+                  />
                 </linearGradient>
               </defs>
               <polygon
@@ -310,7 +344,13 @@ export default function StatsPage() {
               />
               {/* Highlight dot at the tip */}
               <circle cx="900" cy="20" r="4" fill="rgb(212,175,110)" />
-              <circle cx="900" cy="20" r="8" fill="rgb(212,175,110)" opacity="0.2" />
+              <circle
+                cx="900"
+                cy="20"
+                r="8"
+                fill="rgb(212,175,110)"
+                opacity="0.2"
+              />
             </svg>
 
             {/* Y-axis labels */}
@@ -329,7 +369,10 @@ export default function StatsPage() {
           {/* X-axis labels */}
           <div className="flex justify-between px-1">
             {["May", "Jun", "Jul", "Aug"].map((m) => (
-              <span key={m} className="text-[10px] font-mono text-brand-secondary/40">
+              <span
+                key={m}
+                className="text-[10px] font-mono text-brand-secondary/40"
+              >
                 {m}
               </span>
             ))}
@@ -338,7 +381,6 @@ export default function StatsPage() {
 
         {/* ── Section 3: Openings + Recent Matches ──────────────────── */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
           {/* Left: Opening Success Rates */}
           <div className="flex flex-col gap-5 p-6 rounded-2xl border border-brand-border/40 bg-brand-surface/30">
             <div className="flex flex-col gap-0.5">
@@ -378,7 +420,6 @@ export default function StatsPage() {
               View Full Match History
             </button>
           </div>
-
         </div>
 
         {/* Footer note */}
@@ -388,7 +429,6 @@ export default function StatsPage() {
             ELO tracking — is coming soon.
           </p>
         </div>
-
       </div>
     </div>
   );
