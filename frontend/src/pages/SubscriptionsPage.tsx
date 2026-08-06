@@ -327,7 +327,7 @@ export default function SubscriptionsPage() {
         {/* ── Page Header ───────────────────────────────────────────── */}
         <div className="flex items-center justify-between">
           <div className="flex flex-col gap-1">
-            <h1 className="text-3xl font-bold text-brand-text tracking-tight">
+            <h1 className="text-3xl font-display font-bold text-brand-text tracking-tight">
               Subscriptions
             </h1>
             <p className="text-sm text-gray-400 font-sans">

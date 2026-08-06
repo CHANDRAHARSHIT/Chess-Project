@@ -256,7 +256,7 @@ export default function StatsPage() {
         {/* ── Page Header ───────────────────────────────────────────── */}
         <div className="flex items-center justify-between">
           <div className="flex flex-col gap-1">
-            <h1 className="text-3xl font-bold text-brand-text tracking-tight">
+            <h1 className="text-3xl font-display font-bold text-brand-text tracking-tight">
               Your Stats (Coming Soon)
             </h1>
             <p className="text-sm text-brand-secondary font-sans">
@@ -279,7 +279,7 @@ export default function StatsPage() {
         <div className="flex flex-col gap-4 p-6 rounded-2xl border border-brand-border/40 bg-brand-surface/30">
           <div className="flex items-center justify-between">
             <div className="flex flex-col gap-0.5">
-              <h2 className="text-base font-bold text-brand-text tracking-tight">
+              <h2 className="text-base font-display font-bold text-brand-text tracking-tight">
                 Rating Trends
               </h2>
               <p className="text-xs text-brand-secondary/60 font-sans">
@@ -404,7 +404,7 @@ export default function StatsPage() {
           {/* Left: Opening Success Rates */}
           <div className="flex flex-col gap-5 p-6 rounded-2xl border border-brand-border/40 bg-brand-surface/30">
             <div className="flex flex-col gap-0.5">
-              <h2 className="text-base font-bold text-brand-text tracking-tight">
+              <h2 className="text-base font-display font-bold text-brand-text tracking-tight">
                 Opening Success Rates
               </h2>
               <p className="text-xs text-brand-secondary/60 font-sans">
@@ -424,7 +424,7 @@ export default function StatsPage() {
           {/* Right: Recent Matches */}
           <div className="flex flex-col gap-4 p-6 rounded-2xl border border-brand-border/40 bg-brand-surface/30">
             <div className="flex flex-col gap-0.5">
-              <h2 className="text-base font-bold text-brand-text tracking-tight">
+              <h2 className="text-base font-display font-bold text-brand-text tracking-tight">
                 Recent Matches
               </h2>
               <p className="text-xs text-brand-secondary/60 font-sans">

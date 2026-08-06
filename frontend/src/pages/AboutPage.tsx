@@ -31,7 +31,7 @@ function ValueCard({ icon: Icon, title, description, index }: ValueCardProps) {
         <Icon className="w-5 h-5 text-brand-accent" />
       </div>
       <div>
-        <h3 className="text-base font-semibold text-brand-text mb-1">{title}</h3>
+        <h3 className="text-base font-display font-semibold text-brand-text mb-1">{title}</h3>
         <p className="text-sm text-brand-secondary leading-relaxed">{description}</p>
       </div>
     </motion.div>
@@ -112,7 +112,7 @@ export default function AboutPage() {
                 Our Story
               </span>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-bold mb-4 leading-tight tracking-tight">
+            <h1 className="text-3xl sm:text-4xl font-display font-bold mb-4 leading-tight tracking-tight">
               About XLChess
             </h1>
             <p className="text-base sm:text-lg text-brand-secondary leading-relaxed max-w-2xl">
@@ -134,7 +134,7 @@ export default function AboutPage() {
           animate="visible"
           className="mb-14"
         >
-          <h2 className="text-xl font-semibold mb-4 text-brand-text">Our Mission</h2>
+          <h2 className="text-xl font-display font-semibold mb-4 text-brand-text">Our Mission</h2>
           <div className="space-y-4 text-brand-secondary leading-relaxed">
             <p>
               XLChess is a modern chess platform dedicated to democratizing
@@ -170,7 +170,7 @@ export default function AboutPage() {
             variants={fadeUp}
             initial="hidden"
             animate="visible"
-            className="text-xl font-semibold mb-6 text-brand-text"
+            className="text-xl font-display font-semibold mb-6 text-brand-text"
           >
             What We Stand For
           </motion.h2>
@@ -191,7 +191,7 @@ export default function AboutPage() {
           animate="visible"
           className="mb-14"
         >
-          <h2 className="text-xl font-semibold mb-4 text-brand-text">The Team</h2>
+          <h2 className="text-xl font-display font-semibold mb-4 text-brand-text">The Team</h2>
           <div className="space-y-4 text-brand-secondary leading-relaxed">
             <p>
               XLChess is built and maintained by a small but dedicated team
@@ -220,7 +220,7 @@ export default function AboutPage() {
           animate="visible"
           className="rounded-2xl border border-brand-accent/20 bg-brand-accent/5 p-8 text-center"
         >
-          <h2 className="text-xl font-semibold mb-3 text-brand-text">
+          <h2 className="text-xl font-display font-semibold mb-3 text-brand-text">
             Want to Reach Out?
           </h2>
           <p className="text-brand-secondary leading-relaxed mb-6 max-w-xl mx-auto">

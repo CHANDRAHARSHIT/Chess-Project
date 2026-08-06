@@ -27,7 +27,7 @@ function Section({ title, children, index }: SectionProps) {
       animate="visible"
       className="mb-10"
     >
-      <h2 className="text-xl font-semibold mt-8 mb-3 text-brand-text border-b border-brand-border/40 pb-2">
+      <h2 className="text-xl font-display font-semibold mt-8 mb-3 text-brand-text border-b border-brand-border/40 pb-2">
         {title}
       </h2>
       <div className="space-y-3 text-brand-secondary leading-relaxed text-[15px]">
@@ -72,7 +72,7 @@ export default function CopyrightPage() {
                 Legal
               </span>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-bold mb-3 leading-tight tracking-tight">
+            <h1 className="text-3xl sm:text-4xl font-display font-bold mb-3 leading-tight tracking-tight">
               Copyright Information
             </h1>
             <p className="text-sm text-brand-secondary">

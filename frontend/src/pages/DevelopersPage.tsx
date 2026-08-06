@@ -61,7 +61,7 @@ function CapabilityCard({ icon: Icon, title, description, index }: CapabilityCar
         <Icon className="w-5 h-5 text-brand-accent" />
       </div>
       <div>
-        <h3 className="text-base font-semibold text-brand-text mb-1">{title}</h3>
+        <h3 className="text-base font-display font-semibold text-brand-text mb-1">{title}</h3>
         <p className="text-sm text-brand-secondary leading-relaxed">{description}</p>
       </div>
     </motion.div>
@@ -142,7 +142,7 @@ export default function DevelopersPage() {
                 API &amp; SDK
               </span>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-bold mb-4 leading-tight tracking-tight">
+            <h1 className="text-3xl sm:text-4xl font-display font-bold mb-4 leading-tight tracking-tight">
               XLChess for Developers
             </h1>
             <p className="text-base sm:text-lg text-brand-secondary leading-relaxed max-w-2xl">
@@ -164,7 +164,7 @@ export default function DevelopersPage() {
             variants={fadeUp}
             initial="hidden"
             animate="visible"
-            className="text-xl font-semibold mb-6 text-brand-text"
+            className="text-xl font-display font-semibold mb-6 text-brand-text"
           >
             Platform Capabilities
           </motion.h2>
@@ -185,7 +185,7 @@ export default function DevelopersPage() {
           animate="visible"
           className="mb-14"
         >
-          <h2 className="text-xl font-semibold mb-2 text-brand-text">
+          <h2 className="text-xl font-display font-semibold mb-2 text-brand-text">
             Sample API Endpoints
           </h2>
           <p className="text-sm text-brand-secondary mb-6 leading-relaxed">
@@ -216,7 +216,7 @@ export default function DevelopersPage() {
           animate="visible"
           className="mb-14"
         >
-          <h2 className="text-xl font-semibold mb-4 text-brand-text">Getting Started</h2>
+          <h2 className="text-xl font-display font-semibold mb-4 text-brand-text">Getting Started</h2>
           <div className="space-y-4 text-brand-secondary leading-relaxed">
             <p>
               To begin using the XLChess API, register for a developer account
@@ -251,7 +251,7 @@ export default function DevelopersPage() {
           className="rounded-2xl border border-brand-accent/20 bg-brand-accent/5 p-8 text-center"
         >
           <Code2 className="w-8 h-8 text-brand-accent mx-auto mb-4" />
-          <h2 className="text-xl font-semibold mb-3 text-brand-text">
+          <h2 className="text-xl font-display font-semibold mb-3 text-brand-text">
             Questions? Talk to the Team.
           </h2>
           <p className="text-brand-secondary leading-relaxed mb-6 max-w-xl mx-auto">
