@@ -22,7 +22,7 @@ export function StudentBreakthroughs({ breakthroughs }: StudentBreakthroughsProp
             Student Success Stories
           </h3>
           <p className="text-xs sm:text-sm font-sans text-brand-secondary mt-0.5">
-            Real human reactions from chess players studying Alex Vance's interactive masterclasses
+            Real human reactions from chess players studying these interactive masterclasses
           </p>
         </div>
       </div>
@@ -83,3 +83,4 @@ export function StudentBreakthroughs({ breakthroughs }: StudentBreakthroughsProp
     </div>
   );
 }
+

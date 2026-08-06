@@ -2,33 +2,20 @@
  * ContentGridCard.tsx
  *
  * Content card component for /your-content library view.
- * Features live FEN mini-board thumbnail, move counts, retention heat marker,
- * and quick hover actions (Preview, Edit, Pin).
- * Fully theme-aware for light and dark modes.
+ * Displays content info with a frosted blur "Coming Soon" UI overlay on hover.
  */
 
-import { Play, Eye, ThumbsUp, Flame, Pin } from "lucide-react";
+import { Eye, ThumbsUp, Flame } from "lucide-react";
 import { ThemedChessboard } from "../ThemedChessboard";
-import { soundManager } from "../../utils/SoundManager";
 import type { MasterclassItem } from "../../data/creatorMockData";
 
 interface ContentGridCardProps {
   item: MasterclassItem;
-  onPreviewClick: (item: MasterclassItem) => void;
-  onPinClick?: (item: MasterclassItem) => void;
 }
 
-export function ContentGridCard({ item, onPreviewClick, onPinClick }: ContentGridCardProps) {
-  const handleClick = () => {
-    soundManager.playButtonClick();
-    onPreviewClick(item);
-  };
-
+export function ContentGridCard({ item }: ContentGridCardProps) {
   return (
-    <div
-      onClick={handleClick}
-      className="group relative w-full rounded-3xl border border-brand-text/15 bg-brand-surface p-5 shadow-xl transition-all duration-300 hover:border-brand-accent/50 hover:-translate-y-1 hover:shadow-[0_20px_40px_-15px_rgba(212,175,110,0.15)] cursor-pointer flex flex-col justify-between"
-    >
+    <div className="group relative w-full rounded-3xl border border-brand-text/15 bg-brand-surface p-5 shadow-xl transition-all duration-300 hover:border-brand-accent/50 cursor-pointer overflow-hidden flex flex-col justify-between">
       <div className="space-y-4">
         {/* Category & Status */}
         <div className="flex items-center justify-between">
@@ -47,7 +34,7 @@ export function ContentGridCard({ item, onPreviewClick, onPinClick }: ContentGri
         </div>
 
         {/* Live FEN Mini Board Thumbnail */}
-        <div className="relative w-full aspect-square rounded-2xl overflow-hidden border border-brand-text/20 bg-obsidian group-hover:border-brand-accent/40 transition-colors">
+        <div className="relative w-full aspect-square rounded-2xl overflow-hidden border border-brand-text/20 bg-obsidian group-hover:border-brand-accent/40 transition-colors pointer-events-none">
           <ThemedChessboard
             options={{
               position: item.thumbnailFen,
@@ -61,40 +48,11 @@ export function ContentGridCard({ item, onPreviewClick, onPinClick }: ContentGri
           <div className="absolute bottom-2 right-2 px-2.5 py-0.5 rounded-md bg-black/80 border border-white/20 text-[10px] font-mono text-white font-semibold shadow-md">
             {item.videoDuration} • {item.moveCount} Moves
           </div>
-
-          {/* Hover Action Overlay */}
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                soundManager.playButtonClick();
-                onPreviewClick(item);
-              }}
-              className="p-3.5 rounded-full bg-brand-accent text-obsidian shadow-2xl hover:scale-110 active:scale-95 transition-transform"
-              title="Preview Synchronized Lesson"
-            >
-              <Play className="w-5 h-5 fill-current" />
-            </button>
-
-            {onPinClick && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  soundManager.playButtonClick();
-                  onPinClick(item);
-                }}
-                className="p-3 rounded-full bg-black/60 text-amber-400 border border-amber-400/40 shadow-2xl hover:scale-110 active:scale-95 transition-transform"
-                title="Pin to Channel Featured"
-              >
-                <Pin className="w-4 h-4" />
-              </button>
-            )}
-          </div>
         </div>
 
         {/* Title & Description */}
         <div>
-          <h4 className="text-base font-display font-bold text-brand-text group-hover:text-brand-accent transition-colors line-clamp-2 leading-snug">
+          <h4 className="text-base font-display font-bold text-brand-text transition-colors line-clamp-2 leading-snug">
             {item.title}
           </h4>
           <p className="text-xs font-sans text-brand-secondary mt-1 line-clamp-2 leading-relaxed">
@@ -130,6 +88,19 @@ export function ContentGridCard({ item, onPreviewClick, onPinClick }: ContentGri
           {item.studentCompletion}% Completion
         </span>
       </div>
+
+      {/* Hover UI Overlay: Coming Soon with Blur Backdrop */}
+      <div className="absolute inset-0 bg-obsidian/85 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center justify-center gap-2 p-6 z-20 pointer-events-none text-center">
+        <span className="px-4 py-1.5 rounded-full text-xs font-mono font-bold bg-brand-accent text-obsidian uppercase tracking-wider shadow-lg">
+          Coming Soon
+        </span>
+        <p className="text-xs font-sans text-brand-secondary font-medium max-w-[210px] leading-relaxed">
+          Interactive content studio feature currently in development
+        </p>
+      </div>
     </div>
   );
 }
+
+
+

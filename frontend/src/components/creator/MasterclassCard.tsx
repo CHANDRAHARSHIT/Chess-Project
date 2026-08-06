@@ -1,33 +1,21 @@
 /**
  * MasterclassCard.tsx
  *
- * Card component for Alex Vance's featured masterclasses.
- * Combines video duration, student completion rate, PGN move counts,
- * and the "Most Replayed Position" heat marker.
- * Fully theme-aware for light and dark modes.
+ * Card component for featured masterclasses.
+ * Displays class details with a frosted blur "Coming Soon" UI overlay on hover.
  */
 
-import { Play, Flame, Eye, ThumbsUp } from "lucide-react";
+import { Flame, Eye, ThumbsUp } from "lucide-react";
 import { ThemedChessboard } from "../ThemedChessboard";
-import { soundManager } from "../../utils/SoundManager";
 import type { MasterclassItem } from "../../data/creatorMockData";
 
 interface MasterclassCardProps {
   item: MasterclassItem;
-  onPreviewClick: (item: MasterclassItem) => void;
 }
 
-export function MasterclassCard({ item, onPreviewClick }: MasterclassCardProps) {
-  const handleClick = () => {
-    soundManager.playButtonClick();
-    onPreviewClick(item);
-  };
-
+export function MasterclassCard({ item }: MasterclassCardProps) {
   return (
-    <div
-      onClick={handleClick}
-      className="group relative w-full rounded-3xl border border-brand-text/15 bg-brand-surface p-5 shadow-xl transition-all duration-300 hover:border-brand-accent/50 hover:-translate-y-1 hover:shadow-[0_20px_40px_-15px_rgba(212,175,110,0.15)] cursor-pointer flex flex-col justify-between"
-    >
+    <div className="group relative w-full rounded-3xl border border-brand-text/15 bg-brand-surface p-5 shadow-xl transition-all duration-300 hover:border-brand-accent/50 cursor-pointer overflow-hidden flex flex-col justify-between">
       <div className="space-y-4">
         {/* Top Header: Category & Status */}
         <div className="flex items-center justify-between">
@@ -46,7 +34,7 @@ export function MasterclassCard({ item, onPreviewClick }: MasterclassCardProps) 
         </div>
 
         {/* Live Mini Chessboard FEN Thumbnail */}
-        <div className="relative w-full aspect-square rounded-2xl overflow-hidden border border-brand-text/20 bg-obsidian group-hover:border-brand-accent/40 transition-colors">
+        <div className="relative w-full aspect-square rounded-2xl overflow-hidden border border-brand-text/20 bg-obsidian group-hover:border-brand-accent/40 transition-colors pointer-events-none">
           <ThemedChessboard
             options={{
               position: item.thumbnailFen,
@@ -60,18 +48,11 @@ export function MasterclassCard({ item, onPreviewClick }: MasterclassCardProps) 
           <div className="absolute bottom-2 right-2 px-2.5 py-0.5 rounded-md bg-black/80 border border-white/20 text-[10px] font-mono text-white font-semibold shadow-md">
             {item.videoDuration}
           </div>
-
-          {/* Hover Play Button Overlay */}
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-            <div className="p-3.5 rounded-full bg-brand-accent text-obsidian shadow-2xl scale-90 group-hover:scale-100 transition-transform">
-              <Play className="w-6 h-6 fill-current" />
-            </div>
-          </div>
         </div>
 
         {/* Title & Description */}
         <div>
-          <h4 className="text-lg font-display font-bold text-brand-text group-hover:text-brand-accent transition-colors line-clamp-2 leading-snug">
+          <h4 className="text-lg font-display font-bold text-brand-text transition-colors line-clamp-2 leading-snug">
             {item.title}
           </h4>
           <p className="text-xs font-sans text-brand-secondary mt-1 line-clamp-2 leading-relaxed">
@@ -107,6 +88,19 @@ export function MasterclassCard({ item, onPreviewClick }: MasterclassCardProps) 
           {item.studentCompletion}% Completion
         </span>
       </div>
+
+      {/* Hover UI Overlay: Coming Soon with Blur Backdrop */}
+      <div className="absolute inset-0 bg-obsidian/85 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center justify-center gap-2 p-6 z-20 pointer-events-none text-center">
+        <span className="px-4 py-1.5 rounded-full text-xs font-mono font-bold bg-brand-accent text-obsidian uppercase tracking-wider shadow-lg">
+          Coming Soon
+        </span>
+        <p className="text-xs font-sans text-brand-secondary font-medium max-w-[210px] leading-relaxed">
+          Masterclass interactive video player currently in development
+        </p>
+      </div>
     </div>
   );
 }
+
+
+

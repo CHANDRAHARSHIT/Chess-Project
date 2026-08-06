@@ -294,7 +294,7 @@ export const STUDENT_BREAKTHROUGHS: StudentBreakthrough[] = [
     studentAvatar: "https://picsum.photos/seed/sarah/100/100",
     headline: "I replayed Move 7 five times before it clicked.",
     openingLearned: "Sicilian Najdorf Mainlines",
-    testimonial: "I used to be terrified of 1.e4 until I completed Alex's Najdorf masterclass. The position discussions cleared up all my doubts!",
+    testimonial: "I used to be terrified of 1.e4 until I completed this Najdorf masterclass. The position discussions cleared up all my doubts!",
     fenSnapshot: "r2qkb1r/1p3ppp/p2pbn2/4p3/4P3/1NN1B3/PPP2PPP/R2QKB1R b KQkq - 2 8",
     date: "July 2026",
   },
