@@ -1,5 +1,8 @@
+import { useEffect } from "react";
+import { useNavigate } from "react-router";
+import { ArrowLeft, Shield } from "lucide-react";
 import { motion, type Variants } from "framer-motion";
-import { Shield } from "lucide-react";
+import { soundManager } from "../utils/SoundManager";
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 16 },
@@ -25,7 +28,7 @@ function Section({ title, children, index }: SectionProps) {
       animate="visible"
       className="mb-10"
     >
-      <h2 className="text-xl font-semibold mt-8 mb-3 text-brand-text border-b border-brand-border/40 pb-2">
+      <h2 className="font-display text-xl font-semibold mt-8 mb-3 text-brand-text border-b border-brand-border/40 pb-2">
         {title}
       </h2>
       <div className="space-y-3 text-brand-secondary leading-relaxed text-[15px]">
@@ -36,8 +39,27 @@ function Section({ title, children, index }: SectionProps) {
 }
 
 export default function PrivacyPolicyPage() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
-    <div className="min-h-screen bg-brand-bg text-brand-text">
+    <div className="min-h-[calc(100vh-4rem)] bg-brand-bg text-brand-text flex flex-col pt-6 pb-12">
+      {/* Back to Home */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full mb-6 sm:mb-8">
+        <button
+          type="button"
+          onClick={() => { soundManager.playButtonClick(); navigate("/"); }}
+          className="inline-flex items-center gap-2 text-brand-secondary hover:text-brand-text transition-colors duration-200 font-sans text-sm font-semibold cursor-pointer group"
+          aria-label="Back to Home"
+        >
+          <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+          <span>Back to Home</span>
+        </button>
+      </div>
+      <div className="flex-1">
       {/* Hero Banner */}
       <div className="relative overflow-hidden border-b border-brand-border/30">
         <div className="absolute inset-0 bg-gradient-to-br from-brand-accent/5 via-transparent to-brand-accent/3 pointer-events-none" />
@@ -54,7 +76,7 @@ export default function PrivacyPolicyPage() {
                 Legal
               </span>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-bold mb-3 leading-tight tracking-tight">
+            <h1 className="font-display text-3xl sm:text-4xl font-bold mb-3 leading-tight tracking-tight">
               Privacy Policy &amp; Safety
             </h1>
             <p className="text-sm text-brand-secondary">
@@ -244,6 +266,7 @@ export default function PrivacyPolicyPage() {
             transparently.
           </p>
         </Section>
+      </div>
       </div>
     </div>
   );

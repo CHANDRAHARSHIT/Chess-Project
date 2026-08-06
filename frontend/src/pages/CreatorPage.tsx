@@ -1,5 +1,8 @@
+import { useEffect } from "react";
+import { useNavigate } from "react-router";
+import { ArrowLeft, Paintbrush, Video, BookOpen, BarChart2, Users, Zap } from "lucide-react";
 import { motion, type Variants } from "framer-motion";
-import { Paintbrush, Video, BookOpen, BarChart2, Users, Zap } from "lucide-react";
+import { soundManager } from "../utils/SoundManager";
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 16 },
@@ -30,7 +33,7 @@ function FeatureCard({ icon: Icon, title, description, index }: FeatureCardProps
         <Icon className="w-5 h-5 text-brand-accent" />
       </div>
       <div>
-        <h3 className="text-base font-semibold text-brand-text mb-1">{title}</h3>
+        <h3 className="font-display text-base font-semibold text-brand-text mb-1">{title}</h3>
         <p className="text-sm text-brand-secondary leading-relaxed">{description}</p>
       </div>
     </motion.div>
@@ -77,8 +80,27 @@ const creatorFeatures = [
 ];
 
 export default function CreatorPage() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
-    <div className="min-h-screen bg-brand-bg text-brand-text">
+    <div className="min-h-[calc(100vh-4rem)] bg-brand-bg text-brand-text flex flex-col pt-6 pb-12">
+      {/* Back to Home */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full mb-6 sm:mb-8">
+        <button
+          type="button"
+          onClick={() => { soundManager.playButtonClick(); navigate("/"); }}
+          className="inline-flex items-center gap-2 text-brand-secondary hover:text-brand-text transition-colors duration-200 font-sans text-sm font-semibold cursor-pointer group"
+          aria-label="Back to Home"
+        >
+          <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+          <span>Back to Home</span>
+        </button>
+      </div>
+      <div className="flex-1">
       {/* Hero Banner */}
       <div className="relative overflow-hidden border-b border-brand-border/30">
         <div className="absolute inset-0 bg-gradient-to-br from-brand-accent/5 via-transparent to-brand-accent/3 pointer-events-none" />
@@ -95,7 +117,7 @@ export default function CreatorPage() {
                 Create
               </span>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-bold mb-4 leading-tight tracking-tight">
+            <h1 className="font-display text-3xl sm:text-4xl font-bold mb-4 leading-tight tracking-tight">
               Creators on XLChess
             </h1>
             <p className="text-base sm:text-lg text-brand-secondary leading-relaxed max-w-2xl">
@@ -118,7 +140,7 @@ export default function CreatorPage() {
           animate="visible"
           className="mb-14"
         >
-          <h2 className="text-xl font-semibold mb-4 text-brand-text">
+          <h2 className="font-display text-xl font-semibold mb-4 text-brand-text">
             Why Create on XLChess?
           </h2>
           <div className="space-y-4 text-brand-secondary leading-relaxed">
@@ -156,7 +178,7 @@ export default function CreatorPage() {
             variants={fadeUp}
             initial="hidden"
             animate="visible"
-            className="text-xl font-semibold mb-6 text-brand-text"
+            className="font-display text-xl font-semibold mb-6 text-brand-text"
           >
             Creator Tools and Features
           </motion.h2>
@@ -177,7 +199,7 @@ export default function CreatorPage() {
           animate="visible"
           className="mb-14"
         >
-          <h2 className="text-xl font-semibold mb-4 text-brand-text">
+          <h2 className="font-display text-xl font-semibold mb-4 text-brand-text">
             Creator Guidelines
           </h2>
           <div className="space-y-4 text-brand-secondary leading-relaxed">
@@ -208,7 +230,7 @@ export default function CreatorPage() {
           animate="visible"
           className="rounded-2xl border border-brand-accent/20 bg-brand-accent/5 p-8 text-center"
         >
-          <h2 className="text-xl font-semibold mb-3 text-brand-text">
+          <h2 className="font-display text-xl font-semibold mb-3 text-brand-text">
             Ready to Start Creating?
           </h2>
           <p className="text-brand-secondary leading-relaxed mb-6 max-w-xl mx-auto">
@@ -224,6 +246,7 @@ export default function CreatorPage() {
             Apply to Become a Creator
           </a>
         </motion.section>
+      </div>
       </div>
     </div>
   );
