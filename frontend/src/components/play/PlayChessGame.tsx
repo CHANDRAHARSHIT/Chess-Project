@@ -185,7 +185,7 @@ export function PlayChessGame({ onLeave, onFindAnother }: PlayChessGameProps) {
       <LiveRegion politeMessage={politeMessage} assertiveMessage={finalAssertiveMessage} />
 
       {/* Top Session Bar - Stretches flush across full arena width */}
-      <div className="w-full flex items-center justify-between gap-3 px-5 py-3 rounded-xl bg-brand-surface/80 border border-white/10 backdrop-blur-xl">
+      <div className="w-full flex items-center justify-between gap-3 px-5 py-3 rounded-2xl bg-brand-surface/80 border border-white/10 backdrop-blur-xl">
         <div className="flex items-center gap-3">
           <button
             onClick={handleBackClick}
@@ -206,14 +206,14 @@ export function PlayChessGame({ onLeave, onFindAnother }: PlayChessGameProps) {
       </div>
 
       {status === "WAITING" && !waitedTooLong && (
-        <div className="w-full flex items-center gap-3 px-4 py-2 rounded-xl border border-white/10 bg-brand-surface/50 text-brand-secondary text-xs">
+        <div className="w-full flex items-center gap-3 px-4 py-2 rounded-2xl border border-white/10 bg-brand-surface/50 text-brand-secondary text-xs">
           <span className="h-2 w-2 rounded-full bg-brand-accent shrink-0" />
           <span>Waiting for your opponent to connect…</span>
         </div>
       )}
 
       {waitedTooLong && status === "WAITING" && (
-        <div className="w-full flex items-center gap-3 px-4 py-2 rounded-xl border border-amber-500/30 bg-amber-500/10 text-amber-200 text-xs">
+        <div className="w-full flex items-center gap-3 px-4 py-2 rounded-2xl border border-amber-500/30 bg-amber-500/10 text-amber-200 text-xs">
           <AlertTriangle className="w-4 h-4 shrink-0" />
           <span>This is taking longer than expected. Your opponent may not be connecting.</span>
           <button onClick={onLeave} className="ml-auto font-mono text-[11px] uppercase tracking-wider underline cursor-pointer">
@@ -223,9 +223,9 @@ export function PlayChessGame({ onLeave, onFindAnother }: PlayChessGameProps) {
       )}
 
       {/* Main Studio Arena: Board (Left, 450px) + Controls/MoveLog (Right, flex-1) */}
-      <div className="w-full flex flex-col lg:flex-row items-center lg:items-stretch justify-between gap-5 lg:gap-7">
-        {/* Left Column: Opponent Panel, Board with Countdown, Player Panel */}
-        <div className="relative flex flex-col items-center justify-center w-full max-w-[450px] lg:w-[450px] shrink-0 gap-2">
+      <div className="w-full flex flex-col lg:flex-row items-center lg:items-start justify-between gap-6">
+        {/* Left Column: Opponent Panel (62px), Board (450px), Player Panel (62px) = 598px total */}
+        <div className="relative flex flex-col items-center justify-center w-full max-w-[450px] lg:w-[450px] shrink-0 gap-3">
           {opponentUserId && (
             <div className="w-full">
               <PlayerPanel
@@ -342,8 +342,8 @@ export function PlayChessGame({ onLeave, onFindAnother }: PlayChessGameProps) {
           )}
         </div>
 
-        {/* Right Column: Game Action Controls & Live Move Log (Expands to fill workspace width) */}
-        <div className="w-full max-w-[450px] lg:max-w-none lg:flex-1 flex flex-col gap-2 lg:self-stretch shrink-0 min-h-0">
+        {/* Right Column: Action Bar (64px) + Gap (12px) + MoveLog (522px) = 598px total */}
+        <div className="w-full max-w-[450px] lg:max-w-none lg:flex-1 lg:h-[598px] lg:max-h-[598px] flex flex-col gap-3 shrink-0 min-h-0 overflow-hidden">
           <GameActionBar canAct={interactive && !gameResult} onResign={resign} />
           <div className="flex-1 min-h-0 overflow-hidden">
             <MoveLog moves={historyView} />

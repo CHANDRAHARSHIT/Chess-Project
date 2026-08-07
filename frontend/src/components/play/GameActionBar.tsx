@@ -32,7 +32,7 @@ export function GameActionBar({ canAct, onResign }: GameActionBarProps) {
   };
 
   return (
-    <div className="grid grid-cols-2 gap-2.5 p-2.5 bg-brand-surface/60 border border-white/10 rounded-2xl backdrop-blur-xl">
+    <div className="grid grid-cols-2 gap-2.5 p-2 h-[64px] items-center bg-brand-surface/60 border border-white/10 rounded-2xl backdrop-blur-xl">
       <button
         onClick={handleResignClick}
         onBlur={() => setConfirming(false)}
