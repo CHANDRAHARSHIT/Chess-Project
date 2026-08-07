@@ -593,6 +593,17 @@ export default function StoryModeBattle({
                   ))}
                 </div>
               </div>
+
+              {/* DEV Only: Skip Buttons */}
+              {import.meta.env.VITE_ENABLE_STORY_DEV_TOOLS === 'true' && (
+                <div className="mt-4 p-2 rounded border border-dashed border-yellow-500/50 bg-yellow-500/10 flex gap-2 justify-center opacity-80 hover:opacity-100 transition-opacity">
+                  <span className="text-[10px] text-yellow-500 font-mono self-center mr-2">DEV:</span>
+                  <button onClick={onVictory} className="px-2 py-1 bg-green-500/20 border border-green-500/50 text-green-400 rounded text-[10px] font-mono hover:bg-green-500/40 cursor-pointer">Skip (Win)</button>
+                  {onDefeat && (
+                    <button onClick={onDefeat} className="px-2 py-1 bg-red-500/20 border border-red-500/50 text-red-400 rounded text-[10px] font-mono hover:bg-red-500/40 cursor-pointer">Skip (Lose)</button>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Move History */}

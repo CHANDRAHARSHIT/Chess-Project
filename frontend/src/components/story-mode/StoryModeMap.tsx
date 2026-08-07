@@ -8,7 +8,7 @@
 
 import { useState, useCallback, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { RotateCcw, Map } from "lucide-react";
+import { RotateCcw, Map, Home, X, LogIn } from "lucide-react";
 import {
   STORY_MAP_NODES,
   type NodeStatus,
@@ -27,7 +27,7 @@ type ActiveView =
   | { kind: "rest"; nodeId: number };
 
 export default function StoryModeMap() {
-  const { session, status } = useSession();
+  const { session, status, signIn } = useSession();
 
   // ── Game state persisted in component (resets on page refresh for guests) ──
   const [completedNodes, setCompletedNodes] = useState<Set<number>>(new Set());
@@ -35,6 +35,9 @@ export default function StoryModeMap() {
   const [activeView, setActiveView] = useState<ActiveView>({ kind: "map" });
   const [journeyComplete, setJourneyComplete] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [showGuestWarning, setShowGuestWarning] = useState<number | null>(null);
+  const [hasIgnoredGuestWarning, setHasIgnoredGuestWarning] = useState(false);
 
   // ── Persistence Logic ────────────────────────────────────────────────
   useEffect(() => {
@@ -109,12 +112,22 @@ export default function StoryModeMap() {
 
   // ── Node click handler ────────────────────────────────────────────────
   const handleNodeClick = useCallback(
-    (nodeId: number) => {
+    (nodeId: number, bypassWarning = false) => {
       const node = STORY_MAP_NODES.find((n) => n.id === nodeId);
       if (!node) return;
 
-      const status = getNodeStatus(nodeId);
-      if (status !== "available" && status !== "active") return;
+      const nodeStatus = getNodeStatus(nodeId);
+      if (nodeStatus !== "available" && nodeStatus !== "active") return;
+
+      if (
+        nodeId === 0 &&
+        status === "unauthenticated" &&
+        !bypassWarning &&
+        !hasIgnoredGuestWarning
+      ) {
+        setShowGuestWarning(nodeId);
+        return;
+      }
 
       setCurrentNodeId(nodeId);
 
@@ -135,8 +148,16 @@ export default function StoryModeMap() {
           break;
       }
     },
-    [getNodeStatus]
+    [getNodeStatus, status, hasIgnoredGuestWarning]
   );
+
+  const handleContinueAsGuest = useCallback(() => {
+    setHasIgnoredGuestWarning(true);
+    if (showGuestWarning !== null) {
+      handleNodeClick(showGuestWarning, true);
+    }
+    setShowGuestWarning(null);
+  }, [showGuestWarning, handleNodeClick]);
 
   // ── Battle callbacks ──────────────────────────────────────────────────
   const handleBattleVictory = useCallback(() => {
@@ -176,25 +197,30 @@ export default function StoryModeMap() {
 
   // ── Reset adventure ───────────────────────────────────────────────────
   const handleReset = useCallback(() => {
-    if (window.confirm("Are you sure you want to abandon this run and start over?")) {
-      setCompletedNodes(new Set());
-      setCurrentNodeId(-1);
-      setActiveView({ kind: "map" });
-      setJourneyComplete(false);
-      
-      // Explicitly clear from local storage immediately so it doesn't rely solely on the effect
-      if (status === "authenticated" && session?.user?.id) {
-        localStorage.removeItem(`storyProgress_${session.user.id}`);
-      }
+    setShowResetConfirm(true);
+  }, []);
+
+  const confirmReset = useCallback(() => {
+    setCompletedNodes(new Set());
+    setCurrentNodeId(-1);
+    setActiveView({ kind: "map" });
+    setJourneyComplete(false);
+    setShowResetConfirm(false);
+
+    // Explicitly clear from local storage immediately so it doesn't rely solely on the effect
+    if (status === "authenticated" && session?.user?.id) {
+      localStorage.removeItem(`storyProgress_${session.user.id}`);
     }
   }, [status, session?.user?.id]);
 
   // ── Progress ──────────────────────────────────────────────────────────
   const progress = useMemo(() => {
-    const totalNodes = STORY_MAP_NODES.length;
+    if (journeyComplete) return 100;
+    // A single full run from start to boss consists of exactly 8 nodes
+    const MAX_PATH_LENGTH = 8;
     const completedCount = completedNodes.size;
-    return Math.round((completedCount / totalNodes) * 100);
-  }, [completedNodes]);
+    return Math.min(100, Math.round((completedCount / MAX_PATH_LENGTH) * 100));
+  }, [completedNodes, journeyComplete]);
 
   // ── Render ────────────────────────────────────────────────────────────
   return (
@@ -236,77 +262,257 @@ export default function StoryModeMap() {
             </div>
 
             {/* Map wrapper for scrolling */}
-            <div className="w-full h-[75vh] min-h-[500px] rounded-2xl border border-[#D4AF6E]/40 overflow-y-auto overflow-x-hidden shadow-lg relative bg-[rgb(var(--obsidian-mid-rgb)/0.4)] custom-scrollbar">
-              <div
-                className="relative w-full min-h-[900px] sm:min-h-[1100px] overflow-hidden"
-                style={{
-                  backgroundImage:
-                    "radial-gradient(ellipse at 50% 80%, rgba(99,102,241,0.15) 0%, transparent 60%), radial-gradient(ellipse at 20% 30%, rgba(168,85,247,0.1) 0%, transparent 50%), radial-gradient(ellipse at 80% 20%, rgba(212,175,110,0.15) 0%, transparent 50%), url('/map-bg.jpg')",
-                  backgroundSize: "auto, auto, auto, 400px",
-                  backgroundRepeat: "no-repeat, no-repeat, no-repeat, repeat",
-                  backgroundBlendMode: "screen, screen, screen, normal",
-                }}
-              >
-                {/* Fog / atmosphere layers */}
+            <div className="relative w-full rounded-2xl overflow-hidden">
+              <div className="w-full h-[75vh] min-h-[500px] rounded-2xl border border-[#D4AF6E]/40 overflow-y-auto overflow-x-hidden shadow-lg relative bg-[rgb(var(--obsidian-mid-rgb)/0.4)] custom-scrollbar">
                 <div
-                  className="absolute inset-0 pointer-events-none"
+                  className="relative w-full min-h-[1200px] sm:min-h-[1400px] overflow-hidden"
                   style={{
-                    background:
-                      "linear-gradient(180deg, transparent 0%, rgb(var(--obsidian-rgb) / 0.08) 50%, rgb(var(--obsidian-rgb) / 0.18) 100%)",
+                    backgroundColor: "#080b14",
+                    backgroundImage:
+                      "radial-gradient(ellipse at 50% 80%, rgba(99,102,241,0.15) 0%, transparent 60%), radial-gradient(ellipse at 20% 30%, rgba(168,85,247,0.1) 0%, transparent 50%), radial-gradient(ellipse at 80% 20%, rgba(212,175,110,0.15) 0%, transparent 50%)",
                   }}
-                />
-
-                {/* Animated ambient particles */}
-                {[...Array(8)].map((_, i) => (
-                  <motion.div
-                    key={`particle-${i}`}
-                    className="absolute w-0.5 h-0.5 rounded-full bg-brand-accent/20"
+                >
+                  {/* Fog / atmosphere layers */}
+                  <div
+                    className="absolute inset-0 pointer-events-none"
                     style={{
-                      left: `${10 + Math.random() * 80}%`,
-                      top: `${10 + Math.random() * 80}%`,
-                    }}
-                    animate={{
-                      y: [0, -20, 0],
-                      opacity: [0, 0.6, 0],
-                    }}
-                    transition={{
-                      duration: 4 + Math.random() * 3,
-                      repeat: Infinity,
-                      delay: i * 0.7,
-                      ease: "easeInOut",
+                      background:
+                        "linear-gradient(180deg, transparent 0%, rgb(var(--obsidian-rgb) / 0.08) 50%, rgb(var(--obsidian-rgb) / 0.18) 100%)",
                     }}
                   />
-                ))}
 
-                {/* SVG path lines */}
-                <StoryModeMapCanvas
-                  nodes={STORY_MAP_NODES}
-                  getNodeStatus={getNodeStatus}
-                />
+                  {/* Animated ambient particles */}
+                  {[...Array(35)].map((_, i) => (
+                    <motion.div
+                      key={`particle-${i}`}
+                      className="absolute rounded-full pointer-events-none"
+                      style={{
+                        width: 1.5 + (i % 3),
+                        height: 1.5 + (i % 3),
+                        background: i % 2 === 0 ? "rgba(168, 85, 247, 0.7)" : "rgba(212, 175, 110, 0.7)",
+                        left: `${(i * 17) % 100}%`,
+                        top: `${(i * 23) % 100}%`,
+                      }}
+                      animate={{
+                        y: [0, -60 - (i % 40)],
+                        x: [0, ((i % 5) - 2) * 15],
+                        opacity: [0, 0.8, 0],
+                        scale: [0, 1.5, 0],
+                      }}
+                      transition={{
+                        duration: 6 + (i % 4),
+                        repeat: Infinity,
+                        delay: (i % 7) * 0.6,
+                        ease: "easeInOut",
+                      }}
+                    />
+                  ))}
 
-                {/* Node icons */}
-                {STORY_MAP_NODES.map((node) => (
-                  <StoryModeNodeIcon
-                    key={node.id}
-                    id={node.id}
-                    type={node.type}
-                    label={node.label}
-                    status={getNodeStatus(node.id)}
-                    x={node.x}
-                    y={node.y}
-                    onClick={() => handleNodeClick(node.id)}
+                  {/* SVG path lines */}
+                  <StoryModeMapCanvas
+                    nodes={STORY_MAP_NODES}
+                    getNodeStatus={getNodeStatus}
                   />
-                ))}
+
+                  {/* Node icons */}
+                  {STORY_MAP_NODES.map((node) => (
+                    <StoryModeNodeIcon
+                      key={node.id}
+                      id={node.id}
+                      type={node.type}
+                      label={node.label}
+                      status={getNodeStatus(node.id)}
+                      x={node.x}
+                      y={node.y}
+                      onClick={() => handleNodeClick(node.id)}
+                    />
+                  ))}
+                </div>
               </div>
+
+              {/* Journey complete overlay */}
+              <AnimatePresence>
+                {journeyComplete && (
+                  <motion.div
+                    className="absolute inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm rounded-2xl"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                  >
+                    <motion.div
+                      className="flex flex-col items-center gap-6 p-10 rounded-2xl border border-brand-accent/40 bg-brand-accent/5 backdrop-blur-md max-w-md w-full mx-4 shadow-2xl"
+                      initial={{ scale: 0.8, y: 30 }}
+                      animate={{ scale: 1, y: 0 }}
+                      exit={{ scale: 0.8, y: 30 }}
+                      transition={{ type: "spring", duration: 0.6 }}
+                    >
+                      {/* Crown / star */}
+                      <motion.div
+                        className="w-24 h-24 rounded-full bg-brand-accent/15 border-2 border-brand-accent/50 flex items-center justify-center"
+                        animate={{
+                          boxShadow: [
+                            "0 0 30px rgba(212,175,110,0.2)",
+                            "0 0 60px rgba(212,175,110,0.5)",
+                            "0 0 30px rgba(212,175,110,0.2)",
+                          ],
+                        }}
+                        transition={{
+                          duration: 2,
+                          repeat: Infinity,
+                          ease: "easeInOut",
+                        }}
+                      >
+                        <span className="text-5xl inline-block -translate-y-1">👑</span>
+                      </motion.div>
+
+                      <div className="text-center">
+                        <h3 className="text-3xl font-display font-bold text-brand-accent">
+                          Journey Complete!
+                        </h3>
+                        <p className="text-sm text-brand-secondary mt-2 leading-relaxed">
+                          You have conquered the Dark King and completed the
+                          adventure! Your chess prowess knows no bounds.
+                        </p>
+                      </div>
+
+                      <div className="flex flex-col sm:flex-row gap-3 mt-2 w-full max-w-xs">
+                        <button
+                          onClick={() => window.location.href = "/"}
+                          className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-brand-border/40 text-brand-secondary hover:text-brand-text hover:bg-brand-surface transition-all text-sm font-medium cursor-pointer"
+                        >
+                          <Home className="w-4 h-4" />
+                          Return to Home
+                        </button>
+                        <button
+                          onClick={confirmReset}
+                          className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-brand-accent/15 border border-brand-accent/40 text-brand-accent hover:bg-brand-accent/25 transition-all text-sm font-medium cursor-pointer"
+                        >
+                          <RotateCcw className="w-4 h-4" />
+                          Restart Journey
+                        </button>
+                      </div>
+                    </motion.div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Reset Confirmation Overlay */}
+              <AnimatePresence>
+                {showResetConfirm && (
+                  <motion.div
+                    className="absolute inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm rounded-2xl"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                  >
+                    <motion.div
+                      className="flex flex-col items-center gap-5 p-8 rounded-2xl border border-red-500/30 bg-red-500/5 backdrop-blur-md max-w-sm w-full mx-4 shadow-2xl relative"
+                      initial={{ scale: 0.8, y: 30 }}
+                      animate={{ scale: 1, y: 0 }}
+                      exit={{ scale: 0.8, y: 30 }}
+                      transition={{ type: "spring", duration: 0.5 }}
+                    >
+                      <button
+                        onClick={() => setShowResetConfirm(false)}
+                        className="absolute top-4 right-4 text-brand-secondary hover:text-brand-text transition-colors cursor-pointer"
+                      >
+                        <X className="w-5 h-5" />
+                      </button>
+
+                      <div className="w-16 h-16 rounded-full bg-red-500/10 border-2 border-red-500/30 flex items-center justify-center text-red-400">
+                        <RotateCcw className="w-8 h-8" />
+                      </div>
+
+                      <div className="text-center">
+                        <h3 className="text-2xl font-display font-bold text-red-400">Abandon Run?</h3>
+                        <p className="text-sm text-brand-secondary mt-2">
+                          Are you sure you want to abandon this run and start over? All your current progress will be lost.
+                        </p>
+                      </div>
+
+                      <div className="flex gap-3 mt-4 w-full">
+                        <button
+                          onClick={() => setShowResetConfirm(false)}
+                          className="flex-1 px-4 py-2.5 rounded-xl border border-brand-border/40 text-brand-secondary hover:text-brand-text hover:bg-brand-surface transition-all text-sm font-medium cursor-pointer"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          onClick={confirmReset}
+                          className="flex-1 px-4 py-2.5 rounded-xl bg-red-500/15 border border-red-500/40 text-red-400 hover:bg-red-500/25 transition-all text-sm font-medium cursor-pointer"
+                        >
+                          Confirm
+                        </button>
+                      </div>
+                    </motion.div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Guest Warning Overlay */}
+              <AnimatePresence>
+                {showGuestWarning !== null && (
+                  <motion.div
+                    className="absolute inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm rounded-2xl"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                  >
+                    <motion.div
+                      className="flex flex-col items-center gap-5 p-8 rounded-2xl border border-[#D4AF6E]/60 bg-brand-accent/5 backdrop-blur-md max-w-sm w-full mx-4 shadow-[0_0_30px_rgba(212,175,110,0.15)] relative"
+                      initial={{ scale: 0.8, y: 30 }}
+                      animate={{ scale: 1, y: 0 }}
+                      exit={{ scale: 0.8, y: 30 }}
+                      transition={{ type: "spring", duration: 0.5 }}
+                    >
+                      <button
+                        onClick={() => setShowGuestWarning(null)}
+                        className="absolute top-4 right-4 text-brand-secondary hover:text-brand-text transition-colors cursor-pointer"
+                      >
+                        <X className="w-5 h-5" />
+                      </button>
+
+                      <div className="w-16 h-16 rounded-full bg-brand-accent/10 border-2 border-brand-accent/30 flex items-center justify-center text-brand-accent">
+                        <LogIn className="w-8 h-8" />
+                      </div>
+
+                      <div className="text-center">
+                        <h3 className="text-2xl font-display font-bold text-brand-accent">Sign In to Save</h3>
+                        <p className="text-sm text-brand-secondary mt-2">
+                          You are currently playing as a guest.<br />
+                          Your progress will be lost if you refresh<br />
+                          or close the page.
+                        </p>
+                      </div>
+
+                      <div className="flex flex-col gap-3 mt-4 w-full">
+                        <button
+                          onClick={() => signIn()}
+                          className="w-full px-4 py-2.5 rounded-xl bg-brand-accent/15 border border-brand-accent/40 text-brand-accent hover:bg-brand-accent/25 transition-all text-sm font-medium cursor-pointer flex items-center justify-center gap-2"
+                        >
+                          <LogIn className="w-4 h-4" />
+                          Sign In
+                        </button>
+                        <button
+                          onClick={handleContinueAsGuest}
+                          className="w-full px-4 py-2.5 rounded-xl border border-brand-border/40 text-brand-secondary hover:text-brand-text hover:bg-brand-surface transition-all text-sm font-medium cursor-pointer"
+                        >
+                          Continue without sign in
+                        </button>
+                      </div>
+                    </motion.div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
             {/* Legend */}
             <div className="flex flex-wrap items-center justify-center gap-4 mt-4 px-2">
               {[
-                { color: "#f59e0b", label: "Monster" },
+                { color: "#ef4444", label: "Monster" },
                 { color: "#a855f7", label: "Mystery" },
-                { color: "#06b6d4", label: "Rest Site" },
-                { color: "#ef4444", label: "Boss" },
+                { color: "#f97316", label: "Rest Site" },
+                { color: "#eab308", label: "Boss" },
                 { color: "#22c55e", label: "Completed" },
               ].map((item) => (
                 <div
@@ -321,63 +527,6 @@ export default function StoryModeMap() {
                 </div>
               ))}
             </div>
-
-            {/* Journey complete overlay */}
-            <AnimatePresence>
-              {journeyComplete && (
-                <motion.div
-                  className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                >
-                  <motion.div
-                    className="flex flex-col items-center gap-6 p-10 rounded-2xl border border-brand-accent/40 bg-brand-accent/5 backdrop-blur-md max-w-md w-full mx-4"
-                    initial={{ scale: 0.8, y: 30 }}
-                    animate={{ scale: 1, y: 0 }}
-                    exit={{ scale: 0.8, y: 30 }}
-                    transition={{ type: "spring", duration: 0.6 }}
-                  >
-                    {/* Crown / star */}
-                    <motion.div
-                      className="w-24 h-24 rounded-full bg-brand-accent/15 border-2 border-brand-accent/50 flex items-center justify-center"
-                      animate={{
-                        boxShadow: [
-                          "0 0 30px rgba(212,175,110,0.2)",
-                          "0 0 60px rgba(212,175,110,0.5)",
-                          "0 0 30px rgba(212,175,110,0.2)",
-                        ],
-                      }}
-                      transition={{
-                        duration: 2,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                      }}
-                    >
-                      <span className="text-5xl">👑</span>
-                    </motion.div>
-
-                    <div className="text-center">
-                      <h3 className="text-3xl font-display font-bold text-brand-accent">
-                        Journey Complete!
-                      </h3>
-                      <p className="text-sm text-brand-secondary mt-2 leading-relaxed">
-                        You have conquered the Dark King and completed the
-                        adventure! Your chess prowess knows no bounds.
-                      </p>
-                    </div>
-
-                    <button
-                      onClick={handleReset}
-                      className="flex items-center gap-2 px-6 py-3 rounded-xl bg-brand-accent/15 border border-brand-accent/40 text-brand-accent hover:bg-brand-accent/25 transition-all text-sm font-medium cursor-pointer"
-                    >
-                      <RotateCcw className="w-4 h-4" />
-                      Start New Adventure
-                    </button>
-                  </motion.div>
-                </motion.div>
-              )}
-            </AnimatePresence>
           </motion.div>
         ) : activeView.kind === "battle" ? (
           <motion.div

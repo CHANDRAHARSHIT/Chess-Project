@@ -49,14 +49,7 @@ export default function StoryModeMapCanvas({
       let edgeStatus: "completed" | "available" | "locked" = "locked";
       if (fromStatus === "completed" && toStatus === "completed") {
         edgeStatus = "completed";
-      } else if (
-        fromStatus === "completed" ||
-        toStatus === "completed" ||
-        fromStatus === "available" ||
-        toStatus === "available" ||
-        fromStatus === "active" ||
-        toStatus === "active"
-      ) {
+      } else if (fromStatus === "completed" && (toStatus === "available" || toStatus === "active")) {
         edgeStatus = "available";
       }
 
@@ -81,7 +74,7 @@ export default function StoryModeMapCanvas({
     >
       <defs>
         {/* Gold glow for completed paths */}
-        <filter id="story-path-glow-gold" x="-50%" y="-50%" width="200%" height="200%">
+        <filter id="story-path-glow-gold" x="-20" y="-20" width="140" height="140" filterUnits="userSpaceOnUse">
           <feGaussianBlur stdDeviation="0.4" result="blur" />
           <feMerge>
             <feMergeNode in="blur" />
@@ -89,7 +82,7 @@ export default function StoryModeMapCanvas({
           </feMerge>
         </filter>
         {/* White glow for available paths */}
-        <filter id="story-path-glow-white" x="-50%" y="-50%" width="200%" height="200%">
+        <filter id="story-path-glow-white" x="-20" y="-20" width="140" height="140" filterUnits="userSpaceOnUse">
           <feGaussianBlur stdDeviation="0.3" result="blur" />
           <feMerge>
             <feMergeNode in="blur" />
@@ -131,8 +124,8 @@ export default function StoryModeMapCanvas({
             key={pathId}
             x1={edge.fromX}
             y1={edge.fromY}
-            x2={edge.toX}
-            y2={edge.toY}
+            x2={edge.fromX === edge.toX ? edge.toX + 0.01 : edge.toX}
+            y2={edge.fromY === edge.toY ? edge.toY + 0.01 : edge.toY}
             stroke={stroke}
             strokeWidth={strokeWidth}
             strokeDasharray="2 2"

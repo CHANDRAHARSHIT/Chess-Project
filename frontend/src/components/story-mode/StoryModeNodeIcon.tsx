@@ -45,7 +45,7 @@ function NodeSVG({ type, status }: { type: StoryNodeType; status: NodeStatus }) 
 
   switch (type) {
     case "start":
-      // Player pawn silhouette
+      // Player pawn silhouette (kept inline as no replacement asset provided)
       return (
         <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
           <circle cx="12" cy="6" r="3" />
@@ -54,46 +54,40 @@ function NodeSVG({ type, status }: { type: StoryNodeType; status: NodeStatus }) 
         </svg>
       );
     case "monster":
-      // Skull icon
       return (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 2C7.58 2 4 5.58 4 10c0 2.76 1.35 5.2 3.42 6.72L7 20h2l.5-2h5l.5 2h2l-.42-3.28C18.65 15.2 20 12.76 20 10c0-4.42-3.58-8-8-8zm-2.5 11a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
-        </svg>
+        <img
+          src="/story mode assets/skull.svg"
+          alt="Monster"
+          style={{ width: size, height: size }}
+          className="object-contain"
+        />
       );
     case "mystery":
-      // Question mark
       return (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
-          <text
-            x="12"
-            y="18"
-            textAnchor="middle"
-            fontSize="20"
-            fontWeight="bold"
-            fontFamily="serif"
-          >
-            ?
-          </text>
-        </svg>
+        <img
+          src="/story mode assets/question mark.svg"
+          alt="Mystery"
+          style={{ width: size, height: size }}
+          className="object-contain"
+        />
       );
     case "fireplace":
-      // Campfire flame
       return (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 2c-1 4-4 6-4 10a4 4 0 0 0 8 0c0-4-3-6-4-10z" />
-          <path
-            d="M12 8c-.5 2-2 3-2 5a2 2 0 0 0 4 0c0-2-1.5-3-2-5z"
-            fill="rgba(255,200,50,0.8)"
-          />
-          <path d="M8 19l-2 3h12l-2-3H8z" opacity="0.4" />
-        </svg>
+        <img
+          src="/story mode assets/fireplace.svg"
+          alt="Rest Site"
+          style={{ width: size, height: size }}
+          className="object-contain"
+        />
       );
     case "boss":
-      // Crown / diamond
       return (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
-          <polygon points="12,2 15,9 22,9 17,14 19,22 12,17 5,22 7,14 2,9 9,9" />
-        </svg>
+        <img
+          src="/story mode assets/star.svg"
+          alt="Boss"
+          style={{ width: size, height: size }}
+          className="object-contain"
+        />
       );
     default:
       return null;
@@ -132,20 +126,20 @@ function getNodeColors(type: StoryNodeType, status: NodeStatus) {
   } else {
     switch (type) {
       case "monster":
-        glowColor = "rgba(245, 158, 11, 0.4)"; // Amber
-        shadow = "0 0 25px rgba(245, 158, 11, 0.6)";
+        glowColor = "rgba(239, 68, 68, 0.4)"; // Red
+        shadow = "0 0 25px rgba(239, 68, 68, 0.6)";
         break;
       case "mystery":
         glowColor = "rgba(168, 85, 247, 0.4)"; // Purple
         shadow = "0 0 25px rgba(168, 85, 247, 0.6)";
         break;
       case "fireplace":
-        glowColor = "rgba(6, 182, 212, 0.4)"; // Cyan
-        shadow = "0 0 25px rgba(6, 182, 212, 0.6)";
+        glowColor = "rgba(249, 115, 22, 0.4)"; // Orange
+        shadow = "0 0 25px rgba(249, 115, 22, 0.6)";
         break;
       case "boss":
-        glowColor = "rgba(239, 68, 68, 0.4)"; // Red
-        shadow = "0 0 30px rgba(239, 68, 68, 0.7)";
+        glowColor = "rgba(250, 204, 21, 0.7)"; // Bright Yellow/Gold
+        shadow = "0 0 40px rgba(250, 204, 21, 0.9)";
         break;
     }
   }
@@ -183,7 +177,7 @@ export default function StoryModeNodeIcon({
       <motion.button
         onClick={isClickable ? onClick : undefined}
         disabled={!isClickable}
-        className="flex flex-col items-center gap-1.5 group"
+        className="relative flex items-center justify-center group"
         style={{
           cursor: isClickable ? "pointer" : "default",
         }}
@@ -194,7 +188,7 @@ export default function StoryModeNodeIcon({
         whileTap={isClickable ? { scale: 0.95 } : undefined}
       >
         <motion.div
-          className="flex flex-col items-center gap-1.5"
+          className="relative flex items-center justify-center"
           animate={isAvailable || status === "active" ? { y: [0, -4, 0] } : {}}
           transition={
             isAvailable || status === "active"
@@ -246,10 +240,12 @@ export default function StoryModeNodeIcon({
 
           {/* Label */}
           <span
-            className="text-[10px] font-mono font-semibold tracking-wide whitespace-nowrap max-w-[100px] truncate text-center transition-opacity duration-300"
+            className="absolute top-[100%] mt-2 text-xs font-mono font-semibold tracking-wide max-w-[140px] w-max text-center transition-opacity duration-300 px-3 py-1.5 rounded-lg border shadow-sm backdrop-blur-md leading-tight"
             style={{
-              color: status === "locked" ? "rgb(var(--text-secondary-rgb) / 0.35)" : colors.text,
-              opacity: status === "locked" ? 0.4 : 0.9,
+              color: status === "locked" ? "rgb(var(--text-secondary-rgb) / 0.5)" : colors.text,
+              backgroundColor: status === "locked" ? "rgba(0,0,0,0.4)" : "rgba(8, 11, 20, 0.75)",
+              borderColor: status === "locked" ? "transparent" : colors.border,
+              opacity: status === "locked" ? 0.5 : 1,
             }}
           >
             {label}

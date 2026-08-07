@@ -104,6 +104,14 @@ export default function StoryModeEncounter({
                   Investigate
                 </button>
               </div>
+              
+              {/* DEV Only: Skip Button */}
+              {import.meta.env.VITE_ENABLE_STORY_DEV_TOOLS === 'true' && (
+                <div className="mt-4 p-2 rounded border border-dashed border-yellow-500/50 bg-yellow-500/10 flex justify-center opacity-80 hover:opacity-100 transition-opacity w-full">
+                  <span className="text-[10px] text-yellow-500 font-mono self-center mr-2">DEV:</span>
+                  <button onClick={onComplete} className="px-2 py-1 bg-green-500/20 border border-green-500/50 text-green-400 rounded text-[10px] font-mono hover:bg-green-500/40 cursor-pointer">Skip Encounter</button>
+                </div>
+              )}
             </motion.div>
           ) : (
             <motion.div
