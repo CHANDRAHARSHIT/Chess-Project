@@ -61,6 +61,7 @@ export function PlayChessGame({ onLeave, onFindAnother }: PlayChessGameProps) {
   const [politeMessage, setPoliteMessage] = useState("");
   const [assertiveMessage, setAssertiveMessage] = useState("");
   const [waitedTooLong, setWaitedTooLong] = useState(false);
+  const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
   const wasMyTurnRef = useRef(false);
 
   // 3-second Match Sync Countdown (3... 2... 1... PLAY!)
@@ -83,6 +84,20 @@ export function PlayChessGame({ onLeave, onFindAnother }: PlayChessGameProps) {
   // READY window.
   const activeCountdown = status === "READY" ? countdown : null;
   const interactive = connectionStatus === "connected" && isGameActive && !gameResult && activeCountdown === null;
+  const isMatchOngoing = isGameActive && !gameResult;
+
+  const handleBackClick = () => {
+    if (isMatchOngoing) {
+      setShowLeaveConfirm(true);
+    } else {
+      onLeave();
+    }
+  };
+
+  const confirmLeave = () => {
+    setShowLeaveConfirm(false);
+    onLeave();
+  };
 
   // Run the 3s "get ready" countdown once, the first time this session reaches READY.
   useEffect(() => {
@@ -172,7 +187,7 @@ export function PlayChessGame({ onLeave, onFindAnother }: PlayChessGameProps) {
       <div className="w-full flex items-center justify-between gap-3 px-5 py-3 rounded-xl bg-brand-surface/80 border border-white/10 backdrop-blur-xl shadow-md">
         <div className="flex items-center gap-3">
           <button
-            onClick={onLeave}
+            onClick={handleBackClick}
             className="p-1.5 rounded-lg border border-white/10 bg-brand-bg/40 text-brand-secondary hover:text-brand-text hover:border-brand-accent/40 transition-all cursor-pointer"
             title="Return to lobby"
           >
@@ -284,6 +299,41 @@ export function PlayChessGame({ onLeave, onFindAnother }: PlayChessGameProps) {
           </div>
         </div>
       </div>
+
+      {showLeaveConfirm && (
+        <div
+          role="alertdialog"
+          aria-modal="true"
+          aria-labelledby="leave-confirm-title"
+          className="fixed inset-0 z-40 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
+        >
+          <div className="max-w-sm w-full rounded-2xl border border-white/10 bg-brand-surface/95 backdrop-blur-xl p-6 space-y-4 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9)]">
+            <div className="flex items-center gap-2.5 text-amber-400">
+              <AlertTriangle className="w-5 h-5 shrink-0" />
+              <h2 id="leave-confirm-title" className="font-display text-lg font-bold text-brand-text">
+                Leave ongoing match?
+              </h2>
+            </div>
+            <p className="text-sm text-brand-secondary">
+              Going back will terminate the ongoing match. Do you want to proceed?
+            </p>
+            <div className="flex justify-end gap-3 pt-1">
+              <button
+                onClick={() => setShowLeaveConfirm(false)}
+                className="px-4 py-2 rounded-lg font-mono text-xs uppercase tracking-widest font-semibold border border-brand-border/60 text-brand-secondary hover:text-brand-text hover:border-brand-accent/40 bg-brand-bg/40 transition-all cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmLeave}
+                className="px-4 py-2 rounded-lg font-mono text-xs uppercase tracking-widest font-bold text-white bg-rose-600 hover:bg-rose-500 transition-all cursor-pointer"
+              >
+                Leave Match
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

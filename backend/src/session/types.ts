@@ -33,7 +33,7 @@ export type SessionStatus =
  */
 export interface SessionClock {
   readonly remainingMs: readonly number[]; // index = side number
-  readonly lastMoveAt: number | null;      // wall-clock ms; null = not yet READY
+  readonly lastMoveAt: number | null;      // wall-clock ms; null = not yet READY, or still inside the match-start grace
 }
 
 /**
