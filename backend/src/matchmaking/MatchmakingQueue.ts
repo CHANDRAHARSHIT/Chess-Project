@@ -325,6 +325,25 @@ export class MatchmakingQueue {
   }
 
   /**
+   * Drops a MATCHED ticket for userId, if any. Called once the game that ticket produced has
+   * concluded (any terminal GameResult), so a stale ticket can't be replayed by enqueue()'s
+   * idempotency check into re-serving an already-finished match's descriptor — MATCHED tickets
+   * otherwise only disappear via pruneMatched()'s flat 5-minute retention window, which is meant
+   * for polling latency, not as the signal that a game is actually still live.
+   * Safe no-op if userId has no ticket, or it isn't MATCHED.
+   */
+  releaseMatchedTicket(userId: string): void {
+    const ticketId = this.userTickets.get(userId);
+    if (!ticketId) return;
+
+    const ticket = this.tickets.get(ticketId);
+    if (!ticket || ticket.status !== "MATCHED") return;
+
+    this.tickets.delete(ticketId);
+    this.userTickets.delete(userId);
+  }
+
+  /**
    * Marks a single WAITING ticket EXPIRED and deletes it immediately. Shared by expireStale()'s
    * periodic sweep and getTicket()'s lazy, read-time check, so both paths expire a ticket
    * identically (same emitTransition, same map cleanup) instead of drifting apart.

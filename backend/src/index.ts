@@ -43,11 +43,13 @@ server.on("error", (err: any) => {
 // Composition root: SessionManager is constructed here, not exported as a module singleton,
 // so future consumers (Results in M4) receive it via injection.
 if (env.MULTIPLAYER_ENABLED) {
-  // M7: releases a terminal result's participating bot (safe no-op for humans) before
-  // forwarding to the existing, unmodified handleGameResult.
+  // each participant's now-stale MATCHED queue ticket (safe no-op if already gone) — otherwise
+  // enqueue()'s idempotency check can hand back a finished game's descriptor for up to 5 minutes
+  // — before forwarding to the existing, unmodified handleGameResult.
   const onResult = (result: GameResult) => {
     for (const participant of result.participants) {
       releaseBot(participant.userId);
+      matchmakingQueue.releaseMatchedTicket(participant.userId);
     }
     handleGameResult(result);
   };
