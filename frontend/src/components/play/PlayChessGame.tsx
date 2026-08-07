@@ -96,6 +96,7 @@ export function PlayChessGame({ onLeave, onFindAnother }: PlayChessGameProps) {
 
   const confirmLeave = () => {
     setShowLeaveConfirm(false);
+    resign();
     onLeave();
   };
 
