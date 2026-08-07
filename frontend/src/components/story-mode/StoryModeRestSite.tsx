@@ -5,7 +5,7 @@
  * Features an interactive resting sequence with healing animations before continuing.
  */
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Flame, ArrowRight, RotateCcw, Heart, Sparkles } from "lucide-react";
 
