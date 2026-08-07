@@ -234,6 +234,7 @@ export function PlayChessGame({ onLeave, onFindAnother }: PlayChessGameProps) {
                 name={opponentParticipant?.name}
                 image={opponentParticipant?.image}
                 presenceState={mapOpponentPresence(presence[opponentUserId])}
+                isBot={descriptor?.provenance === "bot"}
                 {...opponentClock}
               />
             </div>

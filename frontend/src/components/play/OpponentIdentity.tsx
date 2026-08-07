@@ -22,9 +22,10 @@ interface OpponentIdentityProps {
   name?: string;
   image?: string;
   size?: number;
+  isBot?: boolean;
 }
 
-export function OpponentIdentity({ userId, label, name, image, size = 36 }: OpponentIdentityProps) {
+export function OpponentIdentity({ userId, label, name, image, size = 36, isBot }: OpponentIdentityProps) {
   const { boardTheme } = useBoardSettings();
   const [imageFailed, setImageFailed] = useState(false);
   const hash = hashUserId(userId);
@@ -66,7 +67,14 @@ export function OpponentIdentity({ userId, label, name, image, size = 36 }: Oppo
           </>
         )}
       </div>
-      <span className="font-sans text-sm font-semibold text-brand-text truncate tracking-tight">{displayName}</span>
+      <div className="flex items-center gap-1.5 min-w-0">
+        <span className="font-sans text-sm font-semibold text-brand-text truncate tracking-tight">{displayName}</span>
+        {isBot && (
+          <span className="shrink-0 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-brand-accent/20 border border-brand-accent/40 text-brand-accent uppercase tracking-wider">
+            BOT
+          </span>
+        )}
+      </div>
     </div>
   );
 }

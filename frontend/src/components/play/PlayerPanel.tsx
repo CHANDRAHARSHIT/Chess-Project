@@ -11,6 +11,7 @@ interface PlayerPanelProps {
   remainingMs: number;
   lastMoveAt: number | null;
   isLive: boolean;
+  isBot?: boolean;
 }
 
 export function PlayerPanel({
@@ -22,6 +23,7 @@ export function PlayerPanel({
   remainingMs,
   lastMoveAt,
   isLive,
+  isBot,
 }: PlayerPanelProps) {
   const isYou = label.toLowerCase() === "you";
 
@@ -35,7 +37,7 @@ export function PlayerPanel({
     >
       {/* Left: Player Crest & Identity */}
       <div className="flex flex-col gap-0.5 min-w-0">
-        <OpponentIdentity userId={userId} label={label} name={name} image={image} size={28} />
+        <OpponentIdentity userId={userId} label={label} name={name} image={image} size={28} isBot={isBot} />
         <ConnectionIndicator state={presenceState} className="pl-[36px]" />
       </div>
 

@@ -78,6 +78,7 @@ export function MatchFoundCard({ descriptor, onEnter }: MatchFoundCardProps) {
               name={opponent.name}
               image={opponent.image}
               size={24}
+              isBot={descriptor.provenance === "bot"}
             />
           ) : (
             <span className="font-sans text-xs text-brand-secondary">Opponent</span>
