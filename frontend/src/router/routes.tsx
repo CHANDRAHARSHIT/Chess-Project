@@ -31,6 +31,7 @@ import VariantsPage from "../pages/VariantsPage";
 import LessonsPage from "../pages/LessonsPage";
 import LessonViewerPage from "../pages/LessonViewerPage";
 import QuickGamePage from "../pages/QuickGamePage";
+import StoryModePage from "../pages/StoryModePage";
 import StatsPage from "../pages/StatsPage";
 
 export interface RouteConfig {
@@ -47,6 +48,11 @@ export const mainRoutes: RouteConfig[] = [
     path: "/puzzles",
     element: <PuzzlePage />,
     title: "Chess Puzzles | XLChess",
+  },
+  {
+    path: "/story-mode",
+    element: <StoryModePage />,
+    title: "Story Mode | XLChess",
   },
   {
     path: "/openings",
