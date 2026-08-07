@@ -162,7 +162,7 @@ export function PlayChessGame({ onLeave, onFindAnother }: PlayChessGameProps) {
     const fallbackMs = descriptor.timeControl.initialSeconds * 1000;
     const remainingMs = sessionState?.clock.remainingMs[side] ?? fallbackMs;
     const lastMoveAt = sessionState?.clock.lastMoveAt ?? null;
-    const isLive = isGameActive && activeSide === side;
+    const isLive = isGameActive && !gameResult && activeSide === side;
     return { remainingMs, lastMoveAt, isLive };
   };
 
