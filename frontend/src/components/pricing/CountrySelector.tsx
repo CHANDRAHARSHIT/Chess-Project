@@ -59,7 +59,7 @@ export const CountrySelector: React.FC<CountrySelectorProps> = ({
 
   return (
     <div className="flex flex-col items-center justify-center mb-10 relative z-50 w-full">
-      <div className="bg-brand-bg/90 backdrop-blur-xl border border-brand-accent/30 p-5 rounded-2xl max-w-sm w-full shadow-[0_10px_40px_rgba(212,175,110,0.15)] relative">
+      <div className="bg-brand-bg/90 backdrop-blur-xl border border-brand-accent/30 p-5 rounded-2xl max-w-sm w-full relative">
         <div className="flex items-center gap-2 mb-3 justify-center">
           <Globe className="w-4 h-4 text-brand-accent" />
           <h3 className="text-sm font-display font-medium text-white tracking-wide">
@@ -97,7 +97,7 @@ export const CountrySelector: React.FC<CountrySelectorProps> = ({
           </button>
 
           {isOpen && (
-            <div className="absolute top-[calc(100%+8px)] left-0 right-0 bg-brand-bg border border-brand-accent/40 rounded-xl shadow-2xl overflow-hidden z-[100] animate-in fade-in zoom-in-95 duration-200">
+            <div className="absolute top-[calc(100%+8px)] left-0 right-0 bg-brand-bg border border-brand-accent/40 rounded-xl overflow-hidden z-[100] animate-in fade-in zoom-in-95 duration-200">
               <div className="p-2 border-b border-brand-border/50 flex items-center gap-2 bg-brand-bg/50">
                 <Search className="w-4 h-4 text-brand-secondary ml-2" />
                 <input

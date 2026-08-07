@@ -31,7 +31,7 @@ const PieceSvg: React.FC<{
   type: "king" | "queen" | "rook" | "knight" | "bishop";
 }> = ({ type }) => {
   const cls =
-    "w-full h-full fill-brand-accent/10 stroke-brand-accent/20 stroke-[0.8] drop-shadow-[0_0_15px_rgba(212,175,110,0.1)]";
+    "w-full h-full fill-brand-accent/10 stroke-brand-accent/20 stroke-[0.8]";
   switch (type) {
     case "king":
       return (
@@ -258,7 +258,7 @@ function CompCell({ value, diamond }: { value: boolean; diamond?: boolean }) {
   if (value) {
     if (diamond) {
       return (
-        <span className="inline-flex items-center justify-center w-[22px] h-[22px] rounded-full bg-sky-500 text-white shadow-md">
+        <span className="inline-flex items-center justify-center w-[22px] h-[22px] rounded-full bg-sky-500 text-white">
           <Check className="w-3.5 h-3.5 stroke-[3.5]" />
         </span>
       );
@@ -375,7 +375,7 @@ export default function PricingPage() {
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="w-full max-w-2xl mt-2 mb-4 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs sm:text-sm font-sans flex items-center justify-between gap-3 shadow-md z-30"
+            className="w-full max-w-2xl mt-2 mb-4 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs sm:text-sm font-sans flex items-center justify-between gap-3 z-30"
           >
             <div className="flex items-center gap-2">
               <AlertCircle className="w-5 h-5 flex-shrink-0" />
@@ -402,7 +402,7 @@ export default function PricingPage() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-surface/80 border border-brand-border backdrop-blur-sm text-brand-accent text-xs font-sans tracking-wide mb-6 shadow-sm"
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-surface/80 border border-brand-border backdrop-blur-sm text-brand-accent text-xs font-sans tracking-wide mb-6"
           >
             <Sparkles className="w-3.5 h-3.5" />
             <span>Trusted by thousands of chess players</span>
@@ -433,7 +433,7 @@ export default function PricingPage() {
 
         {/* ─── BILLING TOGGLE ─── */}
         <section className="mb-14 z-20">
-          <div className="bg-brand-surface/90 border border-brand-border p-1.5 rounded-2xl flex items-center relative shadow-xl">
+          <div className="bg-brand-surface/90 border border-brand-border p-1.5 rounded-2xl flex items-center relative">
             <button
               onClick={() => setIsYearly(false)}
               className={`relative z-10 px-6 py-2.5 rounded-xl font-mono text-xs uppercase tracking-wider font-semibold transition-all duration-300 cursor-pointer min-w-[120px] text-center
@@ -442,7 +442,7 @@ export default function PricingPage() {
               {!isYearly && (
                 <motion.div
                   layoutId="billingSlider"
-                  className="absolute inset-0 bg-brand-accent rounded-xl -z-10 shadow-lg shadow-brand-accent/20"
+                  className="absolute inset-0 bg-brand-accent rounded-xl -z-10"
                   transition={{ type: "spring", stiffness: 350, damping: 28 }}
                 />
               )}
@@ -457,14 +457,14 @@ export default function PricingPage() {
               {isYearly && (
                 <motion.div
                   layoutId="billingSlider"
-                  className="absolute inset-0 bg-brand-accent rounded-xl -z-10 shadow-lg shadow-brand-accent/20"
+                  className="absolute inset-0 bg-brand-accent rounded-xl -z-10"
                   transition={{ type: "spring", stiffness: 350, damping: 28 }}
                 />
               )}
               Yearly
             </button>
 
-            <div className="absolute z-20 -top-6 left-3/4 -translate-x-1/2 sm:left-[calc(100%+14px)] sm:top-1/2 sm:-translate-y-1/2 sm:translate-x-0 whitespace-nowrap bg-brand-accent/15 border border-brand-accent/30 text-brand-accent text-[10px] font-mono tracking-wider uppercase px-2 py-0.5 rounded-md pointer-events-none shadow-sm">
+            <div className="absolute z-20 -top-6 left-3/4 -translate-x-1/2 sm:left-[calc(100%+14px)] sm:top-1/2 sm:-translate-y-1/2 sm:translate-x-0 whitespace-nowrap bg-brand-accent/15 border border-brand-accent/30 text-brand-accent text-[10px] font-mono tracking-wider uppercase px-2 py-0.5 rounded-md pointer-events-none">
               Save up to 66%
             </div>
           </div>
@@ -484,12 +484,12 @@ export default function PricingPage() {
               <div
                 key={plan.id}
                 className={`relative rounded-2xl p-6 backdrop-blur-xl transition-all ${isDiamond
-                  ? "bg-brand-surface/90 border-2 border-sky-400 shadow-xl shadow-sky-500/10"
-                  : "bg-brand-surface/60 border border-brand-border shadow-lg"
+                  ? "bg-brand-surface/90 border-2 border-sky-400"
+                  : "bg-brand-surface/60 border border-brand-border"
                   }`}
               >
                 {isDiamond && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-sky-500 text-white text-[10px] font-bold uppercase tracking-wider shadow-md">
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-sky-500 text-white text-[10px] font-bold uppercase tracking-wider">
                     Most Popular
                   </div>
                 )}
@@ -533,7 +533,7 @@ export default function PricingPage() {
                     onClick={() =>
                       handleUpgrade(isYearly ? "Yearly" : "Monthly")
                     }
-                    className="w-full py-3 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-bold text-sm transition-all shadow-lg shadow-sky-500/20 mb-6 flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98]"
+                    className="w-full py-3 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-bold text-sm transition-all mb-6 flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98]"
                   >
                     <span>Get Access</span>
                     <ArrowRight className="w-4 h-4" />
@@ -576,7 +576,7 @@ export default function PricingPage() {
 
         {/* ─── DESKTOP COMPARISON TABLE (Visible >= md) ─── */}
         <section className="w-full max-w-6xl mb-20 sm:mb-24 z-10 hidden md:block">
-          <div className="w-full overflow-x-auto rounded-2xl border border-brand-border bg-brand-surface/60 backdrop-blur-xl shadow-2xl">
+          <div className="w-full overflow-x-auto rounded-2xl border border-brand-border bg-brand-surface/60 backdrop-blur-xl">
             <table className="w-full text-left border-collapse min-w-[700px]">
               {/* ─── HEADER ROW ─── */}
               <thead>
@@ -624,7 +624,7 @@ export default function PricingPage() {
                   </th>
 
                   {/* Diamond */}
-                  <th className="relative pt-12 pb-6 px-4 align-bottom text-center w-48 border-t-2 border-l-2 border-r-2 border-sky-400 bg-sky-500/[0.04] rounded-t-2xl shadow-[0_-10px_30px_rgba(56,189,248,0.08)]">
+                  <th className="relative pt-12 pb-6 px-4 align-bottom text-center w-48 border-t-2 border-l-2 border-r-2 border-sky-400 bg-sky-500/[0.04] rounded-t-2xl">
                     <div className="flex flex-col items-center justify-center gap-1">
                       <div className="inline-flex items-center gap-1 text-[10px] font-bold text-sky-400 tracking-widest uppercase mb-1 px-2.5 py-0.5 rounded-full bg-sky-500/10 border border-sky-400/30">
                         <Sparkles className="w-3 h-3 text-sky-400" />
@@ -746,12 +746,12 @@ export default function PricingPage() {
                   </td>
 
                   {/* Diamond Footer */}
-                  <td className="py-8 px-4 text-center border-b-2 border-l-2 border-r-2 border-sky-400 bg-sky-500/[0.04] rounded-b-2xl shadow-[0_10px_30px_rgba(56,189,248,0.08)]">
+                  <td className="py-8 px-4 text-center border-b-2 border-l-2 border-r-2 border-sky-400 bg-sky-500/[0.04] rounded-b-2xl">
                     <button
                       onClick={() =>
                         handleUpgrade(isYearly ? "Yearly" : "Monthly")
                       }
-                      className="w-[140px] py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-bold text-sm transition-colors mb-2 shadow-lg shadow-sky-500/20 cursor-pointer inline-flex items-center justify-center gap-1 mx-auto hover:scale-[1.02]"
+                      className="w-[140px] py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-bold text-sm transition-colors mb-2 cursor-pointer inline-flex items-center justify-center gap-1 mx-auto hover:scale-[1.02]"
                     >
                       <span>Get Access</span>
                       <ArrowRight className="w-4 h-4" />

@@ -201,7 +201,7 @@ export default function BrandSection() {
               <img
                 src="/final%20banner.png"
                 alt="Build More Than Subscribers Design"
-                className="w-full h-auto object-contain relative z-10 drop-shadow-[0_20px_40px_rgba(0,0,0,0.4)]"
+                className="w-full h-auto object-contain relative z-10"
                 draggable={false}
               />
             </div>

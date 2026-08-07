@@ -72,7 +72,7 @@ export function GameBoard({
 
   return (
     <div
-      className={`relative w-full max-w-[480px] sm:max-w-[540px] aspect-square shadow-[0_20px_50px_rgba(212,175,110,0.03)] border bg-brand-surface transition-all duration-300 ${borderClass}`}
+      className={`relative w-full max-w-[480px] sm:max-w-[540px] aspect-square border bg-brand-surface transition-all duration-300 ${borderClass}`}
     >
       <ThemedChessboard
         options={{

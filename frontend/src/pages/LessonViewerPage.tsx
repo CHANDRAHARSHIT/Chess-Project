@@ -166,7 +166,7 @@ export default function LessonViewerPage() {
       {/* Main Grid: Sidebar Segments + Slide Player */}
       {isCompleted ? (
         /* Completion View */
-        <div className="p-8 sm:p-12 lg:p-16 rounded-3xl bg-gradient-to-b from-brand-surface via-brand-surface/90 to-brand-bg border border-brand-border text-center space-y-6 shadow-2xl">
+        <div className="p-8 sm:p-12 lg:p-16 rounded-3xl bg-gradient-to-b from-brand-surface via-brand-surface/90 to-brand-bg border border-brand-border text-center space-y-6">
           <div className="space-y-2 max-w-lg mx-auto">
             <h2 className="font-display font-black text-3xl sm:text-4xl text-brand-text">
               Lesson Completed! 🎉
@@ -183,7 +183,7 @@ export default function LessonViewerPage() {
           <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
             <button
               onClick={handleRestart}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-brand-surface hover:bg-brand-surface/80 border border-brand-border text-brand-text font-semibold text-sm transition-all cursor-pointer shadow-md"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-brand-surface hover:bg-brand-surface/80 border border-brand-border text-brand-text font-semibold text-sm transition-all cursor-pointer"
             >
               <RotateCcw className="w-4 h-4" />
               <span>Restart Lesson</span>
@@ -191,7 +191,7 @@ export default function LessonViewerPage() {
 
             <button
               onClick={() => navigate("/lessons")}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-brand-accent hover:bg-brand-accent/90 text-brand-bg font-bold text-sm transition-all cursor-pointer shadow-lg shadow-brand-accent/20"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-brand-accent hover:bg-brand-accent/90 text-brand-bg font-bold text-sm transition-all cursor-pointer"
             >
               <BookOpen className="w-4 h-4" />
               <span>Return to Lesson Library</span>
@@ -231,7 +231,7 @@ export default function LessonViewerPage() {
                     }}
                     className={`p-3 rounded-xl border transition-all duration-200 ${
                       isActive
-                        ? "bg-brand-accent/10 border-brand-accent/50 text-brand-text shadow-md"
+                        ? "bg-brand-accent/10 border-brand-accent/50 text-brand-text"
                         : isUnlocked
                           ? "bg-brand-bg/50 border-brand-border/40 hover:bg-brand-surface text-brand-secondary hover:text-brand-text cursor-pointer"
                           : "bg-brand-bg/20 border-brand-border/20 text-brand-secondary/40 cursor-not-allowed opacity-60"
@@ -284,7 +284,7 @@ export default function LessonViewerPage() {
           {/* Slide Viewer (3 Columns on Desktop) */}
           <div className="lg:col-span-3 flex flex-col space-y-4">
             {/* The Slide Display Box */}
-            <div className="relative rounded-3xl overflow-hidden bg-brand-surface border border-brand-border shadow-2xl flex flex-col min-h-[420px] sm:min-h-[480px]">
+            <div className="relative rounded-3xl overflow-hidden bg-brand-surface border border-brand-border flex flex-col min-h-[420px] sm:min-h-[480px]">
               {/* SLIDE VISUAL AREA WITH FULL COMING SOON BANNER */}
               <div className="relative flex-1 flex flex-col items-center justify-center p-8 text-center bg-gradient-to-br from-brand-surface via-brand-bg to-brand-surface overflow-hidden">
                 {/* Visual Chess Graphic Background Patterns */}
@@ -293,7 +293,7 @@ export default function LessonViewerPage() {
                 <div className="absolute -bottom-24 -left-24 w-72 h-72 rounded-full bg-amber-500/15 blur-3xl pointer-events-none" />
 
                 {/* SLIDE "COMING SOON" DISPLAY */}
-                <div className="relative z-10 w-full max-w-md p-8 rounded-2xl bg-black/40 backdrop-blur-md border border-amber-500/30 space-y-3 shadow-2xl flex flex-col items-center justify-center">
+                <div className="relative z-10 w-full max-w-md p-8 rounded-2xl bg-black/40 backdrop-blur-md border border-amber-500/30 space-y-3 flex flex-col items-center justify-center">
                   <h3 className="font-display font-extrabold text-2xl sm:text-3xl text-amber-400 tracking-wider">
                     Coming Soon
                   </h3>
@@ -339,7 +339,7 @@ export default function LessonViewerPage() {
               {isLastSlideInSegment ? (
                 <button
                   onClick={handleMoveToNextSegment}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-accent to-amber-500 hover:brightness-110 text-brand-bg font-extrabold text-xs sm:text-sm transition-all duration-200 shadow-lg shadow-brand-accent/20 cursor-pointer animate-pulse"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-accent to-amber-500 hover:brightness-110 text-brand-bg font-extrabold text-xs sm:text-sm transition-all duration-200 cursor-pointer animate-pulse"
                 >
                   <span>
                     {isLastSegment ? "Complete Lesson" : "Next Segment"}
@@ -349,7 +349,7 @@ export default function LessonViewerPage() {
               ) : (
                 <button
                   onClick={handleNextSlide}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-accent hover:bg-brand-accent/90 text-brand-bg font-bold text-xs sm:text-sm transition-all duration-200 shadow-md cursor-pointer"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-accent hover:bg-brand-accent/90 text-brand-bg font-bold text-xs sm:text-sm transition-all duration-200 cursor-pointer"
                 >
                   <span>Next Slide</span>
                   <ChevronRight className="w-4 h-4" />

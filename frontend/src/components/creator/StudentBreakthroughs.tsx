@@ -31,7 +31,7 @@ export function StudentBreakthroughs({ breakthroughs }: StudentBreakthroughsProp
         {breakthroughs.map((item) => (
           <div
             key={item.id}
-            className="rounded-3xl border border-brand-text/15 bg-brand-surface p-5 shadow-xl flex flex-col justify-between space-y-4 transition-all duration-300 hover:border-brand-accent/40 hover:-translate-y-1 hover:shadow-[0_20px_40px_-15px_rgba(212,175,110,0.12)]"
+            className="rounded-3xl border border-brand-text/15 bg-brand-surface p-5 flex flex-col justify-between space-y-4 transition-all duration-300 hover:border-brand-accent/40 hover:-translate-y-1"
           >
             <div className="space-y-3">
               {/* Header: Student Avatar & Headline */}
@@ -39,7 +39,7 @@ export function StudentBreakthroughs({ breakthroughs }: StudentBreakthroughsProp
                 <img
                   src={item.studentAvatar}
                   alt={item.studentName}
-                  className="w-10 h-10 rounded-full object-cover border border-brand-accent/40 bg-obsidian shadow-md"
+                  className="w-10 h-10 rounded-full object-cover border border-brand-accent/40 bg-obsidian"
                 />
                 <div className="flex flex-col">
                   <span className="text-sm font-sans font-semibold text-brand-text">
@@ -57,7 +57,7 @@ export function StudentBreakthroughs({ breakthroughs }: StudentBreakthroughsProp
               </h4>
 
               {/* Board FEN Snapshot */}
-              <div className="relative w-full aspect-square max-w-[160px] mx-auto rounded-xl overflow-hidden border border-brand-text/20 bg-obsidian shadow-md">
+              <div className="relative w-full aspect-square max-w-[160px] mx-auto rounded-xl overflow-hidden border border-brand-text/20 bg-obsidian">
                 <ThemedChessboard
                   options={{
                     position: item.fenSnapshot,

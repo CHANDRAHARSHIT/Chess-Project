@@ -79,7 +79,7 @@ export function GameStatusBanner({
           soundManager.playButtonClick();
           onNewGame();
         }}
-        className="flex items-center gap-2 py-3 px-6 rounded-xl font-mono text-xs uppercase tracking-widest font-bold btn-premium-cta btn-glow-container btn-glow-accent cta-shine cursor-pointer shadow-lg hover:scale-[1.01] active:scale-[0.98] transition-all"
+        className="flex items-center gap-2 py-3 px-6 rounded-xl font-mono text-xs uppercase tracking-widest font-bold btn-premium-cta btn-glow-container btn-glow-accent cta-shine cursor-pointer hover:scale-[1.01] active:scale-[0.98] transition-all"
       >
         <RotateCcw className="w-4 h-4 text-brand-accent" />
         <span>Play Again</span>

@@ -27,7 +27,7 @@ export function GameControls({
     'flex items-center justify-center gap-1.5 px-2 sm:px-3 py-2 rounded-xl font-mono text-[11px] sm:text-xs uppercase tracking-wider font-semibold bg-brand-surface/60 border border-brand-border/60 hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-brand-border/60 disabled:hover:text-brand-secondary';
 
   const hintBtnClass = isHintActive
-    ? 'flex items-center justify-center gap-1.5 px-2 sm:px-3 py-2 rounded-xl font-mono text-[11px] sm:text-xs uppercase tracking-wider font-semibold bg-amber-500/20 border-amber-500/80 text-amber-300 shadow-[0_0_15px_rgba(245,158,11,0.35)] animate-pulse transition-all duration-300'
+    ? 'flex items-center justify-center gap-1.5 px-2 sm:px-3 py-2 rounded-xl font-mono text-[11px] sm:text-xs uppercase tracking-wider font-semibold bg-amber-500/20 border-amber-500/80 text-amber-300 animate-pulse transition-all duration-300'
     : btnClass;
 
   const handleHintClick = () => {

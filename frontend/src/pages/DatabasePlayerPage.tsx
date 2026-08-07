@@ -164,7 +164,7 @@ export default function DatabasePlayerPage() {
                 </button>
 
                 {isSortOpen && (
-                  <div className="absolute right-0 top-6 w-48 bg-brand-surface border border-brand-border/40 rounded shadow-2xl z-50 overflow-hidden font-sans">
+                  <div className="absolute right-0 top-6 w-48 bg-brand-surface border border-brand-border/40 rounded z-50 overflow-hidden font-sans">
                     {[
                       { value: "year-desc", label: "Year (Most Recent)" },
                       { value: "year-asc", label: "Year (Oldest)" },
@@ -240,7 +240,7 @@ export default function DatabasePlayerPage() {
 
         {/* Right Sidebar (Search Panel - Duplicate from DatabasePage) */}
         <div className="w-full lg:w-80 flex-shrink-0 flex flex-col items-center gap-6">
-          <div className="w-full rounded-xl border border-brand-border bg-brand-surface p-5 shadow-2xl opacity-40 pointer-events-none">
+          <div className="w-full rounded-xl border border-brand-border bg-brand-surface p-5 opacity-40 pointer-events-none">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold font-display text-brand-text">
                 Games
@@ -294,7 +294,7 @@ export default function DatabasePlayerPage() {
               </label>
 
               <div className="pt-4 flex items-center justify-between">
-                <button className="px-6 py-2 bg-[#7FA650] hover:bg-[#8CB758] text-white font-bold rounded-lg text-sm shadow-lg transition-colors">
+                <button className="px-6 py-2 bg-[#7FA650] hover:bg-[#8CB758] text-white font-bold rounded-lg text-sm transition-colors">
                   Search
                 </button>
                 <button className="text-xs text-brand-secondary hover:text-brand-text flex items-center gap-1 transition-colors">
@@ -304,7 +304,7 @@ export default function DatabasePlayerPage() {
             </div>
           </div>
 
-          <div className="bg-brand-surface px-6 py-2.5 rounded-lg border border-brand-border/40 text-brand-accent font-semibold shadow-xl">
+          <div className="bg-brand-surface px-6 py-2.5 rounded-lg border border-brand-border/40 text-brand-accent font-semibold">
             Coming Soon
           </div>
         </div>
@@ -314,7 +314,7 @@ export default function DatabasePlayerPage() {
       {hoveredGame && (
         <div
           key={hoveredGame.id}
-          className="fixed z-50 rounded-xl border border-brand-border/60 bg-brand-surface shadow-2xl pointer-events-none p-1.5 overflow-hidden"
+          className="fixed z-50 rounded-xl border border-brand-border/60 bg-brand-surface pointer-events-none p-1.5 overflow-hidden"
           style={{
             top: popoverPos.top,
             left: popoverPos.left,
@@ -360,7 +360,7 @@ function StatBar({
           style={{ width: `${win}%`, minWidth: win > 0 ? "80px" : undefined }}
           className="bg-[#7FA650] flex items-center justify-center border-r border-brand-bg/50 relative"
         >
-          <span className="whitespace-nowrap z-10 drop-shadow-sm">
+          <span className="whitespace-nowrap z-10">
             {win > 0 ? `${win}% Win` : ""}
           </span>
         </div>
@@ -368,7 +368,7 @@ function StatBar({
           style={{ width: `${draw}%`, minWidth: draw > 0 ? "80px" : undefined }}
           className="bg-[#8E8B82] flex items-center justify-center border-r border-brand-bg/50 relative"
         >
-          <span className="whitespace-nowrap z-10 drop-shadow-sm">
+          <span className="whitespace-nowrap z-10">
             {draw > 0 ? `${draw}% Draw` : ""}
           </span>
         </div>
@@ -376,7 +376,7 @@ function StatBar({
           style={{ width: `${loss}%`, minWidth: loss > 0 ? "80px" : undefined }}
           className="bg-[#B95147] flex items-center justify-center relative"
         >
-          <span className="whitespace-nowrap z-10 drop-shadow-sm">
+          <span className="whitespace-nowrap z-10">
             {loss > 0 ? `${loss}% Loss` : ""}
           </span>
         </div>

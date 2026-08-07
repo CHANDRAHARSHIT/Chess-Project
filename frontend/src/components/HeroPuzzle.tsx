@@ -2311,8 +2311,8 @@ export default function HeroPuzzle({
                     ref={isActive ? boardCardRef : null}
                     className="relative rounded-sm overflow-hidden flex flex-col p-0"
                     style={{
-                      willChange: "transform, opacity, box-shadow",
-                      transition: "box-shadow 1.5s ease-in-out",
+                      willChange: "transform, opacity",
+                      transition: "none",
                     }}
                   >
                     {/* Chessboard Container */}
@@ -2371,7 +2371,7 @@ export default function HeroPuzzle({
                             transform: rotate(45deg) !important;
                             transform-origin: center !important;
                             transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1), filter 0.8s ease !important;
-                            filter: drop-shadow(0 0 5px rgba(239, 68, 68, 0.85)) sepia(1) saturate(12) hue-rotate(-50deg) brightness(0.7) contrast(1.1) !important;
+                            filter: sepia(1) saturate(12) hue-rotate(-50deg) brightness(0.7) contrast(1.1) !important;
                           }
                           ${
                             winningKingSq
@@ -2379,7 +2379,7 @@ export default function HeroPuzzle({
                           #hero-chessboard-${i} [data-square="${winningKingSq}"] [data-piece],
                           #hero-chessboard-${i} [data-square="${winningKingSq}"] img {
                             transition: filter 0.8s ease !important;
-                            filter: drop-shadow(0 0 5px rgba(34, 197, 94, 0.85)) sepia(1) saturate(12) hue-rotate(70deg) brightness(0.8) contrast(1.1) !important;
+                            filter: sepia(1) saturate(12) hue-rotate(70deg) brightness(0.8) contrast(1.1) !important;
                           }
                           `
                               : ""

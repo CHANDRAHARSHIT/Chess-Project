@@ -350,7 +350,7 @@ export default function SettingsPage() {
                                 : "ring-1 ring-brand-border/40 hover:ring-brand-border/80 hover:bg-brand-text/[0.03]"
                             }`}
                           >
-                            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg overflow-hidden grid grid-cols-2 grid-rows-2 shadow-inner shadow-black/30">
+                            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg overflow-hidden grid grid-cols-2 grid-rows-2">
                               <div style={{ backgroundColor: theme.light }} />
                               <div style={{ backgroundColor: theme.dark }} />
                               <div style={{ backgroundColor: theme.dark }} />
@@ -360,7 +360,7 @@ export default function SettingsPage() {
                               {theme.name}
                             </span>
                             {isSelected && (
-                              <span className="absolute -top-1.5 -left-1.5 w-5 h-5 rounded-full bg-brand-accent flex items-center justify-center shadow-md shadow-black/40">
+                              <span className="absolute -top-1.5 -left-1.5 w-5 h-5 rounded-full bg-brand-accent flex items-center justify-center">
                                 <Check
                                   className="w-3 h-3 text-brand-bg"
                                   strokeWidth={3}
@@ -404,7 +404,7 @@ export default function SettingsPage() {
                               {set.name}
                             </span>
                             {isSelected && (
-                              <span className="absolute -top-1.5 -left-1.5 w-5 h-5 rounded-full bg-brand-accent flex items-center justify-center shadow-md shadow-black/40">
+                              <span className="absolute -top-1.5 -left-1.5 w-5 h-5 rounded-full bg-brand-accent flex items-center justify-center">
                                 <Check
                                   className="w-3 h-3 text-brand-bg"
                                   strokeWidth={3}

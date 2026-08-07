@@ -50,7 +50,7 @@ export function Chess960SetupPanel({
       aria-labelledby="setup-title"
     >
       <div
-        className="relative bg-brand-surface border border-brand-accent/20 shadow-[0_0_50px_rgba(212,175,110,0.08)] rounded-2xl max-w-xl w-full p-6 sm:p-8 space-y-6 text-brand-text"
+        className="relative bg-brand-surface border border-brand-accent/20 rounded-2xl max-w-xl w-full p-6 sm:p-8 space-y-6 text-brand-text"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -101,7 +101,7 @@ export function Chess960SetupPanel({
                   }}
                   className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all ${
                     selectedColor === opt.id
-                      ? 'bg-brand-accent/15 border-brand-accent text-brand-text shadow-[0_0_15px_rgba(212,175,110,0.15)]'
+                      ? 'bg-brand-accent/15 border-brand-accent text-brand-text'
                       : 'bg-brand-surface/40 border-brand-border/60 text-brand-secondary hover:border-brand-border hover:text-brand-text'
                   }`}
                 >
@@ -128,7 +128,7 @@ export function Chess960SetupPanel({
                   }}
                   className={`flex items-center justify-between p-3.5 rounded-xl border text-left transition-all ${
                     selectedDifficulty === config.level
-                      ? 'bg-brand-accent/15 border-brand-accent text-brand-text shadow-[0_0_15px_rgba(212,175,110,0.15)]'
+                      ? 'bg-brand-accent/15 border-brand-accent text-brand-text'
                       : 'bg-brand-surface/40 border-brand-border/60 text-brand-secondary hover:border-brand-border hover:text-brand-text'
                   }`}
                 >
@@ -155,7 +155,7 @@ export function Chess960SetupPanel({
             <button
               ref={startBtnRef}
               type="submit"
-              className="w-full py-3.5 px-6 rounded-xl font-mono text-xs uppercase tracking-widest font-bold btn-premium-cta btn-glow-container btn-glow-accent cta-shine cursor-pointer shadow-lg hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2 group"
+              className="w-full py-3.5 px-6 rounded-xl font-mono text-xs uppercase tracking-widest font-bold btn-premium-cta btn-glow-container btn-glow-accent cta-shine cursor-pointer hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2 group"
             >
               <Play className="w-4 h-4 text-brand-accent fill-brand-accent/20 group-hover:scale-110 transition-transform" />
               <span>Start Game</span>

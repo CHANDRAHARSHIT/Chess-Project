@@ -14,7 +14,7 @@ export function VariantCard({ name, tagline, href }: VariantCardProps) {
     <Link
       to={href}
       onClick={() => soundManager.playButtonClick()}
-      className="group relative flex flex-col sm:flex-row items-center gap-6 p-6 rounded-2xl bg-brand-surface/80 border border-brand-border/60 hover:border-brand-accent/40 backdrop-blur-md transition-all duration-300 hover:shadow-[0_0_30px_rgba(212,175,110,0.12)] hover:-translate-y-0.5"
+      className="group relative flex flex-col sm:flex-row items-center gap-6 p-6 rounded-2xl bg-brand-surface/80 border border-brand-border/60 hover:border-brand-accent/40 backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5"
     >
       {/* Board Thumbnail */}
       <div className="shrink-0 group-hover:scale-105 transition-transform duration-300">
