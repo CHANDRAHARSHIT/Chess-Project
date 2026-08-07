@@ -121,3 +121,8 @@ export type LessonProgress = Prisma.LessonProgressModel
  * 
  */
 export type CustomLink = Prisma.CustomLinkModel
+/**
+ * Model PathwayProgress
+ * 
+ */
+export type PathwayProgress = Prisma.PathwayProgressModel
