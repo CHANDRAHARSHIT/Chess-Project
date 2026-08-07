@@ -57,7 +57,7 @@ export function OpponentIdentity({ userId, label, name, image, size = 36, isBot 
               }}
             />
             <svg
-              className="relative text-brand-accent drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]"
+              className="relative text-brand-accent"
               style={{ width: size * 0.55, height: size * 0.55 }}
               viewBox="0 0 24 24"
               fill="currentColor"

@@ -35,7 +35,7 @@ function formatDuration(seconds: number): string {
 }
 
 const primaryBtn =
-  "px-7 py-3.5 rounded-xl font-mono text-xs uppercase tracking-widest font-bold btn-premium-cta btn-glow-container btn-glow-accent cta-shine cursor-pointer shadow-[0_10px_25px_-5px_rgba(212,175,110,0.3)] hover:scale-[1.02] active:scale-[0.98] transition-all inline-flex items-center justify-center gap-2";
+  "px-7 py-3.5 rounded-xl font-mono text-xs uppercase tracking-widest font-bold btn-premium-cta btn-glow-container btn-glow-accent cta-shine cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-all inline-flex items-center justify-center gap-2";
 
 const outlineBtn =
   "px-6 py-3.5 rounded-xl font-mono text-xs uppercase tracking-widest font-semibold border border-brand-border/60 text-brand-secondary hover:text-brand-text hover:border-brand-accent/40 bg-brand-surface/60 backdrop-blur-md transition-all cursor-pointer";
@@ -94,11 +94,11 @@ export function ResultRevealModal({ result, myUserId, onFindAnother, onBackToLob
       aria-modal="true"
       aria-labelledby="result-title"
       aria-describedby="result-reason"
-      className="absolute inset-0 z-30 bg-brand-bg/95 backdrop-blur-xl flex flex-col items-center justify-center p-6 text-center reveal-in rounded-2xl"
+      className="absolute inset-0 z-30 bg-brand-bg/95 backdrop-blur-xl flex flex-col items-center justify-center p-6 text-center rounded-2xl"
     >
-      <div className="relative overflow-hidden rounded-3xl border-2 border-brand-accent/50 bg-gradient-to-b from-brand-surface/95 via-brand-surface/85 to-brand-bg/95 p-8 space-y-4 max-w-md w-full shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9),0_0_30px_rgba(212,175,110,0.2)]">
+      <div className="relative overflow-hidden rounded-3xl border-2 border-brand-accent/50 bg-brand-surface/95 p-8 space-y-4 max-w-md w-full">
         {/* Top Icon Badge */}
-        <div className="mx-auto w-14 h-14 rounded-2xl bg-brand-accent/10 border border-brand-accent/30 flex items-center justify-center text-brand-accent shadow-[0_0_20px_rgba(212,175,110,0.2)]">
+        <div className="mx-auto w-14 h-14 rounded-2xl bg-brand-accent/10 border border-brand-accent/30 flex items-center justify-center text-brand-accent">
           {isWin ? (
             <Trophy className="w-7 h-7 text-amber-400" />
           ) : isDraw ? (

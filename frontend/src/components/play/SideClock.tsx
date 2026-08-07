@@ -72,7 +72,7 @@ export function SideClock({ remainingMs, lastMoveAt, isLive, label }: SideClockP
         isFlagged
           ? "clock-plate--flagged border-rose-500 bg-rose-500/20 text-rose-400 font-bold"
           : isLive
-            ? "bg-brand-accent/15 border-brand-accent/50 text-brand-accent shadow-[0_0_10px_rgba(212,175,110,0.15)]"
+            ? "bg-brand-accent/15 border-brand-accent/50 text-brand-accent"
             : "bg-brand-surface/60 border-white/10 text-brand-secondary/80"
       }`}
     >
@@ -80,7 +80,7 @@ export function SideClock({ remainingMs, lastMoveAt, isLive, label }: SideClockP
         aria-hidden="true"
         className={`font-mono tabular-nums tracking-wider transition-all duration-[var(--dur-instant)] ${
           isCritical
-            ? "text-lg font-extrabold text-rose-400 animate-pulse"
+            ? "text-lg font-extrabold text-rose-400"
             : isLive
               ? "text-base font-bold text-brand-accent"
               : "text-sm font-semibold text-brand-secondary"

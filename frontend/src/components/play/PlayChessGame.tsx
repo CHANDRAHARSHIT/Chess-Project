@@ -181,11 +181,11 @@ export function PlayChessGame({ onLeave, onFindAnother }: PlayChessGameProps) {
   const opponentParticipant = descriptor.participants.find((p) => p.userId === opponentUserId);
 
   return (
-    <div className="w-full max-w-6xl mx-auto flex flex-col gap-3.5 animate-fade-in">
+    <div className="w-full max-w-6xl mx-auto flex flex-col gap-3.5">
       <LiveRegion politeMessage={politeMessage} assertiveMessage={finalAssertiveMessage} />
 
       {/* Top Session Bar - Stretches flush across full arena width */}
-      <div className="w-full flex items-center justify-between gap-3 px-5 py-3 rounded-xl bg-brand-surface/80 border border-white/10 backdrop-blur-xl shadow-md">
+      <div className="w-full flex items-center justify-between gap-3 px-5 py-3 rounded-xl bg-brand-surface/80 border border-white/10 backdrop-blur-xl">
         <div className="flex items-center gap-3">
           <button
             onClick={handleBackClick}
@@ -195,7 +195,7 @@ export function PlayChessGame({ onLeave, onFindAnother }: PlayChessGameProps) {
             <ArrowLeft className="w-4 h-4" />
           </button>
           <div className="flex items-center gap-2">
-            <Zap className="w-3.5 h-3.5 text-brand-accent animate-pulse" />
+            <Zap className="w-3.5 h-3.5 text-brand-accent" />
             <span className="font-mono text-xs uppercase tracking-widest text-brand-text font-bold">
               Chess960 • {descriptor.timeControl.label}
             </span>
@@ -206,14 +206,14 @@ export function PlayChessGame({ onLeave, onFindAnother }: PlayChessGameProps) {
       </div>
 
       {status === "WAITING" && !waitedTooLong && (
-        <div className="w-full flex items-center gap-3 px-4 py-2 rounded-xl border border-white/10 bg-brand-surface/50 text-brand-secondary text-xs shadow-md">
-          <span className="h-2 w-2 rounded-full bg-brand-accent animate-pulse shrink-0" />
+        <div className="w-full flex items-center gap-3 px-4 py-2 rounded-xl border border-white/10 bg-brand-surface/50 text-brand-secondary text-xs">
+          <span className="h-2 w-2 rounded-full bg-brand-accent shrink-0" />
           <span>Waiting for your opponent to connect…</span>
         </div>
       )}
 
       {waitedTooLong && status === "WAITING" && (
-        <div className="w-full flex items-center gap-3 px-4 py-2 rounded-xl border border-amber-500/30 bg-amber-500/10 text-amber-200 text-xs shadow-md">
+        <div className="w-full flex items-center gap-3 px-4 py-2 rounded-xl border border-amber-500/30 bg-amber-500/10 text-amber-200 text-xs">
           <AlertTriangle className="w-4 h-4 shrink-0" />
           <span>This is taking longer than expected. Your opponent may not be connecting.</span>
           <button onClick={onLeave} className="ml-auto font-mono text-[11px] uppercase tracking-wider underline cursor-pointer">
@@ -223,7 +223,7 @@ export function PlayChessGame({ onLeave, onFindAnother }: PlayChessGameProps) {
       )}
 
       {/* Main Studio Arena: Board (Left, 450px) + Controls/MoveLog (Right, flex-1) */}
-      <div className="w-full flex flex-col lg:flex-row items-center lg:items-start justify-between gap-5 lg:gap-7">
+      <div className="w-full flex flex-col lg:flex-row items-center lg:items-stretch justify-between gap-5 lg:gap-7">
         {/* Left Column: Opponent Panel, Board with Countdown, Player Panel */}
         <div className="relative flex flex-col items-center justify-center w-full max-w-[450px] lg:w-[450px] shrink-0 gap-2">
           {opponentUserId && (
@@ -257,16 +257,12 @@ export function PlayChessGame({ onLeave, onFindAnother }: PlayChessGameProps) {
               onMoveApplied={handleMoveApplied}
             />
 
-            {/* 3-Second Match Sync Countdown Overlay */}
+            {/* Clean Match Countdown Overlay */}
             {activeCountdown !== null && (
-              <div className="absolute inset-0 z-30 flex flex-col items-center justify-center rounded-2xl bg-brand-bg/80 dark:bg-brand-bg/85 backdrop-blur-xl border border-brand-accent/30 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8),0_0_40px_rgba(212,175,110,0.15)] animate-fade-in pointer-events-none p-6 overflow-hidden">
-                {/* Background Ambient Glow Orbs */}
-                <div className="pointer-events-none absolute -top-12 -left-12 h-40 w-40 rounded-full bg-brand-accent/15 blur-3xl" />
-                <div className="pointer-events-none absolute -bottom-12 -right-12 h-40 w-40 rounded-full bg-brand-accent/15 blur-3xl" />
-
+              <div className="absolute inset-0 z-30 flex flex-col items-center justify-center rounded-2xl bg-brand-bg/90 backdrop-blur-xl border border-brand-accent/30 pointer-events-none p-6 overflow-hidden">
                 {/* Top Pill Badge */}
-                <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-brand-accent/15 border border-brand-accent/35 font-mono text-[11px] uppercase tracking-widest text-brand-accent font-bold mb-4 shadow-[0_0_15px_rgba(212,175,110,0.2)]">
-                  <Zap className="w-3.5 h-3.5 fill-brand-accent text-brand-accent animate-pulse" />
+                <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-brand-accent/15 border border-brand-accent/35 font-mono text-[11px] uppercase tracking-widest text-brand-accent font-bold mb-4">
+                  <Zap className="w-3.5 h-3.5 fill-brand-accent text-brand-accent" />
                   <span>Match Starting</span>
                 </div>
 
@@ -287,7 +283,7 @@ export function PlayChessGame({ onLeave, onFindAnother }: PlayChessGameProps) {
                       cx="50"
                       cy="50"
                       r="44"
-                      className="text-brand-accent transition-all duration-700 ease-out drop-shadow-[0_0_8px_rgba(212,175,110,0.6)]"
+                      className="text-brand-accent transition-all duration-700 ease-out"
                       strokeWidth="5"
                       strokeDasharray={276}
                       strokeDashoffset={276 * (1 - (activeCountdown === 0 ? 0 : activeCountdown / 3))}
@@ -297,17 +293,14 @@ export function PlayChessGame({ onLeave, onFindAnother }: PlayChessGameProps) {
                     />
                   </svg>
 
-                  {/* Number / PLAY! Pop */}
-                  <div
-                    key={activeCountdown}
-                    className="relative z-10 flex items-center justify-center animate-countdown-pop"
-                  >
+                  {/* Number / PLAY! */}
+                  <div className="relative z-10 flex items-center justify-center">
                     {activeCountdown === 0 ? (
-                      <span className="font-display text-4xl sm:text-5xl font-extrabold tracking-wider text-brand-accent drop-shadow-[0_0_25px_rgba(212,175,110,0.85)] animate-pulse uppercase">
+                      <span className="font-display text-4xl sm:text-5xl font-extrabold tracking-wider text-brand-accent uppercase">
                         PLAY!
                       </span>
                     ) : (
-                      <span className="font-display text-5xl sm:text-6xl font-extrabold text-brand-text drop-shadow-[0_0_20px_rgba(212,175,110,0.6)]">
+                      <span className="font-display text-5xl sm:text-6xl font-extrabold text-brand-text">
                         {activeCountdown}
                       </span>
                     )}
@@ -317,7 +310,7 @@ export function PlayChessGame({ onLeave, onFindAnother }: PlayChessGameProps) {
                 {/* Subtitle Guidance */}
                 <span className="font-mono text-[11px] uppercase tracking-widest text-brand-secondary/90 font-semibold mt-3">
                   {activeCountdown === 0 ? (
-                    <span className="text-brand-accent font-bold animate-pulse">Battle Commenced</span>
+                    <span className="text-brand-accent font-bold">Battle Commenced</span>
                   ) : (
                     "Prepare Your Opening Strategy"
                   )}
@@ -350,7 +343,7 @@ export function PlayChessGame({ onLeave, onFindAnother }: PlayChessGameProps) {
         </div>
 
         {/* Right Column: Game Action Controls & Live Move Log (Expands to fill workspace width) */}
-        <div className="w-full max-w-[450px] lg:max-w-none lg:flex-1 flex flex-col gap-2 lg:h-[550px] lg:max-h-[550px] shrink-0 min-h-0">
+        <div className="w-full max-w-[450px] lg:max-w-none lg:flex-1 flex flex-col gap-2 lg:self-stretch shrink-0 min-h-0">
           <GameActionBar canAct={interactive && !gameResult} onResign={resign} />
           <div className="flex-1 min-h-0 overflow-hidden">
             <MoveLog moves={historyView} />
@@ -365,7 +358,7 @@ export function PlayChessGame({ onLeave, onFindAnother }: PlayChessGameProps) {
           aria-labelledby="leave-confirm-title"
           className="fixed inset-0 z-40 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
         >
-          <div className="max-w-sm w-full rounded-2xl border border-white/10 bg-brand-surface/95 backdrop-blur-xl p-6 space-y-4 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9)]">
+          <div className="max-w-sm w-full rounded-2xl border border-white/10 bg-brand-surface/95 backdrop-blur-xl p-6 space-y-4">
             <div className="flex items-center gap-2.5 text-amber-400">
               <AlertTriangle className="w-5 h-5 shrink-0" />
               <h2 id="leave-confirm-title" className="font-display text-lg font-bold text-brand-text">

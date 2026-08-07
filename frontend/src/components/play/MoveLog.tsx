@@ -37,7 +37,7 @@ export function MoveLog({ moves }: MoveLogProps) {
   }, [moves]);
 
   return (
-    <div className="flex flex-col h-full bg-brand-surface/60 border border-white/10 rounded-xl overflow-hidden backdrop-blur-xl shadow-lg">
+    <div className="flex flex-col h-full bg-brand-surface/60 border border-white/10 rounded-xl overflow-hidden backdrop-blur-xl">
       <div className="px-4 py-2.5 border-b border-white/10 bg-brand-surface/80 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-2">
           <ListOrdered className="w-4 h-4 text-brand-accent" />
@@ -80,7 +80,7 @@ export function MoveLog({ moves }: MoveLogProps) {
                 <span
                   className={`font-semibold tracking-wide justify-self-start ${
                     whiteIsLatest
-                      ? "text-brand-accent bg-brand-accent/10 px-2 py-0.5 rounded border border-brand-accent/25 font-bold shadow-sm"
+                      ? "text-brand-accent bg-brand-accent/10 px-2 py-0.5 rounded border border-brand-accent/25 font-bold"
                       : "text-brand-text"
                   }`}
                 >
@@ -89,7 +89,7 @@ export function MoveLog({ moves }: MoveLogProps) {
                 <span
                   className={`font-semibold tracking-wide justify-self-start ${
                     blackIsLatest
-                      ? "text-brand-accent bg-brand-accent/10 px-2 py-0.5 rounded border border-brand-accent/25 font-bold shadow-sm"
+                      ? "text-brand-accent bg-brand-accent/10 px-2 py-0.5 rounded border border-brand-accent/25 font-bold"
                       : "text-brand-text/80"
                   }`}
                 >
