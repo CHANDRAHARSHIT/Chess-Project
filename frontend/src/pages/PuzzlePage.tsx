@@ -18,6 +18,7 @@ import type { ChessPuzzle } from '../utils/PuzzleLoader';
 import { Chess } from 'chess.js';
 import { Confetti } from '../components/Confetti';
 import rollbar from '../config/rollbar';
+import { usePuzzleProgress } from '../hooks/usePuzzleProgress';
 
 // Tailwind's `lg` breakpoint. Keep in sync with tailwind config if changed.
 const DESKTOP_BREAKPOINT_PX = 1024;
@@ -79,30 +80,8 @@ export default function PuzzlePage() {
     return ROYAL_GOLD_NODES || PATHWAY_NODES['RoyalGold'];
   }, []);
 
-  const [completedIds, setCompletedIds] = useState<string[]>(() => {
-    try {
-      const saved = localStorage.getItem('xlchess_completed_puzzles');
-      return saved ? JSON.parse(saved) : [];
-    } catch {
-      return [];
-    }
-  });
-
-  const [streak, setStreak] = useState<number>(() => {
-    try {
-      return parseInt(localStorage.getItem('xlchess_puzzle_streak') || '0', 10);
-    } catch {
-      return 0;
-    }
-  });
-
-  const [solvedCount, setSolvedCount] = useState<number>(() => {
-    try {
-      return parseInt(localStorage.getItem('xlchess_puzzle_solved') || '0', 10);
-    } catch {
-      return 0;
-    }
-  });
+  // ── Progress — synced to DB for authenticated users, localStorage for guests ──
+  const { completedIds, streak, solvedCount, markSolved, markFailed } = usePuzzleProgress();
 
   const [showConfetti, setShowConfetti] = useState(false);
 
@@ -205,34 +184,16 @@ export default function PuzzlePage() {
   // Solve callback from left puzzle board
   const handleSolved = useCallback(() => {
     setShowConfetti(true);
-
     if (selectedNode) {
-      setCompletedIds(prev => {
-        if (prev.includes(selectedNode.id)) return prev;
-        const updated = [...prev, selectedNode.id];
-        try { localStorage.setItem('xlchess_completed_puzzles', JSON.stringify(updated)); } catch { /* empty */ }
-        return updated;
-      });
+      markSolved(selectedNode.id);
     }
-
-    setStreak(prev => {
-      const next = prev + 1;
-      try { localStorage.setItem('xlchess_puzzle_streak', next.toString()); } catch { /* empty */ }
-      return next;
-    });
-
-    setSolvedCount(prev => {
-      const next = prev + 1;
-      try { localStorage.setItem('xlchess_puzzle_solved', next.toString()); } catch { /* empty */ }
-      return next;
-    });
-  }, [selectedNode]);
+  }, [selectedNode, markSolved]);
 
   // Failed callback from left puzzle board
   const handleFailed = useCallback(() => {
-    setStreak(0);
-    try { localStorage.setItem('xlchess_puzzle_streak', '0'); } catch { /* empty */ }
-  }, []);
+    markFailed();
+  }, [markFailed]);
+
 
   const handleNavigateHome = useCallback(() => {
     navigate('/');
