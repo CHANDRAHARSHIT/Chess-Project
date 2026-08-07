@@ -443,16 +443,16 @@ export default function StoryModeBattle({
               style={{ borderRadius: "4px", transform: "translateZ(0)" }}
             >
               <ThemedChessboard
-                options={{
+                options={({
                   position: gameFen,
-                  onPieceDrop: ({ sourceSquare, targetSquare }) =>
+                  onPieceDrop: ({ sourceSquare, targetSquare }: any) =>
                     onDrop(sourceSquare, targetSquare),
                   boardOrientation,
                   squareStyles: customSquareStyles,
                   boardStyle: { borderRadius: "0px" },
                   showNotation: false,
                   arePiecesDraggable: battleResult === "playing" && !isEditMode,
-                }}
+                } as any)}
               />
               <BoardCoordinates boardOrientation={boardOrientation} />
             </div>
