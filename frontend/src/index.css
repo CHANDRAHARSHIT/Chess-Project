@@ -1920,3 +1920,25 @@ body {
     to   { opacity: 1; }
   }
 }
+
+/* Match Start Countdown Pop Animation */
+@keyframes countdown-pop {
+  0% {
+    opacity: 0;
+    transform: scale(1.35);
+    filter: blur(4px);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(0.97);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-countdown-pop {
+  animation: countdown-pop 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

@@ -259,13 +259,69 @@ export function PlayChessGame({ onLeave, onFindAnother }: PlayChessGameProps) {
 
             {/* 3-Second Match Sync Countdown Overlay */}
             {activeCountdown !== null && (
-              <div className="absolute inset-0 z-30 flex flex-col items-center justify-center rounded-2xl bg-black/60 backdrop-blur-md animate-fade-in pointer-events-none">
-                <span className="font-mono text-xs uppercase tracking-widest text-brand-accent font-bold mb-2">
-                  Match Syncing
-                </span>
-                <div className="text-6xl font-display font-extrabold text-brand-accent animate-bounce drop-shadow-[0_0_25px_rgba(212,175,110,0.6)]">
-                  {activeCountdown === 0 ? "PLAY!" : activeCountdown}
+              <div className="absolute inset-0 z-30 flex flex-col items-center justify-center rounded-2xl bg-brand-bg/80 dark:bg-brand-bg/85 backdrop-blur-xl border border-brand-accent/30 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8),0_0_40px_rgba(212,175,110,0.15)] animate-fade-in pointer-events-none p-6 overflow-hidden">
+                {/* Background Ambient Glow Orbs */}
+                <div className="pointer-events-none absolute -top-12 -left-12 h-40 w-40 rounded-full bg-brand-accent/15 blur-3xl" />
+                <div className="pointer-events-none absolute -bottom-12 -right-12 h-40 w-40 rounded-full bg-brand-accent/15 blur-3xl" />
+
+                {/* Top Pill Badge */}
+                <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-brand-accent/15 border border-brand-accent/35 font-mono text-[11px] uppercase tracking-widest text-brand-accent font-bold mb-4 shadow-[0_0_15px_rgba(212,175,110,0.2)]">
+                  <Zap className="w-3.5 h-3.5 fill-brand-accent text-brand-accent animate-pulse" />
+                  <span>Match Starting</span>
                 </div>
+
+                {/* Central Ring & Dynamic Number */}
+                <div className="relative flex items-center justify-center w-32 h-32 my-1">
+                  {/* Circular Outer Progress Ring */}
+                  <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 100 100">
+                    <circle
+                      cx="50"
+                      cy="50"
+                      r="44"
+                      className="text-brand-border/40"
+                      strokeWidth="4"
+                      stroke="currentColor"
+                      fill="transparent"
+                    />
+                    <circle
+                      cx="50"
+                      cy="50"
+                      r="44"
+                      className="text-brand-accent transition-all duration-700 ease-out drop-shadow-[0_0_8px_rgba(212,175,110,0.6)]"
+                      strokeWidth="5"
+                      strokeDasharray={276}
+                      strokeDashoffset={276 * (1 - (activeCountdown === 0 ? 0 : activeCountdown / 3))}
+                      strokeLinecap="round"
+                      stroke="currentColor"
+                      fill="transparent"
+                    />
+                  </svg>
+
+                  {/* Number / PLAY! Pop */}
+                  <div
+                    key={activeCountdown}
+                    className="relative z-10 flex items-center justify-center animate-countdown-pop"
+                  >
+                    {activeCountdown === 0 ? (
+                      <span className="font-display text-4xl sm:text-5xl font-extrabold tracking-wider text-brand-accent drop-shadow-[0_0_25px_rgba(212,175,110,0.85)] animate-pulse uppercase">
+                        PLAY!
+                      </span>
+                    ) : (
+                      <span className="font-display text-5xl sm:text-6xl font-extrabold text-brand-text drop-shadow-[0_0_20px_rgba(212,175,110,0.6)]">
+                        {activeCountdown}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Subtitle Guidance */}
+                <span className="font-mono text-[11px] uppercase tracking-widest text-brand-secondary/90 font-semibold mt-3">
+                  {activeCountdown === 0 ? (
+                    <span className="text-brand-accent font-bold animate-pulse">Battle Commenced</span>
+                  ) : (
+                    "Prepare Your Opening Strategy"
+                  )}
+                </span>
               </div>
             )}
 
