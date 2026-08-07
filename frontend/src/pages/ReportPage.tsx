@@ -1,19 +1,20 @@
-/**
- * QuickGamePage.tsx
- * Quick Game page rendering the central interactive chessboard with Stockfish AI.
- */
-
+import { useEffect } from "react";
 import { useNavigate } from "react-router";
 import { ArrowLeft } from "lucide-react";
-import ProductDemo from "../components/ProductDemo";
+import ReportForm from "../components/ReportForm";
 import { soundManager } from "../utils/SoundManager";
 
-export default function QuickGamePage() {
+export default function ReportPage() {
   const navigate = useNavigate();
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
-    <div className="min-h-screen text-brand-text flex flex-col">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-4 sm:pt-6">
+    <div className="min-h-[calc(100vh-4rem)] bg-brand-bg flex flex-col pt-6 pb-12">
+      {/* Page-level Header / Navigation Bar */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full mb-6 sm:mb-8">
         <button
           type="button"
           onClick={() => {
@@ -27,9 +28,10 @@ export default function QuickGamePage() {
           <span>Back to Home</span>
         </button>
       </div>
-      <main className="flex-1">
-        <ProductDemo />
-      </main>
+
+      <div className="flex-1 flex items-center justify-center">
+        <ReportForm />
+      </div>
     </div>
   );
 }
