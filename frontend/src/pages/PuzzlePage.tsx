@@ -353,7 +353,7 @@ export default function PuzzlePage() {
 
             <div className="lg:col-span-5 flex flex-col space-y-6">
               <div
-                className="rounded-2xl p-6 text-left shadow-2xl relative overflow-hidden bg-brand-surface/80 backdrop-blur-xl border border-brand-border/40"
+                className="rounded-2xl p-6 text-left relative overflow-hidden bg-brand-surface/80 backdrop-blur-xl border border-brand-border/40"
               >
                 <div
                   className="absolute top-0 right-0 w-[150px] h-[150px] pointer-events-none"
@@ -418,7 +418,7 @@ export default function PuzzlePage() {
           /* ── DESKTOP VIEW (only mounted when isDesktop is true) ──────────── */
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch w-full">
             <div className="lg:col-span-7 flex flex-col items-center w-full space-y-6">
-              <div className="w-full bg-brand-surface/70 backdrop-blur-xl border border-brand-border rounded-2xl p-5 text-left shadow-2xl relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="w-full bg-brand-surface/70 backdrop-blur-xl border border-brand-border rounded-2xl p-5 text-left relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
                   <div className="flex items-center gap-2">
                     <h1 className="text-xl sm:text-2xl font-display lining-nums font-semibold text-brand-text tracking-wide">
@@ -480,7 +480,7 @@ export default function PuzzlePage() {
                         </button>
                       </div>
 
-                      <div className="w-full bg-brand-surface/70 backdrop-blur-xl border border-brand-border rounded-2xl p-4 text-left shadow-2xl relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                      <div className="w-full bg-brand-surface/70 backdrop-blur-xl border border-brand-border rounded-2xl p-4 text-left relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                         <div>
                           <div className="flex items-center gap-2">
                             <h1 className="text-lg font-display lining-nums font-semibold text-brand-text tracking-wide">

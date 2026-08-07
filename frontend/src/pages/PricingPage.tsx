@@ -180,32 +180,32 @@ const MOBILE_PLANS: Array<{
   badge?: string;
   icon: React.ReactNode;
 }> = [
-  {
-    id: "gold",
-    key: "gold",
-    name: "Gold",
-    icon: <Star className="w-6 h-6 text-yellow-400 fill-yellow-400 flex-shrink-0" />,
-  },
-  {
-    id: "platinum",
-    key: "platinum",
-    name: "Platinum",
-    icon: <Crown className="w-6 h-6 text-slate-300 fill-slate-300 flex-shrink-0" />,
-  },
-  {
-    id: "diamond",
-    key: "diamond",
-    name: "Diamond",
-    icon: <Sparkles className="w-6 h-6 text-sky-400 flex-shrink-0" />,
-  },
-  {
-    id: "family",
-    key: "family",
-    name: "Friends & Family",
-    badge: "Save 70%",
-    icon: <Users className="w-6 h-6 text-emerald-400 fill-emerald-400 flex-shrink-0" />,
-  },
-];
+    {
+      id: "gold",
+      key: "gold",
+      name: "Gold",
+      icon: <Star className="w-6 h-6 text-yellow-400 fill-yellow-400 flex-shrink-0" />,
+    },
+    {
+      id: "platinum",
+      key: "platinum",
+      name: "Platinum",
+      icon: <Crown className="w-6 h-6 text-slate-300 fill-slate-300 flex-shrink-0" />,
+    },
+    {
+      id: "diamond",
+      key: "diamond",
+      name: "Diamond",
+      icon: <Sparkles className="w-6 h-6 text-sky-400 flex-shrink-0" />,
+    },
+    {
+      id: "family",
+      key: "family",
+      name: "Friends & Family",
+      badge: "Save 70%",
+      icon: <Users className="w-6 h-6 text-emerald-400 fill-emerald-400 flex-shrink-0" />,
+    },
+  ];
 
 // ─── USD base prices for all tiers (ground truth) ─────────────────────────────
 const USD_PRICES: Record<string, { monthly: number; yearly: number }> = {
@@ -483,11 +483,10 @@ export default function PricingPage() {
             return (
               <div
                 key={plan.id}
-                className={`relative rounded-2xl p-6 backdrop-blur-xl transition-all ${
-                  isDiamond
-                    ? "bg-brand-surface/90 border-2 border-sky-400 shadow-xl shadow-sky-500/10"
-                    : "bg-brand-surface/60 border border-brand-border shadow-lg"
-                }`}
+                className={`relative rounded-2xl p-6 backdrop-blur-xl transition-all ${isDiamond
+                  ? "bg-brand-surface/90 border-2 border-sky-400 shadow-xl shadow-sky-500/10"
+                  : "bg-brand-surface/60 border border-brand-border shadow-lg"
+                  }`}
               >
                 {isDiamond && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-sky-500 text-white text-[10px] font-bold uppercase tracking-wider shadow-md">
@@ -514,9 +513,8 @@ export default function PricingPage() {
                 <div className="mb-6">
                   <div className="flex items-baseline gap-1">
                     <span
-                      className={`text-3xl font-bold ${
-                        isDiamond ? "text-sky-400" : "text-brand-text"
-                      }`}
+                      className={`text-3xl font-bold ${isDiamond ? "text-sky-400" : "text-brand-text"
+                        }`}
                     >
                       {priceStr}
                     </span>
@@ -588,22 +586,20 @@ export default function PricingPage() {
                     <div className="flex items-center gap-2.5 text-xs font-semibold text-brand-secondary">
                       <button
                         onClick={() => setIsYearly(false)}
-                        className={`px-3 py-1.5 rounded-lg border transition-all cursor-pointer flex items-center gap-1.5 ${
-                          !isYearly
-                            ? "bg-brand-accent/15 border-brand-accent text-brand-accent font-bold"
-                            : "border-brand-border hover:border-brand-secondary/40 text-brand-secondary hover:text-brand-text"
-                        }`}
+                        className={`px-3 py-1.5 rounded-lg border transition-all cursor-pointer flex items-center gap-1.5 ${!isYearly
+                          ? "bg-brand-accent/15 border-brand-accent text-brand-accent font-bold"
+                          : "border-brand-border hover:border-brand-secondary/40 text-brand-secondary hover:text-brand-text"
+                          }`}
                       >
                         {!isYearly && <Check className="w-3.5 h-3.5" />}
                         Monthly
                       </button>
                       <button
                         onClick={() => setIsYearly(true)}
-                        className={`px-3 py-1.5 rounded-lg border transition-all cursor-pointer flex items-center gap-1.5 ${
-                          isYearly
-                            ? "bg-brand-accent/15 border-brand-accent text-brand-accent font-bold"
-                            : "border-brand-border hover:border-brand-secondary/40 text-brand-secondary hover:text-brand-text"
-                        }`}
+                        className={`px-3 py-1.5 rounded-lg border transition-all cursor-pointer flex items-center gap-1.5 ${isYearly
+                          ? "bg-brand-accent/15 border-brand-accent text-brand-accent font-bold"
+                          : "border-brand-border hover:border-brand-secondary/40 text-brand-secondary hover:text-brand-text"
+                          }`}
                       >
                         {isYearly && <Check className="w-3.5 h-3.5" />}
                         Yearly
