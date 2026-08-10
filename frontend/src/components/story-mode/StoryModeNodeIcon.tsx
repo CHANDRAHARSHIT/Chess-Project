@@ -8,6 +8,7 @@
  */
 
 import { motion } from "framer-motion";
+import { Coins, Gem, Crown } from "lucide-react";
 import type { StoryNodeType, NodeStatus } from "../../data/storyModeMapData";
 
 interface StoryModeNodeIconProps {
@@ -53,25 +54,25 @@ function NodeSVG({ type, status }: { type: StoryNodeType; status: NodeStatus }) 
           <rect x="6" y="17" width="12" height="3" rx="1" />
         </svg>
       );
-    case "monster":
+    case "enemy":
       return (
         <img
           src="/story mode assets/skull.svg"
-          alt="Monster"
+          alt="Enemy"
           style={{ width: size, height: size }}
           className="object-contain"
         />
       );
-    case "mystery":
+    case "unknown":
       return (
         <img
           src="/story mode assets/question mark.svg"
-          alt="Mystery"
+          alt="Unknown"
           style={{ width: size, height: size }}
           className="object-contain"
         />
       );
-    case "fireplace":
+    case "rest":
       return (
         <img
           src="/story mode assets/fireplace.svg"
@@ -89,6 +90,12 @@ function NodeSVG({ type, status }: { type: StoryNodeType; status: NodeStatus }) 
           className="object-contain"
         />
       );
+    case "merchant":
+      return <Coins size={size - 4} strokeWidth={2} className="text-[#D4AF6E]" />;
+    case "treasure":
+      return <Gem size={size - 4} strokeWidth={2} className="text-[#38bdf8]" />;
+    case "elite":
+      return <Crown size={size - 4} strokeWidth={2.5} className="text-[#ef4444]" />;
     default:
       return null;
   }
@@ -125,17 +132,29 @@ function getNodeColors(type: StoryNodeType, status: NodeStatus) {
     shadow = "0 0 25px rgba(34, 197, 94, 0.5)";
   } else {
     switch (type) {
-      case "monster":
+      case "enemy":
         glowColor = "rgba(239, 68, 68, 0.4)"; // Red
         shadow = "0 0 25px rgba(239, 68, 68, 0.6)";
         break;
-      case "mystery":
+      case "elite":
+        glowColor = "rgba(185, 28, 28, 0.6)"; // Dark Red / Intense
+        shadow = "0 0 35px rgba(185, 28, 28, 0.8)";
+        break;
+      case "unknown":
         glowColor = "rgba(168, 85, 247, 0.4)"; // Purple
         shadow = "0 0 25px rgba(168, 85, 247, 0.6)";
         break;
-      case "fireplace":
+      case "rest":
         glowColor = "rgba(249, 115, 22, 0.4)"; // Orange
         shadow = "0 0 25px rgba(249, 115, 22, 0.6)";
+        break;
+      case "merchant":
+        glowColor = "rgba(250, 204, 21, 0.5)"; // Yellow/Gold
+        shadow = "0 0 30px rgba(250, 204, 21, 0.7)";
+        break;
+      case "treasure":
+        glowColor = "rgba(56, 189, 248, 0.5)"; // Light Blue / Cyan
+        shadow = "0 0 30px rgba(56, 189, 248, 0.7)";
         break;
       case "boss":
         glowColor = "rgba(250, 204, 21, 0.7)"; // Bright Yellow/Gold

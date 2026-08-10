@@ -15,10 +15,13 @@ import type { DifficultyLevel } from "../types/chess";
 
 export type StoryNodeType =
   | "start"
-  | "monster"
-  | "mystery"
-  | "fireplace"
-  | "boss";
+  | "enemy"
+  | "unknown"
+  | "rest"
+  | "boss"
+  | "merchant"
+  | "treasure"
+  | "elite";
 
 export type NodeStatus =
   | "locked"     // Cannot be visited yet
@@ -46,7 +49,7 @@ export interface StoryNode {
 export const STORY_MAP_NODES: StoryNode[] = [
   {
     id: 0,
-    type: "monster",
+    type: "enemy",
     label: "Pawn Sentinel",
     x: 50,
     y: 92,
@@ -56,35 +59,35 @@ export const STORY_MAP_NODES: StoryNode[] = [
   },
   {
     id: 1,
-    type: "mystery",
-    label: "Shadowed Crossroads",
+    type: "merchant",
+    label: "Wandering Merchant",
     x: 30,
     y: 80,
     edges: [3],
-    description: "A strange fog swirls around this clearing. Something stirs…",
+    description: "A mysterious figure offers wares in exchange for coins.",
   },
   {
     id: 2,
-    type: "mystery",
-    label: "Abandoned Camp",
+    type: "treasure",
+    label: "Forgotten Reliquary",
     x: 70,
     y: 80,
     edges: [3],
-    description: "You find some old supplies scattered around.",
+    description: "An ancient chest gleams faintly. What treasures lie within?",
   },
   {
     id: 3,
-    type: "monster",
+    type: "elite",
     label: "Knight Prowler",
     x: 50,
     y: 68,
     difficulty: 2,
     edges: [4, 5],
-    description: "A spectral knight leaps from the shadows, challenging you to battle!",
+    description: "An elite spectral knight leaps from the shadows, challenging you to battle!",
   },
   {
     id: 4,
-    type: "fireplace",
+    type: "rest",
     label: "Wayward Campfire",
     x: 30,
     y: 56,
@@ -93,26 +96,26 @@ export const STORY_MAP_NODES: StoryNode[] = [
   },
   {
     id: 5,
-    type: "monster",
-    label: "Bishop Phantom",
+    type: "unknown",
+    label: "Shadowed Crossroads",
     x: 70,
     y: 56,
-    difficulty: 2,
     edges: [6],
-    description: "A ghostly bishop materializes, its diagonal gaze piercing the darkness.",
+    description: "A strange fog swirls around this clearing. Something stirs…",
   },
   {
     id: 6,
-    type: "mystery",
-    label: "Forgotten Reliquary",
+    type: "enemy",
+    label: "Bishop Phantom",
     x: 50,
     y: 44,
+    difficulty: 2,
     edges: [7],
-    description: "An ancient chest gleams faintly. What treasures — or traps — lie within?",
+    description: "A ghostly bishop materializes, its diagonal gaze piercing the darkness.",
   },
   {
     id: 7,
-    type: "monster",
+    type: "elite",
     label: "Rook Colossus",
     x: 50,
     y: 32,
@@ -122,7 +125,7 @@ export const STORY_MAP_NODES: StoryNode[] = [
   },
   {
     id: 8,
-    type: "fireplace",
+    type: "rest",
     label: "Summit Sanctuary",
     x: 30,
     y: 20,
@@ -131,7 +134,7 @@ export const STORY_MAP_NODES: StoryNode[] = [
   },
   {
     id: 9,
-    type: "monster",
+    type: "enemy",
     label: "Queen's Guard",
     x: 70,
     y: 20,
@@ -174,7 +177,7 @@ export const MONSTER_PROFILES: Record<number, MonsterProfile> = {
     rating: "~1200",
     icon: "♞",
   },
-  5: {
+  6: {
     name: "Bishop Phantom",
     title: "Diagonal Specter",
     rating: "~1200",

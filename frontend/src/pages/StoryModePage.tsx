@@ -8,6 +8,7 @@
 import { motion } from "framer-motion";
 import { Swords, ArrowLeft } from "lucide-react";
 import StoryModeMap from "../components/story-mode/StoryModeMap";
+import { StoryModeProvider } from "../components/story-mode/StoryModeContext";
 import { useNavigate } from "react-router";
 
 export default function StoryModePage() {
@@ -59,7 +60,9 @@ export default function StoryModePage() {
         </motion.div>
 
         {/* Map */}
-        <StoryModeMap />
+        <StoryModeProvider>
+          <StoryModeMap />
+        </StoryModeProvider>
       </main>
     </div>
   );

@@ -15,6 +15,7 @@ import {
 } from "../../data/storyModeMapData";
 import StoryModeNodeIcon from "./StoryModeNodeIcon";
 import StoryModeMapCanvas from "./StoryModeMapCanvas";
+import StoryModeMerchant from "./StoryModeMerchant"; // Force TS re-index
 import StoryModeBattle from "./StoryModeBattle";
 import StoryModeEncounter from "./StoryModeEncounter";
 import StoryModeRestSite from "./StoryModeRestSite";
@@ -24,7 +25,8 @@ type ActiveView =
   | { kind: "map" }
   | { kind: "battle"; nodeId: number }
   | { kind: "encounter"; nodeId: number }
-  | { kind: "rest"; nodeId: number };
+  | { kind: "rest"; nodeId: number }
+  | { kind: "merchant"; nodeId: number };
 
 export default function StoryModeMap() {
   const { session, status, signIn } = useSession();
@@ -136,15 +138,20 @@ export default function StoryModeMap() {
           // Legacy start node handling, though we now use monster as node 0
           setCompletedNodes((prev) => new Set([...prev, nodeId]));
           break;
-        case "monster":
+        case "enemy":
+        case "elite":
         case "boss":
           setActiveView({ kind: "battle", nodeId });
           break;
-        case "mystery":
+        case "unknown":
+        case "treasure":
           setActiveView({ kind: "encounter", nodeId });
           break;
-        case "fireplace":
+        case "rest":
           setActiveView({ kind: "rest", nodeId });
+          break;
+        case "merchant":
+          setActiveView({ kind: "merchant", nodeId });
           break;
       }
     },
@@ -191,6 +198,12 @@ export default function StoryModeMap() {
 
   const handleRestComplete = useCallback(() => {
     if (activeView.kind !== "rest") return;
+    setCompletedNodes((prev) => new Set([...prev, activeView.nodeId]));
+    setActiveView({ kind: "map" });
+  }, [activeView]);
+
+  const handleMerchantComplete = useCallback(() => {
+    if (activeView.kind !== "merchant") return;
     setCompletedNodes((prev) => new Set([...prev, activeView.nodeId]));
     setActiveView({ kind: "map" });
   }, [activeView]);
@@ -495,10 +508,12 @@ export default function StoryModeMap() {
             {/* Legend */}
             <div className="flex flex-wrap items-center justify-center gap-4 mt-4 px-2">
               {[
-                { color: "#ef4444", label: "Monster" },
-                { color: "#a855f7", label: "Mystery" },
-                { color: "#f97316", label: "Rest Site" },
-                { color: "#eab308", label: "Boss" },
+                { color: "#a855f7", label: "Unknown" },
+                { color: "#eab308", label: "Merchant" },
+                { color: "#38bdf8", label: "Treasure" },
+                { color: "#f97316", label: "Rest" },
+                { color: "#ef4444", label: "Enemy" },
+                { color: "#b91c1c", label: "Elite" },
                 { color: "#22c55e", label: "Completed" },
               ].map((item) => (
                 <div
@@ -547,6 +562,19 @@ export default function StoryModeMap() {
                   ?.label ?? "Unknown"
               }
               onComplete={handleEncounterComplete}
+              onRetreat={handleRetreat}
+            />
+          </motion.div>
+        ) : activeView.kind === "merchant" ? (
+          <motion.div
+            key="merchant"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <StoryModeMerchant
+              onComplete={handleMerchantComplete}
               onRetreat={handleRetreat}
             />
           </motion.div>

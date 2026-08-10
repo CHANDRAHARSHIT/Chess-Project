@@ -1,13 +1,7 @@
-/**
- * StoryModeRestSite.tsx
- *
- * Fireplace / rest site screen shown when the player lands on a campfire node.
- * Features an interactive resting sequence with healing animations before continuing.
- */
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Flame, ArrowRight, RotateCcw, Heart, Sparkles } from "lucide-react";
+import { Flame, ArrowRight, RotateCcw, Heart, Sparkles, Plus, Minus } from "lucide-react";
+import { useStoryModeRun } from "./StoryModeContext";
 
 interface StoryModeRestSiteProps {
   nodeLabel: string;
@@ -22,16 +16,90 @@ export default function StoryModeRestSite({
   onComplete,
   onRetreat,
 }: StoryModeRestSiteProps) {
+  const { runState, updateRunState } = useStoryModeRun();
+  
   const [isResting, setIsResting] = useState(false);
   const [hasRested, setHasRested] = useState(false);
 
+  // Local state for point allocation
+  const [pointsAvailable, setPointsAvailable] = useState(5);
+  const [allocations, setAllocations] = useState({
+    undo: 0,
+    hint: 0,
+    evalBar: 0,
+    time: 0,
+    reroll: 0,
+  });
+
+  const handleAllocate = (key: keyof typeof allocations, delta: number) => {
+    if (delta > 0 && pointsAvailable <= 0) return;
+    
+    // Check max bounds based on runState
+    const currentCharge = runState[`${key}Charges` as keyof typeof runState] as number;
+    const maxCharge = runState[`max${key.charAt(0).toUpperCase() + key.slice(1)}Charges` as keyof typeof runState] as number;
+    const allocated = allocations[key];
+    
+    if (delta > 0 && currentCharge + allocated >= maxCharge) return; // Cannot exceed max
+    if (delta < 0 && allocated <= 0) return; // Cannot un-allocate below 0
+    
+    setAllocations(prev => ({ ...prev, [key]: prev[key] + delta }));
+    setPointsAvailable(prev => prev - delta);
+  };
+
   const handleRest = () => {
     setIsResting(true);
+    
+    // Apply allocations
+    updateRunState({
+      undoCharges: runState.undoCharges + allocations.undo,
+      hintCharges: runState.hintCharges + allocations.hint,
+      evalBarCharges: runState.evalBarCharges + allocations.evalBar,
+      timeCharges: runState.timeCharges + allocations.time,
+      rerollCharges: runState.rerollCharges + allocations.reroll,
+    });
+
     // Simulate rest sequence duration
     setTimeout(() => {
       setIsResting(false);
       setHasRested(true);
     }, 2000);
+  };
+
+  const renderAllocationRow = (label: string, key: keyof typeof allocations, maxChargeKey: keyof typeof runState) => {
+    const currentCharge = runState[`${key}Charges` as keyof typeof runState] as number;
+    const maxCharge = runState[maxChargeKey] as number;
+    const allocated = allocations[key];
+    const newTotal = currentCharge + allocated;
+    
+    return (
+      <div className="flex items-center justify-between w-full py-3 border-b border-brand-border/30 last:border-0">
+        <span className="text-base font-mono text-brand-secondary">{label}</span>
+        <div className="flex items-center gap-3">
+          <button 
+            onClick={() => handleAllocate(key, -1)}
+            disabled={allocated <= 0 || isResting}
+            className="p-1 rounded bg-brand-surface/50 text-brand-secondary hover:text-brand-text disabled:opacity-30 transition-all cursor-pointer"
+          >
+            <Minus className="w-4 h-4" />
+          </button>
+          
+          <div className="flex items-center gap-1 min-w-[60px] justify-center">
+            <span className={`text-base font-mono font-semibold ${allocated > 0 ? "text-green-400" : "text-brand-text"}`}>
+              {newTotal}
+            </span>
+            <span className="text-sm font-mono text-brand-secondary">/ {maxCharge}</span>
+          </div>
+
+          <button 
+            onClick={() => handleAllocate(key, 1)}
+            disabled={pointsAvailable <= 0 || newTotal >= maxCharge || isResting}
+            className="p-1 rounded bg-brand-surface/50 text-brand-secondary hover:text-brand-text disabled:opacity-30 transition-all cursor-pointer"
+          >
+            <Plus className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -128,15 +196,31 @@ export default function StoryModeRestSite({
               </h2>
               <p className="text-sm text-brand-secondary text-center leading-relaxed max-w-sm px-2">
                 {isResting
-                  ? "You rest by the fire, letting the warmth heal your weary spirit…"
+                  ? "You rest by the fire, allocating your points to restore your mind…"
                   : nodeDescription}
               </p>
 
-              {/* Divider */}
-              <div className="w-24 h-px bg-gradient-to-r from-transparent via-orange-500/30 to-transparent my-2" />
+              {/* Point Allocation UI */}
+              <div className="w-full bg-brand-surface/30 border border-brand-border/40 rounded-xl p-4 mt-2">
+                <div className="flex justify-between items-center mb-4">
+                  <span className="text-sm font-semibold text-brand-text">Restore Charges</span>
+                  <div className="flex items-center gap-1.5 bg-orange-500/20 px-2 py-1 rounded text-orange-300 text-xs font-mono border border-orange-500/30">
+                    <Sparkles className="w-3 h-3" />
+                    {pointsAvailable} Points Left
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-1">
+                  {renderAllocationRow("Undo", "undo", "maxUndoCharges")}
+                  {renderAllocationRow("Best Move", "hint", "maxHintCharges")}
+                  {renderAllocationRow("Eval Bar", "evalBar", "maxEvalBarCharges")}
+                  {renderAllocationRow("Time", "time", "maxTimeCharges")}
+                  {renderAllocationRow("Rerolls", "reroll", "maxRerollCharges")}
+                </div>
+              </div>
 
               {/* Actions */}
-              <div className="flex gap-3 flex-wrap justify-center w-full">
+              <div className="flex gap-3 flex-wrap justify-center w-full mt-4">
                 <button
                   onClick={onRetreat}
                   disabled={isResting}
@@ -151,12 +235,12 @@ export default function StoryModeRestSite({
                   className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-orange-500/20 border border-orange-500/40 text-orange-300 hover:bg-orange-500/30 hover:border-orange-500/60 transition-all duration-200 text-sm font-medium cursor-pointer disabled:opacity-30 disabled:scale-95"
                 >
                   <Heart className={`w-4 h-4 ${isResting ? "animate-pulse" : ""}`} />
-                  {isResting ? "Resting…" : "Rest"}
+                  {isResting ? "Resting…" : "Rest & Apply"}
                 </button>
               </div>
               
               {/* DEV Only: Skip Button */}
-              {import.meta.env.VITE_ENABLE_STORY_DEV_TOOLS === 'true' && (
+              {(import.meta.env.DEV && import.meta.env.VITE_ENABLE_STORY_DEV_TOOLS !== 'false') && (
                 <div className="mt-4 p-2 rounded border border-dashed border-yellow-500/50 bg-yellow-500/10 flex justify-center opacity-80 hover:opacity-100 transition-opacity w-full">
                   <span className="text-[10px] text-yellow-500 font-mono self-center mr-2">DEV:</span>
                   <button onClick={onComplete} className="px-2 py-1 bg-green-500/20 border border-green-500/50 text-green-400 rounded text-[10px] font-mono hover:bg-green-500/40 cursor-pointer">Skip Rest</button>

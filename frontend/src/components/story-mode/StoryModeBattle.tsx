@@ -5,7 +5,7 @@
  * Merges the luxury UI of the Quick Game (ProductDemo) with Story Mode RPG elements.
  */
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Chess } from "chess.js";
 import { ThemedChessboard } from "../ThemedChessboard";
@@ -22,7 +22,6 @@ import {
   type MonsterProfile,
 } from "../../data/storyModeMapData";
 import { DIFFICULTY_CONFIGS, type DifficultyLevel } from "../../types/chess";
-import { generateChess960FEN } from "../../utils/chess960";
 import { EditPositionModal } from "../EditPositionModal";
 import {
   validateEditorPosition,
@@ -37,12 +36,15 @@ import {
   ArrowLeft,
   CornerUpLeft,
   Lightbulb,
-  MoreHorizontal,
-  Shuffle,
-  Pencil,
+  Eye,
+  Hourglass,
+  Clock,
+  Plus,
+  Minus,
 } from "lucide-react";
 import { useScrollReveal } from "../../hooks/useScrollReveal";
 import { BoardCoordinates } from "../BoardCoordinates";
+import { useStoryModeRun } from "./StoryModeContext";
 
 interface StoryModeBattleProps {
   nodeId: number;
@@ -60,6 +62,8 @@ export default function StoryModeBattle({
   onRetreat,
 }: StoryModeBattleProps) {
   // ── Game state ────────────────────────────────────────────────────────────
+  const { runState, useCharge, addCoins } = useStoryModeRun();
+  
   const gameRef = useRef(new Chess());
   const [gameFen, setGameFen] = useState(() => gameRef.current.fen());
   const [playerColor, setPlayerColor] = useState<"w" | "b">("w");
@@ -71,9 +75,35 @@ export default function StoryModeBattle({
   // Result tracking
   const [battleResult, setBattleResult] = useState<"playing" | "victory" | "defeat">("playing");
 
+  // Eval Bar Charges
+  const [evalMovesRemaining, setEvalMovesRemaining] = useState<number>(0);
+
+  // Clocks
+  const initialTime = useMemo(() => {
+    switch (difficulty) {
+      case 5: return 180; // 3 min
+      case 4: return 300; // 5 min
+      case 3: return 420; // 7 min
+      case 2: return 480; // 8 min
+      case 1:
+      default: return 600; // 10 min
+    }
+  }, [difficulty]);
+  const [playerTime, setPlayerTime] = useState<number>(initialTime);
+  const [enemyTime, setEnemyTime] = useState<number>(initialTime);
+
+  const formatTime = (seconds: number) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s.toString().padStart(2, "0")}`;
+  };
+
   // Edit Position & Menus
   const [isEditMode, setIsEditMode] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
+  const [showTimeMenu, setShowTimeMenu] = useState(false);
+  const timeMenuRef = useRef<HTMLDivElement>(null);
+  const timeButtonRef = useRef<HTMLButtonElement>(null);
   const moreMenuRef = useRef<HTMLDivElement>(null);
   const moreButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -156,6 +186,38 @@ export default function StoryModeBattle({
 
   // Move history container
   const moveHistoryContainerRef = useRef<HTMLDivElement>(null);
+
+  // ── Clock Ticking ─────────────────────────────────────────────────────────
+  useEffect(() => {
+    if (battleResult !== "playing" || isEditMode || !!gameOverReason) return;
+
+    const interval = setInterval(() => {
+      const turn = gameRef.current.turn();
+      if (turn === playerColor) {
+        setPlayerTime((prev) => {
+          if (prev <= 1) {
+            clearInterval(interval);
+            setGameOverReason("timeout");
+            setBattleResult("defeat");
+            return 0;
+          }
+          return prev - 1;
+        });
+      } else {
+        setEnemyTime((prev) => {
+          if (prev <= 1) {
+            clearInterval(interval);
+            setGameOverReason("timeout");
+            setBattleResult("victory");
+            return 0;
+          }
+          return prev - 1;
+        });
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [battleResult, isEditMode, playerColor, gameOverReason]);
 
   // ── Game-over detection ───────────────────────────────────────────────────
   useEffect(() => {
@@ -251,6 +313,7 @@ export default function StoryModeBattle({
         if (move) {
           setGameFen(game.fen());
           setShowHint(false);
+          setEvalMovesRemaining(prev => Math.max(0, prev - 1));
           if (hintTimerRef.current) clearTimeout(hintTimerRef.current);
           playMoveSound(game, move.flags, !!move.captured);
           return true;
@@ -267,6 +330,11 @@ export default function StoryModeBattle({
     const game = gameRef.current;
     const history = game.history();
     if (history.length === 0) return;
+    if (runState.undoCharges <= 0) return;
+
+    const used = useCharge('undo');
+    if (!used) return;
+
     game.undo();
     if (game.history().length > 0 && game.turn() !== playerColor) {
       game.undo();
@@ -275,12 +343,43 @@ export default function StoryModeBattle({
     setShowHint(false);
     stopSearch();
     soundManager.playMove();
-  }, [playerColor, stopSearch]);
+  }, [playerColor, stopSearch, runState.undoCharges, useCharge]);
 
   const handleHint = useCallback(() => {
+    if (runState.hintCharges <= 0) return;
+    const used = useCharge('hint');
+    if (!used) return;
+
     setShowHint(true);
-    analyzePosition(gameRef.current.fen());
-  }, [analyzePosition]);
+    analyzePosition(gameRef.current.fen(), runState.hintStrength);
+  }, [analyzePosition, runState.hintCharges, runState.hintStrength, useCharge]);
+
+  const handleActivateEval = useCallback(() => {
+    if (runState.evalBarCharges <= 0) return;
+    const used = useCharge('evalBar');
+    if (!used) return;
+    
+    const moves = runState.evalBarTier === 'bronze' ? 5 : runState.evalBarTier === 'silver' ? 10 : Infinity;
+    setEvalMovesRemaining(prev => prev + moves);
+  }, [useCharge, runState.evalBarCharges, runState.evalBarTier]);
+
+  const handleTimeAction = useCallback((action: 'increase_player' | 'decrease_enemy') => {
+    if (runState.timeCharges <= 0) return;
+    const used = useCharge('time');
+    if (!used) return;
+
+    if (action === 'increase_player') {
+      setPlayerTime(prev => prev + Math.floor(initialTime * 0.1));
+    } else {
+      setEnemyTime(prev => Math.max(1, prev - Math.floor(initialTime * 0.1)));
+    }
+  }, [useCharge, runState.timeCharges]);
+
+  const handleVictory = useCallback(() => {
+    const baseCoins = difficulty === 5 ? 50 : difficulty >= 3 ? 30 : 15;
+    addCoins(baseCoins);
+    onVictory();
+  }, [addCoins, difficulty, onVictory]);
 
   const loadFreshGame = useCallback(
     (fen?: string) => {
@@ -292,6 +391,8 @@ export default function StoryModeBattle({
       setShowHint(false);
       setGameOverReason(null);
       setBattleResult("playing");
+      setPlayerTime(initialTime);
+      setEnemyTime(initialTime);
       resetEvaluation();
       setDisplayEval({ type: "cp", value: 0 });
       evalTimeoutsRef.current.forEach((t) => clearTimeout(t));
@@ -305,17 +406,6 @@ export default function StoryModeBattle({
   const handleRetry = useCallback(() => {
     loadFreshGame();
   }, [loadFreshGame]);
-
-  const handleChess960 = useCallback(() => {
-    loadFreshGame(generateChess960FEN());
-  }, [loadFreshGame]);
-
-  const handleOpenEditor = useCallback(() => {
-    stopSearch();
-    setShowHint(false);
-    if (hintTimerRef.current) clearTimeout(hintTimerRef.current);
-    setIsEditMode(true);
-  }, [stopSearch]);
 
   const handleApplyEditorPosition = useCallback(
     (fen: string) => {
@@ -386,6 +476,16 @@ export default function StoryModeBattle({
       exit={{ opacity: 0 }}
       transition={{ duration: 0.4 }}
     >
+      <div className="w-full max-w-6xl mx-auto flex items-center justify-start px-2">
+        <button
+          onClick={onRetreat}
+          className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-brand-secondary hover:text-brand-text hover:bg-brand-surface border border-transparent hover:border-brand-border/40 transition-all text-xs font-mono cursor-pointer"
+        >
+          <ArrowLeft className="w-3.5 h-3.5" />
+          Retreat to Map
+        </button>
+      </div>
+
       {/* Monster header */}
       <motion.div
         className="flex flex-col items-center gap-2 text-center"
@@ -419,20 +519,29 @@ export default function StoryModeBattle({
       {/* Dashboard (From ProductDemo) */}
       <div
         ref={dashboardRef}
-        className="luxury-card rounded-sm shadow-2xl p-4 sm:p-6 lg:p-8 w-full max-w-5xl mx-auto"
+        className="luxury-card rounded-sm shadow-2xl p-4 sm:p-6 lg:p-8 w-full max-w-6xl mx-auto"
         style={{ opacity: 0 }}
       >
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:items-stretch">
           {/* ── Col 1: Eval Bar ────────────────────────────────────────── */}
           <div
-            className="lg:col-span-1 flex lg:flex-col items-center lg:justify-start justify-center gap-0"
+            className="lg:col-span-1 flex lg:flex-col items-center lg:justify-start justify-center gap-0 relative"
             style={{ alignSelf: "stretch", padding: "0" }}
           >
-            <EvaluationBar
-              evaluation={displayEval}
-              isDesktop={isDesktop}
-              boardHeight={boardHeight}
-            />
+            {evalMovesRemaining > 0 && (
+              <>
+                <EvaluationBar
+                  evaluation={displayEval}
+                  isDesktop={isDesktop}
+                  boardHeight={boardHeight}
+                />
+                {evalMovesRemaining !== Infinity && (
+                  <div className="absolute top-2 left-1/2 -translate-x-1/2 bg-black/80 px-2 py-1 rounded text-[10px] text-white font-mono z-10 whitespace-nowrap">
+                    {evalMovesRemaining} moves left
+                  </div>
+                )}
+              </>
+            )}
           </div>
 
           {/* ── Col 2: Chessboard ────────────────────────────────────────── */}
@@ -490,78 +599,116 @@ export default function StoryModeBattle({
 
           {/* ── Col 3: Control Panel ────────────────────────────────────────── */}
           <div
-            className="lg:col-span-4 flex flex-col lg:gap-6 gap-8 lg:self-stretch"
+            className="lg:col-span-4 flex flex-col lg:gap-4 gap-6 lg:self-stretch"
             style={{ height: isDesktop && boardHeight ? `${boardHeight}px` : undefined }}
           >
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-3">
+              {/* Clocks */}
+              <div className="flex justify-between items-center bg-brand-bg/80 p-3 rounded-xl border border-brand-border/60 shadow-inner">
+                <div className="flex flex-col items-start gap-0.5">
+                  <span className="text-[10px] text-brand-secondary font-mono flex items-center gap-1 uppercase tracking-wider">
+                    <Clock className="w-3 h-3" /> Enemy
+                  </span>
+                  <span className={`text-2xl font-mono font-bold tracking-tight ${enemyTime < 60 ? 'text-red-400 animate-pulse' : 'text-brand-text'}`}>
+                    {formatTime(enemyTime)}
+                  </span>
+                </div>
+                <div className="h-8 w-px bg-brand-border/50"></div>
+                <div className="flex flex-col items-end gap-0.5">
+                  <span className="text-[10px] text-brand-secondary font-mono flex items-center gap-1 uppercase tracking-wider">
+                    You <Clock className="w-3 h-3" />
+                  </span>
+                  <span className={`text-2xl font-mono font-bold tracking-tight ${playerTime < 60 ? 'text-red-400 animate-pulse' : 'text-brand-text'}`}>
+                    {formatTime(playerTime)}
+                  </span>
+                </div>
+              </div>
+
               {/* Toolbar */}
-              <div className="grid grid-cols-4 gap-2">
+              <div className="grid grid-cols-5 gap-1.5">
                 <button
                   onClick={handleUndo}
-                  disabled={!canUndo || isThinking || isEditMode}
+                  disabled={!canUndo || isThinking || isEditMode || runState.undoCharges <= 0}
                   title="Undo last move"
-                  className="flex flex-col items-center justify-center gap-1.5 py-3 px-1 rounded-lg border border-brand-border bg-brand-bg hover:bg-brand-text/5 hover:border-[rgba(212,175,110,0.4)] text-brand-secondary hover:text-brand-text transition-all duration-200 disabled:opacity-40 group cursor-pointer"
-                  style={{ cursor: !canUndo || isThinking || isEditMode ? "not-allowed" : "pointer" }}
+                  className="flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-lg border border-brand-border bg-brand-bg hover:bg-brand-text/5 hover:border-[rgba(212,175,110,0.4)] text-brand-secondary hover:text-brand-text transition-all duration-200 disabled:opacity-40 group cursor-pointer"
+                  style={{ cursor: !canUndo || isThinking || isEditMode || runState.undoCharges <= 0 ? "not-allowed" : "pointer" }}
                 >
                   <CornerUpLeft className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                  <span className="text-[10px] font-medium font-sans tracking-wide">Undo</span>
+                  <span className="text-[10px] font-medium font-sans tracking-wide">Undo ({runState.undoCharges})</span>
                 </button>
 
                 <button
                   onClick={() => { soundManager.playButtonClick(); handleHint(); }}
-                  disabled={!!gameOverReason || isThinking || isEditMode || currentTurn !== playerColor}
+                  disabled={!!gameOverReason || isThinking || isEditMode || currentTurn !== playerColor || runState.hintCharges <= 0}
                   title="Get a hint"
-                  className="flex flex-col items-center justify-center gap-1.5 py-3 px-1 rounded-lg border border-brand-border bg-brand-bg hover:bg-brand-text/5 hover:border-[rgba(212,175,110,0.4)] text-brand-secondary hover:text-yellow-400 transition-all duration-200 disabled:opacity-40 group cursor-pointer"
-                  style={{ cursor: !!gameOverReason || isThinking || isEditMode || currentTurn !== playerColor ? "not-allowed" : "pointer" }}
+                  className="flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-lg border border-brand-border bg-brand-bg hover:bg-brand-text/5 hover:border-[rgba(212,175,110,0.4)] text-brand-secondary hover:text-yellow-400 transition-all duration-200 disabled:opacity-40 group cursor-pointer"
+                  style={{ cursor: !!gameOverReason || isThinking || isEditMode || currentTurn !== playerColor || runState.hintCharges <= 0 ? "not-allowed" : "pointer" }}
                 >
                   <Lightbulb className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                  <span className="text-[10px] font-medium font-sans tracking-wide">Hint</span>
+                  <span className="text-[10px] font-medium font-sans tracking-wide">Hint ({runState.hintCharges})</span>
                 </button>
 
                 <button
                   onClick={handleRetry}
                   disabled={!canUndo || isEditMode}
                   title="Reset game"
-                  className="flex flex-col items-center justify-center gap-1.5 py-3 px-1 rounded-lg border border-brand-border bg-brand-bg hover:bg-brand-text/5 hover:border-red-500/40 text-brand-secondary hover:text-red-400 transition-all duration-200 disabled:opacity-40 group cursor-pointer"
+                  className="flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-lg border border-brand-border bg-brand-bg hover:bg-brand-text/5 hover:border-red-500/40 text-brand-secondary hover:text-red-400 transition-all duration-200 disabled:opacity-40 group cursor-pointer"
                   style={{ cursor: !canUndo || isEditMode ? "not-allowed" : "pointer" }}
                 >
                   <RotateCcw className="w-5 h-5 group-hover:rotate-[-45deg] transition-transform duration-300" />
                   <span className="text-[10px] font-medium font-sans tracking-wide">Reset</span>
                 </button>
 
+                <button
+                  onClick={() => { soundManager.playButtonClick(); handleActivateEval(); }}
+                  disabled={runState.evalBarCharges <= 0 || isEditMode}
+                  title="Activate Eval Bar"
+                  className="w-full flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-lg border border-brand-border bg-brand-bg hover:bg-brand-text/5 hover:border-emerald-500/40 text-brand-secondary hover:text-emerald-400 transition-all duration-200 disabled:opacity-40 group cursor-pointer"
+                  style={{ cursor: runState.evalBarCharges <= 0 || isEditMode ? "not-allowed" : "pointer" }}
+                >
+                  <Eye className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                  <span className="text-[10px] font-medium font-sans tracking-wide">Eval ({runState.evalBarCharges})</span>
+                </button>
+
                 <div className="relative">
                   <button
-                    ref={moreButtonRef}
-                    onClick={() => { soundManager.playButtonClick(); setShowMoreMenu((prev) => !prev); }}
-                    title="More options"
-                    className={`w-full flex flex-col items-center justify-center gap-1.5 py-3 px-1 rounded-lg border transition-all duration-200 group cursor-pointer ${showMoreMenu ? "border-[rgba(212,175,110,0.6)] bg-[rgba(212,175,110,0.08)] text-brand-text" : "border-brand-border bg-brand-bg hover:bg-brand-text/5 hover:border-[rgba(212,175,110,0.4)] text-brand-secondary hover:text-brand-text"}`}
+                    ref={timeButtonRef}
+                    onClick={() => { soundManager.playButtonClick(); setShowTimeMenu((prev) => !prev); }}
+                    disabled={runState.timeCharges <= 0 || isEditMode}
+                    title="Time actions"
+                    className={`w-full flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-lg border transition-all duration-200 group cursor-pointer disabled:opacity-40 ${showTimeMenu ? "border-blue-500/60 bg-blue-500/10 text-blue-400" : "border-brand-border bg-brand-bg hover:bg-brand-text/5 hover:border-blue-500/40 text-brand-secondary hover:text-blue-400"}`}
+                    style={{ cursor: runState.timeCharges <= 0 || isEditMode ? "not-allowed" : "pointer" }}
                   >
-                    <MoreHorizontal className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                    <span className="text-[10px] font-medium font-sans tracking-wide">More</span>
+                    <Hourglass className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                    <span className="text-[10px] font-medium font-sans tracking-wide">Time ({runState.timeCharges})</span>
                   </button>
 
-                  {showMoreMenu && (
+                  {showTimeMenu && (
                     <div
-                      ref={moreMenuRef}
-                      className="absolute right-0 top-full mt-1.5 z-50 min-w-[160px] rounded-xl border border-brand-border bg-brand-surface py-1 shadow-2xl backdrop-blur-md animate-fade-in overflow-hidden"
+                      ref={timeMenuRef}
+                      className="absolute right-0 top-full mt-1.5 z-50 min-w-[200px] rounded-xl border border-brand-border bg-brand-surface py-1 shadow-2xl backdrop-blur-md animate-fade-in overflow-hidden"
                       style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.3), 0 0 0 1px rgba(212,175,110,0.1)" }}
                     >
                       <button
-                        onClick={() => { soundManager.playButtonClick(); handleChess960(); setShowMoreMenu(false); }}
-                        disabled={isEditMode}
-                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-sans text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06] transition-colors duration-150 disabled:opacity-40 group cursor-pointer"
+                        onClick={() => { soundManager.playButtonClick(); handleTimeAction('increase_player'); setShowTimeMenu(false); }}
+                        className="w-full flex items-center justify-between px-4 py-2.5 text-sm font-sans text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06] transition-colors duration-150 group cursor-pointer"
                       >
-                        <Shuffle className="w-4 h-4 text-brand-accent group-hover:scale-110 transition-transform shrink-0" />
-                        <span className="font-sans font-medium">Chess960</span>
+                        <span className="font-sans font-medium flex items-center gap-2">
+                          <Plus className="w-4 h-4 text-green-400 group-hover:scale-110 transition-transform" />
+                          Boost My Time
+                        </span>
+                        <span className="text-[10px] font-mono text-green-400/80">+10%</span>
                       </button>
                       <div className="my-1 border-t border-brand-border/60" />
                       <button
-                        onClick={() => { soundManager.playButtonClick(); handleOpenEditor(); setShowMoreMenu(false); }}
-                        disabled={isThinking}
-                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-sans text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06] transition-colors duration-150 disabled:opacity-40 group cursor-pointer"
+                        onClick={() => { soundManager.playButtonClick(); handleTimeAction('decrease_enemy'); setShowTimeMenu(false); }}
+                        className="w-full flex items-center justify-between px-4 py-2.5 text-sm font-sans text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06] transition-colors duration-150 group cursor-pointer"
                       >
-                        <Pencil className="w-4 h-4 text-brand-accent group-hover:scale-110 transition-transform shrink-0" />
-                        <span className="font-sans font-medium">Edit Position</span>
+                        <span className="font-sans font-medium flex items-center gap-2">
+                          <Minus className="w-4 h-4 text-red-400 group-hover:scale-110 transition-transform" />
+                          Slash Enemy Time
+                        </span>
+                        <span className="text-[10px] font-mono text-red-400/80">-10%</span>
                       </button>
                     </div>
                   )}
@@ -595,19 +742,17 @@ export default function StoryModeBattle({
               </div>
 
               {/* DEV Only: Skip Buttons */}
-              {import.meta.env.VITE_ENABLE_STORY_DEV_TOOLS === 'true' && (
+              {(import.meta.env.DEV && import.meta.env.VITE_ENABLE_STORY_DEV_TOOLS !== 'false') && (
                 <div className="mt-4 p-2 rounded border border-dashed border-yellow-500/50 bg-yellow-500/10 flex gap-2 justify-center opacity-80 hover:opacity-100 transition-opacity">
                   <span className="text-[10px] text-yellow-500 font-mono self-center mr-2">DEV:</span>
-                  <button onClick={onVictory} className="px-2 py-1 bg-green-500/20 border border-green-500/50 text-green-400 rounded text-[10px] font-mono hover:bg-green-500/40 cursor-pointer">Skip (Win)</button>
-                  {onDefeat && (
-                    <button onClick={onDefeat} className="px-2 py-1 bg-red-500/20 border border-red-500/50 text-red-400 rounded text-[10px] font-mono hover:bg-red-500/40 cursor-pointer">Skip (Lose)</button>
-                  )}
+                  <button onClick={handleVictory} className="px-2 py-1 bg-green-500/20 border border-green-500/50 text-green-400 rounded text-[10px] font-mono hover:bg-green-500/40 cursor-pointer">Skip (Win)</button>
+                  <button onClick={onDefeat} className="px-2 py-1 bg-red-500/20 border border-red-500/50 text-red-400 rounded text-[10px] font-mono hover:bg-red-500/40 cursor-pointer">Skip (Lose)</button>
                 </div>
               )}
             </div>
 
             {/* Move History */}
-            <div className={`flex flex-col text-left ${isDesktop ? "flex-1 min-h-0" : ""}`} style={{ height: isDesktop ? undefined : "220px" }}>
+            <div className={`flex flex-col text-left ${isDesktop ? "flex-1 min-h-[120px]" : ""}`} style={{ height: isDesktop ? undefined : "220px" }}>
               <div
                 ref={moveHistoryContainerRef}
                 className="flex-1 overflow-y-auto border border-[rgba(212,175,110,0.60)] rounded-lg p-3 bg-brand-bg/40 font-mono text-sm space-y-1 move-history-scroll"
@@ -630,14 +775,6 @@ export default function StoryModeBattle({
                 )}
               </div>
             </div>
-
-            <button
-              onClick={onRetreat}
-              className="w-full flex justify-center items-center gap-1.5 px-3 py-3 mt-auto rounded-lg border border-brand-border/40 text-brand-secondary hover:text-brand-text hover:border-red-500/40 transition-all text-sm font-medium cursor-pointer"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Retreat to Map
-            </button>
           </div>
         </div>
       </div>
@@ -717,7 +854,7 @@ export default function StoryModeBattle({
                   </button>
                 )}
                 <button
-                  onClick={battleResult === "victory" ? onVictory : (onDefeat || onRetreat)}
+                  onClick={battleResult === "victory" ? handleVictory : (onDefeat || onRetreat)}
                   className="flex items-center gap-2 px-5 py-2.5 rounded-xl border text-sm font-medium cursor-pointer transition-all"
                   style={{
                     borderColor: battleResult === "victory" ? "rgba(34, 197, 94, 0.4)" : "rgba(120,120,140,0.4)",

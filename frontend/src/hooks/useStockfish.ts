@@ -193,7 +193,7 @@ export function useStockfish() {
   }, [initWorker, invalidateSearch, setThinking]);
 
   // Perform deeper analysis for the "Hint" button
-  const analyzePosition = useCallback((fen: string, isChess960?: boolean) => {
+  const analyzePosition = useCallback((fen: string, strength?: number, isChess960?: boolean) => {
     const worker = initWorker();
     if (!worker) return;
 
@@ -204,11 +204,18 @@ export function useStockfish() {
 
     const isBlackTurn = fen.split(' ')[1] === 'b';
 
+    // Map strength (e.g. 2000, 2500, 3200) to Stockfish skill and depth
+    let skill = 20;
+    let depth = 15;
+    if (strength === 2000) { skill = 10; depth = 10; }
+    else if (strength === 2500) { skill = 15; depth = 12; }
+    else if (strength && strength >= 3000) { skill = 20; depth = 18; }
+
     // Set master difficulty options for analysis
     if (isChess960) {
       // CDN Stockfish 10.0.2 does not support UCI_Chess960 option
     }
-    worker.postMessage('setoption name Skill Level value 20');
+    worker.postMessage(`setoption name Skill Level value ${skill}`);
     worker.postMessage(`position fen ${fen}`);
 
     worker.onmessage = (event: MessageEvent) => {
@@ -246,8 +253,8 @@ export function useStockfish() {
       }
     };
 
-    // Perform analysis up to depth 15
-    worker.postMessage('go depth 15');
+    // Perform analysis up to calculated depth
+    worker.postMessage(`go depth ${depth}`);
 
     // Auto-stop after 3 seconds if not completed
     searchTimeoutRef.current = setTimeout(() => {
