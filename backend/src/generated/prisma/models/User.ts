@@ -215,6 +215,7 @@ export type UserWhereInput = {
   subscriptions?: Prisma.SubscriptionListRelationFilter
   gameParticipants?: Prisma.GameParticipantListRelationFilter
   playerRatings?: Prisma.PlayerRatingListRelationFilter
+  pathwayProgress?: Prisma.XOR<Prisma.PathwayProgressNullableScalarRelationFilter, Prisma.PathwayProgressWhereInput> | null
 }
 
 export type UserOrderByWithRelationInput = {
@@ -235,6 +236,7 @@ export type UserOrderByWithRelationInput = {
   subscriptions?: Prisma.SubscriptionOrderByRelationAggregateInput
   gameParticipants?: Prisma.GameParticipantOrderByRelationAggregateInput
   playerRatings?: Prisma.PlayerRatingOrderByRelationAggregateInput
+  pathwayProgress?: Prisma.PathwayProgressOrderByWithRelationInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -258,6 +260,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   subscriptions?: Prisma.SubscriptionListRelationFilter
   gameParticipants?: Prisma.GameParticipantListRelationFilter
   playerRatings?: Prisma.PlayerRatingListRelationFilter
+  pathwayProgress?: Prisma.XOR<Prisma.PathwayProgressNullableScalarRelationFilter, Prisma.PathwayProgressWhereInput> | null
 }, "id" | "email" | "stripeTestCustomerId" | "stripeLiveCustomerId">
 
 export type UserOrderByWithAggregationInput = {
@@ -306,6 +309,7 @@ export type UserCreateInput = {
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
   gameParticipants?: Prisma.GameParticipantCreateNestedManyWithoutUserInput
   playerRatings?: Prisma.PlayerRatingCreateNestedManyWithoutUserInput
+  pathwayProgress?: Prisma.PathwayProgressCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -326,6 +330,7 @@ export type UserUncheckedCreateInput = {
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
   gameParticipants?: Prisma.GameParticipantUncheckedCreateNestedManyWithoutUserInput
   playerRatings?: Prisma.PlayerRatingUncheckedCreateNestedManyWithoutUserInput
+  pathwayProgress?: Prisma.PathwayProgressUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -346,6 +351,7 @@ export type UserUpdateInput = {
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
   gameParticipants?: Prisma.GameParticipantUpdateManyWithoutUserNestedInput
   playerRatings?: Prisma.PlayerRatingUpdateManyWithoutUserNestedInput
+  pathwayProgress?: Prisma.PathwayProgressUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -366,6 +372,7 @@ export type UserUncheckedUpdateInput = {
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
   gameParticipants?: Prisma.GameParticipantUncheckedUpdateManyWithoutUserNestedInput
   playerRatings?: Prisma.PlayerRatingUncheckedUpdateManyWithoutUserNestedInput
+  pathwayProgress?: Prisma.PathwayProgressUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -581,6 +588,20 @@ export type UserUpdateOneRequiredWithoutPlayerRatingsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPlayerRatingsInput, Prisma.UserUpdateWithoutPlayerRatingsInput>, Prisma.UserUncheckedUpdateWithoutPlayerRatingsInput>
 }
 
+export type UserCreateNestedOneWithoutPathwayProgressInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPathwayProgressInput, Prisma.UserUncheckedCreateWithoutPathwayProgressInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPathwayProgressInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutPathwayProgressNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPathwayProgressInput, Prisma.UserUncheckedCreateWithoutPathwayProgressInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPathwayProgressInput
+  upsert?: Prisma.UserUpsertWithoutPathwayProgressInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPathwayProgressInput, Prisma.UserUpdateWithoutPathwayProgressInput>, Prisma.UserUncheckedUpdateWithoutPathwayProgressInput>
+}
+
 export type UserCreateWithoutAccountsInput = {
   id?: string
   name?: string | null
@@ -598,6 +619,7 @@ export type UserCreateWithoutAccountsInput = {
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
   gameParticipants?: Prisma.GameParticipantCreateNestedManyWithoutUserInput
   playerRatings?: Prisma.PlayerRatingCreateNestedManyWithoutUserInput
+  pathwayProgress?: Prisma.PathwayProgressCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAccountsInput = {
@@ -617,6 +639,7 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
   gameParticipants?: Prisma.GameParticipantUncheckedCreateNestedManyWithoutUserInput
   playerRatings?: Prisma.PlayerRatingUncheckedCreateNestedManyWithoutUserInput
+  pathwayProgress?: Prisma.PathwayProgressUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAccountsInput = {
@@ -652,6 +675,7 @@ export type UserUpdateWithoutAccountsInput = {
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
   gameParticipants?: Prisma.GameParticipantUpdateManyWithoutUserNestedInput
   playerRatings?: Prisma.PlayerRatingUpdateManyWithoutUserNestedInput
+  pathwayProgress?: Prisma.PathwayProgressUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -671,6 +695,7 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
   gameParticipants?: Prisma.GameParticipantUncheckedUpdateManyWithoutUserNestedInput
   playerRatings?: Prisma.PlayerRatingUncheckedUpdateManyWithoutUserNestedInput
+  pathwayProgress?: Prisma.PathwayProgressUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSessionsInput = {
@@ -690,6 +715,7 @@ export type UserCreateWithoutSessionsInput = {
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
   gameParticipants?: Prisma.GameParticipantCreateNestedManyWithoutUserInput
   playerRatings?: Prisma.PlayerRatingCreateNestedManyWithoutUserInput
+  pathwayProgress?: Prisma.PathwayProgressCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -709,6 +735,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
   gameParticipants?: Prisma.GameParticipantUncheckedCreateNestedManyWithoutUserInput
   playerRatings?: Prisma.PlayerRatingUncheckedCreateNestedManyWithoutUserInput
+  pathwayProgress?: Prisma.PathwayProgressUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -744,6 +771,7 @@ export type UserUpdateWithoutSessionsInput = {
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
   gameParticipants?: Prisma.GameParticipantUpdateManyWithoutUserNestedInput
   playerRatings?: Prisma.PlayerRatingUpdateManyWithoutUserNestedInput
+  pathwayProgress?: Prisma.PathwayProgressUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -763,6 +791,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
   gameParticipants?: Prisma.GameParticipantUncheckedUpdateManyWithoutUserNestedInput
   playerRatings?: Prisma.PlayerRatingUncheckedUpdateManyWithoutUserNestedInput
+  pathwayProgress?: Prisma.PathwayProgressUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSubscriptionsInput = {
@@ -782,6 +811,7 @@ export type UserCreateWithoutSubscriptionsInput = {
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   gameParticipants?: Prisma.GameParticipantCreateNestedManyWithoutUserInput
   playerRatings?: Prisma.PlayerRatingCreateNestedManyWithoutUserInput
+  pathwayProgress?: Prisma.PathwayProgressCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSubscriptionsInput = {
@@ -801,6 +831,7 @@ export type UserUncheckedCreateWithoutSubscriptionsInput = {
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   gameParticipants?: Prisma.GameParticipantUncheckedCreateNestedManyWithoutUserInput
   playerRatings?: Prisma.PlayerRatingUncheckedCreateNestedManyWithoutUserInput
+  pathwayProgress?: Prisma.PathwayProgressUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSubscriptionsInput = {
@@ -836,6 +867,7 @@ export type UserUpdateWithoutSubscriptionsInput = {
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   gameParticipants?: Prisma.GameParticipantUpdateManyWithoutUserNestedInput
   playerRatings?: Prisma.PlayerRatingUpdateManyWithoutUserNestedInput
+  pathwayProgress?: Prisma.PathwayProgressUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSubscriptionsInput = {
@@ -855,6 +887,7 @@ export type UserUncheckedUpdateWithoutSubscriptionsInput = {
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   gameParticipants?: Prisma.GameParticipantUncheckedUpdateManyWithoutUserNestedInput
   playerRatings?: Prisma.PlayerRatingUncheckedUpdateManyWithoutUserNestedInput
+  pathwayProgress?: Prisma.PathwayProgressUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPaymentsInput = {
@@ -874,6 +907,7 @@ export type UserCreateWithoutPaymentsInput = {
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
   gameParticipants?: Prisma.GameParticipantCreateNestedManyWithoutUserInput
   playerRatings?: Prisma.PlayerRatingCreateNestedManyWithoutUserInput
+  pathwayProgress?: Prisma.PathwayProgressCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPaymentsInput = {
@@ -893,6 +927,7 @@ export type UserUncheckedCreateWithoutPaymentsInput = {
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
   gameParticipants?: Prisma.GameParticipantUncheckedCreateNestedManyWithoutUserInput
   playerRatings?: Prisma.PlayerRatingUncheckedCreateNestedManyWithoutUserInput
+  pathwayProgress?: Prisma.PathwayProgressUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPaymentsInput = {
@@ -928,6 +963,7 @@ export type UserUpdateWithoutPaymentsInput = {
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
   gameParticipants?: Prisma.GameParticipantUpdateManyWithoutUserNestedInput
   playerRatings?: Prisma.PlayerRatingUpdateManyWithoutUserNestedInput
+  pathwayProgress?: Prisma.PathwayProgressUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPaymentsInput = {
@@ -947,6 +983,7 @@ export type UserUncheckedUpdateWithoutPaymentsInput = {
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
   gameParticipants?: Prisma.GameParticipantUncheckedUpdateManyWithoutUserNestedInput
   playerRatings?: Prisma.PlayerRatingUncheckedUpdateManyWithoutUserNestedInput
+  pathwayProgress?: Prisma.PathwayProgressUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutBillingProfileInput = {
@@ -966,6 +1003,7 @@ export type UserCreateWithoutBillingProfileInput = {
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
   gameParticipants?: Prisma.GameParticipantCreateNestedManyWithoutUserInput
   playerRatings?: Prisma.PlayerRatingCreateNestedManyWithoutUserInput
+  pathwayProgress?: Prisma.PathwayProgressCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutBillingProfileInput = {
@@ -985,6 +1023,7 @@ export type UserUncheckedCreateWithoutBillingProfileInput = {
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
   gameParticipants?: Prisma.GameParticipantUncheckedCreateNestedManyWithoutUserInput
   playerRatings?: Prisma.PlayerRatingUncheckedCreateNestedManyWithoutUserInput
+  pathwayProgress?: Prisma.PathwayProgressUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutBillingProfileInput = {
@@ -1020,6 +1059,7 @@ export type UserUpdateWithoutBillingProfileInput = {
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
   gameParticipants?: Prisma.GameParticipantUpdateManyWithoutUserNestedInput
   playerRatings?: Prisma.PlayerRatingUpdateManyWithoutUserNestedInput
+  pathwayProgress?: Prisma.PathwayProgressUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutBillingProfileInput = {
@@ -1039,6 +1079,7 @@ export type UserUncheckedUpdateWithoutBillingProfileInput = {
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
   gameParticipants?: Prisma.GameParticipantUncheckedUpdateManyWithoutUserNestedInput
   playerRatings?: Prisma.PlayerRatingUncheckedUpdateManyWithoutUserNestedInput
+  pathwayProgress?: Prisma.PathwayProgressUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutLessonProgressInput = {
@@ -1058,6 +1099,7 @@ export type UserCreateWithoutLessonProgressInput = {
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
   gameParticipants?: Prisma.GameParticipantCreateNestedManyWithoutUserInput
   playerRatings?: Prisma.PlayerRatingCreateNestedManyWithoutUserInput
+  pathwayProgress?: Prisma.PathwayProgressCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutLessonProgressInput = {
@@ -1077,6 +1119,7 @@ export type UserUncheckedCreateWithoutLessonProgressInput = {
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
   gameParticipants?: Prisma.GameParticipantUncheckedCreateNestedManyWithoutUserInput
   playerRatings?: Prisma.PlayerRatingUncheckedCreateNestedManyWithoutUserInput
+  pathwayProgress?: Prisma.PathwayProgressUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutLessonProgressInput = {
@@ -1112,6 +1155,7 @@ export type UserUpdateWithoutLessonProgressInput = {
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
   gameParticipants?: Prisma.GameParticipantUpdateManyWithoutUserNestedInput
   playerRatings?: Prisma.PlayerRatingUpdateManyWithoutUserNestedInput
+  pathwayProgress?: Prisma.PathwayProgressUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutLessonProgressInput = {
@@ -1131,6 +1175,7 @@ export type UserUncheckedUpdateWithoutLessonProgressInput = {
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
   gameParticipants?: Prisma.GameParticipantUncheckedUpdateManyWithoutUserNestedInput
   playerRatings?: Prisma.PlayerRatingUncheckedUpdateManyWithoutUserNestedInput
+  pathwayProgress?: Prisma.PathwayProgressUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutCustomLinksInput = {
@@ -1150,6 +1195,7 @@ export type UserCreateWithoutCustomLinksInput = {
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
   gameParticipants?: Prisma.GameParticipantCreateNestedManyWithoutUserInput
   playerRatings?: Prisma.PlayerRatingCreateNestedManyWithoutUserInput
+  pathwayProgress?: Prisma.PathwayProgressCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutCustomLinksInput = {
@@ -1169,6 +1215,7 @@ export type UserUncheckedCreateWithoutCustomLinksInput = {
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
   gameParticipants?: Prisma.GameParticipantUncheckedCreateNestedManyWithoutUserInput
   playerRatings?: Prisma.PlayerRatingUncheckedCreateNestedManyWithoutUserInput
+  pathwayProgress?: Prisma.PathwayProgressUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutCustomLinksInput = {
@@ -1204,6 +1251,7 @@ export type UserUpdateWithoutCustomLinksInput = {
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
   gameParticipants?: Prisma.GameParticipantUpdateManyWithoutUserNestedInput
   playerRatings?: Prisma.PlayerRatingUpdateManyWithoutUserNestedInput
+  pathwayProgress?: Prisma.PathwayProgressUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCustomLinksInput = {
@@ -1223,6 +1271,7 @@ export type UserUncheckedUpdateWithoutCustomLinksInput = {
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
   gameParticipants?: Prisma.GameParticipantUncheckedUpdateManyWithoutUserNestedInput
   playerRatings?: Prisma.PlayerRatingUncheckedUpdateManyWithoutUserNestedInput
+  pathwayProgress?: Prisma.PathwayProgressUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutGameParticipantsInput = {
@@ -1242,6 +1291,7 @@ export type UserCreateWithoutGameParticipantsInput = {
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
   playerRatings?: Prisma.PlayerRatingCreateNestedManyWithoutUserInput
+  pathwayProgress?: Prisma.PathwayProgressCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutGameParticipantsInput = {
@@ -1261,6 +1311,7 @@ export type UserUncheckedCreateWithoutGameParticipantsInput = {
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
   playerRatings?: Prisma.PlayerRatingUncheckedCreateNestedManyWithoutUserInput
+  pathwayProgress?: Prisma.PathwayProgressUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutGameParticipantsInput = {
@@ -1296,6 +1347,7 @@ export type UserUpdateWithoutGameParticipantsInput = {
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
   playerRatings?: Prisma.PlayerRatingUpdateManyWithoutUserNestedInput
+  pathwayProgress?: Prisma.PathwayProgressUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutGameParticipantsInput = {
@@ -1315,6 +1367,7 @@ export type UserUncheckedUpdateWithoutGameParticipantsInput = {
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
   playerRatings?: Prisma.PlayerRatingUncheckedUpdateManyWithoutUserNestedInput
+  pathwayProgress?: Prisma.PathwayProgressUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPlayerRatingsInput = {
@@ -1334,6 +1387,7 @@ export type UserCreateWithoutPlayerRatingsInput = {
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
   gameParticipants?: Prisma.GameParticipantCreateNestedManyWithoutUserInput
+  pathwayProgress?: Prisma.PathwayProgressCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPlayerRatingsInput = {
@@ -1353,6 +1407,7 @@ export type UserUncheckedCreateWithoutPlayerRatingsInput = {
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
   gameParticipants?: Prisma.GameParticipantUncheckedCreateNestedManyWithoutUserInput
+  pathwayProgress?: Prisma.PathwayProgressUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPlayerRatingsInput = {
@@ -1388,6 +1443,7 @@ export type UserUpdateWithoutPlayerRatingsInput = {
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
   gameParticipants?: Prisma.GameParticipantUpdateManyWithoutUserNestedInput
+  pathwayProgress?: Prisma.PathwayProgressUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPlayerRatingsInput = {
@@ -1407,6 +1463,103 @@ export type UserUncheckedUpdateWithoutPlayerRatingsInput = {
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
   gameParticipants?: Prisma.GameParticipantUncheckedUpdateManyWithoutUserNestedInput
+  pathwayProgress?: Prisma.PathwayProgressUncheckedUpdateOneWithoutUserNestedInput
+}
+
+export type UserCreateWithoutPathwayProgressInput = {
+  id?: string
+  name?: string | null
+  email: string
+  emailVerified?: Date | string | null
+  image?: string | null
+  createdAt?: Date | string
+  stripeTestCustomerId?: string | null
+  stripeLiveCustomerId?: string | null
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  billingProfile?: Prisma.BillingProfileCreateNestedOneWithoutUserInput
+  customLinks?: Prisma.CustomLinkCreateNestedManyWithoutUserInput
+  LessonProgress?: Prisma.LessonProgressCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
+  gameParticipants?: Prisma.GameParticipantCreateNestedManyWithoutUserInput
+  playerRatings?: Prisma.PlayerRatingCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutPathwayProgressInput = {
+  id?: string
+  name?: string | null
+  email: string
+  emailVerified?: Date | string | null
+  image?: string | null
+  createdAt?: Date | string
+  stripeTestCustomerId?: string | null
+  stripeLiveCustomerId?: string | null
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  billingProfile?: Prisma.BillingProfileUncheckedCreateNestedOneWithoutUserInput
+  customLinks?: Prisma.CustomLinkUncheckedCreateNestedManyWithoutUserInput
+  LessonProgress?: Prisma.LessonProgressUncheckedCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
+  gameParticipants?: Prisma.GameParticipantUncheckedCreateNestedManyWithoutUserInput
+  playerRatings?: Prisma.PlayerRatingUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutPathwayProgressInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutPathwayProgressInput, Prisma.UserUncheckedCreateWithoutPathwayProgressInput>
+}
+
+export type UserUpsertWithoutPathwayProgressInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutPathwayProgressInput, Prisma.UserUncheckedUpdateWithoutPathwayProgressInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutPathwayProgressInput, Prisma.UserUncheckedCreateWithoutPathwayProgressInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutPathwayProgressInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutPathwayProgressInput, Prisma.UserUncheckedUpdateWithoutPathwayProgressInput>
+}
+
+export type UserUpdateWithoutPathwayProgressInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  stripeTestCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  billingProfile?: Prisma.BillingProfileUpdateOneWithoutUserNestedInput
+  customLinks?: Prisma.CustomLinkUpdateManyWithoutUserNestedInput
+  LessonProgress?: Prisma.LessonProgressUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
+  gameParticipants?: Prisma.GameParticipantUpdateManyWithoutUserNestedInput
+  playerRatings?: Prisma.PlayerRatingUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutPathwayProgressInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  stripeTestCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  billingProfile?: Prisma.BillingProfileUncheckedUpdateOneWithoutUserNestedInput
+  customLinks?: Prisma.CustomLinkUncheckedUpdateManyWithoutUserNestedInput
+  LessonProgress?: Prisma.LessonProgressUncheckedUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  gameParticipants?: Prisma.GameParticipantUncheckedUpdateManyWithoutUserNestedInput
+  playerRatings?: Prisma.PlayerRatingUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -1521,6 +1674,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   subscriptions?: boolean | Prisma.User$subscriptionsArgs<ExtArgs>
   gameParticipants?: boolean | Prisma.User$gameParticipantsArgs<ExtArgs>
   playerRatings?: boolean | Prisma.User$playerRatingsArgs<ExtArgs>
+  pathwayProgress?: boolean | Prisma.User$pathwayProgressArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -1568,6 +1722,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   subscriptions?: boolean | Prisma.User$subscriptionsArgs<ExtArgs>
   gameParticipants?: boolean | Prisma.User$gameParticipantsArgs<ExtArgs>
   playerRatings?: boolean | Prisma.User$playerRatingsArgs<ExtArgs>
+  pathwayProgress?: boolean | Prisma.User$pathwayProgressArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1585,6 +1740,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     subscriptions: Prisma.$SubscriptionPayload<ExtArgs>[]
     gameParticipants: Prisma.$GameParticipantPayload<ExtArgs>[]
     playerRatings: Prisma.$PlayerRatingPayload<ExtArgs>[]
+    pathwayProgress: Prisma.$PathwayProgressPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1998,6 +2154,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   subscriptions<T extends Prisma.User$subscriptionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$subscriptionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SubscriptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   gameParticipants<T extends Prisma.User$gameParticipantsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$gameParticipantsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GameParticipantPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   playerRatings<T extends Prisma.User$playerRatingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$playerRatingsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PlayerRatingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  pathwayProgress<T extends Prisma.User$pathwayProgressArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$pathwayProgressArgs<ExtArgs>>): Prisma.Prisma__PathwayProgressClient<runtime.Types.Result.GetResult<Prisma.$PathwayProgressPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2636,6 +2793,25 @@ export type User$playerRatingsArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.PlayerRatingScalarFieldEnum | Prisma.PlayerRatingScalarFieldEnum[]
+}
+
+/**
+ * User.pathwayProgress
+ */
+export type User$pathwayProgressArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PathwayProgress
+   */
+  select?: Prisma.PathwayProgressSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PathwayProgress
+   */
+  omit?: Prisma.PathwayProgressOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PathwayProgressInclude<ExtArgs> | null
+  where?: Prisma.PathwayProgressWhereInput
 }
 
 /**

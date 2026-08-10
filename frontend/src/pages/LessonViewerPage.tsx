@@ -1,23 +1,20 @@
-import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router';
+import { useState } from "react";
+import { useNavigate, useParams } from "react-router";
 import {
   ArrowLeft,
   ChevronLeft,
   ChevronRight,
   Lock,
   CheckCircle2,
-  Trophy,
   RotateCcw,
   Sparkles,
   BookOpen,
   Layers,
   Award,
-} from 'lucide-react';
+} from "lucide-react";
 
 interface Slide {
   id: string;
-  title: string;
-  description: string;
 }
 
 interface Segment {
@@ -28,76 +25,24 @@ interface Segment {
 
 const LESSON_SEGMENTS: Segment[] = [
   {
-    id: 'seg-1',
-    title: 'Segment 1 - Introduction',
-    slides: [
-      {
-        id: 's1-1',
-        title: 'Introduction to Board Control & Center Pawns',
-        description:
-          'Learn how controlling the central squares (d4, d5, e4, e5) allows your pieces to command the maximum number of moves.',
-      },
-      {
-        id: 's1-2',
-        title: 'Development Principles & King Safety',
-        description:
-          'Develop your knights and bishops efficiently before moving heavy pieces, and prepare for early castling.',
-      },
-    ],
+    id: "seg-1",
+    title: "Segment 1 - Introduction",
+    slides: [{ id: "s1-1" }, { id: "s1-2" }],
   },
   {
-    id: 'seg-2',
-    title: 'Segment 2 - Opening Ideas',
-    slides: [
-      {
-        id: 's2-1',
-        title: 'Classical King Pawn Openings (1.e4)',
-        description:
-          'Explore open games leading to sharp tactical fights and quick piece activation.',
-      },
-      {
-        id: 's2-2',
-        title: 'Queen Pawn & Strategic Control (1.d4)',
-        description:
-          'Master solid positional structures, pawn chains, and long-term strategic plans.',
-      },
-      {
-        id: 's2-3',
-        title: 'Flank Openings & Hypermodern Concepts',
-        description:
-          'Understand how controlling the center from a distance with knights and fianchettoed bishops creates counter-attacking opportunities.',
-      },
-    ],
+    id: "seg-2",
+    title: "Segment 2 - Opening Ideas",
+    slides: [{ id: "s2-1" }, { id: "s2-2" }, { id: "s2-3" }],
   },
   {
-    id: 'seg-3',
-    title: 'Segment 3 - Tactical Example',
-    slides: [
-      {
-        id: 's3-1',
-        title: 'Fork and Pin Combinations in Action',
-        description:
-          'Examine real grandmaster tactical puzzles featuring knight forks and pin skewers.',
-      },
-      {
-        id: 's3-2',
-        title: 'Discovered Attacks & Sacrifices',
-        description:
-          'Unleash devastating discovered checks and sacrificial blows that strip away opponent defenses.',
-      },
-    ],
+    id: "seg-3",
+    title: "Segment 3 - Tactical Example",
+    slides: [{ id: "s3-1" }, { id: "s3-2" }],
   },
   {
-    id: 'seg-4',
-    title: 'Segment 4 - Summary',
-    slides: [
-      {
-        id: 's4-1',
-        title: 'Key Takeaways & Practice Checklist',
-        description:
-          'Review the core takeaways from this lesson and apply them directly in your upcoming online games.',
-      },
-    ],
+    id: "seg-4",
+    title: "Segment 4 - Summary",
+    slides: [{ id: "s4-1" }],
   },
 ];
 
@@ -111,7 +56,6 @@ export default function LessonViewerPage() {
   const [isCompleted, setIsCompleted] = useState<boolean>(false);
 
   const currentSegment = LESSON_SEGMENTS[activeSegmentIndex];
-  const currentSlide = currentSegment?.slides[activeSlideIndex];
   const isLastSlideInSegment =
     activeSlideIndex === (currentSegment?.slides.length || 0) - 1;
   const isLastSegment = activeSegmentIndex === LESSON_SEGMENTS.length - 1;
@@ -181,7 +125,7 @@ export default function LessonViewerPage() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-brand-surface/60 border border-brand-border p-4 rounded-2xl">
         <div className="flex items-center gap-3">
           <button
-            onClick={() => navigate('/lessons')}
+            onClick={() => navigate("/lessons")}
             className="p-2 rounded-xl bg-brand-bg hover:bg-brand-surface border border-brand-border/60 text-brand-secondary hover:text-brand-text transition-colors cursor-pointer"
             title="Back to Lesson Library"
           >
@@ -205,7 +149,9 @@ export default function LessonViewerPage() {
           <div className="flex-1 sm:w-32 space-y-1">
             <div className="flex justify-between text-[11px] font-semibold text-brand-secondary">
               <span>Progress</span>
-              <span className="text-brand-text">{calculateProgressPercent()}%</span>
+              <span className="text-brand-text">
+                {calculateProgressPercent()}%
+              </span>
             </div>
             <div className="w-full h-1.5 bg-brand-border/40 rounded-full overflow-hidden">
               <div
@@ -221,17 +167,16 @@ export default function LessonViewerPage() {
       {isCompleted ? (
         /* Completion View */
         <div className="p-8 sm:p-12 lg:p-16 rounded-3xl bg-gradient-to-b from-brand-surface via-brand-surface/90 to-brand-bg border border-brand-border text-center space-y-6 shadow-2xl">
-          <div className="inline-flex p-4 rounded-full bg-brand-accent/10 border border-brand-accent/30 text-brand-accent animate-bounce">
-            <Trophy className="w-16 h-16" />
-          </div>
-
           <div className="space-y-2 max-w-lg mx-auto">
             <h2 className="font-display font-black text-3xl sm:text-4xl text-brand-text">
               Lesson Completed! 🎉
             </h2>
             <p className="text-sm text-brand-secondary">
-              Congratulations! You have finished all 4 segments of{' '}
-              <strong className="text-brand-text">Mastering Chess Fundamentals</strong>.
+              Congratulations! You have finished all 4 segments of{" "}
+              <strong className="text-brand-text">
+                Mastering Chess Fundamentals
+              </strong>
+              .
             </p>
           </div>
 
@@ -245,7 +190,7 @@ export default function LessonViewerPage() {
             </button>
 
             <button
-              onClick={() => navigate('/lessons')}
+              onClick={() => navigate("/lessons")}
               className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-brand-accent hover:bg-brand-accent/90 text-brand-bg font-bold text-sm transition-all cursor-pointer shadow-lg shadow-brand-accent/20"
             >
               <BookOpen className="w-4 h-4" />
@@ -271,7 +216,9 @@ export default function LessonViewerPage() {
               {LESSON_SEGMENTS.map((segment, segIdx) => {
                 const isUnlocked = segIdx < unlockedSegmentsCount;
                 const isActive = segIdx === activeSegmentIndex;
-                const isFinished = segIdx < unlockedSegmentsCount - 1 || (segIdx < activeSegmentIndex);
+                const isFinished =
+                  segIdx < unlockedSegmentsCount - 1 ||
+                  segIdx < activeSegmentIndex;
 
                 return (
                   <div
@@ -284,10 +231,10 @@ export default function LessonViewerPage() {
                     }}
                     className={`p-3 rounded-xl border transition-all duration-200 ${
                       isActive
-                        ? 'bg-brand-accent/10 border-brand-accent/50 text-brand-text shadow-md'
+                        ? "bg-brand-accent/10 border-brand-accent/50 text-brand-text shadow-md"
                         : isUnlocked
-                        ? 'bg-brand-bg/50 border-brand-border/40 hover:bg-brand-surface text-brand-secondary hover:text-brand-text cursor-pointer'
-                        : 'bg-brand-bg/20 border-brand-border/20 text-brand-secondary/40 cursor-not-allowed opacity-60'
+                          ? "bg-brand-bg/50 border-brand-border/40 hover:bg-brand-surface text-brand-secondary hover:text-brand-text cursor-pointer"
+                          : "bg-brand-bg/20 border-brand-border/20 text-brand-secondary/40 cursor-not-allowed opacity-60"
                     }`}
                   >
                     <div className="flex items-center justify-between">
@@ -317,12 +264,12 @@ export default function LessonViewerPage() {
                             key={slideIdx}
                             className={`h-1 flex-1 rounded-full transition-all ${
                               isSlideActive
-                                ? 'bg-brand-accent'
+                                ? "bg-brand-accent"
                                 : isActive && slideIdx < activeSlideIndex
-                                ? 'bg-emerald-400'
-                                : isUnlocked
-                                ? 'bg-brand-border/50'
-                                : 'bg-brand-border/20'
+                                  ? "bg-emerald-400"
+                                  : isUnlocked
+                                    ? "bg-brand-border/50"
+                                    : "bg-brand-border/20"
                             }`}
                           />
                         );
@@ -345,24 +292,11 @@ export default function LessonViewerPage() {
                 <div className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-brand-accent/15 blur-3xl pointer-events-none" />
                 <div className="absolute -bottom-24 -left-24 w-72 h-72 rounded-full bg-amber-500/15 blur-3xl pointer-events-none" />
 
-                {/* FULL SLIDE "COMING SOON" BANNER OVERLAY */}
-                <div className="relative z-10 w-full max-w-xl p-8 rounded-2xl bg-black/40 backdrop-blur-md border border-amber-500/30 space-y-4 shadow-2xl">
-                  <div className="inline-flex p-3 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400">
-                    <Sparkles className="w-8 h-8" />
-                  </div>
-
-                  <div className="space-y-1">
-                    <div className="inline-block px-4 py-1 rounded-full bg-gradient-to-r from-amber-500 to-yellow-500 text-brand-bg text-xs font-black uppercase tracking-widest shadow-md">
-                      Interactive Slide Visual - Coming Soon
-                    </div>
-                    <h3 className="font-display font-bold text-xl sm:text-2xl text-white pt-2">
-                      {currentSlide?.title}
-                    </h3>
-                  </div>
-
-                  <p className="text-xs sm:text-sm text-brand-secondary/90 leading-relaxed max-w-md mx-auto">
-                    {currentSlide?.description}
-                  </p>
+                {/* SLIDE "COMING SOON" DISPLAY */}
+                <div className="relative z-10 w-full max-w-md p-8 rounded-2xl bg-black/40 backdrop-blur-md border border-amber-500/30 space-y-3 shadow-2xl flex flex-col items-center justify-center">
+                  <h3 className="font-display font-extrabold text-2xl sm:text-3xl text-amber-400 tracking-wider">
+                    Coming Soon
+                  </h3>
                 </div>
               </div>
 
@@ -373,7 +307,8 @@ export default function LessonViewerPage() {
                     {currentSegment?.title}
                   </span>
                   <span className="text-brand-secondary">
-                    Slide {activeSlideIndex + 1} of {currentSegment?.slides.length}
+                    Slide {activeSlideIndex + 1} of{" "}
+                    {currentSegment?.slides.length}
                   </span>
                 </div>
 
@@ -407,7 +342,7 @@ export default function LessonViewerPage() {
                   className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-accent to-amber-500 hover:brightness-110 text-brand-bg font-extrabold text-xs sm:text-sm transition-all duration-200 shadow-lg shadow-brand-accent/20 cursor-pointer animate-pulse"
                 >
                   <span>
-                    {isLastSegment ? 'Complete Lesson' : 'Move to Next Segment'}
+                    {isLastSegment ? "Complete Lesson" : "Next Segment"}
                   </span>
                   <ChevronRight className="w-4 h-4" />
                 </button>

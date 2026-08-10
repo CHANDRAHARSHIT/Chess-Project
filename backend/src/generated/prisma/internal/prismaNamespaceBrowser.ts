@@ -69,7 +69,8 @@ export const ModelName = {
   CustomLink: 'CustomLink',
   GameRecord: 'GameRecord',
   GameParticipant: 'GameParticipant',
-  PlayerRating: 'PlayerRating'
+  PlayerRating: 'PlayerRating',
+  PathwayProgress: 'PathwayProgress'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -389,6 +390,18 @@ export const PlayerRatingScalarFieldEnum = {
 } as const
 
 export type PlayerRatingScalarFieldEnum = (typeof PlayerRatingScalarFieldEnum)[keyof typeof PlayerRatingScalarFieldEnum]
+
+
+export const PathwayProgressScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  completedIds: 'completedIds',
+  streak: 'streak',
+  totalSolved: 'totalSolved',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PathwayProgressScalarFieldEnum = (typeof PathwayProgressScalarFieldEnum)[keyof typeof PathwayProgressScalarFieldEnum]
 
 
 export const SortOrder = {

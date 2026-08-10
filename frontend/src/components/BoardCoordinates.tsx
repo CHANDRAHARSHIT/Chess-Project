@@ -12,8 +12,10 @@
  *  • Dark square  → light label  (#FFF8E5 warm cream)
  *  • Light square → dark label   (#5C7D3A deep green)
  *
- * Usage: Place inside any `position: relative; overflow: hidden` board container.
- *   <div className="relative overflow-hidden aspect-square w-full">
+ * Usage: Place inside any `position: relative` board container. `overflow: hidden`
+ * is NOT required — coordinate labels are clamped to percentage-based positions
+ * inside the board. Omitting overflow:hidden prevents drag clipping on the board.
+ *   <div className="relative aspect-square w-full">
  *     <Chessboard ... />
  *     <BoardCoordinates boardOrientation={boardOrientation} />
  *   </div>

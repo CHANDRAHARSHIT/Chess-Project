@@ -5,9 +5,11 @@
  * All other observability code obtains the instance via getRollbar().
  *
  * GRACEFUL DEGRADATION
- *   When ROLLBAR_TOKEN is absent (local dev, CI), Rollbar is disabled and a
- *   warning is logged. The rest of the application continues normally.
- *   No domain may error-out because Rollbar is unavailable.
+ *   When ROLLBAR_ACCESS_TOKEN is absent, Rollbar is disabled and a warning is
+ *   logged. The rest of the application continues normally. No domain may
+ *   error-out because Rollbar is unavailable.
+ *   NOTE: env.ts currently lists ROLLBAR_ACCESS_TOKEN as required, so this
+ *   branch is presently unreachable in practice — see PR discussion.
  */
 
 import Rollbar from "rollbar";
