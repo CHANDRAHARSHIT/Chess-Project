@@ -11,7 +11,6 @@ import PremiumPage from "../pages/PremiumPage";
 import OpeningsPage from "../pages/OpeningsPage";
 import Chess960Page from "../pages/Chess960Page";
 import PlayChessPage from "../pages/PlayChessPage";
-import ComingSoonPage from "../pages/ComingSoonPage";
 import AboutPage from "../pages/AboutPage";
 import PrivacyPolicyPage from "../pages/PrivacyPolicyPage";
 import TermsOfServicePage from "../pages/TermsOfServicePage";
@@ -24,14 +23,17 @@ import { ProtectedRoute } from "../components/ProtectedRoute";
 import DatabasePage from "../pages/DatabasePage";
 import DatabasePlayerPage from "../pages/DatabasePlayerPage";
 import DatabaseGamePage from "../pages/DatabaseGamePage";
+import YourChannelPage from "../pages/YourChannelPage";
+import YourContentPage from "../pages/YourContentPage";
 import ReportPage from "../pages/ReportPage";
 import CompleteLaterPage from "../pages/CompleteLaterPage";
 import SubscriptionsPage from "../pages/SubscriptionsPage";
 import VariantsPage from "../pages/VariantsPage";
 import LessonsPage from "../pages/LessonsPage";
 import LessonViewerPage from "../pages/LessonViewerPage";
-import { BarChart2, Video, UserCircle2 } from "lucide-react";
 import QuickGamePage from "../pages/QuickGamePage";
+import StoryModePage from "../pages/StoryModePage";
+import StatsPage from "../pages/StatsPage";
 
 export interface RouteConfig {
   path: string;
@@ -47,6 +49,11 @@ export const mainRoutes: RouteConfig[] = [
     path: "/puzzles",
     element: <PuzzlePage />,
     title: "Chess Puzzles | XLChess",
+  },
+  {
+    path: "/story-mode",
+    element: <StoryModePage />,
+    title: "Story Mode | XLChess",
   },
   {
     path: "/openings",
@@ -139,13 +146,7 @@ export const mainRoutes: RouteConfig[] = [
   },
   {
     path: "/stats",
-    element: (
-      <ComingSoonPage
-        featureName="Your Stats"
-        description="Track your progress with detailed performance analytics - win/loss history, rating trends, puzzle accuracy, and opening success rates."
-        icon={BarChart2}
-      />
-    ),
+    element: <StatsPage />,
     title: "Stats | XLChess",
   },
   {
@@ -155,24 +156,17 @@ export const mainRoutes: RouteConfig[] = [
   },
   {
     path: "/your-content",
-    element: (
-      <ComingSoonPage
-        featureName="Your Content"
-        description="Manage and review all the chess content you've created or saved annotated games, custom lessons, and video analyses."
-        icon={Video}
-      />
-    ),
+    element: <YourContentPage />,
     title: "Your Content | XLChess",
   },
   {
     path: "/channel",
-    element: (
-      <ComingSoonPage
-        featureName="Your Channel"
-        description="Build your own chess channel to share insights, stream games, and grow a following within the XLChess community."
-        icon={UserCircle2}
-      />
-    ),
+    element: <YourChannelPage />,
+    title: "Your Channel | XLChess",
+  },
+  {
+    path: "/your-channel",
+    element: <YourChannelPage />,
     title: "Your Channel | XLChess",
   },
   {
