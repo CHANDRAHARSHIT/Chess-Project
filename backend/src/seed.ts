@@ -190,32 +190,9 @@ async function seedOpenings() {
   console.log(`Finished seeding openings. Imported/Updated records: ${importedCount}`);
 }
 
-async function seedBots() {
-  console.log("Seeding bot users...");
-
-  const bots = [
-    { email: "bot1@xlchess.internal", name: "XLChess Bot 1" },
-    { email: "bot2@xlchess.internal", name: "XLChess Bot 2" },
-    { email: "bot3@xlchess.internal", name: "XLChess Bot 3" },
-    { email: "bot4@xlchess.internal", name: "XLChess Bot 4" },
-    { email: "bot5@xlchess.internal", name: "XLChess Bot 5" },
-  ];
-
-  for (const bot of bots) {
-    await prisma.user.upsert({
-      where: { email: bot.email },
-      update: { name: bot.name },
-      create: { email: bot.email, name: bot.name },
-    });
-  }
-
-  console.log("Finished seeding bot users.");
-}
-
 async function main() {
   await seed();
   await seedOpenings();
-  await seedBots();
 }
 
 main()
