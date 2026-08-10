@@ -402,7 +402,8 @@ export const ModelName = {
   CustomLink: 'CustomLink',
   GameRecord: 'GameRecord',
   GameParticipant: 'GameParticipant',
-  PlayerRating: 'PlayerRating'
+  PlayerRating: 'PlayerRating',
+  PathwayProgress: 'PathwayProgress'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -418,7 +419,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "account" | "session" | "verificationToken" | "subscription" | "payment" | "billingProfile" | "product" | "productFeature" | "webhookEvent" | "opening" | "curatedPuzzle" | "course" | "lesson" | "lessonProgress" | "customLink" | "gameRecord" | "gameParticipant" | "playerRating"
+    modelProps: "user" | "account" | "session" | "verificationToken" | "subscription" | "payment" | "billingProfile" | "product" | "productFeature" | "webhookEvent" | "opening" | "curatedPuzzle" | "course" | "lesson" | "lessonProgress" | "customLink" | "gameRecord" | "gameParticipant" | "playerRating" | "pathwayProgress"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1828,6 +1829,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    PathwayProgress: {
+      payload: Prisma.$PathwayProgressPayload<ExtArgs>
+      fields: Prisma.PathwayProgressFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PathwayProgressFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PathwayProgressPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PathwayProgressFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PathwayProgressPayload>
+        }
+        findFirst: {
+          args: Prisma.PathwayProgressFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PathwayProgressPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PathwayProgressFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PathwayProgressPayload>
+        }
+        findMany: {
+          args: Prisma.PathwayProgressFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PathwayProgressPayload>[]
+        }
+        create: {
+          args: Prisma.PathwayProgressCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PathwayProgressPayload>
+        }
+        createMany: {
+          args: Prisma.PathwayProgressCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.PathwayProgressCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PathwayProgressPayload>[]
+        }
+        delete: {
+          args: Prisma.PathwayProgressDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PathwayProgressPayload>
+        }
+        update: {
+          args: Prisma.PathwayProgressUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PathwayProgressPayload>
+        }
+        deleteMany: {
+          args: Prisma.PathwayProgressDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PathwayProgressUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.PathwayProgressUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PathwayProgressPayload>[]
+        }
+        upsert: {
+          args: Prisma.PathwayProgressUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PathwayProgressPayload>
+        }
+        aggregate: {
+          args: Prisma.PathwayProgressAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePathwayProgress>
+        }
+        groupBy: {
+          args: Prisma.PathwayProgressGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PathwayProgressGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PathwayProgressCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PathwayProgressCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -2168,6 +2243,18 @@ export const PlayerRatingScalarFieldEnum = {
 } as const
 
 export type PlayerRatingScalarFieldEnum = (typeof PlayerRatingScalarFieldEnum)[keyof typeof PlayerRatingScalarFieldEnum]
+
+
+export const PathwayProgressScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  completedIds: 'completedIds',
+  streak: 'streak',
+  totalSolved: 'totalSolved',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PathwayProgressScalarFieldEnum = (typeof PathwayProgressScalarFieldEnum)[keyof typeof PathwayProgressScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -2513,6 +2600,7 @@ export type GlobalOmitConfig = {
   gameRecord?: Prisma.GameRecordOmit
   gameParticipant?: Prisma.GameParticipantOmit
   playerRating?: Prisma.PlayerRatingOmit
+  pathwayProgress?: Prisma.PathwayProgressOmit
 }
 
 /* Types for Logging */

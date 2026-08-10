@@ -112,3 +112,8 @@ export type GameParticipant = Prisma.GameParticipantModel
  * 
  */
 export type PlayerRating = Prisma.PlayerRatingModel
+/**
+ * Model PathwayProgress
+ * 
+ */
+export type PathwayProgress = Prisma.PathwayProgressModel
