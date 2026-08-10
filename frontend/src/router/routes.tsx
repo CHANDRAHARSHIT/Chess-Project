@@ -10,7 +10,6 @@ import FailedPage from "../pages/FailedPage";
 import PremiumPage from "../pages/PremiumPage";
 import OpeningsPage from "../pages/OpeningsPage";
 import Chess960Page from "../pages/Chess960Page";
-import PlayChessPage from "../pages/PlayChessPage";
 import AboutPage from "../pages/AboutPage";
 import PrivacyPolicyPage from "../pages/PrivacyPolicyPage";
 import TermsOfServicePage from "../pages/TermsOfServicePage";
