@@ -89,6 +89,8 @@ app.use("/api/pricing", pricingRouter);
 app.use("/api/puzzles", puzzleRouter);
 app.use("/api/openings", openingRouter);
 app.use("/api/matchmaking", matchmakingRouter);
+app.use("/api/pathway-progress", pathwayProgressRouter);
+app.use("/api/games", gamesRouter);
 
 // Catch-all centralized error handler
 app.use(errorHandler);
