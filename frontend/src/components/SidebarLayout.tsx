@@ -21,6 +21,7 @@ import {
   Pencil,
   MoveUp,
   Archive,
+  Swords,
 } from "lucide-react";
 import { useLogoAnimation } from "../hooks/useLogoAnimation";
 import { soundManager } from "../utils/SoundManager";
@@ -389,6 +390,7 @@ export default function SidebarLayout({
     { name: "Quick Game", href: "/play", icon: Zap },
     { name: "Lessons", href: "/lessons", icon: BookOpen },
     { name: "Puzzles", href: "/puzzles", icon: Puzzle },
+    { name: "Odyssey", href: "/story-mode", icon: Swords },
     { name: "Variants", href: "/variants", icon: Shuffle },
     { name: "Upgrade", href: "/pricing", icon: Crown },
   ];
@@ -416,13 +418,11 @@ export default function SidebarLayout({
       name: "Your Content",
       href: "/your-content",
       icon: Video,
-      comingSoon: true,
     },
     {
       name: "Your Channel",
       href: "/channel",
       icon: UserCircle2,
-      comingSoon: true,
     },
   ];
 

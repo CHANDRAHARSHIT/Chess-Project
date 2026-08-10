@@ -66,7 +66,8 @@ export const ModelName = {
   Course: 'Course',
   Lesson: 'Lesson',
   LessonProgress: 'LessonProgress',
-  CustomLink: 'CustomLink'
+  CustomLink: 'CustomLink',
+  PathwayProgress: 'PathwayProgress'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -332,6 +333,18 @@ export const CustomLinkScalarFieldEnum = {
 } as const
 
 export type CustomLinkScalarFieldEnum = (typeof CustomLinkScalarFieldEnum)[keyof typeof CustomLinkScalarFieldEnum]
+
+
+export const PathwayProgressScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  completedIds: 'completedIds',
+  streak: 'streak',
+  totalSolved: 'totalSolved',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PathwayProgressScalarFieldEnum = (typeof PathwayProgressScalarFieldEnum)[keyof typeof PathwayProgressScalarFieldEnum]
 
 
 export const SortOrder = {
