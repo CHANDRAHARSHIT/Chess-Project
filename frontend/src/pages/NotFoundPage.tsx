@@ -17,12 +17,7 @@ export default function NotFoundPage() {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[95vw] max-w-[800px] h-[400px] bg-gradient-to-r from-brand-accent/5 via-amber-500/3 to-transparent rounded-full blur-[140px] pointer-events-none z-0" />
 
       {/* Main card composition - borderless layout blending into ambient background */}
-      <motion.div
-        initial={{ opacity: 0, y: 15 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: 'easeOut' }}
-        className="relative z-10 max-w-xl w-full flex flex-col items-center gap-8 py-8 px-4"
-      >
+      <div className="relative z-10 max-w-xl w-full flex flex-col items-center gap-8 py-8 px-4">
         
         {/* Lost chess piece icon */}
         <motion.div
@@ -35,14 +30,9 @@ export default function NotFoundPage() {
 
         {/* 404 Heading Section */}
         <div className="flex flex-col items-center -mt-10">
-          <motion.h1
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.1, duration: 0.5 }}
-            className="text-8xl md:text-9xl font-display font-extrabold text-transparent bg-clip-text bg-gradient-to-b from-white via-[#f0eae1] to-[#aba499] tracking-tighter leading-none filter drop-shadow-[0_0_40px_rgba(212,175,110,0.1)]"
-          >
+          <h1 className="text-8xl md:text-9xl font-display font-extrabold text-transparent bg-clip-text bg-gradient-to-b from-white via-[#f0eae1] to-[#aba499] tracking-tighter leading-none filter drop-shadow-[0_0_40px_rgba(212,175,110,0.1)]">
             404
-          </motion.h1>
+          </h1>
           <span className="text-xs md:text-sm font-mono text-brand-accent uppercase tracking-widest font-semibold mt-4">
             Page Not Found
           </span>
@@ -55,10 +45,7 @@ export default function NotFoundPage() {
 
         {/* ── SMART SUGGESTION BOX ── */}
         {suggestion && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ type: 'spring', stiffness: 100 }}
+          <div
             onClick={() => navigate(suggestion)}
             className="w-full max-w-md p-4 rounded-xl bg-brand-accent/5 hover:bg-brand-accent/10 border border-brand-accent/10 hover:border-brand-accent/30 shadow-lg cursor-pointer group flex items-center gap-3 transition-all duration-300 active:scale-[0.99] select-none text-left"
           >
@@ -74,7 +61,7 @@ export default function NotFoundPage() {
             <div className="text-brand-accent group-hover:translate-x-1 transition-all duration-200">
               <ArrowRight className="w-4 h-4" />
             </div>
-          </motion.div>
+          </div>
         )}
 
         {/* Action Button & Quicklinks */}
@@ -106,7 +93,7 @@ export default function NotFoundPage() {
           </div>
         </div>
 
-      </motion.div>
+      </div>
     </div>
   );
 }

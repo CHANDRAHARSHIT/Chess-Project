@@ -372,11 +372,7 @@ export default function PricingPage() {
 
         {/* ─── Session error ─── */}
         {showSessionError && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="w-full max-w-2xl mt-2 mb-4 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs sm:text-sm font-sans flex items-center justify-between gap-3 shadow-md z-30"
-          >
+          <div className="w-full max-w-2xl mt-2 mb-4 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs sm:text-sm font-sans flex items-center justify-between gap-3 shadow-md z-30">
             <div className="flex items-center gap-2">
               <AlertCircle className="w-5 h-5 flex-shrink-0" />
               <span>
@@ -393,42 +389,27 @@ export default function PricingPage() {
             >
               Dismiss
             </button>
-          </motion.div>
+          </div>
         )}
 
         {/* ─── HERO ─── */}
         <section className="text-center pt-16 sm:pt-20 pb-12 sm:pb-16 max-w-3xl flex flex-col items-center">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-surface/80 border border-brand-border backdrop-blur-sm text-brand-accent text-xs font-sans tracking-wide mb-6 shadow-sm"
-          >
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-surface/80 border border-brand-border backdrop-blur-sm text-brand-accent text-xs font-sans tracking-wide mb-6 shadow-sm">
             <Sparkles className="w-3.5 h-3.5" />
             <span>Trusted by thousands of chess players</span>
-          </motion.div>
+          </div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-4xl sm:text-5xl md:text-6xl font-display font-medium tracking-tight text-brand-text mb-6 leading-[1.05]"
-          >
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-display font-medium tracking-tight text-brand-text mb-6 leading-[1.05]">
             Unlock Your Full <br className="sm:block hidden" />
             <span className="text-gold-gradient font-bold italic">
               Chess Potential
             </span>
-          </motion.h1>
+          </h1>
 
-          <motion.p
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-base sm:text-lg text-brand-secondary font-sans leading-relaxed max-w-2xl px-2"
-          >
+          <p className="text-base sm:text-lg text-brand-secondary font-sans leading-relaxed max-w-2xl px-2">
             Choose the plan that fits your ambitions, from casual learner to
             elite competitor.
-          </motion.p>
+          </p>
         </section>
 
         {/* ─── BILLING TOGGLE ─── */}

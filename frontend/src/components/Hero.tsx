@@ -183,14 +183,12 @@ export default function Hero() {
         "-=0.35",
       );
 
-      // ⑤ Board column — cinematic entrance
+      // ⑤ Board column — subtle fade-in
       tl.fromTo(
         boardColRef.current,
-        { opacity: 0, x: 90, rotation: -4 },
+        { opacity: 0 },
         {
           opacity: 1,
-          x: 0,
-          rotation: 0,
           duration: dur(1.3),
           ease: "power2.out",
         },

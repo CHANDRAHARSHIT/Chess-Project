@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
 import { ArrowRight, AlertCircle, RefreshCw, XCircle } from 'lucide-react';
 import { useNavigate } from 'react-router';
 
@@ -41,42 +40,22 @@ export default function FailedPage() {
         <div className="relative mb-6">
           <div className="absolute inset-0 rounded-full bg-rose-500/20 blur-xl scale-125 animate-pulse" />
 
-          <motion.div
-            initial={{ scale: 0, rotate: 30 }}
-            animate={{ scale: 1, rotate: 0 }}
-            transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.1 }}
-            className="w-20 h-20 rounded-full bg-brand-bg border border-rose-500/30 flex items-center justify-center text-rose-500 mx-auto shadow-[0_0_30px_rgba(239,68,68,0.15)] relative z-10"
-          >
+          <div className="w-20 h-20 rounded-full bg-brand-bg border border-rose-500/30 flex items-center justify-center text-rose-500 mx-auto shadow-[0_0_30px_rgba(239,68,68,0.15)] relative z-10">
             <XCircle className="w-10 h-10" />
-          </motion.div>
+          </div>
         </div>
 
         {/* Header Text */}
-        <motion.h1
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="text-3xl font-display font-medium text-brand-text tracking-wide mb-3 leading-tight"
-        >
+        <h1 className="text-3xl font-display font-medium text-brand-text tracking-wide mb-3 leading-tight">
           Payment Unsuccessful
-        </motion.h1>
+        </h1>
 
-        <motion.p
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="text-sm text-brand-secondary font-sans leading-relaxed mb-8 max-w-sm"
-        >
+        <p className="text-sm text-brand-secondary font-sans leading-relaxed mb-8 max-w-sm">
           Your checkout session was cancelled or could not be processed. No charges were made to your card.
-        </motion.p>
+        </p>
 
         {/* Reason Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-          className="w-full bg-brand-surface/60 backdrop-blur-xl border border-brand-border rounded-2xl p-5 mb-8 text-left relative overflow-hidden"
-        >
+        <div className="w-full bg-brand-surface/60 backdrop-blur-xl border border-brand-border rounded-2xl p-5 mb-8 text-left relative overflow-hidden">
           <div className="flex items-start gap-3">
             <AlertCircle className="w-5 h-5 text-rose-400 mt-0.5 flex-shrink-0" />
             <div>
@@ -84,15 +63,10 @@ export default function FailedPage() {
               <span className="text-sm font-sans text-brand-text leading-relaxed">{errorReason}</span>
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* Action Buttons */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.5 }}
-          className="w-full space-y-4"
-        >
+        <div className="w-full space-y-4">
           <button
             onClick={() => navigate('/pricing')}
             className="w-full py-4 px-6 rounded-xl font-mono text-xs uppercase tracking-widest font-semibold bg-brand-text/5 border border-white/10 hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text transition-all duration-300 cursor-pointer flex items-center justify-center gap-2 shadow-md active:scale-[0.99]"
@@ -108,7 +82,7 @@ export default function FailedPage() {
             <span>Return to Dashboard</span>
             <ArrowRight className="w-4 h-4" />
           </button>
-        </motion.div>
+        </div>
 
       </main>
     </div>

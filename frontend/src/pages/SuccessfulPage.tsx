@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
 import { ArrowRight, Mail, Check, Award } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import { Confetti } from '../components/Confetti';
@@ -173,13 +172,8 @@ export default function SuccessfulPage() {
           {/* Radial emerald aura behind checks */}
           <div className="absolute inset-0 rounded-full bg-emerald-500/20 blur-xl scale-125 animate-pulse" />
 
-          <motion.div
-            initial={{ scale: 0, rotate: -30 }}
-            animate={{ scale: 1, rotate: 0 }}
-            transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.1 }}
-            className="w-20 h-20 rounded-full bg-gradient-to-tr from-emerald-500 to-emerald-400 border border-emerald-400/40 flex items-center justify-center shadow-[0_0_24px_rgba(16,185,129,0.3)] relative z-10"
-          >
-            <motion.svg
+          <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-emerald-500 to-emerald-400 border border-emerald-400/40 flex items-center justify-center shadow-[0_0_24px_rgba(16,185,129,0.3)] relative z-10">
+            <svg
               className="w-10 h-10 text-brand-text"
               viewBox="0 0 24 24"
               fill="none"
@@ -188,62 +182,32 @@ export default function SuccessfulPage() {
               strokeLinecap="round"
               strokeLinejoin="round"
             >
-              <motion.path
-                d="M20 6L9 17l-5-5"
-                initial={{ pathLength: 0 }}
-                animate={{ pathLength: 1 }}
-                transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
-              />
-            </motion.svg>
-          </motion.div>
+              <path d="M20 6L9 17l-5-5" />
+            </svg>
+          </div>
         </div>
 
         {/* Heading */}
-        <motion.h1
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="text-3xl sm:text-4xl font-display font-medium text-brand-text tracking-wide mb-3"
-        >
+        <h1 className="text-3xl sm:text-4xl font-display font-medium text-brand-text tracking-wide mb-3">
           Payment Successful!
-        </motion.h1>
+        </h1>
 
         {/* Subheadings */}
-        <motion.p
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="text-base text-brand-text font-sans leading-relaxed px-2"
-        >
+        <p className="text-base text-brand-text font-sans leading-relaxed px-2">
           Welcome to <span className="text-brand-accent font-semibold font-display italic">XLChess Premium</span>.
-        </motion.p>
-        <motion.p
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.35 }}
-          className="text-sm text-brand-secondary font-sans mt-1 mb-6"
-        >
+        </p>
+        <p className="text-sm text-brand-secondary font-sans mt-1 mb-6">
           Your membership has been activated successfully.
-        </motion.p>
+        </p>
 
         {/* Premium Badge */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.4, delay: 0.4 }}
-          className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-brand-accent/15 border border-brand-accent/30 text-brand-accent text-xs font-mono tracking-wider uppercase font-semibold mb-8 shadow-sm"
-        >
+        <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-brand-accent/15 border border-brand-accent/30 text-brand-accent text-xs font-mono tracking-wider uppercase font-semibold mb-8 shadow-sm">
           <Award className="w-4 h-4 fill-current animate-pulse" />
           Premium Activated
-        </motion.div>
+        </div>
 
         {/* Summary Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.45 }}
-          className="w-full bg-brand-surface/60 backdrop-blur-xl border border-brand-border rounded-2xl p-5 sm:p-6 mb-8 text-left shadow-2xl"
-        >
+        <div className="w-full bg-brand-surface/60 backdrop-blur-xl border border-brand-border rounded-2xl p-5 sm:p-6 mb-8 text-left shadow-2xl">
           <h3 className="text-sm font-mono tracking-wider text-brand-secondary uppercase border-b border-[rgba(212,175,110,0.40)] pb-3 mb-4">
             Membership Details
           </h3>
@@ -296,15 +260,10 @@ export default function SuccessfulPage() {
               <span className="font-sans text-brand-text font-semibold">{details.username}</span>
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* Features list below */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.6 }}
-          className="w-full mb-8 text-left"
-        >
+        <div className="w-full mb-8 text-left">
           <p className="text-xs font-mono text-brand-secondary uppercase tracking-wider mb-4 border-b border-[rgba(212,175,110,0.20)] pb-2">
             You now have access to:
           </p>
@@ -316,26 +275,16 @@ export default function SuccessfulPage() {
               </div>
             ))}
           </div>
-        </motion.div>
+        </div>
 
         {/* Email Notification Note */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.7 }}
-          className="text-xs text-brand-secondary flex items-center justify-center gap-1.5 mb-8"
-        >
+        <p className="text-xs text-brand-secondary flex items-center justify-center gap-1.5 mb-8">
           <Mail className="w-3.5 h-3.5" />
           A confirmation email has been sent to your registered address.
-        </motion.p>
+        </p>
 
         {/* Action Buttons */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.75 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full border-b border-[rgba(212,175,110,0.40)] pb-8 mb-6"
-        >
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full border-b border-[rgba(212,175,110,0.40)] pb-8 mb-6">
           <button
             onClick={() => navigate('/profile')}
             className="w-full sm:w-auto px-6 py-3.5 rounded-xl font-mono text-xs uppercase tracking-widest font-semibold btn-premium-cta cta-shine cursor-pointer flex items-center justify-center gap-2"
@@ -357,15 +306,10 @@ export default function SuccessfulPage() {
           >
             View Membership
           </button>
-        </motion.div>
+        </div>
 
         {/* Footer Support section */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.8 }}
-          className="text-xs text-brand-secondary font-sans"
-        >
+        <div className="text-xs text-brand-secondary font-sans">
           Need help?{' '}
           <a
             href="mailto:support@xlchess.com"
@@ -373,7 +317,7 @@ export default function SuccessfulPage() {
           >
             Contact Support
           </a>
-        </motion.div>
+        </div>
 
       </main>
     </div>
