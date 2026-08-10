@@ -108,9 +108,9 @@ function getNodeColors(type: StoryNodeType, status: NodeStatus) {
 
   if (isLocked) {
     return {
-      bg: "rgb(var(--obsidian-mid-rgb) / 0.5)",
-      border: "rgb(var(--text-secondary-rgb) / 0.2)",
-      text: "rgb(var(--text-secondary-rgb) / 0.35)",
+      bg: "var(--obsidian-glass)",
+      border: "var(--marble-border)",
+      text: "var(--text-secondary)",
       glow: "transparent",
       shadow: "none",
     };
@@ -240,12 +240,12 @@ export default function StoryModeNodeIcon({
 
           {/* Label */}
           <span
-            className="absolute top-[100%] mt-2 text-xs font-mono font-semibold tracking-wide max-w-[140px] w-max text-center transition-opacity duration-300 px-3 py-1.5 rounded-lg border shadow-sm backdrop-blur-md leading-tight"
+            className="absolute top-[100%] mt-2 text-xs font-mono font-semibold tracking-wide max-w-[140px] w-max text-center transition-all duration-300 px-3 py-1.5 rounded-lg border shadow-sm backdrop-blur-md leading-tight"
             style={{
-              color: status === "locked" ? "rgb(var(--text-secondary-rgb) / 0.5)" : colors.text,
-              backgroundColor: status === "locked" ? "rgba(0,0,0,0.4)" : "rgba(8, 11, 20, 0.75)",
+              color: status === "locked" ? "var(--text-secondary)" : colors.text,
+              backgroundColor: status === "locked" ? "var(--obsidian-glass)" : "var(--obsidian-mid)",
               borderColor: status === "locked" ? "transparent" : colors.border,
-              opacity: status === "locked" ? 0.5 : 1,
+              opacity: status === "locked" ? 0.75 : 1,
             }}
           >
             {label}

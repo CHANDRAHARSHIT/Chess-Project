@@ -264,32 +264,18 @@ export default function StoryModeMap() {
             {/* Map wrapper for scrolling */}
             <div className="relative w-full rounded-2xl overflow-hidden">
               <div className="w-full h-[75vh] min-h-[500px] rounded-2xl border border-[#D4AF6E]/40 overflow-y-auto overflow-x-hidden shadow-lg relative bg-[rgb(var(--obsidian-mid-rgb)/0.4)] custom-scrollbar">
-                <div
-                  className="relative w-full min-h-[1200px] sm:min-h-[1400px] overflow-hidden"
-                  style={{
-                    backgroundColor: "#080b14",
-                    backgroundImage:
-                      "radial-gradient(ellipse at 50% 80%, rgba(99,102,241,0.15) 0%, transparent 60%), radial-gradient(ellipse at 20% 30%, rgba(168,85,247,0.1) 0%, transparent 50%), radial-gradient(ellipse at 80% 20%, rgba(212,175,110,0.15) 0%, transparent 50%)",
-                  }}
-                >
+                <div className="relative w-full min-h-[1200px] sm:min-h-[1400px] overflow-hidden story-map-bg">
                   {/* Fog / atmosphere layers */}
-                  <div
-                    className="absolute inset-0 pointer-events-none"
-                    style={{
-                      background:
-                        "linear-gradient(180deg, transparent 0%, rgb(var(--obsidian-rgb) / 0.08) 50%, rgb(var(--obsidian-rgb) / 0.18) 100%)",
-                    }}
-                  />
+                  <div className="absolute inset-0 pointer-events-none story-map-fog" />
 
                   {/* Animated ambient particles */}
                   {[...Array(35)].map((_, i) => (
                     <motion.div
                       key={`particle-${i}`}
-                      className="absolute rounded-full pointer-events-none"
+                      className={`absolute rounded-full pointer-events-none ${i % 2 === 0 ? 'story-map-particle-1' : 'story-map-particle-2'}`}
                       style={{
                         width: 1.5 + (i % 3),
                         height: 1.5 + (i % 3),
-                        background: i % 2 === 0 ? "rgba(168, 85, 247, 0.7)" : "rgba(212, 175, 110, 0.7)",
                         left: `${(i * 17) % 100}%`,
                         top: `${(i * 23) % 100}%`,
                       }}
