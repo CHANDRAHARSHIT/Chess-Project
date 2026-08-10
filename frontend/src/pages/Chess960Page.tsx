@@ -28,7 +28,9 @@ export default function Chess960Page() {
     if (window.history.length > 1) {
       navigate(-1);
     } else {
-      navigate('/variants');
+      // Deterministic fallback: direct-URL access has no history to pop,
+      // so navigate explicitly to the hub's Variants tab.
+      navigate('/play?tab=variants', { replace: true });
     }
   };
 

@@ -28,11 +28,10 @@ import YourContentPage from "../pages/YourContentPage";
 import ReportPage from "../pages/ReportPage";
 import CompleteLaterPage from "../pages/CompleteLaterPage";
 import SubscriptionsPage from "../pages/SubscriptionsPage";
-import VariantsPage from "../pages/VariantsPage";
 import LessonsPage from "../pages/LessonsPage";
 import LessonViewerPage from "../pages/LessonViewerPage";
-import QuickGamePage from "../pages/QuickGamePage";
 import StoryModePage from "../pages/StoryModePage";
+import PlayHubPage from "../pages/PlayHubPage";
 import StatsPage from "../pages/StatsPage";
 
 export interface RouteConfig {
@@ -81,8 +80,9 @@ export const mainRoutes: RouteConfig[] = [
     title: "My Subscriptions | XLChess",
   },
   {
+    // /variants → Play Hub Variants tab. Navigate replace keeps browser history clean.
     path: "/variants",
-    element: <VariantsPage />,
+    element: <Navigate to="/play?tab=variants" replace />,
     title: "Chess Variants | XLChess",
   },
   {
@@ -91,12 +91,9 @@ export const mainRoutes: RouteConfig[] = [
     title: "Chess 960 | XLChess",
   },
   {
+    // /play/chess → Play Hub Online tab. Navigate replace keeps browser history clean.
     path: "/play/chess",
-    element: (
-      <ProtectedRoute>
-        <PlayChessPage />
-      </ProtectedRoute>
-    ),
+    element: <Navigate to="/play?tab=online" replace />,
     title: "Play Chess Online | XLChess",
   },
   {
@@ -123,10 +120,9 @@ export const mainRoutes: RouteConfig[] = [
   },
   { path: "/pricing", element: <PricingPage />, title: "Pricing | XLChess" },
 
-  // ── Coming Soon placeholder routes ──────────────────────────────────────
   {
     path: "/play",
-    element: <QuickGamePage />,
+    element: <PlayHubPage />,
     title: "Play Chess | XLChess",
   },
   {
