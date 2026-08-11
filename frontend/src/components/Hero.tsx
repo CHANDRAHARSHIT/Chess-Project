@@ -6,7 +6,6 @@
 
 import { useRef, useState, useEffect } from "react";
 import { useGSAP } from "../hooks/useGSAP";
-import { usePerspectiveTilt } from "../hooks/usePerspectiveTilt";
 import { useMagneticButton } from "../hooks/useMagneticButton";
 import { useButtonGlow } from "../hooks/useButtonGlow";
 import { gsap, dur, ease } from "../utils/gsapConfig";
@@ -51,35 +50,6 @@ export default function Hero() {
   const ctaRef = useRef<HTMLDivElement>(null);
   const boardColRef = useRef<HTMLDivElement>(null);
   const boardCardRef = useRef<HTMLDivElement>(null);
-
-  const [isDragging, setIsDragging] = useState(false);
-
-  useEffect(() => {
-    if (isDragging) {
-      const handlePointerUp = () => {
-        setIsDragging(false);
-      };
-      window.addEventListener("pointerup", handlePointerUp);
-      window.addEventListener("mouseup", handlePointerUp);
-      window.addEventListener("touchend", handlePointerUp);
-      return () => {
-        window.removeEventListener("pointerup", handlePointerUp);
-        window.removeEventListener("mouseup", handlePointerUp);
-        window.removeEventListener("touchend", handlePointerUp);
-      };
-    }
-  }, [isDragging]);
-
-  // ── Perspective tilt hook (manages its own ref) ────────────────────────────
-  const tiltRef = usePerspectiveTilt<HTMLDivElement>({
-    maxRotate: 6,
-    scalePeak: 1.03,
-    quickToDuration: 0.35,
-    quickToEase: "power2.out",
-    floatDistance: 8,
-    floatDuration: 3,
-    paused: isDragging,
-  });
 
   const primaryGlowRef = useButtonGlow<HTMLAnchorElement>();
 
@@ -434,22 +404,14 @@ export default function Hero() {
             className="w-full lg:w-[45%] flex justify-center lg:justify-end"
             style={{
               opacity: 0,
-              perspective: "1000px",
             }}
           >
-            <div
-              ref={tiltRef}
-              className="w-full max-w-[540px] relative mt-8 lg:mt-0"
-              style={{
-                transformStyle: "preserve-3d",
-                willChange: "transform, filter",
-              }}
-            >
+            <div className="w-full max-w-[540px] relative mt-8 lg:mt-0">
               {/* Board card — luxury obsidian + gold hairline */}
               <div
                 ref={boardCardRef}
                 className="luxury-card shadow-deep overflow-hidden hero-board-card p-4 md:p-6"
-                style={{ transformStyle: "preserve-3d", borderRadius: "2px" }}
+                style={{ borderRadius: "2px" }}
               >
                 {/* Engraved coordinate decoration — top right corner */}
                 <div
