@@ -191,12 +191,7 @@ export default function CheckoutPage() {
 
         {/* Lock Gate Screen */}
         <main className="relative z-10 flex-1 flex flex-col items-center justify-center max-w-md mx-auto px-4 text-center mt-12 sm:mt-16">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.92 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5 }}
-            className="w-full bg-brand-surface/75 backdrop-blur-xl border border-brand-border rounded-3xl p-8"
-          >
+          <div className="w-full bg-brand-surface/75 backdrop-blur-xl border border-brand-border rounded-3xl p-8">
             <div className="w-16 h-16 rounded-full bg-brand-accent/10 border border-brand-accent/25 flex items-center justify-center mx-auto mb-6 text-brand-accent">
               <Lock className="w-6 h-6 animate-pulse" />
             </div>
@@ -225,7 +220,7 @@ export default function CheckoutPage() {
                 Create Account
               </button>
             </div>
-          </motion.div>
+          </div>
 
           <button
             onClick={() => navigate("/pricing")}

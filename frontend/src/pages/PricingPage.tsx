@@ -98,7 +98,9 @@ interface ComparisonRow {
 const COMPARISON_ROWS: ComparisonRow[] = [
   {
     label: "Puzzles",
-    icon: <Puzzle className="w-5 h-5 text-orange-500 fill-orange-500 flex-shrink-0" />,
+    icon: (
+      <Puzzle className="w-5 h-5 text-orange-500 fill-orange-500 flex-shrink-0" />
+    ),
     gold: true,
     platinum: true,
     diamond: true,
@@ -106,7 +108,9 @@ const COMPARISON_ROWS: ComparisonRow[] = [
   },
   {
     label: "Lessons",
-    icon: <GraduationCap className="w-5 h-5 text-sky-400 fill-sky-400 flex-shrink-0" />,
+    icon: (
+      <GraduationCap className="w-5 h-5 text-sky-400 fill-sky-400 flex-shrink-0" />
+    ),
     gold: true,
     platinum: true,
     diamond: true,
@@ -114,7 +118,9 @@ const COMPARISON_ROWS: ComparisonRow[] = [
   },
   {
     label: "Bots",
-    icon: <Bot className="w-5 h-5 text-slate-400 fill-slate-400 flex-shrink-0" />,
+    icon: (
+      <Bot className="w-5 h-5 text-slate-400 fill-slate-400 flex-shrink-0" />
+    ),
     gold: true,
     platinum: true,
     diamond: true,
@@ -122,7 +128,9 @@ const COMPARISON_ROWS: ComparisonRow[] = [
   },
   {
     label: "Play Coach",
-    icon: <UserCircle className="w-5 h-5 text-amber-500 fill-amber-500 flex-shrink-0" />,
+    icon: (
+      <UserCircle className="w-5 h-5 text-amber-500 fill-amber-500 flex-shrink-0" />
+    ),
     gold: true,
     platinum: true,
     diamond: true,
@@ -138,7 +146,9 @@ const COMPARISON_ROWS: ComparisonRow[] = [
   },
   {
     label: "Game Review",
-    icon: <Star className="w-5 h-5 text-green-500 fill-green-500 flex-shrink-0" />,
+    icon: (
+      <Star className="w-5 h-5 text-green-500 fill-green-500 flex-shrink-0" />
+    ),
     gold: false,
     platinum: true,
     diamond: true,
@@ -156,7 +166,9 @@ const COMPARISON_ROWS: ComparisonRow[] = [
   },
   {
     label: "Advanced Stats",
-    icon: <BarChart2 className="w-5 h-5 text-blue-500 fill-blue-500 flex-shrink-0" />,
+    icon: (
+      <BarChart2 className="w-5 h-5 text-blue-500 fill-blue-500 flex-shrink-0" />
+    ),
     gold: false,
     platinum: false,
     diamond: true,
@@ -164,7 +176,9 @@ const COMPARISON_ROWS: ComparisonRow[] = [
   },
   {
     label: "Courses Perks",
-    icon: <BookMarked className="w-5 h-5 text-orange-400 fill-orange-400 flex-shrink-0" />,
+    icon: (
+      <BookMarked className="w-5 h-5 text-orange-400 fill-orange-400 flex-shrink-0" />
+    ),
     gold: false,
     platinum: false,
     diamond: true,
@@ -180,32 +194,38 @@ const MOBILE_PLANS: Array<{
   badge?: string;
   icon: React.ReactNode;
 }> = [
-    {
-      id: "gold",
-      key: "gold",
-      name: "Gold",
-      icon: <Star className="w-6 h-6 text-yellow-400 fill-yellow-400 flex-shrink-0" />,
-    },
-    {
-      id: "platinum",
-      key: "platinum",
-      name: "Platinum",
-      icon: <Crown className="w-6 h-6 text-slate-300 fill-slate-300 flex-shrink-0" />,
-    },
-    {
-      id: "diamond",
-      key: "diamond",
-      name: "Diamond",
-      icon: <Sparkles className="w-6 h-6 text-sky-400 flex-shrink-0" />,
-    },
-    {
-      id: "family",
-      key: "family",
-      name: "Friends & Family",
-      badge: "Save 70%",
-      icon: <Users className="w-6 h-6 text-emerald-400 fill-emerald-400 flex-shrink-0" />,
-    },
-  ];
+  {
+    id: "gold",
+    key: "gold",
+    name: "Gold",
+    icon: (
+      <Star className="w-6 h-6 text-yellow-400 fill-yellow-400 flex-shrink-0" />
+    ),
+  },
+  {
+    id: "platinum",
+    key: "platinum",
+    name: "Platinum",
+    icon: (
+      <Crown className="w-6 h-6 text-slate-300 fill-slate-300 flex-shrink-0" />
+    ),
+  },
+  {
+    id: "diamond",
+    key: "diamond",
+    name: "Diamond",
+    icon: <Sparkles className="w-6 h-6 text-sky-400 flex-shrink-0" />,
+  },
+  {
+    id: "family",
+    key: "family",
+    name: "Friends & Family",
+    badge: "Save 70%",
+    icon: (
+      <Users className="w-6 h-6 text-emerald-400 fill-emerald-400 flex-shrink-0" />
+    ),
+  },
+];
 
 // ─── USD base prices for all tiers (ground truth) ─────────────────────────────
 const USD_PRICES: Record<string, { monthly: number; yearly: number }> = {
@@ -226,7 +246,7 @@ function formatConvertedPrice(amount: number): string {
 function getDynamicPlanPrice(
   planId: string,
   isYearly: boolean,
-  pricing: PricingResponse
+  pricing: PricingResponse,
 ): string {
   const usdPrices = USD_PRICES[planId];
   if (!usdPrices) return `${pricing.symbol}0`;
@@ -243,7 +263,7 @@ function getDynamicPlanPrice(
 
 function getDynamicYearlyTotal(
   planId: string,
-  pricing: PricingResponse
+  pricing: PricingResponse,
 ): string {
   const usdPrices = USD_PRICES[planId];
   if (!usdPrices) return "";
@@ -372,11 +392,7 @@ export default function PricingPage() {
 
         {/* ─── Session error ─── */}
         {showSessionError && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="w-full max-w-2xl mt-2 mb-4 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs sm:text-sm font-sans flex items-center justify-between gap-3 z-30"
-          >
+          <div className="w-full max-w-2xl mt-2 mb-4 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs sm:text-sm font-sans flex items-center justify-between gap-3 z-30">
             <div className="flex items-center gap-2">
               <AlertCircle className="w-5 h-5 flex-shrink-0" />
               <span>
@@ -393,7 +409,7 @@ export default function PricingPage() {
             >
               Dismiss
             </button>
-          </motion.div>
+          </div>
         )}
 
         {/* ─── HERO ─── */}
@@ -408,27 +424,17 @@ export default function PricingPage() {
             <span>Trusted by thousands of chess players</span>
           </motion.div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-4xl sm:text-5xl md:text-6xl font-display font-medium tracking-tight text-brand-text mb-6 leading-[1.05]"
-          >
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-display font-medium tracking-tight text-brand-text mb-6 leading-[1.05]">
             Unlock Your Full <br className="sm:block hidden" />
             <span className="text-gold-gradient font-bold italic">
               Chess Potential
             </span>
-          </motion.h1>
+          </h1>
 
-          <motion.p
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-base sm:text-lg text-brand-secondary font-sans leading-relaxed max-w-2xl px-2"
-          >
+          <p className="text-base sm:text-lg text-brand-secondary font-sans leading-relaxed max-w-2xl px-2">
             Choose the plan that fits your ambitions, from casual learner to
             elite competitor.
-          </motion.p>
+          </p>
         </section>
 
         {/* ─── BILLING TOGGLE ─── */}
@@ -476,17 +482,16 @@ export default function PricingPage() {
             const isDiamond = plan.id === "diamond";
             const priceStr = getDynamicPlanPrice(plan.id, isYearly, pricing);
             const yearlyTotalStr = getDynamicYearlyTotal(plan.id, pricing);
-            const tickedFeatures = COMPARISON_ROWS.filter(
-              (r) => r[plan.key]
-            );
+            const tickedFeatures = COMPARISON_ROWS.filter((r) => r[plan.key]);
 
             return (
               <div
                 key={plan.id}
-                className={`relative rounded-2xl p-6 backdrop-blur-xl transition-all ${isDiamond
-                  ? "bg-brand-surface/90 border-2 border-sky-400"
-                  : "bg-brand-surface/60 border border-brand-border"
-                  }`}
+                className={`relative rounded-2xl p-6 backdrop-blur-xl transition-all ${
+                  isDiamond
+                    ? "bg-brand-surface/90 border-2 border-sky-400"
+                    : "bg-brand-surface/60 border border-brand-border"
+                }`}
               >
                 {isDiamond && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-sky-500 text-white text-[10px] font-bold uppercase tracking-wider">
@@ -513,8 +518,9 @@ export default function PricingPage() {
                 <div className="mb-6">
                   <div className="flex items-baseline gap-1">
                     <span
-                      className={`text-3xl font-bold ${isDiamond ? "text-sky-400" : "text-brand-text"
-                        }`}
+                      className={`text-3xl font-bold ${
+                        isDiamond ? "text-sky-400" : "text-brand-text"
+                      }`}
                     >
                       {priceStr}
                     </span>
@@ -586,20 +592,22 @@ export default function PricingPage() {
                     <div className="flex items-center gap-2.5 text-xs font-semibold text-brand-secondary">
                       <button
                         onClick={() => setIsYearly(false)}
-                        className={`px-3 py-1.5 rounded-lg border transition-all cursor-pointer flex items-center gap-1.5 ${!isYearly
-                          ? "bg-brand-accent/15 border-brand-accent text-brand-accent font-bold"
-                          : "border-brand-border hover:border-brand-secondary/40 text-brand-secondary hover:text-brand-text"
-                          }`}
+                        className={`px-3 py-1.5 rounded-lg border transition-all cursor-pointer flex items-center gap-1.5 ${
+                          !isYearly
+                            ? "bg-brand-accent/15 border-brand-accent text-brand-accent font-bold"
+                            : "border-brand-border hover:border-brand-secondary/40 text-brand-secondary hover:text-brand-text"
+                        }`}
                       >
                         {!isYearly && <Check className="w-3.5 h-3.5" />}
                         Monthly
                       </button>
                       <button
                         onClick={() => setIsYearly(true)}
-                        className={`px-3 py-1.5 rounded-lg border transition-all cursor-pointer flex items-center gap-1.5 ${isYearly
-                          ? "bg-brand-accent/15 border-brand-accent text-brand-accent font-bold"
-                          : "border-brand-border hover:border-brand-secondary/40 text-brand-secondary hover:text-brand-text"
-                          }`}
+                        className={`px-3 py-1.5 rounded-lg border transition-all cursor-pointer flex items-center gap-1.5 ${
+                          isYearly
+                            ? "bg-brand-accent/15 border-brand-accent text-brand-accent font-bold"
+                            : "border-brand-border hover:border-brand-secondary/40 text-brand-secondary hover:text-brand-text"
+                        }`}
                       >
                         {isYearly && <Check className="w-3.5 h-3.5" />}
                         Yearly
