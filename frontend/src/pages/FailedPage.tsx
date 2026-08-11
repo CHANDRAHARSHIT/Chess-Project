@@ -45,7 +45,7 @@ export default function FailedPage() {
             initial={{ scale: 0, rotate: 30 }}
             animate={{ scale: 1, rotate: 0 }}
             transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.1 }}
-            className="w-20 h-20 rounded-full bg-brand-bg border border-rose-500/30 flex items-center justify-center text-rose-500 mx-auto shadow-[0_0_30px_rgba(239,68,68,0.15)] relative z-10"
+            className="w-20 h-20 rounded-full bg-brand-bg border border-rose-500/30 flex items-center justify-center text-rose-500 mx-auto relative z-10"
           >
             <XCircle className="w-10 h-10" />
           </motion.div>
@@ -95,7 +95,7 @@ export default function FailedPage() {
         >
           <button
             onClick={() => navigate('/pricing')}
-            className="w-full py-4 px-6 rounded-xl font-mono text-xs uppercase tracking-widest font-semibold bg-brand-text/5 border border-white/10 hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text transition-all duration-300 cursor-pointer flex items-center justify-center gap-2 shadow-md active:scale-[0.99]"
+            className="w-full py-4 px-6 rounded-xl font-mono text-xs uppercase tracking-widest font-semibold bg-brand-text/5 border border-white/10 hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text transition-all duration-300 cursor-pointer flex items-center justify-center gap-2 active:scale-[0.99]"
           >
             <RefreshCw className="w-4 h-4" />
             <span>Try Again</span>
@@ -103,7 +103,7 @@ export default function FailedPage() {
 
           <button
             onClick={() => navigate('/')}
-            className="w-full py-4 px-6 rounded-xl font-mono text-xs uppercase tracking-widest font-bold btn-premium-cta btn-glow-container btn-glow-accent cta-shine cursor-pointer shadow-lg hover:scale-[1.01] flex items-center justify-center gap-2"
+            className="w-full py-4 px-6 rounded-xl font-mono text-xs uppercase tracking-widest font-bold btn-premium-cta btn-glow-container btn-glow-accent cta-shine cursor-pointer hover:scale-[1.01] flex items-center justify-center gap-2"
           >
             <span>Return to Dashboard</span>
             <ArrowRight className="w-4 h-4" />

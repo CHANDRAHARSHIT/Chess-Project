@@ -28,7 +28,7 @@ export default function NotFoundPage() {
         <motion.div
           animate={{ y: [0, -8, 0] }}
           transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-          className="w-16 h-16 rounded-full bg-brand-accent/5 border border-brand-accent/10 text-brand-accent flex items-center justify-center shadow-lg"
+          className="w-16 h-16 rounded-full bg-brand-accent/5 border border-brand-accent/10 text-brand-accent flex items-center justify-center"
         >
           <HelpCircle className="w-8 h-8" />
         </motion.div>
@@ -39,7 +39,7 @@ export default function NotFoundPage() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.1, duration: 0.5 }}
-            className="text-8xl md:text-9xl font-display font-extrabold text-transparent bg-clip-text bg-gradient-to-b from-white via-[#f0eae1] to-[#aba499] tracking-tighter leading-none filter drop-shadow-[0_0_40px_rgba(212,175,110,0.1)]"
+            className="text-8xl md:text-9xl font-display font-extrabold text-transparent bg-clip-text bg-gradient-to-b from-white via-[#f0eae1] to-[#aba499] tracking-tighter leading-none"
           >
             404
           </motion.h1>
@@ -60,7 +60,7 @@ export default function NotFoundPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ type: 'spring', stiffness: 100 }}
             onClick={() => navigate(suggestion)}
-            className="w-full max-w-md p-4 rounded-xl bg-brand-accent/5 hover:bg-brand-accent/10 border border-brand-accent/10 hover:border-brand-accent/30 shadow-lg cursor-pointer group flex items-center gap-3 transition-all duration-300 active:scale-[0.99] select-none text-left"
+            className="w-full max-w-md p-4 rounded-xl bg-brand-accent/5 hover:bg-brand-accent/10 border border-brand-accent/10 hover:border-brand-accent/30 cursor-pointer group flex items-center gap-3 transition-all duration-300 active:scale-[0.99] select-none text-left"
           >
             <div className="w-8 h-8 rounded-lg bg-brand-accent/10 flex items-center justify-center text-brand-accent group-hover:scale-110 transition-transform">
               <Compass className="w-4 h-4 text-brand-accent animate-pulse" />
@@ -81,7 +81,7 @@ export default function NotFoundPage() {
         <div className="w-full max-w-sm flex flex-col items-center gap-6 mt-2">
           <button
             onClick={() => navigate('/')}
-            className="w-full btn-premium-cta btn-glow-container cta-shine px-6 py-3.5 rounded-xl font-mono text-xs uppercase tracking-widest font-semibold flex items-center justify-center gap-2 cursor-pointer shadow-lg hover:scale-[1.01] active:scale-[0.99] transition-all"
+            className="w-full btn-premium-cta btn-glow-container cta-shine px-6 py-3.5 rounded-xl font-mono text-xs uppercase tracking-widest font-semibold flex items-center justify-center gap-2 cursor-pointer hover:scale-[1.01] active:scale-[0.99] transition-all"
           >
             <Home className="w-3.5 h-3.5" />
             <span>Return to Home</span>

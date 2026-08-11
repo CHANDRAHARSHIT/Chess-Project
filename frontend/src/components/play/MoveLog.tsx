@@ -39,16 +39,16 @@ export function MoveLog({ moves }: MoveLogProps) {
   const totalMoves = moves.length;
 
   return (
-    <div className="flex flex-col h-full bg-brand-surface/40 border border-white/[0.07] rounded-2xl overflow-hidden backdrop-blur-md">
+    <div className="flex flex-col h-full bg-brand-surface border border-brand-text/15 rounded-2xl overflow-hidden backdrop-blur-md">
       {/* Header Bar */}
-      <div className="px-4 py-2.5 border-b border-white/[0.05] bg-brand-surface/60 flex items-center justify-between shrink-0">
+      <div className="px-4 py-2.5 border-b border-brand-text/10 bg-brand-surface flex items-center justify-between shrink-0">
         <div className="flex items-center gap-2">
           <History className="w-3.5 h-3.5 text-brand-accent" />
           <h3 className="font-mono font-bold text-xs uppercase tracking-widest text-brand-text">
             Move Log
           </h3>
         </div>
-        <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-brand-accent/15 text-brand-accent">
+        <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-brand-accent/15 text-brand-accent border border-brand-accent/30">
           {totalMoves} {totalMoves === 1 ? 'ply' : 'plies'}
         </span>
       </div>
@@ -76,8 +76,8 @@ export function MoveLog({ moves }: MoveLogProps) {
                 key={pair.moveNumber}
                 className={`grid grid-cols-[3.2rem_1fr_1fr] items-center px-3 py-1.5 rounded-xl transition-all duration-150 ${
                   isLatestPair
-                    ? 'bg-brand-accent/15 text-brand-accent shadow-sm'
-                    : 'hover:bg-brand-surface/60 text-brand-text/90'
+                    ? 'bg-brand-accent/15 text-brand-accent'
+                    : 'hover:bg-brand-text/5 text-brand-text/90'
                 }`}
               >
                 <span className="text-brand-secondary/70 font-bold">{pair.moveNumber}.</span>

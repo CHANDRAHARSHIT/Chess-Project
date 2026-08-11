@@ -244,7 +244,7 @@ export default function PuzzlePage() {
           <button
             id="custom-puzzles-btn"
             onClick={handleOpenCustomConfig}
-            className="btn-gold-outline w-full flex items-center justify-center gap-2 px-4.5 py-3.5 rounded-xl text-xs font-mono uppercase tracking-wider font-bold transition-all duration-300 cursor-pointer bg-brand-surface border border-brand-accent/35 text-brand-accent hover:border-brand-accent/60 shadow-md shadow-brand-accent/10 hover:shadow-lg hover:shadow-brand-accent/20 hover:-translate-y-0.5"
+            className="btn-gold-outline w-full flex items-center justify-center gap-2 px-4.5 py-3.5 rounded-xl text-xs font-mono uppercase tracking-wider font-bold transition-all duration-300 cursor-pointer bg-brand-surface border border-brand-accent/35 text-brand-accent hover:border-brand-accent/60 hover:-translate-y-0.5"
             style={{
               background: "linear-gradient(135deg, rgba(212,175,110,0.14) 0%, rgba(184,147,74,0.08) 100%), var(--obsidian-mid)",
             }}
@@ -314,7 +314,7 @@ export default function PuzzlePage() {
 
             <div className="lg:col-span-5 flex flex-col space-y-6">
               <div
-                className="rounded-2xl p-6 text-left shadow-2xl relative overflow-hidden bg-brand-surface/80 backdrop-blur-xl border border-brand-border/40"
+                className="rounded-2xl p-6 text-left relative overflow-hidden bg-brand-surface/80 backdrop-blur-xl border border-brand-border/40"
               >
                 <div
                   className="absolute top-0 right-0 w-[150px] h-[150px] pointer-events-none"
@@ -379,7 +379,7 @@ export default function PuzzlePage() {
           /* ── DESKTOP VIEW (only mounted when isDesktop is true) ──────────── */
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch w-full">
             <div className="lg:col-span-7 flex flex-col items-center w-full space-y-6">
-              <div className="w-full bg-brand-surface/70 backdrop-blur-xl border border-brand-border rounded-2xl p-5 text-left shadow-2xl relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="w-full bg-brand-surface/70 backdrop-blur-xl border border-brand-border rounded-2xl p-5 text-left relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
                   <div className="flex items-center gap-2">
                     <h1 className="text-xl sm:text-2xl font-display lining-nums font-semibold text-brand-text tracking-wide">
@@ -398,7 +398,7 @@ export default function PuzzlePage() {
                   type="button"
                   onClick={handleNextPuzzle}
                   disabled={!isNextEnabled}
-                  className="px-4 py-2 rounded-xl text-xs font-mono uppercase tracking-wider font-semibold bg-amber-500 text-slate-950 hover:bg-amber-400 transition-all shadow-lg flex items-center gap-1.5 cursor-pointer whitespace-nowrap disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-amber-500 disabled:shadow-none"
+                  className="px-4 py-2 rounded-xl text-xs font-mono uppercase tracking-wider font-semibold bg-amber-500 text-slate-950 hover:bg-amber-400 transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-amber-500"
                 >
                   <span>Next Level</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -434,14 +434,14 @@ export default function PuzzlePage() {
                         <button
                           type="button"
                           onClick={handleReturnToPathway}
-                          className="flex items-center gap-2 text-xs font-mono font-semibold uppercase tracking-wider text-amber-400 hover:text-amber-300 bg-amber-500/10 border border-amber-500/30 px-3.5 py-2 rounded-xl transition-all shadow-md cursor-pointer"
+                          className="flex items-center gap-2 text-xs font-mono font-semibold uppercase tracking-wider text-amber-400 hover:text-amber-300 bg-amber-500/10 border border-amber-500/30 px-3.5 py-2 rounded-xl transition-all cursor-pointer"
                         >
                           <ArrowLeft className="w-4 h-4" />
                           <span>Back to Pathway</span>
                         </button>
                       </div>
 
-                      <div className="w-full bg-brand-surface/70 backdrop-blur-xl border border-brand-border rounded-2xl p-4 text-left shadow-2xl relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                      <div className="w-full bg-brand-surface/70 backdrop-blur-xl border border-brand-border rounded-2xl p-4 text-left relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                         <div>
                           <div className="flex items-center gap-2">
                             <h1 className="text-lg font-display lining-nums font-semibold text-brand-text tracking-wide">
@@ -460,7 +460,7 @@ export default function PuzzlePage() {
                           type="button"
                           onClick={handleNextPuzzleMobile}
                           disabled={!isNextEnabled}
-                          className="px-3.5 py-2 rounded-xl text-xs font-mono uppercase tracking-wider font-semibold bg-amber-500 text-slate-950 hover:bg-amber-400 transition-all shadow-lg flex items-center gap-1.5 cursor-pointer whitespace-nowrap disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-amber-500 disabled:shadow-none"
+                          className="px-4 py-2 rounded-xl text-xs font-mono uppercase tracking-wider font-semibold bg-amber-500 text-slate-950 hover:bg-amber-400 transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-amber-500"
                         >
                           <span>Next Level</span>
                           <ArrowRight className="w-3.5 h-3.5" />
@@ -505,7 +505,7 @@ export default function PuzzlePage() {
                         <button
                           id="custom-puzzles-btn-mobile"
                           onClick={handleOpenCustomConfig}
-                          className="btn-gold-outline w-full flex items-center justify-center gap-2 px-4.5 py-3.5 rounded-xl text-xs font-mono uppercase tracking-wider font-bold transition-all duration-300 cursor-pointer bg-brand-surface border border-brand-accent/35 text-brand-accent hover:border-brand-accent/60 shadow-md shadow-brand-accent/10 hover:shadow-lg hover:shadow-brand-accent/20 hover:-translate-y-0.5"
+                          className="btn-gold-outline w-full flex items-center justify-center gap-2 px-4.5 py-3.5 rounded-xl text-xs font-mono uppercase tracking-wider font-bold transition-all duration-300 cursor-pointer bg-brand-surface border border-brand-accent/35 text-brand-accent hover:border-brand-accent/60 hover:-translate-y-0.5"
                           style={{
                             background: "linear-gradient(135deg, rgba(212,175,110,0.14) 0%, rgba(184,147,74,0.08) 100%), var(--obsidian-mid)",
                           }}

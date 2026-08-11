@@ -177,7 +177,7 @@ export default function SuccessfulPage() {
             initial={{ scale: 0, rotate: -30 }}
             animate={{ scale: 1, rotate: 0 }}
             transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.1 }}
-            className="w-20 h-20 rounded-full bg-gradient-to-tr from-emerald-500 to-emerald-400 border border-emerald-400/40 flex items-center justify-center shadow-[0_0_24px_rgba(16,185,129,0.3)] relative z-10"
+            className="w-20 h-20 rounded-full bg-gradient-to-tr from-emerald-500 to-emerald-400 border border-emerald-400/40 flex items-center justify-center relative z-10"
           >
             <motion.svg
               className="w-10 h-10 text-brand-text"
@@ -231,7 +231,7 @@ export default function SuccessfulPage() {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.4, delay: 0.4 }}
-          className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-brand-accent/15 border border-brand-accent/30 text-brand-accent text-xs font-mono tracking-wider uppercase font-semibold mb-8 shadow-sm"
+          className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-brand-accent/15 border border-brand-accent/30 text-brand-accent text-xs font-mono tracking-wider uppercase font-semibold mb-8"
         >
           <Award className="w-4 h-4 fill-current animate-pulse" />
           Premium Activated
@@ -242,7 +242,7 @@ export default function SuccessfulPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.45 }}
-          className="w-full bg-brand-surface/60 backdrop-blur-xl border border-brand-border rounded-2xl p-5 sm:p-6 mb-8 text-left shadow-2xl"
+          className="w-full bg-brand-surface/60 backdrop-blur-xl border border-brand-border rounded-2xl p-5 sm:p-6 mb-8 text-left"
         >
           <h3 className="text-sm font-mono tracking-wider text-brand-secondary uppercase border-b border-[rgba(212,175,110,0.40)] pb-3 mb-4">
             Membership Details

@@ -32,7 +32,7 @@ export const MembershipFeatureBanner: React.FC<MembershipFeatureBannerProps> = (
 
   // Helper to render the appropriate Lucide icon as a premium placeholder
   const renderImagePlaceholder = () => {
-    const iconClass = "w-24 h-24 sm:w-32 sm:h-32 text-sky-300/80 drop-shadow-[0_0_25px_rgba(125,211,252,0.3)]";
+    const iconClass = "w-24 h-24 sm:w-32 sm:h-32 text-sky-300/80";
     switch (image) {
       case "bot": return <Bot className={iconClass} />;
       case "search": return <Search className={iconClass} />;
@@ -93,7 +93,7 @@ export const MembershipFeatureBanner: React.FC<MembershipFeatureBannerProps> = (
           transition={{ duration: 0.7, ease: "easeOut" }}
           className="w-full md:w-1/2 flex justify-center"
         >
-          <div className="relative w-full max-w-[400px] aspect-square rounded-3xl bg-gradient-to-br from-brand-surface/80 to-brand-bg/50 border border-brand-border/60 shadow-2xl backdrop-blur-sm flex items-center justify-center overflow-hidden group">
+          <div className="relative w-full max-w-[400px] aspect-square rounded-3xl bg-gradient-to-br from-brand-surface/80 to-brand-bg/50 border border-brand-border/60 backdrop-blur-sm flex items-center justify-center overflow-hidden group">
             {/* Ambient Background Glows */}
             <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-sky-300/10 rounded-full blur-[40px] pointer-events-none group-hover:bg-sky-300/20 transition-colors duration-500" />
             <div className="absolute bottom-1/4 right-1/4 w-32 h-32 bg-brand-accent/5 rounded-full blur-[40px] pointer-events-none group-hover:bg-brand-accent/10 transition-colors duration-500" />

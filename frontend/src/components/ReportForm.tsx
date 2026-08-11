@@ -223,7 +223,7 @@ export default function ReportForm() {
                   {isDropdownOpen && (
                     <>
                       <div className="fixed inset-0 z-40" onClick={() => setIsDropdownOpen(false)} />
-                      <div className="absolute z-50 w-full mt-2 rounded-md shadow-2xl bg-brand-bg border border-brand-accent/20 overflow-hidden" style={{ top: '100%', left: 0 }}>
+                      <div className="absolute z-50 w-full mt-2 rounded-md bg-brand-bg border border-brand-accent/20 overflow-hidden" style={{ top: '100%', left: 0 }}>
                         <ul className="max-h-60 overflow-auto py-2">
                           {reportOptions.map((option) => (
                             <li key={option}>
