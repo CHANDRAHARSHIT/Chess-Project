@@ -40,7 +40,7 @@ export default function Chess960Page() {
     ">
 
       {/* ── Header — adapts between mobile compact and desktop full ── */}
-      <div className="w-full shrink-0 flex items-center justify-between gap-2 px-3 py-2 lg:px-4 lg:py-2.5 rounded-xl lg:rounded-2xl bg-brand-surface/60 border border-white/[0.07] backdrop-blur-xl shadow-md">
+      <div className="w-full shrink-0 flex items-center justify-between gap-2 px-3 py-2 lg:px-4 lg:py-2.5 rounded-xl lg:rounded-2xl bg-brand-surface/60 border border-white/[0.07] backdrop-blur-xl">
         <div className="flex items-center gap-2 lg:gap-3">
           <button
             onClick={handleBackToVariants}
@@ -120,7 +120,7 @@ export default function Chess960Page() {
             <div className="flex items-center justify-between px-3.5 py-2.5 lg:py-2 rounded-xl bg-brand-surface/50 border border-white/[0.06] text-xs font-mono shrink-0">
               <div className="flex items-center gap-2">
                 <span className={`w-2.5 h-2.5 rounded-full transition-all ${
-                  game.turn === 'w' ? 'bg-white shadow-[0_0_8px_rgba(255,255,255,0.7)]' : 'bg-neutral-700 border border-neutral-500'
+                  game.turn === 'w' ? 'bg-white' : 'bg-neutral-700 border border-neutral-500'
                 }`} />
                 <span className="font-semibold text-brand-text">
                   {game.turn === 'w' ? 'White to Move' : 'Black to Move'}
@@ -169,7 +169,7 @@ export default function Chess960Page() {
           onClick={() => setIsRulesOpen(false)}
         >
           <div
-            className="relative bg-brand-surface/90 border border-white/10 shadow-2xl rounded-3xl max-w-lg w-full p-6 sm:p-8 space-y-5 text-brand-text backdrop-blur-2xl"
+            className="relative bg-brand-surface/90 border border-white/10 rounded-3xl max-w-lg w-full p-6 sm:p-8 space-y-5 text-brand-text backdrop-blur-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between border-b border-white/10 pb-4">
@@ -205,7 +205,7 @@ export default function Chess960Page() {
               </div>
             </div>
             <div className="pt-2">
-              <button onClick={() => setIsRulesOpen(false)} className="w-full py-3 rounded-xl font-mono text-xs uppercase font-bold bg-brand-accent text-black hover:bg-amber-300 transition-colors shadow-md">
+              <button onClick={() => setIsRulesOpen(false)} className="w-full py-3 rounded-xl font-mono text-xs uppercase font-bold bg-brand-accent text-black hover:bg-amber-300 transition-colors">
                 Got It
               </button>
             </div>

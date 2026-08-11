@@ -78,14 +78,14 @@ export default function VariantsPage() {
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-72 bg-gradient-radial from-brand-accent/15 via-brand-accent/5 to-transparent blur-3xl pointer-events-none -z-10" />
 
       {/* Hero Header Section */}
-      <div className="relative rounded-3xl bg-brand-surface/60 border border-white/10 p-6 sm:p-10 shadow-2xl backdrop-blur-2xl space-y-6 overflow-hidden">
+      <div className="relative rounded-3xl bg-brand-surface/60 border border-white/10 p-6 sm:p-10 backdrop-blur-2xl space-y-6 overflow-hidden">
         {/* Subtle Decorative Pattern */}
         <div className="absolute -right-10 -bottom-10 opacity-5 pointer-events-none text-brand-accent">
           <Dices className="w-80 h-80 stroke-[1]" />
         </div>
 
         <div className="space-y-4 max-w-3xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-accent/15 text-brand-accent font-mono text-[11px] uppercase tracking-widest font-bold shadow-sm">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-accent/15 text-brand-accent font-mono text-[11px] uppercase tracking-widest font-bold">
             <Sparkles className="w-3.5 h-3.5 animate-pulse" />
             <span>Chess Reinvented • Infinite Strategy</span>
           </div>
@@ -151,7 +151,7 @@ export default function VariantsPage() {
               onClick={() => setActiveTab(tab.id)}
               className={`px-2 sm:px-4 py-2 rounded-xl text-[11px] sm:text-xs font-mono font-bold transition-all duration-200 cursor-pointer flex items-center justify-center text-center truncate ${
                 activeTab === tab.id
-                  ? 'bg-brand-accent text-black shadow-md shadow-brand-accent/20'
+                  ? 'bg-brand-accent text-black'
                   : 'text-brand-secondary hover:text-brand-text hover:bg-brand-surface/60'
               }`}
             >
@@ -168,7 +168,7 @@ export default function VariantsPage() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search variants..."
-            className="w-full pl-10 pr-10 py-2.5 text-xs font-mono rounded-2xl outline-none transition-all duration-200 placeholder:text-brand-secondary/50 bg-brand-surface/60 border border-white/5 text-brand-text focus:border-brand-accent/40 backdrop-blur-md shadow-sm"
+            className="w-full pl-10 pr-10 py-2.5 text-xs font-mono rounded-2xl outline-none transition-all duration-200 placeholder:text-brand-secondary/50 bg-brand-surface/60 border border-white/5 text-brand-text focus:border-brand-accent/40 backdrop-blur-md"
           />
           {searchQuery && (
             <button

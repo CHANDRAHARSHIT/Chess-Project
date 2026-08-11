@@ -76,7 +76,7 @@ export function MoveLog({ moves }: MoveLogProps) {
                 key={pair.moveNumber}
                 className={`grid grid-cols-[3.2rem_1fr_1fr] items-center px-3 py-1.5 rounded-xl transition-all duration-150 ${
                   isLatestPair
-                    ? 'bg-brand-accent/15 text-brand-accent shadow-sm'
+                    ? 'bg-brand-accent/15 text-brand-accent'
                     : 'hover:bg-brand-surface/60 text-brand-text/90'
                 }`}
               >
