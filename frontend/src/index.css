@@ -1848,3 +1848,46 @@ body {
     }
   }
 }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   STORY MODE MAP
+   ══════════════════════════════════════════════════════════════════════════ */
+.story-map-bg {
+  background-color: #080b14;
+  background-image: 
+    radial-gradient(ellipse at 50% 80%, rgba(99,102,241,0.15) 0%, transparent 60%), 
+    radial-gradient(ellipse at 20% 30%, rgba(168,85,247,0.1) 0%, transparent 50%), 
+    radial-gradient(ellipse at 80% 20%, rgba(212,175,110,0.15) 0%, transparent 50%);
+}
+
+.story-map-fog {
+  background: linear-gradient(180deg, transparent 0%, rgb(var(--obsidian-rgb) / 0.08) 50%, rgb(var(--obsidian-rgb) / 0.18) 100%);
+}
+
+.story-map-particle-1 {
+  background: rgba(168, 85, 247, 0.7);
+}
+
+.story-map-particle-2 {
+  background: rgba(212, 175, 110, 0.7);
+}
+
+:root[data-theme="light"] .story-map-bg {
+  background-color: var(--obsidian);
+  background-image: 
+    radial-gradient(ellipse at 50% 80%, rgba(99,102,241,0.05) 0%, transparent 60%), 
+    radial-gradient(ellipse at 20% 30%, rgba(168,85,247,0.04) 0%, transparent 50%), 
+    radial-gradient(ellipse at 80% 20%, rgba(148,92,16,0.08) 0%, transparent 50%);
+}
+
+:root[data-theme="light"] .story-map-fog {
+  background: linear-gradient(180deg, transparent 0%, rgb(var(--obsidian-rgb) / 0.3) 50%, rgb(var(--obsidian-rgb) / 0.6) 100%);
+}
+
+:root[data-theme="light"] .story-map-particle-1 {
+  background: rgba(168, 85, 247, 0.5);
+}
+
+:root[data-theme="light"] .story-map-particle-2 {
+  background: rgba(148, 92, 16, 0.5);
+}

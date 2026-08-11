@@ -65,28 +65,30 @@ export function GameBoard({
 
   const borderClass =
     status === 'checkmate'
-      ? 'border-emerald-500 ring-4 ring-emerald-500/25'
+      ? 'border-emerald-500 ring-4 ring-emerald-500/30'
       : status === 'resigned' || status === 'stalemate' || status === 'draw'
-        ? 'border-amber-500/80 ring-4 ring-amber-500/20'
-        : 'border-brand-border/80';
+        ? 'border-amber-500/80 ring-4 ring-amber-500/30'
+        : 'border-white/[0.08]';
 
   return (
-    <div
-      className={`relative w-full max-w-[480px] sm:max-w-[540px] aspect-square border bg-brand-surface transition-all duration-300 ${borderClass}`}
-    >
-      <ThemedChessboard
-        options={{
-          position: fen,
-          onPieceDrop: ({ sourceSquare, targetSquare }) =>
-            onPieceDrop(sourceSquare, targetSquare ?? ''),
-          boardOrientation,
-          squareStyles,
-          boardStyle: { borderRadius: '0px' },
-          showNotation: false,
-          allowDragging: isInteractive && status === 'playing',
-        }}
-      />
-      <BoardCoordinates boardOrientation={boardOrientation} />
+    <div className="relative w-full h-full p-1 rounded-2xl bg-brand-surface/50 border border-white/[0.08]">
+      <div
+        className={`relative w-full aspect-square border bg-brand-surface rounded-xl overflow-hidden transition-all duration-300 ${borderClass}`}
+      >
+        <ThemedChessboard
+          options={{
+            position: fen,
+            onPieceDrop: ({ sourceSquare, targetSquare }) =>
+              onPieceDrop(sourceSquare, targetSquare ?? ''),
+            boardOrientation,
+            squareStyles,
+            boardStyle: { borderRadius: '0px' },
+            showNotation: false,
+            allowDragging: isInteractive && status === 'playing',
+          }}
+        />
+        <BoardCoordinates boardOrientation={boardOrientation} />
+      </div>
     </div>
   );
 }
