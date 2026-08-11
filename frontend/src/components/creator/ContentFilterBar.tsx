@@ -26,7 +26,7 @@ export function ContentFilterBar({
   };
 
   return (
-    <div className="w-full rounded-3xl border border-brand-text/15 bg-obsidian-mid p-4 sm:p-6 shadow-xl space-y-4">
+    <div className="w-full rounded-3xl border border-brand-text/15 bg-obsidian-mid p-4 sm:p-6 space-y-4">
       {/* Top Action Launcher */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
@@ -42,7 +42,7 @@ export function ContentFilterBar({
           <button
             disabled
             title="Coming Soon"
-            className="flex-1 sm:flex-initial btn-gold flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-sans text-xs font-semibold shadow-lg opacity-50 cursor-not-allowed"
+            className="flex-1 sm:flex-initial btn-gold flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-sans text-xs font-semibold opacity-50 cursor-not-allowed"
           >
             <Plus className="w-4 h-4" />
             <span>New Interactive Lesson</span>
@@ -61,7 +61,7 @@ export function ContentFilterBar({
                 onClick={() => handleCategorySelect(cat)}
                 className={`px-3 py-1.5 rounded-xl text-xs font-sans font-medium transition-all cursor-pointer ${
                   isSelected
-                    ? "bg-brand-accent text-obsidian font-bold shadow-md"
+                    ? "bg-brand-accent text-obsidian font-bold"
                     : "bg-brand-text/5 text-brand-text/60 hover:text-brand-text hover:bg-brand-text/10"
                 }`}
               >

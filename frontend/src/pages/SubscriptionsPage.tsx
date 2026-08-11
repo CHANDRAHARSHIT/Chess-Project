@@ -239,7 +239,7 @@ function ThumbnailPlaceholder({
 
 function ContentCard({ item }: { item: ContentItem }) {
   return (
-    <div className="group flex flex-col gap-3 bg-white/5 border border-white/10 hover:border-brand-accent/20 rounded-2xl p-4 cursor-pointer transition-all duration-200 hover:bg-white/[0.07] hover:shadow-lg hover:shadow-black/20">
+    <div className="group flex flex-col gap-3 bg-white/5 border border-white/10 hover:border-brand-accent/20 rounded-2xl p-4 cursor-pointer transition-all duration-200 hover:bg-white/[0.07]">
       <ThumbnailPlaceholder
         type={item.type}
         duration={item.duration}

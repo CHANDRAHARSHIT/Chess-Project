@@ -31,7 +31,7 @@ export default function PremiumPage() {
           <motion.div
             animate={{ y: [0, -6, 0] }}
             transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-            className="w-16 h-16 rounded-full bg-brand-accent/5 border border-brand-accent/10 text-brand-accent flex items-center justify-center shadow-lg"
+            className="w-16 h-16 rounded-full bg-brand-accent/5 border border-brand-accent/10 text-brand-accent flex items-center justify-center"
           >
             <Crown className="w-8 h-8" />
           </motion.div>
@@ -47,7 +47,7 @@ export default function PremiumPage() {
 
           <button
             onClick={() => navigate("/pricing")}
-            className="w-full sm:w-auto btn-premium-cta btn-glow-container cta-shine px-8 py-3.5 rounded-xl font-mono text-sm uppercase tracking-widest font-semibold flex items-center justify-center gap-2 cursor-pointer shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all mt-2"
+            className="w-full sm:w-auto btn-premium-cta btn-glow-container cta-shine px-8 py-3.5 rounded-xl font-mono text-sm uppercase tracking-widest font-semibold flex items-center justify-center gap-2 cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-all mt-2"
           >
             <Sparkles className="w-4 h-4" />
             <span>Upgrade to Premium</span>
@@ -68,8 +68,8 @@ export default function PremiumPage() {
           className="relative"
         >
           <div className="absolute -inset-4 bg-brand-accent/20 rounded-full blur-2xl animate-pulse" />
-          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#1a1a1a] to-[#2a2a2a] border border-brand-accent/20 text-brand-accent flex items-center justify-center shadow-[0_0_40px_rgba(212,175,110,0.15)] transform rotate-3 relative z-10">
-            <Crown className="w-10 h-10 drop-shadow-md" />
+          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#1a1a1a] to-[#2a2a2a] border border-brand-accent/20 text-brand-accent flex items-center justify-center transform rotate-3 relative z-10">
+            <Crown className="w-10 h-10" />
           </div>
         </motion.div>
 
@@ -79,7 +79,7 @@ export default function PremiumPage() {
               <Sparkles className="w-3.5 h-3.5" />
               Pro Member Access
             </span>
-            <h1 className="text-4xl md:text-6xl font-display font-extrabold text-transparent bg-clip-text bg-gradient-to-b from-brand-text via-brand-text/90 to-brand-secondary tracking-tighter filter drop-shadow-[0_0_30px_rgba(212,175,110,0.15)] leading-tight">
+            <h1 className="text-4xl md:text-6xl font-display font-extrabold text-transparent bg-clip-text bg-gradient-to-b from-brand-text via-brand-text/90 to-brand-secondary tracking-tighter leading-tight">
               Premium Features<br />Coming Soon
             </h1>
           </div>

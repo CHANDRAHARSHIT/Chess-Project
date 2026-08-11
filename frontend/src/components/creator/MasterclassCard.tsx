@@ -15,7 +15,7 @@ interface MasterclassCardProps {
 
 export function MasterclassCard({ item }: MasterclassCardProps) {
   return (
-    <div className="group relative w-full rounded-3xl border border-brand-text/15 bg-brand-surface p-5 shadow-xl transition-all duration-300 hover:border-brand-accent/50 cursor-pointer overflow-hidden flex flex-col justify-between">
+    <div className="group relative w-full rounded-3xl border border-brand-text/15 bg-brand-surface p-5 transition-all duration-300 hover:border-brand-accent/50 cursor-pointer overflow-hidden flex flex-col justify-between">
       <div className="space-y-4">
         {/* Top Header: Category & Status */}
         <div className="flex items-center justify-between">
@@ -45,7 +45,7 @@ export function MasterclassCard({ item }: MasterclassCardProps) {
           />
 
           {/* Video Duration Chip */}
-          <div className="absolute bottom-2 right-2 px-2.5 py-0.5 rounded-md bg-black/80 border border-white/20 text-[10px] font-mono text-white font-semibold shadow-md">
+          <div className="absolute bottom-2 right-2 px-2.5 py-0.5 rounded-md bg-black/80 border border-white/20 text-[10px] font-mono text-white font-semibold">
             {item.videoDuration}
           </div>
         </div>
@@ -64,7 +64,7 @@ export function MasterclassCard({ item }: MasterclassCardProps) {
         {item.mostReplayedMove && item.mostReplayedMove !== "Draft Mode" && (
           <div className="flex items-center gap-2 py-1">
             <Flame className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400 shrink-0 animate-pulse" />
-            <span className="px-2.5 py-0.5 rounded-full bg-rose-700 text-white text-[10px] font-mono font-bold truncate shadow-sm">
+            <span className="px-2.5 py-0.5 rounded-full bg-rose-700 text-white text-[10px] font-mono font-bold truncate">
               {item.mostReplayedMove}
             </span>
           </div>
@@ -91,7 +91,7 @@ export function MasterclassCard({ item }: MasterclassCardProps) {
 
       {/* Hover UI Overlay: Coming Soon with Blur Backdrop */}
       <div className="absolute inset-0 bg-obsidian/85 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center justify-center gap-2 p-6 z-20 pointer-events-none text-center">
-        <span className="px-4 py-1.5 rounded-full text-xs font-mono font-bold bg-brand-accent text-obsidian uppercase tracking-wider shadow-lg">
+        <span className="px-4 py-1.5 rounded-full text-xs font-mono font-bold bg-brand-accent text-obsidian uppercase tracking-wider">
           Coming Soon
         </span>
         <p className="text-xs font-sans text-brand-secondary font-medium max-w-[210px] leading-relaxed">

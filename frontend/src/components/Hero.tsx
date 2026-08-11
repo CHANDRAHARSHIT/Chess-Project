@@ -207,7 +207,7 @@ export default function Hero() {
       // ── Play icon glow pulse ───────────────────────────────────────────
       if (playIconRef.current) {
         gsap.to(playIconRef.current, {
-          filter: "drop-shadow(0 0 10px rgba(212, 175, 110, 0.5))",
+          filter: "none",
           duration: 2.5,
           repeat: -1,
           yoyo: true,
@@ -410,7 +410,7 @@ export default function Hero() {
               {/* Board card — luxury obsidian + gold hairline */}
               <div
                 ref={boardCardRef}
-                className="luxury-card shadow-deep overflow-hidden hero-board-card p-4 md:p-6"
+                className="luxury-card overflow-hidden hero-board-card p-4 md:p-6"
                 style={{ borderRadius: "2px" }}
               >
                 {/* Engraved coordinate decoration — top right corner */}

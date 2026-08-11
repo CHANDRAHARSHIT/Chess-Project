@@ -240,7 +240,7 @@ export default function StoryModeNodeIcon({
 
           {/* Label */}
           <span
-            className="absolute top-[100%] mt-2 text-xs font-mono font-semibold tracking-wide max-w-[140px] w-max text-center transition-all duration-300 px-3 py-1.5 rounded-lg border shadow-sm backdrop-blur-md leading-tight"
+            className="absolute top-[100%] mt-2 text-xs font-mono font-semibold tracking-wide max-w-[140px] w-max text-center transition-all duration-300 px-3 py-1.5 rounded-lg border backdrop-blur-md leading-tight"
             style={{
               color: status === "locked" ? "var(--text-secondary)" : colors.text,
               backgroundColor: status === "locked" ? "var(--obsidian-glass)" : "var(--obsidian-mid)",

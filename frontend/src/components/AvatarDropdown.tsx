@@ -95,7 +95,7 @@ export const AvatarDropdown: React.FC = () => {
       {/* Dropdown Menu */}
       {isOpen && (
         <div
-          className="absolute right-0 mt-2 w-48 bg-brand-surface border border-brand-border rounded-xl shadow-xl  py-2 backdrop-blur-md animate-in fade-in slide-in-from-top-2 duration-150"
+          className="absolute right-0 mt-2 w-48 bg-brand-surface border border-brand-border rounded-xl py-2 backdrop-blur-md animate-in fade-in slide-in-from-top-2 duration-150"
           role="menu"
           aria-label="User options"
         >
