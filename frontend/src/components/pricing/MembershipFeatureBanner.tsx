@@ -57,13 +57,7 @@ export const MembershipFeatureBanner: React.FC<MembershipFeatureBannerProps> = (
       <div className={`flex flex-col md:flex-row items-center justify-between gap-12 lg:gap-24 ${reverse ? "md:flex-row-reverse" : ""}`}>
         
         {/* Text Content */}
-        <motion.div 
-          initial={{ opacity: 0, x: reverse ? 30 : -30 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          className="w-full md:w-1/2 flex flex-col items-center md:items-start text-center md:text-left"
-        >
+        <div className="w-full md:w-1/2 flex flex-col items-center md:items-start text-center md:text-left">
           <span className="text-sky-400 font-mono text-xs sm:text-sm uppercase tracking-widest font-semibold mb-3">
             {subtitle}
           </span>
@@ -83,16 +77,10 @@ export const MembershipFeatureBanner: React.FC<MembershipFeatureBannerProps> = (
             </span>
             <div className="absolute inset-0 bg-gradient-to-r from-sky-400/0 via-sky-400/5 to-sky-400/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
           </button>
-        </motion.div>
+        </div>
 
         {/* Image/Illustration Placeholder */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9, x: reverse ? -30 : 30 }}
-          whileInView={{ opacity: 1, scale: 1, x: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.7, ease: "easeOut" }}
-          className="w-full md:w-1/2 flex justify-center"
-        >
+        <div className="w-full md:w-1/2 flex justify-center">
           <div className="relative w-full max-w-[400px] aspect-square rounded-3xl bg-gradient-to-br from-brand-surface/80 to-brand-bg/50 border border-brand-border/60 shadow-2xl backdrop-blur-sm flex items-center justify-center overflow-hidden group">
             {/* Ambient Background Glows */}
             <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-sky-300/10 rounded-full blur-[40px] pointer-events-none group-hover:bg-sky-300/20 transition-colors duration-500" />
@@ -106,7 +94,7 @@ export const MembershipFeatureBanner: React.FC<MembershipFeatureBannerProps> = (
               {renderImagePlaceholder()}
             </motion.div>
           </div>
-        </motion.div>
+        </div>
 
       </div>
     </section>
