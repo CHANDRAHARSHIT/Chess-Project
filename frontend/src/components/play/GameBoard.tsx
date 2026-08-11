@@ -68,10 +68,10 @@ export function GameBoard({
       ? 'border-emerald-500 ring-4 ring-emerald-500/30'
       : status === 'resigned' || status === 'stalemate' || status === 'draw'
         ? 'border-amber-500/80 ring-4 ring-amber-500/30'
-        : 'border-white/[0.08]';
+        : 'border-brand-text/15';
 
   return (
-    <div className="relative w-full h-full p-1 rounded-2xl bg-brand-surface/50 border border-white/[0.08]">
+    <div className="relative w-full h-full p-1 rounded-2xl bg-brand-surface border border-brand-text/15">
       <div
         className={`relative w-full aspect-square border bg-brand-surface rounded-xl overflow-hidden transition-all duration-300 ${borderClass}`}
       >

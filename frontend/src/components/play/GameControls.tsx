@@ -26,7 +26,7 @@ export function GameControls({
   const btnBaseClass =
     'flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl font-mono text-[11px] sm:text-xs uppercase tracking-wider font-bold transition-all duration-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:translate-y-0';
 
-  const defaultBtnClass = `${btnBaseClass} bg-brand-surface/80 border border-white/[0.08] text-brand-secondary hover:text-brand-text hover:bg-brand-surface hover:-translate-y-0.5`;
+  const defaultBtnClass = `${btnBaseClass} bg-brand-text/5 border border-brand-text/15 text-brand-secondary hover:text-brand-text hover:bg-brand-text/10 hover:border-brand-text/25 hover:-translate-y-0.5`;
 
   const hintBtnClass = isHintActive
     ? `${btnBaseClass} bg-amber-500/20 border border-amber-500/40 text-amber-500 dark:text-amber-300 animate-pulse`
@@ -42,7 +42,7 @@ export function GameControls({
   };
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-2 sm:p-2.5 bg-brand-surface/60 border border-white/[0.07] rounded-2xl backdrop-blur-md shrink-0">
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-2 sm:p-2.5 bg-brand-surface border border-brand-text/15 rounded-2xl backdrop-blur-md shrink-0">
 
       <button
         onClick={() => {

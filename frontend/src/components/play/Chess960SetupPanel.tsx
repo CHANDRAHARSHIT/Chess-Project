@@ -58,14 +58,14 @@ export function Chess960SetupPanel({
       aria-labelledby="setup-title"
     >
       <div
-        className="relative bg-brand-surface/90 border border-white/10 rounded-3xl max-w-xl w-full p-6 sm:p-8 space-y-6 text-brand-text backdrop-blur-2xl overflow-hidden"
+        className="relative bg-brand-surface border border-brand-text/15 rounded-3xl max-w-xl w-full p-6 sm:p-8 space-y-6 text-brand-text backdrop-blur-2xl overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Top Ambient Glow Ring */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-72 h-36 bg-brand-accent/10 rounded-full blur-3xl pointer-events-none -z-10" />
 
         {/* Header */}
-        <div className="relative border-b border-white/10 pb-4 sm:pb-5 space-y-3">
+        <div className="relative border-b border-brand-text/10 pb-4 sm:pb-5 space-y-3">
           {/* Top Bar: Variant Icon + Badge (Left) and Close Cross (Right) */}
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2.5 min-w-0">
@@ -82,7 +82,7 @@ export function Chess960SetupPanel({
                 soundManager.playButtonClick();
                 onClose();
               }}
-              className="p-2 rounded-xl text-brand-secondary hover:text-brand-text hover:bg-brand-surface/80 border border-transparent transition-all cursor-pointer shrink-0"
+              className="p-2 rounded-xl text-brand-secondary hover:text-brand-text hover:bg-brand-text/10 border border-transparent transition-all cursor-pointer shrink-0"
               title="Close setup"
             >
               <X className="w-5 h-5" />
@@ -94,7 +94,7 @@ export function Chess960SetupPanel({
             <h2 id="setup-title" className="font-display font-bold text-xl sm:text-2xl text-brand-text tracking-tight">
               Chess 960 Setup
             </h2>
-            <p className="text-xs text-brand-secondary/90 mt-1 leading-relaxed">
+            <p className="text-xs text-brand-secondary mt-1 leading-relaxed">
               Randomized piece back-ranks • 960 symmetrical starting positions
             </p>
           </div>
@@ -130,7 +130,7 @@ export function Chess960SetupPanel({
                     className={`relative flex flex-col items-center justify-center p-3 sm:p-4 rounded-2xl border transition-all duration-200 cursor-pointer ${
                       isActive
                         ? 'bg-brand-accent/15 border-brand-accent text-brand-text scale-[1.02]'
-                        : 'bg-brand-surface/50 border-white/5 text-brand-secondary hover:border-white/10 hover:text-brand-text hover:bg-brand-surface/80'
+                        : 'bg-brand-text/5 border-brand-text/15 text-brand-secondary hover:border-brand-text/30 hover:text-brand-text hover:bg-brand-text/10'
                     }`}
                   >
                     {isActive && (
@@ -141,7 +141,7 @@ export function Chess960SetupPanel({
                     )}
                     <span className="text-3xl mb-1">{opt.icon}</span>
                     <span className="text-xs font-bold font-sans text-brand-text">{opt.label}</span>
-                    <span className="text-[10px] font-mono text-brand-secondary/80 mt-0.5">{opt.subtitle}</span>
+                    <span className="text-[10px] font-mono text-brand-secondary mt-0.5">{opt.subtitle}</span>
                   </button>
                 );
               })}
@@ -176,7 +176,7 @@ export function Chess960SetupPanel({
                     className={`group relative flex items-center justify-between p-3.5 sm:p-4 rounded-2xl border text-left transition-all duration-200 cursor-pointer ${
                       isActive
                         ? 'bg-brand-accent/15 border-brand-accent text-brand-text'
-                        : 'bg-brand-surface/40 border-white/5 text-brand-secondary hover:border-white/10 hover:text-brand-text hover:bg-brand-surface/80'
+                        : 'bg-brand-text/5 border-brand-text/15 text-brand-secondary hover:border-brand-text/30 hover:text-brand-text hover:bg-brand-text/10'
                     }`}
                   >
                     <div className="space-y-1">
@@ -190,7 +190,7 @@ export function Chess960SetupPanel({
                           {config.rating} ELO
                         </span>
                       </div>
-                      <p className="text-xs text-brand-secondary/90">
+                      <p className="text-xs text-brand-secondary">
                         {config.description}
                       </p>
                     </div>
@@ -201,7 +201,7 @@ export function Chess960SetupPanel({
                         className={`w-6 h-6 rounded-full border flex items-center justify-center transition-all ${
                           isActive
                             ? 'bg-brand-accent border-brand-accent text-black'
-                            : 'border-white/10 text-transparent group-hover:border-white/20'
+                            : 'border-brand-text/20 text-transparent group-hover:border-brand-text/40'
                         }`}
                       >
                         <Check className="w-3.5 h-3.5 stroke-[3]" />
