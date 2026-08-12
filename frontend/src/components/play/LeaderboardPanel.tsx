@@ -8,14 +8,14 @@ type LoadState = "loading" | "empty" | "error" | "loaded";
 function RankBadge({ rank }: { rank: number }) {
   if (rank === 1) {
     return (
-      <span className="flex items-center justify-center w-6 h-6 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 font-mono text-xs font-bold shrink-0">
-        <Crown className="w-3.5 h-3.5 text-amber-400" />
+      <span className="flex items-center justify-center w-6 h-6 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-600 font-mono text-xs font-bold shrink-0">
+        <Crown className="w-3.5 h-3.5 text-amber-500" />
       </span>
     );
   }
   if (rank === 2) {
     return (
-      <span className="flex items-center justify-center w-6 h-6 rounded-full bg-slate-300/20 border border-slate-300/30 text-slate-200 font-mono text-xs font-bold shrink-0">
+      <span className="flex items-center justify-center w-6 h-6 rounded-full bg-slate-300/20 border border-slate-300/30 text-slate-600 dark:text-slate-200 font-mono text-xs font-bold shrink-0">
         2
       </span>
     );
@@ -57,7 +57,7 @@ export function LeaderboardPanel() {
 
   return (
     <div className="rounded-3xl border border-brand-text/15 bg-brand-surface overflow-hidden flex flex-col h-full">
-      <div className="px-5 py-4 border-b border-white/10 bg-brand-surface/60 flex items-center justify-between">
+      <div className="px-5 py-4 border-b border-brand-text/10 bg-brand-surface/60 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Award className="w-4 h-4 text-brand-accent" />
           <h3 className="font-display font-bold text-base text-brand-text tracking-tight">
@@ -72,7 +72,7 @@ export function LeaderboardPanel() {
       <div className="p-4 space-y-2 max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-brand-border/40 flex-1">
         {state === "loading" &&
           Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="h-12 rounded-xl bg-brand-surface/30 animate-pulse border border-white/5" />
+            <div key={i} className="h-12 rounded-xl bg-brand-text/5 animate-pulse border border-brand-text/5" />
           ))}
 
         {state === "empty" && (
@@ -95,12 +95,12 @@ export function LeaderboardPanel() {
           entries.map((entry, i) => (
             <div
               key={entry.id}
-              className="flex items-center justify-between p-3 rounded-xl bg-brand-bg/30 border border-white/5 hover:border-brand-accent/30 hover:bg-brand-surface/50 transition-all duration-[var(--dur-quick)]"
+              className="flex items-center justify-between p-3 rounded-xl bg-brand-text/5 border border-brand-text/10 hover:border-brand-accent/30 hover:bg-brand-text/10 transition-all duration-[var(--dur-quick)]"
             >
               <div className="flex items-center gap-3 min-w-0">
                 <RankBadge rank={i + 1} />
                 <div className="flex items-center gap-2 min-w-0">
-                  <div className="w-7 h-7 rounded-full bg-brand-surface border border-white/10 flex items-center justify-center text-brand-accent text-xs font-semibold shrink-0">
+                  <div className="w-7 h-7 rounded-full bg-brand-surface border border-brand-text/10 flex items-center justify-center text-brand-accent text-xs font-semibold shrink-0">
                     {entry.user.name ? entry.user.name[0].toUpperCase() : <User className="w-3.5 h-3.5" />}
                   </div>
                   <span className="text-xs text-brand-text font-medium truncate">

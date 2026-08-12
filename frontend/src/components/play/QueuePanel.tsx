@@ -27,7 +27,7 @@ const primaryBtn =
   "px-7 py-3.5 rounded-xl font-mono text-xs uppercase tracking-widest font-bold btn-premium-cta btn-glow-container btn-glow-accent cta-shine cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-all inline-flex items-center justify-center gap-2.5 min-h-[48px]";
 
 const outlineBtn =
-  "px-5 py-2.5 rounded-xl font-mono text-[11px] uppercase tracking-widest font-semibold border border-rose-500/30 text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 hover:border-rose-500/50 transition-all duration-[var(--dur-quick)] inline-flex items-center gap-2 cursor-pointer";
+  "px-5 py-2.5 rounded-xl font-mono text-[11px] uppercase tracking-widest font-semibold border border-rose-500/30 text-rose-600 bg-rose-500/10 hover:bg-rose-500/20 hover:border-rose-500/50 transition-all duration-[var(--dur-quick)] inline-flex items-center gap-2 cursor-pointer";
 
 export function QueuePanel() {
   const { phase, ticket, errorMessage, findGame, cancelSearch } = useMatchmaking();
@@ -100,7 +100,7 @@ export function QueuePanel() {
           </div>
 
           {phase === "searching" && (
-            <div className="w-full space-y-4 p-4 rounded-xl bg-brand-bg/40 border border-brand-accent/30 backdrop-blur-md">
+            <div className="w-full space-y-4 p-4 rounded-xl bg-brand-text/5 border border-brand-accent/30">
               <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
                   <div className="relative flex h-8 w-8 items-center justify-center rounded-lg bg-brand-accent/10 text-brand-accent border border-brand-accent/30">
@@ -124,11 +124,11 @@ export function QueuePanel() {
               </div>
 
               {/* Progress Sweep Bar */}
-              <div className="relative h-1.5 w-full bg-brand-surface/60 rounded-full overflow-hidden border border-white/5">
+              <div className="relative h-1.5 w-full bg-brand-surface/60 rounded-full overflow-hidden border border-brand-text/10">
                 <div className="absolute inset-y-0 bg-gradient-to-r from-brand-accent/40 via-brand-accent to-brand-accent/40 animate-pulse w-full clock-flag-sweep" />
               </div>
 
-              <div className="flex items-center justify-between font-mono text-xs pt-1 border-t border-white/5">
+              <div className="flex items-center justify-between font-mono text-xs pt-1 border-t border-brand-text/10">
                 <span className="text-brand-text flex items-center gap-1.5">
                   <span className="text-brand-secondary">Elapsed:</span>
                   <span className="font-bold text-brand-accent">{formatElapsed(elapsedMs)}</span>
@@ -143,7 +143,7 @@ export function QueuePanel() {
 
           {phase === "expired" && (
             <div className="space-y-3">
-              <p className="text-xs sm:text-sm text-brand-secondary bg-amber-500/10 border border-amber-500/20 text-amber-200 px-4 py-3 rounded-xl">
+              <p className="text-xs sm:text-sm bg-amber-500/10 border border-amber-500/20 text-amber-700 dark:text-amber-200 px-4 py-3 rounded-xl">
                 No opponent joined within 60 seconds. Click below to try again.
               </p>
               <button onClick={handleFindGame} className={primaryBtn}>
@@ -155,7 +155,7 @@ export function QueuePanel() {
 
           {phase === "error" && (
             <div className="space-y-3">
-              <p className="text-xs sm:text-sm text-rose-300 bg-rose-500/10 border border-rose-500/20 px-4 py-3 rounded-xl">
+              <p className="text-xs sm:text-sm text-rose-600 dark:text-rose-300 bg-rose-500/10 border border-rose-500/20 px-4 py-3 rounded-xl">
                 Couldn't join the queue: {errorMessage ?? "The server rejected the request."}
               </p>
               <button onClick={handleFindGame} className={primaryBtn}>
