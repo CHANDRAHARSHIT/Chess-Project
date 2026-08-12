@@ -125,7 +125,7 @@ export function usePuzzleProgress(): UsePuzzleProgressReturn {
     })();
 
     return () => { cancelled = true; };
-  }, [isAuthenticated]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isAuthenticated]);  
 
   // ── Mark Solved ──────────────────────────────────────────────────────────
   const markSolved = useCallback((puzzleId: string) => {

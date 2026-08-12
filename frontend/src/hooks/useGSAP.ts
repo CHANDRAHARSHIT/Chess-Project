@@ -49,7 +49,7 @@ export function useGSAP(
       // Kill all tweens, ScrollTriggers, and listeners created in this context
       ctx.revert();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, deps);
 
   return ctxRef;

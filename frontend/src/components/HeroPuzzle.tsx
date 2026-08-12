@@ -1547,7 +1547,7 @@ export default function HeroPuzzle({
                 },
               ).then(() => {
                 // Play sound for engine's response
-                if (!!engineMove.captured) {
+                if (engineMove.captured) {
                   heroSoundRef.current.playCapture();
                 } else {
                   heroSoundRef.current.playMove();
@@ -1685,7 +1685,7 @@ export default function HeroPuzzle({
                 },
               ).then(() => {
                 // Play sound for engine's response
-                if (!!engineMove.captured) {
+                if (engineMove.captured) {
                   heroSoundRef.current.playCapture();
                 } else {
                   heroSoundRef.current.playMove();
@@ -1906,7 +1906,7 @@ export default function HeroPuzzle({
                   ).then(() => {
                     setIsStockfishThinking0(false);
                     // Play sound for engine's response
-                    if (!!engineMove.captured) {
+                    if (engineMove.captured) {
                       heroSoundRef.current.playCapture();
                     } else {
                       heroSoundRef.current.playMove();
@@ -1995,7 +1995,7 @@ export default function HeroPuzzle({
                 ).then(() => {
                   setIsStockfishThinking0(false);
                   // Play sound for engine's response
-                  if (!!engineMove.captured) {
+                  if (engineMove.captured) {
                     heroSoundRef.current.playCapture();
                   } else {
                     heroSoundRef.current.playMove();
