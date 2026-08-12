@@ -36,15 +36,11 @@ export function MatchFoundCard({ descriptor, onEnter }: MatchFoundCardProps) {
   }, [onEnter]);
 
   return (
-    <div className="reveal-in relative overflow-hidden flex flex-col items-center gap-6 rounded-3xl border border-brand-accent/40 bg-gradient-to-b from-brand-surface/95 to-brand-bg/95 backdrop-blur-2xl p-6 sm:p-8 max-w-md w-full mx-auto shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8),0_0_30px_rgba(212,175,110,0.15)]">
-      {/* Decorative background ambient glow */}
-      <div className="pointer-events-none absolute -top-20 -left-20 h-56 w-56 rounded-full bg-brand-accent/10 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-20 -right-20 h-56 w-56 rounded-full bg-brand-accent/10 blur-3xl" />
-
+    <div className="relative overflow-hidden flex flex-col items-center gap-6 rounded-3xl border border-brand-accent/40 bg-brand-surface/95 backdrop-blur-2xl p-6 sm:p-8 max-w-md w-full mx-auto">
       {/* Match Found Header */}
       <div className="flex flex-col items-center gap-1.5 text-center">
-        <div className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-brand-accent font-bold px-3 py-1 rounded-full bg-brand-accent/15 border border-brand-accent/30 shadow-[0_0_15px_rgba(212,175,110,0.2)]">
-          <Zap className="w-3.5 h-3.5 fill-brand-accent animate-pulse" />
+        <div className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-brand-accent font-bold px-3 py-1 rounded-full bg-brand-accent/15 border border-brand-accent/30">
+          <Zap className="w-3.5 h-3.5 fill-brand-accent text-brand-accent" />
           Match Confirmed
         </div>
         <h2 className="font-display text-2xl sm:text-3xl font-bold text-brand-text tracking-tight">
@@ -78,6 +74,7 @@ export function MatchFoundCard({ descriptor, onEnter }: MatchFoundCardProps) {
               name={opponent.name}
               image={opponent.image}
               size={24}
+              isBot={descriptor.provenance === "bot"}
             />
           ) : (
             <span className="font-sans text-xs text-brand-secondary">Opponent</span>
@@ -86,7 +83,7 @@ export function MatchFoundCard({ descriptor, onEnter }: MatchFoundCardProps) {
       </div>
 
       {/* Starting Position Preview Card */}
-      <div className="relative group rounded-2xl overflow-hidden border border-brand-accent/30 shadow-2xl p-1 bg-brand-surface/80">
+      <div className="relative group rounded-2xl overflow-hidden border border-brand-accent/30 p-1 bg-brand-surface/80">
         <div className="w-44 sm:w-52 aspect-square border border-brand-border/60 rounded-xl overflow-hidden pointer-events-none">
           <ThemedChessboard
             options={{
@@ -108,9 +105,9 @@ export function MatchFoundCard({ descriptor, onEnter }: MatchFoundCardProps) {
           Time Control: <span className="text-brand-text font-bold">{descriptor.timeControl.label}</span>
         </div>
 
-        {/* Animated Loading Bar */}
+        {/* Clean Static Loading Bar */}
         <div className="relative h-1.5 w-full bg-brand-surface rounded-full overflow-hidden border border-brand-border/40">
-          <div className="absolute inset-y-0 left-0 bg-gradient-to-r from-brand-accent/60 via-brand-accent to-brand-accent rounded-full animate-[progress_1.8s_ease-in-out_infinite] w-full" />
+          <div className="absolute inset-y-0 left-0 bg-brand-accent rounded-full w-full" />
         </div>
         <span className="font-mono text-[10px] uppercase tracking-widest text-brand-secondary/80">
           Entering Live Session...

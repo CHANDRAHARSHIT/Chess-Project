@@ -1,44 +1,82 @@
 /**
  * ResultRevealModal.tsx
- * Grows out of the board rather than a generic full-screen modal — reuses the existing
- * .checkmate-overlay-badge glass treatment. Win/loss/draw is carried by composition and
- * headline text, never by adding a second red/green palette (M5 plan §4.2, Inconsistency I-3).
+ * Container-query responsive game completion overlay embedded inside the board container.
+ * High-contrast, structured outcome display (Victory, Defeat, Draw, Stalemate)
+ * without in-animations or drop-shadows.
  *
- * Note on ratings: the GameResult contract carries no rating delta — Results computes and
- * persists ratings asynchronously, decoupled from Session's broadcast (Invariant: Session never
- * blocks on Results). A rated game's delta is only ever visible later via game history, never
- * live here — this modal states that honestly rather than showing a fabricated number.
+ * Sizing is intentionally compact by default (not "shrink from large"), so it
+ * fits inside the board container without scrolling at typical board sizes.
+ * Stat cards and CTAs stay in a single row at all widths — stacking them
+ * vertically is what caused the previous overflow.
  */
 import { useEffect, useRef } from "react";
-import { Trophy, ShieldAlert, Scale, Swords } from "lucide-react";
+import { Trophy, ShieldAlert, Scale, Swords, type LucideIcon } from "lucide-react";
 import confetti from "canvas-confetti";
 import { soundManager } from "../../utils/SoundManager";
 import type { GameResult, TerminationReason } from "../../types/multiplayer";
 
-const REASON_LABEL: Record<TerminationReason, string> = {
-  checkmate: "Checkmate",
-  stalemate: "Stalemate",
-  draw_agreement: "Draw by Agreement",
-  draw_repetition: "Draw by Repetition",
-  draw_fifty_move: "Draw — Fifty-Move Rule",
-  draw_insufficient_material: "Draw — Insufficient Material",
-  resignation: "Resignation",
-  timeout: "Time Expiry",
-  forfeit: "Forfeit",
-  abort: "Aborted",
+interface OutcomeStyle {
+  pill: string;
+  pillStyle: string;
+  ringStyle: string;
+  icon: LucideIcon;
+  title: string;
+  titleStyle: string;
+  subtitleStyle: string;
+}
+
+const OUTCOME_CONFIG: Record<"victory" | "defeat" | "draw", OutcomeStyle> = {
+  victory: {
+    pill: "VICTORY TRIUMPH",
+    pillStyle: "bg-emerald-500/15 border border-emerald-500/40 text-emerald-950 dark:text-emerald-300 font-extrabold",
+    ringStyle: "bg-brand-accent/15 border border-brand-accent/40 text-brand-accent",
+    icon: Trophy,
+    title: "Victory!",
+    titleStyle: "text-brand-accent",
+    subtitleStyle: "text-emerald-950 dark:text-emerald-300 font-extrabold",
+  },
+  defeat: {
+    pill: "MATCH CONCLUDED",
+    pillStyle: "bg-rose-500/15 border border-rose-500/40 text-rose-950 dark:text-rose-300 font-extrabold",
+    ringStyle: "bg-rose-500/15 border border-rose-500/40 text-rose-400",
+    icon: ShieldAlert,
+    title: "Defeat",
+    titleStyle: "text-brand-text",
+    subtitleStyle: "text-rose-950 dark:text-rose-300 font-extrabold",
+  },
+  draw: {
+    pill: "EQUAL STANDING",
+    pillStyle: "bg-amber-500/15 border border-amber-500/40 text-amber-950 dark:text-amber-300 font-extrabold",
+    ringStyle: "bg-amber-500/15 border border-amber-500/40 text-amber-400",
+    icon: Scale,
+    title: "Match Drawn",
+    titleStyle: "text-brand-text",
+    subtitleStyle: "text-amber-950 dark:text-amber-300 font-extrabold",
+  },
+};
+
+const TERMINATION_LABEL: Record<TerminationReason, string> = {
+  checkmate: "BY CHECKMATE",
+  stalemate: "STALEMATE",
+  draw_agreement: "DRAW BY AGREEMENT",
+  draw_repetition: "DRAW BY REPETITION",
+  draw_fifty_move: "FIFTY-MOVE RULE",
+  draw_insufficient_material: "INSUFFICIENT MATERIAL",
+  resignation: "BY RESIGNATION",
+  timeout: "TIME EXPIRY",
+  forfeit: "FORFEIT",
+  abort: "ABORTED",
 };
 
 function formatDuration(seconds: number): string {
-  const m = Math.floor(seconds / 60);
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
   const s = seconds % 60;
+  if (h > 0) {
+    return `${h}:${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+  }
   return `${m}:${s.toString().padStart(2, "0")}`;
 }
-
-const primaryBtn =
-  "px-7 py-3.5 rounded-xl font-mono text-xs uppercase tracking-widest font-bold btn-premium-cta btn-glow-container btn-glow-accent cta-shine cursor-pointer shadow-[0_10px_25px_-5px_rgba(212,175,110,0.3)] hover:scale-[1.02] active:scale-[0.98] transition-all inline-flex items-center justify-center gap-2";
-
-const outlineBtn =
-  "px-6 py-3.5 rounded-xl font-mono text-xs uppercase tracking-widest font-semibold border border-brand-border/60 text-brand-secondary hover:text-brand-text hover:border-brand-accent/40 bg-brand-surface/60 backdrop-blur-md transition-all cursor-pointer";
 
 interface ResultRevealModalProps {
   result: GameResult;
@@ -51,6 +89,11 @@ export function ResultRevealModal({ result, myUserId, onFindAnother, onBackToLob
   const mySide = result.participants.find((p) => p.userId === myUserId)?.side;
   const isDraw = result.outcome.kind === "draw";
   const isWin = result.outcome.kind === "win" && result.outcome.winningSide === mySide;
+
+  const outcomeKey: "victory" | "defeat" | "draw" = isWin ? "victory" : isDraw ? "draw" : "defeat";
+  const config = OUTCOME_CONFIG[outcomeKey];
+  const IconComponent = config.icon;
+
   const dialogRef = useRef<HTMLDivElement>(null);
   const primaryBtnRef = useRef<HTMLButtonElement>(null);
 
@@ -65,7 +108,7 @@ export function ResultRevealModal({ result, myUserId, onFindAnother, onBackToLob
           colors: ["#D4AF6E", "#10B981", "#F59E0B", "#FFFFFF", "#3B82F6"],
         });
       } catch {
-        // Confetti is decorative — never block the result from rendering.
+        // Confetti is decorative — never block result display
       }
     } else if (isDraw) {
       soundManager.playGameEnd();
@@ -85,8 +128,6 @@ export function ResultRevealModal({ result, myUserId, onFindAnother, onBackToLob
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const title = isDraw ? "Match Drawn" : isWin ? "Victory!" : "Defeat";
-
   return (
     <div
       ref={dialogRef}
@@ -94,54 +135,83 @@ export function ResultRevealModal({ result, myUserId, onFindAnother, onBackToLob
       aria-modal="true"
       aria-labelledby="result-title"
       aria-describedby="result-reason"
-      className="absolute inset-0 z-30 bg-brand-bg/95 backdrop-blur-xl flex flex-col items-center justify-center p-6 text-center reveal-in rounded-2xl"
+      className="@container absolute inset-0 z-30 bg-brand-bg/95 backdrop-blur-xl flex flex-col items-center justify-center gap-4 p-4 text-center rounded-2xl overflow-y-auto min-h-0 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
     >
-      <div className="relative overflow-hidden rounded-3xl border-2 border-brand-accent/50 bg-gradient-to-b from-brand-surface/95 via-brand-surface/85 to-brand-bg/95 p-8 space-y-4 max-w-md w-full shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9),0_0_30px_rgba(212,175,110,0.2)]">
-        {/* Top Icon Badge */}
-        <div className="mx-auto w-14 h-14 rounded-2xl bg-brand-accent/10 border border-brand-accent/30 flex items-center justify-center text-brand-accent shadow-[0_0_20px_rgba(212,175,110,0.2)]">
-          {isWin ? (
-            <Trophy className="w-7 h-7 text-amber-400" />
-          ) : isDraw ? (
-            <Scale className="w-7 h-7 text-brand-accent" />
-          ) : (
-            <ShieldAlert className="w-7 h-7 text-rose-400" />
-          )}
+      {/* Top Section: Outcome Pill & Signature Emblem Ring */}
+      <div className="flex flex-col items-center gap-2 w-full max-w-sm">
+        {/* Outcome Status Pill */}
+        <div className={`px-2.5 py-0.5 rounded-full font-mono text-[9px] uppercase tracking-widest ${config.pillStyle}`}>
+          {config.pill}
         </div>
 
-        <div className="space-y-1">
-          <h2 id="result-title" className="font-display text-3xl sm:text-4xl font-extrabold text-brand-text tracking-tight">
-            {title}
+        {/* Signature Emblem Ring */}
+        <div className={`w-11 h-11 rounded-2xl flex items-center justify-center ${config.ringStyle}`}>
+          <IconComponent className="w-5 h-5" />
+        </div>
+
+        {/* Outcome Title & Termination Reason */}
+        <div className="space-y-0">
+          <h2
+            id="result-title"
+            className={`font-display text-2xl @[300px]:text-3xl font-extrabold tracking-tight leading-tight ${config.titleStyle}`}
+          >
+            {config.title}
           </h2>
-          <p id="result-reason" className="font-mono text-xs uppercase tracking-widest text-brand-accent font-semibold">
-            {REASON_LABEL[result.terminationReason]}
+          <p
+            id="result-reason"
+            className={`font-mono text-[10px] uppercase tracking-widest ${config.subtitleStyle}`}
+          >
+            {TERMINATION_LABEL[result.terminationReason]}
           </p>
-        </div>
-
-        <div className="h-px w-full bg-brand-border/40 my-2" />
-
-        <div className="flex justify-center items-center gap-4 font-mono text-xs text-brand-secondary">
-          <span>{result.moveCount} moves played</span>
-          {typeof result.durationSeconds === "number" && (
-            <>
-              <span>•</span>
-              <span>{formatDuration(result.durationSeconds)} duration</span>
-            </>
-          )}
-        </div>
-
-        <div className="inline-block px-3 py-1 rounded-full bg-brand-bg/60 border border-brand-border/40 font-mono text-[10px] uppercase tracking-wider text-brand-secondary/80">
-          {result.rated ? "Rated Match · Rating Updates Shortly" : "Casual Match · Rating Unaffected"}
         </div>
       </div>
 
-      {/* Primary & Secondary Action CTAs */}
-      <div className="flex flex-wrap justify-center gap-3 mt-6">
-        <button ref={primaryBtnRef} onClick={onFindAnother} className={primaryBtn}>
-          <Swords className="w-4 h-4" />
-          Find Another Game
+      {/* Middle Section: Structured 3-Card Stat Grid — always one row, never stacked */}
+      <div className="grid grid-cols-3 gap-1.5 w-full max-w-sm">
+        <div className="flex flex-col items-center justify-center px-1.5 py-2 rounded-xl bg-brand-surface/80 border border-white/10 text-center min-w-0">
+          <span className="font-mono text-[8px] uppercase tracking-wider text-brand-secondary/80 font-bold">
+            Moves
+          </span>
+          <span className="font-mono text-xs font-extrabold text-brand-text mt-0.5">
+            {result.moveCount}
+          </span>
+        </div>
+
+        <div className="flex flex-col items-center justify-center px-1.5 py-2 rounded-xl bg-brand-surface/80 border border-white/10 text-center min-w-0">
+          <span className="font-mono text-[8px] uppercase tracking-wider text-brand-secondary/80 font-bold">
+            Duration
+          </span>
+          <span className="font-mono text-xs font-extrabold text-brand-text mt-0.5">
+            {formatDuration(result.durationSeconds ?? 0)}
+          </span>
+        </div>
+
+        <div className="flex flex-col items-center justify-center px-1.5 py-2 rounded-xl bg-brand-surface/80 border border-white/10 text-center min-w-0">
+          <span className="font-mono text-[8px] uppercase tracking-wider text-brand-secondary/80 font-bold">
+            Mode
+          </span>
+          <span className="font-mono text-xs font-extrabold text-brand-accent mt-0.5">
+            {result.rated ? "Rated" : "Casual"}
+          </span>
+        </div>
+      </div>
+
+      {/* Bottom Section: Action CTAs — always one row, never stacked */}
+      <div className="flex flex-row justify-center gap-2 w-full max-w-sm">
+        <button
+          ref={primaryBtnRef}
+          onClick={onFindAnother}
+          className="flex-1 px-3 py-2.5 rounded-xl font-mono text-[10px] uppercase tracking-widest font-bold bg-brand-accent text-brand-bg hover:brightness-110 focus-visible:ring-2 focus-visible:ring-brand-accent focus-visible:ring-offset-2 outline-none cursor-pointer flex items-center justify-center gap-1.5 transition-colors"
+        >
+          <Swords className="w-3.5 h-3.5 shrink-0" />
+          <span>Find Another Game</span>
         </button>
-        <button onClick={onBackToLobby} className={outlineBtn}>
-          Return to Lobby
+
+        <button
+          onClick={onBackToLobby}
+          className="flex-1 px-3 py-2.5 rounded-xl font-mono text-[10px] uppercase tracking-widest font-bold border border-white/10 bg-brand-surface/80 text-brand-text hover:bg-brand-surface focus-visible:ring-2 focus-visible:ring-brand-accent focus-visible:ring-offset-2 outline-none cursor-pointer flex items-center justify-center gap-1.5 transition-colors"
+        >
+          <span>Return to Lobby</span>
         </button>
       </div>
     </div>

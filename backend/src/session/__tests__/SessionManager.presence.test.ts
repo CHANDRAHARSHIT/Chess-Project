@@ -63,6 +63,21 @@ describe("SessionManager M2: presence, grace timers, PAUSED (M1-AM-01)", () => {
     assert.equal(session.status, "READY");
   });
 
+  test("notifyParticipantConnected sends the first-connecting participant a WAITING state snapshot", () => {
+    const { transport, sends } = createRecordingTransport();
+    const sm = new SessionManager(undefined, undefined, transport, FAST_TIMINGS);
+    const session = sm.createSession(createDummyDescriptor());
+
+    // Only user-w connects — session stays WAITING for user-b. Without an explicit snapshot
+    // here, user-w's client would receive nothing at all (createSession() broadcasts nothing),
+    // and would have no way to distinguish "genuinely waiting" from "never connected."
+    sm.notifyParticipantConnected(session.sessionId, "user-w");
+
+    const snapshot = sends.find((s) => s.userId === "user-w" && s.message.type === "state_update");
+    assert.ok(snapshot, "expected a state_update sent to the first-connecting participant");
+    assert.equal((snapshot!.message.payload as { status: string }).status, "WAITING");
+  });
+
   test("WAITING no-show times out to ABANDONED with no GameResult emitted", async () => {
     const emitted: GameResult[] = [];
     const sm = new SessionManager((r) => emitted.push(r), undefined, undefined, FAST_TIMINGS);

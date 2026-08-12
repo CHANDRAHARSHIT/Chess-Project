@@ -40,7 +40,9 @@ describe("SessionManager State Machine & Clock Authority", () => {
   });
 
   test("notifyAllPresent transitions WAITING -> READY and starts the clock (M6)", () => {
-    const sm = new SessionManager();
+    // matchStartGraceMs: 0 isolates this test from the match-start countdown grace (separately
+    // covered below) — it's asserting notifyAllPresent's idempotency, not the grace window.
+    const sm = new SessionManager(undefined, undefined, undefined, { matchStartGraceMs: 0 });
     const session = sm.createSession(createDummyDescriptor());
 
     sm.notifyAllPresent(session.sessionId);
@@ -67,7 +69,7 @@ describe("SessionManager State Machine & Clock Authority", () => {
   });
 
   test("first submitMove in READY transitions to PLAYING and starts clock", () => {
-    const sm = new SessionManager();
+    const sm = new SessionManager(undefined, undefined, undefined, { matchStartGraceMs: 0 });
     const session = sm.createSession(createDummyDescriptor());
     sm.notifyAllPresent(session.sessionId);
 
@@ -131,9 +133,14 @@ describe("SessionManager State Machine & Clock Authority", () => {
 
   test("tickClocks is no-op in WAITING, ticks in READY and PLAYING, triggers timeout (M6)", () => {
     const emittedResults: GameResult[] = [];
-    const sm = new SessionManager((res) => {
-      emittedResults.push(res);
-    });
+    const sm = new SessionManager(
+      (res) => {
+        emittedResults.push(res);
+      },
+      undefined,
+      undefined,
+      { matchStartGraceMs: 0 }
+    );
 
     const session = sm.createSession(createDummyDescriptor());
 
@@ -177,9 +184,14 @@ describe("SessionManager State Machine & Clock Authority", () => {
 
   test("timing out during READY (before any move is ever played) ends the game (M6)", () => {
     const emittedResults: GameResult[] = [];
-    const sm = new SessionManager((res) => {
-      emittedResults.push(res);
-    });
+    const sm = new SessionManager(
+      (res) => {
+        emittedResults.push(res);
+      },
+      undefined,
+      undefined,
+      { matchStartGraceMs: 0 }
+    );
 
     const session = sm.createSession(createDummyDescriptor());
     sm.notifyAllPresent(session.sessionId);
@@ -194,5 +206,26 @@ describe("SessionManager State Machine & Clock Authority", () => {
     if (emittedResults[0].outcome.kind === "win") {
       assert.equal(emittedResults[0].outcome.winningSide, 1); // Black wins — White never moved
     }
+  });
+
+  test("clock stays frozen during the match-start grace, then activates on the tick that exhausts it (M6)", () => {
+    const sm = new SessionManager(undefined, undefined, undefined, { matchStartGraceMs: 1000 });
+    const session = sm.createSession(createDummyDescriptor());
+
+    sm.notifyAllPresent(session.sessionId);
+    assert.equal(session.status, "READY");
+    assert.equal(session.clock.lastMoveAt, null); // Grace window just started — not live yet.
+
+    // Tick less than the full grace window: clock must stay frozen.
+    sm.tickClocks(400);
+    assert.equal(session.clock.lastMoveAt, null);
+    assert.equal(session.clock.remainingMs[0], 300000);
+
+    // Tick past the remaining grace (600ms left, elapse 700ms): clock activates and only the
+    // 100ms overshoot past the grace boundary is charged — not the full 700ms.
+    sm.tickClocks(700);
+    assert.notEqual(session.clock.lastMoveAt, null);
+    assert.equal(session.clock.remainingMs[0], 299900);
+    assert.equal(session.clock.remainingMs[1], 300000); // Black untouched — not their turn
   });
 });

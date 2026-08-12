@@ -229,7 +229,14 @@ export const GameSessionProvider: React.FC<{ children: React.ReactNode }> = ({ c
   }, []);
 
   const resign = useCallback(() => {
-    wsRef.current?.send(JSON.stringify({ type: "resign", payload: {} }));
+    // readyState, not connectionStatus: the latter only flips to "connected" once the
+    // "connected" ack round-trips back, lagging the socket's actual sendability by one
+    // hop (e.g. mid-reconnect, the socket can already be OPEN while connectionStatus is
+    // still "reconnecting"). Sending on a CONNECTING socket throws synchronously; OPEN is
+    // the one state where send() is both safe and actually delivered.
+    if (wsRef.current?.readyState === WebSocket.OPEN) {
+      wsRef.current.send(JSON.stringify({ type: "resign", payload: {} }));
+    }
   }, []);
 
   const clearMoveRejection = useCallback(() => setMoveRejection(null), []);

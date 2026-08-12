@@ -32,14 +32,14 @@ export function GameActionBar({ canAct, onResign }: GameActionBarProps) {
   };
 
   return (
-    <div className="grid grid-cols-2 gap-2.5 p-2.5 bg-brand-surface/60 border border-white/10 rounded-2xl backdrop-blur-xl shadow-md">
+    <div className="grid grid-cols-2 gap-2.5 p-2 h-[64px] items-center bg-brand-surface/60 border border-white/10 rounded-2xl backdrop-blur-xl">
       <button
         onClick={handleResignClick}
         onBlur={() => setConfirming(false)}
         disabled={!canAct}
         className={`flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-mono text-[11px] uppercase tracking-wider font-bold transition-all duration-[var(--dur-quick)] disabled:opacity-40 disabled:cursor-not-allowed min-h-[44px] cursor-pointer ${
           confirming
-            ? "bg-rose-500/20 border border-rose-500/60 text-rose-300 shadow-[0_0_15px_rgba(244,63,94,0.2)] animate-pulse"
+            ? "bg-rose-500/20 border border-rose-500/60 text-rose-300"
             : "border border-white/10 bg-brand-bg/40 text-brand-secondary hover:text-brand-text hover:border-brand-accent/40 hover:bg-brand-surface/50"
         }`}
         title={confirming ? "Click again to confirm resignation" : "Resign this game"}

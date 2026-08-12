@@ -37,7 +37,7 @@ export function MoveLog({ moves }: MoveLogProps) {
   }, [moves]);
 
   return (
-    <div className="flex flex-col h-full bg-brand-surface/60 border border-white/10 rounded-xl overflow-hidden backdrop-blur-xl shadow-lg">
+    <div className="flex flex-col h-full max-h-full min-h-0 bg-brand-surface/60 border border-white/10 rounded-2xl overflow-hidden backdrop-blur-xl">
       <div className="px-4 py-2.5 border-b border-white/10 bg-brand-surface/80 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-2">
           <ListOrdered className="w-4 h-4 text-brand-accent" />
@@ -52,11 +52,7 @@ export function MoveLog({ moves }: MoveLogProps) {
 
       <div
         ref={scrollRef}
-        className={`flex-1 p-3 font-mono text-xs space-y-1 min-h-0 ${
-          movePairs.length > 0
-            ? "overflow-y-auto scrollbar-thin scrollbar-thumb-brand-border/40"
-            : "overflow-hidden"
-        }`}
+        className="flex-1 min-h-0 p-3 font-mono text-xs space-y-1 overflow-y-auto scrollbar-thin scrollbar-thumb-brand-border/40"
       >
         {movePairs.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center text-brand-secondary/50 italic text-center py-10">
@@ -80,7 +76,7 @@ export function MoveLog({ moves }: MoveLogProps) {
                 <span
                   className={`font-semibold tracking-wide justify-self-start ${
                     whiteIsLatest
-                      ? "text-brand-accent bg-brand-accent/10 px-2 py-0.5 rounded border border-brand-accent/25 font-bold shadow-sm"
+                      ? "text-brand-accent bg-brand-accent/10 px-2 py-0.5 rounded border border-brand-accent/25 font-bold"
                       : "text-brand-text"
                   }`}
                 >
@@ -89,7 +85,7 @@ export function MoveLog({ moves }: MoveLogProps) {
                 <span
                   className={`font-semibold tracking-wide justify-self-start ${
                     blackIsLatest
-                      ? "text-brand-accent bg-brand-accent/10 px-2 py-0.5 rounded border border-brand-accent/25 font-bold shadow-sm"
+                      ? "text-brand-accent bg-brand-accent/10 px-2 py-0.5 rounded border border-brand-accent/25 font-bold"
                       : "text-brand-text/80"
                   }`}
                 >

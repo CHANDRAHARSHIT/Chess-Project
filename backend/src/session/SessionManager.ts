@@ -23,6 +23,7 @@ export interface SessionTimings {
   readonly participantGraceMs?: number; // one participant disconnected, other(s) remain
   readonly pauseGraceMs?: number;       // all participants disconnected (PAUSED)
   readonly waitTimeoutMs?: number;      // WAITING no-show
+  readonly matchStartGraceMs?: number;  // READY: clock stays frozen until the client's countdown finishes
 }
 
 /**
@@ -36,6 +37,7 @@ export class SessionManager {
   private readonly participantGraceMs: number;
   private readonly pauseGraceMs: number;
   private readonly waitTimeoutMs: number;
+  private readonly matchStartGraceMs: number;
 
   private readonly sessions = new Map<string, GameSession>();
 
@@ -45,6 +47,7 @@ export class SessionManager {
   private readonly pauseGraceTimers = new Map<string, NodeJS.Timeout>();     // sessionId -> timer
   private readonly waitTimers = new Map<string, NodeJS.Timeout>();          // sessionId -> timer
   private readonly userToSession = new Map<string, string>();               // userId -> sessionId
+  private readonly graceRemaining = new Map<string, number>();              // sessionId -> ms left of match-start grace
 
   constructor(
     private readonly onResult: ResultEmitter = () => {},
@@ -56,6 +59,10 @@ export class SessionManager {
     this.participantGraceMs = timings.participantGraceMs ?? 30_000;
     this.pauseGraceMs = timings.pauseGraceMs ?? 60_000;
     this.waitTimeoutMs = timings.waitTimeoutMs ?? 60_000;
+    // Matches the frontend's "3…2…1…PLAY!" match-sync countdown (4 one-second ticks) plus a
+    // small margin for network latency, so the authoritative clock can never go live before the
+    // countdown overlay has visibly finished on the client.
+    this.matchStartGraceMs = timings.matchStartGraceMs ?? 4_500;
   }
 
   /**
@@ -131,6 +138,11 @@ export class SessionManager {
    * with a 5-minute clock and still have the full 5:00 when they finally moved) at the direct
    * expense of fairness to their opponent — standard chess clock behavior charges the mover
    * from the moment the game is ready to begin, not from their first move.
+   *
+   * M6 amendment: the clock doesn't go live immediately — it stays frozen (lastMoveAt null)
+   * for `matchStartGraceMs`, consumed by tickClocks(), so it can never tick underneath the
+   * client's own "3…2…1…PLAY!" match-sync countdown. This is a fixed, equal delay for both
+   * sides, so it doesn't reopen the free-thinking-time exploit the fix above closed.
    * Idempotent: no-op if session is already READY or beyond.
    */
   notifyAllPresent(sessionId: string): void {
@@ -157,7 +169,11 @@ export class SessionManager {
     });
 
     session.status = "READY";
-    session.clock = { remainingMs: session.clock.remainingMs, lastMoveAt: Date.now() };
+    if (this.matchStartGraceMs > 0) {
+      this.graceRemaining.set(sessionId, this.matchStartGraceMs);
+    } else {
+      session.clock = { remainingMs: session.clock.remainingMs, lastMoveAt: Date.now() };
+    }
     this.clearWaitTimer(sessionId);
     this.broadcastState(session);
   }
@@ -207,6 +223,11 @@ export class SessionManager {
     // clock after each move reflected roughly 2x the real time spent, minus increment). This
     // only credits the increment and resets the anchor that both tickClocks() and the frontend's
     // SideClock use going forward.
+    // A move landing during the match-start grace (e.g. it elapses mid-flight) makes the grace
+    // moot — the clock is live as of `now` below regardless, so any leftover countdown must not
+    // linger and freeze a later tick.
+    this.graceRemaining.delete(sessionId);
+
     const incMs = session.matchDescriptor.timeControl.incrementSeconds * 1000;
     const updatedRemaining = [...session.clock.remainingMs];
     updatedRemaining[sideIndex] = Math.max(0, updatedRemaining[sideIndex] + incMs);
@@ -326,6 +347,10 @@ export class SessionManager {
    * time from game start, matching notifyAllPresent()'s clock-start change. This is the sole
    * mechanism that decrements a side's remaining time in real time — submitMove() only credits
    * increment and resets the anchor (see its M6 comment) to avoid double-charging the same span.
+   *
+   * M6 amendment: also the sole place that consumes a session's match-start grace (see
+   * notifyAllPresent()) — while grace remains, the elapsed span is absorbed into the countdown
+   * instead of the clock, so remainingMs/lastMoveAt stay untouched (frozen) until it runs out.
    */
   tickClocks(elapsedMs: number): void {
     const now = Date.now();
@@ -335,9 +360,25 @@ export class SessionManager {
         continue; // Clocks do not run during CREATED, WAITING, PAUSED, COMPLETED, ABANDONED
       }
 
+      let effectiveElapsed = elapsedMs;
+      const grace = this.graceRemaining.get(session.sessionId);
+      if (grace !== undefined) {
+        const remainingGrace = grace - elapsedMs;
+        if (remainingGrace > 0) {
+          this.graceRemaining.set(session.sessionId, remainingGrace);
+          continue; // Still inside the match-start countdown — clock stays frozen.
+        }
+        // Grace just ran out this tick: activate the clock anchor, charge only the overshoot.
+        this.graceRemaining.delete(session.sessionId);
+        session.clock = { remainingMs: session.clock.remainingMs, lastMoveAt: now };
+        this.broadcastState(session);
+        effectiveElapsed = -remainingGrace;
+        if (effectiveElapsed <= 0) continue;
+      }
+
       const turnSide = this.getTurnSideIndex(session);
       const remaining = [...session.clock.remainingMs];
-      remaining[turnSide] = Math.max(0, remaining[turnSide] - elapsedMs);
+      remaining[turnSide] = Math.max(0, remaining[turnSide] - effectiveElapsed);
 
       session.clock = {
         remainingMs: remaining,
@@ -503,6 +544,15 @@ export class SessionManager {
       const allPresent = session.matchDescriptor.participants.every((p) => present.has(p.userId));
       if (allPresent) {
         this.notifyAllPresent(sessionId);
+      } else {
+        // Nothing has ever been broadcast for a WAITING session (createSession() doesn't send
+        // anything, and the READY broadcast hasn't happened yet) — without this, the just-connected
+        // participant's client has zero session state until the opponent shows up, and renders
+        // neither a "waiting for opponent" message nor an error: it just looks frozen/broken.
+        this.transport.send(userId, {
+          type: "state_update",
+          payload: { state: session.currentState, clock: session.clock, status: session.status },
+        });
       }
       return;
     }
@@ -723,6 +773,7 @@ export class SessionManager {
       this.participantGraceTimers.delete(session.sessionId);
     }
     this.clearPauseGrace(session.sessionId);
+    this.graceRemaining.delete(session.sessionId);
   }
 
   private broadcastState(session: GameSession): void {
