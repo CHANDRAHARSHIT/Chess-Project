@@ -142,7 +142,7 @@ export function EditPositionBoard({
   return (
     <div
       ref={boardFrameRef}
-      className="relative aspect-square overflow-hidden rounded-xl border border-brand-border shadow-xl touch-none select-none"
+      className="relative aspect-square overflow-hidden rounded-xl border border-brand-border touch-none select-none"
       onContextMenu={(event) => event.preventDefault()}
       style={boardSize ? { width: `${boardSize}px`, height: `${boardSize}px`, maxWidth: '100%' } : {}}
     >
@@ -254,7 +254,7 @@ export function EditPositionBoard({
             height: 'clamp(48px, 8vw, 72px)',
             transform: 'translate(-50%, -50%) scale(1.1)',
             opacity: 0.95,
-            filter: 'drop-shadow(0 16px 26px rgba(0, 0, 0, 0.45))',
+            filter: 'none',
           }}
         >
           {(() => {

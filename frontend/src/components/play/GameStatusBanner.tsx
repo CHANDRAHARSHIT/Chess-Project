@@ -74,7 +74,7 @@ export function GameStatusBanner({
       />
 
       <div
-        className={`p-4 rounded-3xl border mb-4 shadow-xl ${
+        className={`p-4 rounded-3xl border mb-4 ${
           isPlayerWinner
             ? 'bg-gradient-to-b from-amber-500/20 to-amber-500/5 border-amber-500/40 text-amber-400'
             : isDraw
@@ -83,11 +83,11 @@ export function GameStatusBanner({
         }`}
       >
         {isPlayerWinner ? (
-          <Trophy className="w-10 h-10 text-amber-400 drop-shadow-md animate-bounce" />
+          <Trophy className="w-10 h-10 text-amber-400 animate-bounce" />
         ) : isDraw ? (
-          <Scale className="w-10 h-10 text-sky-400 drop-shadow-md" />
+          <Scale className="w-10 h-10 text-sky-400" />
         ) : (
-          <ShieldAlert className="w-10 h-10 text-rose-400 drop-shadow-md" />
+          <ShieldAlert className="w-10 h-10 text-rose-400" />
         )}
       </div>
 
@@ -105,7 +105,7 @@ export function GameStatusBanner({
           soundManager.playButtonClick();
           onNewGame();
         }}
-        className="flex items-center gap-2.5 py-3.5 px-8 rounded-2xl font-mono text-xs uppercase tracking-widest font-bold btn-premium-cta btn-glow-container btn-glow-accent cta-shine cursor-pointer shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all"
+        className="flex items-center gap-2.5 py-3.5 px-8 rounded-2xl font-mono text-xs uppercase tracking-widest font-bold btn-premium-cta btn-glow-container btn-glow-accent cta-shine cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-all"
       >
         <RotateCcw className="w-4 h-4 text-brand-accent" />
         <span>Play Again</span>
