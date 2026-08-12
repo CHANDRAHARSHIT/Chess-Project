@@ -39,10 +39,10 @@ import {
 } from "lucide-react";
 import { useOpeningTrainer } from "@/hooks/useOpeningTrainer";
 import { useOpenings } from "@/hooks/useOpenings";
-import { OpeningBoard } from "@/components/openings/OpeningBoard";
-import { OpeningCoachPanel } from "@/components/openings/OpeningCoachPanel";
-import { OpeningProgressBar } from "@/components/openings/OpeningProgressBar";
-import { OpeningCompletionCard } from "@/components/openings/OpeningCompletionCard";
+import { OpeningBoard } from "@/features/openings/OpeningBoard";
+import { OpeningCoachPanel } from "@/features/openings/OpeningCoachPanel";
+import { OpeningProgressBar } from "@/features/openings/OpeningProgressBar";
+import { OpeningCompletionCard } from "@/features/openings/OpeningCompletionCard";
 import { soundManager } from "@/utils/SoundManager";
 import type { Opening } from "@/types/opening";
 

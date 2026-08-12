@@ -24,7 +24,7 @@ import { usePricing } from "@/hooks/usePricing";
 import type { PricingResponse } from "@/services/pricingApi";
 import { useNavigate, useLocation } from "react-router";
 import { useNavigationStack } from "@/hooks/useNavigationStack";
-import { MembershipFeaturesSection } from "@/components/pricing/MembershipFeaturesSection";
+import { MembershipFeaturesSection } from "@/features/billing/MembershipFeaturesSection";
 
 // ─── Decorative floating chess pieces ──────────────────────────────────────────
 const PieceSvg: React.FC<{

@@ -8,8 +8,8 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router";
 import { ArrowLeft } from "lucide-react";
-import { ContentFilterBar } from "@/components/creator/ContentFilterBar";
-import { ContentGridCard } from "@/components/creator/ContentGridCard";
+import { ContentFilterBar } from "@/features/creator/ContentFilterBar";
+import { ContentGridCard } from "@/features/creator/ContentGridCard";
 import { MASTERCLASSES } from "@/data/creatorMockData";
 import { soundManager } from "@/utils/SoundManager";
 

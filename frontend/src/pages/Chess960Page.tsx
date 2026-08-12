@@ -2,11 +2,11 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { ArrowLeft, Bot, HelpCircle, X, Shuffle, ShieldCheck } from 'lucide-react';
 import { useChess960Game } from '@/hooks/useChess960Game';
-import { GameBoard } from '@/components/play/GameBoard';
-import { GameControls } from '@/components/play/GameControls';
-import { MoveLog } from '@/components/play/MoveLog';
-import { GameStatusBanner } from '@/components/play/GameStatusBanner';
-import { Chess960SetupPanel } from '@/components/play/Chess960SetupPanel';
+import { GameBoard } from '@/features/play/components/GameBoard';
+import { GameControls } from '@/features/play/components/GameControls';
+import { MoveLog } from '@/features/play/components/MoveLog';
+import { GameStatusBanner } from '@/features/play/components/GameStatusBanner';
+import { Chess960SetupPanel } from '@/features/play/components/Chess960SetupPanel';
 import { DIFFICULTY_CONFIGS } from '@/types/chess';
 import { soundManager } from '@/utils/SoundManager';
 

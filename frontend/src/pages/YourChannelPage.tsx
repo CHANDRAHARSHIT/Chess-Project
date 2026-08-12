@@ -6,9 +6,9 @@
 
 import { useNavigate } from "react-router";
 import { ArrowLeft } from "lucide-react";
-import { ChannelHero } from "@/components/creator/ChannelHero";
-import { MasterclassCard } from "@/components/creator/MasterclassCard";
-import { StudentBreakthroughs } from "@/components/creator/StudentBreakthroughs";
+import { ChannelHero } from "@/features/creator/ChannelHero";
+import { MasterclassCard } from "@/features/creator/MasterclassCard";
+import { StudentBreakthroughs } from "@/features/creator/StudentBreakthroughs";
 import {
   CREATOR_PROFILE,
   MASTERCLASSES,
