@@ -1,6 +1,13 @@
+/**
+ * VariantsView.tsx
+ *
+ * Renders the full variant browser (search, tab filter, VariantCard grid) as a
+ * tab view inside the Play Hub. Extracted from VariantsPage.tsx — all data,
+ * state, and layout logic is unchanged.
+ */
 import { useState, useMemo } from 'react';
 import { Search, X, Dices, Sparkles, Flame, ShieldAlert, Cpu, Trophy, Zap } from 'lucide-react';
-import { VariantCard, type VariantCardProps } from '../components/play/VariantCard';
+import { VariantCard, type VariantCardProps } from './VariantCard';
 
 const VARIANTS_LIST: VariantCardProps[] = [
   {
@@ -49,17 +56,15 @@ const VARIANTS_LIST: VariantCardProps[] = [
   },
 ];
 
-export default function VariantsPage() {
+export function VariantsView() {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState<'all' | 'playable' | 'lab'>('all');
 
   const filteredVariants = useMemo(() => {
     return VARIANTS_LIST.filter((v) => {
-      // Tab filter
       if (activeTab === 'playable' && !v.isPlayable) return false;
       if (activeTab === 'lab' && v.isPlayable) return false;
 
-      // Text query search
       const q = searchQuery.toLowerCase().trim();
       if (!q) return true;
 
@@ -200,4 +205,3 @@ export default function VariantsPage() {
     </div>
   );
 }
-

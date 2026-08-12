@@ -9,12 +9,10 @@ import {
   BookOpen,
   Database,
   ChevronDown,
-  Zap,
   Clock,
   BarChart2,
   Flag,
   Plus,
-  Shuffle,
   Video,
   UserCircle2,
   ExternalLink,
@@ -22,6 +20,7 @@ import {
   MoveUp,
   Archive,
   Swords,
+  Sparkles,
   Loader2,
 } from "lucide-react";
 import { useLogoAnimation } from "../hooks/useLogoAnimation";
@@ -397,13 +396,11 @@ export default function SidebarLayout({
   const baseSection = [{ name: "Home", href: "/", icon: Home }];
 
   const exploreSection = [
-    { name: "Quick Game", href: "/play", icon: Zap },
-    { name: "Play Online", href: "/play/chess", icon: Swords },
-    { name: "Lessons", href: "/lessons", icon: BookOpen },
-    { name: "Puzzles", href: "/puzzles", icon: Puzzle },
-    { name: "Odyssey", href: "/story-mode", icon: Swords },
-    { name: "Variants", href: "/variants", icon: Shuffle },
-    { name: "Upgrade", href: "/pricing", icon: Crown },
+    { name: "Play",    href: "/play",       icon: Swords   },
+    { name: "Lessons", href: "/lessons",    icon: BookOpen },
+    { name: "Puzzles", href: "/puzzles",    icon: Puzzle   },
+    { name: "Odyssey", href: "/story-mode", icon: Sparkles },
+    { name: "Upgrade", href: "/pricing",    icon: Crown    },
   ];
 
   const footerLinks = [
@@ -471,18 +468,22 @@ export default function SidebarLayout({
     const Icon = item.icon;
     const currentPathWithSearch = location.pathname + location.search;
     const isComingSoon = Boolean(item.comingSoon);
-    const isActive =
-      currentPathWithSearch === item.href ||
-      (Boolean(item.href) &&
-        !item.href?.includes("?") &&
-        location.pathname === item.href) ||
-      item.subItems?.some(
-        (s: NavItem) =>
-          currentPathWithSearch === s.href ||
-          (Boolean(s.href) &&
-            !s.href?.includes("?") &&
-            location.pathname === s.href),
-      );
+    // The Play hub item must stay active for all /play/* paths (hub, chess960)
+    // and for /variants during the redirect-migration period.
+    const isPlayHubItem = item.href === "/play";
+    const isActive = isPlayHubItem
+      ? location.pathname.startsWith("/play") || location.pathname === "/variants"
+      : currentPathWithSearch === item.href ||
+        (Boolean(item.href) &&
+          !item.href?.includes("?") &&
+          location.pathname === item.href) ||
+        item.subItems?.some(
+          (s: NavItem) =>
+            currentPathWithSearch === s.href ||
+            (Boolean(s.href) &&
+              !s.href?.includes("?") &&
+              location.pathname === s.href),
+        );
 
     const isAvatar = item.avatar !== undefined;
     const isCustomLink = customLinkIndex !== undefined;

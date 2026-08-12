@@ -1,18 +1,25 @@
 /**
- * PlayChessPage.tsx
- * Thin state-machine shell: lobby -> match found -> live game -> (back to lobby). No route
- * param drives which view renders — there is no GET /api/session/:id to rehydrate from a URL,
- * so state alone decides (M5 plan §6.1). GameSessionContext's own refresh-rehydration means a
- * refresh mid-game lands back on the game view directly, bypassing the lobby.
+ * PlayOnlineView.tsx
+ *
+ * Renders the multiplayer state machine (lobby → match found → live game) as a
+ * tab view inside the Play Hub. Extracted verbatim from PlayChessPage.tsx.
+ *
+ * ARCHITECTURAL INVARIANT: this component must never be mounted unless the user
+ * is authenticated. The ProtectedRoute wrapper in PlayHubPage enforces this gate,
+ * ensuring the WebSocket connection, MatchmakingContext, and GameSessionContext
+ * side-effects are never triggered for unauthenticated users.
+ *
+ * Zero logic changes from PlayChessPage — all handlers, hooks, and rendering
+ * conditions are identical.
  */
 import { useState } from "react";
-import { useMatchmaking } from "../hooks/useMatchmaking";
-import { useGameSession } from "../hooks/useGameSession";
-import { LobbyView } from "../components/play/LobbyView";
-import { MatchFoundCard } from "../components/play/MatchFoundCard";
-import { PlayChessGame } from "../components/play/PlayChessGame";
+import { useMatchmaking } from "../../hooks/useMatchmaking";
+import { useGameSession } from "../../hooks/useGameSession";
+import { LobbyView } from "./LobbyView";
+import { MatchFoundCard } from "./MatchFoundCard";
+import { PlayChessGame } from "./PlayChessGame";
 
-export default function PlayChessPage() {
+export function PlayOnlineView() {
   const matchmaking = useMatchmaking();
   const gameSession = useGameSession();
   const [historyRefreshKey, setHistoryRefreshKey] = useState(0);
