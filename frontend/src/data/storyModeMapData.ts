@@ -9,7 +9,7 @@
  * difficulty level for chess battles, and edges to connected nodes.
  */
 
-import type { DifficultyLevel } from "../types/chess";
+import type { DifficultyLevel } from "@/types/chess";
 
 // ── Node types ──────────────────────────────────────────────────────────────
 

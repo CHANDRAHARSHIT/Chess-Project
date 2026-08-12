@@ -1,4 +1,4 @@
-import type { PathNode } from '../../../types/PuzzlePath';
+import type { PathNode } from '@/types/PuzzlePath';
 
 export const ROYAL_GOLD_NODES: PathNode[] = [
   {

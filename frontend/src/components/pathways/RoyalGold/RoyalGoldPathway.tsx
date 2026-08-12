@@ -1,9 +1,9 @@
 import React, { useRef, useState, useEffect, useMemo } from 'react';
-import type { PathwayComponentProps, PuzzleTileState } from '../../../types/PuzzlePath';
+import type { PathwayComponentProps, PuzzleTileState } from '@/types/PuzzlePath';
 import { Lock, Check, Target } from 'lucide-react';
-import bgImage from '../../../assets/Background-w-assets.png';
-import tileImage from '../../../assets/Tile.png';
-import bridgeImage from '../../../assets/Bridge.png';
+import bgImage from '@/assets/Background-w-assets.png';
+import tileImage from '@/assets/Tile.png';
+import bridgeImage from '@/assets/Bridge.png';
 import './RoyalGoldPathway.css';
 
 import { ROYAL_GOLD_NODES } from './royalGoldNodes';

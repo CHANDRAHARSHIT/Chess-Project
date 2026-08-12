@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { History, Trophy, Clock } from "lucide-react";
-import { GamesService, type GameHistoryEntry } from "../../services/games.service";
-import { MultiplayerDisabledError } from "../../services/matchmaking.service";
+import { GamesService, type GameHistoryEntry } from "@/services/games.service";
+import { MultiplayerDisabledError } from "@/services/matchmaking.service";
 
 type LoadState = "loading" | "empty" | "error" | "loaded" | "unavailable";
 

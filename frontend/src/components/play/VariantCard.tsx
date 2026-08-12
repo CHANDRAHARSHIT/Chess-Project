@@ -1,7 +1,7 @@
 import { Link } from 'react-router';
 import { ArrowRight, Shuffle, Sparkles, Lock } from 'lucide-react';
-import BoardPreview from '../BoardPreview';
-import { soundManager } from '../../utils/SoundManager';
+import BoardPreview from '@/components/BoardPreview';
+import { soundManager } from '@/utils/SoundManager';
 
 export interface VariantCardProps {
   id: string;

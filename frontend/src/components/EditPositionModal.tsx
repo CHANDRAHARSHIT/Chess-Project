@@ -8,13 +8,13 @@ import {
   parseFenToEditorState,
   type EditorPositionState,
   type EditorTool,
-} from '../utils/positionEditor';
-import { useStockfish } from '../hooks/useStockfish';
+} from '@/utils/positionEditor';
+import { useStockfish } from '@/hooks/useStockfish';
 import { EvaluationBar } from './EvaluationBar';
 import { EditPositionBoard } from './EditPositionBoard';
-import type { BoardOrientation } from '../utils/editModeInteraction';
-import { soundManager } from '../utils/SoundManager';
-import { useBoardSettings } from '../hooks/useBoardSettings';
+import type { BoardOrientation } from '@/utils/editModeInteraction';
+import { soundManager } from '@/utils/SoundManager';
+import { useBoardSettings } from '@/hooks/useBoardSettings';
 
 const PIECE_ROWS = [
   ['wK', 'wQ', 'wR', 'wB', 'wN', 'wP'] as const,

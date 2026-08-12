@@ -1,10 +1,10 @@
 import { useState, useCallback, useEffect, useMemo } from "react";
 import { Chess } from "chess.js";
 import { PuzzleBoard } from "./PuzzleBoard";
-import { PuzzleApiService } from "../services/puzzle.service";
-import type { CuratedPuzzle } from "../types/puzzle";
-import type { PuzzleFilters } from "../types/puzzle";
-import type { ChessPuzzle } from "../utils/PuzzleLoader";
+import { PuzzleApiService } from "@/services/puzzle.service";
+import type { CuratedPuzzle } from "@/types/puzzle";
+import type { PuzzleFilters } from "@/types/puzzle";
+import type { ChessPuzzle } from "@/utils/PuzzleLoader";
 import {
   Trophy,
   Zap,

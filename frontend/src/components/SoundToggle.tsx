@@ -19,7 +19,7 @@
 
 import { useState, useEffect } from 'react';
 import { Volume2, VolumeX } from 'lucide-react';
-import { soundManager } from '../utils/SoundManager';
+import { soundManager } from '@/utils/SoundManager';
 
 const STORAGE_KEY = 'sound-enabled'; // single source of truth for the key
 

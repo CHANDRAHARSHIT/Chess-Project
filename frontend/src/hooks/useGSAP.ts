@@ -11,7 +11,7 @@
  */
 
 import { useEffect, useLayoutEffect, useRef, type RefObject } from 'react';
-import { gsap } from '../utils/gsapConfig';
+import { gsap } from '@/utils/gsapConfig';
 
 type GSAPContextCallback = (ctx: gsap.Context) => void;
 

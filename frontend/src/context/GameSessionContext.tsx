@@ -11,8 +11,8 @@
  * rehydrate session state, so the descriptor itself must be cached, not just the token).
  */
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useSession } from "../hooks/useSession";
-import rollbar from "../config/rollbar";
+import { useSession } from "@/hooks/useSession";
+import rollbar from "@/config/rollbar";
 import { GameSessionContext } from "./gameSessionContext.instance";
 import type { ConnectionStatus } from "./gameSessionContext.instance";
 import type {
@@ -21,7 +21,7 @@ import type {
   StateUpdatePayload,
   PresenceUpdatePayload,
   OutboundMessage,
-} from "../types/multiplayer";
+} from "@/types/multiplayer";
 
 // In production (Vercel) we connect directly to the backend WSS URL because
 // Vercel's edge cannot proxy WebSocket upgrade requests.

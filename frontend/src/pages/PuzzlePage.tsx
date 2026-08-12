@@ -1,24 +1,24 @@
 import { useState, useCallback, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import { RoyalGoldPathway } from '../components/pathways/RoyalGold/RoyalGoldPathway';
-import { ROYAL_GOLD_NODES } from '../components/pathways/RoyalGold/royalGoldNodes';
-import { PATHWAY_NODES } from '../components/pathways';
-import type { PathNode, PlayerProgress } from '../types/PuzzlePath';
-import { PuzzleBoard } from '../components/PuzzleBoard';
-import { CustomPuzzlePanel } from '../components/CustomPuzzlePanel';
-import { CustomPuzzleSession } from '../components/CustomPuzzleSession';
-import type { PuzzleFilters } from '../types/puzzle';
+import { RoyalGoldPathway } from '@/components/pathways/RoyalGold/RoyalGoldPathway';
+import { ROYAL_GOLD_NODES } from '@/components/pathways/RoyalGold/royalGoldNodes';
+import { PATHWAY_NODES } from '@/components/pathways';
+import type { PathNode, PlayerProgress } from '@/types/PuzzlePath';
+import { PuzzleBoard } from '@/components/PuzzleBoard';
+import { CustomPuzzlePanel } from '@/components/CustomPuzzlePanel';
+import { CustomPuzzleSession } from '@/components/CustomPuzzleSession';
+import type { PuzzleFilters } from '@/types/puzzle';
 import {
   HelpCircle,
   SlidersHorizontal,
   ArrowLeft,
   ArrowRight,
 } from 'lucide-react';
-import type { ChessPuzzle } from '../utils/PuzzleLoader';
+import type { ChessPuzzle } from '@/utils/PuzzleLoader';
 import { Chess } from 'chess.js';
-import { Confetti } from '../components/Confetti';
-import rollbar from '../config/rollbar';
-import { usePuzzleProgress } from '../hooks/usePuzzleProgress';
+import { Confetti } from '@/components/Confetti';
+import rollbar from '@/config/rollbar';
+import { usePuzzleProgress } from '@/hooks/usePuzzleProgress';
 
 // Tailwind's `lg` breakpoint. Keep in sync with tailwind config if changed.
 const DESKTOP_BREAKPOINT_PX = 1024;

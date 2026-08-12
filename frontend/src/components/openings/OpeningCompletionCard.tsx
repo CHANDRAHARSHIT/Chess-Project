@@ -6,7 +6,7 @@
  */
 
 import { Check, RotateCcw } from "lucide-react";
-import type { Opening } from "../../types/opening";
+import type { Opening } from "@/types/opening";
 
 interface OpeningCompletionCardProps {
   opening: Opening;

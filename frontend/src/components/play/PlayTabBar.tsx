@@ -6,7 +6,7 @@
  * All state and event handling lives in the parent (PlayHubPage).
  */
 import { Zap, Swords, Shuffle } from "lucide-react";
-import { soundManager } from "../../utils/SoundManager";
+import { soundManager } from "@/utils/SoundManager";
 
 export type PlayTab = "quick" | "online" | "variants";
 

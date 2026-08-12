@@ -10,7 +10,7 @@ import {
   Settings,
   ArrowLeft,
 } from "lucide-react";
-import { soundManager } from "../utils/SoundManager";
+import { soundManager } from "@/utils/SoundManager";
 
 interface StepProps {
   number: number;

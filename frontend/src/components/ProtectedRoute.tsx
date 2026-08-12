@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router";
-import { useSession } from "../hooks/useSession";
+import { useSession } from "@/hooks/useSession";
 import { Loader2 } from "lucide-react";
 
 interface ProtectedRouteProps {

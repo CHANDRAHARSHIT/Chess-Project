@@ -1,6 +1,6 @@
 import React from "react";
 import { MembershipFeatureBanner } from "./MembershipFeatureBanner";
-import { pricingFeatures } from "../../data/pricingFeatures";
+import { pricingFeatures } from "@/data/pricingFeatures";
 
 export interface MembershipFeaturesSectionProps {
   onChoosePlan?: () => void;

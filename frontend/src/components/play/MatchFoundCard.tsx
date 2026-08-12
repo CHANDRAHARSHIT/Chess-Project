@@ -6,11 +6,11 @@
  */
 import { useEffect } from "react";
 import { Zap } from "lucide-react";
-import { ThemedChessboard } from "../ThemedChessboard";
+import { ThemedChessboard } from "@/components/ThemedChessboard";
 import { OpponentIdentity } from "./OpponentIdentity";
-import { useSession } from "../../hooks/useSession";
-import { generateStartingFenFromPositionId } from "../../utils/chess960PositionId";
-import type { MatchDescriptor } from "../../types/multiplayer";
+import { useSession } from "@/hooks/useSession";
+import { generateStartingFenFromPositionId } from "@/utils/chess960PositionId";
+import type { MatchDescriptor } from "@/types/multiplayer";
 
 const HANDOFF_DELAY_MS = 1800;
 

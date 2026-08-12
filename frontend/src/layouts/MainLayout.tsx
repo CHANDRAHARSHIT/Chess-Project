@@ -1,4 +1,4 @@
-import SidebarLayout from '../components/SidebarLayout';
+import SidebarLayout from '@/components/SidebarLayout';
 import { Outlet } from 'react-router';
 
 export default function MainLayout() {

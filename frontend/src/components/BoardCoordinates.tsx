@@ -21,7 +21,7 @@
  *   </div>
  */
 import React from "react";
-import { useBoardSettings } from "../hooks/useBoardSettings";
+import { useBoardSettings } from "@/hooks/useBoardSettings";
 
 interface BoardCoordinatesProps {
   boardOrientation?: "white" | "black";

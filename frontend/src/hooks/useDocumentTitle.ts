@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useLocation, matchPath } from "react-router";
-import { mainRoutes, minimalRoutes } from "../router/routes";
+import { mainRoutes, minimalRoutes } from "@/router/routes";
 
 const ALL_ROUTES = [...mainRoutes, ...minimalRoutes];
 const DEFAULT_TITLE = "XLChess - Chess Platform";

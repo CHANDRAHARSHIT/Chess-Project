@@ -12,7 +12,7 @@ import {
   CheckCircle2,
   ArrowLeft,
 } from 'lucide-react';
-import { soundManager } from '../utils/SoundManager';
+import { soundManager } from '@/utils/SoundManager';
 
 interface Lesson {
   id: string;

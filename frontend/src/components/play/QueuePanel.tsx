@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import { Swords, Shield, Clock, Search, XCircle, RefreshCw, Cpu } from "lucide-react";
-import BoardPreview from "../BoardPreview";
-import { useMatchmaking } from "../../hooks/useMatchmaking";
-import { soundManager } from "../../utils/SoundManager";
+import BoardPreview from "@/components/BoardPreview";
+import { useMatchmaking } from "@/hooks/useMatchmaking";
+import { soundManager } from "@/utils/SoundManager";
 
 function formatMinSec(totalSeconds: number): string {
   const s = Math.max(0, totalSeconds);

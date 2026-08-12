@@ -6,8 +6,8 @@
  */
 
 import { Award, Users, CheckCircle2, Star, BookOpen } from "lucide-react";
-import { useSession } from "../../hooks/useSession";
-import type { CreatorProfile } from "../../data/creatorMockData";
+import { useSession } from "@/hooks/useSession";
+import type { CreatorProfile } from "@/data/creatorMockData";
 
 interface ChannelHeroProps {
   profile: CreatorProfile;

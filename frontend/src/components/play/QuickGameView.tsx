@@ -8,7 +8,7 @@
  * - No "Back to Home" button: the hub's tab bar handles in-hub navigation.
  * - No page-level min-h-screen wrapper: the hub provides the outer container.
  */
-import ProductDemo from "../ProductDemo";
+import ProductDemo from "@/components/ProductDemo";
 
 export function QuickGameView() {
   return (

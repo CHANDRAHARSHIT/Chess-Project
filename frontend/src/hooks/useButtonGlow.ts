@@ -1,6 +1,6 @@
 import { useRef, useLayoutEffect, type RefObject } from 'react';
-import { gsap } from '../utils/gsapConfig';
-import { prefersReducedMotion } from '../utils/gsapConfig';
+import { gsap } from '@/utils/gsapConfig';
+import { prefersReducedMotion } from '@/utils/gsapConfig';
 
 /**
  * useButtonGlow

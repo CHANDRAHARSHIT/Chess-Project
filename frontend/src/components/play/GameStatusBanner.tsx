@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import { Trophy, ShieldAlert, RotateCcw, Scale } from 'lucide-react';
-import { type GameStatus, type GameResult } from '../../types/chess';
-import { soundManager } from '../../utils/SoundManager';
-import { useButtonGlow } from '../../hooks/useButtonGlow';
+import { type GameStatus, type GameResult } from '@/types/chess';
+import { soundManager } from '@/utils/SoundManager';
+import { useButtonGlow } from '@/hooks/useButtonGlow';
 
 interface GameStatusBannerProps {
   status: GameStatus;

@@ -8,11 +8,11 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { Chess, type Square } from 'chess.js';
 import { useStockfish } from './useStockfish';
-import { type DifficultyLevel, type GameStatus, type GameResult } from '../types/chess';
-import { generateChess960FEN } from '../utils/chess960';
-import { parseUciMove, playMoveSound } from '../utils/chessHelpers';
-import { soundManager } from '../utils/SoundManager';
-import rollbar from '../config/rollbar';
+import { type DifficultyLevel, type GameStatus, type GameResult } from '@/types/chess';
+import { generateChess960FEN } from '@/utils/chess960';
+import { parseUciMove, playMoveSound } from '@/utils/chessHelpers';
+import { soundManager } from '@/utils/SoundManager';
+import rollbar from '@/config/rollbar';
 
 export interface Chess960GameOptions {
   playerColor: 'w' | 'b' | 'random';

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
-import { PricingApi, type PricingResponse } from "../services/pricingApi";
-import rollbar from "../config/rollbar";
+import { PricingApi, type PricingResponse } from "@/services/pricingApi";
+import rollbar from "@/config/rollbar";
 
 const FALLBACK_PRICING: PricingResponse = {
   country: "New Zealand",

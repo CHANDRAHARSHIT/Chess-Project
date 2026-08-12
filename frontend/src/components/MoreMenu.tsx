@@ -18,7 +18,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { MoreVertical, Settings, Palette, Volume2, VolumeX, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router';
-import { soundManager } from '../utils/SoundManager';
+import { soundManager } from '@/utils/SoundManager';
 import { ThemeSubmenu } from './ThemeSubmenu';
 
 const STORAGE_KEY = 'sound-enabled';

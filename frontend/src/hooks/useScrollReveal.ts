@@ -9,7 +9,7 @@
  */
 
 import { useRef, type RefObject } from 'react';
-import { gsap, ScrollTrigger, dur, ease } from '../utils/gsapConfig';
+import { gsap, ScrollTrigger, dur, ease } from '@/utils/gsapConfig';
 import { useGSAP } from './useGSAP';
 
 export interface ScrollRevealOptions {

@@ -4,7 +4,7 @@
  * pattern used by PaymentService/OpeningService. No polling or queue-state logic lives here;
  * that belongs to MatchmakingContext. This module only knows how to talk to the endpoint.
  */
-import type { MatchTicket, MatchDescriptor, TicketStatus } from "../types/multiplayer";
+import type { MatchTicket, MatchDescriptor, TicketStatus } from "@/types/multiplayer";
 
 export interface EnqueueResponse {
   ticket: MatchTicket;

@@ -6,8 +6,8 @@
  */
 
 import { Flame, Eye, ThumbsUp } from "lucide-react";
-import { ThemedChessboard } from "../ThemedChessboard";
-import type { MasterclassItem } from "../../data/creatorMockData";
+import { ThemedChessboard } from "@/components/ThemedChessboard";
+import type { MasterclassItem } from "@/data/creatorMockData";
 
 interface MasterclassCardProps {
   item: MasterclassItem;

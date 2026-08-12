@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router";
 import { Code2, Zap, Shield, BookOpen, GitBranch, Globe, ArrowLeft } from "lucide-react";
-import { soundManager } from "../utils/SoundManager";
+import { soundManager } from "@/utils/SoundManager";
 
 interface EndpointProps {
   method: "GET" | "POST" | "DELETE" | "PUT";

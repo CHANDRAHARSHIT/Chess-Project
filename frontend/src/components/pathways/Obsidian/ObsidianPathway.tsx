@@ -1,8 +1,8 @@
 import React, { useRef, useState, useEffect, useMemo } from 'react';
-import type { PathwayComponentProps, PathNode, PuzzleTileState } from '../../../types/PuzzlePath';
+import type { PathwayComponentProps, PathNode, PuzzleTileState } from '@/types/PuzzlePath';
 import { Lock, Check, Flame } from 'lucide-react';
-import bgImage from '../../../assets/Background-w-assets.png';
-import tileImage from '../../../assets/Tile.png';
+import bgImage from '@/assets/Background-w-assets.png';
+import tileImage from '@/assets/Tile.png';
 import './ObsidianPathway.css';
 
 export const OBSIDIAN_NODES: PathNode[] = [

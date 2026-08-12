@@ -40,8 +40,8 @@ import {
 } from "react";
 import { ThemedChessboard } from "./ThemedChessboard";
 import { Chess } from "chess.js";
-import { parseUciMove } from "../utils/chessHelpers";
-import { useStockfish } from "../hooks/useStockfish";
+import { parseUciMove } from "@/utils/chessHelpers";
+import { useStockfish } from "@/hooks/useStockfish";
 import {
   RotateCcw,
   Play,
@@ -52,15 +52,15 @@ import {
   Volume2,
   VolumeX,
 } from "lucide-react";
-import { useConfetti } from "../hooks/useConfetti";
-import { useMoveTrail } from "../hooks/useMoveTrail";
-import { gsap } from "../utils/gsapConfig";
-import { prefersReducedMotion } from "../utils/gsapConfig";
-import { useMoveAnnotation } from "../hooks/useMoveAnnotation";
+import { useConfetti } from "@/hooks/useConfetti";
+import { useMoveTrail } from "@/hooks/useMoveTrail";
+import { gsap } from "@/utils/gsapConfig";
+import { prefersReducedMotion } from "@/utils/gsapConfig";
+import { useMoveAnnotation } from "@/hooks/useMoveAnnotation";
 import { MoveAnnotation } from "./MoveAnnotation";
 import ChessAnimationLayer from "./ChessAnimationLayer";
 import { motion } from "framer-motion";
-import { SoundManager } from "../utils/SoundManager";
+import { SoundManager } from "@/utils/SoundManager";
 import { BoardCoordinates } from "./BoardCoordinates";
 interface ActiveMove {
   startX: number;

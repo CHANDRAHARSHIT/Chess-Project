@@ -1,22 +1,22 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { ThemedChessboard } from "./ThemedChessboard";
 import { Chess } from "chess.js";
-import { useStockfish } from "../hooks/useStockfish";
+import { useStockfish } from "@/hooks/useStockfish";
 import {
   parseUciMove,
   getGameOverReason,
   playMoveSound,
-} from "../utils/chessHelpers";
-import { generateChess960FEN } from "../utils/chess960";
+} from "@/utils/chessHelpers";
+import { generateChess960FEN } from "@/utils/chess960";
 import { EditPositionModal } from "./EditPositionModal";
 import { EvaluationBar } from "./EvaluationBar";
 import {
   validateEditorPosition,
   type EditorPositionState,
-} from "../utils/positionEditor";
-import { DIFFICULTY_CONFIGS, type DifficultyLevel } from "../types/chess";
-import { soundManager } from "../utils/SoundManager";
-import rollbar from "../config/rollbar";
+} from "@/utils/positionEditor";
+import { DIFFICULTY_CONFIGS, type DifficultyLevel } from "@/types/chess";
+import { soundManager } from "@/utils/SoundManager";
+import rollbar from "@/config/rollbar";
 import {
   RotateCcw,
   Lightbulb,
@@ -26,8 +26,8 @@ import {
   Pencil,
   MoreHorizontal,
 } from "lucide-react";
-import { useScrollReveal } from "../hooks/useScrollReveal";
-import { useButtonGlow } from "../hooks/useButtonGlow";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
+import { useButtonGlow } from "@/hooks/useButtonGlow";
 import { BoardCoordinates } from "./BoardCoordinates";
 
 // Board colors + piece set now come from Settings -> Board & Pieces

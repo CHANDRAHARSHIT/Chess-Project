@@ -1,6 +1,6 @@
 import { useContext } from "react";
-import { NavigationStackContext } from "../context/NavigationStackContext";
-import type { NavigationStackContextType } from "../context/NavigationStackContext";
+import { NavigationStackContext } from "@/context/NavigationStackContext";
+import type { NavigationStackContextType } from "@/context/NavigationStackContext";
 
 /**
  * Custom React hook to access the global navigation stack.

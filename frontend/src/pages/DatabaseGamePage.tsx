@@ -10,11 +10,11 @@ import {
   Rewind,
   Compass,
 } from "lucide-react";
-import { ThemedChessboard } from "../components/ThemedChessboard";
-import { BoardCoordinates } from "../components/BoardCoordinates";
+import { ThemedChessboard } from "@/components/ThemedChessboard";
+import { BoardCoordinates } from "@/components/BoardCoordinates";
 
-import { useStockfish } from "../hooks/useStockfish";
-import { MOCK_GAMES } from "../data/mockGames";
+import { useStockfish } from "@/hooks/useStockfish";
+import { MOCK_GAMES } from "@/data/mockGames";
 
 type Tab = "Moves" | "Info";
 

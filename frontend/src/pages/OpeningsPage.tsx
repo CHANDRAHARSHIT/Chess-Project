@@ -37,14 +37,14 @@ import {
   ChevronRight,
   ChevronLeft,
 } from "lucide-react";
-import { useOpeningTrainer } from "../hooks/useOpeningTrainer";
-import { useOpenings } from "../hooks/useOpenings";
-import { OpeningBoard } from "../components/openings/OpeningBoard";
-import { OpeningCoachPanel } from "../components/openings/OpeningCoachPanel";
-import { OpeningProgressBar } from "../components/openings/OpeningProgressBar";
-import { OpeningCompletionCard } from "../components/openings/OpeningCompletionCard";
-import { soundManager } from "../utils/SoundManager";
-import type { Opening } from "../types/opening";
+import { useOpeningTrainer } from "@/hooks/useOpeningTrainer";
+import { useOpenings } from "@/hooks/useOpenings";
+import { OpeningBoard } from "@/components/openings/OpeningBoard";
+import { OpeningCoachPanel } from "@/components/openings/OpeningCoachPanel";
+import { OpeningProgressBar } from "@/components/openings/OpeningProgressBar";
+import { OpeningCompletionCard } from "@/components/openings/OpeningCompletionCard";
+import { soundManager } from "@/utils/SoundManager";
+import type { Opening } from "@/types/opening";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 

@@ -5,7 +5,7 @@
  * only-export-components requires a component-only file for Fast Refresh to work).
  */
 import { createContext } from "react";
-import type { MatchDescriptor, GameResult, StateUpdatePayload } from "../types/multiplayer";
+import type { MatchDescriptor, GameResult, StateUpdatePayload } from "@/types/multiplayer";
 
 export type ConnectionStatus = "idle" | "connecting" | "connected" | "reconnecting" | "disconnected";
 

@@ -1,8 +1,8 @@
 import React, { useRef, useState, useEffect, useMemo } from 'react';
-import type { PathwayComponentProps, PathNode, PuzzleTileState } from '../../../types/PuzzlePath';
+import type { PathwayComponentProps, PathNode, PuzzleTileState } from '@/types/PuzzlePath';
 import { Lock, Check, Leaf } from 'lucide-react';
-import bgImage from '../../../assets/Background-w-assets.png';
-import tileImage from '../../../assets/Tile.png';
+import bgImage from '@/assets/Background-w-assets.png';
+import tileImage from '@/assets/Tile.png';
 import './VerdantForestPathway.css';
 
 export const VERDANT_FOREST_NODES: PathNode[] = [

@@ -1,6 +1,6 @@
 import { ArrowLeft, Search } from "lucide-react";
 import { useNavigate } from "react-router";
-import { soundManager } from "../utils/SoundManager";
+import { soundManager } from "@/utils/SoundManager";
 
 const PLAYERS = [
   {

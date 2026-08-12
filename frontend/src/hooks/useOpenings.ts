@@ -20,8 +20,8 @@
  */
 
 import { useState, useEffect, useCallback } from "react";
-import { OpeningService } from "../services/opening";
-import type { Opening } from "../types/opening";
+import { OpeningService } from "@/services/opening";
+import type { Opening } from "@/types/opening";
 
 const STORAGE_KEY = "xlchess_openings_cache";
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000;

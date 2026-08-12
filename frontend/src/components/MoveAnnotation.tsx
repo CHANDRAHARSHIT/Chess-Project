@@ -1,4 +1,4 @@
-import type { ActiveAnnotation } from '../hooks/useMoveAnnotation';
+import type { ActiveAnnotation } from '@/hooks/useMoveAnnotation';
 
 const FILES = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 

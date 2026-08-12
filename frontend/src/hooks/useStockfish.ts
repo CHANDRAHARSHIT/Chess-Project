@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { type DifficultyLevel, type EngineEvaluation, DIFFICULTY_CONFIGS, type EngineStatus } from '../types/chess';
-import rollbar from '../config/rollbar';
+import { type DifficultyLevel, type EngineEvaluation, DIFFICULTY_CONFIGS, type EngineStatus } from '@/types/chess';
+import rollbar from '@/config/rollbar';
 
 export function useStockfish() {
   const workerRef = useRef<Worker | null>(null);

@@ -5,8 +5,8 @@
  */
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AlertTriangle, Zap, ArrowLeft } from "lucide-react";
-import { useGameSession } from "../../hooks/useGameSession";
-import { useSession } from "../../hooks/useSession";
+import { useGameSession } from "@/hooks/useGameSession";
+import { useSession } from "@/hooks/useSession";
 import { PlayerPanel } from "./PlayerPanel";
 import { MultiplayerBoard, type DerivedMove } from "./MultiplayerBoard";
 import { GameActionBar } from "./GameActionBar";
@@ -14,8 +14,8 @@ import { ConnectionIndicator, type PresenceState } from "./ConnectionIndicator";
 import { ResultRevealModal } from "./ResultRevealModal";
 import { LiveRegion } from "./LiveRegion";
 import { MoveLog } from "./MoveLog";
-import { soundManager } from "../../utils/SoundManager";
-import { generateStartingFenFromPositionId } from "../../utils/chess960PositionId";
+import { soundManager } from "@/utils/SoundManager";
+import { generateStartingFenFromPositionId } from "@/utils/chess960PositionId";
 
 const WAIT_TOO_LONG_MS = 65_000;
 

@@ -12,8 +12,8 @@
 import { useEffect, useRef } from "react";
 import { Trophy, ShieldAlert, Scale, Swords, type LucideIcon } from "lucide-react";
 import confetti from "canvas-confetti";
-import { soundManager } from "../../utils/SoundManager";
-import type { GameResult, TerminationReason } from "../../types/multiplayer";
+import { soundManager } from "@/utils/SoundManager";
+import type { GameResult, TerminationReason } from "@/types/multiplayer";
 
 interface OutcomeStyle {
   pill: string;

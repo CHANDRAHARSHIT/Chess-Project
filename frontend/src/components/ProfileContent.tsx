@@ -13,10 +13,10 @@ import {
   Share2,
   ShieldAlert,
 } from "lucide-react";
-import { useSession } from "../hooks/useSession";
+import { useSession } from "@/hooks/useSession";
 import { useNavigate } from "react-router";
-import { PaymentService } from "../services/payment";
-import rollbar from "../config/rollbar";
+import { PaymentService } from "@/services/payment";
+import rollbar from "@/config/rollbar";
 
 interface PlatformButtonProps {
   name: string;

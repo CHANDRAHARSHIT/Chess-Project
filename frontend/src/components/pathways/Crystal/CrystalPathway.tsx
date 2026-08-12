@@ -1,8 +1,8 @@
 import React, { useRef, useState, useEffect, useMemo } from 'react';
-import type { PathwayComponentProps, PathNode, PuzzleTileState } from '../../../types/PuzzlePath';
+import type { PathwayComponentProps, PathNode, PuzzleTileState } from '@/types/PuzzlePath';
 import { Lock, Check, Snowflake } from 'lucide-react';
-import bgImage from '../../../assets/Plain_BG.png';
-import tileImage from '../../../assets/Tile.png';
+import bgImage from '@/assets/Plain_BG.png';
+import tileImage from '@/assets/Tile.png';
 import './CrystalPathway.css';
 
 export const CRYSTAL_NODES: PathNode[] = [

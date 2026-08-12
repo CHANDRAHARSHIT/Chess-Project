@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Award, Crown, User } from "lucide-react";
-import { GamesService, type LeaderboardEntry } from "../../services/games.service";
-import { MultiplayerDisabledError } from "../../services/matchmaking.service";
+import { GamesService, type LeaderboardEntry } from "@/services/games.service";
+import { MultiplayerDisabledError } from "@/services/matchmaking.service";
 
 type LoadState = "loading" | "empty" | "error" | "loaded";
 

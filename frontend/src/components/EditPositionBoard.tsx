@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { type PositionDataType } from 'react-chessboard';
 import { ThemedChessboard } from './ThemedChessboard';
-import { getSquareFromPointer, type BoardOrientation } from '../utils/editModeInteraction';
+import { getSquareFromPointer, type BoardOrientation } from '@/utils/editModeInteraction';
 import {
   movePieceBetweenSquares,
   setPieceOnSquare,
   type EditorPieceCode,
   type EditorTool,
-} from '../utils/positionEditor';
-import { useBoardSettings } from '../hooks/useBoardSettings';
+} from '@/utils/positionEditor';
+import { useBoardSettings } from '@/hooks/useBoardSettings';
 
 const FILE_LABELS = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'] as const;
 const RANK_LABELS = ['8', '7', '6', '5', '4', '3', '2', '1'] as const;

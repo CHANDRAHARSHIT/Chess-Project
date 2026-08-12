@@ -6,15 +6,15 @@
 
 import { useNavigate } from "react-router";
 import { ArrowLeft } from "lucide-react";
-import { ChannelHero } from "../components/creator/ChannelHero";
-import { MasterclassCard } from "../components/creator/MasterclassCard";
-import { StudentBreakthroughs } from "../components/creator/StudentBreakthroughs";
+import { ChannelHero } from "@/components/creator/ChannelHero";
+import { MasterclassCard } from "@/components/creator/MasterclassCard";
+import { StudentBreakthroughs } from "@/components/creator/StudentBreakthroughs";
 import {
   CREATOR_PROFILE,
   MASTERCLASSES,
   STUDENT_BREAKTHROUGHS,
-} from "../data/creatorMockData";
-import { soundManager } from "../utils/SoundManager";
+} from "@/data/creatorMockData";
+import { soundManager } from "@/utils/SoundManager";
 
 export default function YourChannelPage() {
   const navigate = useNavigate();

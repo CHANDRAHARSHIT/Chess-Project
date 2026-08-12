@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
-import type { UserSubscriptionState, SubscriptionStatus } from "../types/payment";
-import rollbar from "../config/rollbar";
+import type { UserSubscriptionState, SubscriptionStatus } from "@/types/payment";
+import rollbar from "@/config/rollbar";
 
 export function useSubscription() {
   const [subscription, setSubscription] = useState<UserSubscriptionState>({

@@ -1,5 +1,5 @@
-import type { CheckoutSessionResponse, BillingPortalResponse, GetCheckoutSessionResponse } from "../types/payment";
-import rollbar from "../config/rollbar";
+import type { CheckoutSessionResponse, BillingPortalResponse, GetCheckoutSessionResponse } from "@/types/payment";
+import rollbar from "@/config/rollbar";
 
 export class PaymentService {
   /**

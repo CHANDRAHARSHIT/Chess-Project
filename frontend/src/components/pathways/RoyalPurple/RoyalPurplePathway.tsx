@@ -1,8 +1,8 @@
 import React, { useRef, useState, useEffect, useMemo } from 'react';
-import type { PathwayComponentProps, PathNode, PuzzleTileState } from '../../../types/PuzzlePath';
+import type { PathwayComponentProps, PathNode, PuzzleTileState } from '@/types/PuzzlePath';
 import { Lock, Check, Crown } from 'lucide-react';
-import bgImage from '../../../assets/Background-w-assets.png';
-import tileImage from '../../../assets/Tile.png';
+import bgImage from '@/assets/Background-w-assets.png';
+import tileImage from '@/assets/Tile.png';
 import './RoyalPurplePathway.css';
 
 export const ROYAL_PURPLE_NODES: PathNode[] = [
