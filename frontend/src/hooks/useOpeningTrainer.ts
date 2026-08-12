@@ -201,7 +201,7 @@ export function useOpeningTrainer(opening: Opening | null): TrainerState {
       if (status !== "playing" || !opening) return false;
 
       const game = gameRef.current;
-      let move: any = null;
+      let move: ReturnType<typeof game.move> | null = null;
 
       try {
         move = game.move({

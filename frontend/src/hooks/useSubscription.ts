@@ -44,7 +44,7 @@ export function useSubscription() {
           // Build a features map key-value from the database features list
           const featuresMap: Record<string, string> = {};
           if (latestSub.product.features) {
-            latestSub.product.features.forEach((feat: any) => {
+            latestSub.product.features.forEach((feat: { featureKey: string; featureValue: string }) => {
               featuresMap[feat.featureKey] = feat.featureValue;
             });
           }
@@ -70,12 +70,12 @@ export function useSubscription() {
       } else {
         throw new Error(json.message || "Failed to parse user profile.");
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
       // Caught here rather than thrown, so this never reaches the
       // ErrorBoundary — report it manually since it gates premium features.
-      rollbar.error(err, { context: "useSubscription.fetchSubscription" });
-      setError(err.message || "Error synchronizing subscription status.");
+      rollbar.error(err instanceof Error ? err : new Error(String(err)), { context: "useSubscription.fetchSubscription" });
+      setError(err instanceof Error ? err.message : "Error synchronizing subscription status.");
     } finally {
       setLoading(false);
     }

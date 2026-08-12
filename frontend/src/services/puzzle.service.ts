@@ -58,7 +58,7 @@ export class PuzzleApiService {
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        throw new Error((err as any).message || "Failed to fetch themes.");
+        throw new Error((err as Record<string, unknown>).message as string || "Failed to fetch themes.");
       }
 
       const json: GetThemesResponse = await res.json();
@@ -68,11 +68,11 @@ export class PuzzleApiService {
       themesCache = { themes, fetchedAt: now };
 
       return themes;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("[PuzzleApiService.getThemes] Error:", error);
       // Falls back to the stale cache below, so this never reaches the
       // ErrorBoundary — report it manually.
-      rollbar.error(error, { context: "PuzzleApiService.getThemes" });
+      rollbar.error(error instanceof Error ? error : new Error(String(error)), { context: "PuzzleApiService.getThemes" });
       // Return stale cache on error rather than empty, if available
       return themesCache?.themes ?? [];
     }
@@ -113,7 +113,7 @@ export class PuzzleApiService {
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        throw new Error((err as any).message || "Failed to fetch puzzles.");
+        throw new Error((err as Record<string, unknown>).message as string || "Failed to fetch puzzles.");
       }
 
       const json: GetPuzzlesResponse = await res.json();
@@ -123,9 +123,9 @@ export class PuzzleApiService {
       puzzlesCache.set(cacheKey, { puzzles, fetchedAt: now });
 
       return puzzles;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("[PuzzleApiService.getPuzzles] Error:", error);
-      rollbar.error(error, { context: "PuzzleApiService.getPuzzles", filters });
+      rollbar.error(error instanceof Error ? error : new Error(String(error)), { context: "PuzzleApiService.getPuzzles", filters });
       // Return stale cache on error rather than empty, if available
       return cached?.puzzles ?? [];
     }

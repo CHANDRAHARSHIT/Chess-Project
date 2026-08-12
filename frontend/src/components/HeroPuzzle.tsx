@@ -480,6 +480,7 @@ export default function HeroPuzzle({
     [safeSetTimeout],
   );
   const runCheckmateImpact = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     (_kingSq: string | null): Promise<void> => {
       return new Promise((resolve) => {
         if (prefersReducedMotion()) {
@@ -1733,7 +1734,7 @@ export default function HeroPuzzle({
       if (phase0 !== "PUZZLE") return false;
 
       const game = gameRef0.current;
-      const piece = game.get(sourceSquare as any);
+      const piece = game.get(sourceSquare as import("chess.js").Square);
       if (!piece || piece.color !== "w") return false;
 
       const legalMoves = game.moves({ verbose: true });

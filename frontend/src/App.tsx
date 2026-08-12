@@ -16,8 +16,9 @@ import AppRouter from "./router/AppRouter";
 
 import { ParticlesProvider } from "@tsparticles/react";
 import { loadConfettiCannonPreset } from "@tsparticles/preset-confetti-cannon";
+import type { Engine } from "@tsparticles/engine";
 
-const initParticles = async (engine: any) => {
+const initParticles = async (engine: Engine) => {
   await loadConfettiCannonPreset(engine);
 };
 

@@ -201,12 +201,12 @@ export default function ProfileContent() {
       } else {
         throw new Error(json.message || "Failed to load user profile.");
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
       // Only report unexpected errors — a plain 401 for a logged-out user
       // is not an application error and should never hit Rollbar.
-      rollbar.error(err, { context: "ProfileContent.loadProfile" });
-      setError(err.message || "An unexpected error occurred while loading profile.");
+      rollbar.error(err instanceof Error ? err : new Error(String(err)), { context: "ProfileContent.loadProfile" });
+      setError(err instanceof Error ? err.message : "An unexpected error occurred while loading profile.");
     } finally {
       setLoadingProfile(false);
     }
@@ -236,7 +236,7 @@ export default function ProfileContent() {
         year: "numeric",
       });
       return `Joined ${formatter.format(date)}`;
-    } catch (e) {
+    } catch {
       return "Joined July 2026";
     }
   };

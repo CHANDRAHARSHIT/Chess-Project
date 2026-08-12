@@ -27,9 +27,9 @@ export class PathwayProgressApiService {
 
       const json = await res.json();
       return json.data as PathwayProgressData;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("[PathwayProgressApiService.get] Error:", error);
-      rollbar.error(error, { context: "PathwayProgressApiService.get" });
+      rollbar.error(error instanceof Error ? error : new Error(String(error)), { context: "PathwayProgressApiService.get" });
       return null;
     }
   }
@@ -51,9 +51,9 @@ export class PathwayProgressApiService {
         const err = await res.json().catch(() => ({}));
         console.warn("[PathwayProgressApiService.save] Failed:", err);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("[PathwayProgressApiService.save] Error:", error);
-      rollbar.error(error, { context: "PathwayProgressApiService.save" });
+      rollbar.error(error instanceof Error ? error : new Error(String(error)), { context: "PathwayProgressApiService.save" });
     }
   }
 }

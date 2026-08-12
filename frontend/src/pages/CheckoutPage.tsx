@@ -156,11 +156,11 @@ export default function CheckoutPage() {
         );
         setIsProcessing(false);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("[CheckoutPage] Payment redirect error:", error);
-      rollbar.error(error, { context: "CheckoutPage.handleUpgrade" });
+      rollbar.error(error instanceof Error ? error : new Error(String(error)), { context: "CheckoutPage.handleUpgrade" });
       setPaymentError(
-        error?.message ||
+        (error instanceof Error ? error.message : null) ||
           "An unexpected error occurred while establishing a secure billing session. Please try again.",
       );
       setIsProcessing(false);

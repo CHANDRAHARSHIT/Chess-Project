@@ -49,12 +49,12 @@ export function usePricing() {
 
       const data = await PricingApi.getPricing(country);
       setPricing(data);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.warn("[usePricing]: Failed to fetch backend pricing, using fallback NZD pricing.", err);
       // Falls back to NZD pricing below, so this never reaches the
       // ErrorBoundary — report it manually since it affects checkout pricing.
-      rollbar.error(err, { context: "usePricing.fetchPricing" });
-      setError(err.message || "Failed to load local pricing. Displaying default NZD prices.");
+      rollbar.error(err instanceof Error ? err : new Error(String(err)), { context: "usePricing.fetchPricing" });
+      setError(err instanceof Error ? err.message : "Failed to load local pricing. Displaying default NZD prices.");
       setPricing(FALLBACK_PRICING);
     }
   }, [selectedCountry]);

@@ -59,3 +59,26 @@ export interface BillingPortalResponse {
   portalUrl?: string;
   message?: string;
 }
+
+export interface GetCheckoutSessionData {
+  isSubscribed?: boolean;
+  subscription?: {
+    billingInterval?: string;
+    productName?: string;
+    currentPeriodEnd?: string;
+  };
+  session?: {
+    id?: string;
+    status?: string;
+    totalPaidFormatted?: string;
+    customerEmail?: string;
+    currency?: string;
+    symbol?: string;
+  };
+}
+
+export interface GetCheckoutSessionResponse {
+  status: "success" | "fail";
+  message?: string;
+  data?: GetCheckoutSessionData;
+}

@@ -137,11 +137,11 @@ export class OpeningService {
       OpeningService._writeStorage(openings);
 
       return openings;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("[OpeningService.refreshCache] Error:", error);
       // Falls back to the stale cache below, so this never reaches the
       // ErrorBoundary — report it manually.
-      rollbar.error(error, { context: "OpeningService.refreshCache" });
+      rollbar.error(error instanceof Error ? error : new Error(String(error)), { context: "OpeningService.refreshCache" });
       // Return whatever is still in memory/storage rather than an empty list
       return OpeningService._memCache ?? OpeningService._readStorage() ?? [];
     }
@@ -176,9 +176,9 @@ export class OpeningService {
       }
       const json: OpeningResponse = await response.json();
       return json.data.opening;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("[OpeningService.getOpeningById] Error:", error);
-      rollbar.error(error, { context: "OpeningService.getOpeningById", id });
+      rollbar.error(error instanceof Error ? error : new Error(String(error)), { context: "OpeningService.getOpeningById", id });
       return null;
     }
   }

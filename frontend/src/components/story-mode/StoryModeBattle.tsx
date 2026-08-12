@@ -443,6 +443,7 @@ export default function StoryModeBattle({
               style={{ borderRadius: "4px", transform: "translateZ(0)" }}
             >
               <ThemedChessboard
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any -- react-chessboard options object cast
                 options={({
                   position: gameFen,
                   onPieceDrop: ({ sourceSquare, targetSquare }: any) =>

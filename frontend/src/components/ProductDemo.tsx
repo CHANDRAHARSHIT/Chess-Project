@@ -48,7 +48,7 @@ export default function ProductDemo() {
 
   // playerColor = the color the human plays (affects who makes moves)
   // boardOrientation = purely visual board flip (does NOT affect turn logic)
-  // @ts-ignore
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [playerColor, setPlayerColor] = useState<"w" | "b">("w");
   const [boardOrientation, setBoardOrientation] = useState<"white" | "black">(
     "white",

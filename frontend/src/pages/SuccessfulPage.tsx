@@ -51,10 +51,10 @@ export default function SuccessfulPage() {
                   month: "long",
                   year: "numeric",
                 }),
-                txnId: stripeSession.id,
-                selectedPlan: data.subscription.productName,
+                txnId: stripeSession?.id || "",
+                selectedPlan: data.subscription.productName || "Pro Plan",
                 // Use pre-formatted amount from Stripe metadata (e.g. "₹483", "$5", "NZ$9")
-                totalPaid: stripeSession.totalPaidFormatted || "Processing...",
+                totalPaid: stripeSession?.totalPaidFormatted || "Processing...",
                 renewalDate: data.subscription.currentPeriodEnd
                   ? new Date(
                       data.subscription.currentPeriodEnd,
@@ -66,11 +66,11 @@ export default function SuccessfulPage() {
                   : "Pending Verification",
                 username: session?.user?.name || "Grandmaster",
                 email:
-                  stripeSession.customerEmail || session?.user?.email || "",
+                  stripeSession?.customerEmail || session?.user?.email || "",
                 // Currency code from Stripe session (e.g. "INR", "USD", "NZD")
-                currency: stripeSession.currency || "NZD",
+                currency: stripeSession?.currency || "NZD",
                 // Discount formatted with correct symbol
-                discount: `${stripeSession.symbol || ""}0.00`,
+                discount: `${stripeSession?.symbol || ""}0.00`,
               };
               setDetails(upgradeDetails);
               setLoading(false);
@@ -123,7 +123,7 @@ export default function SuccessfulPage() {
     // Verify payment completion flags (both sessionStorage and in-memory window flag)
     const isCompleted =
       sessionStorage.getItem("xlchess_payment_completed") === "true" ||
-      (window as any).xlchess_payment_completed === true;
+      (window as unknown as Record<string, unknown>).xlchess_payment_completed === true;
     const stored = sessionStorage.getItem("xlchess_upgrade_success_data");
 
     if (!isCompleted || !stored) {
@@ -150,8 +150,10 @@ export default function SuccessfulPage() {
       try {
         sessionStorage.removeItem("xlchess_payment_completed");
         sessionStorage.removeItem("xlchess_upgrade_success_data");
-      } catch (e) {}
-      (window as any).xlchess_payment_completed = false;
+      } catch {
+        /* sessionStorage cleanup is best-effort */
+      }
+      (window as unknown as Record<string, unknown>).xlchess_payment_completed = false;
     };
   }, [session, navigate]);
 

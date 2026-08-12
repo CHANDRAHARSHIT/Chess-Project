@@ -12,6 +12,7 @@ export function useMoveTrail() {
     // Disabled in favor of the new canvas trail cleanup inside HeroPuzzle.tsx
   }, []);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const showTrail = useCallback((_from: string, _to: string) => {
     // Disabled in favor of the canvas motion smear during piece movement
   }, []);

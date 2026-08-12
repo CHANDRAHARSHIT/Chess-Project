@@ -1,4 +1,4 @@
-import type { CheckoutSessionResponse, BillingPortalResponse } from "../types/payment";
+import type { CheckoutSessionResponse, BillingPortalResponse, GetCheckoutSessionResponse } from "../types/payment";
 import rollbar from "../config/rollbar";
 
 export class PaymentService {
@@ -21,14 +21,14 @@ export class PaymentService {
       }
 
       return await response.json();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("[PaymentService.createCheckoutSession] Error:", error);
       // Swallowed into a "fail" response here rather than thrown, so this
       // never reaches the ErrorBoundary — report it manually.
-      rollbar.error(error, { context: "PaymentService.createCheckoutSession" });
+      rollbar.error(error instanceof Error ? error : new Error(String(error)), { context: "PaymentService.createCheckoutSession" });
       return {
         status: "fail",
-        message: error.message || "An unexpected error occurred.",
+        message: error instanceof Error ? error.message : "An unexpected error occurred.",
       };
     }
   }
@@ -51,12 +51,12 @@ export class PaymentService {
       }
 
       return await response.json();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("[PaymentService.createBillingPortalSession] Error:", error);
-      rollbar.error(error, { context: "PaymentService.createBillingPortalSession" });
+      rollbar.error(error instanceof Error ? error : new Error(String(error)), { context: "PaymentService.createBillingPortalSession" });
       return {
         status: "fail",
-        message: error.message || "An unexpected error occurred.",
+        message: error instanceof Error ? error.message : "An unexpected error occurred.",
       };
     }
   }
@@ -64,7 +64,7 @@ export class PaymentService {
   /**
    * Retrieves checkout session details from the backend for success verification.
    */
-  static async getCheckoutSession(sessionId: string): Promise<any> {
+  static async getCheckoutSession(sessionId: string): Promise<GetCheckoutSessionResponse> {
     try {
       const response = await fetch(`/api/payments/checkout-session/${sessionId}`, {
         method: "GET",
@@ -79,12 +79,12 @@ export class PaymentService {
       }
 
       return await response.json();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("[PaymentService.getCheckoutSession] Error:", error);
-      rollbar.error(error, { context: "PaymentService.getCheckoutSession" });
+      rollbar.error(error instanceof Error ? error : new Error(String(error)), { context: "PaymentService.getCheckoutSession" });
       return {
         status: "fail",
-        message: error.message || "An unexpected error occurred.",
+        message: error instanceof Error ? error.message : "An unexpected error occurred.",
       };
     }
   }
