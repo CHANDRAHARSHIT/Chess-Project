@@ -419,7 +419,7 @@ export default function StoryModeBattle({
       {/* Dashboard (From ProductDemo) */}
       <div
         ref={dashboardRef}
-        className="luxury-card rounded-sm shadow-2xl p-4 sm:p-6 lg:p-8 w-full max-w-5xl mx-auto"
+        className="luxury-card rounded-sm p-4 sm:p-6 lg:p-8 w-full max-w-5xl mx-auto"
         style={{ opacity: 0 }}
       >
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:items-stretch">
@@ -439,7 +439,7 @@ export default function StoryModeBattle({
           <div className="lg:col-span-7 flex flex-col lg:justify-start justify-center">
             <div
               ref={boardContainerRef}
-              className="aspect-square w-full shadow-xl border border-brand-border relative overflow-hidden"
+              className="aspect-square w-full border border-brand-border relative overflow-hidden"
               style={{ borderRadius: "4px", transform: "translateZ(0)" }}
             >
               <ThemedChessboard
@@ -543,8 +543,7 @@ export default function StoryModeBattle({
                   {showMoreMenu && (
                     <div
                       ref={moreMenuRef}
-                      className="absolute right-0 top-full mt-1.5 z-50 min-w-[160px] rounded-xl border border-brand-border bg-brand-surface py-1 shadow-2xl backdrop-blur-md animate-fade-in overflow-hidden"
-                      style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.3), 0 0 0 1px rgba(212,175,110,0.1)" }}
+                      className="absolute right-0 top-full mt-1.5 z-50 min-w-[160px] rounded-xl border border-brand-border bg-brand-surface py-1 backdrop-blur-md animate-fade-in overflow-hidden"
                     >
                       <button
                         onClick={() => { soundManager.playButtonClick(); handleChess960(); setShowMoreMenu(false); }}
@@ -584,7 +583,7 @@ export default function StoryModeBattle({
                       key={level}
                       className={`py-1 rounded text-center text-xs font-mono transition-all duration-200 ${
                         difficulty === level
-                          ? "bg-brand-accent text-brand-bg shadow-sm font-bold"
+                          ? "bg-brand-accent text-brand-bg font-bold"
                           : "text-brand-secondary/50"
                       }`}
                     >

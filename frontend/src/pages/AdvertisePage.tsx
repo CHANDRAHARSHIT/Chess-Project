@@ -1,31 +1,16 @@
-import { motion, type Variants } from "framer-motion";
 import { useNavigate } from "react-router";
 import { Megaphone, Target, Users, BarChart2, Globe, Zap, ArrowLeft } from "lucide-react";
 import { soundManager } from "../utils/SoundManager";
-
-const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 16 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.07, duration: 0.5, ease: "easeOut" },
-  }),
-};
 
 interface AdFormatCardProps {
   title: string;
   description: string;
   tag: string;
-  index: number;
 }
 
-function AdFormatCard({ title, description, tag, index }: AdFormatCardProps) {
+function AdFormatCard({ title, description, tag }: AdFormatCardProps) {
   return (
-    <motion.div
-      custom={index}
-      variants={fadeUp}
-      initial="hidden"
-      animate="visible"
+    <div
       className="p-5 rounded-2xl border border-brand-border/40 bg-brand-surface/30 hover:border-brand-accent/30 hover:bg-brand-surface/50 transition-all duration-300"
     >
       <span className="inline-block text-xs font-mono text-brand-accent uppercase tracking-widest bg-brand-accent/10 border border-brand-accent/20 rounded-full px-2.5 py-0.5 mb-3">
@@ -33,7 +18,7 @@ function AdFormatCard({ title, description, tag, index }: AdFormatCardProps) {
       </span>
       <h3 className="text-base font-display font-semibold text-brand-text mb-2">{title}</h3>
       <p className="text-sm text-brand-secondary leading-relaxed">{description}</p>
-    </motion.div>
+    </div>
   );
 }
 
@@ -107,11 +92,7 @@ export default function AdvertisePage() {
               <span>Back to Home</span>
             </button>
           </div>
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
+          <div>
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-accent/30 bg-brand-accent/5 mb-6">
               <Megaphone className="w-3.5 h-3.5 text-brand-accent" />
               <span className="text-xs font-mono text-brand-accent uppercase tracking-widest font-semibold">
@@ -127,39 +108,31 @@ export default function AdvertisePage() {
               partnership opportunities that place your message in front of
               players who are passionate, attentive, and growth-oriented.
             </p>
-          </motion.div>
+          </div>
         </div>
       </div>
 
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-6 py-12">
         {/* Audience Stats */}
-        <motion.section
-          custom={0}
-          variants={fadeUp}
-          initial="hidden"
-          animate="visible"
+        <section
           className="mb-14"
         >
           <h2 className="text-xl font-display font-semibold mb-6 text-brand-text">
             Our Audience
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-            {stats.map((s, i) => {
+            {stats.map((s) => {
               const Icon = s.icon;
               return (
-                <motion.div
+                <div
                   key={s.label}
-                  custom={i + 1}
-                  variants={fadeUp}
-                  initial="hidden"
-                  animate="visible"
                   className="flex flex-col items-center text-center p-5 rounded-2xl border border-brand-border/40 bg-brand-surface/30"
                 >
                   <Icon className="w-5 h-5 text-brand-accent mb-2" />
                   <span className="text-2xl font-bold text-brand-text">{s.value}</span>
                   <span className="text-xs text-brand-secondary mt-1 leading-snug">{s.label}</span>
-                </motion.div>
+                </div>
               );
             })}
           </div>
@@ -180,24 +153,20 @@ export default function AdvertisePage() {
               high-attention sessions ideal for brand exposure.
             </p>
           </div>
-        </motion.section>
+        </section>
 
         <div className="w-full h-px bg-gradient-to-r from-transparent via-brand-accent/20 to-transparent mb-14" />
 
         {/* Ad Formats */}
         <section className="mb-14">
-          <motion.h2
-            custom={6}
-            variants={fadeUp}
-            initial="hidden"
-            animate="visible"
+          <h2
             className="text-xl font-display font-semibold mb-6 text-brand-text"
           >
             Advertising Formats
-          </motion.h2>
+          </h2>
           <div className="grid sm:grid-cols-2 gap-4">
-            {adFormats.map((f, i) => (
-              <AdFormatCard key={f.title} {...f} index={i + 7} />
+            {adFormats.map((f) => (
+              <AdFormatCard key={f.title} {...f} />
             ))}
           </div>
         </section>
@@ -205,11 +174,7 @@ export default function AdvertisePage() {
         <div className="w-full h-px bg-gradient-to-r from-transparent via-brand-accent/20 to-transparent mb-14" />
 
         {/* Brand Safety */}
-        <motion.section
-          custom={14}
-          variants={fadeUp}
-          initial="hidden"
-          animate="visible"
+        <section
           className="mb-14"
         >
           <h2 className="text-xl font-display font-semibold mb-4 text-brand-text">
@@ -231,14 +196,10 @@ export default function AdvertisePage() {
               moderation.
             </p>
           </div>
-        </motion.section>
+        </section>
 
         {/* CTA */}
-        <motion.section
-          custom={15}
-          variants={fadeUp}
-          initial="hidden"
-          animate="visible"
+        <section
           className="rounded-2xl border border-brand-accent/20 bg-brand-accent/5 p-8 text-center"
         >
           <Zap className="w-8 h-8 text-brand-accent mx-auto mb-4" />
@@ -256,7 +217,7 @@ export default function AdvertisePage() {
           >
             Contact Our Partnerships Team
           </a>
-        </motion.section>
+        </section>
       </div>
     </div>
   );

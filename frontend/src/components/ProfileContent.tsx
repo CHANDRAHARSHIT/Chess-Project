@@ -33,7 +33,7 @@ const PlatformButton: React.FC<PlatformButtonProps> = ({ name, icon, brandColor 
       onClick={() => alert(`${name} connection coming in the next release!`)}
       className="flex items-center justify-center gap-2.5 bg-brand-text/5 hover:bg-brand-text/10 active:scale-[0.98] border border-white/10 hover:border-brand-accent/40 rounded-xl py-3 px-4 transition-all duration-200 cursor-pointer text-sm font-sans font-medium text-brand-secondary hover:text-brand-text group relative overflow-hidden w-full"
       style={{
-        boxShadow: hovered ? `0 0 12px ${brandColor}15` : 'none',
+        boxShadow: 'none',
       }}
     >
       <div
@@ -245,7 +245,7 @@ export default function ProfileContent() {
     <>
       {/* LOADING STATE (Skeleton card) */}
       {loadingProfile && (
-        <div className="w-full bg-gradient-to-br from-brand-surface/60 via-brand-surface/40 to-brand-bg/80 border border-[rgba(212,175,110,0.60)] shadow-2xl backdrop-blur-xl rounded-2xl p-6 sm:p-10 relative overflow-hidden animate-pulse">
+        <div className="w-full bg-gradient-to-br from-brand-surface/60 via-brand-surface/40 to-brand-bg/80 border border-[rgba(212,175,110,0.60)] backdrop-blur-xl rounded-2xl p-6 sm:p-10 relative overflow-hidden animate-pulse">
           <div className="flex flex-col md:flex-row items-center md:items-start gap-8 pb-8 border-b border-[rgba(212,175,110,0.20)]">
             <div className="w-32 h-32 md:w-36 md:h-36 rounded-full bg-brand-surface/80 flex-shrink-0" />
             <div className="flex-1 w-full flex flex-col items-center md:items-start gap-3 mt-2">
@@ -271,7 +271,7 @@ export default function ProfileContent() {
 
       {/* UNAUTHENTICATED STATE */}
       {!loadingProfile && status !== "authenticated" && (
-        <div className="w-full bg-gradient-to-br from-brand-surface/60 via-brand-surface/40 to-brand-bg/80 border border-[rgba(212,175,110,0.40)] shadow-2xl backdrop-blur-xl rounded-2xl p-10 flex flex-col items-center gap-5 text-center select-none">
+        <div className="w-full bg-gradient-to-br from-brand-surface/60 via-brand-surface/40 to-brand-bg/80 border border-[rgba(212,175,110,0.40)] backdrop-blur-xl rounded-2xl p-10 flex flex-col items-center gap-5 text-center select-none">
           {/* Icon */}
           <div className="w-16 h-16 rounded-full bg-brand-accent/10 border border-brand-accent/20 flex items-center justify-center text-brand-accent">
             <ShieldAlert className="w-8 h-8" />
@@ -292,7 +292,7 @@ export default function ProfileContent() {
           {/* CTA */}
           <button
             onClick={() => signIn()}
-            className="mt-2 inline-flex items-center gap-2 px-7 py-3 rounded-xl font-sans text-sm font-bold bg-brand-accent text-brand-bg hover:bg-brand-accent/90 transition-all duration-200 active:scale-[0.98] cursor-pointer shadow-md shadow-brand-accent/20"
+            className="mt-2 inline-flex items-center gap-2 px-7 py-3 rounded-xl font-sans text-sm font-bold bg-brand-accent text-brand-bg hover:bg-brand-accent/90 transition-all duration-200 active:scale-[0.98] cursor-pointer"
           >
             Log In
           </button>
@@ -312,7 +312,7 @@ export default function ProfileContent() {
 
       {/* GENERIC ERROR STATE (real unexpected errors only, not 401) */}
       {!loadingProfile && status === "authenticated" && error && (
-        <div className="w-full bg-gradient-to-br from-red-950/20 via-brand-surface/40 to-brand-bg/80 border border-red-500/20 shadow-2xl backdrop-blur-xl rounded-2xl p-8 text-center flex flex-col items-center gap-4">
+        <div className="w-full bg-gradient-to-br from-red-950/20 via-brand-surface/40 to-brand-bg/80 border border-red-500/20 backdrop-blur-xl rounded-2xl p-8 text-center flex flex-col items-center gap-4">
           <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center text-red-400">
             <AlertCircle className="w-6 h-6" />
           </div>
@@ -320,7 +320,7 @@ export default function ProfileContent() {
           <p className="font-sans text-brand-secondary text-sm max-w-md">{error}</p>
           <button
             onClick={fetchProfile}
-            className="btn-gold-solid mt-2 font-sans font-semibold text-sm bg-brand-accent hover:bg-brand-accent/80 text-brand-text px-5 py-2.5 rounded-lg border border-brand-accent/30 transition-all duration-200 active:scale-[0.98] cursor-pointer shadow-md shadow-brand-accent/20"
+            className="btn-gold-solid mt-2 font-sans font-semibold text-sm bg-brand-accent hover:bg-brand-accent/80 text-brand-text px-5 py-2.5 rounded-lg border border-brand-accent/30 transition-all duration-200 active:scale-[0.98] cursor-pointer"
           >
             Try Again
           </button>
@@ -329,7 +329,7 @@ export default function ProfileContent() {
 
       {/* SUCCESS STATE */}
       {!loadingProfile && !error && profile && (
-        <div className="w-full bg-gradient-to-br from-brand-surface/60 via-brand-surface/40 to-brand-bg/80 border border-[rgba(212,175,110,0.60)] shadow-2xl backdrop-blur-xl rounded-2xl p-6 sm:p-10 relative overflow-hidden">
+        <div className="w-full bg-gradient-to-br from-brand-surface/60 via-brand-surface/40 to-brand-bg/80 border border-[rgba(212,175,110,0.60)] backdrop-blur-xl rounded-2xl p-6 sm:p-10 relative overflow-hidden">
           {/* Background Glows for visual excellence */}
           <div className="absolute top-0 right-0 w-72 h-72 bg-brand-accent/5 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute bottom-0 left-0 w-72 h-72 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none" />
@@ -337,7 +337,7 @@ export default function ProfileContent() {
           {/* Profile Info Header */}
           <div className="flex flex-col md:flex-row items-center md:items-start gap-8 pb-8 border-b border-[rgba(212,175,110,0.20)]">
             {/* Profile Picture */}
-            <div className="w-32 h-32 md:w-36 md:h-36 rounded-full overflow-hidden border border-brand-accent/40 shadow-lg shadow-brand-bg/80 flex-shrink-0 bg-brand-surface relative group">
+            <div className="w-32 h-32 md:w-36 md:h-36 rounded-full overflow-hidden border border-brand-accent/40 flex-shrink-0 bg-brand-surface relative group">
               {profile.image ? (
                 <img
                   src={profile.image}
@@ -362,7 +362,7 @@ export default function ProfileContent() {
                   {profile.name || "Anonymous Player"}
                 </h2>
                 {profile.subscriptions?.[0] && (profile.subscriptions[0].status === "ACTIVE" || profile.subscriptions[0].status === "TRIALING") && (
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-accent/20 border border-brand-accent/40 text-brand-accent text-[10px] font-mono font-bold tracking-wider uppercase select-none shadow-[0_0_15px_rgba(212,175,110,0.15)] mt-2 md:mt-0">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-accent/20 border border-brand-accent/40 text-brand-accent text-[10px] font-mono font-bold tracking-wider uppercase select-none mt-2 md:mt-0">
                     <Award className="w-3.5 h-3.5 fill-current" />
                     Premium
                   </span>

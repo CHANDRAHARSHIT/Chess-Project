@@ -1,31 +1,16 @@
-import { motion, type Variants } from "framer-motion";
 import { useNavigate } from "react-router";
 import { Paintbrush, Video, BookOpen, BarChart2, Users, Zap, ArrowLeft } from "lucide-react";
 import { soundManager } from "../utils/SoundManager";
-
-const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 16 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.07, duration: 0.5, ease: "easeOut" },
-  }),
-};
 
 interface FeatureCardProps {
   icon: React.ComponentType<{ className?: string }>;
   title: string;
   description: string;
-  index: number;
 }
 
-function FeatureCard({ icon: Icon, title, description, index }: FeatureCardProps) {
+function FeatureCard({ icon: Icon, title, description }: FeatureCardProps) {
   return (
-    <motion.div
-      custom={index}
-      variants={fadeUp}
-      initial="hidden"
-      animate="visible"
+    <div
       className="flex gap-4 p-5 rounded-2xl border border-brand-border/40 bg-brand-surface/30 hover:border-brand-accent/30 hover:bg-brand-surface/50 transition-all duration-300"
     >
       <div className="shrink-0 w-10 h-10 rounded-xl bg-brand-accent/10 border border-brand-accent/20 flex items-center justify-center mt-0.5">
@@ -35,7 +20,7 @@ function FeatureCard({ icon: Icon, title, description, index }: FeatureCardProps
         <h3 className="text-base font-display font-semibold text-brand-text mb-1">{title}</h3>
         <p className="text-sm text-brand-secondary leading-relaxed">{description}</p>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -102,11 +87,7 @@ export default function CreatorPage() {
               <span>Back to Home</span>
             </button>
           </div>
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
+          <div>
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-accent/30 bg-brand-accent/5 mb-6">
               <Paintbrush className="w-3.5 h-3.5 text-brand-accent" />
               <span className="text-xs font-mono text-brand-accent uppercase tracking-widest font-semibold">
@@ -122,18 +103,14 @@ export default function CreatorPage() {
               amateur, XLChess gives you the tools to teach, inspire, and build
               a community around the game you love.
             </p>
-          </motion.div>
+          </div>
         </div>
       </div>
 
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-6 py-12">
         {/* Why Create */}
-        <motion.section
-          custom={0}
-          variants={fadeUp}
-          initial="hidden"
-          animate="visible"
+        <section
           className="mb-14"
         >
           <h2 className="text-xl font-display font-semibold mb-4 text-brand-text">
@@ -163,24 +140,20 @@ export default function CreatorPage() {
               we share in the success together.
             </p>
           </div>
-        </motion.section>
+        </section>
 
         <div className="w-full h-px bg-gradient-to-r from-transparent via-brand-accent/20 to-transparent mb-14" />
 
         {/* Creator Tools */}
         <section className="mb-14">
-          <motion.h2
-            custom={7}
-            variants={fadeUp}
-            initial="hidden"
-            animate="visible"
+          <h2
             className="text-xl font-display font-semibold mb-6 text-brand-text"
           >
             Creator Tools and Features
-          </motion.h2>
+          </h2>
           <div className="grid sm:grid-cols-2 gap-4">
-            {creatorFeatures.map((f, i) => (
-              <FeatureCard key={f.title} {...f} index={i + 8} />
+            {creatorFeatures.map((f) => (
+              <FeatureCard key={f.title} {...f} />
             ))}
           </div>
         </section>
@@ -188,11 +161,7 @@ export default function CreatorPage() {
         <div className="w-full h-px bg-gradient-to-r from-transparent via-brand-accent/20 to-transparent mb-14" />
 
         {/* Requirements */}
-        <motion.section
-          custom={15}
-          variants={fadeUp}
-          initial="hidden"
-          animate="visible"
+        <section
           className="mb-14"
         >
           <h2 className="text-xl font-display font-semibold mb-4 text-brand-text">
@@ -214,16 +183,12 @@ export default function CreatorPage() {
               for details on how copyright applies to creator content.
             </p>
           </div>
-        </motion.section>
+        </section>
 
         <div className="w-full h-px bg-gradient-to-r from-transparent via-brand-accent/20 to-transparent mb-14" />
 
         {/* CTA */}
-        <motion.section
-          custom={16}
-          variants={fadeUp}
-          initial="hidden"
-          animate="visible"
+        <section
           className="rounded-2xl border border-brand-accent/20 bg-brand-accent/5 p-8 text-center"
         >
           <h2 className="text-xl font-display font-semibold mb-3 text-brand-text">
@@ -241,7 +206,7 @@ export default function CreatorPage() {
           >
             Apply to Become a Creator
           </a>
-        </motion.section>
+        </section>
       </div>
     </div>
   );

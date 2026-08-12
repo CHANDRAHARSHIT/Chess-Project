@@ -985,7 +985,7 @@ export default function SidebarLayout({
         {/* Desktop Fixed Hover SubMenu (Portalled out of sidebar) */}
         {hoveredSubMenu && (
           <div
-            className="fixed z-[100] w-[14rem] rounded-2xl border border-brand-border/60 py-2 shadow-[0_8px_30px_rgb(0,0,0,0.8)] bg-brand-bg animate-in fade-in zoom-in-95 duration-150"
+            className="fixed z-[100] w-[14rem] rounded-2xl border border-brand-border/60 py-2 bg-brand-bg animate-in fade-in zoom-in-95 duration-150"
             style={{ top: hoveredSubMenu.top, left: hoveredSubMenu.left }}
             onMouseEnter={() => {
               if (hoverTimeout.current) clearTimeout(hoverTimeout.current);
@@ -1263,7 +1263,7 @@ export default function SidebarLayout({
         {/* Add Link Modal */}
         {isAddLinkModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-            <div className="bg-brand-surface border border-brand-border p-6 rounded-2xl w-full max-w-[22rem] shadow-2xl">
+            <div className="bg-brand-surface border border-brand-border p-6 rounded-2xl w-full max-w-[22rem]">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-bold text-brand-text tracking-wide">
                   {editLinkIndex !== null ? "Edit Link" : "Add Custom Link"}
@@ -1287,7 +1287,7 @@ export default function SidebarLayout({
                     value={newLinkName}
                     onChange={(e) => setNewLinkName(e.target.value)}
                     placeholder="e.g. Analysis Board"
-                    className="w-full bg-brand-surface border border-brand-border rounded-xl px-4 py-3 text-[14px] text-brand-text placeholder-brand-text/20 focus:outline-none focus:border-brand-accent transition-colors shadow-inner"
+                    className="w-full bg-brand-surface border border-brand-border rounded-xl px-4 py-3 text-[14px] text-brand-text placeholder-brand-text/20 focus:outline-none focus:border-brand-accent transition-colors"
                   />
                 </div>
 
@@ -1298,7 +1298,7 @@ export default function SidebarLayout({
                   <button
                     type="button"
                     onClick={() => setIsUrlDropdownOpen(!isUrlDropdownOpen)}
-                    className={`w-full bg-brand-surface border ${isUrlDropdownOpen ? "border-brand-accent" : "border-brand-border"} rounded-xl px-4 py-3 text-[14px] text-left text-brand-text focus:outline-none transition-colors flex justify-between items-center shadow-inner cursor-pointer`}
+                    className={`w-full bg-brand-surface border ${isUrlDropdownOpen ? "border-brand-accent" : "border-brand-border"} rounded-xl px-4 py-3 text-[14px] text-left text-brand-text focus:outline-none transition-colors flex justify-between items-center cursor-pointer`}
                   >
                     <span>
                       {urlOptions.find((o) => o.value === newLinkUrl)?.label ||
@@ -1310,7 +1310,7 @@ export default function SidebarLayout({
                   </button>
 
                   {isUrlDropdownOpen && (
-                    <div className="absolute top-[calc(100%+8px)] left-0 w-full bg-brand-surface border border-brand-border rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.8)] z-50 overflow-hidden py-1.5 animate-in fade-in slide-in-from-top-2 duration-200">
+                    <div className="absolute top-[calc(100%+8px)] left-0 w-full bg-brand-surface border border-brand-border rounded-xl z-50 overflow-hidden py-1.5 animate-in fade-in slide-in-from-top-2 duration-200">
                       {urlOptions.map((option) => (
                         <button
                           key={option.value}
