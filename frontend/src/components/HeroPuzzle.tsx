@@ -11,19 +11,18 @@
  *
  * â”€â”€ Premium Animation Systems â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
  * 1. Board entrance: scale+fade from slightly below on page load
- * 2. Cursor glow: radial light follows mouse across board (useBoardCursorGlow)
- * 3. Move trail: SVG animated arrow from source â†’ dest (useMoveTrail)
- * 4. Piece lift: CSS :hover translateY + drop-shadow (index.css)
- * 5. Last-move highlight: amber squares with fade keyframe
- * 6. Checkmate impact sequence:
+ * 2. Move trail: SVG animated arrow from source â†’ dest (useMoveTrail)
+ * 3. Piece lift: CSS :hover translateY + drop-shadow (index.css)
+ * 4. Last-move highlight: amber squares with fade keyframe
+ * 5. Checkmate impact sequence:
  *    a) Board white flash
  *    b) King square red pulse
  *    c) Full-screen "CHECKMATE" overlay (GSAP timeline)
  *    d) Board glow expansion ring
- * 7. Confetti burst (useConfetti) â€” brand colors
- * 8. "Puzzle Solved!" badge with spring pop
- * 9. Notation panel with slide-in entries
- * 10. All animations: transforms + opacity only â†’ 60fps
+ * 6. Confetti burst (useConfetti) â€” brand colors
+ * 7. "Puzzle Solved!" badge with spring pop
+ * 8. Notation panel with slide-in entries
+ * 9. All animations: transforms + opacity only â†’ 60fps
  *
  * â”€â”€ Architecture â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
  * - Data-driven: swap PUZZLE const to change puzzle
