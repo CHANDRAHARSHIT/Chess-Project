@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { PricingApi, type PricingResponse } from "@/services/pricingApi";
+import { PricingApi, type PricingResponse } from "@/features/billing/pricing.service";
 import rollbar from "@/shared/lib/rollbar";
 
 const FALLBACK_PRICING: PricingResponse = {

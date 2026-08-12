@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import { Swords, Shield, Clock, Search, XCircle, RefreshCw, Cpu } from "lucide-react";
 import BoardPreview from "@/shared/ui/BoardPreview";
-import { useMatchmaking } from "@/hooks/useMatchmaking";
+import { useMatchmaking } from "@/features/play/useMatchmaking";
 import { soundManager } from "@/shared/lib/SoundManager";
 
 function formatMinSec(totalSeconds: number): string {

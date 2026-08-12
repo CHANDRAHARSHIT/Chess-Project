@@ -10,7 +10,7 @@ import { useNavigate } from "react-router";
 import { ArrowLeft } from "lucide-react";
 import { ContentFilterBar } from "@/features/creator/ContentFilterBar";
 import { ContentGridCard } from "@/features/creator/ContentGridCard";
-import { MASTERCLASSES } from "@/data/creatorMockData";
+import { MASTERCLASSES } from "@/features/creator/creatorMockData";
 import { soundManager } from "@/shared/lib/SoundManager";
 
 export default function YourContentPage() {

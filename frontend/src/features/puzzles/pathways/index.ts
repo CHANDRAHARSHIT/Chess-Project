@@ -1,5 +1,5 @@
 import React from 'react';
-import type { PathwayComponentProps, PathNode } from '@/types/PuzzlePath';
+import type { PathwayComponentProps, PathNode } from '@/features/puzzles/pathway.types';
 import { RoyalGoldPathway } from './RoyalGold/RoyalGoldPathway';
 import { ROYAL_GOLD_NODES } from './RoyalGold/royalGoldNodes';
 import { RoyalPurplePathway, ROYAL_PURPLE_NODES } from './RoyalPurple/RoyalPurplePathway';

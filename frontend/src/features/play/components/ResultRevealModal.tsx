@@ -13,7 +13,7 @@ import { useEffect, useRef } from "react";
 import { Trophy, ShieldAlert, Scale, Swords, type LucideIcon } from "lucide-react";
 import confetti from "canvas-confetti";
 import { soundManager } from "@/shared/lib/SoundManager";
-import type { GameResult, TerminationReason } from "@/types/multiplayer";
+import type { GameResult, TerminationReason } from "@/features/play/multiplayer.types";
 
 interface OutcomeStyle {
   pill: string;

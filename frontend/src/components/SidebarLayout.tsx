@@ -25,9 +25,9 @@ import {
 } from "lucide-react";
 import { useLogoAnimation } from "@/hooks/useLogoAnimation";
 import { soundManager } from "@/shared/lib/SoundManager";
-import { useSession } from "@/hooks/useSession";
+import { useSession } from "@/features/account/useSession";
 import { AvatarDropdown } from "./AvatarDropdown";
-import { AuthModal } from "./AuthModal";
+import { AuthModal } from "@/features/account/AuthModal";
 import { MoreMenu } from "./MoreMenu";
 import { useNavigate, useLocation } from "react-router";
 import { useNavigationStack } from "@/hooks/useNavigationStack";

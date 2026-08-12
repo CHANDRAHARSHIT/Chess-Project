@@ -18,7 +18,7 @@ import CreatorPage from "@/pages/CreatorPage";
 import AdvertisePage from "@/pages/AdvertisePage";
 import DevelopersPage from "@/pages/DevelopersPage";
 import HowXLChessWorksPage from "@/pages/HowXLChessWorksPage";
-import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { ProtectedRoute } from "@/features/account/ProtectedRoute";
 import DatabasePage from "@/pages/DatabasePage";
 import DatabasePlayerPage from "@/pages/DatabasePlayerPage";
 import DatabaseGamePage from "@/pages/DatabaseGamePage";

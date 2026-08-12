@@ -12,13 +12,13 @@ import { RotateCcw, Map, Home, X, LogIn } from "lucide-react";
 import {
   STORY_MAP_NODES,
   type NodeStatus,
-} from "@/data/storyModeMapData";
+} from "@/features/story-mode/storyModeMapData";
 import StoryModeNodeIcon from "./StoryModeNodeIcon";
 import StoryModeMapCanvas from "./StoryModeMapCanvas";
 import StoryModeBattle from "./StoryModeBattle";
 import StoryModeEncounter from "./StoryModeEncounter";
 import StoryModeRestSite from "./StoryModeRestSite";
-import { useSession } from "@/hooks/useSession";
+import { useSession } from "@/features/account/useSession";
 
 type ActiveView =
   | { kind: "map" }

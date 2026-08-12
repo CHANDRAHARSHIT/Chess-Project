@@ -52,11 +52,11 @@ import {
   Volume2,
   VolumeX,
 } from "lucide-react";
-import { useConfetti } from "@/hooks/useConfetti";
-import { useMoveTrail } from "@/hooks/useMoveTrail";
+import { useConfetti } from "@/features/landing/useConfetti";
+import { useMoveTrail } from "@/features/landing/useMoveTrail";
 import { gsap } from "@/shared/lib/gsapConfig";
 import { prefersReducedMotion } from "@/shared/lib/gsapConfig";
-import { useMoveAnnotation } from "@/hooks/useMoveAnnotation";
+import { useMoveAnnotation } from "@/features/landing/useMoveAnnotation";
 import { MoveAnnotation } from "./MoveAnnotation";
 import ChessAnimationLayer from "./ChessAnimationLayer";
 import { motion } from "framer-motion";

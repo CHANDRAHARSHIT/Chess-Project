@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, useMemo } from 'react';
-import type { PathwayComponentProps, PuzzleTileState } from '@/types/PuzzlePath';
+import type { PathwayComponentProps, PuzzleTileState } from '@/features/puzzles/pathway.types';
 import { Lock, Check, Target } from 'lucide-react';
 import bgImage from '@/assets/Background-w-assets.png';
 import tileImage from '@/assets/Tile.png';

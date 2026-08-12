@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
 import { ArrowLeft } from "lucide-react";
-import PartnerCTA from "@/components/PartnerCTA";
+import PartnerCTA from "@/features/landing/PartnerCTA";
 import { soundManager } from "@/shared/lib/SoundManager";
 
 export default function ContactPage() {

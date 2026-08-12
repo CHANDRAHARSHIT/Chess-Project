@@ -18,9 +18,9 @@ import { QuickGameView } from "@/features/play/components/QuickGameView";
 import { PlayOnlineView } from "@/features/play/components/PlayOnlineView";
 import { VariantsView } from "@/features/play/components/VariantsView";
 import { LeaveGameConfirmModal } from "@/features/play/components/LeaveGameConfirmModal";
-import { ProtectedRoute } from "@/components/ProtectedRoute";
-import { useGameSession } from "@/hooks/useGameSession";
-import { useMatchmaking } from "@/hooks/useMatchmaking";
+import { ProtectedRoute } from "@/features/account/ProtectedRoute";
+import { useGameSession } from "@/features/play/useGameSession";
+import { useMatchmaking } from "@/features/play/useMatchmaking";
 
 const VALID_TABS: PlayTab[] = ["quick", "online", "variants"];
 

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { ArrowLeft, Bot, HelpCircle, X, Shuffle, ShieldCheck } from 'lucide-react';
-import { useChess960Game } from '@/hooks/useChess960Game';
+import { useChess960Game } from '@/features/play/useChess960Game';
 import { GameBoard } from '@/features/play/components/GameBoard';
 import { GameControls } from '@/features/play/components/GameControls';
 import { MoveLog } from '@/features/play/components/MoveLog';

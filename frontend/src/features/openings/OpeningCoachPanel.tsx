@@ -5,7 +5,7 @@
  * and the move history for the current training session.
  */
 
-import type { TrainerStatus } from "@/hooks/useOpeningTrainer";
+import type { TrainerStatus } from "@/features/openings/useOpeningTrainer";
 
 interface OpeningCoachPanelProps {
   coachMessage: string;

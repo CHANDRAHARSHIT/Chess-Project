@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { useSession } from './useSession';
-import { PathwayProgressApiService } from '@/services/pathwayProgress.service';
+import { useSession } from '@/features/account/useSession';
+import { PathwayProgressApiService } from '@/features/puzzles/pathwayProgress.service';
 
 // ── localStorage keys (kept for guest fallback + fast-read cache) ──────────
 const LS_COMPLETED = 'xlchess_completed_puzzles';

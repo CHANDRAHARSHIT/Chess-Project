@@ -2,8 +2,8 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import { ThemedChessboard } from "@/shared/ui/ThemedChessboard";
 import { Chess } from "chess.js";
 import type { Square } from "chess.js";
-import type { ChessPuzzle } from "@/utils/PuzzleLoader";
-import { validateMove } from "@/utils/PuzzleValidator";
+import type { ChessPuzzle } from "@/features/puzzles/puzzleLoader";
+import { validateMove } from "@/features/puzzles/puzzleValidator";
 import {
   HelpCircle,
   RotateCcw,

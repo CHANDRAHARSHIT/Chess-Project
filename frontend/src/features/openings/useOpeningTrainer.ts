@@ -17,7 +17,7 @@
 
 import { useState, useRef, useCallback, useEffect } from "react";
 import { Chess } from "chess.js";
-import type { Opening } from "@/types/opening";
+import type { Opening } from "@/features/openings/openings.types";
 import { soundManager } from "@/shared/lib/SoundManager";
 
 export type TrainerStatus =

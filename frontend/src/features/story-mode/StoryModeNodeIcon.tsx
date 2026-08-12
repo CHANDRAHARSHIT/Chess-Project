@@ -8,7 +8,7 @@
  */
 
 import { motion } from "framer-motion";
-import type { StoryNodeType, NodeStatus } from "@/data/storyModeMapData";
+import type { StoryNodeType, NodeStatus } from "@/features/story-mode/storyModeMapData";
 
 interface StoryModeNodeIconProps {
   id: number;

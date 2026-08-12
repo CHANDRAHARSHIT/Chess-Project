@@ -3,7 +3,7 @@ import type {
   PuzzleFilters,
   GetPuzzlesResponse,
   GetThemesResponse,
-} from "@/types/puzzle";
+} from "@/features/puzzles/puzzle.types";
 import rollbar from "@/shared/lib/rollbar";
 
 // ─── Cache Configuration ───────────────────────────────────────────────────────

@@ -9,7 +9,7 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, ArrowRight, RotateCcw } from "lucide-react";
-import { RANDOM_ENCOUNTERS } from "@/data/storyModeMapData";
+import { RANDOM_ENCOUNTERS } from "@/features/story-mode/storyModeMapData";
 
 interface StoryModeEncounterProps {
   nodeLabel: string;

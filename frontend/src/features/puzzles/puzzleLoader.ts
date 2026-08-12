@@ -1,4 +1,4 @@
-import puzzles from '@/data/matein1.json';
+import puzzles from '@/features/puzzles/matein1.json';
 
 export interface ChessPuzzle {
   id: string;

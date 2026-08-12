@@ -11,10 +11,10 @@ import {
   Info,
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router";
-import { useSession } from "@/hooks/useSession";
-import { AuthModal } from "@/components/AuthModal";
-import { PaymentService } from "@/services/payment";
-import { usePricing } from "@/hooks/usePricing";
+import { useSession } from "@/features/account/useSession";
+import { AuthModal } from "@/features/account/AuthModal";
+import { PaymentService } from "@/features/billing/payment.service";
+import { usePricing } from "@/features/billing/usePricing";
 import rollbar from "@/shared/lib/rollbar";
 
 export default function CheckoutPage() {

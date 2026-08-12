@@ -1,6 +1,6 @@
 import { useContext } from "react";
-import { MatchmakingContext } from "@/context/matchmakingContext.instance";
-import type { MatchmakingContextType } from "@/context/matchmakingContext.instance";
+import { MatchmakingContext } from "@/features/play/matchmakingContext.instance";
+import type { MatchmakingContextType } from "@/features/play/matchmakingContext.instance";
 
 export function useMatchmaking(): MatchmakingContextType {
   const context = useContext(MatchmakingContext);

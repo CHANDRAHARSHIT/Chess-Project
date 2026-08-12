@@ -1,6 +1,6 @@
 import { useContext } from "react";
-import { GameSessionContext } from "@/context/gameSessionContext.instance";
-import type { GameSessionContextType } from "@/context/gameSessionContext.instance";
+import { GameSessionContext } from "@/features/play/gameSessionContext.instance";
+import type { GameSessionContextType } from "@/features/play/gameSessionContext.instance";
 
 export function useGameSession(): GameSessionContextType {
   const context = useContext(GameSessionContext);

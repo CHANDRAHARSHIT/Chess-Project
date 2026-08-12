@@ -14,7 +14,7 @@ import { ThemedChessboard } from "@/shared/ui/ThemedChessboard";
 import { BoardCoordinates } from "@/shared/ui/BoardCoordinates";
 
 import { useStockfish } from "@/shared/hooks/useStockfish";
-import { MOCK_GAMES } from "@/data/mockGames";
+import { MOCK_GAMES } from "@/features/database/mockGames";
 
 type Tab = "Moves" | "Info";
 

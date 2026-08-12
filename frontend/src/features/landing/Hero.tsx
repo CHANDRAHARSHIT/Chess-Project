@@ -10,7 +10,7 @@ import { useMagneticButton } from "@/shared/hooks/useMagneticButton";
 import { useButtonGlow } from "@/shared/hooks/useButtonGlow";
 import { gsap, dur, ease } from "@/shared/lib/gsapConfig";
 import HeroPuzzle from "./HeroPuzzle";
-import { AuthModal } from "./AuthModal";
+import { AuthModal } from "@/features/account/AuthModal";
 import { useSearchParams, Link } from "react-router";
 
 export default function Hero() {

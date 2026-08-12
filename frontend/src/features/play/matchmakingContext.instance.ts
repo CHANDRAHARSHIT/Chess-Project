@@ -5,7 +5,7 @@
  * only-export-components requires a component-only file for Fast Refresh to work).
  */
 import { createContext } from "react";
-import type { MatchDescriptor, MatchTicket } from "@/types/multiplayer";
+import type { MatchDescriptor, MatchTicket } from "@/features/play/multiplayer.types";
 
 export type QueuePhase = "idle" | "searching" | "found" | "expired" | "cancelled" | "error" | "unavailable";
 

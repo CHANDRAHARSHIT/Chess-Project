@@ -20,7 +20,7 @@ import { soundManager } from "@/shared/lib/SoundManager";
 import {
   MONSTER_PROFILES,
   type MonsterProfile,
-} from "@/data/storyModeMapData";
+} from "@/features/story-mode/storyModeMapData";
 import { DIFFICULTY_CONFIGS, type DifficultyLevel } from "@/shared/chess/chess.types";
 import { generateChess960FEN } from "@/shared/chess/chess960";
 import { EditPositionModal } from "@/shared/ui/EditPositionModal";

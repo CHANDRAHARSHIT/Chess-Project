@@ -7,7 +7,7 @@
 
 import { Eye, ThumbsUp, Flame } from "lucide-react";
 import { ThemedChessboard } from "@/shared/ui/ThemedChessboard";
-import type { MasterclassItem } from "@/data/creatorMockData";
+import type { MasterclassItem } from "@/features/creator/creatorMockData";
 
 interface ContentGridCardProps {
   item: MasterclassItem;

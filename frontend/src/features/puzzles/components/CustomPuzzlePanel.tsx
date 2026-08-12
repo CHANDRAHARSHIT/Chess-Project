@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { X, Search, SlidersHorizontal, ChevronRight, AlertCircle } from "lucide-react";
-import { PuzzleApiService } from "@/services/puzzle.service";
-import type { PuzzleFilters } from "@/types/puzzle";
+import { PuzzleApiService } from "@/features/puzzles/puzzle.service";
+import type { PuzzleFilters } from "@/features/puzzles/puzzle.types";
 
 interface CustomPuzzlePanelProps {
   onStart: (filters: PuzzleFilters) => void;

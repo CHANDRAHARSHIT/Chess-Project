@@ -23,7 +23,7 @@ import { useBoardSettings } from "@/shared/appearance/useBoardSettings";
 import { BOARD_THEMES } from "@/shared/appearance/boardThemes";
 import { PIECE_SETS } from "@/shared/appearance/pieceSets";
 import BoardPreview from "@/shared/ui/BoardPreview";
-import ProfileContent from "@/components/ProfileContent";
+import ProfileContent from "@/features/account/ProfileContent";
 import { soundManager } from "@/shared/lib/SoundManager";
 import { useNavigationStack } from "@/hooks/useNavigationStack";
 

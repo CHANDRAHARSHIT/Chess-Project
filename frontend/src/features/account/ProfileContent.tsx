@@ -13,9 +13,9 @@ import {
   Share2,
   ShieldAlert,
 } from "lucide-react";
-import { useSession } from "@/hooks/useSession";
+import { useSession } from "@/features/account/useSession";
 import { useNavigate } from "react-router";
-import { PaymentService } from "@/services/payment";
+import { PaymentService } from "@/features/billing/payment.service";
 import rollbar from "@/shared/lib/rollbar";
 
 interface PlatformButtonProps {

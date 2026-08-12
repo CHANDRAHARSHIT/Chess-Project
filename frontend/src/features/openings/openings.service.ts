@@ -27,7 +27,7 @@
  *   value: { cachedAt: number, openings: Opening[] }
  */
 
-import type { Opening, OpeningsListResponse, OpeningResponse } from "@/types/opening";
+import type { Opening, OpeningsListResponse, OpeningResponse } from "@/features/openings/openings.types";
 import rollbar from "@/shared/lib/rollbar";
 
 // ─── Constants ────────────────────────────────────────────────────────────────

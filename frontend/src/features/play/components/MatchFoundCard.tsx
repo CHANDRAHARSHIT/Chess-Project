@@ -8,9 +8,9 @@ import { useEffect } from "react";
 import { Zap } from "lucide-react";
 import { ThemedChessboard } from "@/shared/ui/ThemedChessboard";
 import { OpponentIdentity } from "./OpponentIdentity";
-import { useSession } from "@/hooks/useSession";
+import { useSession } from "@/features/account/useSession";
 import { generateStartingFenFromPositionId } from "@/shared/chess/chess960PositionId";
-import type { MatchDescriptor } from "@/types/multiplayer";
+import type { MatchDescriptor } from "@/features/play/multiplayer.types";
 
 const HANDOFF_DELAY_MS = 1800;
 

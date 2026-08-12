@@ -5,8 +5,8 @@
  */
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AlertTriangle, Zap, ArrowLeft } from "lucide-react";
-import { useGameSession } from "@/hooks/useGameSession";
-import { useSession } from "@/hooks/useSession";
+import { useGameSession } from "@/features/play/useGameSession";
+import { useSession } from "@/features/account/useSession";
 import { PlayerPanel } from "./PlayerPanel";
 import { MultiplayerBoard, type DerivedMove } from "./MultiplayerBoard";
 import { GameActionBar } from "./GameActionBar";

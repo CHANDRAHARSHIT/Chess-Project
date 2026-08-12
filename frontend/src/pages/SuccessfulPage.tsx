@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { ArrowRight, Mail, Check, Award } from "lucide-react";
 import { useNavigate } from "react-router";
 import { Confetti } from "@/shared/ui/Confetti";
-import { useSession } from "@/hooks/useSession";
-import { PaymentService } from "@/services/payment";
+import { useSession } from "@/features/account/useSession";
+import { PaymentService } from "@/features/billing/payment.service";
 import rollbar from "@/shared/lib/rollbar";
 
 interface UpgradeDetails {

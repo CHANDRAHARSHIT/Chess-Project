@@ -9,10 +9,10 @@ import {
   MatchmakingService,
   MultiplayerDisabledError,
   TicketNotFoundError,
-} from "@/services/matchmaking.service";
+} from "@/features/play/matchmaking.service";
 import { MatchmakingContext } from "./matchmakingContext.instance";
 import type { QueuePhase } from "./matchmakingContext.instance";
-import type { MatchDescriptor, MatchTicket } from "@/types/multiplayer";
+import type { MatchDescriptor, MatchTicket } from "@/features/play/multiplayer.types";
 
 // 2.5s keeps a single queue session (up to the 60s ticket TTL) well under the backend's
 // global rate limit (100 req / 15 min per IP, shared across all /api/* traffic) even with

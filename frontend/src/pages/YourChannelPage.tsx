@@ -13,7 +13,7 @@ import {
   CREATOR_PROFILE,
   MASTERCLASSES,
   STUDENT_BREAKTHROUGHS,
-} from "@/data/creatorMockData";
+} from "@/features/creator/creatorMockData";
 import { soundManager } from "@/shared/lib/SoundManager";
 
 export default function YourChannelPage() {

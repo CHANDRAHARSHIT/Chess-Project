@@ -13,8 +13,8 @@
  * conditions are identical.
  */
 import { useState } from "react";
-import { useMatchmaking } from "@/hooks/useMatchmaking";
-import { useGameSession } from "@/hooks/useGameSession";
+import { useMatchmaking } from "@/features/play/useMatchmaking";
+import { useGameSession } from "@/features/play/useGameSession";
 import { LobbyView } from "./LobbyView";
 import { MatchFoundCard } from "./MatchFoundCard";
 import { PlayChessGame } from "./PlayChessGame";

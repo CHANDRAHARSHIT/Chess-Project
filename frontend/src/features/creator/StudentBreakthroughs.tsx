@@ -7,7 +7,7 @@
  */
 
 import { ThemedChessboard } from "@/shared/ui/ThemedChessboard";
-import type { StudentBreakthrough } from "@/data/creatorMockData";
+import type { StudentBreakthrough } from "@/features/creator/creatorMockData";
 
 interface StudentBreakthroughsProps {
   breakthroughs: StudentBreakthrough[];

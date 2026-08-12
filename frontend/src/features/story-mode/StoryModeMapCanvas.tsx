@@ -9,7 +9,7 @@
  */
 
 import { motion } from "framer-motion";
-import type { StoryNode, NodeStatus } from "@/data/storyModeMapData";
+import type { StoryNode, NodeStatus } from "@/features/story-mode/storyModeMapData";
 
 interface StoryModeMapCanvasProps {
   nodes: StoryNode[];

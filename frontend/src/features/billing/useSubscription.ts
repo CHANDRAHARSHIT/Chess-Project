@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import type { UserSubscriptionState, SubscriptionStatus } from "@/types/payment";
+import type { UserSubscriptionState, SubscriptionStatus } from "@/features/billing/payment.types";
 import rollbar from "@/shared/lib/rollbar";
 
 export function useSubscription() {
