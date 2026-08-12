@@ -1,13 +1,13 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { 
-  Bot, 
-  Search, 
-  BookOpen, 
-  TrendingUp, 
-  Target, 
+import {
+  Bot,
+  Search,
+  BookOpen,
+  TrendingUp,
+  Target,
   Palette,
-  ArrowRight
+  ArrowRight,
 } from "lucide-react";
 
 export interface MembershipFeatureBannerProps {
@@ -20,7 +20,9 @@ export interface MembershipFeatureBannerProps {
   onButtonClick?: () => void;
 }
 
-export const MembershipFeatureBanner: React.FC<MembershipFeatureBannerProps> = ({
+export const MembershipFeatureBanner: React.FC<
+  MembershipFeatureBannerProps
+> = ({
   title,
   subtitle,
   description,
@@ -29,18 +31,24 @@ export const MembershipFeatureBanner: React.FC<MembershipFeatureBannerProps> = (
   buttonText,
   onButtonClick,
 }) => {
-
   // Helper to render the appropriate Lucide icon as a premium placeholder
   const renderImagePlaceholder = () => {
-    const iconClass = "w-24 h-24 sm:w-32 sm:h-32 text-sky-300/80 drop-shadow-[0_0_25px_rgba(125,211,252,0.3)]";
+    const iconClass = "w-24 h-24 sm:w-32 sm:h-32 text-sky-300/80";
     switch (image) {
-      case "bot": return <Bot className={iconClass} />;
-      case "search": return <Search className={iconClass} />;
-      case "book-open": return <BookOpen className={iconClass} />;
-      case "trending-up": return <TrendingUp className={iconClass} />;
-      case "target": return <Target className={iconClass} />;
-      case "palette": return <Palette className={iconClass} />;
-      default: return <Bot className={iconClass} />;
+      case "bot":
+        return <Bot className={iconClass} />;
+      case "search":
+        return <Search className={iconClass} />;
+      case "book-open":
+        return <BookOpen className={iconClass} />;
+      case "trending-up":
+        return <TrendingUp className={iconClass} />;
+      case "target":
+        return <Target className={iconClass} />;
+      case "palette":
+        return <Palette className={iconClass} />;
+      default:
+        return <Bot className={iconClass} />;
     }
   };
 
@@ -54,16 +62,11 @@ export const MembershipFeatureBanner: React.FC<MembershipFeatureBannerProps> = (
 
   return (
     <section className="w-full max-w-6xl mx-auto py-16 sm:py-24 px-4 sm:px-6 z-10 relative overflow-hidden">
-      <div className={`flex flex-col md:flex-row items-center justify-between gap-12 lg:gap-24 ${reverse ? "md:flex-row-reverse" : ""}`}>
-        
+      <div
+        className={`flex flex-col md:flex-row items-center justify-between gap-12 lg:gap-24 ${reverse ? "md:flex-row-reverse" : ""}`}
+      >
         {/* Text Content */}
-        <motion.div 
-          initial={{ opacity: 0, x: reverse ? 30 : -30 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          className="w-full md:w-1/2 flex flex-col items-center md:items-start text-center md:text-left"
-        >
+        <div className="w-full md:w-1/2 flex flex-col items-center md:items-start text-center md:text-left">
           <span className="text-sky-400 font-mono text-xs sm:text-sm uppercase tracking-widest font-semibold mb-3">
             {subtitle}
           </span>
@@ -83,21 +86,15 @@ export const MembershipFeatureBanner: React.FC<MembershipFeatureBannerProps> = (
             </span>
             <div className="absolute inset-0 bg-gradient-to-r from-sky-400/0 via-sky-400/5 to-sky-400/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
           </button>
-        </motion.div>
+        </div>
 
         {/* Image/Illustration Placeholder */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9, x: reverse ? -30 : 30 }}
-          whileInView={{ opacity: 1, scale: 1, x: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.7, ease: "easeOut" }}
-          className="w-full md:w-1/2 flex justify-center"
-        >
-          <div className="relative w-full max-w-[400px] aspect-square rounded-3xl bg-gradient-to-br from-brand-surface/80 to-brand-bg/50 border border-brand-border/60 shadow-2xl backdrop-blur-sm flex items-center justify-center overflow-hidden group">
+        <div className="w-full md:w-1/2 flex justify-center">
+          <div className="relative w-full max-w-[400px] aspect-square rounded-3xl bg-gradient-to-br from-brand-surface/80 to-brand-bg/50 border border-brand-border/60 backdrop-blur-sm flex items-center justify-center overflow-hidden group">
             {/* Ambient Background Glows */}
             <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-sky-300/10 rounded-full blur-[40px] pointer-events-none group-hover:bg-sky-300/20 transition-colors duration-500" />
             <div className="absolute bottom-1/4 right-1/4 w-32 h-32 bg-brand-accent/5 rounded-full blur-[40px] pointer-events-none group-hover:bg-brand-accent/10 transition-colors duration-500" />
-            
+
             {/* Floating Animation for the Icon */}
             <motion.div
               animate={{ y: [0, -10, 0] }}
@@ -106,8 +103,7 @@ export const MembershipFeatureBanner: React.FC<MembershipFeatureBannerProps> = (
               {renderImagePlaceholder()}
             </motion.div>
           </div>
-        </motion.div>
-
+        </div>
       </div>
     </section>
   );

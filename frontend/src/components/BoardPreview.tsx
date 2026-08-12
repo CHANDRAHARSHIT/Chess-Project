@@ -26,7 +26,7 @@ export default function BoardPreview({ size = 280, theme, pieceSet }: BoardPrevi
 
   return (
     <div
-      className="select-none rounded-lg overflow-hidden border border-[rgba(212,175,110,0.60)] shadow-lg shadow-black/40"
+      className="select-none rounded-lg overflow-hidden border border-[rgba(212,175,110,0.60)]"
       style={{ width: size, height: size }}
     >
       {PREVIEW_ROWS.map((row, rowIndex) => (

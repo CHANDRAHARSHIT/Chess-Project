@@ -78,7 +78,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMo
     >
       <div
         ref={modalRef}
-        className="relative max-w-sm w-full bg-brand-surface/95 border border-brand-border rounded-xl p-8 shadow-2xl shadow-brand-bg/50 backdrop-blur-md animate-in fade-in zoom-in-95 duration-200"
+        className="relative max-w-sm w-full bg-brand-surface/95 border border-brand-border rounded-xl p-8 backdrop-blur-md animate-in fade-in zoom-in-95 duration-200"
       >
         {/* Close Button */}
         <button
@@ -108,7 +108,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMo
         {/* Google OAuth Trigger */}
         <button
           onClick={handleGoogleSignIn}
-          className="w-full flex items-center justify-center gap-3 bg-white text-black hover:bg-gray-100 font-sans font-medium text-sm px-4 py-3 rounded-lg transition-all duration-200 active:scale-[0.98] shadow-md shadow-white/5"
+          className="w-full flex items-center justify-center gap-3 bg-white text-black hover:bg-gray-100 font-sans font-medium text-sm px-4 py-3 rounded-lg transition-all duration-200 active:scale-[0.98]"
         >
           {/* Inline Premium Flat Google G Logo */}
           <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

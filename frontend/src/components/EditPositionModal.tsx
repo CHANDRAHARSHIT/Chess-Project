@@ -192,7 +192,7 @@ export function EditPositionModal({
           maxHeight: !isDesktopLayout && visualViewportHeight ? `${visualViewportHeight - 24}px` : undefined,
         }}
       >
-        <div className={`relative flex h-full w-full overflow-hidden rounded-sm border border-brand-border bg-brand-surface shadow-2xl ${isEraserActive ? 'eraser-mode-active' : ''}`}>
+        <div className={`relative flex h-full w-full overflow-hidden rounded-sm border border-brand-border bg-brand-surface ${isEraserActive ? 'eraser-mode-active' : ''}`}>
           <button
             onClick={() => { soundManager.playButtonClick(); onCancel(); }}
             className="absolute right-4 top-2.5 z-20 rounded-md border border-brand-border bg-brand-bg/80 p-2 text-brand-secondary transition-colors hover:bg-brand-text/10 hover:text-brand-text"
@@ -237,7 +237,7 @@ export function EditPositionModal({
                             key={pieceCode}
                             onClick={() => selectTool(pieceCode)}
                             className={`flex aspect-square items-center justify-center rounded-lg border transition-all ${isSelected
-                              ? 'border-brand-accent bg-brand-accent/15 text-brand-text shadow-[0_0_0_1px_rgba(212,175,110,0.45),0_0_24px_rgba(212,175,110,0.22)] scale-105'
+                              ? 'border-brand-accent bg-brand-accent/15 text-brand-text scale-105'
                               : 'border-brand-border bg-brand-bg/50 text-brand-secondary hover:bg-brand-text/5 hover:text-brand-text'
                               }`}
                             title={pieceCode}
@@ -255,7 +255,7 @@ export function EditPositionModal({
                 <button
                   onClick={() => selectTool('erase')}
                   className={`flex-shrink-0 flex items-center justify-center gap-3 rounded-lg border px-4 py-2.5 transition-all duration-150 ${selectedTool === 'erase'
-                    ? 'border-brand-accent bg-brand-accent/15 text-brand-text shadow-[0_0_0_1px_rgba(212,175,110,0.45),0_0_24px_rgba(212,175,110,0.22)] scale-[1.02]'
+                    ? 'border-brand-accent bg-brand-accent/15 text-brand-text scale-[1.02]'
                     : 'border-brand-border bg-brand-bg text-brand-secondary hover:bg-brand-text/5 hover:text-brand-text'
                     }`}
                   role="checkbox"
@@ -265,7 +265,7 @@ export function EditPositionModal({
                   {/* Custom Checkbox UI */}
                   <div
                     className={`relative flex items-center justify-center w-5 h-5 rounded-md border transition-all duration-200 ${selectedTool === 'erase'
-                      ? 'border-brand-accent bg-brand-accent text-brand-bg scale-100 shadow-[0_0_12px_rgba(212,175,110,0.45)]'
+                      ? 'border-brand-accent bg-brand-accent text-brand-bg scale-100'
                       : 'border-brand-secondary/40 bg-brand-bg text-transparent'
                       }`}
                   >
@@ -330,7 +330,7 @@ export function EditPositionModal({
                             />
                             <div
                               className={`relative flex items-center justify-center w-5 h-5 rounded-md border transition-all duration-200 ${editorState.castlingRights.K
-                                ? 'border-brand-accent bg-brand-accent text-brand-text scale-100 shadow-[0_0_12px_rgba(212,175,110,0.45)]'
+                                ? 'border-brand-accent bg-brand-accent text-brand-text scale-100'
                                 : 'border-brand-border bg-brand-bg text-transparent group-hover:border-brand-accent/50'
                                 }`}
                             >
@@ -367,7 +367,7 @@ export function EditPositionModal({
                             />
                             <div
                               className={`relative flex items-center justify-center w-5 h-5 rounded-md border transition-all duration-200 ${editorState.castlingRights.Q
-                                ? 'border-brand-accent bg-brand-accent text-brand-text scale-100 shadow-[0_0_12px_rgba(212,175,110,0.45)]'
+                                ? 'border-brand-accent bg-brand-accent text-brand-text scale-100'
                                 : 'border-brand-border bg-brand-bg text-transparent group-hover:border-brand-accent/50'
                                 }`}
                             >
@@ -411,7 +411,7 @@ export function EditPositionModal({
                             />
                             <div
                               className={`relative flex items-center justify-center w-5 h-5 rounded-md border transition-all duration-200 ${editorState.castlingRights.k
-                                ? 'border-brand-accent bg-brand-accent text-brand-text scale-100 shadow-[0_0_12px_rgba(212,175,110,0.45)]'
+                                ? 'border-brand-accent bg-brand-accent text-brand-text scale-100'
                                 : 'border-brand-border bg-brand-bg text-transparent group-hover:border-brand-accent/50'
                                 }`}
                             >
@@ -448,7 +448,7 @@ export function EditPositionModal({
                             />
                             <div
                               className={`relative flex items-center justify-center w-5 h-5 rounded-md border transition-all duration-200 ${editorState.castlingRights.q
-                                ? 'border-brand-accent bg-brand-accent text-brand-text scale-100 shadow-[0_0_12px_rgba(212,175,110,0.45)]'
+                                ? 'border-brand-accent bg-brand-accent text-brand-text scale-100'
                                 : 'border-brand-border bg-brand-bg text-transparent group-hover:border-brand-accent/50'
                                 }`}
                             >
@@ -543,7 +543,7 @@ export function EditPositionModal({
             aria-hidden="true"
           />
 
-          <div className="relative w-full max-w-md rounded-2xl border border-red-500/40 bg-brand-surface/95 p-5 text-red-100 shadow-[0_0_40px_rgba(239,68,68,0.22)] backdrop-blur-md animate-fade-in">
+          <div className="relative w-full max-w-md rounded-2xl border border-red-500/40 bg-brand-surface/95 p-5 text-red-100 backdrop-blur-md animate-fade-in">
             <button
               onClick={() => setLoadErrorMessage(null)}
               className="absolute right-3 top-3 rounded-md p-1 text-red-200/80 transition-colors hover:bg-brand-text/10 hover:text-brand-text"

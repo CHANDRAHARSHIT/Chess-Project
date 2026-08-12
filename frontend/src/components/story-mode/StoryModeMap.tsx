@@ -263,7 +263,7 @@ export default function StoryModeMap() {
 
             {/* Map wrapper for scrolling */}
             <div className="relative w-full rounded-2xl overflow-hidden">
-              <div className="w-full h-[75vh] min-h-[500px] rounded-2xl border border-[#D4AF6E]/40 overflow-y-auto overflow-x-hidden shadow-lg relative bg-[rgb(var(--obsidian-mid-rgb)/0.4)] custom-scrollbar">
+              <div className="w-full h-[75vh] min-h-[500px] rounded-2xl border border-[#D4AF6E]/40 overflow-y-auto overflow-x-hidden relative bg-[rgb(var(--obsidian-mid-rgb)/0.4)] custom-scrollbar">
                 <div className="relative w-full min-h-[1200px] sm:min-h-[1400px] overflow-hidden story-map-bg">
                   {/* Fog / atmosphere layers */}
                   <div className="absolute inset-0 pointer-events-none story-map-fog" />
@@ -326,7 +326,7 @@ export default function StoryModeMap() {
                     exit={{ opacity: 0 }}
                   >
                     <motion.div
-                      className="flex flex-col items-center gap-6 p-10 rounded-2xl border border-brand-accent/40 bg-brand-accent/5 backdrop-blur-md max-w-md w-full mx-4 shadow-2xl"
+                      className="flex flex-col items-center gap-6 p-10 rounded-2xl border border-brand-accent/40 bg-brand-accent/5 backdrop-blur-md max-w-md w-full mx-4"
                       initial={{ scale: 0.8, y: 30 }}
                       animate={{ scale: 1, y: 0 }}
                       exit={{ scale: 0.8, y: 30 }}
@@ -392,7 +392,7 @@ export default function StoryModeMap() {
                     exit={{ opacity: 0 }}
                   >
                     <motion.div
-                      className="flex flex-col items-center gap-5 p-8 rounded-2xl border border-red-500/30 bg-red-500/5 backdrop-blur-md max-w-sm w-full mx-4 shadow-2xl relative"
+                      className="flex flex-col items-center gap-5 p-8 rounded-2xl border border-red-500/30 bg-red-500/5 backdrop-blur-md max-w-sm w-full mx-4 relative"
                       initial={{ scale: 0.8, y: 30 }}
                       animate={{ scale: 1, y: 0 }}
                       exit={{ scale: 0.8, y: 30 }}
@@ -445,7 +445,7 @@ export default function StoryModeMap() {
                     exit={{ opacity: 0 }}
                   >
                     <motion.div
-                      className="flex flex-col items-center gap-5 p-8 rounded-2xl border border-[#D4AF6E]/60 bg-brand-accent/5 backdrop-blur-md max-w-sm w-full mx-4 shadow-[0_0_30px_rgba(212,175,110,0.15)] relative"
+                      className="flex flex-col items-center gap-5 p-8 rounded-2xl border border-[#D4AF6E]/60 bg-brand-accent/5 backdrop-blur-md max-w-sm w-full mx-4 relative"
                       initial={{ scale: 0.8, y: 30 }}
                       animate={{ scale: 1, y: 0 }}
                       exit={{ scale: 0.8, y: 30 }}

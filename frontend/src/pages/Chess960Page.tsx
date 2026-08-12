@@ -42,43 +42,43 @@ export default function Chess960Page() {
     ">
 
       {/* ── Header — adapts between mobile compact and desktop full ── */}
-      <div className="w-full shrink-0 flex items-center justify-between gap-2 px-3 py-2 lg:px-4 lg:py-2.5 rounded-xl lg:rounded-2xl bg-brand-surface/60 border border-white/[0.07] backdrop-blur-xl shadow-md">
+      <div className="w-full shrink-0 flex items-center justify-between gap-2 px-3 py-2 lg:px-4 lg:py-2.5 rounded-xl lg:rounded-2xl bg-brand-surface border border-brand-text/15 backdrop-blur-xl">
         <div className="flex items-center gap-2 lg:gap-3">
           <button
             onClick={handleBackToVariants}
-            className="inline-flex items-center gap-1 lg:gap-1.5 px-2.5 lg:px-3 py-1.5 rounded-lg lg:rounded-xl bg-brand-surface/80 hover:bg-brand-surface text-brand-secondary hover:text-brand-text border border-white/[0.08] transition-all duration-200 font-mono text-xs font-semibold cursor-pointer group"
+            className="inline-flex items-center gap-1 lg:gap-1.5 px-2.5 lg:px-3 py-1.5 rounded-lg lg:rounded-xl bg-brand-text/5 hover:bg-brand-text/10 text-brand-secondary hover:text-brand-text border border-brand-text/15 transition-all duration-200 font-mono text-xs font-semibold cursor-pointer group"
           >
             <ArrowLeft className="w-3.5 h-3.5 lg:transition-transform lg:group-hover:-translate-x-1" />
             <span className="hidden sm:inline">Variants</span>
             <span className="sm:hidden">Back</span>
           </button>
           <div className="flex items-center gap-2 lg:gap-2.5">
-            <div className="hidden lg:flex p-1.5 rounded-xl bg-brand-accent/10 text-brand-accent">
+            <div className="hidden lg:flex p-1.5 rounded-xl bg-brand-accent/10 text-brand-accent border border-brand-accent/20">
               <Shuffle className="w-4 h-4" />
             </div>
             <div>
               <div className="flex items-center gap-1.5 lg:gap-2">
                 <h1 className="font-display font-bold text-base lg:text-xl text-brand-text tracking-tight">Chess 960</h1>
-                <span className="px-1.5 lg:px-2 py-0.5 rounded-full text-[9px] lg:text-[10px] font-mono font-bold bg-brand-accent/15 text-brand-accent">
+                <span className="px-1.5 lg:px-2 py-0.5 rounded-full text-[9px] lg:text-[10px] font-mono font-bold bg-brand-accent/15 text-brand-accent border border-brand-accent/30">
                   <span className="lg:hidden">960</span>
                   <span className="hidden lg:inline">Fischer Random</span>
                 </span>
               </div>
-              <p className="hidden lg:block text-[11px] text-brand-secondary/80 font-mono">
+              <p className="hidden lg:block text-[11px] text-brand-secondary font-mono">
                 Randomized back-rank setups • Play vs Stockfish Engine
               </p>
             </div>
           </div>
         </div>
         <div className="flex items-center gap-1.5 lg:gap-2">
-          <div className="flex items-center gap-1 lg:gap-1.5 px-2 lg:px-3 py-1 lg:py-1.5 rounded-lg lg:rounded-xl bg-brand-surface/80 border border-white/[0.07] text-[11px] lg:text-xs font-mono">
+          <div className="flex items-center gap-1 lg:gap-1.5 px-2 lg:px-3 py-1 lg:py-1.5 rounded-lg lg:rounded-xl bg-brand-text/5 border border-brand-text/15 text-[11px] lg:text-xs font-mono">
             <Bot className="w-3 lg:w-3.5 h-3 lg:h-3.5 text-brand-accent" />
             <span className="text-brand-text font-semibold">{diffConfig.name}</span>
-            <span className="hidden lg:inline text-brand-secondary/70 text-[10px]">({diffConfig.rating} Elo)</span>
+            <span className="hidden lg:inline text-brand-secondary text-[10px]">({diffConfig.rating} Elo)</span>
           </div>
           <button
             onClick={() => { soundManager.playButtonClick(); setIsRulesOpen(true); }}
-            className="flex items-center gap-1 lg:gap-1.5 p-2 lg:px-3 lg:py-1.5 rounded-lg lg:rounded-xl bg-brand-surface/80 hover:bg-brand-surface border border-white/[0.07] text-brand-secondary hover:text-brand-text transition-all duration-200 font-mono text-xs font-medium cursor-pointer"
+            className="flex items-center gap-1 lg:gap-1.5 p-2 lg:px-3 lg:py-1.5 rounded-lg lg:rounded-xl bg-brand-text/5 hover:bg-brand-text/10 border border-brand-text/15 text-brand-secondary hover:text-brand-text transition-all duration-200 font-mono text-xs font-medium cursor-pointer"
           >
             <HelpCircle className="w-3.5 h-3.5 text-brand-accent" />
             <span className="hidden lg:inline">Rules</span>
@@ -119,15 +119,15 @@ export default function Chess960Page() {
 
           {/* Turn indicator */}
           {game.status === 'playing' && (
-            <div className="flex items-center justify-between px-3.5 py-2.5 lg:py-2 rounded-xl bg-brand-surface/50 border border-white/[0.06] text-xs font-mono shrink-0">
+            <div className="flex items-center justify-between px-3.5 py-2.5 lg:py-2 rounded-xl bg-brand-surface border border-brand-text/15 text-xs font-mono shrink-0">
               <div className="flex items-center gap-2">
                 <span className={`w-2.5 h-2.5 rounded-full transition-all ${
-                  game.turn === 'w' ? 'bg-white shadow-[0_0_8px_rgba(255,255,255,0.7)]' : 'bg-neutral-700 border border-neutral-500'
+                  game.turn === 'w' ? 'bg-white border border-neutral-300' : 'bg-neutral-800 border border-neutral-600'
                 }`} />
                 <span className="font-semibold text-brand-text">
                   {game.turn === 'w' ? 'White to Move' : 'Black to Move'}
                 </span>
-                <span className="text-[10px] text-brand-secondary/60">
+                <span className="text-[10px] text-brand-secondary">
                   ({game.turn === game.playerColor ? 'Your Turn' : 'Engine'})
                 </span>
               </div>
@@ -171,10 +171,10 @@ export default function Chess960Page() {
           onClick={() => setIsRulesOpen(false)}
         >
           <div
-            className="relative bg-brand-surface/90 border border-white/10 shadow-2xl rounded-3xl max-w-lg w-full p-6 sm:p-8 space-y-5 text-brand-text backdrop-blur-2xl"
+            className="relative bg-brand-surface border border-brand-text/15 rounded-3xl max-w-lg w-full p-6 sm:p-8 space-y-5 text-brand-text backdrop-blur-2xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between border-b border-white/10 pb-4">
+            <div className="flex items-center justify-between border-b border-brand-text/10 pb-4">
               <div className="flex items-center gap-3">
                 <div className="p-2 rounded-xl bg-brand-accent/15 text-brand-accent">
                   <ShieldCheck className="w-5 h-5" />
@@ -184,30 +184,30 @@ export default function Chess960Page() {
                   <p className="text-xs text-brand-secondary">Standard FIDE Chess 960 Specifications</p>
                 </div>
               </div>
-              <button onClick={() => setIsRulesOpen(false)} className="p-2 rounded-xl text-brand-secondary hover:text-brand-text hover:bg-brand-surface/80">
+              <button onClick={() => setIsRulesOpen(false)} className="p-2 rounded-xl text-brand-secondary hover:text-brand-text hover:bg-brand-text/10">
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <div className="space-y-3.5 text-xs font-sans text-brand-secondary/90 leading-relaxed max-h-[60vh] overflow-y-auto pr-1">
-              <div className="p-3.5 rounded-2xl bg-brand-bg/60 border border-white/5 space-y-1">
+            <div className="space-y-3.5 text-xs font-sans text-brand-secondary leading-relaxed max-h-[60vh] overflow-y-auto pr-1">
+              <div className="p-3.5 rounded-2xl bg-brand-text/5 border border-brand-text/10 space-y-1">
                 <p className="font-mono font-bold text-brand-accent uppercase text-[11px]">1. Randomized Back-Rank Setup</p>
                 <p>Pieces on the 1st rank (White) and 8th rank (Black) are placed symmetrically in one of 960 valid starting configurations before play begins.</p>
               </div>
-              <div className="p-3.5 rounded-2xl bg-brand-bg/60 border border-white/5 space-y-1">
+              <div className="p-3.5 rounded-2xl bg-brand-text/5 border border-brand-text/10 space-y-1">
                 <p className="font-mono font-bold text-brand-accent uppercase text-[11px]">2. Bishops on Opposite Colors</p>
                 <p>Each side always starts with one light-squared bishop and one dark-squared bishop to maintain board balance.</p>
               </div>
-              <div className="p-3.5 rounded-2xl bg-brand-bg/60 border border-white/5 space-y-1">
+              <div className="p-3.5 rounded-2xl bg-brand-text/5 border border-brand-text/10 space-y-1">
                 <p className="font-mono font-bold text-brand-accent uppercase text-[11px]">3. King Between Rooks</p>
                 <p>The King is always placed somewhere between the two Rooks, enabling both Kingside and Queenside castling in every starting setup.</p>
               </div>
-              <div className="p-3.5 rounded-2xl bg-brand-bg/60 border border-white/5 space-y-1">
+              <div className="p-3.5 rounded-2xl bg-brand-text/5 border border-brand-text/10 space-y-1">
                 <p className="font-mono font-bold text-brand-accent uppercase text-[11px]">4. Castling Landing Squares</p>
                 <p>After castling, the King and Rook land on the exact same squares as standard chess (King on g1/c1 for White, g8/c8 for Black).</p>
               </div>
             </div>
             <div className="pt-2">
-              <button onClick={() => setIsRulesOpen(false)} className="w-full py-3 rounded-xl font-mono text-xs uppercase font-bold bg-brand-accent text-black hover:bg-amber-300 transition-colors shadow-md">
+              <button onClick={() => setIsRulesOpen(false)} className="w-full py-3 rounded-xl font-mono text-xs uppercase font-bold bg-brand-accent text-black hover:bg-amber-300 transition-colors">
                 Got It
               </button>
             </div>
