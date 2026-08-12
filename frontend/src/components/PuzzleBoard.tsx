@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from "react";
-import { ThemedChessboard } from "./ThemedChessboard";
+import { ThemedChessboard } from "@/shared/ui/ThemedChessboard";
 import { Chess } from "chess.js";
 import type { Square } from "chess.js";
 import type { ChessPuzzle } from "@/utils/PuzzleLoader";
@@ -12,9 +12,9 @@ import {
   Check,
   Undo2,
 } from "lucide-react";
-import { soundManager } from "@/utils/SoundManager";
-import { BoardCoordinates } from "./BoardCoordinates";
-import rollbar from "@/config/rollbar";
+import { soundManager } from "@/shared/lib/SoundManager";
+import { BoardCoordinates } from "@/shared/ui/BoardCoordinates";
+import rollbar from "@/shared/lib/rollbar";
 
 export interface PuzzleBoardProps {
   puzzle: ChessPuzzle;

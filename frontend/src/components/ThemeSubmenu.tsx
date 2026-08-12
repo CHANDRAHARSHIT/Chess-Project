@@ -1,6 +1,6 @@
 import React from "react";
 import { ChevronLeft } from "lucide-react";
-import { useTheme } from "@/hooks/useTheme";
+import { useTheme } from "@/shared/appearance/useTheme";
 
 interface ThemeSubmenuProps {
   onBack: () => void;

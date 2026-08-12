@@ -6,8 +6,8 @@
  * overlays BoardCoordinates exactly like the rest of the app's boards.
  */
 
-import { ThemedChessboard } from "@/components/ThemedChessboard";
-import { BoardCoordinates } from "@/components/BoardCoordinates";
+import { ThemedChessboard } from "@/shared/ui/ThemedChessboard";
+import { BoardCoordinates } from "@/shared/ui/BoardCoordinates";
 
 
 interface OpeningBoardProps {

@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { gsap } from '@/utils/gsapConfig';
+import { gsap } from '@/shared/lib/gsapConfig';
 
 interface UseMagneticButtonOptions<T extends HTMLElement, C extends HTMLElement> {
   targetRef: React.RefObject<T | null>;

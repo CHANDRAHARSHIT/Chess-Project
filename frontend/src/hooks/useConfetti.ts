@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import confetti from 'canvas-confetti';
-import { prefersReducedMotion } from '@/utils/gsapConfig';
+import { prefersReducedMotion } from '@/shared/lib/gsapConfig';
 
 export function useConfetti() {
   const fireConfetti = useCallback(() => {

@@ -4,7 +4,7 @@ import type {
   GetPuzzlesResponse,
   GetThemesResponse,
 } from "@/types/puzzle";
-import rollbar from "@/config/rollbar";
+import rollbar from "@/shared/lib/rollbar";
 
 // ─── Cache Configuration ───────────────────────────────────────────────────────
 const PUZZLES_TTL_MS = 15 * 60 * 1000; // 15 minutes

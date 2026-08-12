@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from "react";
-import { useBoardSettings } from "@/hooks/useBoardSettings";
+import { useBoardSettings } from "@/shared/appearance/useBoardSettings";
 
 // =========================================================================
 // 1. CONFIGURATION

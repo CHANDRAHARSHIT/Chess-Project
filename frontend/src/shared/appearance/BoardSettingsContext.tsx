@@ -1,8 +1,8 @@
 import React, { createContext, useCallback, useState } from "react";
-import { BOARD_THEMES, DEFAULT_BOARD_THEME_ID } from "@/data/boardThemes";
-import type { BoardTheme } from "@/data/boardThemes";
-import { PIECE_SETS, DEFAULT_PIECE_SET_ID } from "@/data/pieceSets";
-import type { PieceSetDef } from "@/data/pieceSets";
+import { BOARD_THEMES, DEFAULT_BOARD_THEME_ID } from "@/shared/appearance/boardThemes";
+import type { BoardTheme } from "@/shared/appearance/boardThemes";
+import { PIECE_SETS, DEFAULT_PIECE_SET_ID } from "@/shared/appearance/pieceSets";
+import type { PieceSetDef } from "@/shared/appearance/pieceSets";
 
 const BOARD_THEME_STORAGE_KEY = "xlchess-board-theme";
 const PIECE_SET_STORAGE_KEY = "xlchess-piece-set";

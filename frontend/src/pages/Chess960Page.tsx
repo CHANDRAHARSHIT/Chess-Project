@@ -7,8 +7,8 @@ import { GameControls } from '@/features/play/components/GameControls';
 import { MoveLog } from '@/features/play/components/MoveLog';
 import { GameStatusBanner } from '@/features/play/components/GameStatusBanner';
 import { Chess960SetupPanel } from '@/features/play/components/Chess960SetupPanel';
-import { DIFFICULTY_CONFIGS } from '@/types/chess';
-import { soundManager } from '@/utils/SoundManager';
+import { DIFFICULTY_CONFIGS } from '@/shared/chess/chess.types';
+import { soundManager } from '@/shared/lib/SoundManager';
 
 export default function Chess960Page() {
   const navigate = useNavigate();

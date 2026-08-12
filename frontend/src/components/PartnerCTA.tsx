@@ -7,9 +7,9 @@
 
 import { useState, useRef } from "react";
 import { CheckCircle2, AlertCircle } from "lucide-react";
-import { useScrollReveal } from "@/hooks/useScrollReveal";
-import { soundManager } from "@/utils/SoundManager";
-import rollbar from "@/config/rollbar";
+import { useScrollReveal } from "@/shared/hooks/useScrollReveal";
+import { soundManager } from "@/shared/lib/SoundManager";
+import rollbar from "@/shared/lib/rollbar";
 
 type FormStatus = "idle" | "submitting" | "success" | "error";
 

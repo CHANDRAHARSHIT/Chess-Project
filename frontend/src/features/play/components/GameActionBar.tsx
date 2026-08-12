@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Flag, Handshake } from "lucide-react";
-import { soundManager } from "@/utils/SoundManager";
+import { soundManager } from "@/shared/lib/SoundManager";
 
 interface GameActionBarProps {
   canAct: boolean;

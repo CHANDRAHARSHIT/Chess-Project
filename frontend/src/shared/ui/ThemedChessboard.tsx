@@ -22,7 +22,7 @@
  * Usage — identical to react-chessboard's own <Chessboard />, just with a
  * different import:
  *
- *   import { ThemedChessboard } from "@/components/ThemedChessboard";
+ *   import { ThemedChessboard } from "@/shared/ui/ThemedChessboard";
  *
  *   <ThemedChessboard
  *     options={{
@@ -43,8 +43,8 @@
 import { useId } from "react";
 import { Chessboard } from "react-chessboard";
 import type { ChessboardOptions } from "react-chessboard";
-import { useBoardSettings } from "@/hooks/useBoardSettings";
-import { useClickToMove } from "@/hooks/useClickToMove";
+import { useBoardSettings } from "@/shared/appearance/useBoardSettings";
+import { useClickToMove } from "@/shared/hooks/useClickToMove";
 
 interface ThemedChessboardProps {
   options: ChessboardOptions;

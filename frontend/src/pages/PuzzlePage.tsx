@@ -16,8 +16,8 @@ import {
 } from 'lucide-react';
 import type { ChessPuzzle } from '@/utils/PuzzleLoader';
 import { Chess } from 'chess.js';
-import { Confetti } from '@/components/Confetti';
-import rollbar from '@/config/rollbar';
+import { Confetti } from '@/shared/ui/Confetti';
+import rollbar from '@/shared/lib/rollbar';
 import { usePuzzleProgress } from '@/hooks/usePuzzleProgress';
 
 // Tailwind's `lg` breakpoint. Keep in sync with tailwind config if changed.

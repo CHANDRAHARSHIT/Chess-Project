@@ -5,10 +5,10 @@
  */
 
 import { useRef, useState, useEffect } from "react";
-import { useGSAP } from "@/hooks/useGSAP";
-import { useMagneticButton } from "@/hooks/useMagneticButton";
-import { useButtonGlow } from "@/hooks/useButtonGlow";
-import { gsap, dur, ease } from "@/utils/gsapConfig";
+import { useGSAP } from "@/shared/hooks/useGSAP";
+import { useMagneticButton } from "@/shared/hooks/useMagneticButton";
+import { useButtonGlow } from "@/shared/hooks/useButtonGlow";
+import { gsap, dur, ease } from "@/shared/lib/gsapConfig";
 import HeroPuzzle from "./HeroPuzzle";
 import { AuthModal } from "./AuthModal";
 import { useSearchParams, Link } from "react-router";

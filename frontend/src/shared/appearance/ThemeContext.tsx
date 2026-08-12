@@ -10,7 +10,7 @@ import {
   DEFAULT_THEME_MODE_ID,
   THEME_MODES,
   type ThemeMode,
-} from "@/data/themeModes";
+} from "@/shared/appearance/themeModes";
 
 const STORAGE_KEY = "theme-mode";
 

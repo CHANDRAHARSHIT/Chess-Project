@@ -11,7 +11,7 @@ import { ArrowLeft } from "lucide-react";
 import { ContentFilterBar } from "@/features/creator/ContentFilterBar";
 import { ContentGridCard } from "@/features/creator/ContentGridCard";
 import { MASTERCLASSES } from "@/data/creatorMockData";
-import { soundManager } from "@/utils/SoundManager";
+import { soundManager } from "@/shared/lib/SoundManager";
 
 export default function YourContentPage() {
   const navigate = useNavigate();

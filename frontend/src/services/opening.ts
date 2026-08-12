@@ -28,7 +28,7 @@
  */
 
 import type { Opening, OpeningsListResponse, OpeningResponse } from "@/types/opening";
-import rollbar from "@/config/rollbar";
+import rollbar from "@/shared/lib/rollbar";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 

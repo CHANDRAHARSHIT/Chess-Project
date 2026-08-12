@@ -15,7 +15,7 @@ import { useSession } from "@/hooks/useSession";
 import { AuthModal } from "@/components/AuthModal";
 import { PaymentService } from "@/services/payment";
 import { usePricing } from "@/hooks/usePricing";
-import rollbar from "@/config/rollbar";
+import rollbar from "@/shared/lib/rollbar";
 
 export default function CheckoutPage() {
   const navigate = useNavigate();

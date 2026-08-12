@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { ArrowRight, Mail, Check, Award } from "lucide-react";
 import { useNavigate } from "react-router";
-import { Confetti } from "@/components/Confetti";
+import { Confetti } from "@/shared/ui/Confetti";
 import { useSession } from "@/hooks/useSession";
 import { PaymentService } from "@/services/payment";
-import rollbar from "@/config/rollbar";
+import rollbar from "@/shared/lib/rollbar";
 
 interface UpgradeDetails {
   billingCycle: "Monthly" | "Yearly";

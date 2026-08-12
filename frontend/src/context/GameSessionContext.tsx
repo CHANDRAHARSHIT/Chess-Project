@@ -12,7 +12,7 @@
  */
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useSession } from "@/hooks/useSession";
-import rollbar from "@/config/rollbar";
+import rollbar from "@/shared/lib/rollbar";
 import { GameSessionContext } from "./gameSessionContext.instance";
 import type { ConnectionStatus } from "./gameSessionContext.instance";
 import type {

@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router";
 import { Paintbrush, Video, BookOpen, BarChart2, Users, Zap, ArrowLeft } from "lucide-react";
-import { soundManager } from "@/utils/SoundManager";
+import { soundManager } from "@/shared/lib/SoundManager";
 
 interface FeatureCardProps {
   icon: React.ComponentType<{ className?: string }>;

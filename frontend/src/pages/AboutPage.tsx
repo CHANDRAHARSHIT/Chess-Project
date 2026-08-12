@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router";
 import { Crown, Target, Users, Zap, BookOpen, Globe, ArrowLeft } from "lucide-react";
-import { soundManager } from "@/utils/SoundManager";
+import { soundManager } from "@/shared/lib/SoundManager";
 
 interface ValueCardProps {
   icon: React.ComponentType<{ className?: string }>;

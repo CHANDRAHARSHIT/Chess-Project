@@ -5,7 +5,7 @@
  */
 
 import { Plus } from "lucide-react";
-import { soundManager } from "@/utils/SoundManager";
+import { soundManager } from "@/shared/lib/SoundManager";
 
 interface ContentFilterBarProps {
   selectedCategory: string;

@@ -1,6 +1,6 @@
 import { useContext } from "react";
-import { BoardSettingsContext } from "@/context/BoardSettingsContext";
-import type { BoardSettingsContextType } from "@/context/BoardSettingsContext";
+import { BoardSettingsContext } from "@/shared/appearance/BoardSettingsContext";
+import type { BoardSettingsContextType } from "@/shared/appearance/BoardSettingsContext";
 
 /**
  * Custom React hook to read/update the player's board theme and piece set.

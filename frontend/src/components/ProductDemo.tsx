@@ -1,22 +1,22 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { ThemedChessboard } from "./ThemedChessboard";
+import { ThemedChessboard } from "@/shared/ui/ThemedChessboard";
 import { Chess } from "chess.js";
-import { useStockfish } from "@/hooks/useStockfish";
+import { useStockfish } from "@/shared/hooks/useStockfish";
 import {
   parseUciMove,
   getGameOverReason,
   playMoveSound,
-} from "@/utils/chessHelpers";
-import { generateChess960FEN } from "@/utils/chess960";
-import { EditPositionModal } from "./EditPositionModal";
-import { EvaluationBar } from "./EvaluationBar";
+} from "@/shared/chess/chessHelpers";
+import { generateChess960FEN } from "@/shared/chess/chess960";
+import { EditPositionModal } from "@/shared/ui/EditPositionModal";
+import { EvaluationBar } from "@/shared/ui/EvaluationBar";
 import {
   validateEditorPosition,
   type EditorPositionState,
-} from "@/utils/positionEditor";
-import { DIFFICULTY_CONFIGS, type DifficultyLevel } from "@/types/chess";
-import { soundManager } from "@/utils/SoundManager";
-import rollbar from "@/config/rollbar";
+} from "@/shared/chess/positionEditor";
+import { DIFFICULTY_CONFIGS, type DifficultyLevel } from "@/shared/chess/chess.types";
+import { soundManager } from "@/shared/lib/SoundManager";
+import rollbar from "@/shared/lib/rollbar";
 import {
   RotateCcw,
   Lightbulb,
@@ -26,9 +26,9 @@ import {
   Pencil,
   MoreHorizontal,
 } from "lucide-react";
-import { useScrollReveal } from "@/hooks/useScrollReveal";
-import { useButtonGlow } from "@/hooks/useButtonGlow";
-import { BoardCoordinates } from "./BoardCoordinates";
+import { useScrollReveal } from "@/shared/hooks/useScrollReveal";
+import { useButtonGlow } from "@/shared/hooks/useButtonGlow";
+import { BoardCoordinates } from "@/shared/ui/BoardCoordinates";
 
 // Board colors + piece set now come from Settings -> Board & Pieces
 // (see useBoardSettings inside the component) instead of being hardcoded here.

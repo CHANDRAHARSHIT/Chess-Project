@@ -10,7 +10,7 @@
  */
 
 // ── GSAP: register plugins immediately (before any component renders) ──────
-import "./utils/gsapConfig";
+import "@/shared/lib/gsapConfig";
 
 import AppRouter from "./router/AppRouter";
 

@@ -16,7 +16,7 @@ import {
 import { useSession } from "@/hooks/useSession";
 import { useNavigate } from "react-router";
 import { PaymentService } from "@/services/payment";
-import rollbar from "@/config/rollbar";
+import rollbar from "@/shared/lib/rollbar";
 
 interface PlatformButtonProps {
   name: string;

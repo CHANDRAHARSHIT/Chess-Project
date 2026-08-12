@@ -1,6 +1,6 @@
-import { useBoardSettings } from "@/hooks/useBoardSettings";
-import type { BoardTheme } from "@/data/boardThemes";
-import type { PieceSetDef } from "@/data/pieceSets";
+import { useBoardSettings } from "@/shared/appearance/useBoardSettings";
+import type { BoardTheme } from "@/shared/appearance/boardThemes";
+import type { PieceSetDef } from "@/shared/appearance/pieceSets";
 
 // A compact 3x3 corner-of-the-board sample, showing one of each piece type
 // so both the square colors and the piece style are visible at a glance —

@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router";
 import { Shield, ArrowLeft } from "lucide-react";
-import { soundManager } from "@/utils/SoundManager";
+import { soundManager } from "@/shared/lib/SoundManager";
 
 interface SectionProps {
   title: string;

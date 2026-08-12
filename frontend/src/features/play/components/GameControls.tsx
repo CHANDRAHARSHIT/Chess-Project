@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { RotateCcw, Flag, FlipHorizontal, Lightbulb } from 'lucide-react';
-import { type GameStatus } from '@/types/chess';
-import { soundManager } from '@/utils/SoundManager';
+import { type GameStatus } from '@/shared/chess/chess.types';
+import { soundManager } from '@/shared/lib/SoundManager';
 
 interface GameControlsProps {
   status: GameStatus;

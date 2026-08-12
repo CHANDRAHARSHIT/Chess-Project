@@ -12,9 +12,9 @@
  */
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Chess, type Square } from "chess.js";
-import { ThemedChessboard } from "@/components/ThemedChessboard";
-import { BoardCoordinates } from "@/components/BoardCoordinates";
-import { soundManager } from "@/utils/SoundManager";
+import { ThemedChessboard } from "@/shared/ui/ThemedChessboard";
+import { BoardCoordinates } from "@/shared/ui/BoardCoordinates";
+import { soundManager } from "@/shared/lib/SoundManager";
 
 export interface DerivedMove {
   san: string;

@@ -8,27 +8,27 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Chess } from "chess.js";
-import { ThemedChessboard } from "@/components/ThemedChessboard";
-import { useStockfish } from "@/hooks/useStockfish";
+import { ThemedChessboard } from "@/shared/ui/ThemedChessboard";
+import { useStockfish } from "@/shared/hooks/useStockfish";
 import {
   parseUciMove,
   getGameOverReason,
   playMoveSound,
-} from "@/utils/chessHelpers";
-import { EvaluationBar } from "@/components/EvaluationBar";
-import { soundManager } from "@/utils/SoundManager";
+} from "@/shared/chess/chessHelpers";
+import { EvaluationBar } from "@/shared/ui/EvaluationBar";
+import { soundManager } from "@/shared/lib/SoundManager";
 import {
   MONSTER_PROFILES,
   type MonsterProfile,
 } from "@/data/storyModeMapData";
-import { DIFFICULTY_CONFIGS, type DifficultyLevel } from "@/types/chess";
-import { generateChess960FEN } from "@/utils/chess960";
-import { EditPositionModal } from "@/components/EditPositionModal";
+import { DIFFICULTY_CONFIGS, type DifficultyLevel } from "@/shared/chess/chess.types";
+import { generateChess960FEN } from "@/shared/chess/chess960";
+import { EditPositionModal } from "@/shared/ui/EditPositionModal";
 import {
   validateEditorPosition,
   type EditorPositionState,
-} from "@/utils/positionEditor";
-import rollbar from "@/config/rollbar";
+} from "@/shared/chess/positionEditor";
+import rollbar from "@/shared/lib/rollbar";
 import {
   Swords,
   Trophy,
@@ -41,8 +41,8 @@ import {
   Shuffle,
   Pencil,
 } from "lucide-react";
-import { useScrollReveal } from "@/hooks/useScrollReveal";
-import { BoardCoordinates } from "@/components/BoardCoordinates";
+import { useScrollReveal } from "@/shared/hooks/useScrollReveal";
+import { BoardCoordinates } from "@/shared/ui/BoardCoordinates";
 
 interface StoryModeBattleProps {
   nodeId: number;

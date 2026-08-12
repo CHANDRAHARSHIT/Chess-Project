@@ -6,7 +6,7 @@
  * Fully theme-aware for light and dark modes.
  */
 
-import { ThemedChessboard } from "@/components/ThemedChessboard";
+import { ThemedChessboard } from "@/shared/ui/ThemedChessboard";
 import type { StudentBreakthrough } from "@/data/creatorMockData";
 
 interface StudentBreakthroughsProps {

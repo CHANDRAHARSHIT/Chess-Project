@@ -1,4 +1,4 @@
-import rollbar from "@/config/rollbar";
+import rollbar from "@/shared/lib/rollbar";
 
 export interface PathwayProgressData {
   completedIds: string[];

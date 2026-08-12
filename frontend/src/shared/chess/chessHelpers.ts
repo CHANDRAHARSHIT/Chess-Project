@@ -17,7 +17,7 @@ export function formatColor(color: 'w' | 'b'): string {
 }
 
 import { Chess } from 'chess.js';
-import { soundManager } from './SoundManager';
+import { soundManager } from '@/shared/lib/SoundManager';
 
 /**
  * Plays the correct sound for a chess.js move result and current game state.

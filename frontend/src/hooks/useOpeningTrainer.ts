@@ -18,7 +18,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { Chess } from "chess.js";
 import type { Opening } from "@/types/opening";
-import { soundManager } from "@/utils/SoundManager";
+import { soundManager } from "@/shared/lib/SoundManager";
 
 export type TrainerStatus =
   | "idle"       // No opening selected yet

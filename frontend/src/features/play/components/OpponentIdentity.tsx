@@ -6,7 +6,7 @@
  * `label` for the name, for any participant with no name/image set (or if the avatar fails to load).
  */
 import { useState } from "react";
-import { useBoardSettings } from "@/hooks/useBoardSettings";
+import { useBoardSettings } from "@/shared/appearance/useBoardSettings";
 
 function hashUserId(userId: string): number {
   let h = 0;

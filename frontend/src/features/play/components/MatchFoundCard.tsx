@@ -6,10 +6,10 @@
  */
 import { useEffect } from "react";
 import { Zap } from "lucide-react";
-import { ThemedChessboard } from "@/components/ThemedChessboard";
+import { ThemedChessboard } from "@/shared/ui/ThemedChessboard";
 import { OpponentIdentity } from "./OpponentIdentity";
 import { useSession } from "@/hooks/useSession";
-import { generateStartingFenFromPositionId } from "@/utils/chess960PositionId";
+import { generateStartingFenFromPositionId } from "@/shared/chess/chess960PositionId";
 import type { MatchDescriptor } from "@/types/multiplayer";
 
 const HANDOFF_DELAY_MS = 1800;

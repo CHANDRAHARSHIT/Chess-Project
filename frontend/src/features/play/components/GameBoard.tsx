@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
-import { ThemedChessboard } from '@/components/ThemedChessboard';
-import { BoardCoordinates } from '@/components/BoardCoordinates';
-import { type GameStatus } from '@/types/chess';
+import { ThemedChessboard } from '@/shared/ui/ThemedChessboard';
+import { BoardCoordinates } from '@/shared/ui/BoardCoordinates';
+import { type GameStatus } from '@/shared/chess/chess.types';
 
 interface GameBoardProps {
   fen: string;

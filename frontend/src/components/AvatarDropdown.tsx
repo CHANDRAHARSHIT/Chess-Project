@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { LogOut, Settings, Palette, Volume2, VolumeX, ChevronRight } from "lucide-react";
 import { useSession } from "@/hooks/useSession";
 import { useNavigate } from "react-router";
-import { soundManager } from "@/utils/SoundManager";
+import { soundManager } from "@/shared/lib/SoundManager";
 import { ThemeSubmenu } from "./ThemeSubmenu";
 
 const STORAGE_KEY = 'sound-enabled';

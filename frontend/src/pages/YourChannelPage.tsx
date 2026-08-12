@@ -14,7 +14,7 @@ import {
   MASTERCLASSES,
   STUDENT_BREAKTHROUGHS,
 } from "@/data/creatorMockData";
-import { soundManager } from "@/utils/SoundManager";
+import { soundManager } from "@/shared/lib/SoundManager";
 
 export default function YourChannelPage() {
   const navigate = useNavigate();

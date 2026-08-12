@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { X, Shuffle, Play, Bot, Check } from 'lucide-react';
-import { DIFFICULTY_CONFIGS, type DifficultyLevel } from '@/types/chess';
+import { DIFFICULTY_CONFIGS, type DifficultyLevel } from '@/shared/chess/chess.types';
 import { type Chess960GameOptions } from '@/hooks/useChess960Game';
-import { soundManager } from '@/utils/SoundManager';
-import { useButtonGlow } from '@/hooks/useButtonGlow';
+import { soundManager } from '@/shared/lib/SoundManager';
+import { useButtonGlow } from '@/shared/hooks/useButtonGlow';
 
 interface Chess960SetupPanelProps {
   isOpen: boolean;

@@ -43,7 +43,7 @@ import { OpeningBoard } from "@/features/openings/OpeningBoard";
 import { OpeningCoachPanel } from "@/features/openings/OpeningCoachPanel";
 import { OpeningProgressBar } from "@/features/openings/OpeningProgressBar";
 import { OpeningCompletionCard } from "@/features/openings/OpeningCompletionCard";
-import { soundManager } from "@/utils/SoundManager";
+import { soundManager } from "@/shared/lib/SoundManager";
 import type { Opening } from "@/types/opening";
 
 // ─── Constants ────────────────────────────────────────────────────────────────

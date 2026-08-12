@@ -1,4 +1,4 @@
-import type { EngineEvaluation } from "@/types/chess";
+import type { EngineEvaluation } from "@/shared/chess/chess.types";
 
 interface EvaluationBarProps {
   evaluation: EngineEvaluation | null;

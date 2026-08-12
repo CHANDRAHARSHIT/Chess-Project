@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { ArrowLeft, Search, ChevronDown, Settings } from "lucide-react";
 import { useNavigate } from "react-router";
-import { ThemedChessboard } from "@/components/ThemedChessboard";
+import { ThemedChessboard } from "@/shared/ui/ThemedChessboard";
 import { MOCK_GAMES } from "@/data/mockGames";
 import type { MockGame } from "@/data/mockGames";
 

@@ -14,8 +14,8 @@ import { ConnectionIndicator, type PresenceState } from "./ConnectionIndicator";
 import { ResultRevealModal } from "./ResultRevealModal";
 import { LiveRegion } from "./LiveRegion";
 import { MoveLog } from "./MoveLog";
-import { soundManager } from "@/utils/SoundManager";
-import { generateStartingFenFromPositionId } from "@/utils/chess960PositionId";
+import { soundManager } from "@/shared/lib/SoundManager";
+import { generateStartingFenFromPositionId } from "@/shared/chess/chess960PositionId";
 
 const WAIT_TOO_LONG_MS = 65_000;
 

@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router";
 import { Megaphone, Target, Users, BarChart2, Globe, Zap, ArrowLeft } from "lucide-react";
-import { soundManager } from "@/utils/SoundManager";
+import { soundManager } from "@/shared/lib/SoundManager";
 
 interface AdFormatCardProps {
   title: string;

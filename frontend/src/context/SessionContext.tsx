@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import type { Session } from "@auth/core/types";
 import { useNavigate } from "react-router";
-import rollbar from "@/config/rollbar";
+import rollbar from "@/shared/lib/rollbar";
 import { SessionContext } from "./sessionContext.instance";
 
 /**

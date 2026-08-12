@@ -32,8 +32,8 @@
  */
 
 import { useRef, useLayoutEffect } from 'react';
-import { gsap } from '@/utils/gsapConfig';
-import { prefersReducedMotion } from '@/utils/gsapConfig';
+import { gsap } from '@/shared/lib/gsapConfig';
+import { prefersReducedMotion } from '@/shared/lib/gsapConfig';
 
 // ─── Returned refs ────────────────────────────────────────────────────────────
 export interface LogoAnimationRefs {
