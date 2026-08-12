@@ -2,7 +2,7 @@
  * StoryModeBattle.tsx
  *
  * Full chess battle screen for story mode monster/boss encounters.
- * Merges the luxury UI of the Quick Game (ProductDemo) with Story Mode RPG elements.
+ * Merges the luxury UI of the Quick Game (QuickGameBoard) with Story Mode RPG elements.
  */
 
 import { useState, useEffect, useRef, useCallback } from "react";
@@ -416,7 +416,7 @@ export default function StoryModeBattle({
         </div>
       </motion.div>
 
-      {/* Dashboard (From ProductDemo) */}
+      {/* Dashboard (From QuickGameBoard) */}
       <div
         ref={dashboardRef}
         className="luxury-card rounded-sm p-4 sm:p-6 lg:p-8 w-full max-w-5xl mx-auto"

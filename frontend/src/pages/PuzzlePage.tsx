@@ -1,7 +1,7 @@
 import { useState, useCallback, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import { RoyalGoldPathway } from '@/features/puzzles/pathways/RoyalGold/RoyalGoldPathway';
-import { ROYAL_GOLD_NODES } from '@/features/puzzles/pathways/RoyalGold/royalGoldNodes';
+import { RoyalGoldPathway } from '@/features/puzzles/pathways/RoyalGoldPathway';
+import { ROYAL_GOLD_NODES } from '@/features/puzzles/pathways/royalGoldNodes';
 import { PATHWAY_NODES } from '@/features/puzzles/pathways';
 import type { PathNode, PlayerProgress } from '@/features/puzzles/pathway.types';
 import { PuzzleBoard } from '@/features/puzzles/components/PuzzleBoard';

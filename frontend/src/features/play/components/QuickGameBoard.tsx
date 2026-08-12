@@ -33,7 +33,7 @@ import { BoardCoordinates } from "@/shared/ui/BoardCoordinates";
 // Board colors + piece set now come from Settings -> Board & Pieces
 // (see useBoardSettings inside the component) instead of being hardcoded here.
 
-export default function ProductDemo() {
+export default function QuickGameBoard() {
   // ─── ROOT CAUSE OF SCROLL BUG ──────────────────────────────────────────────────
   // Previously: game was in useState → setGame() during reset caused React to
   // unmount+remount the Chessboard. react-chessboard internally calls focus()
@@ -208,7 +208,7 @@ export default function ProductDemo() {
           }
         } catch (e) {
           console.error("AI tried to make invalid move:", bestMoveStr, e);
-          rollbar.error(e as Error, { context: "ProductDemo.applyEngineMove", bestMoveStr });
+          rollbar.error(e as Error, { context: "QuickGameBoard.applyEngineMove", bestMoveStr });
         }
       });
     }, 350);

@@ -1,19 +1,19 @@
 import React from 'react';
 import type { PathwayComponentProps, PathNode } from '@/features/puzzles/pathway.types';
-import { RoyalGoldPathway } from './RoyalGold/RoyalGoldPathway';
-import { ROYAL_GOLD_NODES } from './RoyalGold/royalGoldNodes';
-import { RoyalPurplePathway, ROYAL_PURPLE_NODES } from './RoyalPurple/RoyalPurplePathway';
-import { VerdantForestPathway, VERDANT_FOREST_NODES } from './VerdantForest/VerdantForestPathway';
-import { ObsidianPathway, OBSIDIAN_NODES } from './Obsidian/ObsidianPathway';
-import { CrystalPathway, CRYSTAL_NODES } from './Crystal/CrystalPathway';
-import { InfernoPathway, INFERNO_NODES } from './Inferno/InfernoPathway';
+import { RoyalGoldPathway } from './RoyalGoldPathway';
+import { ROYAL_GOLD_NODES } from './royalGoldNodes';
+import { RoyalPurplePathway, ROYAL_PURPLE_NODES } from './RoyalPurplePathway';
+import { VerdantForestPathway, VERDANT_FOREST_NODES } from './VerdantForestPathway';
+import { ObsidianPathway, OBSIDIAN_NODES } from './ObsidianPathway';
+import { CrystalPathway, CRYSTAL_NODES } from './CrystalPathway';
+import { InfernoPathway, INFERNO_NODES } from './InfernoPathway';
 
-export { RoyalGoldPathway } from './RoyalGold/RoyalGoldPathway';
-export { RoyalPurplePathway } from './RoyalPurple/RoyalPurplePathway';
-export { VerdantForestPathway } from './VerdantForest/VerdantForestPathway';
-export { ObsidianPathway } from './Obsidian/ObsidianPathway';
-export { CrystalPathway } from './Crystal/CrystalPathway';
-export { InfernoPathway } from './Inferno/InfernoPathway';
+export { RoyalGoldPathway } from './RoyalGoldPathway';
+export { RoyalPurplePathway } from './RoyalPurplePathway';
+export { VerdantForestPathway } from './VerdantForestPathway';
+export { ObsidianPathway } from './ObsidianPathway';
+export { CrystalPathway } from './CrystalPathway';
+export { InfernoPathway } from './InfernoPathway';
 
 export const PATHWAYS: Record<string, React.ComponentType<PathwayComponentProps>> = {
   RoyalGold: RoyalGoldPathway,
