@@ -67,7 +67,7 @@ export function QueuePanel() {
       <div className="flex flex-col lg:flex-row items-center gap-6 lg:gap-8">
         {/* Left: Board preview & format tags */}
         <div className="flex flex-col sm:flex-row lg:flex-col items-center gap-4 shrink-0 p-4 rounded-2xl bg-brand-text/5 border border-brand-text/10 w-full sm:w-auto">
-          <div className="relative shrink-0 rounded-2xl overflow-hidden border border-brand-text/15">
+          <div className="relative shrink-0 border border-brand-text/15">
             <BoardPreview size={140} />
           </div>
 

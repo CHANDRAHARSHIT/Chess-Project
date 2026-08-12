@@ -84,7 +84,7 @@ export function MatchFoundCard({ descriptor, onEnter }: MatchFoundCardProps) {
 
       {/* Starting Position Preview Card */}
       <div className="relative group rounded-2xl overflow-hidden border border-brand-accent/30 p-1 bg-brand-surface/80">
-        <div className="w-44 sm:w-52 aspect-square border border-brand-border/60 rounded-xl overflow-hidden pointer-events-none">
+        <div className="w-44 sm:w-52 aspect-square border border-brand-border/60 overflow-hidden pointer-events-none">
           <ThemedChessboard
             options={{
               position: fen,
