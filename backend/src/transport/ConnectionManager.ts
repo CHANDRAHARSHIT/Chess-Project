@@ -65,20 +65,25 @@ export class ConnectionManager {
   /**
    * Handles a client reconnect attempt using a stable ResumeToken.
    * Replaces the WebSocket reference and replays missed messages since lastReceivedSeq.
+   *
+   * AM-02 (Backend Stabilization, pre-M5): returns the underlying ConnectionId (not a boolean).
+   * `conn.id` never changes across reconnects (see register()) — this lets the caller
+   * (TransportServer) track the connection by its real, persistent identity instead of the
+   * ResumeToken, which is not a key `recordPong`/`disconnect` understand. See TransportServer.ts.
    */
-  markReconnected(resumeToken: ResumeToken, lastReceivedSeq: number, newWs: WebSocket): boolean {
+  markReconnected(resumeToken: ResumeToken, lastReceivedSeq: number, newWs: WebSocket): ConnectionId | null {
     const existingConnId = this.resumeIndex.get(resumeToken);
     if (!existingConnId) {
       const err = new Error(`Invalid or expired resumeToken '${resumeToken}'.`);
       reportError({ domain: "transport", error: err, fatal: false, context: { resumeToken } });
-      return false;
+      return null;
     }
 
     const conn = this.connections.get(existingConnId);
     if (!conn) {
       const err = new Error(`Connection entry missing for resumeToken '${resumeToken}'.`);
       reportError({ domain: "transport", error: err, fatal: false, context: { resumeToken } });
-      return false;
+      return null;
     }
 
     const oldStatus = conn.status;
@@ -118,7 +123,7 @@ export class ConnectionManager {
       }
     }
 
-    return true;
+    return conn.id;
   }
 
   /**

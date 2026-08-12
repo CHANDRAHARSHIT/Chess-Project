@@ -41,7 +41,7 @@ export function wireSessionTransportBridge(sessionManager: SessionManager): Tran
 
   return {
     onAppMessage: (userId, _connectionId, message) => {
-      if (message.type !== "submit_move") return;
+      if (message.type !== "submit_move" && message.type !== "resign") return;
 
       const sessionId = sessionManager.getSessionIdForParticipant(userId);
       if (!sessionId) {
@@ -49,10 +49,17 @@ export function wireSessionTransportBridge(sessionManager: SessionManager): Tran
         connectionManager.send(userId, { type: "error", payload: { reason: "no_active_session" } });
         reportError({
           domain: "session",
-          error: new Error(`submit_move from '${userId}' with no active session.`),
+          error: new Error(`${message.type} from '${userId}' with no active session.`),
           fatal: false,
           context: { userId },
         });
+        return;
+      }
+
+      // AM-01 (Backend Stabilization, pre-M5): routes to the existing, unmodified forfeit() —
+      // SessionManager already produces the correct GameResult; only the wire route was missing.
+      if (message.type === "resign") {
+        sessionManager.forfeit(sessionId, userId);
         return;
       }
 

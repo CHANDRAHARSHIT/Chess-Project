@@ -10,6 +10,7 @@ import {
   wireMatchmakingSessionBridge,
 } from "./session/index.js";
 import { matchmakingQueue, ExpiryTicker } from "./matchmaking/index.js";
+import { handleGameResult } from "./results/index.js";
 
 // Initialise observability first so the very first server error is captured.
 initRollbar();
@@ -30,7 +31,7 @@ export const server = app.listen(env.PORT, () => {
 // Composition root: SessionManager is constructed here, not exported as a module singleton,
 // so future consumers (Results in M4) receive it via injection.
 if (env.MULTIPLAYER_ENABLED) {
-  const sessionManager = new SessionManager(undefined, undefined, sessionTransportImpl);
+  const sessionManager = new SessionManager(handleGameResult, undefined, sessionTransportImpl);
   const hooks = wireSessionTransportBridge(sessionManager);
   wireMatchmakingSessionBridge(matchmakingQueue, sessionManager);
 
