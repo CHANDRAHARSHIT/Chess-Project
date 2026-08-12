@@ -7,10 +7,10 @@ export function LobbyView({ historyRefreshKey }: { historyRefreshKey: number }) 
   return (
     <div className="max-w-5xl mx-auto space-y-8 animate-fade-in">
       {/* Hero Header & Quick Specs */}
-      <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-r from-brand-surface/80 via-brand-surface/50 to-brand-surface/80 p-6 sm:p-8 backdrop-blur-xl shadow-xl">
+      <div className="relative overflow-hidden rounded-3xl border border-brand-text/15 bg-brand-surface p-6 sm:p-8">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="flex items-start gap-4">
-            <div className="p-3 rounded-2xl bg-brand-accent/10 border border-brand-accent/20 text-brand-accent shadow-[0_0_20px_rgba(212,175,110,0.1)] shrink-0">
+            <div className="p-3 rounded-2xl bg-brand-accent/10 border border-brand-accent/20 text-brand-accent shrink-0">
               <Swords className="w-7 h-7" />
             </div>
             <div className="space-y-1">
@@ -28,16 +28,16 @@ export function LobbyView({ historyRefreshKey }: { historyRefreshKey: number }) 
           </div>
 
           {/* Quick Info Badges */}
-          <div className="flex flex-wrap md:flex-col lg:flex-row items-center gap-2.5 shrink-0 pt-4 md:pt-0 border-t md:border-t-0 md:border-l border-white/10 md:pl-6">
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-brand-bg/40 border border-white/10 font-mono text-xs text-brand-secondary">
+          <div className="flex flex-wrap md:flex-col lg:flex-row items-center gap-2.5 shrink-0 pt-4 md:pt-0 border-t md:border-t-0 md:border-l border-brand-text/10 md:pl-6">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-brand-text/5 border border-brand-text/10 font-mono text-xs text-brand-secondary">
               <Zap className="w-3.5 h-3.5 text-brand-accent" />
               <span>5+3 Blitz</span>
             </div>
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-brand-bg/40 border border-white/10 font-mono text-xs text-brand-secondary">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-brand-text/5 border border-brand-text/10 font-mono text-xs text-brand-secondary">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
               <span>Quick Pairing</span>
             </div>
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-brand-bg/40 border border-white/10 font-mono text-xs text-brand-secondary">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-brand-text/5 border border-brand-text/10 font-mono text-xs text-brand-secondary">
               <Sparkles className="w-3.5 h-3.5 text-brand-accent" />
               <span>Fischer Random</span>
             </div>

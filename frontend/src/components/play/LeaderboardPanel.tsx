@@ -56,7 +56,7 @@ export function LeaderboardPanel() {
   }, []);
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-gradient-to-b from-brand-surface/80 to-brand-surface/40 backdrop-blur-xl overflow-hidden shadow-xl flex flex-col h-full">
+    <div className="rounded-3xl border border-brand-text/15 bg-brand-surface overflow-hidden flex flex-col h-full">
       <div className="px-5 py-4 border-b border-white/10 bg-brand-surface/60 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Award className="w-4 h-4 text-brand-accent" />

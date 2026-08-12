@@ -19,9 +19,9 @@ interface PlayTabBarProps {
 }
 
 const TABS: { id: PlayTab; label: string; Icon: React.ElementType }[] = [
-  { id: "quick",    label: "Quick Game",   Icon: Zap     },
-  { id: "online",   label: "Play Online",  Icon: Swords  },
-  { id: "variants", label: "Variants",     Icon: Shuffle },
+  { id: "quick", label: "Quick Game", Icon: Zap },
+  { id: "online", label: "Play Online", Icon: Swords },
+  { id: "variants", label: "Variants", Icon: Shuffle },
 ];
 
 export function PlayTabBar({ activeTab, onTabChange, isOnlineActive = false }: PlayTabBarProps) {
@@ -38,11 +38,10 @@ export function PlayTabBar({ activeTab, onTabChange, isOnlineActive = false }: P
               soundManager.playButtonClick();
               onTabChange(id);
             }}
-            className={`relative flex items-center justify-center gap-2 flex-1 sm:flex-none sm:px-5 px-3 py-2.5 rounded-xl text-xs font-mono font-bold transition-all duration-200 cursor-pointer ${
-              isActive
-                ? "bg-brand-accent text-black shadow-md shadow-brand-accent/20"
-                : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5"
-            }`}
+            className={`relative flex items-center justify-center gap-2 flex-1 sm:flex-none sm:px-5 px-3 py-2.5 rounded-xl text-xs font-mono font-bold transition-all duration-200 cursor-pointer ${isActive
+              ? "bg-brand-accent text-black"
+              : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5"
+              }`}
             aria-selected={isActive}
             role="tab"
           >

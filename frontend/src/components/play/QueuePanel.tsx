@@ -24,7 +24,7 @@ function formatRemaining(ms: number): string {
 }
 
 const primaryBtn =
-  "px-7 py-3.5 rounded-xl font-mono text-xs uppercase tracking-widest font-bold btn-premium-cta btn-glow-container btn-glow-accent cta-shine cursor-pointer shadow-[0_10px_25px_-5px_rgba(212,175,110,0.25)] hover:scale-[1.02] active:scale-[0.98] transition-all inline-flex items-center justify-center gap-2.5 min-h-[48px]";
+  "px-7 py-3.5 rounded-xl font-mono text-xs uppercase tracking-widest font-bold btn-premium-cta btn-glow-container btn-glow-accent cta-shine cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-all inline-flex items-center justify-center gap-2.5 min-h-[48px]";
 
 const outlineBtn =
   "px-5 py-2.5 rounded-xl font-mono text-[11px] uppercase tracking-widest font-semibold border border-rose-500/30 text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 hover:border-rose-500/50 transition-all duration-[var(--dur-quick)] inline-flex items-center gap-2 cursor-pointer";
@@ -60,14 +60,14 @@ export function QueuePanel() {
   };
 
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-brand-surface/80 to-brand-surface/40 backdrop-blur-xl p-6 sm:p-8 shadow-xl transition-all">
+    <div className="relative overflow-hidden rounded-3xl border border-brand-text/15 bg-brand-surface p-6 sm:p-8 transition-all">
       {/* Decorative subtle ambient background glow */}
       <div className="pointer-events-none absolute -top-24 -right-24 h-64 w-64 rounded-full bg-brand-accent/5 blur-3xl" />
 
       <div className="flex flex-col lg:flex-row items-center gap-6 lg:gap-8">
         {/* Left: Board preview & format tags */}
-        <div className="flex flex-col sm:flex-row lg:flex-col items-center gap-4 shrink-0 p-4 rounded-xl bg-brand-bg/30 border border-white/5 w-full sm:w-auto">
-          <div className="relative shrink-0 rounded-lg overflow-hidden border border-white/10 shadow-md">
+        <div className="flex flex-col sm:flex-row lg:flex-col items-center gap-4 shrink-0 p-4 rounded-2xl bg-brand-text/5 border border-brand-text/10 w-full sm:w-auto">
+          <div className="relative shrink-0 rounded-2xl overflow-hidden border border-brand-text/15">
             <BoardPreview size={140} />
           </div>
 
@@ -77,7 +77,7 @@ export function QueuePanel() {
               <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-brand-accent/10 border border-brand-accent/20 font-mono text-[10px] uppercase tracking-wider text-brand-accent font-medium">
                 <Clock className="w-3 h-3" /> 5+3 Blitz
               </span>
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-brand-surface/40 border border-white/10 font-mono text-[10px] uppercase tracking-wider text-brand-secondary">
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-brand-text/5 border border-brand-text/10 font-mono text-[10px] uppercase tracking-wider text-brand-secondary">
                 <Shield className="w-3 h-3" /> Casual
               </span>
             </div>
@@ -167,7 +167,7 @@ export function QueuePanel() {
 
           {phase === "unavailable" && (
             <div className="space-y-3">
-              <p className="text-xs sm:text-sm text-brand-secondary bg-brand-surface/40 border border-white/10 px-4 py-3 rounded-xl">
+              <p className="text-xs sm:text-sm text-brand-secondary bg-brand-text/5 border border-brand-text/10 px-4 py-3 rounded-xl">
                 Online play isn't open yet. XLChess is rolling multiplayer out gradually. Chess 960 against the engine is available now.
               </p>
               <Link to="/play/chess960" className={primaryBtn}>
