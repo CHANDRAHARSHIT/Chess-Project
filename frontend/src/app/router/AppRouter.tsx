@@ -1,9 +1,9 @@
 import { Routes, Route } from 'react-router';
-import MainLayout from '@/layouts/MainLayout';
-import MinimalLayout from '@/layouts/MinimalLayout';
+import MainLayout from '@/app/layouts/MainLayout';
+import MinimalLayout from '@/app/layouts/MinimalLayout';
 import { mainRoutes, minimalRoutes } from './routes';
 import NotFoundPage from '@/pages/NotFoundPage';
-import { useDocumentTitle } from '@/hooks/useDocumentTitle';
+import { useDocumentTitle } from '@/app/router/useDocumentTitle';
 
 export default function AppRouter() {
   useDocumentTitle();

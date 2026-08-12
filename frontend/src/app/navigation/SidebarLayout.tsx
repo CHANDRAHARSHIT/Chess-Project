@@ -23,14 +23,14 @@ import {
   Sparkles,
   Loader2,
 } from "lucide-react";
-import { useLogoAnimation } from "@/hooks/useLogoAnimation";
+import { useLogoAnimation } from "@/app/navigation/useLogoAnimation";
 import { soundManager } from "@/shared/lib/SoundManager";
 import { useSession } from "@/features/account/useSession";
 import { AvatarDropdown } from "./AvatarDropdown";
 import { AuthModal } from "@/features/account/AuthModal";
 import { MoreMenu } from "./MoreMenu";
 import { useNavigate, useLocation } from "react-router";
-import { useNavigationStack } from "@/hooks/useNavigationStack";
+import { useNavigationStack } from "@/app/navigation/useNavigationStack";
 import rollbar from "@/shared/lib/rollbar";
 
 // Hook for clicking outside the custom dropdown

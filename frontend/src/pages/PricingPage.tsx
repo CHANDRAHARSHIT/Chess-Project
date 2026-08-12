@@ -23,7 +23,7 @@ import {
 import { usePricing } from "@/features/billing/usePricing";
 import type { PricingResponse } from "@/features/billing/pricing.service";
 import { useNavigate, useLocation } from "react-router";
-import { useNavigationStack } from "@/hooks/useNavigationStack";
+import { useNavigationStack } from "@/app/navigation/useNavigationStack";
 import { MembershipFeaturesSection } from "@/features/billing/MembershipFeaturesSection";
 
 // ─── Decorative floating chess pieces ──────────────────────────────────────────

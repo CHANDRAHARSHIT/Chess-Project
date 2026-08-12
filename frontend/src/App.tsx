@@ -12,7 +12,7 @@
 // ── GSAP: register plugins immediately (before any component renders) ──────
 import "@/shared/lib/gsapConfig";
 
-import AppRouter from "./router/AppRouter";
+import AppRouter from "@/app/router/AppRouter";
 
 import { ParticlesProvider } from "@tsparticles/react";
 import { loadConfettiCannonPreset } from "@tsparticles/preset-confetti-cannon";

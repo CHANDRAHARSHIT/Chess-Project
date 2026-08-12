@@ -25,7 +25,7 @@ import { PIECE_SETS } from "@/shared/appearance/pieceSets";
 import BoardPreview from "@/shared/ui/BoardPreview";
 import ProfileContent from "@/features/account/ProfileContent";
 import { soundManager } from "@/shared/lib/SoundManager";
-import { useNavigationStack } from "@/hooks/useNavigationStack";
+import { useNavigationStack } from "@/app/navigation/useNavigationStack";
 
 type TabId = "boards" | "pieces" | "background" | "presets";
 
