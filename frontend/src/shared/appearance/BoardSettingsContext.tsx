@@ -1,24 +1,10 @@
-import React, { createContext, useCallback, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { BOARD_THEMES, DEFAULT_BOARD_THEME_ID } from "@/shared/appearance/boardThemes";
-import type { BoardTheme } from "@/shared/appearance/boardThemes";
 import { PIECE_SETS, DEFAULT_PIECE_SET_ID } from "@/shared/appearance/pieceSets";
-import type { PieceSetDef } from "@/shared/appearance/pieceSets";
+import { BoardSettingsContext } from "./boardSettingsContext.instance";
 
 const BOARD_THEME_STORAGE_KEY = "xlchess-board-theme";
 const PIECE_SET_STORAGE_KEY = "xlchess-piece-set";
-
-export interface BoardSettingsContextType {
-  /** The currently active board color theme (resolved object, not just the id). */
-  boardTheme: BoardTheme;
-  /** The currently active piece set (resolved object, not just the id). */
-  pieceSet: PieceSetDef;
-  setBoardThemeId: (id: string) => void;
-  setPieceSetId: (id: string) => void;
-}
-
-export const BoardSettingsContext = createContext<BoardSettingsContextType | undefined>(
-  undefined,
-);
 
 function readStoredId(key: string, fallback: string, validIds: string[]): string {
   if (typeof window === "undefined") return fallback;

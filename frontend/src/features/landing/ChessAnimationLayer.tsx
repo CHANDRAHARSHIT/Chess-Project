@@ -140,7 +140,7 @@ export default function ChessAnimationLayer({
       
       if (isFading) { cx = targetX; cy = targetY; }
 
-      let ghostScale = 1.0;
+      let ghostScale: number;
       let ghostOpacity = 1.0;
       
       let capturedOpacity = 0.0;

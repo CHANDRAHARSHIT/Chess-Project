@@ -1,20 +1,6 @@
-import React, { createContext, useCallback, useState } from "react";
-
-export interface NavigationItem {
-  label: string;
-  path: string;
-}
-
-export interface NavigationStackContextType {
-  stack: NavigationItem[];
-  push: (item: NavigationItem) => void;
-  getPrevious: () => NavigationItem | undefined;
-  clear: () => void;
-}
-
-export const NavigationStackContext = createContext<
-  NavigationStackContextType | undefined
->(undefined);
+import React, { useCallback, useState } from "react";
+import type { NavigationItem } from "./navigationStackContext.instance";
+import { NavigationStackContext } from "./navigationStackContext.instance";
 
 const MAX_STACK_SIZE = 3;
 

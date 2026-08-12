@@ -1,5 +1,4 @@
 import {
-  createContext,
   useEffect,
   useMemo,
   useState,
@@ -9,17 +8,10 @@ import {
 import {
   DEFAULT_THEME_MODE_ID,
   THEME_MODES,
-  type ThemeMode,
 } from "@/shared/appearance/themeModes";
+import { ThemeContext } from "./themeContext.instance";
 
 const STORAGE_KEY = "theme-mode";
-
-interface ThemeContextValue {
-  themeMode: ThemeMode;
-  setThemeModeId: (id: string) => void;
-}
-
-export const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
 function getResolvedTheme(mode: string): "light" | "dark" {
   if (mode === "light" || mode === "dark") {

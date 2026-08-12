@@ -443,17 +443,16 @@ export default function StoryModeBattle({
               style={{ borderRadius: "4px", transform: "translateZ(0)" }}
             >
               <ThemedChessboard
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any -- react-chessboard options object cast
-                options={({
+                options={{
                   position: gameFen,
-                  onPieceDrop: ({ sourceSquare, targetSquare }: any) =>
+                  onPieceDrop: ({ sourceSquare, targetSquare }) =>
                     onDrop(sourceSquare, targetSquare),
                   boardOrientation,
                   squareStyles: customSquareStyles,
                   boardStyle: { borderRadius: "0px" },
                   showNotation: false,
-                  arePiecesDraggable: battleResult === "playing" && !isEditMode,
-                } as any)}
+                  allowDragging: battleResult === "playing" && !isEditMode,
+                }}
               />
               <BoardCoordinates boardOrientation={boardOrientation} />
             </div>
