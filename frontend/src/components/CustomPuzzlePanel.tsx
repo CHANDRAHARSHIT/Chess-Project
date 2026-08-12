@@ -216,10 +216,9 @@ export function CustomPuzzlePanel({
 
   return (
     <div
-      className="relative flex flex-col rounded-2xl overflow-hidden shadow-2xl w-full h-full max-h-[685px] bg-brand-surface border border-brand-border text-brand-text transition-colors duration-200"
+      className="relative flex flex-col rounded-2xl overflow-hidden w-full h-full max-h-[685px] bg-brand-surface border border-brand-border text-brand-text transition-colors duration-200"
       style={{
-        boxShadow:
-          "0 24px 60px rgba(0,0,0,0.3), 0 0 0 1px var(--marble-border)",
+        boxShadow: "none",
       }}
     >
       {/* Ambient glow top-right */}
@@ -296,7 +295,7 @@ export function CustomPuzzlePanel({
                 className={`w-full text-sm font-mono text-center transition-all duration-200 outline-none rounded-xl py-2 px-3 bg-brand-bg/80 text-brand-text ring-1 ${
                   ratingError
                     ? "ring-amber-500/80 focus:ring-amber-400"
-                    : "ring-brand-accent/15 focus:ring-brand-accent/50 shadow-inner"
+                    : "ring-brand-accent/15 focus:ring-brand-accent/50"
                 }`}
               />
             </div>
@@ -317,7 +316,7 @@ export function CustomPuzzlePanel({
                 className={`w-full text-sm font-mono text-center transition-all duration-200 outline-none rounded-xl py-2 px-3 bg-brand-bg/80 text-brand-text ring-1 ${
                   ratingError
                     ? "ring-amber-500/80 focus:ring-amber-400"
-                    : "ring-brand-accent/15 focus:ring-brand-accent/50 shadow-inner"
+                    : "ring-brand-accent/15 focus:ring-brand-accent/50"
                 }`}
               />
             </div>
@@ -358,13 +357,13 @@ export function CustomPuzzlePanel({
               placeholder="Search themes…"
               value={themeSearch}
               onChange={(e) => setThemeSearch(e.target.value)}
-              className="w-full text-xs pl-8 pr-3 py-2 outline-none transition-all duration-200 rounded-full bg-brand-bg/80 ring-1 ring-brand-accent/15 focus:ring-brand-accent/50 text-brand-text placeholder:text-brand-secondary/50 shadow-inner"
+              className="w-full text-xs pl-8 pr-3 py-2 outline-none transition-all duration-200 rounded-full bg-brand-bg/80 ring-1 ring-brand-accent/15 focus:ring-brand-accent/50 text-brand-text placeholder:text-brand-secondary/50"
             />
           </div>
 
           {/* Theme list */}
           <div
-            className="overflow-y-auto rounded-xl flex-1 bg-brand-bg/60 min-h-[140px] max-h-[300px] shadow-inner"
+            className="overflow-y-auto rounded-xl flex-1 bg-brand-bg/60 min-h-[140px] max-h-[300px]"
           >
             {loadingThemes ? (
               <div className="flex items-center justify-center py-10">
@@ -494,7 +493,7 @@ export function CustomPuzzlePanel({
           id="panel-puzzle-start-btn"
           onClick={handleStart}
           disabled={starting || !!ratingError}
-          className="w-full py-3.5 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed btn-premium-cta cta-shine shadow-md shadow-brand-accent/10"
+          className="w-full py-3.5 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed btn-premium-cta cta-shine"
         >
           {starting ? (
             <>

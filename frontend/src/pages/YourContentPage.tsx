@@ -58,7 +58,7 @@ export default function YourContentPage() {
 
       {/* Content Library Grid */}
       {filteredItems.length === 0 ? (
-        <div className="w-full rounded-3xl border border-brand-text/10 bg-obsidian-mid p-12 text-center space-y-3 shadow-xl">
+        <div className="w-full rounded-3xl border border-brand-text/10 bg-obsidian-mid p-12 text-center space-y-3">
           <span className="text-3xl">♟️</span>
           <h3 className="text-lg font-display font-bold text-brand-text">No content matches your filter</h3>
           <p className="text-xs sm:text-sm font-sans text-brand-secondary">

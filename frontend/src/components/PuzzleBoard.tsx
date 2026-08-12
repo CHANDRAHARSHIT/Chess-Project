@@ -315,7 +315,7 @@ export function PuzzleBoard({
 
       <div
         ref={boardContainerRef}
-        className={`relative w-full max-w-[500px] sm:max-w-[540px] aspect-square shadow-[0_20px_50px_rgba(212,175,110,0.03)] border overflow-hidden bg-brand-surface transition-all duration-300 z-10 ${isShaking
+        className={`relative w-full max-w-[500px] sm:max-w-[540px] aspect-square border overflow-hidden bg-brand-surface transition-all duration-300 z-10 ${isShaking
           ? "border-rose-500 ring-4 ring-rose-500/25"
           : puzzleStatus === "solved"
             ? "border-emerald-500 ring-4 ring-emerald-500/25 animate-pulse"
@@ -350,7 +350,7 @@ export function PuzzleBoard({
             Incorrect. Try Again
           </span>
         ) : (
-          <span className="font-mono uppercase tracking-wider text-xs font-bold text-brand-text flex items-center gap-1.5 bg-brand-surface border border-brand-border/60 px-3 py-1 rounded-full shadow-sm">
+          <span className="font-mono uppercase tracking-wider text-xs font-bold text-brand-text flex items-center gap-1.5 bg-brand-surface border border-brand-border/60 px-3 py-1 rounded-full">
             <Play className="w-3.5 h-3.5 text-brand-accent fill-current" />
             {playerColor === "w" ? "White to Move" : "Black to Move"}
           </span>
@@ -365,7 +365,7 @@ export function PuzzleBoard({
             handleHint();
           }}
           disabled={puzzleStatus === "solved"}
-          className="flex-1 min-w-[70px] sm:flex-initial px-2.5 sm:px-5 py-2.5 min-h-[44px] justify-center rounded-xl font-mono text-xs uppercase tracking-wider font-semibold bg-brand-surface border border-brand-border/60 hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center gap-1.5 shadow-sm"
+          className="flex-1 min-w-[70px] sm:flex-initial px-2.5 sm:px-5 py-2.5 min-h-[44px] justify-center rounded-xl font-mono text-xs uppercase tracking-wider font-semibold bg-brand-surface border border-brand-border/60 hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center gap-1.5"
         >
           <HelpCircle className="w-3.5 h-3.5 text-brand-accent" />
           <span>Hint</span>
@@ -377,7 +377,7 @@ export function PuzzleBoard({
             handleUndo();
           }}
           disabled={!canUndo}
-          className="flex-1 min-w-[70px] sm:flex-initial px-2.5 sm:px-5 py-2.5 min-h-[44px] justify-center rounded-xl font-mono text-xs uppercase tracking-wider font-semibold bg-brand-surface border border-brand-border/60 hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center gap-1.5 shadow-sm"
+          className="flex-1 min-w-[70px] sm:flex-initial px-2.5 sm:px-5 py-2.5 min-h-[44px] justify-center rounded-xl font-mono text-xs uppercase tracking-wider font-semibold bg-brand-surface border border-brand-border/60 hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center gap-1.5"
         >
           <Undo2 className="w-3.5 h-3.5 text-brand-accent" />
           <span>Undo</span>
@@ -389,7 +389,7 @@ export function PuzzleBoard({
             handleReset();
           }}
           disabled={!canUndo}
-          className="flex-1 min-w-[70px] sm:flex-initial px-2.5 sm:px-5 py-2.5 min-h-[44px] justify-center rounded-xl font-mono text-xs uppercase tracking-wider font-semibold bg-brand-surface border border-brand-border/60 hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center gap-1.5 shadow-sm"
+          className="flex-1 min-w-[70px] sm:flex-initial px-2.5 sm:px-5 py-2.5 min-h-[44px] justify-center rounded-xl font-mono text-xs uppercase tracking-wider font-semibold bg-brand-surface border border-brand-border/60 hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center gap-1.5"
         >
           <RotateCcw className="w-3.5 h-3.5 text-brand-accent" />
           <span>Reset</span>
@@ -403,11 +403,10 @@ export function PuzzleBoard({
               onNextPuzzle();
             }}
             disabled={isNextBtnDisabled}
-            className={`w-full sm:w-auto sm:flex-initial px-4 sm:px-6 py-2.5 min-h-[44px] justify-center rounded-xl font-mono text-xs uppercase tracking-widest font-bold transition-all duration-300 flex items-center gap-1.5 shadow-md ${
-              isNextBtnDisabled
-                ? "opacity-40 bg-brand-surface border border-brand-border/60 text-brand-secondary cursor-not-allowed shadow-none"
-                : "btn-premium-cta cta-shine cursor-pointer shadow-brand-accent/5 hover:scale-[1.02] active:scale-[0.98]"
-            }`}
+            className={`w-full sm:w-auto sm:flex-initial px-4 sm:px-6 py-2.5 min-h-[44px] justify-center rounded-xl font-mono text-xs uppercase tracking-widest font-bold transition-all duration-300 flex items-center gap-1.5 ${isNextBtnDisabled
+              ? "opacity-40 bg-brand-surface border border-brand-border/60 text-brand-secondary cursor-not-allowed"
+              : "btn-premium-cta cta-shine cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
+              }`}
           >
             <span>Next Puzzle</span>
             <ArrowRight className="w-3.5 h-3.5" />

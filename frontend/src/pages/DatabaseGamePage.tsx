@@ -134,7 +134,7 @@ export default function DatabaseGamePage() {
             {/* Board Area */}
             <div className="flex w-full relative items-stretch">
               {/* Chessboard */}
-              <div className="flex-1 aspect-square overflow-hidden shadow-2xl border-[3px] border-brand-border rounded-sm relative">
+              <div className="flex-1 aspect-square overflow-hidden border-[3px] border-brand-border rounded-sm relative">
                 <ThemedChessboard
                   options={{
                     position: currentFen,
@@ -229,7 +229,7 @@ export default function DatabaseGamePage() {
           <div className="flex-1 overflow-y-auto bg-brand-surface">
             {activeTab === "Info" ? (
               <div className="p-4 space-y-4">
-                <div className="bg-white text-black text-center py-2 font-bold rounded shadow-sm">
+                <div className="bg-white text-black text-center py-2 font-bold rounded">
                   {whiteWon
                     ? "White Won (1-0)"
                     : blackWon

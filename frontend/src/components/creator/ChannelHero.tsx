@@ -24,7 +24,7 @@ export function ChannelHero({ profile }: ChannelHeroProps) {
     : profile.handle;
 
   return (
-    <div className="relative w-full rounded-3xl border border-brand-accent/30 bg-brand-surface p-6 sm:p-8 shadow-2xl space-y-6 overflow-hidden">
+    <div className="relative w-full rounded-3xl border border-brand-accent/30 bg-brand-surface p-6 sm:p-8 space-y-6 overflow-hidden">
       {/* Background ambient lighting */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-brand-accent/10 rounded-full blur-3xl pointer-events-none" />
 
@@ -36,7 +36,7 @@ export function ChannelHero({ profile }: ChannelHeroProps) {
             <img
               src={userDp}
               alt={userName}
-              className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-2 border-brand-accent shadow-xl bg-obsidian"
+              className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-2 border-brand-accent bg-obsidian"
             />
           </div>
 

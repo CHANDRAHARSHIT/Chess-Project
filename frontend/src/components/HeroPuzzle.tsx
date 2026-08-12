@@ -2311,8 +2311,8 @@ export default function HeroPuzzle({
                     ref={isActive ? boardCardRef : null}
                     className="relative rounded-sm overflow-hidden flex flex-col p-0"
                     style={{
-                      willChange: "transform, opacity, box-shadow",
-                      transition: "box-shadow 1.5s ease-in-out",
+                      willChange: "transform, opacity",
+                      transition: "none",
                     }}
                   >
                     {/* Chessboard Container */}
@@ -2371,18 +2371,17 @@ export default function HeroPuzzle({
                             transform: rotate(45deg) !important;
                             transform-origin: center !important;
                             transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1), filter 0.8s ease !important;
-                            filter: drop-shadow(0 0 5px rgba(239, 68, 68, 0.85)) sepia(1) saturate(12) hue-rotate(-50deg) brightness(0.7) contrast(1.1) !important;
+                            filter: sepia(1) saturate(12) hue-rotate(-50deg) brightness(0.7) contrast(1.1) !important;
                           }
-                          ${
-                            winningKingSq
-                              ? `
+                          ${winningKingSq
+                            ? `
                           #hero-chessboard-${i} [data-square="${winningKingSq}"] [data-piece],
                           #hero-chessboard-${i} [data-square="${winningKingSq}"] img {
                             transition: filter 0.8s ease !important;
-                            filter: drop-shadow(0 0 5px rgba(34, 197, 94, 0.85)) sepia(1) saturate(12) hue-rotate(70deg) brightness(0.8) contrast(1.1) !important;
+                            filter: sepia(1) saturate(12) hue-rotate(70deg) brightness(0.8) contrast(1.1) !important;
                           }
                           `
-                              : ""
+                            : ""
                           }
                         `}</style>
                       )}
@@ -2421,11 +2420,10 @@ export default function HeroPuzzle({
                 key={i}
                 onClick={() => toSlide(i)}
                 aria-label={`Go to slide ${i + 1}`}
-                className={`rounded-full transition-all duration-300 ${
-                  activeIndex === i
+                className={`rounded-full transition-all duration-300 ${activeIndex === i
                     ? "w-5 h-1.5 bg-brand-accent"
                     : "w-1.5 h-1.5 bg-brand-secondary/40 hover:bg-brand-secondary"
-                }`}
+                  }`}
               />
             ))}
           </div>
@@ -2589,13 +2587,13 @@ export default function HeroPuzzle({
               phase1 === "black_responding" ||
               phase1 === "awaiting_mate" ||
               phase1 === "failed") && (
-              <>
-                <button
-                  onClick={() => {
-                    cleanupGame();
-                    initGame(1);
-                  }}
-                  className="
+                <>
+                  <button
+                    onClick={() => {
+                      cleanupGame();
+                      initGame(1);
+                    }}
+                    className="
                     flex-1 flex items-center justify-center gap-2
                     px-4 py-2.5 rounded-lg
                     font-sans text-sm font-semibold
@@ -2605,13 +2603,13 @@ export default function HeroPuzzle({
                     transition-all duration-200
                     btn-glow-container btn-glow-surface
                   "
-                >
-                  <RotateCcw className="w-4 h-4 text-brand-accent" />
-                  Reset
-                </button>
-                <button
-                  onClick={handleSolve1}
-                  className="
+                  >
+                    <RotateCcw className="w-4 h-4 text-brand-accent" />
+                    Reset
+                  </button>
+                  <button
+                    onClick={handleSolve1}
+                    className="
                     flex-1 flex items-center justify-center gap-2
                     px-4 py-2.5 rounded-lg
                     font-sans text-sm font-semibold
@@ -2621,12 +2619,12 @@ export default function HeroPuzzle({
                     transition-all duration-200
                     btn-glow-container btn-glow-surface
                   "
-                >
-                  <Play className="w-4 h-4 text-brand-accent" />
-                  Solve
-                </button>
-              </>
-            )}
+                  >
+                    <Play className="w-4 h-4 text-brand-accent" />
+                    Solve
+                  </button>
+                </>
+              )}
             {phase1 === "solved" && (
               <button
                 onClick={handleReplayOriginal}
@@ -2668,13 +2666,13 @@ export default function HeroPuzzle({
             {(phase2 === "idle" ||
               phase2 === "awaiting_move" ||
               phase2 === "failed") && (
-              <>
-                <button
-                  onClick={() => {
-                    cleanupGame();
-                    initGame(2);
-                  }}
-                  className="
+                <>
+                  <button
+                    onClick={() => {
+                      cleanupGame();
+                      initGame(2);
+                    }}
+                    className="
                     flex-1 flex items-center justify-center gap-2
                     px-4 py-2.5 rounded-lg
                     font-sans text-sm font-semibold
@@ -2684,12 +2682,12 @@ export default function HeroPuzzle({
                     transition-all duration-200
                     btn-glow-container btn-glow-surface
                   "
-                >
-                  <RotateCcw className="w-4 h-4 text-brand-accent" />
-                  Reset
-                </button>
-              </>
-            )}
+                  >
+                    <RotateCcw className="w-4 h-4 text-brand-accent" />
+                    Reset
+                  </button>
+                </>
+              )}
             {phase2 === "solved" && (
               <button
                 onClick={() => {
@@ -2734,13 +2732,13 @@ export default function HeroPuzzle({
             {(phase3 === "idle" ||
               phase3 === "awaiting_move" ||
               phase3 === "failed") && (
-              <>
-                <button
-                  onClick={() => {
-                    cleanupGame();
-                    initGame(3);
-                  }}
-                  className="
+                <>
+                  <button
+                    onClick={() => {
+                      cleanupGame();
+                      initGame(3);
+                    }}
+                    className="
                     flex-1 flex items-center justify-center gap-2
                     px-4 py-2.5 rounded-lg
                     font-sans text-sm font-semibold
@@ -2750,12 +2748,12 @@ export default function HeroPuzzle({
                     transition-all duration-200
                     btn-glow-container btn-glow-surface
                   "
-                >
-                  <RotateCcw className="w-4 h-4 text-brand-accent" />
-                  Reset
-                </button>
-              </>
-            )}
+                  >
+                    <RotateCcw className="w-4 h-4 text-brand-accent" />
+                    Reset
+                  </button>
+                </>
+              )}
             {phase3 === "solved" && (
               <button
                 onClick={() => {

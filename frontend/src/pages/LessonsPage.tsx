@@ -159,7 +159,7 @@ export default function LessonsPage() {
       </div>
 
       {/* Top Banner / Header */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-brand-surface via-brand-surface/90 to-brand-bg border border-brand-border p-6 sm:p-8 lg:p-10 shadow-2xl">
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-brand-surface via-brand-surface/90 to-brand-bg border border-brand-border p-6 sm:p-8 lg:p-10">
         <div className="absolute right-0 top-0 -mr-16 -mt-16 w-80 h-80 rounded-full bg-brand-accent/10 blur-3xl pointer-events-none" />
         <div className="relative z-10 space-y-4 max-w-2xl">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-accent/10 border border-brand-accent/30 text-brand-accent text-xs font-semibold uppercase tracking-wider">
@@ -200,8 +200,8 @@ export default function LessonsPage() {
               onClick={() => setSelectedCategory(category)}
               className={`px-4 py-2 rounded-xl text-xs font-semibold tracking-wide whitespace-nowrap transition-all duration-200 cursor-pointer ${
                 selectedCategory === category
-                  ? 'bg-brand-accent text-brand-bg shadow-md shadow-brand-accent/20'
-                  : 'bg-brand-surface/60 hover:bg-brand-surface text-brand-secondary hover:text-brand-text border border-brand-border/50'
+                  ? 'bg-brand-accent text-brand-bg'
+                  : 'bg-brand-bg text-brand-secondary hover:text-brand-text border border-brand-border/50'
               }`}
             >
               {category}
@@ -235,8 +235,8 @@ export default function LessonsPage() {
               }}
               className={`group relative flex flex-col rounded-2xl overflow-hidden bg-brand-surface/70 border border-brand-border transition-all duration-300 ${
                 lesson.isAvailable
-                  ? 'hover:border-brand-accent/50 hover:shadow-xl hover:shadow-brand-accent/5 hover:-translate-y-1 cursor-pointer'
-                  : 'opacity-75 cursor-not-allowed'
+                  ? 'hover:border-brand-accent/50 hover:-translate-y-1 cursor-pointer'
+                  : 'opacity-40 cursor-not-allowed'
               }`}
             >
               {/* Thumbnail Container */}
@@ -266,7 +266,7 @@ export default function LessonsPage() {
 
                 {/* Badge if available */}
                 {lesson.badge && lesson.isAvailable && (
-                  <div className="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-brand-accent text-brand-bg text-[10px] font-bold uppercase tracking-wider shadow-md">
+                  <div className="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-brand-accent text-brand-bg text-[10px] font-bold uppercase tracking-wider">
                     {lesson.badge}
                   </div>
                 )}
@@ -274,17 +274,17 @@ export default function LessonsPage() {
                 {/* Play Icon Hover Overlay for Available Lesson */}
                 {lesson.isAvailable ? (
                   <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-black/40 backdrop-blur-[2px]">
-                    <div className="w-14 h-14 rounded-full bg-brand-accent text-brand-bg flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform duration-200">
+                    <div className="w-14 h-14 rounded-full bg-brand-accent text-brand-bg flex items-center justify-center transform group-hover:scale-110 transition-transform duration-200">
                       <Play className="w-6 h-6 fill-current ml-1" />
                     </div>
                   </div>
                 ) : (
                   /* Coming Soon Banner Overlay for Locked Lessons */
                   <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 backdrop-blur-[2px] p-4 text-center">
-                    <div className="p-3 rounded-full bg-brand-surface/80 border border-brand-border/60 text-brand-secondary mb-2 shadow-lg">
+                    <div className="p-3 rounded-full bg-brand-surface/80 border border-brand-border/60 text-brand-secondary mb-2">
                       <Lock className="w-6 h-6 text-amber-400" />
                     </div>
-                    <span className="px-3 py-1 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 text-xs font-bold uppercase tracking-widest shadow-inner">
+                    <span className="px-3 py-1 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 text-xs font-bold uppercase tracking-widest">
                       Coming Soon
                     </span>
                   </div>

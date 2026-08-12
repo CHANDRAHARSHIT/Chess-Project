@@ -486,7 +486,7 @@ export default function OpeningsPage() {
                 background: "var(--glass-bg)",
                 border: "1px solid rgba(212,175,110,0.12)",
                 backdropFilter: "blur(12px)",
-                boxShadow: "0 8px 32px rgba(0,0,0,0.4)",
+                boxShadow: "none",
               }}
             >
               <OpeningCoachPanel

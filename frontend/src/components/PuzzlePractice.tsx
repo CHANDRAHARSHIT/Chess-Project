@@ -58,7 +58,7 @@ export default function PuzzlePractice() {
       {/* Utility Skip Button */}
       <button
         onClick={handleSkip}
-        className="flex items-center gap-2 px-5 py-2.5 border border-brand-border hover:border-brand-accent text-brand-text hover:text-brand-accent hover:bg-brand-surface/40 rounded-lg text-xs font-bold transition-all duration-200 shadow-md active:scale-95"
+        className="flex items-center gap-2 px-5 py-2.5 border border-brand-border hover:border-brand-accent text-brand-text hover:text-brand-accent hover:bg-brand-surface/40 rounded-lg text-xs font-bold transition-all duration-200 active:scale-95"
       >
         <RefreshCw className="w-3.5 h-3.5" />
         Skip / Random Puzzle

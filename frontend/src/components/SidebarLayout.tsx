@@ -22,6 +22,7 @@ import {
   MoveUp,
   Archive,
   Swords,
+  Loader2,
 } from "lucide-react";
 import { useLogoAnimation } from "../hooks/useLogoAnimation";
 import { soundManager } from "../utils/SoundManager";
@@ -164,6 +165,7 @@ export default function SidebarLayout({
   );
   const [newLinkName, setNewLinkName] = useState("");
   const [newLinkUrl, setNewLinkUrl] = useState("/analysis");
+  const [isSubmittingLink, setIsSubmittingLink] = useState(false);
   const [isUrlDropdownOpen, setIsUrlDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -172,71 +174,79 @@ export default function SidebarLayout({
   const handleAddLink = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newLinkName && newLinkUrl) {
-      if (editLinkIndex !== null) {
-        const isMore = editLinkSection === "more";
-        const link = isMore
-          ? moreLinks[editLinkIndex]
-          : customLinks[editLinkIndex];
+      setIsSubmittingLink(true);
+      // Artificial delay so you can see the spinner
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      try {
+        if (editLinkIndex !== null) {
+          const isMore = editLinkSection === "more";
+          const link = isMore
+            ? moreLinks[editLinkIndex]
+            : customLinks[editLinkIndex];
 
-        // Optimistic update
-        const updatedLink = { ...link, name: newLinkName, url: newLinkUrl };
-        if (isMore) {
-          setMoreLinks((prev) => {
-            const arr = [...prev];
-            arr[editLinkIndex] = updatedLink;
-            return arr;
-          });
-        } else {
-          setCustomLinks((prev) => {
-            const arr = [...prev];
-            arr[editLinkIndex] = updatedLink;
-            return arr;
-          });
-        }
-
-        try {
-          await fetch(`/api/custom-links/${link.id}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name: newLinkName, url: newLinkUrl }),
-            credentials: "include",
-          });
-        } catch (err) {
-          console.error(err);
-          rollbar.error(err as Error, {
-            context: "SidebarLayout.handleAddLink:update",
-          });
-          fetchLinks(); // Revert on error
-        }
-      } else {
-        // Optimistic UX (without ID temporarily) is tricky, so we await for create
-        try {
-          const res = await fetch("/api/custom-links", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              name: newLinkName,
-              url: newLinkUrl,
-              isArchived: false,
-            }),
-            credentials: "include",
-          });
-          const json = await res.json();
-          if (json.status === "success") {
-            setCustomLinks((prev) => [...prev, json.data.link]);
+          // Optimistic update
+          const updatedLink = { ...link, name: newLinkName, url: newLinkUrl };
+          if (isMore) {
+            setMoreLinks((prev) => {
+              const arr = [...prev];
+              arr[editLinkIndex] = updatedLink;
+              return arr;
+            });
+          } else {
+            setCustomLinks((prev) => {
+              const arr = [...prev];
+              arr[editLinkIndex] = updatedLink;
+              return arr;
+            });
           }
-        } catch (err) {
-          console.error(err);
-          rollbar.error(err as Error, {
-            context: "SidebarLayout.handleAddLink:create",
-          });
+
+          try {
+            await fetch(`/api/custom-links/${link.id}`, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ name: newLinkName, url: newLinkUrl }),
+              credentials: "include",
+            });
+          } catch (err) {
+            console.error(err);
+            rollbar.error(err as Error, {
+              context: "SidebarLayout.handleAddLink:update",
+            });
+            fetchLinks(); // Revert on error
+          }
+        } else {
+          // Optimistic UX (without ID temporarily) is tricky, so we await for create
+          try {
+            const res = await fetch("/api/custom-links", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                name: newLinkName,
+                url: newLinkUrl,
+                isArchived: false,
+              }),
+              credentials: "include",
+            });
+            const json = await res.json();
+            if (json.status === "success") {
+              setCustomLinks((prev) => [...prev, json.data.link]);
+            }
+          } catch (err) {
+            console.error(err);
+            rollbar.error(err as Error, {
+              context: "SidebarLayout.handleAddLink:create",
+            });
+          }
         }
+      } finally {
+        setIsSubmittingLink(false);
+        setNewLinkName("");
+        setNewLinkUrl("/analysis");
+        setIsAddLinkModalOpen(false);
+        setEditLinkIndex(null);
+        setEditLinkSection("active");
       }
-      setNewLinkName("");
-      setNewLinkUrl("/analysis");
-      setIsAddLinkModalOpen(false);
-      setEditLinkIndex(null);
-      setEditLinkSection("active");
     }
   };
 
@@ -975,7 +985,7 @@ export default function SidebarLayout({
         {/* Desktop Fixed Hover SubMenu (Portalled out of sidebar) */}
         {hoveredSubMenu && (
           <div
-            className="fixed z-[100] w-[14rem] rounded-2xl border border-brand-border/60 py-2 shadow-[0_8px_30px_rgb(0,0,0,0.8)] bg-brand-bg animate-in fade-in zoom-in-95 duration-150"
+            className="fixed z-[100] w-[14rem] rounded-2xl border border-brand-border/60 py-2 bg-brand-bg animate-in fade-in zoom-in-95 duration-150"
             style={{ top: hoveredSubMenu.top, left: hoveredSubMenu.left }}
             onMouseEnter={() => {
               if (hoverTimeout.current) clearTimeout(hoverTimeout.current);
@@ -1253,7 +1263,7 @@ export default function SidebarLayout({
         {/* Add Link Modal */}
         {isAddLinkModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-            <div className="bg-brand-surface border border-brand-border p-6 rounded-2xl w-full max-w-[22rem] shadow-2xl">
+            <div className="bg-brand-surface border border-brand-border p-6 rounded-2xl w-full max-w-[22rem]">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-bold text-brand-text tracking-wide">
                   {editLinkIndex !== null ? "Edit Link" : "Add Custom Link"}
@@ -1277,7 +1287,7 @@ export default function SidebarLayout({
                     value={newLinkName}
                     onChange={(e) => setNewLinkName(e.target.value)}
                     placeholder="e.g. Analysis Board"
-                    className="w-full bg-brand-surface border border-brand-border rounded-xl px-4 py-3 text-[14px] text-brand-text placeholder-brand-text/20 focus:outline-none focus:border-brand-accent transition-colors shadow-inner"
+                    className="w-full bg-brand-surface border border-brand-border rounded-xl px-4 py-3 text-[14px] text-brand-text placeholder-brand-text/20 focus:outline-none focus:border-brand-accent transition-colors"
                   />
                 </div>
 
@@ -1288,7 +1298,7 @@ export default function SidebarLayout({
                   <button
                     type="button"
                     onClick={() => setIsUrlDropdownOpen(!isUrlDropdownOpen)}
-                    className={`w-full bg-brand-surface border ${isUrlDropdownOpen ? "border-brand-accent" : "border-brand-border"} rounded-xl px-4 py-3 text-[14px] text-left text-brand-text focus:outline-none transition-colors flex justify-between items-center shadow-inner cursor-pointer`}
+                    className={`w-full bg-brand-surface border ${isUrlDropdownOpen ? "border-brand-accent" : "border-brand-border"} rounded-xl px-4 py-3 text-[14px] text-left text-brand-text focus:outline-none transition-colors flex justify-between items-center cursor-pointer`}
                   >
                     <span>
                       {urlOptions.find((o) => o.value === newLinkUrl)?.label ||
@@ -1300,7 +1310,7 @@ export default function SidebarLayout({
                   </button>
 
                   {isUrlDropdownOpen && (
-                    <div className="absolute top-[calc(100%+8px)] left-0 w-full bg-brand-surface border border-brand-border rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.8)] z-50 overflow-hidden py-1.5 animate-in fade-in slide-in-from-top-2 duration-200">
+                    <div className="absolute top-[calc(100%+8px)] left-0 w-full bg-brand-surface border border-brand-border rounded-xl z-50 overflow-hidden py-1.5 animate-in fade-in slide-in-from-top-2 duration-200">
                       {urlOptions.map((option) => (
                         <button
                           key={option.value}
@@ -1336,9 +1346,14 @@ export default function SidebarLayout({
                 <div className="flex justify-end pt-2">
                   <button
                     type="submit"
-                    className="btn-gold-solid bg-brand-accent text-brand-bg font-semibold px-5 py-2.5 rounded-xl hover:bg-brand-accent/90 hover:scale-[1.02] transition-all cursor-pointer text-[14px]"
+                    disabled={isSubmittingLink}
+                    className="btn-gold-solid flex items-center justify-center gap-2 bg-brand-accent text-brand-bg font-semibold px-5 py-2.5 rounded-xl hover:bg-brand-accent/90 hover:scale-[1.02] transition-all cursor-pointer text-[14px] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                   >
-                    {editLinkIndex !== null ? "Save Changes" : "Save Link"}
+                    {isSubmittingLink && <Loader2 className="w-4 h-4 animate-spin" />}
+                    {editLinkIndex !== null 
+                      ? (isSubmittingLink ? "Saving..." : "Save Changes") 
+                      : (isSubmittingLink ? "Saving..." : "Save Link")
+                    }
                   </button>
                 </div>
               </form>
