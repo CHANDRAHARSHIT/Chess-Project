@@ -27,6 +27,16 @@ export const server = app.listen(env.PORT, () => {
   );
 });
 
+server.on("error", (err: any) => {
+  if (err.code === "EADDRINUSE") {
+    console.error(
+      `[Server Error]: Port ${env.PORT} is already in use (EADDRINUSE). Please terminate the process holding port ${env.PORT}.`
+    );
+  } else {
+    console.error("[Server Error]:", err);
+  }
+});
+
 // Transport + Session attach after server is live, flag-gated.
 // Composition root: SessionManager is constructed here, not exported as a module singleton,
 // so future consumers (Results in M4) receive it via injection.

@@ -1,19 +1,8 @@
-import React, { createContext, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import type { Session } from "@auth/core/types";
 import { useNavigate } from "react-router";
 import rollbar from "../config/rollbar";
-
-export type AuthStatus = "authenticated" | "unauthenticated" | "loading";
-
-export interface SessionContextType {
-  session: Session | null;
-  status: AuthStatus;
-  updateSession: () => Promise<Session | null>;
-  signIn: (provider?: string) => void;
-  signOut: () => void;
-}
-
-export const SessionContext = createContext<SessionContextType | undefined>(undefined);
+import { SessionContext } from "./sessionContext.instance";
 
 /**
  * SessionProvider manages client-side authentication state.
@@ -23,37 +12,43 @@ export const SessionContext = createContext<SessionContextType | undefined>(unde
  */
 export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [session, setSession] = useState<Session | null>(null);
-  const [status, setStatus] = useState<AuthStatus>("loading");
+  const [status, setStatus] = useState<"authenticated" | "unauthenticated" | "loading">("loading");
   const navigate = useNavigate();
 
-  const fetchSession = async (): Promise<Session | null> => {
+  /** Fetches `/api/auth/session` and resolves to the session, or null if unauthenticated/failed. */
+  const resolveSession = async (): Promise<Session | null> => {
     try {
       const res = await fetch("/api/auth/session");
       if (res.ok) {
         const data = await res.json();
         // An empty JSON object {} represents an unauthenticated session in Auth.js
         if (data && Object.keys(data).length > 0) {
-          setSession(data);
-          setStatus("authenticated");
           return data;
         }
       }
-      setSession(null);
-      setStatus("unauthenticated");
       return null;
     } catch (error) {
       console.error("Failed to fetch session:", error);
       // Falls back to unauthenticated below, so this never reaches the
       // ErrorBoundary — report it manually.
       rollbar.error(error as Error, { context: "SessionContext.fetchSession" });
-      setSession(null);
-      setStatus("unauthenticated");
       return null;
     }
   };
 
+  const applySession = (data: Session | null): Session | null => {
+    setSession(data);
+    setStatus(data ? "authenticated" : "unauthenticated");
+    return data;
+  };
+
+  /** Re-fetches and applies the current session — exposed to consumers as `updateSession`. */
+  const fetchSession = async (): Promise<Session | null> => applySession(await resolveSession());
+
   useEffect(() => {
-    fetchSession();
+    // Chained here (rather than calling fetchSession() directly) so the setState calls are
+    // visibly inside a .then() callback, not a bare call to a closure the effect can't see into.
+    resolveSession().then(applySession);
   }, []);
 
   /**

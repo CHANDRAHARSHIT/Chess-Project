@@ -10,6 +10,7 @@ import FailedPage from "../pages/FailedPage";
 import PremiumPage from "../pages/PremiumPage";
 import OpeningsPage from "../pages/OpeningsPage";
 import Chess960Page from "../pages/Chess960Page";
+import PlayChessPage from "../pages/PlayChessPage";
 import AboutPage from "../pages/AboutPage";
 import PrivacyPolicyPage from "../pages/PrivacyPolicyPage";
 import TermsOfServicePage from "../pages/TermsOfServicePage";
@@ -88,6 +89,15 @@ export const mainRoutes: RouteConfig[] = [
     path: "/play/chess960",
     element: <Chess960Page />,
     title: "Chess 960 | XLChess",
+  },
+  {
+    path: "/play/chess",
+    element: (
+      <ProtectedRoute>
+        <PlayChessPage />
+      </ProtectedRoute>
+    ),
+    title: "Play Chess Online | XLChess",
   },
   {
     path: "/profile",

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { env } from "../config/env.js";
+import { requireAuth } from "../middleware/auth.middleware.js";
 import { enqueueTicket, cancelTicket, getTicketStatus } from "./matchmaking.controller.js";
 
 export const matchmakingRouter = Router();
@@ -13,6 +14,8 @@ matchmakingRouter.use((_req, res, next) => {
   next();
 });
 
-matchmakingRouter.post("/queue", enqueueTicket);
-matchmakingRouter.delete("/queue/:ticketId", cancelTicket);
-matchmakingRouter.get("/queue/:ticketId", getTicketStatus);
+// requireAuth mirrors games.route.ts — without it, req.user is never populated and every
+// caller (regardless of who is actually signed in) collapses into the same anonymous ticket.
+matchmakingRouter.post("/queue", requireAuth, enqueueTicket);
+matchmakingRouter.delete("/queue/:ticketId", requireAuth, cancelTicket);
+matchmakingRouter.get("/queue/:ticketId", requireAuth, getTicketStatus);

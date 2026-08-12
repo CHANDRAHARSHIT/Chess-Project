@@ -17,4 +17,6 @@ export interface MatchTicket {
   matchedAt: number | null;
   status: TicketStatus;
   descriptor?: MatchDescriptor;     // Present when status = "MATCHED"
+  readonly name?: string;           // Display name at enqueue time, carried into the MatchDescriptor on pairing
+  readonly image?: string;          // Avatar URL at enqueue time, carried into the MatchDescriptor on pairing
 }

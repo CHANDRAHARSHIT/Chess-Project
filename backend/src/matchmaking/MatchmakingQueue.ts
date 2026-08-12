@@ -43,12 +43,16 @@ export class MatchmakingQueue {
    */
   enqueue(
     userId: string,
-    variantId: string
+    variantId: string,
+    name?: string,
+    image?: string
   ): { ticket: MatchTicket; descriptor: MatchDescriptor | null } {
-    // Idempotency check: if user is already queued or matched
+    // Idempotency check: if user is already queued or matched.
+    // Routed through getTicket() (not a raw map read) so a WAITING ticket that's already
+    // past its expiresAt is lazily expired here rather than handed back as if still active.
     const existingTicketId = this.userTickets.get(userId);
     if (existingTicketId) {
-      const existing = this.tickets.get(existingTicketId);
+      const existing = this.getTicket(existingTicketId);
       if (existing && (existing.status === "WAITING" || existing.status === "MATCHED")) {
         return { ticket: existing, descriptor: existing.descriptor ?? null };
       }
@@ -65,6 +69,8 @@ export class MatchmakingQueue {
       expiresAt: now + this.ticketTtlMs,
       matchedAt: null,
       status: "WAITING",
+      name,
+      image,
     };
 
     this.tickets.set(ticketId, ticket);
@@ -162,8 +168,8 @@ export class MatchmakingQueue {
         const descriptor: MatchDescriptor = {
           matchId,
           participants: [
-            { userId: t1.userId, side: p1Side },
-            { userId: t2.userId, side: p2Side },
+            { userId: t1.userId, side: p1Side, name: t1.name, image: t1.image },
+            { userId: t2.userId, side: p2Side, name: t2.name, image: t2.image },
           ],
           cardinality: { sides: 2, perSide: 1 },
           variantId,
@@ -240,6 +246,8 @@ export class MatchmakingQueue {
         expiresAt: now + this.ticketTtlMs,
         matchedAt: null,
         status: "WAITING",
+        name: ticket.name,
+        image: ticket.image,
       };
 
       this.tickets.set(ticketId, refunded);
@@ -254,23 +262,34 @@ export class MatchmakingQueue {
   }
 
   /**
+   * Marks a single WAITING ticket EXPIRED and deletes it immediately. Shared by expireStale()'s
+   * periodic sweep and getTicket()'s lazy, read-time check, so both paths expire a ticket
+   * identically (same emitTransition, same map cleanup) instead of drifting apart.
+   */
+  private expireTicket(ticket: MatchTicket): void {
+    ticket.status = "EXPIRED";
+
+    emitTransition({
+      domain: "matchmaking",
+      from: "WAITING",
+      to: "EXPIRED",
+      context: { ticketId: ticket.ticketId, userId: ticket.userId },
+    });
+
+    this.tickets.delete(ticket.ticketId);
+    this.userTickets.delete(ticket.userId);
+  }
+
+  /**
    * Marks WAITING tickets past expiresAt as EXPIRED and deletes them immediately.
+   * Covers tickets nobody is actively polling (e.g. a closed tab) — getTicket() covers the
+   * common case (an active poller) immediately instead of waiting for this sweep.
    */
   expireStale(): void {
     const now = Date.now();
-    for (const [ticketId, ticket] of Array.from(this.tickets.entries())) {
+    for (const ticket of Array.from(this.tickets.values())) {
       if (ticket.status === "WAITING" && now > ticket.expiresAt) {
-        ticket.status = "EXPIRED";
-
-        emitTransition({
-          domain: "matchmaking",
-          from: "WAITING",
-          to: "EXPIRED",
-          context: { ticketId, userId: ticket.userId },
-        });
-
-        this.tickets.delete(ticketId);
-        this.userTickets.delete(ticket.userId);
+        this.expireTicket(ticket);
       }
     }
   }
@@ -288,9 +307,20 @@ export class MatchmakingQueue {
     }
   }
 
-  /** Retrieves a ticket by ticketId */
+  /**
+   * Retrieves a ticket by ticketId, lazily expiring it first if it's WAITING and past
+   * expiresAt. Without this, a WAITING ticket only expires when the 30s ExpiryTicker sweep
+   * happens to run, so a client polling GET /queue/:ticketId right after its own countdown
+   * hits 0:00 could still see "WAITING" for up to ~30s longer — this makes expiry consistent
+   * with the deadline itself, independent of the periodic sweep's timing.
+   */
   getTicket(ticketId: string): MatchTicket | undefined {
-    return this.tickets.get(ticketId);
+    const ticket = this.tickets.get(ticketId);
+    if (ticket && ticket.status === "WAITING" && Date.now() > ticket.expiresAt) {
+      this.expireTicket(ticket);
+      return undefined;
+    }
+    return ticket;
   }
 }
 

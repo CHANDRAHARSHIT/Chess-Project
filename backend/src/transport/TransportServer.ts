@@ -74,6 +74,16 @@ export function bootstrapTransport(server: http.Server, hooks: TransportHooks = 
           );
           if (reconnectedId) {
             currentConnId = reconnectedId;
+            // M6 fix: the fresh-connection handshake branch below sends a `{type: "connected"}`
+            // confirmation, but this reconnect branch never did — the client's connectionStatus
+            // (driven solely by receiving that message type) stayed "reconnecting" forever even
+            // though the reconnect fully succeeded. Routed through connectionManager.send() (not
+            // a raw ws.send) so it gets a proper monotonic seq stamp and buffering, consistent
+            // with every other outbound message on this logical connection.
+            connectionManager.send(userId, {
+              type: "connected",
+              payload: { connectionId: reconnectedId, resumeToken: parsed.resumeToken },
+            });
           } else {
             ws.close(4001, "Invalid or expired resume token");
           }

@@ -39,17 +39,22 @@ describe("SessionManager State Machine & Clock Authority", () => {
     assert.equal(resultEmitted, null);
   });
 
-  test("notifyAllPresent transitions WAITING -> READY (idempotently)", () => {
+  test("notifyAllPresent transitions WAITING -> READY and starts the clock (M6)", () => {
     const sm = new SessionManager();
     const session = sm.createSession(createDummyDescriptor());
 
     sm.notifyAllPresent(session.sessionId);
     assert.equal(session.status, "READY");
-    assert.equal(session.clock.lastMoveAt, null);
+    // M6: the side to move first is charged from game start, not just from their first move —
+    // lastMoveAt is set the instant both participants are present, not left null until PLAYING.
+    assert.notEqual(session.clock.lastMoveAt, null);
 
-    // Second call is idempotent no-op
+    const lastMoveAtAfterFirstCall = session.clock.lastMoveAt;
+
+    // Second call is idempotent no-op — must not reset the clock anchor again
     sm.notifyAllPresent(session.sessionId);
     assert.equal(session.status, "READY");
+    assert.equal(session.clock.lastMoveAt, lastMoveAtAfterFirstCall);
   });
 
   test("submitMove in WAITING is rejected", () => {
@@ -124,7 +129,7 @@ describe("SessionManager State Machine & Clock Authority", () => {
     assert.equal(emittedResults.length, 1); // No second result
   });
 
-  test("tickClocks is no-op in WAITING/READY, ticks in PLAYING, triggers timeout", () => {
+  test("tickClocks is no-op in WAITING, ticks in READY and PLAYING, triggers timeout (M6)", () => {
     const emittedResults: GameResult[] = [];
     const sm = new SessionManager((res) => {
       emittedResults.push(res);
@@ -138,13 +143,17 @@ describe("SessionManager State Machine & Clock Authority", () => {
 
     sm.notifyAllPresent(session.sessionId);
 
-    // Tick in READY -> no-op
+    // M6: tick in READY now decrements the side to move first (side 0 / White) — the fairness
+    // fix that stops a player banking unlimited free time before their first move.
     sm.tickClocks(10000);
-    assert.equal(session.clock.remainingMs[0], 300000);
+    assert.equal(session.clock.remainingMs[0], 290000);
+    assert.equal(session.clock.remainingMs[1], 300000); // Black untouched — not their turn
 
-    // White plays e2-e4 -> enters PLAYING
+    // White plays e2-e4 -> enters PLAYING. M6: submitMove no longer re-deducts elapsed time
+    // (tickClocks already charged it above) — it only credits the increment.
     sm.submitMove(session.sessionId, "user-w", { from: "e2", to: "e4" });
     assert.equal(session.status, "PLAYING");
+    assert.equal(session.clock.remainingMs[0], 293000); // 290000 + 3000 increment, not double-charged
 
     // It is now Black's turn (side 1)
     // Tick 10 seconds -> Black's clock decrements
@@ -164,5 +173,26 @@ describe("SessionManager State Machine & Clock Authority", () => {
     // Additional tick after COMPLETED does not emit a second result
     sm.tickClocks(10000);
     assert.equal(emittedResults.length, 1);
+  });
+
+  test("timing out during READY (before any move is ever played) ends the game (M6)", () => {
+    const emittedResults: GameResult[] = [];
+    const sm = new SessionManager((res) => {
+      emittedResults.push(res);
+    });
+
+    const session = sm.createSession(createDummyDescriptor());
+    sm.notifyAllPresent(session.sessionId);
+
+    // White never moves and lets their entire 300s run out while still in READY.
+    sm.tickClocks(300000);
+
+    assert.equal(session.status, "COMPLETED");
+    assert.equal(session.clock.remainingMs[0], 0);
+    assert.equal(emittedResults.length, 1);
+    assert.equal(emittedResults[0].terminationReason, "timeout");
+    if (emittedResults[0].outcome.kind === "win") {
+      assert.equal(emittedResults[0].outcome.winningSide, 1); // Black wins — White never moved
+    }
   });
 });

@@ -398,6 +398,7 @@ export default function SidebarLayout({
 
   const exploreSection = [
     { name: "Quick Game", href: "/play", icon: Zap },
+    { name: "Play Online", href: "/play/chess", icon: Swords },
     { name: "Lessons", href: "/lessons", icon: BookOpen },
     { name: "Puzzles", href: "/puzzles", icon: Puzzle },
     { name: "Odyssey", href: "/story-mode", icon: Swords },

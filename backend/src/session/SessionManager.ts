@@ -123,7 +123,14 @@ export class SessionManager {
 
   /**
    * Called when Transport confirms all participants have connected.
-   * Transitions WAITING → READY. Clocks remain stopped.
+   * Transitions WAITING → READY.
+   *
+   * M6 fix: the clock for the side to move first now starts ticking here, at game start,
+   * instead of staying frozen until that side's first move lands. Previously a player could
+   * bank unlimited free thinking time before their first move (e.g. sit idle for 10 minutes
+   * with a 5-minute clock and still have the full 5:00 when they finally moved) at the direct
+   * expense of fairness to their opponent — standard chess clock behavior charges the mover
+   * from the moment the game is ready to begin, not from their first move.
    * Idempotent: no-op if session is already READY or beyond.
    */
   notifyAllPresent(sessionId: string): void {
@@ -150,6 +157,7 @@ export class SessionManager {
     });
 
     session.status = "READY";
+    session.clock = { remainingMs: session.clock.remainingMs, lastMoveAt: Date.now() };
     this.clearWaitTimer(sessionId);
     this.broadcastState(session);
   }
@@ -191,6 +199,22 @@ export class SessionManager {
 
     const now = Date.now();
 
+    // M6 fix: elapsed time for the mover's side is no longer deducted here. tickClocks()
+    // (driven by ClockTicker every 100ms, real wall-clock elapsed) is now the single source of
+    // truth for decrementing a running clock — it already ran continuously for this side's turn
+    // for the entire READY/PLAYING window since their side became the one to move. Deducting
+    // `now - lastMoveAt` again here on top of that double-charged the same span (the visible
+    // clock after each move reflected roughly 2x the real time spent, minus increment). This
+    // only credits the increment and resets the anchor that both tickClocks() and the frontend's
+    // SideClock use going forward.
+    const incMs = session.matchDescriptor.timeControl.incrementSeconds * 1000;
+    const updatedRemaining = [...session.clock.remainingMs];
+    updatedRemaining[sideIndex] = Math.max(0, updatedRemaining[sideIndex] + incMs);
+    session.clock = {
+      remainingMs: updatedRemaining,
+      lastMoveAt: now,
+    };
+
     // READY → PLAYING on first valid move
     if (session.status === "READY") {
       emitTransition({
@@ -201,23 +225,6 @@ export class SessionManager {
       });
       session.status = "PLAYING";
       session.startedAt = now;
-      session.clock = {
-        remainingMs: session.clock.remainingMs,
-        lastMoveAt: now,
-      };
-    } else {
-      // PLAYING state: deduct elapsed time and add increment
-      const lastMoveAt = session.clock.lastMoveAt ?? now;
-      const elapsed = Math.max(0, now - lastMoveAt);
-      const incMs = session.matchDescriptor.timeControl.incrementSeconds * 1000;
-
-      const updatedRemaining = [...session.clock.remainingMs];
-      updatedRemaining[sideIndex] = Math.max(0, updatedRemaining[sideIndex] - elapsed + incMs);
-
-      session.clock = {
-        remainingMs: updatedRemaining,
-        lastMoveAt: now,
-      };
     }
 
     // Apply move and update state
@@ -312,15 +319,20 @@ export class SessionManager {
 
   /**
    * Advances game clocks by elapsedMs.
-   * No-op on sessions not in PLAYING state.
+   * No-op on sessions not in READY or PLAYING state.
    * Triggers clock timeout -> COMPLETED when remainingMs reaches 0.
+   *
+   * M6 fix: also runs during READY (not just PLAYING) so the side to move first is charged
+   * time from game start, matching notifyAllPresent()'s clock-start change. This is the sole
+   * mechanism that decrements a side's remaining time in real time — submitMove() only credits
+   * increment and resets the anchor (see its M6 comment) to avoid double-charging the same span.
    */
   tickClocks(elapsedMs: number): void {
     const now = Date.now();
 
     for (const session of this.sessions.values()) {
-      if (session.status !== "PLAYING") {
-        continue; // Clocks do not run during CREATED, WAITING, READY, COMPLETED, ABANDONED
+      if (session.status !== "PLAYING" && session.status !== "READY") {
+        continue; // Clocks do not run during CREATED, WAITING, PAUSED, COMPLETED, ABANDONED
       }
 
       const turnSide = this.getTurnSideIndex(session);
@@ -359,12 +371,13 @@ export class SessionManager {
           ...(session.matchDescriptor.metadata ? { metadata: session.matchDescriptor.metadata } : {}),
         };
 
+        const oldStatus = session.status;
         session.status = "COMPLETED";
         this.cleanupSession(session);
 
         emitTransition({
           domain: "session",
-          from: "PLAYING",
+          from: oldStatus,
           to: "COMPLETED",
           context: { sessionId: session.sessionId, matchId: session.matchDescriptor.matchId, reason: "timeout", losingSide: turnSide },
         });
@@ -468,6 +481,20 @@ export class SessionManager {
     if (!session) return;
 
     const present = this.presence.get(sessionId) ?? new Set<string>();
+
+    // Bootstrap: broadcastPresence() below only reaches sockets that are already registered —
+    // ConnectionManager.send() silently no-ops for anyone not yet connected (see its `if
+    // (!connId) return`). So whichever participant connects first has their "connected" fact
+    // dropped for a peer who hasn't connected yet, and that peer never learns it later since no
+    // further connect event fires for the first participant. Directly send the just-connected
+    // participant a presence fact for everyone already present, so both directions are covered
+    // regardless of connection order.
+    for (const p of session.matchDescriptor.participants) {
+      if (p.userId !== userId && present.has(p.userId)) {
+        this.transport.send(userId, { type: "presence_update", payload: { userId: p.userId, connected: true } });
+      }
+    }
+
     present.add(userId);
     this.presence.set(sessionId, present);
     this.broadcastPresence(session, userId, true);
@@ -482,6 +509,17 @@ export class SessionManager {
 
     if (session.status === "PLAYING") {
       this.clearParticipantGrace(sessionId, userId);
+      // M6 fix: ConnectionManager.send() silently no-ops for a disconnected user (their
+      // ConnectionId is removed from userIndex on disconnect — see ConnectionManager.disconnect()),
+      // so ReconnectBuffer never actually buffers anything addressed to them while they're offline;
+      // there is nothing for markReconnected()'s replay to replay. Without this, a participant who
+      // reconnects mid-PLAYING while their opponent moved during the gap would never learn about
+      // that move at all. Send them a fresh, authoritative snapshot directly (not a broadcast —
+      // the opponent already has the current state).
+      this.transport.send(userId, {
+        type: "state_update",
+        payload: { state: session.currentState, clock: session.clock, status: session.status },
+      });
       return;
     }
 

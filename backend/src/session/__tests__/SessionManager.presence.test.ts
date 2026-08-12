@@ -23,18 +23,22 @@ function createDummyDescriptor(): MatchDescriptor {
 // Short overridden timings so these tests don't wait on real 30-60s durations (M1-AM-01 / M2 additions).
 const FAST_TIMINGS = { participantGraceMs: 40, pauseGraceMs: 40, waitTimeoutMs: 40 };
 
-/** Minimal SessionTransport double that records every broadcast() call (AM-03). */
+/** Minimal SessionTransport double that records every send()/broadcast() call (AM-03, M6). */
 function createRecordingTransport() {
   const broadcasts: { userIds: string[]; message: { type: string; payload: unknown } }[] = [];
+  const sends: { userId: string; message: { type: string; payload: unknown } }[] = [];
   return {
     transport: {
-      send: () => {},
+      send: (userId: string, message: { type: string; payload: unknown }) => {
+        sends.push({ userId, message });
+      },
       broadcast: (userIds: string[], message: { type: string; payload: unknown }) => {
         broadcasts.push({ userIds, message });
       },
       isConnected: () => false,
     },
     broadcasts,
+    sends,
   };
 }
 
@@ -157,6 +161,30 @@ describe("SessionManager M2: presence, grace timers, PAUSED (M1-AM-01)", () => {
 
     // Payload is minimal: exactly userId + connected, nothing else of Session's internal state.
     assert.deepEqual(Object.keys(disconnectMsg!.message.payload as object).sort(), ["connected", "userId"]);
+  });
+
+  test("M6: reconnecting mid-PLAYING (single-side grace, opponent still present) resends a full state snapshot", () => {
+    const { transport, sends } = createRecordingTransport();
+    const sm = new SessionManager(undefined, undefined, transport, FAST_TIMINGS);
+    const session = sm.createSession(createDummyDescriptor());
+
+    sm.notifyParticipantConnected(session.sessionId, "user-w");
+    sm.notifyParticipantConnected(session.sessionId, "user-b");
+    sm.submitMove(session.sessionId, "user-w", { from: "e2", to: "e4" });
+    assert.equal(session.status, "PLAYING");
+
+    sm.notifyParticipantDisconnected(session.sessionId, "user-b");
+    sends.length = 0; // clear the disconnect-time bookkeeping noise, only care about the reconnect below
+
+    // Without this fix, ConnectionManager's ReconnectBuffer never buffers anything for a user
+    // while their userIndex entry is gone (removed on disconnect), so a participant reconnecting
+    // mid-PLAYING would learn nothing about moves made during their gap — this is Session's own
+    // resync, independent of Transport's replay buffer.
+    sm.notifyParticipantConnected(session.sessionId, "user-b");
+
+    const resync = sends.find((s) => s.userId === "user-b" && s.message.type === "state_update");
+    assert.ok(resync, "expected a direct state_update resend to the reconnecting participant");
+    assert.equal((resync!.message.payload as any).status, "PLAYING");
   });
 
   test("PAUSED with nobody reconnecting expires to ABANDONED with a mutual-draw GameResult", async () => {
