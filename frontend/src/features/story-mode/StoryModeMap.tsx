@@ -200,6 +200,10 @@ export default function StoryModeMap() {
     setShowResetConfirm(true);
   }, []);
 
+  // Intentionally depend on the specific primitives this reads (status, session?.user?.id)
+  // rather than the whole `session` object, so this callback doesn't get a new identity
+  // whenever `session` is re-fetched with the same user id.
+  // eslint-disable-next-line react-hooks/preserve-manual-memoization
   const confirmReset = useCallback(() => {
     setCompletedNodes(new Set());
     setCurrentNodeId(-1);

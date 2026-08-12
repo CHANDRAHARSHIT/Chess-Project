@@ -27,7 +27,11 @@ export default function DatabaseGamePage() {
   const [currentMoveIndex, setCurrentMoveIndex] = useState(-1);
   const isAnalyzing = false; // Fixed to false as analysis toggle was removed
 
-  // Initialize chess instance and parse history
+  // Initialize chess instance and parse history.
+  // Intentionally depend on game?.pgn (the string actually consumed here) rather than the
+  // whole `game` object, so this doesn't re-parse the PGN if `game` is ever re-fetched with
+  // an unchanged pgn string.
+  // eslint-disable-next-line react-hooks/preserve-manual-memoization
   const { history } = useMemo(() => {
     const c = new Chess();
     if (game?.pgn) {

@@ -6,7 +6,7 @@
  * This is a placeholder — future versions will have interactive mini-games.
  */
 
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, ArrowRight, RotateCcw } from "lucide-react";
 import { RANDOM_ENCOUNTERS } from "@/features/story-mode/storyModeMapData";
@@ -24,11 +24,13 @@ export default function StoryModeEncounter({
 }: StoryModeEncounterProps) {
   const [revealed, setRevealed] = useState(false);
 
-  // Pick a random encounter on mount
-  const encounter = useMemo(() => {
+  // Pick a random encounter on mount. useState's lazy initializer runs exactly once and
+  // its result is guaranteed stable across re-renders — unlike useMemo, which React is
+  // allowed to discard and recompute, silently swapping the encounter mid-session.
+  const [encounter] = useState(() => {
     const idx = Math.floor(Math.random() * RANDOM_ENCOUNTERS.length);
     return RANDOM_ENCOUNTERS[idx];
-  }, []);
+  });
 
   return (
     <motion.div

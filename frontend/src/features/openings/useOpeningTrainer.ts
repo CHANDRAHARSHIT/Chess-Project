@@ -15,7 +15,7 @@
  * Returns everything OpeningsPage needs: fen, squareStyles, handlers, status.
  */
 
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback, useEffect, useMemo } from "react";
 import { Chess } from "chess.js";
 import type { Opening } from "@/features/openings/openings.types";
 import { soundManager } from "@/shared/lib/SoundManager";
@@ -103,7 +103,7 @@ function getCoachMessage(
 }
 
 export function useOpeningTrainer(opening: Opening | null): TrainerState {
-  const sanMoves = opening ? parseMoves(opening.moves) : [];
+  const sanMoves = useMemo(() => (opening ? parseMoves(opening.moves) : []), [opening]);
   const totalSteps = sanMoves.length;
 
   const gameRef = useRef<Chess>(new Chess());
