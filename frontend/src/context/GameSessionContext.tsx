@@ -23,7 +23,12 @@ import type {
   OutboundMessage,
 } from "../types/multiplayer";
 
+// In production (Vercel) we connect directly to the backend WSS URL because
+// Vercel's edge cannot proxy WebSocket upgrade requests.
+// Set VITE_WS_URL=wss://chess-project-staging.up.railway.app/ws in Vercel env vars.
+// Local dev leaves VITE_WS_URL unset and falls back to the Vite proxy at /ws.
 const WS_PATH = "/ws";
+const WS_URL: string | undefined = import.meta.env.VITE_WS_URL as string | undefined;
 const STORAGE_KEY = "xlchess.mp.session";
 const RECONNECT_DELAYS_MS = [1000, 2000, 4000, 8000, 15000];
 
@@ -144,8 +149,11 @@ export const GameSessionProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
   const openSocket = useCallback(
     (resumeToken: string | null, lastReceivedSeq: number) => {
+      // Use the explicit WSS URL when provided (production); otherwise fall back to
+      // the Vite dev proxy so local development continues to work unchanged.
       const proto = window.location.protocol === "https:" ? "wss:" : "ws:";
-      const ws = new WebSocket(`${proto}//${window.location.host}${WS_PATH}`);
+      const wsUrl = WS_URL || `${proto}//${window.location.host}${WS_PATH}`;
+      const ws = new WebSocket(wsUrl);
       wsRef.current = ws;
       setConnectionStatus(resumeToken ? "reconnecting" : "connecting");
 
