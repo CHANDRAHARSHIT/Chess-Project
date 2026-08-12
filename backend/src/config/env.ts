@@ -40,6 +40,13 @@ export const env = {
   STRIPE_SUCCESS_URL: process.env.STRIPE_SUCCESS_URL,
   STRIPE_CANCEL_URL: process.env.STRIPE_CANCEL_URL,
 
+  // Multiplayer (all optional — MULTIPLAYER_ENABLED=false disables all real-time infrastructure)
+  // MULTIPLAYER_ENABLED: Gates every WebSocket route and matchmaking endpoint.
+  MULTIPLAYER_ENABLED: process.env.MULTIPLAYER_ENABLED === "true",
+
+  //   Must match the Vite dev proxy entry and the Vercel rewrite rule (if applicable).
+  WS_PATH: process.env.WS_PATH ?? "/ws",
+
   // Rollbar error monitoring
   ROLLBAR_ACCESS_TOKEN: process.env.ROLLBAR_ACCESS_TOKEN!,
 };
