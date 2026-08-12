@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import {
   BookOpen,
@@ -11,10 +11,13 @@ import {
   Search,
   CheckCircle2,
   ArrowLeft,
+  Loader2,
 } from 'lucide-react';
 import { soundManager } from '../utils/SoundManager';
+import { publicLessonService } from '../services/publicLesson.service';
+import type { BuilderLessonData } from '../services/builderLesson.service';
 
-interface Lesson {
+interface StaticLesson {
   id: string;
   title: string;
   category: string;
@@ -37,7 +40,7 @@ const CATEGORIES = [
   'Strategy',
 ];
 
-const LESSONS: Lesson[] = [
+const STATIC_LESSONS: StaticLesson[] = [
   {
     id: 'chess-fundamentals',
     title: 'Mastering Chess Fundamentals: Opening & Tactics',
@@ -50,7 +53,7 @@ const LESSONS: Lesson[] = [
     segmentsCount: 4,
     thumbnailUrl:
       'https://images.unsplash.com/photo-1529699211952-734e80c4d42b?auto=format&fit=crop&w=800&q=80',
-    isAvailable: true,
+    isAvailable: false,
     badge: 'Popular',
   },
   {
@@ -127,10 +130,45 @@ const LESSONS: Lesson[] = [
 
 export default function LessonsPage() {
   const navigate = useNavigate();
+  const [publishedLessons, setPublishedLessons] = useState<BuilderLessonData[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const filteredLessons = LESSONS.filter((lesson) => {
+  useEffect(() => {
+    loadLessons();
+  }, []);
+
+  const loadLessons = async () => {
+    setLoading(true);
+    try {
+      const data = await publicLessonService.getPublishedLessons();
+      setPublishedLessons(data);
+    } catch (err) {
+      console.error('Failed to load published lessons', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getSlidesCount = (lesson: BuilderLessonData) => {
+    if (!lesson.segments) return 0;
+    return lesson.segments.reduce((acc, seg) => acc + (seg.slides?.length || 0), 0);
+  };
+
+  // Filter published DB lessons
+  const filteredDbLessons = publishedLessons.filter((lesson) => {
+    const matchesCategory =
+      selectedCategory === 'All' || lesson.category === selectedCategory;
+    const matchesSearch =
+      lesson.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (lesson.description || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (lesson.authorDisplayName || '').toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
+
+  // Filter static placeholder lessons
+  const filteredStaticLessons = STATIC_LESSONS.filter((lesson) => {
     const matchesCategory =
       selectedCategory === 'All' || lesson.category === selectedCategory;
     const matchesSearch =
@@ -139,6 +177,8 @@ export default function LessonsPage() {
       lesson.instructor.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
+
+  const totalFilteredCount = filteredDbLessons.length + filteredStaticLessons.length;
 
   return (
     <div className="min-h-[calc(100vh-4rem)] p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-6 select-none">
@@ -159,7 +199,7 @@ export default function LessonsPage() {
       </div>
 
       {/* Top Banner / Header */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-brand-surface via-brand-surface/90 to-brand-bg border border-brand-border p-6 sm:p-8 lg:p-10 shadow-2xl">
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-brand-surface via-brand-surface/90 to-brand-bg border border-brand-border p-6 sm:p-8 lg:p-10">
         <div className="absolute right-0 top-0 -mr-16 -mt-16 w-80 h-80 rounded-full bg-brand-accent/10 blur-3xl pointer-events-none" />
         <div className="relative z-10 space-y-4 max-w-2xl">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-accent/10 border border-brand-accent/30 text-brand-accent text-xs font-semibold uppercase tracking-wider">
@@ -192,7 +232,7 @@ export default function LessonsPage() {
 
       {/* Controls & Filter Bar */}
       <div className="flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between">
-        {/* Category Pills (YouTube Feed Style) */}
+        {/* Category Pills */}
         <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 no-scrollbar">
           {CATEGORIES.map((category) => (
             <button
@@ -200,8 +240,8 @@ export default function LessonsPage() {
               onClick={() => setSelectedCategory(category)}
               className={`px-4 py-2 rounded-xl text-xs font-semibold tracking-wide whitespace-nowrap transition-all duration-200 cursor-pointer ${
                 selectedCategory === category
-                  ? 'bg-brand-accent text-brand-bg shadow-md shadow-brand-accent/20'
-                  : 'bg-brand-surface/60 hover:bg-brand-surface text-brand-secondary hover:text-brand-text border border-brand-border/50'
+                  ? 'bg-brand-accent text-brand-bg'
+                  : 'bg-brand-bg text-brand-secondary hover:text-brand-text border border-brand-border/50'
               }`}
             >
               {category}
@@ -222,115 +262,186 @@ export default function LessonsPage() {
         </div>
       </div>
 
-      {/* Lessons Grid (YT Feed Style) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredLessons.map((lesson) => {
-          return (
-            <div
-              key={lesson.id}
-              onClick={() => {
-                if (lesson.isAvailable) {
-                  navigate(`/lessons/${lesson.id}`);
-                }
-              }}
-              className={`group relative flex flex-col rounded-2xl overflow-hidden bg-brand-surface/70 border border-brand-border transition-all duration-300 ${
-                lesson.isAvailable
-                  ? 'hover:border-brand-accent/50 hover:shadow-xl hover:shadow-brand-accent/5 hover:-translate-y-1 cursor-pointer'
-                  : 'opacity-75 cursor-not-allowed'
-              }`}
-            >
-              {/* Thumbnail Container */}
-              <div className="relative aspect-video w-full overflow-hidden bg-brand-bg">
-                <img
-                  src={lesson.thumbnailUrl}
-                  alt={lesson.title}
-                  className={`w-full h-full object-cover transition-transform duration-500 ${
-                    lesson.isAvailable ? 'group-hover:scale-105' : 'filter blur-[1px]'
-                  }`}
-                />
+      {/* Loading state */}
+      {loading ? (
+        <div className="flex flex-col items-center justify-center py-20 text-brand-secondary space-y-3">
+          <Loader2 className="w-8 h-8 text-brand-accent animate-spin" />
+          <span className="text-sm font-sans">Loading published lessons...</span>
+        </div>
+      ) : totalFilteredCount === 0 ? (
+        /* Empty State */
+        <div className="p-12 rounded-3xl bg-brand-surface/60 border border-brand-border text-center space-y-4 max-w-xl mx-auto my-8">
+          <div className="w-12 h-12 rounded-2xl bg-brand-accent/10 border border-brand-accent/20 flex items-center justify-center text-brand-accent mx-auto">
+            <BookOpen className="w-6 h-6" />
+          </div>
+          <h3 className="font-display font-bold text-xl text-brand-text">No Lessons Found</h3>
+          <p className="text-sm text-brand-secondary leading-relaxed">
+            No lessons found matching "{searchQuery}". Try a different search term or category.
+          </p>
+        </div>
+      ) : (
+        /* Lessons Grid (Published Database Lessons FIRST, Placeholder Coming Soon AFTER) */
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* 1. PUBLISHED DATABASE LESSONS (Rendered FIRST) */}
+          {filteredDbLessons.map((lesson) => {
+            const segCount = lesson.segments?.length || 0;
+            const slideCount = getSlidesCount(lesson);
+            const cover =
+              lesson.coverImage ||
+              'https://images.unsplash.com/photo-1529699211952-734e80c4d42b?auto=format&fit=crop&w=800&q=80';
+            const author = lesson.authorDisplayName || 'Chess Creator';
 
-                {/* Dark Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-brand-surface via-transparent to-transparent opacity-80" />
+            return (
+              <div
+                key={lesson.id}
+                onClick={() => {
+                  soundManager.playButtonClick();
+                  navigate(`/lessons/${lesson.slug || lesson.id}`);
+                }}
+                className="group relative flex flex-col rounded-2xl overflow-hidden bg-brand-surface/70 border border-brand-border transition-all duration-300 hover:border-brand-accent/50 hover:-translate-y-1 cursor-pointer select-none"
+              >
+                {/* Thumbnail Container */}
+                <div className="relative aspect-video w-full overflow-hidden bg-brand-bg">
+                  <img
+                    src={cover}
+                    alt={lesson.title}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
 
-                {/* Duration Tag */}
-                <div className="absolute bottom-3 right-3 flex items-center gap-1 px-2.5 py-1 rounded-md bg-black/80 backdrop-blur-md border border-white/10 text-white text-[11px] font-medium">
-                  <Clock className="w-3 h-3 text-brand-accent" />
-                  <span>{lesson.duration}</span>
-                </div>
+                  {/* Dark Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-brand-surface via-transparent to-transparent opacity-80" />
 
-                {/* Segments Tag */}
-                <div className="absolute bottom-3 left-3 flex items-center gap-1 px-2.5 py-1 rounded-md bg-black/80 backdrop-blur-md border border-white/10 text-white text-[11px] font-medium">
-                  <Layers className="w-3 h-3 text-brand-accent" />
-                  <span>{lesson.segmentsCount} Segments</span>
-                </div>
-
-                {/* Badge if available */}
-                {lesson.badge && lesson.isAvailable && (
-                  <div className="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-brand-accent text-brand-bg text-[10px] font-bold uppercase tracking-wider shadow-md">
-                    {lesson.badge}
+                  {/* Slides Count Tag */}
+                  <div className="absolute bottom-3 right-3 flex items-center gap-1 px-2.5 py-1 rounded-md bg-black/80 backdrop-blur-md border border-white/10 text-white text-[11px] font-medium">
+                    <Clock className="w-3 h-3 text-brand-accent" />
+                    <span>{slideCount} Slides</span>
                   </div>
-                )}
 
-                {/* Play Icon Hover Overlay for Available Lesson */}
-                {lesson.isAvailable ? (
+                  {/* Segments Tag */}
+                  <div className="absolute bottom-3 left-3 flex items-center gap-1 px-2.5 py-1 rounded-md bg-black/80 backdrop-blur-md border border-white/10 text-white text-[11px] font-medium">
+                    <Layers className="w-3 h-3 text-brand-accent" />
+                    <span>{segCount} Segments</span>
+                  </div>
+
+                  {/* Published Badge */}
+                  <div className="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-emerald-500/90 text-white text-[10px] font-bold uppercase tracking-wider shadow-sm">
+                    Published
+                  </div>
+
+                  {/* Play Icon Hover Overlay */}
                   <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-black/40 backdrop-blur-[2px]">
-                    <div className="w-14 h-14 rounded-full bg-brand-accent text-brand-bg flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform duration-200">
+                    <div className="w-14 h-14 rounded-full bg-brand-accent text-brand-bg flex items-center justify-center transform group-hover:scale-110 transition-transform duration-200 shadow-xl">
                       <Play className="w-6 h-6 fill-current ml-1" />
                     </div>
                   </div>
-                ) : (
-                  /* Coming Soon Banner Overlay for Locked Lessons */
+                </div>
+
+                {/* Card Body */}
+                <div className="flex-1 p-5 flex flex-col justify-between space-y-4">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-xs text-brand-secondary font-medium">
+                      <span className="text-brand-accent font-semibold">{lesson.category || "Interactive"}</span>
+                      <span>{segCount} Segments</span>
+                    </div>
+
+                    <h3 className="font-display font-bold text-lg leading-snug text-brand-text group-hover:text-brand-accent transition-colors">
+                      {lesson.title}
+                    </h3>
+
+                    <p className="text-xs text-brand-secondary line-clamp-2 leading-relaxed">
+                      {lesson.description || 'Step-by-step interactive chess lesson.'}
+                    </p>
+                  </div>
+
+                  {/* Card Footer */}
+                  <div className="pt-3 border-t border-brand-border/40 flex items-center justify-between text-xs font-medium">
+                    <span className="text-brand-secondary/80">
+                      By <strong className="text-brand-text">{author}</strong>
+                    </span>
+
+                    <span className="inline-flex items-center gap-1 text-brand-accent group-hover:translate-x-1 transition-transform font-semibold">
+                      Start Lesson &rarr;
+                    </span>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+
+          {/* 2. PLACEHOLDER / COMING SOON LESSONS (Rendered AFTER Published Lessons) */}
+          {filteredStaticLessons.map((lesson) => {
+            return (
+              <div
+                key={lesson.id}
+                className="group relative flex flex-col rounded-2xl overflow-hidden bg-brand-surface/70 border border-brand-border opacity-40 cursor-not-allowed select-none"
+              >
+                {/* Thumbnail Container */}
+                <div className="relative aspect-video w-full overflow-hidden bg-brand-bg">
+                  <img
+                    src={lesson.thumbnailUrl}
+                    alt={lesson.title}
+                    className="w-full h-full object-cover filter blur-[1px]"
+                  />
+
+                  {/* Dark Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-brand-surface via-transparent to-transparent opacity-80" />
+
+                  {/* Duration Tag */}
+                  <div className="absolute bottom-3 right-3 flex items-center gap-1 px-2.5 py-1 rounded-md bg-black/80 backdrop-blur-md border border-white/10 text-white text-[11px] font-medium">
+                    <Clock className="w-3 h-3 text-brand-accent" />
+                    <span>{lesson.duration}</span>
+                  </div>
+
+                  {/* Segments Tag */}
+                  <div className="absolute bottom-3 left-3 flex items-center gap-1 px-2.5 py-1 rounded-md bg-black/80 backdrop-blur-md border border-white/10 text-white text-[11px] font-medium">
+                    <Layers className="w-3 h-3 text-brand-accent" />
+                    <span>{lesson.segmentsCount} Segments</span>
+                  </div>
+
+                  {/* Coming Soon Banner Overlay */}
                   <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 backdrop-blur-[2px] p-4 text-center">
-                    <div className="p-3 rounded-full bg-brand-surface/80 border border-brand-border/60 text-brand-secondary mb-2 shadow-lg">
+                    <div className="p-3 rounded-full bg-brand-surface/80 border border-brand-border/60 text-brand-secondary mb-2">
                       <Lock className="w-6 h-6 text-amber-400" />
                     </div>
-                    <span className="px-3 py-1 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 text-xs font-bold uppercase tracking-widest shadow-inner">
+                    <span className="px-3 py-1 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 text-xs font-bold uppercase tracking-widest">
                       Coming Soon
                     </span>
                   </div>
-                )}
-              </div>
-
-              {/* Card Body */}
-              <div className="flex-1 p-5 flex flex-col justify-between space-y-4">
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-xs text-brand-secondary font-medium">
-                    <span className="text-brand-accent">{lesson.category}</span>
-                    <span>{lesson.level}</span>
-                  </div>
-
-                  <h3 className={`font-display font-bold text-lg leading-snug transition-colors ${
-                    lesson.isAvailable ? 'text-brand-text group-hover:text-brand-accent' : 'text-brand-text/70'
-                  }`}>
-                    {lesson.title}
-                  </h3>
-
-                  <p className="text-xs text-brand-secondary line-clamp-2 leading-relaxed">
-                    {lesson.description}
-                  </p>
                 </div>
 
-                {/* Card Footer */}
-                <div className="pt-3 border-t border-brand-border/40 flex items-center justify-between text-xs font-medium">
-                  <span className="text-brand-secondary/80">
-                    By <strong className="text-brand-text">{lesson.instructor}</strong>
-                  </span>
+                {/* Card Body */}
+                <div className="flex-1 p-5 flex flex-col justify-between space-y-4">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-xs text-brand-secondary font-medium">
+                      <span className="text-brand-accent">{lesson.category}</span>
+                      <span>{lesson.level}</span>
+                    </div>
 
-                  {lesson.isAvailable ? (
-                    <span className="inline-flex items-center gap-1 text-brand-accent group-hover:translate-x-1 transition-transform">
-                      Start Lesson &rarr;
+                    <h3 className="font-display font-bold text-lg leading-snug text-brand-text/70">
+                      {lesson.title}
+                    </h3>
+
+                    <p className="text-xs text-brand-secondary line-clamp-2 leading-relaxed">
+                      {lesson.description}
+                    </p>
+                  </div>
+
+                  {/* Card Footer */}
+                  <div className="pt-3 border-t border-brand-border/40 flex items-center justify-between text-xs font-medium">
+                    <span className="text-brand-secondary/80">
+                      By <strong className="text-brand-text">{lesson.instructor}</strong>
                     </span>
-                  ) : (
+
                     <span className="text-amber-400/80 text-[11px] font-semibold uppercase tracking-wider">
                       Locked
                     </span>
-                  )}
+                  </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

@@ -31,6 +31,7 @@ export type BuilderLessonMinAggregateOutputType = {
   authorId: string | null
   authorDisplayName: string | null
   status: $Enums.BuilderLessonStatus | null
+  category: string | null
   coverImage: string | null
   slug: string | null
   createdAt: Date | null
@@ -45,6 +46,7 @@ export type BuilderLessonMaxAggregateOutputType = {
   authorId: string | null
   authorDisplayName: string | null
   status: $Enums.BuilderLessonStatus | null
+  category: string | null
   coverImage: string | null
   slug: string | null
   createdAt: Date | null
@@ -59,6 +61,7 @@ export type BuilderLessonCountAggregateOutputType = {
   authorId: number
   authorDisplayName: number
   status: number
+  category: number
   coverImage: number
   slug: number
   createdAt: number
@@ -75,6 +78,7 @@ export type BuilderLessonMinAggregateInputType = {
   authorId?: true
   authorDisplayName?: true
   status?: true
+  category?: true
   coverImage?: true
   slug?: true
   createdAt?: true
@@ -89,6 +93,7 @@ export type BuilderLessonMaxAggregateInputType = {
   authorId?: true
   authorDisplayName?: true
   status?: true
+  category?: true
   coverImage?: true
   slug?: true
   createdAt?: true
@@ -103,6 +108,7 @@ export type BuilderLessonCountAggregateInputType = {
   authorId?: true
   authorDisplayName?: true
   status?: true
+  category?: true
   coverImage?: true
   slug?: true
   createdAt?: true
@@ -190,6 +196,7 @@ export type BuilderLessonGroupByOutputType = {
   authorId: string
   authorDisplayName: string | null
   status: $Enums.BuilderLessonStatus
+  category: string | null
   coverImage: string | null
   slug: string | null
   createdAt: Date
@@ -225,6 +232,7 @@ export type BuilderLessonWhereInput = {
   authorId?: Prisma.StringFilter<"BuilderLesson"> | string
   authorDisplayName?: Prisma.StringNullableFilter<"BuilderLesson"> | string | null
   status?: Prisma.EnumBuilderLessonStatusFilter<"BuilderLesson"> | $Enums.BuilderLessonStatus
+  category?: Prisma.StringNullableFilter<"BuilderLesson"> | string | null
   coverImage?: Prisma.StringNullableFilter<"BuilderLesson"> | string | null
   slug?: Prisma.StringNullableFilter<"BuilderLesson"> | string | null
   createdAt?: Prisma.DateTimeFilter<"BuilderLesson"> | Date | string
@@ -241,6 +249,7 @@ export type BuilderLessonOrderByWithRelationInput = {
   authorId?: Prisma.SortOrder
   authorDisplayName?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
+  category?: Prisma.SortOrderInput | Prisma.SortOrder
   coverImage?: Prisma.SortOrderInput | Prisma.SortOrder
   slug?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -261,6 +270,7 @@ export type BuilderLessonWhereUniqueInput = Prisma.AtLeast<{
   authorId?: Prisma.StringFilter<"BuilderLesson"> | string
   authorDisplayName?: Prisma.StringNullableFilter<"BuilderLesson"> | string | null
   status?: Prisma.EnumBuilderLessonStatusFilter<"BuilderLesson"> | $Enums.BuilderLessonStatus
+  category?: Prisma.StringNullableFilter<"BuilderLesson"> | string | null
   coverImage?: Prisma.StringNullableFilter<"BuilderLesson"> | string | null
   createdAt?: Prisma.DateTimeFilter<"BuilderLesson"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"BuilderLesson"> | Date | string
@@ -276,6 +286,7 @@ export type BuilderLessonOrderByWithAggregationInput = {
   authorId?: Prisma.SortOrder
   authorDisplayName?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
+  category?: Prisma.SortOrderInput | Prisma.SortOrder
   coverImage?: Prisma.SortOrderInput | Prisma.SortOrder
   slug?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -296,6 +307,7 @@ export type BuilderLessonScalarWhereWithAggregatesInput = {
   authorId?: Prisma.StringWithAggregatesFilter<"BuilderLesson"> | string
   authorDisplayName?: Prisma.StringNullableWithAggregatesFilter<"BuilderLesson"> | string | null
   status?: Prisma.EnumBuilderLessonStatusWithAggregatesFilter<"BuilderLesson"> | $Enums.BuilderLessonStatus
+  category?: Prisma.StringNullableWithAggregatesFilter<"BuilderLesson"> | string | null
   coverImage?: Prisma.StringNullableWithAggregatesFilter<"BuilderLesson"> | string | null
   slug?: Prisma.StringNullableWithAggregatesFilter<"BuilderLesson"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"BuilderLesson"> | Date | string
@@ -309,6 +321,7 @@ export type BuilderLessonCreateInput = {
   description?: string | null
   authorDisplayName?: string | null
   status?: $Enums.BuilderLessonStatus
+  category?: string | null
   coverImage?: string | null
   slug?: string | null
   createdAt?: Date | string
@@ -325,6 +338,7 @@ export type BuilderLessonUncheckedCreateInput = {
   authorId: string
   authorDisplayName?: string | null
   status?: $Enums.BuilderLessonStatus
+  category?: string | null
   coverImage?: string | null
   slug?: string | null
   createdAt?: Date | string
@@ -339,6 +353,7 @@ export type BuilderLessonUpdateInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   authorDisplayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBuilderLessonStatusFieldUpdateOperationsInput | $Enums.BuilderLessonStatus
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -355,6 +370,7 @@ export type BuilderLessonUncheckedUpdateInput = {
   authorId?: Prisma.StringFieldUpdateOperationsInput | string
   authorDisplayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBuilderLessonStatusFieldUpdateOperationsInput | $Enums.BuilderLessonStatus
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -370,6 +386,7 @@ export type BuilderLessonCreateManyInput = {
   authorId: string
   authorDisplayName?: string | null
   status?: $Enums.BuilderLessonStatus
+  category?: string | null
   coverImage?: string | null
   slug?: string | null
   createdAt?: Date | string
@@ -383,6 +400,7 @@ export type BuilderLessonUpdateManyMutationInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   authorDisplayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBuilderLessonStatusFieldUpdateOperationsInput | $Enums.BuilderLessonStatus
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -397,6 +415,7 @@ export type BuilderLessonUncheckedUpdateManyInput = {
   authorId?: Prisma.StringFieldUpdateOperationsInput | string
   authorDisplayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBuilderLessonStatusFieldUpdateOperationsInput | $Enums.BuilderLessonStatus
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -421,6 +440,7 @@ export type BuilderLessonCountOrderByAggregateInput = {
   authorId?: Prisma.SortOrder
   authorDisplayName?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  category?: Prisma.SortOrder
   coverImage?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -435,6 +455,7 @@ export type BuilderLessonMaxOrderByAggregateInput = {
   authorId?: Prisma.SortOrder
   authorDisplayName?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  category?: Prisma.SortOrder
   coverImage?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -449,6 +470,7 @@ export type BuilderLessonMinOrderByAggregateInput = {
   authorId?: Prisma.SortOrder
   authorDisplayName?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  category?: Prisma.SortOrder
   coverImage?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -527,6 +549,7 @@ export type BuilderLessonCreateWithoutAuthorInput = {
   description?: string | null
   authorDisplayName?: string | null
   status?: $Enums.BuilderLessonStatus
+  category?: string | null
   coverImage?: string | null
   slug?: string | null
   createdAt?: Date | string
@@ -541,6 +564,7 @@ export type BuilderLessonUncheckedCreateWithoutAuthorInput = {
   description?: string | null
   authorDisplayName?: string | null
   status?: $Enums.BuilderLessonStatus
+  category?: string | null
   coverImage?: string | null
   slug?: string | null
   createdAt?: Date | string
@@ -585,6 +609,7 @@ export type BuilderLessonScalarWhereInput = {
   authorId?: Prisma.StringFilter<"BuilderLesson"> | string
   authorDisplayName?: Prisma.StringNullableFilter<"BuilderLesson"> | string | null
   status?: Prisma.EnumBuilderLessonStatusFilter<"BuilderLesson"> | $Enums.BuilderLessonStatus
+  category?: Prisma.StringNullableFilter<"BuilderLesson"> | string | null
   coverImage?: Prisma.StringNullableFilter<"BuilderLesson"> | string | null
   slug?: Prisma.StringNullableFilter<"BuilderLesson"> | string | null
   createdAt?: Prisma.DateTimeFilter<"BuilderLesson"> | Date | string
@@ -598,6 +623,7 @@ export type BuilderLessonCreateWithoutSegmentsInput = {
   description?: string | null
   authorDisplayName?: string | null
   status?: $Enums.BuilderLessonStatus
+  category?: string | null
   coverImage?: string | null
   slug?: string | null
   createdAt?: Date | string
@@ -613,6 +639,7 @@ export type BuilderLessonUncheckedCreateWithoutSegmentsInput = {
   authorId: string
   authorDisplayName?: string | null
   status?: $Enums.BuilderLessonStatus
+  category?: string | null
   coverImage?: string | null
   slug?: string | null
   createdAt?: Date | string
@@ -642,6 +669,7 @@ export type BuilderLessonUpdateWithoutSegmentsInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   authorDisplayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBuilderLessonStatusFieldUpdateOperationsInput | $Enums.BuilderLessonStatus
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -657,6 +685,7 @@ export type BuilderLessonUncheckedUpdateWithoutSegmentsInput = {
   authorId?: Prisma.StringFieldUpdateOperationsInput | string
   authorDisplayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBuilderLessonStatusFieldUpdateOperationsInput | $Enums.BuilderLessonStatus
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -670,6 +699,7 @@ export type BuilderLessonCreateManyAuthorInput = {
   description?: string | null
   authorDisplayName?: string | null
   status?: $Enums.BuilderLessonStatus
+  category?: string | null
   coverImage?: string | null
   slug?: string | null
   createdAt?: Date | string
@@ -683,6 +713,7 @@ export type BuilderLessonUpdateWithoutAuthorInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   authorDisplayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBuilderLessonStatusFieldUpdateOperationsInput | $Enums.BuilderLessonStatus
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -697,6 +728,7 @@ export type BuilderLessonUncheckedUpdateWithoutAuthorInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   authorDisplayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBuilderLessonStatusFieldUpdateOperationsInput | $Enums.BuilderLessonStatus
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -711,6 +743,7 @@ export type BuilderLessonUncheckedUpdateManyWithoutAuthorInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   authorDisplayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBuilderLessonStatusFieldUpdateOperationsInput | $Enums.BuilderLessonStatus
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -756,6 +789,7 @@ export type BuilderLessonSelect<ExtArgs extends runtime.Types.Extensions.Interna
   authorId?: boolean
   authorDisplayName?: boolean
   status?: boolean
+  category?: boolean
   coverImage?: boolean
   slug?: boolean
   createdAt?: boolean
@@ -773,6 +807,7 @@ export type BuilderLessonSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   authorId?: boolean
   authorDisplayName?: boolean
   status?: boolean
+  category?: boolean
   coverImage?: boolean
   slug?: boolean
   createdAt?: boolean
@@ -788,6 +823,7 @@ export type BuilderLessonSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   authorId?: boolean
   authorDisplayName?: boolean
   status?: boolean
+  category?: boolean
   coverImage?: boolean
   slug?: boolean
   createdAt?: boolean
@@ -803,6 +839,7 @@ export type BuilderLessonSelectScalar = {
   authorId?: boolean
   authorDisplayName?: boolean
   status?: boolean
+  category?: boolean
   coverImage?: boolean
   slug?: boolean
   createdAt?: boolean
@@ -810,7 +847,7 @@ export type BuilderLessonSelectScalar = {
   publishedAt?: boolean
 }
 
-export type BuilderLessonOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "authorId" | "authorDisplayName" | "status" | "coverImage" | "slug" | "createdAt" | "updatedAt" | "publishedAt", ExtArgs["result"]["builderLesson"]>
+export type BuilderLessonOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "authorId" | "authorDisplayName" | "status" | "category" | "coverImage" | "slug" | "createdAt" | "updatedAt" | "publishedAt", ExtArgs["result"]["builderLesson"]>
 export type BuilderLessonInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   segments?: boolean | Prisma.BuilderLesson$segmentsArgs<ExtArgs>
@@ -836,6 +873,7 @@ export type $BuilderLessonPayload<ExtArgs extends runtime.Types.Extensions.Inter
     authorId: string
     authorDisplayName: string | null
     status: $Enums.BuilderLessonStatus
+    category: string | null
     coverImage: string | null
     slug: string | null
     createdAt: Date
@@ -1272,6 +1310,7 @@ export interface BuilderLessonFieldRefs {
   readonly authorId: Prisma.FieldRef<"BuilderLesson", 'String'>
   readonly authorDisplayName: Prisma.FieldRef<"BuilderLesson", 'String'>
   readonly status: Prisma.FieldRef<"BuilderLesson", 'BuilderLessonStatus'>
+  readonly category: Prisma.FieldRef<"BuilderLesson", 'String'>
   readonly coverImage: Prisma.FieldRef<"BuilderLesson", 'String'>
   readonly slug: Prisma.FieldRef<"BuilderLesson", 'String'>
   readonly createdAt: Prisma.FieldRef<"BuilderLesson", 'DateTime'>

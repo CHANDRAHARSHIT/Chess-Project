@@ -104,29 +104,38 @@ export function useClickToMove(options: ChessboardOptions): ChessboardOptions {
   const [optionSquares, setOptionSquares] = useState<Record<string, React.CSSProperties>>({});
 
   // Keep a stable ref to the latest options so our callback never goes stale
-  // without re-creating the function on every render.
+  // without re-creating the function on every render. Refs must be written in an
+  // effect, not during render (React refs must not be read/written while rendering).
   const optionsRef = useRef(options);
-  optionsRef.current = options;
+  useEffect(() => {
+    optionsRef.current = options;
+  });
 
   // Track the last processed click to deduplicate rapid duplicate events (e.g. piece + square click)
   const lastClickRef = useRef<{ square: string; time: number } | null>(null);
 
-  // Clear selection whenever the position changes externally (new puzzle, etc.)
+  // Clear selection whenever the position changes externally (new puzzle, etc.). This is React's
+  // documented "adjusting state when a prop changes" pattern: compare against the previous value
+  // in a parallel state slot and update during render, rather than resetting in an effect.
   const position = options.position;
-  useEffect(() => {
+  const [prevPosition, setPrevPosition] = useState(position);
+  if (position !== prevPosition) {
+    setPrevPosition(position);
     setMoveFrom(null);
     setOptionSquares({});
-  }, [position]);
+  }
 
   // Also clear selection when the board becomes non-interactive (e.g. HeroPuzzle
   // sets allowDragging=false while the engine is thinking or the slide is inactive).
   const allowDragging = options.allowDragging;
-  useEffect(() => {
+  const [prevAllowDragging, setPrevAllowDragging] = useState(allowDragging);
+  if (allowDragging !== prevAllowDragging) {
+    setPrevAllowDragging(allowDragging);
     if (allowDragging === false) {
       setMoveFrom(null);
       setOptionSquares({});
     }
-  }, [allowDragging]);
+  }
 
   const handleSquareClick = useCallback(
     ({ piece, square }: SquareHandlerArgs) => {

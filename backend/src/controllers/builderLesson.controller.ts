@@ -175,7 +175,7 @@ export async function updateLesson(req: Request, res: Response, next: NextFuncti
   try {
     const userId = req.user?.id;
     const { id } = req.params;
-    const { title, description, status, coverImage } = req.body;
+    const { title, description, status, coverImage, category } = req.body;
 
     if (!userId) {
       return res.status(401).json({ status: "fail", message: "Unauthorized" });
@@ -196,6 +196,7 @@ export async function updateLesson(req: Request, res: Response, next: NextFuncti
         ...(description !== undefined && { description }),
         ...(status !== undefined && { status }),
         ...(coverImage !== undefined && { coverImage }),
+        ...(category !== undefined && { category: category ? String(category) : null }),
         publishedAt: status === "PUBLISHED" ? new Date() : existing.publishedAt,
       },
     });

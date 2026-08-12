@@ -13,6 +13,13 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
       },
+      // local dev only - forwards WebSocket upgrade traffic to the backend so `WS_PATH` (default '/ws') is reachable from `npm run dev`.
+      // No production config touched
+      '/ws': {
+        target: 'ws://localhost:3000',
+        ws: true,
+        changeOrigin: true,
+      },
     },
   },
 });

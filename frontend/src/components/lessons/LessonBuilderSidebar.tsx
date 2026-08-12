@@ -157,7 +157,7 @@ function SortableSlideItem({
 
           {slide.content && slide.content.trim() !== "" ? (
             <div
-              className="w-full h-full font-sans text-brand-text text-base leading-relaxed break-words space-y-3 [&_h1]:text-2xl [&_h1]:font-semibold [&_h1]:text-brand-text [&_h1]:mb-3 [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:text-brand-text [&_h2]:mb-2 [&_h3]:text-lg [&_h3]:font-medium [&_h3]:text-brand-text [&_h3]:mb-2 [&_p]:text-base [&_p]:text-brand-text [&_p]:leading-relaxed [&_p]:mb-3"
+              className="w-full h-full font-sans text-brand-text text-base leading-relaxed break-words space-y-3 [&_h1]:text-2xl [&_h1]:font-semibold [&_h1]:text-brand-text [&_h1]:mb-3 [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:text-brand-text [&_h2]:mb-2 [&_h3]:text-lg [&_h3]:font-medium [&_h3]:text-brand-text [&_h3]:mb-2 [&_p]:text-base [&_p]:text-brand-text [&_p]:leading-relaxed [&_p]:mb-3 [&_ul]:list-disc [&_ul]:list-inside [&_ul]:space-y-1 [&_ul]:my-2 [&_ul]:pl-2 [&_ul]:text-brand-text [&_ol]:list-decimal [&_ol]:list-inside [&_ol]:space-y-1 [&_ol]:my-2 [&_ol]:pl-2 [&_ol]:text-brand-text [&_li]:leading-relaxed [&_li]:text-brand-text [&_blockquote]:border-l-4 [&_blockquote]:border-brand-accent [&_blockquote]:bg-brand-accent/10 [&_blockquote]:px-4 [&_blockquote]:py-2.5 [&_blockquote]:my-3 [&_blockquote]:rounded-r [&_blockquote]:text-brand-text/90 [&_blockquote]:italic [&_blockquote]:font-sans [&_hr]:border-brand-border/80 [&_hr]:my-4 [&_a]:text-brand-accent [&_a]:underline [&_a]:underline-offset-2 [&_a]:hover:text-brand-accent-hover"
               dangerouslySetInnerHTML={{ __html: slide.content }}
             />
           ) : (

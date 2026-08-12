@@ -9,6 +9,7 @@ interface LessonCanvasProps {
   onFenChange?: (fen: string) => void;
   onRemoveBoard?: () => void;
   zoomLevel?: number;
+  onContextMenu?: (x: number, y: number) => void;
 }
 
 export function LessonCanvas({
@@ -19,6 +20,7 @@ export function LessonCanvas({
   onFenChange,
   onRemoveBoard,
   zoomLevel = 100,
+  onContextMenu,
 }: LessonCanvasProps) {
   return (
     <div
@@ -37,7 +39,7 @@ export function LessonCanvas({
         )}
 
         {/* Document Text Editor */}
-        <RichTextEditor content={content} onChange={onContentChange} />
+        <RichTextEditor content={content} onChange={onContentChange} onContextMenu={onContextMenu} />
       </div>
     </div>
   );

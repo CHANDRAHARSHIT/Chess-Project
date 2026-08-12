@@ -28,6 +28,7 @@ export interface BuilderLessonData {
   authorId: string;
   authorDisplayName?: string | null;
   status: "DRAFT" | "PUBLISHED";
+  category?: string | null;
   coverImage?: string | null;
   slug?: string | null;
   segments: BuilderSegmentData[];
@@ -97,6 +98,13 @@ class BuilderLessonService {
     if (!res.ok) throw new Error("Failed to update lesson");
     const json = await res.json();
     return json.data;
+  }
+
+  /**
+   * Publish lesson
+   */
+  async publishLesson(id: string): Promise<BuilderLessonData> {
+    return this.updateLesson(id, { status: "PUBLISHED" });
   }
 
   /**

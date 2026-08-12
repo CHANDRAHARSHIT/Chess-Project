@@ -77,6 +77,7 @@ export function EmbeddedChessboard({
   return (
     <div
       contentEditable={false}
+      onMouseDown={(e) => e.stopPropagation()}
       className="float-right ml-6 mb-6 w-[44%] max-w-[480px] min-w-[340px] rounded-xl border border-brand-border bg-brand-bg shadow-2xl select-none clear-none relative z-20 pointer-events-auto cursor-default font-sans"
     >
       {/* Header bar */}

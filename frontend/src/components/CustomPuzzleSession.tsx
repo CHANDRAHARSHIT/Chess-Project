@@ -208,7 +208,7 @@ export function CustomPuzzleSession({ filters, onExit }: CustomPuzzleSessionProp
       <div className="flex flex-col items-center justify-center min-h-[500px] gap-8 text-center px-4">
         <div className="relative">
           <div
-            className="w-20 h-20 rounded-2xl flex items-center justify-center bg-brand-accent/10 border border-brand-accent/30 shadow-lg shadow-brand-accent/10"
+            className="w-20 h-20 rounded-2xl flex items-center justify-center bg-brand-accent/10 border border-brand-accent/30"
           >
             <PartyPopper className="w-9 h-9 text-brand-accent" />
           </div>
@@ -264,7 +264,7 @@ export function CustomPuzzleSession({ filters, onExit }: CustomPuzzleSessionProp
               setSessionSolved(0);
               setSessionStreak(0);
             }}
-            className="px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest cursor-pointer transition-all duration-200 btn-premium-cta cta-shine shadow-md shadow-brand-accent/10"
+            className="px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest cursor-pointer transition-all duration-200 btn-premium-cta cta-shine"
           >
             Play Again
           </button>
