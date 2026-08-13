@@ -2,10 +2,11 @@ import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Coins, ArrowRight, RotateCcw, Package, ShoppingBag, Sparkles } from "lucide-react";
 import { useStoryModeRun } from "./StoryModeContext";
+import type { RelicType } from "./StoryModeContext";
 
 interface StoryModeMerchantProps {
   onComplete: () => void;
-  onRetreat: () => void;
+
 }
 
 type ShopItem = {
@@ -13,81 +14,49 @@ type ShopItem = {
   name: string;
   description: string;
   cost: number;
-  type: 'upgrade_hint' | 'upgrade_time' | 'upgrade_eval' | 'max_undo' | 'max_time' | 'max_eval' | 'max_hint' | 'restore_reroll' | 'restore_time' | 'restore_undo' | 'restore_hint' | 'restore_eval';
-  value?: number;
+  type: RelicType;
 };
 
 export default function StoryModeMerchant({
   onComplete,
-  onRetreat,
 }: StoryModeMerchantProps) {
-  const { runState, updateRunState, addCoins, useCharge } = useStoryModeRun();
+  const { runState, updateRunState, useCharge } = useStoryModeRun();
   const [purchasedIds, setPurchasedIds] = useState<Set<string>>(new Set());
+  const [activeTab, setActiveTab] = useState<'buy' | 'sell'>('buy');
+  const [quantities, setQuantities] = useState<Record<string, number>>({});
+
+  const handleQuantityChange = (id: string, delta: number) => {
+    setQuantities(prev => ({
+      ...prev,
+      [id]: Math.max(1, (prev[id] || 1) + delta)
+    }));
+  };
+
+  const relicData = [
+    { type: 'undo' as RelicType, name: 'Relic of Undo', description: 'Allows you to undo a move.' },
+    { type: 'hint' as RelicType, name: 'Relic of Oracle', description: 'Reveals the best move.' },
+    { type: 'evalBar' as RelicType, name: 'Relic of Truth', description: 'Shows the evaluation bar.' },
+    { type: 'time' as RelicType, name: 'Relic of Haste', description: 'Grants extra time in timed battles.' },
+    { type: 'reroll' as RelicType, name: 'Relic of Fate', description: 'Rerolls merchant or encounters.' },
+  ];
 
   // Generate available pool based on current state
   const availablePool = useMemo(() => {
     const pool: ShopItem[] = [];
-    // Dynamic base pricing variance (e.g., +/- 5 coins)
     const v = (base: number) => Math.max(5, base + Math.floor(Math.random() * 11) - 5);
 
-    if (runState.hintStrength < 3200) {
+    relicData.forEach(r => {
       pool.push({
-        id: 'upgrade_hint',
-        name: 'Engine Upgrade',
-        description: `Upgrade Best Move engine from ${runState.hintStrength} to ${runState.hintStrength === 2000 ? 2500 : 3200} ELO.`,
-        cost: v(50),
-        type: 'upgrade_hint'
+        id: `${r.type}_${Math.random()}`,
+        name: r.name,
+        description: r.description,
+        cost: v(20), // 20 base cost per charge
+        type: r.type,
       });
-    }
-    
-    if (runState.timeTier !== 'gold') {
-      pool.push({
-        id: 'upgrade_time',
-        name: 'Time Crystal Upgrade',
-        description: `Upgrade Time charges to ${runState.timeTier === 'bronze' ? 'Silver (Double Time)' : 'Gold (Infinite)'}.`,
-        cost: v(40),
-        type: 'upgrade_time'
-      });
-    }
-
-    if (runState.evalBarTier !== 'gold') {
-      pool.push({
-        id: 'upgrade_eval',
-        name: 'Eval Lens Upgrade',
-        description: `Upgrade Eval charges to ${runState.evalBarTier === 'bronze' ? 'Silver (10 moves)' : 'Gold (Infinite moves)'}.`,
-        cost: v(40),
-        type: 'upgrade_eval'
-      });
-    }
-
-    // Max Charge Upgrades
-    pool.push({ id: `max_undo_${Math.random()}`, name: 'Relic: Chrono Gear', description: 'Increases Max Undo Charges by +1.', cost: v(60), type: 'max_undo' });
-    pool.push({ id: `max_time_${Math.random()}`, name: 'Relic: Haste Boots', description: 'Increases Max Time Charges by +1.', cost: v(60), type: 'max_time' });
-    pool.push({ id: `max_eval_${Math.random()}`, name: 'Relic: True Sight', description: 'Increases Max Eval Charges by +1.', cost: v(60), type: 'max_eval' });
-    pool.push({ id: `max_hint_${Math.random()}`, name: 'Relic: Oracle Bone', description: 'Increases Max Hint Charges by +1.', cost: v(60), type: 'max_hint' });
-
-    // Consumables (Restore Charges)
-    if (runState.rerollCharges < runState.maxRerollCharges) {
-      pool.push({ id: `rest_reroll_${Math.random()}`, name: 'Fate Token', description: 'Restores 1 Reroll charge.', cost: v(15), type: 'restore_reroll', value: 1 });
-      if (runState.maxRerollCharges - runState.rerollCharges >= 2) {
-        pool.push({ id: `rest_reroll2_${Math.random()}`, name: 'Destiny Coin', description: 'Restores 2 Reroll charges.', cost: v(25), type: 'restore_reroll', value: 2 });
-      }
-    }
-    if (runState.timeCharges < runState.maxTimeCharges) {
-      pool.push({ id: `rest_time_${Math.random()}`, name: 'Hourglass Dust', description: 'Restores 1 Time charge.', cost: v(15), type: 'restore_time', value: 1 });
-    }
-    if (runState.undoCharges < runState.maxUndoCharges) {
-      pool.push({ id: `rest_undo_${Math.random()}`, name: 'Rewind Spring', description: 'Restores 1 Undo charge.', cost: v(15), type: 'restore_undo', value: 1 });
-    }
-    if (runState.hintCharges < runState.maxHintCharges) {
-      pool.push({ id: `rest_hint_${Math.random()}`, name: 'Whispering Gem', description: 'Restores 1 Best Move charge.', cost: v(15), type: 'restore_hint', value: 1 });
-    }
-    if (runState.evalBarCharges < runState.maxEvalBarCharges) {
-      pool.push({ id: `rest_eval_${Math.random()}`, name: 'Focus Prism', description: 'Restores 1 Eval Bar charge.', cost: v(15), type: 'restore_eval', value: 1 });
-    }
+    });
 
     return pool;
-  }, [runState]);
+  }, []);
 
   // State to hold current random offerings
   const [offerings, setOfferings] = useState<ShopItem[]>(() => getRandomOfferings(availablePool, 3));
@@ -98,7 +67,7 @@ export default function StoryModeMerchant({
   }
 
   const handleReroll = () => {
-    if (runState.rerollCharges > 0) {
+    if (runState.relics.includes('reroll') && runState.rerollCharges > 0) {
       const used = useCharge('reroll');
       if (used) {
         setOfferings(getRandomOfferings(availablePool, 3));
@@ -108,57 +77,39 @@ export default function StoryModeMerchant({
   };
 
   const handlePurchase = (item: ShopItem) => {
-    if (runState.coins >= item.cost) {
-      // Deduct coins
-      updateRunState({ coins: runState.coins - item.cost });
-      setPurchasedIds(prev => new Set([...prev, item.id]));
-
-      // Apply effect
-      switch(item.type) {
-        case 'upgrade_hint':
-          updateRunState({ hintStrength: runState.hintStrength === 2000 ? 2500 : 3200 });
-          break;
-        case 'upgrade_time':
-          updateRunState({ timeTier: runState.timeTier === 'bronze' ? 'silver' : 'gold' });
-          break;
-        case 'upgrade_eval':
-          updateRunState({ evalBarTier: runState.evalBarTier === 'bronze' ? 'silver' : 'gold' });
-          break;
-        case 'max_undo':
-          updateRunState({ maxUndoCharges: runState.maxUndoCharges + 1 });
-          break;
-        case 'max_time':
-          updateRunState({ maxTimeCharges: runState.maxTimeCharges + 1 });
-          break;
-        case 'max_eval':
-          updateRunState({ maxEvalBarCharges: runState.maxEvalBarCharges + 1 });
-          break;
-        case 'max_hint':
-          updateRunState({ maxHintCharges: runState.maxHintCharges + 1 });
-          break;
-        case 'restore_reroll':
-          updateRunState({ rerollCharges: Math.min(runState.maxRerollCharges, runState.rerollCharges + (item.value || 1)) });
-          break;
-        case 'restore_time':
-          updateRunState({ timeCharges: Math.min(runState.maxTimeCharges, runState.timeCharges + (item.value || 1)) });
-          break;
-        case 'restore_undo':
-          updateRunState({ undoCharges: Math.min(runState.maxUndoCharges, runState.undoCharges + (item.value || 1)) });
-          break;
-        case 'restore_hint':
-          updateRunState({ hintCharges: Math.min(runState.maxHintCharges, runState.hintCharges + (item.value || 1)) });
-          break;
-        case 'restore_eval':
-          updateRunState({ evalBarCharges: Math.min(runState.maxEvalBarCharges, runState.evalBarCharges + (item.value || 1)) });
-          break;
+    const qty = quantities[item.id] || 1;
+    const totalCost = item.cost * qty;
+    
+    if (runState.coins >= totalCost) {
+      const isOwned = runState.relics.includes(item.type);
+      if (!isOwned && runState.relics.length >= 5) {
+        return; // No slots available
       }
+      
+      const newRelics = isOwned ? runState.relics : [...runState.relics, item.type];
+      const currentCharges = (runState[`${item.type}Charges`] as number) || 0;
+      
+      updateRunState({ 
+        coins: runState.coins - totalCost,
+        relics: newRelics,
+        [`${item.type}Charges`]: currentCharges + qty
+      });
+      setPurchasedIds(prev => new Set([...prev, item.id]));
     }
   };
 
-  const handleSell = () => {
-    // Placeholder for selling relics
-    addCoins(10);
+  const handleSell = (type: RelicType) => {
+    const sellPrice = 25; // fixed sell price
+    updateRunState({ 
+      relics: runState.relics.filter(r => r !== type), 
+      coins: runState.coins + sellPrice,
+      [`${type}Charges`]: 0
+    });
   };
+
+  const ownedRelics = runState.relics.map(type => relicData.find(r => r.type === type)).filter(Boolean) as typeof relicData;
+
+  const MAX_SLOTS = 5;
 
   return (
     <motion.div
@@ -194,98 +145,162 @@ export default function StoryModeMerchant({
               <Coins className="w-4 h-4 text-yellow-400" />
               <span className="text-sm font-mono font-bold text-yellow-100">{runState.coins} Coins</span>
             </div>
+            <div className="text-xs font-mono text-brand-secondary mt-1">
+              Slots: {runState.relics.length} / {MAX_SLOTS}
+            </div>
           </div>
+        </div>
+
+        {/* Tabs */}
+        <div className="w-full flex gap-2 border-b border-brand-border/30 pb-2">
+          <button
+            onClick={() => setActiveTab('buy')}
+            className={`flex-1 py-2 text-sm font-bold rounded-t-lg transition-all ${
+              activeTab === 'buy' 
+                ? 'bg-yellow-500/20 text-yellow-300 border-b-2 border-yellow-400' 
+                : 'text-brand-secondary hover:text-brand-text'
+            }`}
+          >
+            Buy Relics
+          </button>
+          <button
+            onClick={() => setActiveTab('sell')}
+            className={`flex-1 py-2 text-sm font-bold rounded-t-lg transition-all ${
+              activeTab === 'sell' 
+                ? 'bg-yellow-500/20 text-yellow-300 border-b-2 border-yellow-400' 
+                : 'text-brand-secondary hover:text-brand-text'
+            }`}
+          >
+            Sell Relics
+          </button>
         </div>
 
         <div className="w-full flex flex-col gap-4">
-          <div className="flex justify-between items-center px-1">
-            <h3 className="text-sm font-semibold text-brand-text flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-yellow-400" /> Wares for Sale
-            </h3>
-            
-            <button 
-              onClick={handleReroll}
-              disabled={runState.rerollCharges <= 0}
-              className="flex items-center gap-1.5 text-xs font-mono px-2 py-1 rounded bg-brand-surface/50 border border-brand-border/50 text-brand-secondary hover:text-brand-text hover:border-brand-accent/50 transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
-            >
-              <RotateCcw className="w-3 h-3" />
-              Reroll ({runState.rerollCharges}/{runState.maxRerollCharges})
-            </button>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            {offerings.map(item => {
-              const isPurchased = purchasedIds.has(item.id);
-              const canAfford = runState.coins >= item.cost;
-              
-              return (
-                <div 
-                  key={item.id} 
-                  className={`flex flex-col gap-2 p-3 rounded-xl border ${isPurchased ? 'border-green-500/30 bg-green-500/5' : 'border-yellow-500/20 bg-yellow-500/5 hover:bg-yellow-500/10'} transition-all`}
+          {activeTab === 'buy' ? (
+            <>
+              <div className="flex justify-between items-center px-1">
+                <h3 className="text-sm font-semibold text-brand-text flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-yellow-400" /> Wares for Sale
+                </h3>
+                
+                <button 
+                  onClick={handleReroll}
+                  disabled={!runState.relics.includes('reroll') || runState.rerollCharges <= 0}
+                  className="flex items-center gap-1.5 text-xs font-mono px-2 py-1 rounded bg-brand-surface/50 border border-brand-border/50 text-brand-secondary hover:text-brand-text hover:border-brand-accent/50 transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
                 >
-                  <div className="flex-1">
-                    <h4 className="text-sm font-bold text-yellow-200 mb-1 leading-tight">{item.name}</h4>
-                    <p className="text-xs text-brand-secondary leading-snug">{item.description}</p>
-                  </div>
+                  <RotateCcw className="w-3 h-3" />
+                  Reroll ({runState.relics.includes('reroll') ? runState.rerollCharges : 0}/3)
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {offerings.map(item => {
+                  const isPurchased = purchasedIds.has(item.id);
+                  const qty = quantities[item.id] || 1;
+                  const totalCost = item.cost * qty;
+                  const canAfford = runState.coins >= totalCost;
+                  const canAffordNext = runState.coins >= item.cost * (qty + 1);
+                  const isOwned = runState.relics.includes(item.type);
+                  const needsSlot = !isOwned;
+                  const slotsFull = runState.relics.length >= MAX_SLOTS;
+                  const canFit = !(needsSlot && slotsFull);
+                  const canBuy = canAfford && canFit && !isPurchased;
                   
-                  {isPurchased ? (
-                    <div className="text-xs font-mono font-bold text-green-400 text-center py-1.5 bg-green-500/10 rounded">
-                      Purchased
-                    </div>
-                  ) : (
-                    <button
-                      onClick={() => handlePurchase(item)}
-                      disabled={!canAfford}
-                      className={`flex items-center justify-center gap-1.5 w-full py-1.5 rounded text-xs font-mono font-bold transition-all cursor-pointer ${
-                        canAfford 
-                          ? 'bg-yellow-500/20 text-yellow-300 hover:bg-yellow-500/30 border border-yellow-500/40' 
-                          : 'bg-brand-surface text-brand-secondary border border-brand-border/40 opacity-50 cursor-not-allowed'
-                      }`}
+                  return (
+                    <div 
+                      key={item.id} 
+                      className={`flex flex-col gap-2 p-3 rounded-xl border ${isPurchased ? 'border-green-500/30 bg-green-500/5' : 'border-yellow-500/20 bg-yellow-500/5 hover:bg-yellow-500/10'} transition-all`}
                     >
-                      <Coins className="w-3 h-3" />
-                      {item.cost}
-                    </button>
-                  )}
+                      <div className="flex-1">
+                        <h4 className="text-sm font-bold text-yellow-200 mb-1 leading-tight">{item.name}</h4>
+                        <p className="text-xs text-brand-secondary leading-snug">{item.description}</p>
+                      </div>
+                      
+                      {isPurchased ? (
+                        <div className="text-xs font-mono font-bold text-green-400 text-center py-1.5 bg-green-500/10 rounded">
+                          Purchased
+                        </div>
+                      ) : (
+                        <>
+                          <div className="flex items-center justify-between bg-black/20 rounded p-1 mb-1 border border-brand-border/30">
+                            <button 
+                              onClick={() => handleQuantityChange(item.id, -1)}
+                              disabled={qty <= 1}
+                              className="w-6 h-6 flex items-center justify-center rounded bg-brand-surface hover:bg-brand-surface/80 text-brand-secondary disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                            >
+                              -
+                            </button>
+                            <span className="text-xs font-mono font-bold text-yellow-300">
+                              {qty} {qty === 1 ? 'Use' : 'Uses'}
+                            </span>
+                            <button 
+                              onClick={() => handleQuantityChange(item.id, 1)}
+                              disabled={!canAffordNext}
+                              className="w-6 h-6 flex items-center justify-center rounded bg-brand-surface hover:bg-brand-surface/80 text-brand-secondary disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                            >
+                              +
+                            </button>
+                          </div>
+                          
+                          <button
+                            onClick={() => handlePurchase(item)}
+                            disabled={!canBuy}
+                            className={`flex items-center justify-center gap-1.5 w-full py-1.5 rounded text-xs font-mono font-bold transition-all cursor-pointer ${
+                              canBuy 
+                                ? 'bg-yellow-500/20 text-yellow-300 hover:bg-yellow-500/30 border border-yellow-500/40' 
+                                : 'bg-brand-surface text-brand-secondary border border-brand-border/40 opacity-50 cursor-not-allowed'
+                            }`}
+                          >
+                            <Coins className="w-3 h-3" />
+                            {totalCost}
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+              {runState.relics.length >= MAX_SLOTS && (
+                <p className="text-xs text-red-400 text-center mt-2">Your Relic Slots are full! Sell a relic to buy another.</p>
+              )}
+            </>
+          ) : (
+            <div className="flex flex-col gap-3 min-h-[160px]">
+              <h3 className="text-sm font-semibold text-brand-text flex items-center gap-2 px-1">
+                <Package className="w-4 h-4 text-yellow-400" /> Your Inventory ({runState.relics.length}/{MAX_SLOTS})
+              </h3>
+              
+              {ownedRelics.length === 0 ? (
+                <div className="flex items-center justify-center flex-1 text-sm text-brand-secondary border border-dashed border-brand-border/40 rounded-xl">
+                  You have no relics to sell.
                 </div>
-              );
-            })}
-          </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {ownedRelics.map(relic => (
+                    <div key={relic.type} className="flex items-center justify-between p-3 rounded-xl border border-brand-border/40 bg-brand-surface/30">
+                      <div>
+                        <h4 className="text-sm font-bold text-brand-text leading-tight">{relic.name}</h4>
+                      </div>
+                      <button
+                        onClick={() => handleSell(relic.type)}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-brand-surface border border-brand-border text-xs font-mono font-bold text-brand-text hover:border-yellow-500/50 hover:text-yellow-400 transition-all cursor-pointer"
+                      >
+                        Sell <span className="text-green-400">+25</span>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
-        <div className="w-full flex justify-between items-center pt-4 border-t border-brand-border/30 mt-2">
-          <button
-            onClick={handleSell}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg border border-brand-border/60 text-brand-secondary hover:text-brand-text hover:border-brand-accent/40 transition-all text-xs font-medium cursor-pointer"
-          >
-            <Package className="w-3 h-3" />
-            Sell Junk (+10 Coins)
-          </button>
-          
-          <div className="flex gap-3">
-            <button
-              onClick={onRetreat}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg border border-brand-border/60 text-brand-secondary hover:text-brand-text hover:border-brand-accent/40 transition-all text-xs font-medium cursor-pointer"
-            >
-              Leave
-            </button>
-            <button
-              onClick={onComplete}
-              className="flex items-center gap-2 px-6 py-2 rounded-lg bg-green-500/20 border border-green-500/40 text-green-300 hover:bg-green-500/30 hover:border-green-500/60 transition-all text-sm font-medium cursor-pointer"
-            >
-              Continue Journey
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-
-        {/* DEV Only: Skip Button */}
-        {(import.meta.env.DEV && import.meta.env.VITE_ENABLE_STORY_DEV_TOOLS !== 'false') && (
-          <div className="mt-4 p-2 rounded border border-dashed border-yellow-500/50 bg-yellow-500/10 flex justify-center opacity-80 hover:opacity-100 transition-opacity w-full">
-            <span className="text-[10px] text-yellow-500 font-mono self-center mr-2">DEV:</span>
-            <button onClick={onComplete} className="px-2 py-1 bg-green-500/20 border border-green-500/50 text-green-400 rounded text-[10px] font-mono hover:bg-green-500/40 cursor-pointer">Skip Merchant</button>
-          </div>
-        )}
-
+        <button
+          onClick={onComplete}
+          className="mt-4 flex items-center gap-2 px-6 py-2.5 rounded-xl border border-brand-border text-brand-text hover:border-brand-accent hover:text-brand-accent transition-all cursor-pointer"
+        >
+          Leave Shop <ArrowRight className="w-4 h-4" />
+        </button>
       </motion.div>
     </motion.div>
   );

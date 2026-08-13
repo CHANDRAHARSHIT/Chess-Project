@@ -5,9 +5,9 @@
  *
  * Desktop (pointer device):
  *   ① Continuous subtle float: translateY -4px yoyo, 3s, sine.inOut, infinite
- *   ② Cursor tracking: mousemove inside logo container drives rotateX / rotateY
+ *   ② Cursor tracking: mousemove inside logo container drives rotationX / rotationY
  *      via gsap.utils.interpolate() — maps normalised [0,1] cursor offset to [-10,10]deg
- *   ③ quickTo() for rotateX, rotateY, scale, brightness — all at 60fps
+ *   ③ quickTo() for rotationX, rotationY, scale, brightness — all at 60fps
  *   ④ Hover energy: scale(1.08) + brightness(1.15) + deeper shadow on mouseenter
  *   ⑤ Dance / wobble on fast moves: velocity tracked, overshoot injected via
  *      a small elastic kick when velocity exceeds threshold
@@ -44,7 +44,7 @@ export interface LogoAnimationRefs {
 }
 
 // ─── Tuning constants ─────────────────────────────────────────────────────────
-const MAX_ROTATE        = 6;    // degrees — rotateX and rotateY cap
+const MAX_ROTATE        = 6;    // degrees — rotationX and rotationY cap
 const SCALE_HOVER       = 1.03;
 const SCALE_REST        = 1;
 const FLOAT_DISTANCE    = 4;    // px — subtle float amplitude
@@ -114,12 +114,12 @@ export function useLogoAnimation(): LogoAnimationRefs {
 
       // ── gsap.utils.interpolate() setters ───────────────────────────────
       // Maps a progress value [0 → 1] to the rotation range
-      const rotateYInterp = gsap.utils.interpolate(-MAX_ROTATE, MAX_ROTATE);
-      const rotateXInterp = gsap.utils.interpolate(MAX_ROTATE, -MAX_ROTATE); // inverted: top→tilt back
+      const rotationYInterp = gsap.utils.interpolate(-MAX_ROTATE, MAX_ROTATE);
+      const rotationXInterp = gsap.utils.interpolate(MAX_ROTATE, -MAX_ROTATE); // inverted: top→tilt back
 
       // ── quickTo setters for silky 60fps ────────────────────────────────
-      const setRotateX  = gsap.quickTo(logo, 'rotateX', { duration: QUICK_DURATION, ease: QUICK_EASE });
-      const setRotateY  = gsap.quickTo(logo, 'rotateY', { duration: QUICK_DURATION, ease: QUICK_EASE });
+      const setRotateX  = gsap.quickTo(logo, 'rotationX', { duration: QUICK_DURATION, ease: QUICK_EASE });
+      const setRotateY  = gsap.quickTo(logo, 'rotationY', { duration: QUICK_DURATION, ease: QUICK_EASE });
       const setScaleX   = gsap.quickTo(logo, 'scaleX',  { duration: 0.35,           ease: 'back.out(2)' });
       const setScaleY   = gsap.quickTo(logo, 'scaleY',  { duration: 0.35,           ease: 'back.out(2)' });
       const setBrightness = (val: number) =>
@@ -142,8 +142,8 @@ export function useLogoAnimation(): LogoAnimationRefs {
         const ny = (e.clientY - rect.top)   / rect.height;  // 0=top,  1=bottom
 
         // Map through interpolate() — organic, not raw offset
-        const targetRotateY = rotateYInterp(nx);
-        const targetRotateX = rotateXInterp(ny);
+        const targetRotateY = rotationYInterp(nx);
+        const targetRotateX = rotationXInterp(ny);
 
         // ── Velocity check for dance wobble ──────────────────────────────
         const now  = performance.now();
@@ -159,8 +159,8 @@ export function useLogoAnimation(): LogoAnimationRefs {
             const kickY = targetRotateY + (nx < 0.5 ? -WOBBLE_KICK : WOBBLE_KICK);
 
             gsap.to(logo, {
-              rotateX: kickX,
-              rotateY: kickY,
+              rotationX: kickX,
+              rotationY: kickY,
               duration: 0.12,
               ease: 'power1.out',
               overwrite: 'auto',

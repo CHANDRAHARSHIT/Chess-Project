@@ -351,17 +351,17 @@ export default function StoryModeBattle({
     if (!used) return;
 
     setShowHint(true);
-    analyzePosition(gameRef.current.fen(), runState.hintStrength);
-  }, [analyzePosition, runState.hintCharges, runState.hintStrength, useCharge]);
+    analyzePosition(gameRef.current.fen(), 2500);
+  }, [analyzePosition, runState.hintCharges, useCharge]);
 
   const handleActivateEval = useCallback(() => {
     if (runState.evalBarCharges <= 0) return;
     const used = useCharge('evalBar');
     if (!used) return;
     
-    const moves = runState.evalBarTier === 'bronze' ? 5 : runState.evalBarTier === 'silver' ? 10 : Infinity;
+    const moves = 5;
     setEvalMovesRemaining(prev => prev + moves);
-  }, [useCharge, runState.evalBarCharges, runState.evalBarTier]);
+  }, [useCharge, runState.evalBarCharges]);
 
   const handleTimeAction = useCallback((action: 'increase_player' | 'decrease_enemy') => {
     if (runState.timeCharges <= 0) return;

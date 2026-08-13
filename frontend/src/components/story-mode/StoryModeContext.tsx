@@ -1,31 +1,19 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useSession } from '../../hooks/useSession';
 
-export type UpgradeTier = 'bronze' | 'silver' | 'gold';
+export type RelicType = 'undo' | 'hint' | 'evalBar' | 'time' | 'reroll';
 
 export interface RunState {
   coins: number;
-  xp: number;
-  level: number;
-  statPoints: number; // Earned on level up to increase max charges
+  
+  // Inventory of equipped relics (max 5 slots)
+  relics: RelicType[];
   
   undoCharges: number;
-  maxUndoCharges: number;
-  
   hintCharges: number;
-  maxHintCharges: number;
-  hintStrength: number; // e.g. 2000, 2500, 3200
-  
   evalBarCharges: number;
-  maxEvalBarCharges: number;
-  evalBarTier: UpgradeTier;
-  
   timeCharges: number;
-  maxTimeCharges: number;
-  timeTier: UpgradeTier;
-  
   rerollCharges: number;
-  maxRerollCharges: number;
 
   completedNodes: number[];
   currentNodeId: number;
@@ -33,30 +21,13 @@ export interface RunState {
 }
 
 const defaultState: RunState = {
-  coins: 0,
-  xp: 0,
-  level: 1,
-  statPoints: 0,
-
-  // Start with 0 charges so players have to use Rest Site. Or 3?
-  // "Assuming the player used everything before entering..." - let's start with 0 so the first rest site is useful.
+  coins: 50,
+  relics: [], // Empty inventory to start
   undoCharges: 0,
-  maxUndoCharges: 3,
-
   hintCharges: 0,
-  maxHintCharges: 3,
-  hintStrength: 2000,
-
   evalBarCharges: 0,
-  maxEvalBarCharges: 3,
-  evalBarTier: 'bronze',
-
   timeCharges: 0,
-  maxTimeCharges: 3,
-  timeTier: 'bronze',
-
   rerollCharges: 0,
-  maxRerollCharges: 3,
 
   completedNodes: [],
   currentNodeId: -1,
@@ -66,9 +37,9 @@ const defaultState: RunState = {
 interface StoryModeContextType {
   runState: RunState;
   updateRunState: (updates: Partial<RunState>) => void;
-  resetRun: () => void;
+  resetRun: (keepProgress?: boolean) => void;
   addCoins: (amount: number) => void;
-  useCharge: (type: 'undo' | 'hint' | 'evalBar' | 'time' | 'reroll') => boolean;
+  useCharge: (type: RelicType) => boolean;
 }
 
 const StoryModeContext = createContext<StoryModeContextType | undefined>(undefined);
@@ -86,7 +57,7 @@ export function StoryModeProvider({ children }: { children: React.ReactNode }) {
       if (stored) {
         try {
           const parsed = JSON.parse(stored);
-          setRunState({ ...defaultState, ...parsed });
+          setRunState({ ...defaultState, ...parsed, relics: parsed.relics || [] });
         } catch (e) {
           console.error("Failed to parse run state", e);
         }
@@ -108,10 +79,23 @@ export function StoryModeProvider({ children }: { children: React.ReactNode }) {
     setRunState(prev => ({ ...prev, ...updates }));
   };
 
-  const resetRun = () => {
-    setRunState(defaultState);
-    if (status === 'authenticated' && session?.user?.id) {
-      localStorage.removeItem(`storyRunState_${session.user.id}`);
+  const resetRun = (keepProgress: boolean = false) => {
+    if (keepProgress) {
+      setRunState(prev => ({
+        ...defaultState,
+        coins: prev.coins,
+        relics: prev.relics,
+        undoCharges: prev.undoCharges,
+        hintCharges: prev.hintCharges,
+        evalBarCharges: prev.evalBarCharges,
+        timeCharges: prev.timeCharges,
+        rerollCharges: prev.rerollCharges,
+      }));
+    } else {
+      setRunState(defaultState);
+      if (status === 'authenticated' && session?.user?.id) {
+        localStorage.removeItem(`storyRunState_${session.user.id}`);
+      }
     }
   };
 
@@ -119,7 +103,7 @@ export function StoryModeProvider({ children }: { children: React.ReactNode }) {
     setRunState(prev => ({ ...prev, coins: Math.max(0, prev.coins + amount) }));
   };
 
-  const useCharge = (type: 'undo' | 'hint' | 'evalBar' | 'time' | 'reroll') => {
+  const useCharge = (type: RelicType) => {
     let used = false;
     setRunState(prev => {
       const chargeKey = `${type}Charges` as keyof RunState;

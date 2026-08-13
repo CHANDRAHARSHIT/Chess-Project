@@ -6,7 +6,7 @@
  *
  * Desktop behaviour (pointer device):
  *   - Tracks mousemove over the element
- *   - Maps cursor offset → rotateX (±maxRotate°) / rotateY (±maxRotate°)
+ *   - Maps cursor offset → rotationX (±maxRotate°) / rotationY (±maxRotate°)
  *   - Uses gsap.quickTo() for buttery-smooth 60 fps interpolation
  *   - Applies scale(scalePeak) + dynamic drop-shadow on hover
  *   - Resets smoothly on mouseleave
@@ -99,8 +99,8 @@ export function usePerspectiveTilt<T extends HTMLElement>(
     if (paused) {
       const restAlpha = +(0.15 * shadowStrength).toFixed(3);
       gsap.to(el, {
-        rotateX: 0,
-        rotateY: 0,
+        rotationX: 0,
+        rotationY: 0,
         scaleX: 1,
         scaleY: 1,
         filter: `drop-shadow(0 16px 40px rgba(99,102,241,${restAlpha}))`,
@@ -125,14 +125,14 @@ export function usePerspectiveTilt<T extends HTMLElement>(
       // ════════════════════════════════════════════════════════════════════════
       if (isPointerDevice) {
         // Seed the element at identity so quickTo has a starting value
-        gsap.set(el, { rotateX: 0, rotateY: 0, scaleX: 1, scaleY: 1, transformOrigin: 'center center' });
+        gsap.set(el, { rotationX: 0, rotationY: 0, scaleX: 1, scaleY: 1, transformOrigin: 'center center' });
 
         // quickTo returns a high-performance setter — call it every mousemove
-        const setRotateX = gsap.quickTo(el, 'rotateX', {
+        const setRotateX = gsap.quickTo(el, 'rotationX', {
           duration: quickToDuration,
           ease: quickToEase,
         });
-        const setRotateY = gsap.quickTo(el, 'rotateY', {
+        const setRotateY = gsap.quickTo(el, 'rotationY', {
           duration: quickToDuration,
           ease: quickToEase,
         });
@@ -157,8 +157,8 @@ export function usePerspectiveTilt<T extends HTMLElement>(
             const nx = ((e.clientX - rect.left) / rect.width)  * 2 - 1; // left→right
             const ny = ((e.clientY - rect.top)  / rect.height) * 2 - 1; // top→bottom
 
-            // rotateX: positive ny (cursor near bottom) → tilt top toward viewer
-            // rotateY: positive nx (cursor near right)  → tilt right away from viewer
+            // rotationX: positive ny (cursor near bottom) → tilt top toward viewer
+            // rotationY: positive nx (cursor near right)  → tilt right away from viewer
             setRotateX(-ny * maxRotate);
             setRotateY( nx * maxRotate);
             setScaleX(scalePeak);

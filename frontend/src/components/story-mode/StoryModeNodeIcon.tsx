@@ -8,7 +8,7 @@
  */
 
 import { motion } from "framer-motion";
-import { Coins, Gem, Crown } from "lucide-react";
+import { Coins, Crown } from "lucide-react";
 import type { StoryNodeType, NodeStatus } from "../../data/storyModeMapData";
 
 interface StoryModeNodeIconProps {
@@ -63,11 +63,11 @@ function NodeSVG({ type, status }: { type: StoryNodeType; status: NodeStatus }) 
           className="object-contain"
         />
       );
-    case "unknown":
+    case "puzzle":
       return (
         <img
           src="/story mode assets/question mark.svg"
-          alt="Unknown"
+          alt="Puzzle Node"
           style={{ width: size, height: size }}
           className="object-contain"
         />
@@ -92,8 +92,7 @@ function NodeSVG({ type, status }: { type: StoryNodeType; status: NodeStatus }) 
       );
     case "merchant":
       return <Coins size={size - 4} strokeWidth={2} className="text-[#D4AF6E]" />;
-    case "treasure":
-      return <Gem size={size - 4} strokeWidth={2} className="text-[#38bdf8]" />;
+
     case "elite":
       return <Crown size={size - 4} strokeWidth={2.5} className="text-[#ef4444]" />;
     default:
@@ -140,7 +139,7 @@ function getNodeColors(type: StoryNodeType, status: NodeStatus) {
         glowColor = "rgba(185, 28, 28, 0.6)"; // Dark Red / Intense
         shadow = "0 0 35px rgba(185, 28, 28, 0.8)";
         break;
-      case "unknown":
+      case "puzzle":
         glowColor = "rgba(168, 85, 247, 0.4)"; // Purple
         shadow = "0 0 25px rgba(168, 85, 247, 0.6)";
         break;
@@ -151,10 +150,6 @@ function getNodeColors(type: StoryNodeType, status: NodeStatus) {
       case "merchant":
         glowColor = "rgba(250, 204, 21, 0.5)"; // Yellow/Gold
         shadow = "0 0 30px rgba(250, 204, 21, 0.7)";
-        break;
-      case "treasure":
-        glowColor = "rgba(56, 189, 248, 0.5)"; // Light Blue / Cyan
-        shadow = "0 0 30px rgba(56, 189, 248, 0.7)";
         break;
       case "boss":
         glowColor = "rgba(250, 204, 21, 0.7)"; // Bright Yellow/Gold

@@ -28,8 +28,8 @@ export default function BrandSection() {
     const dx = (e.clientX - cx) / (rect.width / 2);
     const dy = (e.clientY - cy) / (rect.height / 2);
     gsap.to(el, {
-      rotateX: -dy * 5,
-      rotateY: dx * 5,
+      rotationX: -dy * 5,
+      rotationY: dx * 5,
       scaleX: 1.02,
       scaleY: 1.02,
       duration: 0.4,
@@ -41,8 +41,8 @@ export default function BrandSection() {
     const el = artworkRef.current;
     if (!el) return;
     gsap.to(el, {
-      rotateX: 0,
-      rotateY: 0,
+      rotationX: 0,
+      rotationY: 0,
       scaleX: 1,
       scaleY: 1,
       duration: 0.7,

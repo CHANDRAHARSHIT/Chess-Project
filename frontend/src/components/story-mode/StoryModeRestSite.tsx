@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Flame, ArrowRight, RotateCcw, Heart, Sparkles, Plus, Minus } from "lucide-react";
+import { Flame, ArrowRight, RotateCcw, Heart, Sparkles } from "lucide-react";
 import { useStoryModeRun } from "./StoryModeContext";
+import type { RelicType } from "./StoryModeContext";
 
 interface StoryModeRestSiteProps {
   nodeLabel: string;
@@ -21,42 +22,92 @@ export default function StoryModeRestSite({
   const [isResting, setIsResting] = useState(false);
   const [hasRested, setHasRested] = useState(false);
 
-  // Local state for point allocation
-  const [pointsAvailable, setPointsAvailable] = useState(5);
-  const [allocations, setAllocations] = useState({
+  // Local state for randomized restoration
+  const [restores, setRestores] = useState({
     undo: 0,
     hint: 0,
     evalBar: 0,
     time: 0,
     reroll: 0,
   });
+  const [totalRestored, setTotalRestored] = useState(0);
+  const [foundCoins, setFoundCoins] = useState<number | null>(null);
+  const [foundRelic, setFoundRelic] = useState<RelicType | null>(null);
 
-  const handleAllocate = (key: keyof typeof allocations, delta: number) => {
-    if (delta > 0 && pointsAvailable <= 0) return;
+  useEffect(() => {
+    let availablePoints = 5;
+    const current = {
+      undo: runState.undoCharges,
+      hint: runState.hintCharges,
+      evalBar: runState.evalBarCharges,
+      time: runState.timeCharges,
+      reroll: runState.rerollCharges,
+    };
+    const max = {
+      undo: runState.relics.includes('undo') ? 3 : 0,
+      hint: runState.relics.includes('hint') ? 3 : 0,
+      evalBar: runState.relics.includes('evalBar') ? 3 : 0,
+      time: runState.relics.includes('time') ? 3 : 0,
+      reroll: runState.relics.includes('reroll') ? 3 : 0,
+    };
+    const newRestores = { undo: 0, hint: 0, evalBar: 0, time: 0, reroll: 0 };
     
-    // Check max bounds based on runState
-    const currentCharge = runState[`${key}Charges` as keyof typeof runState] as number;
-    const maxCharge = runState[`max${key.charAt(0).toUpperCase() + key.slice(1)}Charges` as keyof typeof runState] as number;
-    const allocated = allocations[key];
+    const keys = ['undo', 'hint', 'evalBar', 'time', 'reroll'] as const;
+    while (availablePoints > 0) {
+      const possibleKeys = keys.filter(k => current[k] + newRestores[k] < max[k]);
+      if (possibleKeys.length === 0) break;
+      const k = possibleKeys[Math.floor(Math.random() * possibleKeys.length)];
+      newRestores[k]++;
+      availablePoints--;
+    }
     
-    if (delta > 0 && currentCharge + allocated >= maxCharge) return; // Cannot exceed max
-    if (delta < 0 && allocated <= 0) return; // Cannot un-allocate below 0
-    
-    setAllocations(prev => ({ ...prev, [key]: prev[key] + delta }));
-    setPointsAvailable(prev => prev - delta);
-  };
+    setRestores(newRestores);
+    const restoredPoints = 5 - availablePoints;
+    setTotalRestored(restoredPoints);
+
+    // Random Discovery Logic
+    let willFindCoins = Math.random() < 0.3;
+    let willFindRelic = Math.random() < 0.1;
+
+    const allRelicTypes: RelicType[] = ['undo', 'hint', 'evalBar', 'time', 'reroll'];
+    const unowned = allRelicTypes.filter(r => !runState.relics.includes(r));
+
+    if (restoredPoints === 0) {
+      if (unowned.length > 0 && Math.random() < 0.5) {
+        willFindRelic = true;
+      } else {
+        willFindCoins = true;
+      }
+    }
+
+    if (willFindRelic && unowned.length > 0 && runState.relics.length < 5) {
+      setFoundRelic(unowned[Math.floor(Math.random() * unowned.length)]);
+    } else if (willFindCoins) {
+      setFoundCoins(Math.floor(Math.random() * 21) + 15);
+    }
+  }, []); // Only run once on mount
 
   const handleRest = () => {
     setIsResting(true);
     
-    // Apply allocations
-    updateRunState({
-      undoCharges: runState.undoCharges + allocations.undo,
-      hintCharges: runState.hintCharges + allocations.hint,
-      evalBarCharges: runState.evalBarCharges + allocations.evalBar,
-      timeCharges: runState.timeCharges + allocations.time,
-      rerollCharges: runState.rerollCharges + allocations.reroll,
-    });
+    // Apply random restores
+    const updates: any = {
+      undoCharges: runState.undoCharges + restores.undo,
+      hintCharges: runState.hintCharges + restores.hint,
+      evalBarCharges: runState.evalBarCharges + restores.evalBar,
+      timeCharges: runState.timeCharges + restores.time,
+      rerollCharges: runState.rerollCharges + restores.reroll,
+    };
+
+    if (foundCoins) {
+      updates.coins = runState.coins + foundCoins;
+    }
+    if (foundRelic) {
+      updates.relics = [...runState.relics, foundRelic];
+      updates[`${foundRelic}Charges`] = 3;
+    }
+
+    updateRunState(updates);
 
     // Simulate rest sequence duration
     setTimeout(() => {
@@ -65,38 +116,27 @@ export default function StoryModeRestSite({
     }, 2000);
   };
 
-  const renderAllocationRow = (label: string, key: keyof typeof allocations, maxChargeKey: keyof typeof runState) => {
+  const renderRestoreRow = (label: string, key: keyof typeof restores) => {
     const currentCharge = runState[`${key}Charges` as keyof typeof runState] as number;
-    const maxCharge = runState[maxChargeKey] as number;
-    const allocated = allocations[key];
-    const newTotal = currentCharge + allocated;
+    const maxCharge = runState.relics.includes(key as any) ? 3 : 0;
+    const restored = restores[key];
+    const newTotal = currentCharge + restored;
     
+    if (maxCharge === 0) return null; // Don't show if they don't own the relic
+
     return (
       <div className="flex items-center justify-between w-full py-3 border-b border-brand-border/30 last:border-0">
         <span className="text-base font-mono text-brand-secondary">{label}</span>
-        <div className="flex items-center gap-3">
-          <button 
-            onClick={() => handleAllocate(key, -1)}
-            disabled={allocated <= 0 || isResting}
-            className="p-1 rounded bg-brand-surface/50 text-brand-secondary hover:text-brand-text disabled:opacity-30 transition-all cursor-pointer"
-          >
-            <Minus className="w-4 h-4" />
-          </button>
-          
-          <div className="flex items-center gap-1 min-w-[60px] justify-center">
-            <span className={`text-base font-mono font-semibold ${allocated > 0 ? "text-green-400" : "text-brand-text"}`}>
+        <div className="flex items-center gap-4">
+          {restored > 0 && (
+            <span className="text-sm font-mono text-green-400">+{restored}</span>
+          )}
+          <div className="flex items-center gap-1 min-w-[60px] justify-end">
+            <span className={`text-base font-mono font-semibold ${restored > 0 ? "text-green-400" : "text-brand-text"}`}>
               {newTotal}
             </span>
             <span className="text-sm font-mono text-brand-secondary">/ {maxCharge}</span>
           </div>
-
-          <button 
-            onClick={() => handleAllocate(key, 1)}
-            disabled={pointsAvailable <= 0 || newTotal >= maxCharge || isResting}
-            className="p-1 rounded bg-brand-surface/50 text-brand-secondary hover:text-brand-text disabled:opacity-30 transition-all cursor-pointer"
-          >
-            <Plus className="w-4 h-4" />
-          </button>
         </div>
       </div>
     );
@@ -200,22 +240,40 @@ export default function StoryModeRestSite({
                   : nodeDescription}
               </p>
 
-              {/* Point Allocation UI */}
+              {/* Random Restore UI */}
               <div className="w-full bg-brand-surface/30 border border-brand-border/40 rounded-xl p-4 mt-2">
                 <div className="flex justify-between items-center mb-4">
-                  <span className="text-sm font-semibold text-brand-text">Restore Charges</span>
+                  <span className="text-sm font-semibold text-brand-text">Charges Restored</span>
                   <div className="flex items-center gap-1.5 bg-orange-500/20 px-2 py-1 rounded text-orange-300 text-xs font-mono border border-orange-500/30">
                     <Sparkles className="w-3 h-3" />
-                    {pointsAvailable} Points Left
+                    {totalRestored} Restored
                   </div>
                 </div>
 
                 <div className="flex flex-col gap-1">
-                  {renderAllocationRow("Undo", "undo", "maxUndoCharges")}
-                  {renderAllocationRow("Best Move", "hint", "maxHintCharges")}
-                  {renderAllocationRow("Eval Bar", "evalBar", "maxEvalBarCharges")}
-                  {renderAllocationRow("Time", "time", "maxTimeCharges")}
-                  {renderAllocationRow("Rerolls", "reroll", "maxRerollCharges")}
+                  {renderRestoreRow("Undo", "undo")}
+                  {renderRestoreRow("Best Move", "hint")}
+                  {renderRestoreRow("Eval Bar", "evalBar")}
+                  {renderRestoreRow("Time", "time")}
+                  {renderRestoreRow("Rerolls", "reroll")}
+                  
+                  {foundCoins && (
+                    <div className="flex items-center justify-between w-full py-3 border-b border-brand-border/30 last:border-0">
+                      <span className="text-base font-mono text-brand-secondary">Found Stash</span>
+                      <span className="text-base font-mono font-semibold text-yellow-400">+{foundCoins} Coins</span>
+                    </div>
+                  )}
+                  {foundRelic && (
+                    <div className="flex items-center justify-between w-full py-3 border-b border-brand-border/30 last:border-0">
+                      <span className="text-base font-mono text-brand-secondary">Found Item</span>
+                      <span className="text-base font-mono font-semibold text-purple-400 uppercase tracking-widest">{foundRelic} Relic</span>
+                    </div>
+                  )}
+                  {totalRestored === 0 && !foundCoins && !foundRelic && (
+                    <div className="text-center py-4 text-sm font-mono text-brand-secondary/60">
+                      Nothing to find or restore here.
+                    </div>
+                  )}
                 </div>
               </div>
 

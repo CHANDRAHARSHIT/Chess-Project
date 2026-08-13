@@ -8,7 +8,7 @@
  *   - Feature icon boxes with gold accents
  *   - Section eyebrow label
  *   - Editorial Cormorant Garamond typography
- *   - ScrollTrigger: staggered perspective entrance (rotateX + y + blur)
+ *   - ScrollTrigger: staggered perspective entrance (rotationX + y + blur)
  */
 
 import { useRef, useEffect, useCallback } from 'react';
@@ -40,8 +40,8 @@ function FeatureCard({
     const dx = (e.clientX - cx) / (rect.width / 2);
     const dy = (e.clientY - cy) / (rect.height / 2);
     gsap.to(card, {
-      rotateX: -dy * 5,
-      rotateY: dx * 5,
+      rotationX: -dy * 5,
+      rotationY: dx * 5,
       scaleX: 1.02,
       scaleY: 1.02,
       duration: 0.4,
@@ -53,8 +53,8 @@ function FeatureCard({
     const card = cardRef.current;
     if (!card) return;
     gsap.to(card, {
-      rotateX: 0,
-      rotateY: 0,
+      rotationX: 0,
+      rotationY: 0,
       scaleX: 1,
       scaleY: 1,
       duration: 0.7,
@@ -132,11 +132,11 @@ export default function Features() {
       const cards = gridRef.current.querySelectorAll('.luxury-card');
       gsap.fromTo(
         cards,
-        { opacity: 0, y: 60, rotateX: 20, filter: 'blur(4px)' },
+        { opacity: 0, y: 60, rotationX: 20, filter: 'blur(4px)' },
         {
           opacity: 1,
           y: 0,
-          rotateX: 0,
+          rotationX: 0,
           filter: 'blur(0px)',
           duration: dur(0.9),
           stagger: 0.14,

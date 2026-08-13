@@ -16,11 +16,10 @@ import type { DifficultyLevel } from "../types/chess";
 export type StoryNodeType =
   | "start"
   | "enemy"
-  | "unknown"
+  | "puzzle"
   | "rest"
   | "boss"
   | "merchant"
-  | "treasure"
   | "elite";
 
 export type NodeStatus =
@@ -68,12 +67,13 @@ export const STORY_MAP_NODES: StoryNode[] = [
   },
   {
     id: 2,
-    type: "treasure",
-    label: "Forgotten Reliquary",
+    type: "puzzle",
+    label: "Beginner Tactics",
     x: 70,
     y: 80,
+    difficulty: 1,
     edges: [3],
-    description: "An ancient chest gleams faintly. What treasures lie within?",
+    description: "A mysterious obelisk blocks the path. You must solve its chess riddles to pass.",
   },
   {
     id: 3,
@@ -96,12 +96,13 @@ export const STORY_MAP_NODES: StoryNode[] = [
   },
   {
     id: 5,
-    type: "unknown",
-    label: "Shadowed Crossroads",
+    type: "puzzle",
+    label: "Tactics Trial",
     x: 70,
     y: 56,
+    difficulty: 2,
     edges: [6],
-    description: "A strange fog swirls around this clearing. Something stirs…",
+    description: "A mystical monolith challenges you to solve a series of tactical puzzles.",
   },
   {
     id: 6,
