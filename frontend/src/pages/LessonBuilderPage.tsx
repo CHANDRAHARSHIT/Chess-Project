@@ -1,699 +1,22 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router";
-import {
-  Plus,
-  Undo,
-  Redo,
-  ZoomIn,
-  ZoomOut,
-  FolderPlus,
-  Layers,
-  Sparkles,
-  Grid,
-  Bold,
-  Italic,
-  Underline,
-  Check,
-  AlertCircle,
-  Loader2,
-  ArrowLeft,
-  WifiOff,
-  CloudUpload,
-  HardDrive,
-  ChevronDown,
-  List,
-  ListOrdered,
-  AlignLeft,
-  AlignCenter,
-  AlignRight,
-  Quote,
-  Minus,
-  Link as LinkIcon,
-  X,
-  Scissors,
-  Copy,
-  Clipboard,
-  CheckSquare,
-  Globe,
-  CheckCircle2,
-} from "lucide-react";
+import { Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 import { LessonCanvas } from "../components/lessons/LessonCanvas";
 import { LessonBuilderSidebar } from "../components/lessons/LessonBuilderSidebar";
+import { LessonBuilderHeader } from "../components/lessons/LessonBuilderHeader";
+import { LessonTextToolbar } from "../components/lessons/LessonTextToolbar";
+import { LessonFooter } from "../components/lessons/LessonFooter";
+import { PublishConfirmationModal } from "../components/lessons/PublishConfirmationModal";
+import { ContextMenu } from "../components/lessons/ContextMenu";
+import { AuthModal } from "../components/AuthModal";
+import type { SlideData, SegmentData } from "../components/lessons/types";
 import {
   builderLessonService,
   type BuilderLessonData,
 } from "../services/builderLesson.service";
 import { lessonCacheService } from "../services/lessonCache.service";
 import { lessonSyncService, type SyncState } from "../services/lessonSync.service";
-import { AuthModal } from "../components/AuthModal";
-
-interface SlideData {
-  id: string;
-  title: string;
-  content: string;
-  hasBoard: boolean;
-  fen?: string;
-  annotations?: any;
-}
-
-interface SegmentData {
-  id: string;
-  title: string;
-  isExpanded: boolean;
-  slides: SlideData[];
-}
-
-interface PublishModalProps {
-  currentStatus: "DRAFT" | "PUBLISHED";
-  isPublishing: boolean;
-  isSavingDraft: boolean;
-  onConfirmPublish: () => void;
-  onSaveAsDraft: () => void;
-  onClose: () => void;
-}
-
-function PublishConfirmationModal({
-  currentStatus,
-  isPublishing,
-  isSavingDraft,
-  onConfirmPublish,
-  onSaveAsDraft,
-  onClose,
-}: PublishModalProps) {
-  const isRepublish = currentStatus === "PUBLISHED";
-
-  return (
-    <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-150 select-none">
-      <div
-        onMouseDown={(e) => e.stopPropagation()}
-        className="w-full max-w-md bg-brand-surface border border-brand-border rounded-2xl shadow-2xl p-6 font-sans text-brand-text space-y-5 animate-in zoom-in-95 duration-150 relative"
-      >
-        {/* Subtle Top-Right X Close Button */}
-        <button
-          type="button"
-          onClick={onClose}
-          disabled={isPublishing || isSavingDraft}
-          title="Close"
-          aria-label="Close"
-          className="absolute top-4 right-4 p-1.5 rounded-lg text-brand-secondary hover:text-brand-text hover:bg-brand-text/10 transition-colors cursor-pointer disabled:opacity-50"
-        >
-          <X className="w-4 h-4" />
-        </button>
-
-        <div className="flex items-center gap-3 pr-6">
-          <div className="w-10 h-10 rounded-xl bg-brand-accent/15 border border-brand-accent/30 flex items-center justify-center text-brand-accent shrink-0">
-            <Globe className="w-5 h-5" />
-          </div>
-          <div>
-            <h3 className="font-semibold text-lg text-brand-text">
-              {isRepublish ? "Republish Lesson?" : "Publish Lesson?"}
-            </h3>
-            <p className="text-xs text-brand-secondary mt-0.5">
-              {isRepublish
-                ? "Update published content for learners."
-                : "Make your lesson available to students."}
-            </p>
-          </div>
-        </div>
-
-        <p className="text-sm text-brand-secondary leading-relaxed">
-          {isRepublish
-            ? "Are you sure you want to republish this lesson? All recent updates to slides, text, and positions will be saved to your published lesson."
-            : "Are you sure you want to publish this lesson? It will be marked as published in your library."}
-        </p>
-
-        <div className="flex items-center justify-end gap-3 pt-2 border-t border-brand-border/40">
-          {/* Save as draft Button */}
-          <button
-            type="button"
-            onClick={onSaveAsDraft}
-            disabled={isPublishing || isSavingDraft}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-brand-border/60 hover:bg-brand-text/5 text-brand-secondary hover:text-brand-text text-xs font-medium transition-colors cursor-pointer disabled:opacity-50"
-          >
-            {isSavingDraft ? (
-              <>
-                <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                <span>Saving draft...</span>
-              </>
-            ) : (
-              <span>Save as draft</span>
-            )}
-          </button>
-
-          {/* Publish Lesson Button */}
-          <button
-            type="button"
-            onClick={onConfirmPublish}
-            disabled={isPublishing || isSavingDraft}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-accent text-brand-bg hover:bg-brand-accent-hover text-xs font-semibold shadow-md transition-all cursor-pointer disabled:opacity-50"
-          >
-            {isPublishing ? (
-              <>
-                <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                <span>Publishing...</span>
-              </>
-            ) : (
-              <>
-                <Globe className="w-3.5 h-3.5" />
-                <span>{isRepublish ? "Republish Lesson" : "Publish Lesson"}</span>
-              </>
-            )}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-interface LinkPopoverProps {
-  initialUrl?: string;
-  onApply: (url: string) => void;
-  onRemove?: () => void;
-  onClose: () => void;
-}
-
-function LinkPopover({ initialUrl = "https://", onApply, onRemove, onClose }: LinkPopoverProps) {
-  const [url, setUrl] = useState<string>(initialUrl || "https://");
-  const popoverRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (popoverRef.current && !popoverRef.current.contains(e.target as Node)) {
-        onClose();
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [onClose]);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (url.trim()) {
-      onApply(url.trim());
-    }
-  };
-
-  return (
-    <div
-      ref={popoverRef}
-      onMouseDown={(e) => e.stopPropagation()}
-      className="absolute left-0 top-full mt-2 w-80 p-3 rounded-xl bg-brand-surface border border-brand-border shadow-2xl z-50 font-sans text-xs flex flex-col gap-2.5 select-none"
-    >
-      <div className="flex items-center justify-between border-b border-brand-border/40 pb-1.5 text-brand-secondary font-medium">
-        <div className="flex items-center gap-1.5 text-brand-accent font-semibold">
-          <LinkIcon className="w-3.5 h-3.5" />
-          <span>Insert Hyperlink</span>
-        </div>
-        <button
-          type="button"
-          onClick={onClose}
-          className="p-1 rounded hover:bg-brand-text/10 text-brand-secondary hover:text-brand-text cursor-pointer transition-colors"
-        >
-          <X className="w-3.5 h-3.5" />
-        </button>
-      </div>
-
-      <form onSubmit={handleSubmit} className="flex items-center gap-1.5">
-        <input
-          type="text"
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
-          placeholder="https://example.com"
-          autoFocus
-          className="flex-1 px-2.5 py-1.5 rounded-md bg-brand-bg text-brand-text border border-brand-border/60 outline-none focus:border-brand-accent text-xs font-mono"
-        />
-        <button
-          type="submit"
-          className="px-3 py-1.5 rounded-md bg-brand-accent text-brand-bg hover:bg-brand-accent-hover font-semibold cursor-pointer transition-colors flex items-center gap-1 shrink-0"
-        >
-          <Check className="w-3.5 h-3.5" />
-          <span>OK</span>
-        </button>
-      </form>
-
-      {onRemove && (
-        <div className="flex justify-end pt-1 border-t border-brand-border/30">
-          <button
-            type="button"
-            onClick={onRemove}
-            className="text-[11px] text-red-400 hover:underline cursor-pointer font-medium"
-          >
-            Remove Link
-          </button>
-        </div>
-      )}
-    </div>
-  );
-}
-
-interface ContextMenuProps {
-  x: number;
-  y: number;
-  hasSelection: boolean;
-  onCut: () => void;
-  onCopy: () => void;
-  onPaste: () => void;
-  onLink: () => void;
-  onSelectAll: () => void;
-  onClose: () => void;
-}
-
-function ContextMenu({
-  x,
-  y,
-  hasSelection,
-  onCut,
-  onCopy,
-  onPaste,
-  onLink,
-  onSelectAll,
-  onClose,
-}: ContextMenuProps) {
-  const menuRef = useRef<HTMLDivElement>(null);
-
-  const MENU_WIDTH = 160;
-  const MENU_HEIGHT = 190;
-  const adjustedX = Math.min(x, window.innerWidth - MENU_WIDTH - 8);
-  const adjustedY = Math.min(y, window.innerHeight - MENU_HEIGHT - 8);
-
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        onClose();
-      }
-    };
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        onClose();
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    document.addEventListener("keydown", handleKeyDown);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [onClose]);
-
-  return (
-    <div
-      ref={menuRef}
-      style={{ top: `${adjustedY}px`, left: `${adjustedX}px` }}
-      onMouseDown={(e) => e.stopPropagation()}
-      className="fixed z-[100] w-40 py-1.5 px-1 rounded-xl bg-brand-surface border border-brand-border shadow-2xl font-sans text-xs text-brand-text select-none flex flex-col gap-0.5 animate-in fade-in zoom-in-95 duration-100"
-    >
-      {/* Cut */}
-      <button
-        type="button"
-        onMouseDown={(e) => e.preventDefault()}
-        onClick={hasSelection ? onCut : undefined}
-        disabled={!hasSelection}
-        className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg transition-colors ${
-          hasSelection
-            ? "text-brand-text hover:bg-brand-accent/15 hover:text-brand-accent cursor-pointer font-medium"
-            : "text-brand-secondary/40 cursor-not-allowed"
-        }`}
-      >
-        <div className="flex items-center gap-2">
-          <Scissors className="w-3.5 h-3.5" />
-          <span>Cut</span>
-        </div>
-        <span className="text-[10px] font-mono opacity-50">Ctrl+X</span>
-      </button>
-
-      {/* Copy */}
-      <button
-        type="button"
-        onMouseDown={(e) => e.preventDefault()}
-        onClick={hasSelection ? onCopy : undefined}
-        disabled={!hasSelection}
-        className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg transition-colors ${
-          hasSelection
-            ? "text-brand-text hover:bg-brand-accent/15 hover:text-brand-accent cursor-pointer font-medium"
-            : "text-brand-secondary/40 cursor-not-allowed"
-        }`}
-      >
-        <div className="flex items-center gap-2">
-          <Copy className="w-3.5 h-3.5" />
-          <span>Copy</span>
-        </div>
-        <span className="text-[10px] font-mono opacity-50">Ctrl+C</span>
-      </button>
-
-      {/* Paste */}
-      <button
-        type="button"
-        onMouseDown={(e) => e.preventDefault()}
-        onClick={onPaste}
-        className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-brand-text hover:bg-brand-accent/15 hover:text-brand-accent transition-colors cursor-pointer font-medium"
-      >
-        <div className="flex items-center gap-2">
-          <Clipboard className="w-3.5 h-3.5" />
-          <span>Paste</span>
-        </div>
-        <span className="text-[10px] font-mono opacity-50">Ctrl+V</span>
-      </button>
-
-      <div className="my-1 border-t border-brand-border/40" />
-
-      {/* Link */}
-      <button
-        type="button"
-        onMouseDown={(e) => e.preventDefault()}
-        onClick={hasSelection ? onLink : undefined}
-        disabled={!hasSelection}
-        className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg transition-colors ${
-          hasSelection
-            ? "text-brand-text hover:bg-brand-accent/15 hover:text-brand-accent cursor-pointer font-medium"
-            : "text-brand-secondary/40 cursor-not-allowed"
-        }`}
-      >
-        <div className="flex items-center gap-2">
-          <LinkIcon className="w-3.5 h-3.5" />
-          <span>Link</span>
-        </div>
-        <span className="text-[10px] font-mono opacity-50">Ctrl+K</span>
-      </button>
-
-      <div className="my-1 border-t border-brand-border/40" />
-
-      {/* Select All */}
-      <button
-        type="button"
-        onMouseDown={(e) => e.preventDefault()}
-        onClick={onSelectAll}
-        className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-brand-text hover:bg-brand-accent/15 hover:text-brand-accent transition-colors cursor-pointer font-medium"
-      >
-        <div className="flex items-center gap-2">
-          <CheckSquare className="w-3.5 h-3.5" />
-          <span>Select All</span>
-        </div>
-        <span className="text-[10px] font-mono opacity-50">Ctrl+A</span>
-      </button>
-    </div>
-  );
-}
-
-const PREDEFINED_FONT_SIZES = [8, 9, 10, 11, 12, 14, 16, 18, 20, 24, 28, 32, 36, 48, 60, 72];
-const MIN_FONT_SIZE = 8;
-const MAX_FONT_SIZE = 72;
-
-function FontSizeControl({ onApplyFontSize }: { onApplyFontSize: (size: number) => void }) {
-  const [currentSize, setCurrentSize] = useState<number>(16);
-  const [inputValue, setInputValue] = useState<string>("16");
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const savedRangeRef = useRef<Range | null>(null);
-
-  const saveCurrentSelection = () => {
-    if (typeof window === "undefined") return;
-    const sel = window.getSelection();
-    if (sel && sel.rangeCount > 0) {
-      const activeEditor = document.querySelector('[contenteditable="true"]');
-      if (activeEditor && activeEditor.contains(sel.anchorNode)) {
-        savedRangeRef.current = sel.getRangeAt(0).cloneRange();
-      }
-    }
-  };
-
-  const restoreSelection = () => {
-    if (savedRangeRef.current && typeof window !== "undefined") {
-      const sel = window.getSelection();
-      if (sel) {
-        sel.removeAllRanges();
-        sel.addRange(savedRangeRef.current);
-      }
-    }
-  };
-
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  const detectFontSize = () => {
-    if (typeof window === "undefined") return;
-    const selection = window.getSelection();
-    if (!selection || selection.rangeCount === 0) return;
-    const activeEditor = document.querySelector('[contenteditable="true"]');
-    if (!activeEditor || !activeEditor.contains(selection.anchorNode)) return;
-
-    saveCurrentSelection();
-
-    let node: Node | null = selection.anchorNode;
-    if (node && node.nodeType === Node.TEXT_NODE) {
-      node = node.parentNode;
-    }
-    if (node && node instanceof HTMLElement) {
-      const inlineSize = node.style.fontSize;
-      if (inlineSize) {
-        const parsedInline = parseInt(inlineSize, 10);
-        if (!isNaN(parsedInline) && parsedInline >= MIN_FONT_SIZE && parsedInline <= MAX_FONT_SIZE) {
-          setCurrentSize(parsedInline);
-          setInputValue(String(parsedInline));
-          return;
-        }
-      }
-
-      const computedSize = window.getComputedStyle(node).fontSize;
-      if (computedSize) {
-        const parsed = Math.round(parseFloat(computedSize));
-        if (!isNaN(parsed) && parsed >= MIN_FONT_SIZE && parsed <= MAX_FONT_SIZE) {
-          setCurrentSize(parsed);
-          setInputValue(String(parsed));
-        }
-      }
-    }
-  };
-
-  useEffect(() => {
-    document.addEventListener("selectionchange", detectFontSize);
-    return () => document.removeEventListener("selectionchange", detectFontSize);
-  }, []);
-
-  const handleSelectSize = (size: number) => {
-    const clamped = Math.max(MIN_FONT_SIZE, Math.min(MAX_FONT_SIZE, size));
-    setCurrentSize(clamped);
-    setInputValue(String(clamped));
-    restoreSelection();
-    onApplyFontSize(clamped);
-    setIsOpen(false);
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value;
-    setInputValue(val);
-    const parsed = parseInt(val, 10);
-    if (!isNaN(parsed)) {
-      const clamped = Math.max(MIN_FONT_SIZE, Math.min(MAX_FONT_SIZE, parsed));
-      setCurrentSize(clamped);
-      restoreSelection();
-      onApplyFontSize(clamped);
-    }
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      const parsed = parseInt(inputValue, 10);
-      if (!isNaN(parsed)) {
-        handleSelectSize(parsed);
-      }
-    }
-  };
-
-  const incrementSize = (e?: React.MouseEvent) => {
-    e?.preventDefault();
-    saveCurrentSelection();
-    let nextSize: number;
-    const nextIdx = PREDEFINED_FONT_SIZES.findIndex((s) => s > currentSize);
-    if (nextIdx !== -1) {
-      nextSize = PREDEFINED_FONT_SIZES[nextIdx];
-    } else {
-      nextSize = currentSize + 1;
-    }
-    const clamped = Math.min(MAX_FONT_SIZE, nextSize);
-    handleSelectSize(clamped);
-  };
-
-  const decrementSize = (e?: React.MouseEvent) => {
-    e?.preventDefault();
-    saveCurrentSelection();
-    let prevSize: number;
-    const prevSizes = PREDEFINED_FONT_SIZES.filter((s) => s < currentSize);
-    if (prevSizes.length > 0) {
-      prevSize = prevSizes[prevSizes.length - 1];
-    } else {
-      prevSize = currentSize - 1;
-    }
-    const clamped = Math.max(MIN_FONT_SIZE, prevSize);
-    handleSelectSize(clamped);
-  };
-
-  return (
-    <div ref={dropdownRef} className="relative flex items-center gap-0.5 text-left z-40">
-      <button
-        type="button"
-        onMouseDown={(e) => {
-          e.preventDefault();
-          saveCurrentSelection();
-        }}
-        onClick={decrementSize}
-        title="Decrease font size"
-        className="w-6 h-7 flex items-center justify-center rounded-l-md text-brand-secondary hover:text-brand-text hover:bg-brand-text/10 border border-brand-border/50 bg-brand-surface/60 cursor-pointer font-bold text-xs"
-      >
-        -
-      </button>
-
-      <div className="relative flex items-center">
-        <input
-          type="text"
-          value={inputValue}
-          onMouseDown={() => {
-            saveCurrentSelection();
-          }}
-          onChange={handleInputChange}
-          onKeyDown={handleKeyDown}
-          onFocus={() => {
-            saveCurrentSelection();
-            setIsOpen(true);
-          }}
-          title="Font Size (px)"
-          aria-label="Font Size"
-          className="w-10 h-7 bg-brand-surface/80 text-brand-text font-mono text-xs font-semibold text-center border-y border-brand-border/50 outline-none focus:bg-brand-surface focus:border-brand-accent"
-        />
-        <button
-          type="button"
-          onMouseDown={(e) => {
-            e.preventDefault();
-            saveCurrentSelection();
-          }}
-          onClick={() => setIsOpen(!isOpen)}
-          title="Select Font Size"
-          aria-label="Select Font Size"
-          className="h-7 px-1 flex items-center justify-center bg-brand-surface/80 border-y border-r border-brand-border/50 text-brand-secondary hover:text-brand-text cursor-pointer rounded-r-md"
-        >
-          <ChevronDown className="w-3 h-3 opacity-70" />
-        </button>
-      </div>
-
-      <button
-        type="button"
-        onMouseDown={(e) => {
-          e.preventDefault();
-          saveCurrentSelection();
-        }}
-        onClick={incrementSize}
-        title="Increase font size"
-        className="w-6 h-7 flex items-center justify-center rounded-r-md text-brand-secondary hover:text-brand-text hover:bg-brand-text/10 border border-brand-border/50 bg-brand-surface/60 cursor-pointer font-bold text-xs ml-0.5"
-      >
-        +
-      </button>
-
-      {isOpen && (
-        <div className="absolute left-6 top-full mt-1.5 w-24 max-h-56 overflow-y-auto rounded-lg bg-brand-surface border border-brand-border shadow-2xl z-50 py-1 font-mono text-xs select-none">
-          {PREDEFINED_FONT_SIZES.map((size) => (
-            <button
-              key={size}
-              type="button"
-              onMouseDown={(e) => {
-                e.preventDefault();
-                saveCurrentSelection();
-              }}
-              onClick={() => handleSelectSize(size)}
-              className={`w-full text-center py-1 px-2 hover:bg-brand-text/10 transition-colors cursor-pointer flex items-center justify-between ${
-                currentSize === size
-                  ? "text-brand-accent bg-brand-accent/10 font-bold"
-                  : "text-brand-text"
-              }`}
-            >
-              <span>{size}</span>
-              {currentSize === size && <Check className="w-3 h-3 text-brand-accent" />}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-function AlignmentDropdown({ onSelectAlign }: { onSelectAlign: (cmd: string) => void }) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [activeAlign, setActiveAlign] = useState<"left" | "center" | "right">("left");
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  const options = [
-    { id: "left", label: "Align Left", icon: AlignLeft, cmd: "justifyLeft" },
-    { id: "center", label: "Align Center", icon: AlignCenter, cmd: "justifyCenter" },
-    { id: "right", label: "Align Right", icon: AlignRight, cmd: "justifyRight" },
-  ];
-
-  const CurrentIcon =
-    activeAlign === "center"
-      ? AlignCenter
-      : activeAlign === "right"
-      ? AlignRight
-      : AlignLeft;
-
-  return (
-    <div ref={dropdownRef} className="relative inline-block text-left z-40">
-      <button
-        type="button"
-        onClick={() => setIsOpen(!isOpen)}
-        title="Text Alignment"
-        className="flex items-center gap-1 p-1.5 rounded-md text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 transition-colors cursor-pointer border border-brand-border/50 bg-brand-surface/60"
-      >
-        <CurrentIcon className="w-[18px] h-[18px]" />
-        <ChevronDown className="w-3 h-3 opacity-70" />
-      </button>
-
-      {isOpen && (
-        <div className="absolute left-0 top-full mt-1.5 w-32 rounded-lg bg-brand-surface border border-brand-border shadow-2xl z-50 py-1 font-sans">
-          {options.map((opt) => {
-            const Icon = opt.icon;
-            return (
-              <button
-                key={opt.id}
-                type="button"
-                onClick={() => {
-                  onSelectAlign(opt.cmd);
-                  setActiveAlign(opt.id as any);
-                  setIsOpen(false);
-                }}
-                className={`w-full text-left px-3 py-1.5 text-xs transition-colors cursor-pointer flex items-center justify-between ${
-                  activeAlign === opt.id
-                    ? "text-brand-accent bg-brand-accent/10 font-semibold"
-                    : "text-brand-text hover:bg-brand-text/5"
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  <Icon className="w-3.5 h-3.5" />
-                  <span>{opt.label}</span>
-                </div>
-                {activeAlign === opt.id && <Check className="w-3 h-3 text-brand-accent" />}
-              </button>
-            );
-          })}
-        </div>
-      )}
-    </div>
-  );
-}
+import { computeLessonSnapshotHash } from "../utils/lessonHasher";
 
 export default function LessonBuilderPage() {
   const { id: lessonId } = useParams<{ id: string }>();
@@ -708,13 +31,19 @@ export default function LessonBuilderPage() {
 
   const [loading, setLoading] = useState<boolean>(true);
   const [saveStatus, setSaveStatus] = useState<SyncState>("saved");
+  const [hasUnsyncedChanges, setHasUnsyncedChanges] = useState<boolean>(false);
   const [authModalOpen, setAuthModalOpen] = useState<boolean>(false);
 
   const [lessonStatus, setLessonStatus] = useState<"DRAFT" | "PUBLISHED">("DRAFT");
   const [publishedAt, setPublishedAt] = useState<string | null>(null);
   const [publishModalOpen, setPublishModalOpen] = useState<boolean>(false);
   const [isPublishing, setIsPublishing] = useState<boolean>(false);
+  const [isSavingDraft, setIsSavingDraft] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
+
+  // Deterministic Cloud Hashing References for zero-redundancy autosave & undo/revert detection
+  const latestCloudHashRef = useRef<string | null>(null);
+  const inFlightSaveHashRef = useRef<string | null>(null);
 
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isInitialMount = useRef<boolean>(true);
@@ -724,13 +53,33 @@ export default function LessonBuilderPage() {
     setTimeout(() => setToastMessage(null), 4000);
   };
 
-  // Subscribe to sync service status changes
+  // Subscribe to sync service status changes & check pending queue
   useEffect(() => {
-    const unsubscribe = lessonSyncService.subscribeStatus((status) => {
+    const unsubscribe = lessonSyncService.subscribeStatus(async (status) => {
       setSaveStatus(status);
+      if (status === "saved" && lessonId) {
+        const queue = await lessonCacheService.getPendingSyncQueue(lessonId);
+        if (queue.length === 0) {
+          const currentHash = computeLessonSnapshotHash(lessonTitle, lessonStatus, segments);
+          if (latestCloudHashRef.current && currentHash === latestCloudHashRef.current) {
+            setHasUnsyncedChanges(false);
+          }
+        }
+      }
     });
     return unsubscribe;
-  }, []);
+  }, [lessonId, lessonTitle, lessonStatus, segments]);
+
+  // Instant Change & Undo/Revert Detection Effect
+  useEffect(() => {
+    if (isInitialMount.current || !latestCloudHashRef.current) return;
+    const currentHash = computeLessonSnapshotHash(lessonTitle, lessonStatus, segments);
+    if (currentHash === latestCloudHashRef.current) {
+      setHasUnsyncedChanges(false);
+    } else {
+      setHasUnsyncedChanges(true);
+    }
+  }, [lessonTitle, lessonStatus, segments]);
 
   // Load lesson data (IndexedDB first, then server reconciliation)
   useEffect(() => {
@@ -754,13 +103,58 @@ export default function LessonBuilderPage() {
       if (navigator.onLine) {
         try {
           const serverData = await builderLessonService.getLessonById(id);
+          const serverMappedSegments: SegmentData[] = (serverData.segments || []).map((seg) => ({
+            id: seg.id,
+            title: seg.title,
+            isExpanded: true,
+            slides: (seg.slides || []).map((sl) => ({
+              id: sl.id,
+              title: sl.title || "Slide",
+              content: sl.coachText || "",
+              hasBoard: Boolean(sl.fen && sl.fen.trim() !== ""),
+              fen: sl.fen || "",
+              annotations: sl.annotations || {},
+            })),
+          }));
+
+          const serverHash = computeLessonSnapshotHash(
+            serverData.title || "Untitled Lesson",
+            serverData.status || "DRAFT",
+            serverMappedSegments
+          );
+          latestCloudHashRef.current = serverHash;
+
           // If local version had no unsynced changes, update state with server version
           if (!cached || !cached._hasUnsyncedChanges) {
             applyLessonDataToState(serverData);
             await lessonCacheService.saveLessonLocal(serverData, false);
+            setHasUnsyncedChanges(false);
           } else {
             // Reconcile pending queue with server
-            lessonSyncService.processSyncQueue(id);
+            const currentHash = computeLessonSnapshotHash(
+              cached.title || "Untitled Lesson",
+              cached.status || "DRAFT",
+              (cached.segments || []).map((seg) => ({
+                id: seg.id,
+                title: seg.title,
+                isExpanded: true,
+                slides: (seg.slides || []).map((sl) => ({
+                  id: sl.id,
+                  title: sl.title || "Slide",
+                  content: sl.coachText || "",
+                  hasBoard: Boolean(sl.fen && sl.fen.trim() !== ""),
+                  fen: sl.fen || "",
+                  annotations: sl.annotations || {},
+                })),
+              }))
+            );
+
+            if (currentHash === serverHash) {
+              setHasUnsyncedChanges(false);
+            } else {
+              setHasUnsyncedChanges(true);
+              performCloudSync();
+            }
           }
         } catch (serverErr: any) {
           if (serverErr?.message === "UNAUTHORIZED") {
@@ -855,9 +249,75 @@ export default function LessonBuilderPage() {
         },
       });
     }
+  };
 
-    if (navigator.onLine) {
-      await lessonSyncService.processSyncQueue(lessonId);
+  /**
+   * Optimized Cloud Sync Execution.
+   * Compares the deterministic snapshot hash of current lesson data against latestCloudHash.
+   * If hashes match, BYPASSES database network requests completely.
+   */
+  const performCloudSync = async (): Promise<boolean> => {
+    if (!lessonId || !navigator.onLine) {
+      lessonSyncService.setSyncState("offline");
+      return false;
+    }
+
+    const currentHash = computeLessonSnapshotHash(lessonTitle, lessonStatus, segments);
+
+    // Rule 5: If current content matches latest cloud hash, DO NOT make a network request!
+    if (latestCloudHashRef.current && currentHash === latestCloudHashRef.current) {
+      setHasUnsyncedChanges(false);
+      lessonSyncService.setSyncState("saved");
+      return true;
+    }
+
+    // Record the snapshot hash being sent in this request
+    inFlightSaveHashRef.current = currentHash;
+
+    const success = await lessonSyncService.processSyncQueue(lessonId);
+
+    if (success && inFlightSaveHashRef.current) {
+      // Update cloudHash ONLY after request succeeds!
+      latestCloudHashRef.current = inFlightSaveHashRef.current;
+
+      // Handle race condition: check if user made newer edits while request was in-flight
+      const postSaveHash = computeLessonSnapshotHash(lessonTitle, lessonStatus, segments);
+      if (postSaveHash === latestCloudHashRef.current) {
+        setHasUnsyncedChanges(false);
+      } else {
+        setHasUnsyncedChanges(true);
+      }
+      return true;
+    }
+
+    return false;
+  };
+
+  // Manual Force Cloud Sync Handler
+  const handleForceCloudSync = async () => {
+    if (!lessonId) return;
+    try {
+      const currentHash = computeLessonSnapshotHash(lessonTitle, lessonStatus, segments);
+      if (latestCloudHashRef.current && currentHash === latestCloudHashRef.current) {
+        setHasUnsyncedChanges(false);
+        showToast("Lesson is already synced to cloud storage!", "success");
+        return;
+      }
+
+      // Flush local changes first
+      await flushPendingChanges();
+
+      // Perform optimized cloud sync
+      const success = await performCloudSync();
+
+      if (success) {
+        showToast("Lesson synced to cloud storage!", "success");
+      } else {
+        showToast("Cloud sync failed. Changes remain saved locally.", "error");
+      }
+    } catch (err: any) {
+      console.error("Force cloud sync error", err);
+      showToast(err?.message || "Cloud sync failed. Changes remain saved locally.", "error");
     }
   };
 
@@ -876,6 +336,10 @@ export default function LessonBuilderPage() {
       const newPubAt = updated.publishedAt || new Date().toISOString();
       setLessonStatus(newStatus);
       setPublishedAt(newPubAt);
+
+      const postPublishHash = computeLessonSnapshotHash(lessonTitle, newStatus, segments);
+      latestCloudHashRef.current = postPublishHash;
+      setHasUnsyncedChanges(false);
 
       if (lesson) {
         setLesson({ ...lesson, status: newStatus, publishedAt: newPubAt });
@@ -924,8 +388,6 @@ export default function LessonBuilderPage() {
     }
   };
 
-  const [isSavingDraft, setIsSavingDraft] = useState<boolean>(false);
-
   const handleSaveAsDraftAndExit = async () => {
     if (!lessonId) return;
     setIsSavingDraft(true);
@@ -935,7 +397,7 @@ export default function LessonBuilderPage() {
 
       // 2. Process sync queue to database if online
       if (navigator.onLine) {
-        await lessonSyncService.processSyncQueue(lessonId);
+        await performCloudSync();
       }
 
       setPublishModalOpen(false);
@@ -949,13 +411,14 @@ export default function LessonBuilderPage() {
     }
   };
 
-  // Debounced Local Save (IndexedDB) & Background Sync Queueing
+  // Debounced Local Save (IndexedDB) & Optimized Background Cloud Sync
   const triggerAutoSave = (dirtySlideId?: string, dirtySegmentId?: string) => {
     if (!lessonId || isInitialMount.current) {
       isInitialMount.current = false;
       return;
     }
 
+    // Instant local save indicator
     lessonSyncService.setSyncState("saving_local");
 
     if (saveTimerRef.current) {
@@ -987,10 +450,10 @@ export default function LessonBuilderPage() {
           })),
         };
 
-        // 1. Instant local persistence to IndexedDB
+        // 1. Fast local persistence to IndexedDB
         await lessonCacheService.saveLessonLocal(updatedTree, true);
 
-        // 2. Queue dirty mutation for incremental server sync
+        // 2. Queue dirty mutation
         const targetSlide = dirtySlideId ? activeSlide : undefined;
         if (targetSlide) {
           await lessonCacheService.addPendingSync({
@@ -1027,7 +490,8 @@ export default function LessonBuilderPage() {
           });
         }
 
-        lessonSyncService.setSyncState(navigator.onLine ? "saved" : "offline");
+        // 3. Perform zero-redundancy cloud sync check
+        await performCloudSync();
       } catch (error) {
         console.error("Local save error", error);
         lessonSyncService.setSyncState("error");
@@ -1035,13 +499,13 @@ export default function LessonBuilderPage() {
     }, 3000);
   };
 
-  // Select Slide Handler (Triggers Sync Queue)
+  // Select Slide Handler
   const handleSelectSlide = (slideId: string, segId: string) => {
     if (activeSlideId !== slideId) {
       setActiveSlideId(slideId);
       setActiveSegmentId(segId);
       if (lessonId && navigator.onLine) {
-        lessonSyncService.processSyncQueue(lessonId);
+        performCloudSync();
       }
     }
   };
@@ -1150,10 +614,9 @@ export default function LessonBuilderPage() {
     const range = sel.getRangeAt(0);
 
     if (range.collapsed) {
-      // Caret mode: insert span for subsequent typing
       const span = document.createElement("span");
       span.style.fontSize = `${size}px`;
-      span.appendChild(document.createTextNode("\u200B")); // Zero-width space
+      span.appendChild(document.createTextNode("\u200B"));
       range.insertNode(span);
 
       const newRange = document.createRange();
@@ -1163,7 +626,6 @@ export default function LessonBuilderPage() {
       sel.addRange(newRange);
       globalSavedRangeRef.current = newRange.cloneRange();
     } else {
-      // Selection mode: use font[size="7"] landmark tag and re-select new span elements!
       document.execCommand("fontSize", false, "7");
 
       const fontEls = activeEditor.querySelectorAll('font[size="7"]');
@@ -1331,7 +793,6 @@ export default function LessonBuilderPage() {
       setActiveSegmentId(mappedSeg.id);
       setActiveSlideId(newSlide.id);
 
-      // Save to IndexedDB
       await lessonCacheService.saveLessonLocal({
         id: lessonId,
         title: lessonTitle,
@@ -1352,7 +813,7 @@ export default function LessonBuilderPage() {
         })),
       });
 
-      lessonSyncService.setSyncState(navigator.onLine ? "saved" : "offline");
+      triggerAutoSave();
     } catch (error) {
       console.error("Failed to add segment", error);
     }
@@ -1392,7 +853,7 @@ export default function LessonBuilderPage() {
         action: "DELETE",
         payload: {},
       });
-      lessonSyncService.processSyncQueue(lessonId);
+      triggerAutoSave();
     }
   };
 
@@ -1427,7 +888,7 @@ export default function LessonBuilderPage() {
 
       setActiveSegmentId(segId);
       setActiveSlideId(newSlide.id);
-      lessonSyncService.setSyncState(navigator.onLine ? "saved" : "offline");
+      triggerAutoSave();
     } catch (error) {
       console.error("Failed to create slide", error);
     }
@@ -1463,7 +924,7 @@ export default function LessonBuilderPage() {
       );
 
       setActiveSlideId(newSlide.id);
-      lessonSyncService.setSyncState(navigator.onLine ? "saved" : "offline");
+      triggerAutoSave();
     } catch (error) {
       console.error("Failed to duplicate slide", error);
     }
@@ -1491,7 +952,7 @@ export default function LessonBuilderPage() {
         action: "DELETE",
         payload: {},
       });
-      lessonSyncService.processSyncQueue(lessonId);
+      triggerAutoSave();
     }
   };
 
@@ -1574,281 +1035,41 @@ export default function LessonBuilderPage() {
       {/* ── TOP HEADER & TOOLBAR ────────────────────────────────────────────── */}
       <div className="flex flex-col border-b border-brand-border bg-brand-bg/95 backdrop-blur-md shrink-0 relative z-30">
         {/* Title & Navigation Bar */}
-        <div className="flex items-center justify-between px-6 py-2.5 border-b border-brand-border/40">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => {
-                if (lessonId) lessonSyncService.processSyncQueue(lessonId);
-                navigate("/lessons");
-              }}
-              title="Back to Lessons Dashboard"
-              className="p-1.5 rounded-lg bg-brand-surface border border-brand-border/60 hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text transition-colors cursor-pointer"
-            >
-              <ArrowLeft className="w-4 h-4" />
-            </button>
+        <LessonBuilderHeader
+          lessonTitle={lessonTitle}
+          onTitleChange={handleTitleChange}
+          lessonStatus={lessonStatus}
+          publishedAt={publishedAt}
+          saveStatus={saveStatus}
+          hasUnsyncedChanges={hasUnsyncedChanges}
+          onForceCloudSync={handleForceCloudSync}
+          onNavigateBack={() => {
+            if (lessonId) lessonSyncService.processSyncQueue(lessonId);
+            navigate("/lessons");
+          }}
+          onAddSegment={addSegment}
+          onAddSlide={() => addSlide(activeSegmentId)}
+          onOpenPublishModal={() => setPublishModalOpen(true)}
+        />
 
-            <div className="w-8 h-8 rounded-lg bg-brand-accent/10 border border-brand-accent/30 flex items-center justify-center text-brand-accent">
-              <Layers className="w-4 h-4" />
-            </div>
-
-            <div className="flex items-center gap-2">
-              <input
-                type="text"
-                value={lessonTitle}
-                onChange={(e) => handleTitleChange(e.target.value)}
-                className="bg-transparent font-display font-medium text-lg text-brand-text outline-none px-2 py-0.5 rounded-md border border-transparent hover:border-brand-border focus:border-brand-accent/50 focus:bg-brand-surface/50 transition-all duration-200"
-                placeholder="Untitled Lesson"
-              />
-              <span
-                title={publishedAt ? `Published on ${new Date(publishedAt).toLocaleDateString()}` : "Status: Draft"}
-                className={`text-[11px] font-sans font-semibold tracking-wider uppercase px-2.5 py-0.5 rounded-full border ${
-                  lessonStatus === "PUBLISHED"
-                    ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
-                    : "bg-brand-accent/10 text-brand-accent border-brand-accent/20"
-                }`}
-              >
-                {lessonStatus}
-              </span>
-            </div>
-          </div>
-
-          {/* Right Header Controls: Auto-save status & Action Buttons */}
-          <div className="flex items-center gap-4">
-            {/* Auto-save & Multi-layer Status Indicator */}
-            <div className="flex items-center gap-1.5 text-xs font-mono">
-              {saveStatus === "saving_local" && (
-                <span className="flex items-center gap-1.5 text-brand-accent">
-                  <HardDrive className="w-3.5 h-3.5 animate-pulse text-brand-accent" />
-                  <span>Saving locally...</span>
-                </span>
-              )}
-              {saveStatus === "syncing" && (
-                <span className="flex items-center gap-1.5 text-blue-400">
-                  <CloudUpload className="w-3.5 h-3.5 animate-bounce" />
-                  <span>Syncing...</span>
-                </span>
-              )}
-              {saveStatus === "saved" && (
-                <span className="flex items-center gap-1.5 text-emerald-400">
-                  <Check className="w-3.5 h-3.5" />
-                  <span>Saved</span>
-                </span>
-              )}
-              {saveStatus === "offline" && (
-                <span className="flex items-center gap-1.5 text-amber-400">
-                  <WifiOff className="w-3.5 h-3.5" />
-                  <span>Offline (cached)</span>
-                </span>
-              )}
-              {saveStatus === "error" && (
-                <span className="flex items-center gap-1.5 text-red-400">
-                  <AlertCircle className="w-3.5 h-3.5" />
-                  <span>Sync failed</span>
-                </span>
-              )}
-            </div>
-
-            <button
-              onClick={addSegment}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-surface border border-brand-border hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text text-xs font-medium transition-all duration-200 cursor-pointer"
-            >
-              <FolderPlus className="w-3.5 h-3.5 text-brand-accent" />
-              <span>Add Segment</span>
-            </button>
-
-            <button
-              onClick={() => addSlide(activeSegmentId)}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-brand-surface border border-brand-border hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text text-xs font-medium transition-all duration-200 cursor-pointer"
-            >
-              <Plus className="w-3.5 h-3.5 text-brand-accent" />
-              <span>Add Slide</span>
-            </button>
-
-            {/* Primary Publish Action */}
-            <button
-              type="button"
-              onClick={() => setPublishModalOpen(true)}
-              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold shadow-md transition-all duration-200 cursor-pointer ${
-                lessonStatus === "PUBLISHED"
-                  ? "bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 hover:bg-emerald-500/30"
-                  : "bg-brand-accent text-brand-bg hover:bg-brand-accent-hover"
-              }`}
-            >
-              <Globe className="w-3.5 h-3.5" />
-              <span>{lessonStatus === "PUBLISHED" ? "Published" : "Publish Lesson"}</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Expanded Chess Lesson Text Editing Toolbar */}
-        <div className="flex items-center justify-between px-6 py-2 bg-brand-surface/40 border-t border-brand-border/30 select-none relative z-30 overflow-visible">
-          <div className="flex items-center gap-1.5 flex-wrap">
-            {/* History */}
-            <button
-              title="Undo"
-              onClick={() => formatDocument("undo")}
-              className="p-1.5 rounded-md text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 transition-colors cursor-pointer"
-            >
-              <Undo className="w-[18px] h-[18px]" />
-            </button>
-            <button
-              title="Redo"
-              onClick={() => formatDocument("redo")}
-              className="p-1.5 rounded-md text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 transition-colors cursor-pointer"
-            >
-              <Redo className="w-[18px] h-[18px]" />
-            </button>
-
-            <div className="w-px h-5 bg-brand-border mx-1" />
-
-            {/* Numeric Font Size Control */}
-            <FontSizeControl onApplyFontSize={(size) => applyFontSize(size)} />
-
-            <div className="w-px h-5 bg-brand-border mx-1" />
-
-            {/* Inline Formatting */}
-            <button
-              title="Bold"
-              onClick={() => formatDocument("bold")}
-              className="p-1.5 rounded-md text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 transition-colors cursor-pointer font-bold"
-            >
-              <Bold className="w-[18px] h-[18px]" />
-            </button>
-            <button
-              title="Italic"
-              onClick={() => formatDocument("italic")}
-              className="p-1.5 rounded-md text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 transition-colors cursor-pointer italic"
-            >
-              <Italic className="w-[18px] h-[18px]" />
-            </button>
-            <button
-              title="Underline"
-              onClick={() => formatDocument("underline")}
-              className="p-1.5 rounded-md text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 transition-colors cursor-pointer underline"
-            >
-              <Underline className="w-[18px] h-[18px]" />
-            </button>
-
-            <div className="w-px h-5 bg-brand-border mx-1" />
-
-            {/* Lists */}
-            <button
-              title="Bulleted List"
-              onClick={() => formatDocument("insertUnorderedList")}
-              className="p-1.5 rounded-md text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 transition-colors cursor-pointer"
-            >
-              <List className="w-[18px] h-[18px]" />
-            </button>
-            <button
-              title="Numbered List"
-              onClick={() => formatDocument("insertOrderedList")}
-              className="p-1.5 rounded-md text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 transition-colors cursor-pointer"
-            >
-              <ListOrdered className="w-[18px] h-[18px]" />
-            </button>
-
-            {/* Alignment Menu */}
-            <AlignmentDropdown onSelectAlign={(cmd) => formatDocument(cmd)} />
-
-            <div className="w-px h-5 bg-brand-border mx-1" />
-
-            {/* Callouts, Dividers & Links */}
-            <button
-              title="Coach Note / Callout"
-              onClick={toggleCoachCallout}
-              className={`p-1.5 rounded-md transition-all duration-200 cursor-pointer ${
-                isCalloutActive
-                  ? "text-brand-accent bg-brand-accent/15 border border-brand-accent/30 shadow-[0_0_8px_rgba(212,175,110,0.15)]"
-                  : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5"
-              }`}
-            >
-              <Quote className="w-[18px] h-[18px]" />
-            </button>
-            <button
-              title="Horizontal Divider"
-              onClick={() => formatDocument("insertHorizontalRule")}
-              className="p-1.5 rounded-md text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 transition-colors cursor-pointer"
-            >
-              <Minus className="w-[18px] h-[18px]" />
-            </button>
-            {/* Inline Link Toolbar Control */}
-            <div className="relative inline-block z-40">
-              <button
-                type="button"
-                title={hasTextSelection ? "Insert / Edit Link" : "Select text to insert link"}
-                onMouseDown={(e) => {
-                  if (hasTextSelection) {
-                    e.preventDefault();
-                    saveCurrentSelection();
-                  }
-                }}
-                onClick={() => {
-                  if (hasTextSelection) {
-                    setLinkPopoverOpen(!linkPopoverOpen);
-                  }
-                }}
-                disabled={!hasTextSelection}
-                className={`p-1.5 rounded-md transition-colors ${
-                  hasTextSelection
-                    ? "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 cursor-pointer"
-                    : "text-brand-secondary/30 cursor-not-allowed"
-                }`}
-              >
-                <LinkIcon className="w-[18px] h-[18px]" />
-              </button>
-
-              {linkPopoverOpen && (
-                <LinkPopover
-                  initialUrl={existingLinkUrl}
-                  onApply={applyLinkToSelection}
-                  onRemove={existingLinkUrl ? removeLinkFromSelection : undefined}
-                  onClose={() => setLinkPopoverOpen(false)}
-                />
-              )}
-            </div>
-
-            <div className="w-px h-5 bg-brand-border mx-1" />
-
-            {/* Zoom Controls */}
-            <button
-              title="Zoom Out"
-              onClick={() => setZoomLevel((z) => Math.max(50, z - 10))}
-              className="p-1.5 rounded-md text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 transition-colors cursor-pointer"
-            >
-              <ZoomOut className="w-[18px] h-[18px]" />
-            </button>
-            <span className="text-xs font-mono text-brand-secondary min-w-[40px] text-center">
-              {zoomLevel}%
-            </span>
-            <button
-              title="Zoom In"
-              onClick={() => setZoomLevel((z) => Math.min(150, z + 10))}
-              className="p-1.5 rounded-md text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 transition-colors cursor-pointer"
-            >
-              <ZoomIn className="w-[18px] h-[18px]" />
-            </button>
-
-            <div className="w-px h-5 bg-brand-border mx-1" />
-
-            {/* Chessboard Toggle */}
-            <button
-              title={activeSlide?.hasBoard ? "Remove Board" : "Insert Interactive Chessboard"}
-              onClick={toggleChessboard}
-              className={`p-1.5 rounded-md transition-all duration-200 cursor-pointer ${
-                activeSlide?.hasBoard
-                  ? "text-brand-accent bg-brand-accent/15 border border-brand-accent/30 shadow-[0_0_8px_rgba(212,175,110,0.15)]"
-                  : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5"
-              }`}
-            >
-              <Grid className="w-[18px] h-[18px]" />
-            </button>
-          </div>
-
-          <div className="flex items-center gap-2 text-xs text-brand-secondary">
-            <Sparkles className="w-3.5 h-3.5 text-brand-accent/70" />
-            <span className="font-sans">XLChess Lesson Builder</span>
-          </div>
-        </div>
+        {/* Text Formatting Toolbar */}
+        <LessonTextToolbar
+          formatDocument={formatDocument}
+          applyFontSize={applyFontSize}
+          toggleCoachCallout={toggleCoachCallout}
+          isCalloutActive={isCalloutActive}
+          hasTextSelection={hasTextSelection}
+          linkPopoverOpen={linkPopoverOpen}
+          setLinkPopoverOpen={setLinkPopoverOpen}
+          existingLinkUrl={existingLinkUrl}
+          applyLinkToSelection={applyLinkToSelection}
+          removeLinkFromSelection={removeLinkFromSelection}
+          zoomLevel={zoomLevel}
+          setZoomLevel={setZoomLevel}
+          hasBoard={activeSlide?.hasBoard || false}
+          toggleChessboard={toggleChessboard}
+          saveCurrentSelection={saveCurrentSelection}
+        />
       </div>
 
       {/* ── WORKSPACE SPLIT: SIDEBAR + CANVAS ─────────────────────────────── */}
@@ -1892,6 +1113,7 @@ export default function LessonBuilderPage() {
         </main>
       </div>
 
+      {/* Right-click Context Menu */}
       {contextMenuPos && (
         <ContextMenu
           x={contextMenuPos.x}
@@ -1907,24 +1129,12 @@ export default function LessonBuilderPage() {
       )}
 
       {/* ── FOOTER STATUS BAR ──────────────────────────────────────────────── */}
-      <footer className="h-8 border-t border-brand-border bg-brand-bg px-6 flex items-center justify-between text-xs text-brand-secondary shrink-0">
-        <div className="flex items-center gap-4 font-sans">
-          <span>
-            Slide <strong className="text-brand-text">{currentSlideNumber}</strong> of{" "}
-            <strong className="text-brand-text">{totalSlidesCount}</strong>
-          </span>
-          <span className="text-brand-border">•</span>
-          <span className="text-brand-secondary/80">
-            {activeSegment?.title || "Segment"}
-          </span>
-        </div>
-
-        <div className="flex items-center gap-3 font-mono text-[11px]">
-          <span>16:9 Canvas</span>
-          <span className="text-brand-border">•</span>
-          <span>1920 × 1080</span>
-        </div>
-      </footer>
+      <LessonFooter
+        currentSlideNumber={currentSlideNumber}
+        totalSlidesCount={totalSlidesCount}
+        activeSegmentTitle={activeSegment?.title}
+        saveStatus={saveStatus}
+      />
 
       {/* Publish Confirmation Modal */}
       {publishModalOpen && (
