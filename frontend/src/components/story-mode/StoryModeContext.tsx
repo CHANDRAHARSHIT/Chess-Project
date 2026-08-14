@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useSession } from '../../hooks/useSession';
+import { generateStoryMap } from '../../utils/mapGenerator';
+import type { StoryNode } from '../../data/storyModeMapData';
 
 export type RelicType = 'undo' | 'hint' | 'evalBar' | 'time' | 'reroll';
 
@@ -18,6 +20,7 @@ export interface RunState {
   completedNodes: number[];
   currentNodeId: number;
   journeyComplete: boolean;
+  mapNodes: StoryNode[];
 }
 
 const defaultState: RunState = {
@@ -32,6 +35,7 @@ const defaultState: RunState = {
   completedNodes: [],
   currentNodeId: -1,
   journeyComplete: false,
+  mapNodes: [],
 };
 
 interface StoryModeContextType {
@@ -57,13 +61,17 @@ export function StoryModeProvider({ children }: { children: React.ReactNode }) {
       if (stored) {
         try {
           const parsed = JSON.parse(stored);
-          setRunState({ ...defaultState, ...parsed, relics: parsed.relics || [] });
+          const loadedNodes = parsed.mapNodes && parsed.mapNodes.length > 0 ? parsed.mapNodes : generateStoryMap();
+          setRunState({ ...defaultState, ...parsed, relics: parsed.relics || [], mapNodes: loadedNodes });
         } catch (e) {
           console.error("Failed to parse run state", e);
+          setRunState({ ...defaultState, mapNodes: generateStoryMap() });
         }
+      } else {
+        setRunState({ ...defaultState, mapNodes: generateStoryMap() });
       }
     } else {
-      setRunState(defaultState);
+      setRunState({ ...defaultState, mapNodes: generateStoryMap() });
     }
     setIsLoaded(true);
   }, [status, session?.user?.id]);
@@ -80,6 +88,7 @@ export function StoryModeProvider({ children }: { children: React.ReactNode }) {
   };
 
   const resetRun = (keepProgress: boolean = false) => {
+    const newMap = generateStoryMap();
     if (keepProgress) {
       setRunState(prev => ({
         ...defaultState,
@@ -90,9 +99,10 @@ export function StoryModeProvider({ children }: { children: React.ReactNode }) {
         evalBarCharges: prev.evalBarCharges,
         timeCharges: prev.timeCharges,
         rerollCharges: prev.rerollCharges,
+        mapNodes: newMap,
       }));
     } else {
-      setRunState(defaultState);
+      setRunState({ ...defaultState, mapNodes: newMap });
       if (status === 'authenticated' && session?.user?.id) {
         localStorage.removeItem(`storyRunState_${session.user.id}`);
       }
@@ -104,17 +114,13 @@ export function StoryModeProvider({ children }: { children: React.ReactNode }) {
   };
 
   const useCharge = (type: RelicType) => {
-    let used = false;
-    setRunState(prev => {
-      const chargeKey = `${type}Charges` as keyof RunState;
-      const current = prev[chargeKey] as number;
-      if (current > 0) {
-        used = true;
-        return { ...prev, [chargeKey]: current - 1 };
-      }
-      return prev;
-    });
-    return used;
+    const chargeKey = `${type}Charges` as keyof RunState;
+    const current = runState[chargeKey] as number;
+    if (current > 0) {
+      setRunState(prev => ({ ...prev, [chargeKey]: current - 1 }));
+      return true;
+    }
+    return false;
   };
 
   return (

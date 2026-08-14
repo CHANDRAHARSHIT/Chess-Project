@@ -24,7 +24,7 @@ interface StoryModeNodeIconProps {
 /** SVG icon per node type */
 function NodeSVG({ type, status }: { type: StoryNodeType; status: NodeStatus }) {
   const isCompleted = status === "completed";
-  const size = type === "boss" ? 40 : type === "start" ? 38 : 32;
+  const size = type === "boss" ? 36 : type === "start" ? 32 : 24;
 
   if (isCompleted) {
     // Checkmark for completed nodes
@@ -166,6 +166,7 @@ function getNodeColors(type: StoryNodeType, status: NodeStatus) {
 }
 
 export default function StoryModeNodeIcon({
+  id,
   type,
   label,
   status,
@@ -176,10 +177,11 @@ export default function StoryModeNodeIcon({
   const colors = getNodeColors(type, status);
   const isClickable = status === "available" || status === "active";
   const isAvailable = status === "available";
-  const nodeSize = type === "boss" ? 76 : type === "start" ? 70 : 64;
+  const nodeSize = type === "boss" ? 56 : type === "start" ? 52 : 44;
 
   return (
     <div
+      id={`map-node-${id}`}
       className="absolute"
       style={{
         left: `${x}%`,
@@ -254,12 +256,11 @@ export default function StoryModeNodeIcon({
 
           {/* Label */}
           <span
-            className="absolute top-[100%] mt-2 text-xs font-mono font-semibold tracking-wide max-w-[140px] w-max text-center transition-all duration-300 px-3 py-1.5 rounded-lg border shadow-sm backdrop-blur-md leading-tight"
+            className="absolute top-[100%] mt-2 text-[10px] sm:text-xs font-mono font-semibold tracking-wide max-w-[140px] w-max text-center transition-all duration-300 px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg border shadow-sm backdrop-blur-md leading-tight opacity-0 group-hover:opacity-100 pointer-events-none z-50"
             style={{
               color: status === "locked" ? "var(--text-secondary)" : colors.text,
               backgroundColor: status === "locked" ? "var(--obsidian-glass)" : "var(--obsidian-mid)",
               borderColor: status === "locked" ? "transparent" : colors.border,
-              opacity: status === "locked" ? 0.75 : 1,
             }}
           >
             {label}

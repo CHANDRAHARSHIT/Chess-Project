@@ -24,6 +24,7 @@ export default function StoryModeMerchant({
   const [purchasedIds, setPurchasedIds] = useState<Set<string>>(new Set());
   const [activeTab, setActiveTab] = useState<'buy' | 'sell'>('buy');
   const [quantities, setQuantities] = useState<Record<string, number>>({});
+  const [isRerolling, setIsRerolling] = useState(false);
 
   const handleQuantityChange = (id: string, delta: number) => {
     setQuantities(prev => ({
@@ -67,12 +68,21 @@ export default function StoryModeMerchant({
   }
 
   const handleReroll = () => {
-    if (runState.relics.includes('reroll') && runState.rerollCharges > 0) {
-      const used = useCharge('reroll');
-      if (used) {
-        setOfferings(getRandomOfferings(availablePool, 3));
-        setPurchasedIds(new Set());
-      }
+    if (runState.relics.includes('reroll') && runState.rerollCharges > 0 && !isRerolling) {
+      setIsRerolling(true);
+      
+      // Delay to let items fade out
+      setTimeout(() => {
+        const used = useCharge('reroll');
+        if (used) {
+          setOfferings(getRandomOfferings(availablePool, 3));
+          setPurchasedIds(new Set());
+          setQuantities({});
+        }
+        
+        // Wait a tiny bit before fading new items in
+        setTimeout(() => setIsRerolling(false), 50);
+      }, 400);
     }
   };
 
@@ -185,7 +195,7 @@ export default function StoryModeMerchant({
                 
                 <button 
                   onClick={handleReroll}
-                  disabled={!runState.relics.includes('reroll') || runState.rerollCharges <= 0}
+                  disabled={!runState.relics.includes('reroll') || runState.rerollCharges <= 0 || isRerolling}
                   className="flex items-center gap-1.5 text-xs font-mono px-2 py-1 rounded bg-brand-surface/50 border border-brand-border/50 text-brand-secondary hover:text-brand-text hover:border-brand-accent/50 transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
                 >
                   <RotateCcw className="w-3 h-3" />
@@ -194,7 +204,7 @@ export default function StoryModeMerchant({
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {offerings.map(item => {
+                {offerings.map((item, idx) => {
                   const isPurchased = purchasedIds.has(item.id);
                   const qty = quantities[item.id] || 1;
                   const totalCost = item.cost * qty;
@@ -207,8 +217,19 @@ export default function StoryModeMerchant({
                   const canBuy = canAfford && canFit && !isPurchased;
                   
                   return (
-                    <div 
-                      key={item.id} 
+                    <motion.div 
+                      key={item.id}
+                      layout
+                      initial={{ opacity: 0, x: -20, scale: 0.9 }}
+                      animate={
+                        isRerolling 
+                          ? { opacity: 0, y: -40, scale: 0.8, filter: "blur(4px)" } 
+                          : { opacity: 1, y: 0, x: 0, scale: 1, filter: "blur(0px)" }
+                      }
+                      transition={{ 
+                        duration: 0.3,
+                        delay: isRerolling ? idx * 0.05 : idx * 0.1
+                      }}
                       className={`flex flex-col gap-2 p-3 rounded-xl border ${isPurchased ? 'border-green-500/30 bg-green-500/5' : 'border-yellow-500/20 bg-yellow-500/5 hover:bg-yellow-500/10'} transition-all`}
                     >
                       <div className="flex-1">
@@ -256,7 +277,7 @@ export default function StoryModeMerchant({
                           </button>
                         </>
                       )}
-                    </div>
+                    </motion.div>
                   );
                 })}
               </div>

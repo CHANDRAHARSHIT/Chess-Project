@@ -6,13 +6,10 @@
  * rest site screens. Manages game state (current node, completed nodes).
  */
 
-import { useState, useCallback, useMemo, useEffect } from "react";
+import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { RotateCcw, Map, Home, X, LogIn, Coins, Lightbulb, Eye, Hourglass, Shuffle } from "lucide-react";
-import {
-  STORY_MAP_NODES,
-  type NodeStatus,
-} from "../../data/storyModeMapData";
+import type { NodeStatus } from "../../data/storyModeMapData";
 import StoryModeNodeIcon from "./StoryModeNodeIcon";
 import StoryModeMapCanvas from "./StoryModeMapCanvas";
 import StoryModeMerchant from "./StoryModeMerchant"; // Force TS re-index
@@ -20,6 +17,7 @@ import StoryModeBattle from "./StoryModeBattle";
 
 import StoryModeRestSite from "./StoryModeRestSite";
 import StoryModePuzzleNode from "./StoryModePuzzleNode";
+import StoryModeCharacterSelect from "./StoryModeCharacterSelect";
 import { useStoryModeRun } from "./StoryModeContext";
 import { useSession } from "../../hooks/useSession";
 
@@ -28,7 +26,8 @@ type ActiveView =
   | { kind: "battle"; nodeId: number }
   | { kind: "rest"; nodeId: number }
   | { kind: "merchant"; nodeId: number }
-  | { kind: "puzzle"; nodeId: number };
+  | { kind: "puzzle"; nodeId: number }
+  | { kind: "characterSelect"; nodeId: number };
 
 export default function StoryModeMap() {
   const { session, status, signIn } = useSession();
@@ -43,6 +42,33 @@ export default function StoryModeMap() {
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [showGuestWarning, setShowGuestWarning] = useState<number | null>(null);
   const [hasIgnoredGuestWarning, setHasIgnoredGuestWarning] = useState(false);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  // ── Auto-scroll to current node or bottom on mount ────────────────────────────────────
+  useEffect(() => {
+    if (activeView.kind === "map" && scrollContainerRef.current) {
+      // Small delay to ensure render is complete
+      setTimeout(() => {
+        const container = scrollContainerRef.current;
+        if (!container) return;
+
+        if (currentNodeId !== -1) {
+          const nodeEl = document.getElementById(`map-node-${currentNodeId}`);
+          if (nodeEl) {
+            const targetTop = nodeEl.offsetTop - (container.offsetHeight / 2) + (nodeEl.offsetHeight / 2);
+            container.scrollTo({
+              top: Math.max(0, targetTop),
+              behavior: 'smooth'
+            });
+            return;
+          }
+        }
+        
+        // Fallback: Scroll to bottom
+        container.scrollTop = container.scrollHeight;
+      }, 100);
+    }
+  }, [activeView.kind, currentNodeId]);
 
   // ── Persistence Logic ────────────────────────────────────────────────
   useEffect(() => {
@@ -104,7 +130,7 @@ export default function StoryModeMap() {
       // You can ONLY progress to edges of your current node,
       // and ONLY if your current node has been completed!
       if (currentNodeId !== -1 && completedNodes.has(currentNodeId)) {
-        const currentNode = STORY_MAP_NODES.find((n) => n.id === currentNodeId);
+        const currentNode = (runState.mapNodes || []).find((n) => n.id === currentNodeId);
         if (currentNode?.edges.includes(id)) {
           return "available";
         }
@@ -118,7 +144,7 @@ export default function StoryModeMap() {
   // ── Node click handler ────────────────────────────────────────────────
   const handleNodeClick = useCallback(
     (nodeId: number, bypassWarning = false) => {
-      const node = STORY_MAP_NODES.find((n) => n.id === nodeId);
+      const node = (runState.mapNodes || []).find((n) => n.id === nodeId);
       if (!node) return;
 
       const nodeStatus = getNodeStatus(nodeId);
@@ -138,8 +164,7 @@ export default function StoryModeMap() {
 
       switch (node.type) {
         case "start":
-          // Legacy start node handling, though we now use monster as node 0
-          setCompletedNodes((prev) => new Set([...prev, nodeId]));
+          setActiveView({ kind: "characterSelect", nodeId });
           break;
         case "enemy":
         case "elite":
@@ -173,7 +198,7 @@ export default function StoryModeMap() {
   const handleBattleVictory = useCallback(() => {
     if (activeView.kind !== "battle") return;
     const nodeId = activeView.nodeId;
-    const node = STORY_MAP_NODES.find((n) => n.id === nodeId);
+    const node = (runState.mapNodes || []).find((n) => n.id === nodeId);
 
     setCompletedNodes((prev) => new Set([...prev, nodeId]));
     setActiveView({ kind: "map" });
@@ -255,7 +280,7 @@ export default function StoryModeMap() {
   return (
     <div className="w-full max-w-4xl mx-auto">
       <AnimatePresence mode="wait">
-        {activeView.kind === "map" ? (
+        {activeView.kind === "map" || activeView.kind === "characterSelect" ? (
           <motion.div
             key="map"
             initial={{ opacity: 0 }}
@@ -331,8 +356,11 @@ export default function StoryModeMap() {
 
             {/* Map wrapper for scrolling */}
             <div className="relative w-full rounded-2xl overflow-hidden">
-              <div className="w-full h-[75vh] min-h-[500px] rounded-2xl border border-[#D4AF6E]/40 overflow-y-auto overflow-x-hidden shadow-lg relative bg-[rgb(var(--obsidian-mid-rgb)/0.4)] custom-scrollbar">
-                <div className="relative w-full min-h-[1200px] sm:min-h-[1400px] overflow-hidden story-map-bg">
+              <div 
+                ref={scrollContainerRef}
+                className="w-full h-[75vh] min-h-[500px] rounded-2xl border border-[#D4AF6E]/40 overflow-y-auto overflow-x-hidden shadow-lg relative bg-[rgb(var(--obsidian-mid-rgb)/0.4)] custom-scrollbar"
+              >
+                <div className="relative w-full min-h-[1600px] sm:min-h-[2200px] overflow-hidden story-map-bg">
                   {/* Fog / atmosphere layers */}
                   <div className="absolute inset-0 pointer-events-none story-map-fog" />
 
@@ -364,12 +392,12 @@ export default function StoryModeMap() {
 
                   {/* SVG path lines */}
                   <StoryModeMapCanvas
-                    nodes={STORY_MAP_NODES}
+                    nodes={(runState.mapNodes || [])}
                     getNodeStatus={getNodeStatus}
                   />
 
                   {/* Node icons */}
-                  {STORY_MAP_NODES.map((node) => (
+                  {(runState.mapNodes || []).map((node) => (
                     <StoryModeNodeIcon
                       key={node.id}
                       id={node.id}
@@ -571,6 +599,20 @@ export default function StoryModeMap() {
                   </motion.div>
                 )}
               </AnimatePresence>
+
+              {/* Overlays / Modals */}
+              <AnimatePresence>
+                {activeView.kind === "characterSelect" && (
+                  <StoryModeCharacterSelect
+                    onSelect={() => {
+                      // Completes the start node and returns to map
+                      setCompletedNodes((prev) => new Set([...prev, activeView.nodeId]));
+                      setActiveView({ kind: "map" });
+                    }}
+                    onClose={() => setActiveView({ kind: "map" })}
+                  />
+                )}
+              </AnimatePresence>
             </div>
 
             {/* Legend */}
@@ -599,6 +641,7 @@ export default function StoryModeMap() {
                 </div>
               ))}
             </div>
+
           </motion.div>
         ) : activeView.kind === "battle" ? (
           <motion.div
@@ -611,7 +654,7 @@ export default function StoryModeMap() {
             <StoryModeBattle
               nodeId={activeView.nodeId}
               difficulty={
-                STORY_MAP_NODES.find((n) => n.id === activeView.nodeId)
+                (runState.mapNodes || []).find((n) => n.id === activeView.nodeId)
                   ?.difficulty ?? 1
               }
               onVictory={handleBattleVictory}
@@ -642,11 +685,11 @@ export default function StoryModeMap() {
           >
             <StoryModePuzzleNode
               nodeLabel={
-                STORY_MAP_NODES.find((n) => n.id === activeView.nodeId)
+                (runState.mapNodes || []).find((n) => n.id === activeView.nodeId)
                   ?.label ?? "Puzzle Trial"
               }
               difficulty={
-                STORY_MAP_NODES.find((n) => n.id === activeView.nodeId)
+                (runState.mapNodes || []).find((n) => n.id === activeView.nodeId)
                   ?.difficulty ?? 1
               }
               onComplete={handlePuzzleComplete}
@@ -663,11 +706,11 @@ export default function StoryModeMap() {
           >
             <StoryModeRestSite
               nodeLabel={
-                STORY_MAP_NODES.find((n) => n.id === activeView.nodeId)
+                (runState.mapNodes || []).find((n) => n.id === activeView.nodeId)
                   ?.label ?? "Rest Site"
               }
               nodeDescription={
-                STORY_MAP_NODES.find((n) => n.id === activeView.nodeId)
+                (runState.mapNodes || []).find((n) => n.id === activeView.nodeId)
                   ?.description ?? ""
               }
               onComplete={handleRestComplete}
