@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Coins, ArrowRight, RotateCcw, Package, ShoppingBag, Sparkles } from "lucide-react";
-import { useStoryModeRun } from "./StoryModeContext";
+import { useStoryModeRun, getMaxCharges } from "./StoryModeContext";
 import type { RelicType } from "./StoryModeContext";
 
 interface StoryModeMerchantProps {
@@ -34,11 +34,11 @@ export default function StoryModeMerchant({
   };
 
   const relicData = [
-    { type: 'undo' as RelicType, name: 'Relic of Undo', description: 'Allows you to undo a move.' },
-    { type: 'hint' as RelicType, name: 'Relic of Oracle', description: 'Reveals the best move.' },
-    { type: 'evalBar' as RelicType, name: 'Relic of Truth', description: 'Shows the evaluation bar.' },
-    { type: 'time' as RelicType, name: 'Relic of Haste', description: 'Grants extra time in timed battles.' },
-    { type: 'reroll' as RelicType, name: 'Relic of Fate', description: 'Rerolls merchant or encounters.' },
+    { type: 'undo' as RelicType, name: 'Relic of Undo', description: '+1 to max Undos.' },
+    { type: 'hint' as RelicType, name: 'Relic of Oracle', description: '+1 to max Hints.' },
+    { type: 'evalBar' as RelicType, name: 'Relic of Truth', description: '+1 to max Eval Bars.' },
+    { type: 'time' as RelicType, name: 'Relic of Haste', description: '+1 to max Time uses.' },
+    { type: 'reroll' as RelicType, name: 'Moirai\'s Thread', description: '+1 to max Rerolls.' },
   ];
 
   // Generate available pool based on current state
@@ -68,7 +68,7 @@ export default function StoryModeMerchant({
   }
 
   const handleReroll = () => {
-    if (runState.relics.includes('reroll') && runState.rerollCharges > 0 && !isRerolling) {
+    if (runState.rerollCharges > 0 && !isRerolling) {
       setIsRerolling(true);
       
       // Delay to let items fade out
@@ -91,12 +91,11 @@ export default function StoryModeMerchant({
     const totalCost = item.cost * qty;
     
     if (runState.coins >= totalCost) {
-      const isOwned = runState.relics.includes(item.type);
-      if (!isOwned && runState.relics.length >= 5) {
+      if (runState.relics.length >= MAX_SLOTS) {
         return; // No slots available
       }
       
-      const newRelics = isOwned ? runState.relics : [...runState.relics, item.type];
+      const newRelics = [...runState.relics, item.type];
       const currentCharges = (runState[`${item.type}Charges`] as number) || 0;
       
       updateRunState({ 
@@ -195,11 +194,11 @@ export default function StoryModeMerchant({
                 
                 <button 
                   onClick={handleReroll}
-                  disabled={!runState.relics.includes('reroll') || runState.rerollCharges <= 0 || isRerolling}
+                  disabled={runState.rerollCharges <= 0 || isRerolling}
                   className="flex items-center gap-1.5 text-xs font-mono px-2 py-1 rounded bg-brand-surface/50 border border-brand-border/50 text-brand-secondary hover:text-brand-text hover:border-brand-accent/50 transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
                 >
                   <RotateCcw className="w-3 h-3" />
-                  Reroll ({runState.relics.includes('reroll') ? runState.rerollCharges : 0}/3)
+                  Reroll ({runState.rerollCharges}/{getMaxCharges(runState, 'reroll')})
                 </button>
               </div>
 
@@ -210,11 +209,8 @@ export default function StoryModeMerchant({
                   const totalCost = item.cost * qty;
                   const canAfford = runState.coins >= totalCost;
                   const canAffordNext = runState.coins >= item.cost * (qty + 1);
-                  const isOwned = runState.relics.includes(item.type);
-                  const needsSlot = !isOwned;
                   const slotsFull = runState.relics.length >= MAX_SLOTS;
-                  const canFit = !(needsSlot && slotsFull);
-                  const canBuy = canAfford && canFit && !isPurchased;
+                  const canBuy = canAfford && !slotsFull && !isPurchased;
                   
                   return (
                     <motion.div 

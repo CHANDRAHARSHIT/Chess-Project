@@ -5,6 +5,11 @@ import type { StoryNode } from '../../data/storyModeMapData';
 
 export type RelicType = 'undo' | 'hint' | 'evalBar' | 'time' | 'reroll';
 
+export const getMaxCharges = (runState: RunState, type: RelicType) => {
+  // Base 3 charges, plus 1 for each relic of this type owned
+  return 3 + runState.relics.filter(r => r === type).length;
+};
+
 export interface RunState {
   coins: number;
   

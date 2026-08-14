@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Flame, ArrowRight, RotateCcw, Heart, Sparkles } from "lucide-react";
-import { useStoryModeRun } from "./StoryModeContext";
+import { useStoryModeRun, getMaxCharges } from "./StoryModeContext";
 import type { RelicType } from "./StoryModeContext";
 
 interface StoryModeRestSiteProps {
@@ -44,11 +44,11 @@ export default function StoryModeRestSite({
       reroll: runState.rerollCharges,
     };
     const max = {
-      undo: runState.relics.includes('undo') ? 3 : 0,
-      hint: runState.relics.includes('hint') ? 3 : 0,
-      evalBar: runState.relics.includes('evalBar') ? 3 : 0,
-      time: runState.relics.includes('time') ? 3 : 0,
-      reroll: runState.relics.includes('reroll') ? 3 : 0,
+      undo: getMaxCharges(runState, 'undo'),
+      hint: getMaxCharges(runState, 'hint'),
+      evalBar: getMaxCharges(runState, 'evalBar'),
+      time: getMaxCharges(runState, 'time'),
+      reroll: getMaxCharges(runState, 'reroll'),
     };
     const newRestores = { undo: 0, hint: 0, evalBar: 0, time: 0, reroll: 0 };
     
@@ -103,8 +103,9 @@ export default function StoryModeRestSite({
       updates.coins = runState.coins + foundCoins;
     }
     if (foundRelic) {
-      updates.relics = [...runState.relics, foundRelic];
-      updates[`${foundRelic}Charges`] = 3;
+      const newRelics = [...runState.relics, foundRelic];
+      updates.relics = newRelics;
+      updates[`${foundRelic}Charges`] = 3 + newRelics.filter(r => r === foundRelic).length;
     }
 
     updateRunState(updates);
@@ -118,11 +119,11 @@ export default function StoryModeRestSite({
 
   const renderRestoreRow = (label: string, key: keyof typeof restores) => {
     const currentCharge = runState[`${key}Charges` as keyof typeof runState] as number;
-    const maxCharge = runState.relics.includes(key as any) ? 3 : 0;
+    const maxCharge = getMaxCharges(runState, key as RelicType);
     const restored = restores[key];
     const newTotal = currentCharge + restored;
     
-    if (maxCharge === 0) return null; // Don't show if they don't own the relic
+    if (maxCharge === 0) return null;
 
     return (
       <div className="flex items-center justify-between w-full py-3 border-b border-brand-border/30 last:border-0">
