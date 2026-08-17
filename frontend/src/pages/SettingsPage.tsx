@@ -19,13 +19,13 @@ import {
   CreditCard,
   Check,
 } from "lucide-react";
-import { useBoardSettings } from "../hooks/useBoardSettings";
-import { BOARD_THEMES } from "../data/boardThemes";
-import { PIECE_SETS } from "../data/pieceSets";
-import BoardPreview from "../components/BoardPreview";
-import ProfileContent from "../components/ProfileContent";
-import { soundManager } from "../utils/SoundManager";
-import { useNavigationStack } from "../hooks/useNavigationStack";
+import { useBoardSettings } from "@/shared/appearance/useBoardSettings";
+import { BOARD_THEMES } from "@/shared/appearance/boardThemes";
+import { PIECE_SETS } from "@/shared/appearance/pieceSets";
+import BoardPreview from "@/shared/ui/BoardPreview";
+import ProfileContent from "@/features/account/ProfileContent";
+import { soundManager } from "@/shared/lib/SoundManager";
+import { useNavigationStack } from "@/app/navigation/useNavigationStack";
 
 type TabId = "boards" | "pieces" | "background" | "presets";
 

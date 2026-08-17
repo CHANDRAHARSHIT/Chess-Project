@@ -11,11 +11,11 @@ import {
   Info,
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router";
-import { useSession } from "../hooks/useSession";
-import { AuthModal } from "../components/AuthModal";
-import { PaymentService } from "../services/payment";
-import { usePricing } from "../hooks/usePricing";
-import rollbar from "../config/rollbar";
+import { useSession } from "@/features/account/useSession";
+import { AuthModal } from "@/features/account/AuthModal";
+import { PaymentService } from "@/features/billing/payment.service";
+import { usePricing } from "@/features/billing/usePricing";
+import rollbar from "@/shared/lib/rollbar";
 
 export default function CheckoutPage() {
   const navigate = useNavigate();
@@ -156,11 +156,11 @@ export default function CheckoutPage() {
         );
         setIsProcessing(false);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("[CheckoutPage] Payment redirect error:", error);
-      rollbar.error(error, { context: "CheckoutPage.handleUpgrade" });
+      rollbar.error(error instanceof Error ? error : new Error(String(error)), { context: "CheckoutPage.handleUpgrade" });
       setPaymentError(
-        error?.message ||
+        (error instanceof Error ? error.message : null) ||
           "An unexpected error occurred while establishing a secure billing session. Please try again.",
       );
       setIsProcessing(false);

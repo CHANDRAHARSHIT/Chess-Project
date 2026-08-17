@@ -21,15 +21,15 @@ import {
   AlertCircle,
   Image as ImageIcon,
 } from "lucide-react";
-import { useSession } from "../hooks/useSession";
+import { useSession } from "@/features/account/useSession";
 import {
   builderLessonService,
   type BuilderLessonData,
-} from "../services/builderLesson.service";
-import { AuthModal } from "../components/AuthModal";
-import { getNextUntitledTitle } from "../utils/lessonNaming";
-import { ThumbnailEditorModal } from "../components/lessons/ThumbnailEditorModal";
-import { ThumbnailComingSoonModal } from "../components/lessons/ThumbnailComingSoonModal";
+} from "@/features/lessons/builderLesson.service";
+import { AuthModal } from "@/features/account/AuthModal";
+import { getNextUntitledTitle } from "@/features/lessons/utils/lessonNaming";
+import { ThumbnailEditorModal } from "@/features/lessons/components/ThumbnailEditorModal";
+import { ThumbnailComingSoonModal } from "@/features/lessons/components/ThumbnailComingSoonModal";
 
 const TEMPLATES = [
   {

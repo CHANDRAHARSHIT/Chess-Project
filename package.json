@@ -34,7 +34,8 @@
   },
   "dependencies": {
     "@mui/icons-material": "^9.2.0",
-    "chess.js": "^1.4.0"
+    "chess.js": "^1.4.0",
+    "ws": "^8.21.3"
   },
   "allowScripts": {
     "@prisma/engines@7.8.0": true,

@@ -3,17 +3,17 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router";
 import "./index.css";
 import App from "./App.tsx";
-import { soundManager } from "./utils/SoundManager";
-import { SessionProvider } from "./context/SessionContext";
-import { BoardSettingsProvider } from "./context/BoardSettingsContext";
-import { NavigationStackProvider } from "./context/NavigationStackContext";
-import { MatchmakingProvider } from "./context/MatchmakingContext";
-import { GameSessionProvider } from "./context/GameSessionContext";
-import ScrollToTop from "./components/ScrollToTop";
-import RollbarFallback from "./components/RollbarFallback";
+import { soundManager } from "@/shared/lib/SoundManager";
+import { SessionProvider } from "@/features/account/SessionContext";
+import { BoardSettingsProvider } from "@/shared/appearance/BoardSettingsContext";
+import { NavigationStackProvider } from "@/app/navigation/NavigationStackContext";
+import { MatchmakingProvider } from "@/features/play/MatchmakingContext";
+import { GameSessionProvider } from "@/features/play/GameSessionContext";
+import ScrollToTop from "@/app/navigation/ScrollToTop";
+import RollbarFallback from "@/shared/ui/RollbarFallback";
 import { Provider as RollbarProvider, ErrorBoundary } from "@rollbar/react";
-import { ThemeProvider } from "./context/ThemeContext";
-import rollbar from "./config/rollbar";
+import { ThemeProvider } from "@/shared/appearance/ThemeContext";
+import rollbar from "@/shared/lib/rollbar";
 
 // Restore the user's saved sound preference before the first render.
 // This ensures no sounds fire in the wrong mute state during startup.

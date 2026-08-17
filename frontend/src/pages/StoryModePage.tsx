@@ -7,7 +7,7 @@
 
 import { motion } from "framer-motion";
 import { Swords, ArrowLeft } from "lucide-react";
-import StoryModeMap from "../components/story-mode/StoryModeMap";
+import StoryModeMap from "@/features/story-mode/StoryModeMap";
 import { useNavigate } from "react-router";
 
 export default function StoryModePage() {

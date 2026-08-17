@@ -14,9 +14,9 @@ import {
   Loader2,
   AlertCircle,
 } from "lucide-react";
-import { publicLessonService } from "../services/publicLesson.service";
-import type { BuilderLessonData } from "../services/builderLesson.service";
-import { ThemedChessboard } from "../components/ThemedChessboard";
+import { publicLessonService } from "@/features/lessons/publicLesson.service";
+import type { BuilderLessonData } from "@/features/lessons/builderLesson.service";
+import { ThemedChessboard } from "@/shared/ui/ThemedChessboard";
 
 export default function LessonViewerPage() {
   const navigate = useNavigate();

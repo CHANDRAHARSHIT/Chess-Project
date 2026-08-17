@@ -10,11 +10,11 @@ import {
   Rewind,
   Compass,
 } from "lucide-react";
-import { ThemedChessboard } from "../components/ThemedChessboard";
-import { BoardCoordinates } from "../components/BoardCoordinates";
+import { ThemedChessboard } from "@/shared/ui/ThemedChessboard";
+import { BoardCoordinates } from "@/shared/ui/BoardCoordinates";
 
-import { useStockfish } from "../hooks/useStockfish";
-import { MOCK_GAMES } from "../data/mockGames";
+import { useStockfish } from "@/shared/hooks/useStockfish";
+import { MOCK_GAMES } from "@/features/database/mockGames";
 
 type Tab = "Moves" | "Info";
 
@@ -27,7 +27,11 @@ export default function DatabaseGamePage() {
   const [currentMoveIndex, setCurrentMoveIndex] = useState(-1);
   const isAnalyzing = false; // Fixed to false as analysis toggle was removed
 
-  // Initialize chess instance and parse history
+  // Initialize chess instance and parse history.
+  // Intentionally depend on game?.pgn (the string actually consumed here) rather than the
+  // whole `game` object, so this doesn't re-parse the PGN if `game` is ever re-fetched with
+  // an unchanged pgn string.
+  // eslint-disable-next-line react-hooks/preserve-manual-memoization
   const { history } = useMemo(() => {
     const c = new Chess();
     if (game?.pgn) {
