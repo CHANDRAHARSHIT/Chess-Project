@@ -35,7 +35,7 @@ export default function Chess960Page() {
   };
 
   return (
-    
+
     <div className="
       flex flex-col gap-3 px-3 py-3 select-none
       lg:h-[calc(100vh-4rem)] lg:px-5 lg:py-4 lg:overflow-hidden
@@ -88,7 +88,7 @@ export default function Chess960Page() {
 
       <div className="flex flex-col gap-3 lg:flex-1 lg:min-h-0 lg:flex-row lg:items-start lg:gap-4">
 
-  
+
         <div className="w-full aspect-square lg:w-auto lg:h-full lg:aspect-square lg:shrink-0 flex flex-col">
           {/* Board fills the column; GameStatusBanner stacks below on both breakpoints */}
           <div className="flex-1 min-h-0">
@@ -121,9 +121,8 @@ export default function Chess960Page() {
           {game.status === 'playing' && (
             <div className="flex items-center justify-between px-3.5 py-2.5 lg:py-2 rounded-xl bg-brand-surface border border-brand-text/15 text-xs font-mono shrink-0">
               <div className="flex items-center gap-2">
-                <span className={`w-2.5 h-2.5 rounded-full transition-all ${
-                  game.turn === 'w' ? 'bg-white border border-neutral-300' : 'bg-neutral-800 border border-neutral-600'
-                }`} />
+                <span className={`w-2.5 h-2.5 rounded-full transition-all ${game.turn === 'w' ? 'bg-white border border-neutral-300' : 'bg-neutral-800 border border-neutral-600'
+                  }`} />
                 <span className="font-semibold text-brand-text">
                   {game.turn === 'w' ? 'White to Move' : 'Black to Move'}
                 </span>

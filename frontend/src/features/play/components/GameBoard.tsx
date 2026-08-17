@@ -71,9 +71,9 @@ export function GameBoard({
         : 'border-brand-text/15';
 
   return (
-    <div className="relative w-full h-full p-1 rounded-2xl bg-brand-surface border border-brand-text/15">
+    <div className="relative w-full h-full p-1 bg-brand-surface border border-brand-text/15">
       <div
-        className={`relative w-full aspect-square border bg-brand-surface rounded-xl overflow-hidden transition-all duration-300 ${borderClass}`}
+        className={`relative w-full aspect-square border bg-brand-surface overflow-hidden transition-all duration-300 ${borderClass}`}
       >
         <ThemedChessboard
           options={{
