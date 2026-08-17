@@ -67,14 +67,20 @@
   --eval-bar-border: rgba(255, 255, 255, 0.08);
 
   /* --- Shadows --- */
-  --shadow-gold: 0 0 12px rgba(212, 175, 110, 0.015), 0 1px 12px rgba(0, 0, 0, 0.6);
-  --shadow-deep: 0 32px 80px rgba(0, 0, 0, 0.5), 0 8px 24px rgba(0, 0, 0, 0.4);
-  --shadow-card: 0 2px 1px rgba(255, 255, 255, 0.03) inset, 0 24px 60px rgba(0, 0, 0, 0.45);
+  --shadow-gold: none;
+  --shadow-deep: none;
+  --shadow-card: none;
 
   /* --- Timing --- */
   --ease-luxury: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-cinematic: cubic-bezier(0.25, 0.46, 0.45, 0.94);
   --ease-precise: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* --- Motion durations (M5) — reused across every Play Online transition, never one-off --- */
+  --dur-instant: 120ms;
+  --dur-quick: 240ms;
+  --dur-settle: 400ms;
+  --dur-reveal: 800ms;
 
   /* --- RGB-triplet tokens --- */
   --obsidian-rgb: 8 11 20;
@@ -123,8 +129,8 @@
   --eval-bar-border: rgba(148, 92, 16, 0.55);
 
   /* --- Shadows --- */
-  --shadow-deep: 0 20px 48px -12px rgba(148, 92, 16, 0.20), 0 4px 16px rgba(0, 0, 0, 0.04);
-  --shadow-card: 0 10px 32px -8px rgba(148, 92, 16, 0.22), 0 2px 8px rgba(0, 0, 0, 0.03);
+  --shadow-deep: none;
+  --shadow-card: none;
 
   /* --- RGB-triplet tokens (light) --- */
   --obsidian-rgb: 250 246 240;
@@ -308,12 +314,12 @@ body {
 
 /* Dark mode: soft amber glow around the icon bubble */
 .coming-soon-icon {
-  box-shadow: 0 4px 24px rgba(212, 175, 110, 0.18), 0 1px 8px rgba(0, 0, 0, 0.4);
+  box-shadow: none;
 }
 
 /* Light mode: remove the downward glow that bleeds over the heading */
 :root[data-theme="light"] .coming-soon-icon {
-  box-shadow: 0 2px 8px rgba(148, 92, 16, 0.12), 0 1px 3px rgba(0, 0, 0, 0.06);
+  box-shadow: none;
 }
 
 /* ─────────────────────────────────────────────────────────────────────────── */
@@ -395,7 +401,7 @@ body {
   stroke-width: 0.5;
   opacity: 0;
   transition: opacity 0.8s ease;
-  filter: drop-shadow(0 0 12px rgba(212, 175, 110, 0.4));
+  filter: none;
 }
 
 .rook-highlight {
@@ -420,7 +426,7 @@ body {
   border-radius: 1px;
   width: 0%;
   transition: width 0.3s var(--ease-precise);
-  box-shadow: 0 0 8px var(--gold-glow);
+  box-shadow: none;
 }
 
 .loader-label {
@@ -458,13 +464,13 @@ body {
   backdrop-filter: saturate(180%) blur(24px);
   -webkit-backdrop-filter: saturate(180%) blur(24px);
   border-bottom: 1px solid var(--marble-line);
-  box-shadow: 0 1px 0 rgba(212, 175, 110, 0.05), 0 4px 32px rgba(0, 0, 0, 0.3);
-  transition: background 0.4s ease, box-shadow 0.4s ease;
+  box-shadow: none;
+  transition: background 0.4s ease;
 }
 
 .navbar-luxury.scrolled {
   background: rgba(8, 11, 20, 0.95);
-  box-shadow: 0 1px 0 rgba(212, 175, 110, 0.08), 0 8px 40px rgba(0, 0, 0, 0.5);
+  box-shadow: none;
 }
 
 /* Premium nav link — gold underline */
@@ -518,7 +524,7 @@ body {
 .btn-premium-cta:hover {
   background: linear-gradient(135deg, rgba(212, 175, 110, 0.22) 0%, rgba(212, 175, 110, 0.12) 100%);
   border-color: var(--marble-border-strong);
-  box-shadow: 0 0 20px var(--gold-whisper), inset 0 1px 0 rgba(212, 175, 110, 0.1);
+  box-shadow: none;
 }
 
 .btn-premium-cta:hover::before {
@@ -541,7 +547,7 @@ body {
 :root[data-theme="light"] .btn-premium-cta:hover {
   background: #33302B !important;
   border-color: #33302B !important;
-  box-shadow: 0 4px 14px rgba(28, 25, 23, 0.22);
+  box-shadow: none;
 }
 
 /* ── Gold CTA buttons (marker classes) ───────────────────────────────────────
@@ -670,10 +676,10 @@ body {
   border: 1px solid var(--glass-border-gold);
   border-radius: 2px;
   overflow: hidden;
-  box-shadow: var(--shadow-card);
+  box-shadow: none;
   backdrop-filter: var(--glass-blur);
   transform-style: preserve-3d;
-  transition: border-color 0.4s ease, box-shadow 0.4s ease, background-color 0.4s ease;
+  transition: border-color 0.4s ease, background-color 0.4s ease;
   will-change: transform;
 }
 
@@ -707,10 +713,7 @@ body {
 
 .luxury-card:hover {
   border-color: rgba(212, 175, 110, 0.28);
-  box-shadow:
-    var(--shadow-card),
-    0 0 40px rgba(212, 175, 110, 0.06),
-    inset 0 1px 0 rgba(212, 175, 110, 0.05);
+  box-shadow: none;
 }
 
 .luxury-card:hover::after {
@@ -779,7 +782,7 @@ body {
 .luxury-card:hover .feature-icon-box {
   background: linear-gradient(135deg, rgba(212, 175, 110, 0.15), rgba(212, 175, 110, 0.06));
   border-color: rgba(212, 175, 110, 0.28);
-  box-shadow: 0 0 16px rgba(212, 175, 110, 0.08);
+  box-shadow: none;
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -862,7 +865,7 @@ body {
   border: 1px solid var(--glass-border-gold);
   border-radius: 2px;
   overflow: hidden;
-  box-shadow: var(--shadow-card);
+  box-shadow: none;
   backdrop-filter: var(--glass-blur);
 }
 
@@ -908,7 +911,7 @@ body {
   position: absolute;
   font-family: 'DM Mono', monospace;
   color: rgba(212, 175, 110, 0.25);
-  text-shadow: 0 0 6px rgba(212, 175, 110, 0.15);
+  text-shadow: none;
   user-select: none;
   pointer-events: none;
   animation: particle-float linear infinite;
@@ -1045,11 +1048,11 @@ body {
 
   0%,
   100% {
-    box-shadow: 0 0 20px 0px rgba(212, 175, 110, 0.15);
+    box-shadow: none;
   }
 
   50% {
-    box-shadow: 0 0 32px 4px rgba(212, 175, 110, 0.3);
+    box-shadow: none;
   }
 }
 
@@ -1149,15 +1152,15 @@ body {
 
   0%,
   100% {
-    box-shadow: 0 0 0px 0px rgba(212, 175, 110, 0);
+    box-shadow: none;
   }
 
   25% {
-    box-shadow: 0 0 40px 12px rgba(212, 175, 110, 0.5);
+    box-shadow: none;
   }
 
   75% {
-    box-shadow: 0 0 60px 20px rgba(212, 175, 110, 0.35);
+    box-shadow: none;
   }
 }
 
@@ -1252,10 +1255,7 @@ body {
   border-radius: 2px;
   background: rgba(12, 16, 32, 0.85);
   border: 1px solid rgba(212, 175, 110, 0.25);
-  box-shadow:
-    0 0 0 1px rgba(212, 175, 110, 0.1),
-    0 8px 40px rgba(0, 0, 0, 0.6),
-    0 0 60px rgba(212, 175, 110, 0.08);
+  box-shadow: none;
   backdrop-filter: blur(12px);
 }
 
@@ -1278,12 +1278,12 @@ body {
   0%,
   100% {
     background-color: rgba(239, 68, 68, 0.3);
-    box-shadow: inset 0 0 10px rgba(239, 68, 68, 0.5);
+    box-shadow: none;
   }
 
   50% {
     background-color: rgba(239, 68, 68, 0.65);
-    box-shadow: inset 0 0 28px rgba(239, 68, 68, 0.9), 0 0 20px rgba(239, 68, 68, 0.4);
+    box-shadow: none;
   }
 }
 
@@ -1312,14 +1312,14 @@ body {
 
 [data-testid^="piece-"]:hover {
   transform: translateY(-3px) scale(1.08);
-  filter: drop-shadow(0 6px 12px rgba(212, 175, 110, 0.35));
+  filter: none;
   z-index: 100;
 }
 
 [data-testid^="piece-"]:active {
   cursor: grabbing;
   transform: translateY(-6px) scale(1.12);
-  filter: drop-shadow(0 10px 20px rgba(212, 175, 110, 0.5));
+  filter: none;
 }
 
 /* Smooth piece slide */
@@ -1374,7 +1374,7 @@ body {
 :where([data-testid^="piece-"]):hover {
   --lift-y: -5px;
   --mag-scale: 1.1;
-  filter: drop-shadow(0 8px 16px rgba(212, 175, 110, 0.4));
+  filter: none;
   z-index: 100;
 }
 
@@ -1382,7 +1382,7 @@ body {
   cursor: grabbing;
   --lift-y: -9px;
   --mag-scale: 1.15;
-  filter: drop-shadow(0 12px 24px rgba(212, 175, 110, 0.5));
+  filter: none;
 }
 
 /* 60fps guarantee */
@@ -1426,12 +1426,12 @@ body {
   0%,
   100% {
     transform: translateZ(20px) rotateX(-55deg) rotateZ(45deg) translateY(-6px);
-    filter: drop-shadow(0 6px 6px rgba(0, 0, 0, 0.65));
+    filter: none;
   }
 
   50% {
     transform: translateZ(28px) rotateX(-55deg) rotateZ(45deg) translateY(-12px);
-    filter: drop-shadow(0 14px 12px rgba(0, 0, 0, 0.45));
+    filter: none;
   }
 }
 
@@ -1440,12 +1440,12 @@ body {
   0%,
   100% {
     transform: translateZ(24px) rotateX(-55deg) rotateZ(45deg) translateY(-12px);
-    filter: drop-shadow(0 12px 10px rgba(0, 0, 0, 0.5));
+    filter: none;
   }
 
   50% {
     transform: translateZ(32px) rotateX(-55deg) rotateZ(45deg) translateY(-6px);
-    filter: drop-shadow(0 8px 8px rgba(0, 0, 0, 0.6));
+    filter: none;
   }
 }
 
@@ -1457,8 +1457,8 @@ body {
 
 /* Checkmate badge inner */
 .checkmate-badge-inner {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: none;
+  transition: border-color 0.3s ease;
   will-change: transform, opacity, background-color;
   border: 1.5px solid rgba(212, 175, 110, 0.2);
 }
@@ -1473,7 +1473,7 @@ body {
   transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1), filter 0.8s ease;
   transform: rotate(90deg);
   transform-origin: center;
-  filter: drop-shadow(0 0 5px rgba(239, 68, 68, 0.85)) sepia(1) saturate(12) hue-rotate(-50deg) brightness(0.7) contrast(1.1);
+  filter: sepia(1) saturate(12) hue-rotate(-50deg) brightness(0.7) contrast(1.1);
 }
 
 .king-winning-container {
@@ -1483,7 +1483,7 @@ body {
   align-items: center;
   justify-content: center;
   transition: filter 0.8s ease;
-  filter: drop-shadow(0 0 5px rgba(34, 197, 94, 0.85)) sepia(1) saturate(12) hue-rotate(70deg) brightness(0.8) contrast(1.1);
+  filter: sepia(1) saturate(12) hue-rotate(70deg) brightness(0.8) contrast(1.1);
 }
 
 .piece-normal-container {
@@ -1550,7 +1550,7 @@ body {
   border-radius: 2px;
   background: var(--glass-bg);
   border: 1px solid var(--glass-border-gold);
-  box-shadow: var(--shadow-card);
+  box-shadow: none;
   backdrop-filter: blur(28px);
 }
 
@@ -1595,7 +1595,7 @@ body {
 
 .contact-label span {
   color: var(--gold-bright);
-  text-shadow: 0 0 12px rgba(212, 175, 110, 0.4);
+  text-shadow: none;
 }
 
 .contact-input,
@@ -1609,7 +1609,7 @@ body {
   font: inherit;
   font-size: 15px;
   outline: none;
-  transition: border-color 200ms ease, box-shadow 200ms ease, background-color 200ms ease;
+  transition: border-color 200ms ease, background-color 200ms ease;
   box-sizing: border-box;
 }
 
@@ -1631,9 +1631,7 @@ body {
 .contact-input:focus,
 .contact-textarea:focus {
   border-color: rgba(212, 175, 110, 0.55);
-  box-shadow:
-    0 0 0 3px rgba(212, 175, 110, 0.1),
-    0 0 20px rgba(212, 175, 110, 0.08);
+  box-shadow: none;
 }
 
 .contact-input.error,
@@ -1663,7 +1661,7 @@ body {
 .contact-btn:hover {
   background: linear-gradient(135deg, rgba(212, 175, 110, 0.22) 0%, rgba(212, 175, 110, 0.12) 100%);
   border-color: var(--marble-border-strong);
-  box-shadow: 0 0 20px var(--gold-whisper), inset 0 1px 0 rgba(212, 175, 110, 0.1);
+  box-shadow: none;
   transform: translateY(-2px);
 }
 
@@ -1775,26 +1773,66 @@ body {
 
   0%,
   100% {
-    box-shadow:
-      0 0 0 1px rgba(212, 175, 110, 0.15),
-      0 32px 80px rgba(0, 0, 0, 0.6),
-      0 4px 20px rgba(0, 0, 0, 0.4),
-      inset 0 1px 0 rgba(212, 175, 110, 0.06);
+    box-shadow: none;
     border-color: rgba(212, 175, 110, 0.15);
   }
 
   50% {
-    box-shadow:
-      0 0 35px 8px rgba(212, 175, 110, 0.9),
-      0 32px 80px rgba(0, 0, 0, 0.8),
-      0 4px 25px rgba(212, 175, 110, 0.35),
-      inset 0 1px 0 rgba(212, 175, 110, 0.2);
+    box-shadow: none;
     border-color: rgba(212, 175, 110, 0.95);
   }
 }
 
 .highlight-glow-active {
   animation: highlight-puzzle-glow 0.7s ease-in-out 3;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   PLAY ONLINE (M5) — the clock is the turn indicator ("Flagfall")
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* Below 10s: a 1px hairline sweeps the clock plate once a second — the same
+   gradient idiom as .hero-rule / .nav-link::after, just animated. */
+.clock-flag-sweep {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-bright), transparent);
+  animation: clock-flag-sweep 1s linear infinite;
+}
+
+@keyframes clock-flag-sweep {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Flagfall — the clock plate inverts and freezes when a side's time reaches 0. */
+.clock-plate--flagged {
+  background: rgba(225, 29, 72, 0.15) !important;
+  border-color: rgba(225, 29, 72, 0.5) !important;
+  color: #f43f5e !important;
+}
+
+/* Match-found → live board handoff, and the result reveal growing out of the board. */
+@keyframes reveal-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.reveal-in {
+  animation: reveal-in var(--dur-reveal) var(--ease-luxury) forwards;
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -1838,18 +1876,44 @@ body {
     transform: none !important;
     filter: none !important;
   }
+
+  /* Flag sweep becomes a static full-width depleting bar — the urgency information
+     (granularity + inversion) survives; only the animated motion is removed. */
+  .clock-flag-sweep {
+    animation: none !important;
+    transform: none !important;
+    width: 100%;
+  }
+
+  .reveal-in {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }
 
 /* Board preview hover popover — fade-in on fresh mount */
 @keyframes board-preview-fadein {
-  from { opacity: 0; transform: scale(0.95); }
-  to   { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   @keyframes board-preview-fadein {
-    from { opacity: 0; }
-    to   { opacity: 1; }
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
   }
 }
 

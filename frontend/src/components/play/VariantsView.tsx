@@ -1,6 +1,13 @@
+/**
+ * VariantsView.tsx
+ *
+ * Renders the full variant browser (search, tab filter, VariantCard grid) as a
+ * tab view inside the Play Hub. Extracted from VariantsPage.tsx — all data,
+ * state, and layout logic is unchanged.
+ */
 import { useState, useMemo } from 'react';
 import { Search, X, Dices, Sparkles, Flame, ShieldAlert, Cpu, Trophy, Zap } from 'lucide-react';
-import { VariantCard, type VariantCardProps } from '../components/play/VariantCard';
+import { VariantCard, type VariantCardProps } from './VariantCard';
 
 const VARIANTS_LIST: VariantCardProps[] = [
   {
@@ -49,17 +56,15 @@ const VARIANTS_LIST: VariantCardProps[] = [
   },
 ];
 
-export default function VariantsPage() {
+export function VariantsView() {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState<'all' | 'playable' | 'lab'>('all');
 
   const filteredVariants = useMemo(() => {
     return VARIANTS_LIST.filter((v) => {
-      // Tab filter
       if (activeTab === 'playable' && !v.isPlayable) return false;
       if (activeTab === 'lab' && v.isPlayable) return false;
 
-      // Text query search
       const q = searchQuery.toLowerCase().trim();
       if (!q) return true;
 
@@ -78,14 +83,14 @@ export default function VariantsPage() {
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-72 bg-gradient-radial from-brand-accent/15 via-brand-accent/5 to-transparent blur-3xl pointer-events-none -z-10" />
 
       {/* Hero Header Section */}
-      <div className="relative rounded-3xl bg-brand-surface/60 border border-white/10 p-6 sm:p-10 shadow-2xl backdrop-blur-2xl space-y-6 overflow-hidden">
+      <div className="relative rounded-3xl bg-brand-surface border border-brand-text/15 p-6 sm:p-10 backdrop-blur-2xl space-y-6 overflow-hidden">
         {/* Subtle Decorative Pattern */}
         <div className="absolute -right-10 -bottom-10 opacity-5 pointer-events-none text-brand-accent">
           <Dices className="w-80 h-80 stroke-[1]" />
         </div>
 
         <div className="space-y-4 max-w-3xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-accent/15 text-brand-accent font-mono text-[11px] uppercase tracking-widest font-bold shadow-sm">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-accent/15 text-brand-accent font-mono text-[11px] uppercase tracking-widest font-bold border border-brand-accent/30">
             <Sparkles className="w-3.5 h-3.5 animate-pulse" />
             <span>Chess Reinvented • Infinite Strategy</span>
           </div>
@@ -94,14 +99,14 @@ export default function VariantsPage() {
             Explore <span className="bg-gradient-to-r from-amber-200 via-amber-400 to-amber-100 bg-clip-text text-transparent">Chess Variants</span>
           </h1>
 
-          <p className="text-sm sm:text-base text-brand-secondary/90 leading-relaxed font-sans max-w-2xl">
+          <p className="text-sm sm:text-base text-brand-secondary leading-relaxed font-sans max-w-2xl">
             Escape memorized opening theory. Play Fischer Random (Chess 960) with randomized back-ranks, stockfish engine bots, and upcoming tactical modes built for pure skill.
           </p>
         </div>
 
         {/* Feature Metrics Banner */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-white/10 font-mono text-xs">
-          <div className="p-3 rounded-2xl bg-brand-bg/60 border border-white/5 flex items-center gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-brand-text/10 font-mono text-xs">
+          <div className="p-3 rounded-2xl bg-brand-text/5 border border-brand-text/10 flex items-center gap-3">
             <Zap className="w-4 h-4 text-brand-accent shrink-0" />
             <div>
               <p className="text-brand-text font-bold">960 Setups</p>
@@ -109,7 +114,7 @@ export default function VariantsPage() {
             </div>
           </div>
 
-          <div className="p-3 rounded-2xl bg-brand-bg/60 border border-white/5 flex items-center gap-3">
+          <div className="p-3 rounded-2xl bg-brand-text/5 border border-brand-text/10 flex items-center gap-3">
             <Cpu className="w-4 h-4 text-emerald-400 shrink-0" />
             <div>
               <p className="text-brand-text font-bold">Stockfish Bot</p>
@@ -117,7 +122,7 @@ export default function VariantsPage() {
             </div>
           </div>
 
-          <div className="p-3 rounded-2xl bg-brand-bg/60 border border-white/5 flex items-center gap-3">
+          <div className="p-3 rounded-2xl bg-brand-text/5 border border-brand-text/10 flex items-center gap-3">
             <Trophy className="w-4 h-4 text-amber-400 shrink-0" />
             <div>
               <p className="text-brand-text font-bold">No Book Theory</p>
@@ -125,7 +130,7 @@ export default function VariantsPage() {
             </div>
           </div>
 
-          <div className="p-3 rounded-2xl bg-brand-bg/60 border border-white/5 flex items-center gap-3">
+          <div className="p-3 rounded-2xl bg-brand-text/5 border border-brand-text/10 flex items-center gap-3">
             <Flame className="w-4 h-4 text-rose-400 shrink-0" />
             <div>
               <p className="text-brand-text font-bold">More Coming</p>
@@ -138,7 +143,7 @@ export default function VariantsPage() {
       {/* Control Bar: Search & Category Filter */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
         {/* Category Tabs */}
-        <div className="grid grid-cols-3 sm:flex items-center gap-1 sm:gap-1.5 p-1 rounded-2xl bg-brand-surface/60 border border-white/5 backdrop-blur-md w-full sm:w-auto">
+        <div className="grid grid-cols-3 sm:flex items-center gap-1 sm:gap-1.5 p-1 rounded-2xl bg-brand-surface border border-brand-text/15 backdrop-blur-md w-full sm:w-auto">
           {(
             [
               { id: 'all', label: 'All Variants' },
@@ -151,8 +156,8 @@ export default function VariantsPage() {
               onClick={() => setActiveTab(tab.id)}
               className={`px-2 sm:px-4 py-2 rounded-xl text-[11px] sm:text-xs font-mono font-bold transition-all duration-200 cursor-pointer flex items-center justify-center text-center truncate ${
                 activeTab === tab.id
-                  ? 'bg-brand-accent text-black shadow-md shadow-brand-accent/20'
-                  : 'text-brand-secondary hover:text-brand-text hover:bg-brand-surface/60'
+                  ? 'bg-brand-accent text-black'
+                  : 'text-brand-secondary hover:text-brand-text hover:bg-brand-text/5'
               }`}
             >
               {tab.label}
@@ -168,7 +173,7 @@ export default function VariantsPage() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search variants..."
-            className="w-full pl-10 pr-10 py-2.5 text-xs font-mono rounded-2xl outline-none transition-all duration-200 placeholder:text-brand-secondary/50 bg-brand-surface/60 border border-white/5 text-brand-text focus:border-brand-accent/40 backdrop-blur-md shadow-sm"
+            className="w-full pl-10 pr-10 py-2.5 text-xs font-mono rounded-2xl outline-none transition-all duration-200 placeholder:text-brand-secondary/50 bg-brand-surface border border-brand-text/15 text-brand-text focus:border-brand-accent/40 backdrop-blur-md"
           />
           {searchQuery && (
             <button
@@ -200,4 +205,3 @@ export default function VariantsPage() {
     </div>
   );
 }
-

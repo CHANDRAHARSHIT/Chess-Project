@@ -7,6 +7,8 @@ import { soundManager } from "./utils/SoundManager";
 import { SessionProvider } from "./context/SessionContext";
 import { BoardSettingsProvider } from "./context/BoardSettingsContext";
 import { NavigationStackProvider } from "./context/NavigationStackContext";
+import { MatchmakingProvider } from "./context/MatchmakingContext";
+import { GameSessionProvider } from "./context/GameSessionContext";
 import ScrollToTop from "./components/ScrollToTop";
 import RollbarFallback from "./components/RollbarFallback";
 import { Provider as RollbarProvider, ErrorBoundary } from "@rollbar/react";
@@ -36,13 +38,17 @@ createRoot(document.getElementById("root")!).render(
         <BrowserRouter>
           <ScrollToTop />
           <SessionProvider>
-            <BoardSettingsProvider>
-              <ThemeProvider>
-                <NavigationStackProvider>
-                  <App />
-                </NavigationStackProvider>
-              </ThemeProvider>
-            </BoardSettingsProvider>
+            <MatchmakingProvider>
+              <GameSessionProvider>
+                <BoardSettingsProvider>
+                  <ThemeProvider>
+                    <NavigationStackProvider>
+                      <App />
+                    </NavigationStackProvider>
+                  </ThemeProvider>
+                </BoardSettingsProvider>
+              </GameSessionProvider>
+            </MatchmakingProvider>
           </SessionProvider>
         </BrowserRouter>
       </ErrorBoundary>

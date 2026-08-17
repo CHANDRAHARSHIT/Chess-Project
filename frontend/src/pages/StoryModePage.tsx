@@ -29,12 +29,7 @@ export default function StoryModePage() {
 
       <main className="flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 py-12 sm:py-10">
         {/* Header */}
-        <motion.div
-          className="flex flex-col items-center gap-4 mb-8 text-center"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
+        <div className="flex flex-col items-center gap-4 mb-8 text-center">
           {/* Icon */}
           <motion.div
             className="w-14 h-14 rounded-full bg-brand-accent/8 border border-brand-accent/20 flex items-center justify-center"
@@ -57,7 +52,7 @@ export default function StoryModePage() {
 
           {/* Decorative divider */}
           <div className="w-32 h-px bg-gradient-to-r from-transparent via-brand-accent/30 to-transparent" />
-        </motion.div>
+        </div>
 
         {/* Map */}
         <StoryModeProvider>

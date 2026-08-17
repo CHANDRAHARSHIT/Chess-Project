@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { env } from "../config/env.js";
-import rollbar from "../config/rollbar.js";
+import { reportError } from "../observability/index.js";
 
 export interface CustomError extends Error {
   statusCode?: number;
@@ -20,10 +20,15 @@ export function errorHandler(
     console.error(err.stack);
   }
 
-  // Report server errors (5xx) to Rollbar; skip client errors (4xx) intentionally.
-  if (statusCode >= 500) {
-    rollbar.error(err, req);
-  }
+  // Report to Rollbar. No-op when ROLLBAR_TOKEN is absent (local dev, CI).
+  // 5xx errors are treated as fatal (infrastructure/code failures).
+  // 4xx errors are non-fatal (client mistakes — informational only).
+  reportError({
+    domain: "http",
+    error: err,
+    fatal: statusCode >= 500,
+    context: { statusCode, method: req.method, path: req.path },
+  });
 
   res.status(statusCode).json({
     status: "error",

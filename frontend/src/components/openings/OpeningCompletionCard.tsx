@@ -21,7 +21,7 @@ export function OpeningCompletionCard({
 }: OpeningCompletionCardProps) {
   return (
     <div
-      className="w-full max-w-[480px] sm:max-w-[520px] rounded-2xl p-8 flex flex-col items-center gap-6 text-center bg-brand-surface/85 border border-emerald-500/25 shadow-[0_0_40px_rgba(52,211,153,0.06)] shadow-black/10 dark:shadow-black/50"
+      className="w-full max-w-[480px] sm:max-w-[520px] rounded-2xl p-8 flex flex-col items-center gap-6 text-center bg-brand-surface/85 border border-emerald-500/25"
     >
       {/* Success icon */}
       <div

@@ -11,7 +11,9 @@ import { pricingRouter } from "./routes/pricing.route.js";
 
 import { puzzleRouter } from "./routes/puzzle.route.js";
 import { openingRouter } from "./routes/opening.route.js";
+import { matchmakingRouter } from "./matchmaking/index.js";
 import { pathwayProgressRouter } from "./routes/pathway-progress.route.js";
+import { gamesRouter } from "./routes/games.route.js";
 import { errorHandler } from "./middleware/error.middleware.js";
 
 const app = express();
@@ -86,7 +88,9 @@ app.use("/api/pricing", pricingRouter);
 
 app.use("/api/puzzles", puzzleRouter);
 app.use("/api/openings", openingRouter);
+app.use("/api/matchmaking", matchmakingRouter);
 app.use("/api/pathway-progress", pathwayProgressRouter);
+app.use("/api/games", gamesRouter);
 
 // Catch-all centralized error handler
 app.use(errorHandler);

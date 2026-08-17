@@ -36,9 +36,8 @@ export default {
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
-        display: ['Playfair Display', 'Georgia', 'serif'],
-        mono: ['DM Mono', 'Courier New', 'monospace'],
         display: ['Cormorant Garamond', 'Georgia', 'serif'],
+        mono: ['DM Mono', 'Courier New', 'monospace'],
       },
     },
   },

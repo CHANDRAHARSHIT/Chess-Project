@@ -104,10 +104,8 @@ export const MoreMenu: React.FC = () => {
           role="menu"
           aria-label="More options menu"
           aria-orientation="vertical"
-          className="absolute right-0 mt-2 w-52 rounded-xl border border-brand-border bg-brand-surface py-1.5 shadow-2xl animate-in fade-in slide-in-from-top-2 duration-150"
-          style={{
-            boxShadow: '0 8px 32px rgba(0,0,0,0.85), 0 0 0 1px rgba(212,175,110,0.10)',
-          }}
+          className="absolute right-0 mt-2 w-52 rounded-xl border border-brand-border bg-brand-surface py-1.5 animate-in fade-in slide-in-from-top-2 duration-150"
+          style={{}}
         >
           {activeMenu === "main" && (
             <>
