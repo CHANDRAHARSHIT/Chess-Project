@@ -13,14 +13,14 @@
  */
 import { useState } from "react";
 import { useSearchParams } from "react-router";
-import { PlayTabBar, type PlayTab } from "../components/play/PlayTabBar";
-import { QuickGameView } from "../components/play/QuickGameView";
-import { PlayOnlineView } from "../components/play/PlayOnlineView";
-import { VariantsView } from "../components/play/VariantsView";
-import { LeaveGameConfirmModal } from "../components/play/LeaveGameConfirmModal";
-import { ProtectedRoute } from "../components/ProtectedRoute";
-import { useGameSession } from "../hooks/useGameSession";
-import { useMatchmaking } from "../hooks/useMatchmaking";
+import { PlayTabBar, type PlayTab } from "@/features/play/components/PlayTabBar";
+import { QuickGameView } from "@/features/play/components/QuickGameView";
+import { PlayOnlineView } from "@/features/play/components/PlayOnlineView";
+import { VariantsView } from "@/features/play/components/VariantsView";
+import { LeaveGameConfirmModal } from "@/features/play/components/LeaveGameConfirmModal";
+import { ProtectedRoute } from "@/features/account/ProtectedRoute";
+import { useGameSession } from "@/features/play/useGameSession";
+import { useMatchmaking } from "@/features/play/useMatchmaking";
 
 const VALID_TABS: PlayTab[] = ["quick", "online", "variants"];
 
