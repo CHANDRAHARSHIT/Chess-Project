@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect, useMemo } from "react";
 import { Chess } from "chess.js";
 import { PuzzleBoard } from "./PuzzleBoard";
 import { PuzzleApiService } from "../services/puzzle.service";
+import { FALLBACK_PUZZLES } from "../data/fallbackPuzzles";
 import type { CuratedPuzzle } from "../types/puzzle";
 import type { PuzzleFilters } from "../types/puzzle";
 import type { ChessPuzzle } from "../utils/PuzzleLoader";
@@ -86,7 +87,8 @@ export function CustomPuzzleSession({ filters, onExit }: CustomPuzzleSessionProp
         const data = await PuzzleApiService.getPuzzles(filters);
         if (cancelled) return;
         if (data.length === 0) {
-          setError("No puzzles found for the selected filters. Try adjusting your rating range or themes.");
+          const shuffled = [...FALLBACK_PUZZLES].sort(() => 0.5 - Math.random());
+          setPuzzles(shuffled.slice(0, 5));
         } else {
           setPuzzles(data);
         }
