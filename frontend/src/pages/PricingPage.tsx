@@ -20,11 +20,11 @@ import {
   BookMarked,
   X,
 } from "lucide-react";
-import { usePricing } from "../hooks/usePricing";
-import type { PricingResponse } from "../services/pricingApi";
+import { usePricing } from "@/features/billing/usePricing";
+import type { PricingResponse } from "@/features/billing/pricing.service";
 import { useNavigate, useLocation } from "react-router";
-import { useNavigationStack } from "../hooks/useNavigationStack";
-import { MembershipFeaturesSection } from "../components/pricing/MembershipFeaturesSection";
+import { useNavigationStack } from "@/app/navigation/useNavigationStack";
+import { MembershipFeaturesSection } from "@/features/billing/MembershipFeaturesSection";
 
 // ─── Decorative floating chess pieces ──────────────────────────────────────────
 const PieceSvg: React.FC<{

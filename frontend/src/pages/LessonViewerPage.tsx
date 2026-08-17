@@ -48,7 +48,7 @@ const LESSON_SEGMENTS: Segment[] = [
 
 export default function LessonViewerPage() {
   const navigate = useNavigate();
-  const { id: _id } = useParams();
+  const { id: _id } = useParams(); // eslint-disable-line @typescript-eslint/no-unused-vars -- reserved for future route use
 
   const [unlockedSegmentsCount, setUnlockedSegmentsCount] = useState<number>(1);
   const [activeSegmentIndex, setActiveSegmentIndex] = useState<number>(0);

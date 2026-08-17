@@ -31,4 +31,4 @@ backend/supabase
 *.sw?
 *.env
 /src/generated/prisma
-
+.claude
