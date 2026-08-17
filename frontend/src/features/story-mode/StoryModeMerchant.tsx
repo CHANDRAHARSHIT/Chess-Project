@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Coins, ArrowRight, RotateCcw, Package, ShoppingBag, Sparkles } from "lucide-react";
-import { useStoryModeRun, getMaxCharges } from "./StoryModeContext";
+import { useStoryModeRun, MAX_RELIC_CHARGES } from "./StoryModeContext";
 import type { RelicType } from "./StoryModeContext";
 
 interface StoryModeMerchantProps {
@@ -88,20 +88,27 @@ export default function StoryModeMerchant({
 
   const handlePurchase = (item: ShopItem) => {
     const qty = quantities[item.id] || 1;
-    const totalCost = item.cost * qty;
+    const currentCharges = (runState[`${item.type}Charges`] as number) || 0;
+    
+    // Prevent exceeding max charges (5)
+    const actualQty = Math.min(qty, MAX_RELIC_CHARGES - currentCharges);
+    if (actualQty <= 0) return;
+
+    const totalCost = item.cost * actualQty;
     
     if (runState.coins >= totalCost) {
-      if (runState.relics.length >= MAX_SLOTS) {
-        return; // No slots available
+      if (!runState.relics.includes(item.type) && runState.relics.length >= MAX_SLOTS) {
+        return; // No slots available for a new relic
       }
       
-      const newRelics = [...runState.relics, item.type];
-      const currentCharges = (runState[`${item.type}Charges`] as number) || 0;
+      const newRelics = runState.relics.includes(item.type) 
+        ? runState.relics 
+        : [...runState.relics, item.type];
       
       updateRunState({ 
         coins: runState.coins - totalCost,
         relics: newRelics,
-        [`${item.type}Charges`]: currentCharges + qty
+        [`${item.type}Charges`]: currentCharges + actualQty
       });
       setPurchasedIds(prev => new Set([...prev, item.id]));
     }
@@ -109,10 +116,18 @@ export default function StoryModeMerchant({
 
   const handleSell = (type: RelicType) => {
     const sellPrice = 25; // fixed sell price
+    const newRelics = [...runState.relics];
+    const idx = newRelics.indexOf(type);
+    if (idx > -1) {
+      newRelics.splice(idx, 1);
+    }
+    
+    const currentCharges = (runState[`${type}Charges`] as number) || 0;
+
     updateRunState({ 
-      relics: runState.relics.filter(r => r !== type), 
+      relics: newRelics, 
       coins: runState.coins + sellPrice,
-      [`${type}Charges`]: 0
+      [`${type}Charges`]: Math.max(0, currentCharges - 1)
     });
   };
 
@@ -198,7 +213,7 @@ export default function StoryModeMerchant({
                   className="flex items-center gap-1.5 text-xs font-mono px-2 py-1 rounded bg-brand-surface/50 border border-brand-border/50 text-brand-secondary hover:text-brand-text hover:border-brand-accent/50 transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
                 >
                   <RotateCcw className="w-3 h-3" />
-                  Reroll ({runState.rerollCharges}/{getMaxCharges(runState, 'reroll')})
+                  Reroll ({runState.rerollCharges}/{MAX_RELIC_CHARGES})
                 </button>
               </div>
 
@@ -206,11 +221,13 @@ export default function StoryModeMerchant({
                 {offerings.map((item, idx) => {
                   const isPurchased = purchasedIds.has(item.id);
                   const qty = quantities[item.id] || 1;
+                  const currentCharges = (runState[`${item.type}Charges`] as number) || 0;
                   const totalCost = item.cost * qty;
                   const canAfford = runState.coins >= totalCost;
                   const canAffordNext = runState.coins >= item.cost * (qty + 1);
-                  const slotsFull = runState.relics.length >= MAX_SLOTS;
-                  const canBuy = canAfford && !slotsFull && !isPurchased;
+                  const slotsFull = !runState.relics.includes(item.type) && runState.relics.length >= MAX_SLOTS;
+                  const maxBuyable = MAX_RELIC_CHARGES - currentCharges;
+                  const canBuy = canAfford && !slotsFull && !isPurchased && maxBuyable > 0;
                   
                   return (
                     <motion.div 
@@ -252,7 +269,7 @@ export default function StoryModeMerchant({
                             </span>
                             <button 
                               onClick={() => handleQuantityChange(item.id, 1)}
-                              disabled={!canAffordNext}
+                              disabled={!canAffordNext || qty >= maxBuyable}
                               className="w-6 h-6 flex items-center justify-center rounded bg-brand-surface hover:bg-brand-surface/80 text-brand-secondary disabled:opacity-30 disabled:cursor-not-allowed transition-all"
                             >
                               +
@@ -269,7 +286,7 @@ export default function StoryModeMerchant({
                             }`}
                           >
                             <Coins className="w-3 h-3" />
-                            {totalCost}
+                            {maxBuyable === 0 ? "MAXED" : totalCost}
                           </button>
                         </>
                       )}

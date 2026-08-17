@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Flame, ArrowRight, RotateCcw, Heart, Sparkles } from "lucide-react";
-import { useStoryModeRun, getMaxCharges } from "./StoryModeContext";
+import { useStoryModeRun, MAX_RELIC_CHARGES } from "./StoryModeContext";
 import type { RelicType } from "./StoryModeContext";
 
 interface StoryModeRestSiteProps {
@@ -44,11 +44,11 @@ export default function StoryModeRestSite({
       reroll: runState.rerollCharges,
     };
     const max = {
-      undo: getMaxCharges(runState, 'undo'),
-      hint: getMaxCharges(runState, 'hint'),
-      evalBar: getMaxCharges(runState, 'evalBar'),
-      time: getMaxCharges(runState, 'time'),
-      reroll: getMaxCharges(runState, 'reroll'),
+      undo: MAX_RELIC_CHARGES,
+      hint: MAX_RELIC_CHARGES,
+      evalBar: MAX_RELIC_CHARGES,
+      time: MAX_RELIC_CHARGES,
+      reroll: MAX_RELIC_CHARGES,
     };
     const newRestores = { undo: 0, hint: 0, evalBar: 0, time: 0, reroll: 0 };
     
@@ -99,14 +99,27 @@ export default function StoryModeRestSite({
       rerollCharges: runState.rerollCharges + restores.reroll,
     };
 
+    const newRelics = [...runState.relics];
+    
+    // Add any relics that were restored but aren't currently in the inventory
+    (['undo', 'hint', 'evalBar', 'time', 'reroll'] as const).forEach(key => {
+      if (restores[key] > 0 && !newRelics.includes(key)) {
+        newRelics.push(key);
+      }
+    });
+
     if (foundCoins) {
       updates.coins = runState.coins + foundCoins;
     }
+    
     if (foundRelic) {
-      const newRelics = [...runState.relics, foundRelic];
-      updates.relics = newRelics;
-      updates[`${foundRelic}Charges`] = 3 + newRelics.filter(r => r === foundRelic).length;
+      if (!newRelics.includes(foundRelic)) {
+        newRelics.push(foundRelic);
+      }
+      updates[`${foundRelic}Charges`] = MAX_RELIC_CHARGES;
     }
+    
+    updates.relics = newRelics;
 
     updateRunState(updates);
 
@@ -119,11 +132,9 @@ export default function StoryModeRestSite({
 
   const renderRestoreRow = (label: string, key: keyof typeof restores) => {
     const currentCharge = runState[`${key}Charges` as keyof typeof runState] as number;
-    const maxCharge = getMaxCharges(runState, key as RelicType);
+    const maxCharge = MAX_RELIC_CHARGES;
     const restored = restores[key];
     const newTotal = currentCharge + restored;
-    
-    if (maxCharge === 0) return null;
 
     return (
       <div className="flex items-center justify-between w-full py-3 border-b border-brand-border/30 last:border-0">

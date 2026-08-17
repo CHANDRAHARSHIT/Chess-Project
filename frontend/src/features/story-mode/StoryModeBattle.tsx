@@ -22,7 +22,7 @@ import {
   type MonsterProfile,
 } from "@/features/story-mode/storyModeMapData";
 import { DIFFICULTY_CONFIGS, type DifficultyLevel } from "@/shared/chess/chess.types";
-import { generateChess960FEN } from "@/shared/chess/chess960";
+
 import { EditPositionModal } from "@/shared/ui/EditPositionModal";
 import {
   validateEditorPosition,
@@ -80,7 +80,7 @@ export default function StoryModeBattle({
   const [evalMovesRemaining, setEvalMovesRemaining] = useState<number>(0);
 
   // Clocks
-  const initialTime = useMemo(() => {
+  const playerInitialTime = useMemo(() => {
     switch (difficulty) {
       case 5: return 180; // 3 min
       case 4: return 300; // 5 min
@@ -90,8 +90,17 @@ export default function StoryModeBattle({
       default: return 600; // 10 min
     }
   }, [difficulty]);
-  const [playerTime, setPlayerTime] = useState<number>(initialTime);
-  const [enemyTime, setEnemyTime] = useState<number>(initialTime);
+
+  const enemyInitialTime = useMemo(() => {
+    switch (difficulty) {
+      case 5: return 120; // 2 min for Boss
+      case 4: return 90;
+      default: return 60; // 1 min for lower difficulties
+    }
+  }, [difficulty]);
+
+  const [playerTime, setPlayerTime] = useState<number>(playerInitialTime);
+  const [enemyTime, setEnemyTime] = useState<number>(enemyInitialTime);
 
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60);
@@ -109,12 +118,20 @@ export default function StoryModeBattle({
   const moreButtonRef = useRef<HTMLButtonElement>(null);
 
   // Monster profile
-  const monster: MonsterProfile = MONSTER_PROFILES[nodeId] ?? {
-    name: "Unknown Foe",
-    title: "Mysterious Challenger",
-    rating: "???",
-    icon: "♟",
-  };
+  // Monster profile dynamically assigned based on difficulty/type
+  const monster: MonsterProfile = useMemo(() => {
+    const mapNode = runState.mapNodes?.find((n) => n.id === nodeId);
+    const nodeType = mapNode?.type || "enemy";
+    
+    if (difficulty === 5 || nodeType === "boss") return MONSTER_PROFILES[10];
+    if (difficulty === 4) return MONSTER_PROFILES[9];
+    if (difficulty === 3) return MONSTER_PROFILES[7];
+    if (difficulty === 2) {
+      // 50/50 for elite knight or bishop
+      return (nodeId % 2 === 0) ? MONSTER_PROFILES[3] : MONSTER_PROFILES[6];
+    }
+    return MONSTER_PROFILES[0];
+  }, [nodeId, difficulty, runState.mapNodes]);
 
   // ── Layout measurements ───────────────────────────────────────────────────
   const [boardHeight, setBoardHeight] = useState<number>(0);
@@ -370,9 +387,9 @@ export default function StoryModeBattle({
     if (!used) return;
 
     if (action === 'increase_player') {
-      setPlayerTime(prev => prev + Math.floor(initialTime * 0.1));
+      setPlayerTime(prev => prev + Math.floor(playerInitialTime * 0.1));
     } else {
-      setEnemyTime(prev => Math.max(1, prev - Math.floor(initialTime * 0.1)));
+      setEnemyTime(prev => Math.max(1, prev - Math.floor(enemyInitialTime * 0.1)));
     }
   }, [useCharge, runState.timeCharges]);
 
@@ -392,8 +409,8 @@ export default function StoryModeBattle({
       setShowHint(false);
       setGameOverReason(null);
       setBattleResult("playing");
-      setPlayerTime(initialTime);
-      setEnemyTime(initialTime);
+      setPlayerTime(playerInitialTime);
+      setEnemyTime(enemyInitialTime);
       resetEvaluation();
       setDisplayEval({ type: "cp", value: 0 });
       evalTimeoutsRef.current.forEach((t) => clearTimeout(t));
@@ -495,19 +512,29 @@ export default function StoryModeBattle({
         transition={{ delay: 0.1, duration: 0.5 }}
       >
         <div className="flex items-center gap-3">
-          <span className="text-3xl">{monster.icon}</span>
+          <span className={`w-10 h-10 rounded-full flex items-center justify-center text-2xl shadow-lg border ${
+            difficulty === 5 
+              ? "bg-red-500/20 text-red-400 border-red-500/50 animate-pulse" 
+              : "bg-brand-surface border-brand-border/60 text-brand-accent"
+          }`}>
+            {monster.icon}
+          </span>
           <div>
-            <h2 className="text-xl sm:text-2xl font-display font-bold text-brand-text">
-              {monster.name}
+            <h2 className={`text-xl sm:text-2xl font-display font-bold ${
+              difficulty === 5 
+                ? "text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-rose-600 drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]" 
+                : "text-brand-text"
+            }`}>
+              {difficulty === 5 ? `BOSS: ${monster.name}` : monster.name}
             </h2>
-            <p className="text-xs font-mono text-brand-secondary">
+            <p className="text-xs font-mono text-brand-secondary mt-0.5">
               {monster.title}
             </p>
           </div>
         </div>
         <div className="flex items-center gap-2 mt-1">
-          <Swords className="w-3.5 h-3.5 text-red-400" />
-          <span className="text-xs font-mono text-red-400">
+          <Swords className={`w-3.5 h-3.5 ${difficulty === 5 ? "text-red-500" : "text-red-400"}`} />
+          <span className={`text-xs font-mono ${difficulty === 5 ? "text-red-500 font-bold" : "text-red-400"}`}>
             Rating {monster.rating}
           </span>
           <span className="text-xs text-brand-secondary">•</span>
@@ -775,6 +802,7 @@ export default function StoryModeBattle({
                   ))
                 )}
               </div>
+
             </div>
           </div>
         </div>
@@ -842,6 +870,13 @@ export default function StoryModeBattle({
                     ? `You defeated ${monster.name}! The path ahead opens.`
                     : `${monster.name} has bested you. Try again?`}
                 </p>
+                {battleResult === "victory" && (
+                  <div className="flex items-center justify-center gap-1.5 mt-3">
+                    <span className="text-yellow-400 font-bold font-mono text-lg flex items-center gap-1.5 bg-yellow-500/10 px-3 py-1 rounded-full border border-yellow-500/20">
+                      +{difficulty === 5 ? 50 : difficulty >= 3 ? 30 : 15} Coins
+                    </span>
+                  </div>
+                )}
               </div>
 
               <div className="flex gap-3 mt-2">

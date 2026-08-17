@@ -1,12 +1,19 @@
 import { motion } from 'framer-motion';
-import { Lock, ArrowRight } from 'lucide-react';
+import { Lock, ArrowRight, ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router';
 
 interface StoryModeCharacterSelectProps {
   onSelect: (characterId: string) => void;
   onClose?: () => void;
 }
 
-export default function StoryModeCharacterSelect({ onSelect }: StoryModeCharacterSelectProps) {
+export default function StoryModeCharacterSelect({ onSelect, onClose }: StoryModeCharacterSelectProps) {
+  const navigate = useNavigate();
+
+  const handleBack = () => {
+    if (onClose) onClose();
+    else navigate(-1);
+  };
   const characters = [
     {
       id: "knight",
@@ -38,7 +45,14 @@ export default function StoryModeCharacterSelect({ onSelect }: StoryModeCharacte
         animate={{ opacity: 1, scale: 1, y: 0 }}
         className="w-full max-w-4xl bg-[var(--obsidian-mid)] rounded-2xl border border-[var(--obsidian-light)] shadow-2xl overflow-hidden flex flex-col"
       >
-        <div className="p-6 border-b border-white/5 text-center">
+        <div className="relative p-6 border-b border-white/5 text-center">
+          <button 
+            onClick={handleBack}
+            className="absolute left-6 top-1/2 -translate-y-1/2 p-2 rounded-full hover:bg-white/10 text-white/60 hover:text-white transition-colors cursor-pointer"
+            title="Go Back"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </button>
           <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-amber-500">
             Choose Your Champion
           </h2>

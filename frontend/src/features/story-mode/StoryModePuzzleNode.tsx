@@ -1,14 +1,14 @@
 import { useState, useCallback, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
-import { PuzzleBoard } from "../../components/PuzzleBoard";
-import { PuzzleApiService } from "../../services/puzzle.service";
-import type { CuratedPuzzle } from "../../types/puzzle";
-import type { ChessPuzzle } from "../../utils/PuzzleLoader";
+import { PuzzleBoard } from "@/features/puzzles/components/PuzzleBoard";
+import { PuzzleApiService } from "@/features/puzzles/puzzle.service";
+import type { CuratedPuzzle } from "@/features/puzzles/puzzle.types";
+import type { ChessPuzzle } from "@/features/puzzles/puzzleLoader";
 import { useStoryModeRun } from "./StoryModeContext";
 import { Chess } from "chess.js";
 import { Loader2, Swords, Trophy, RotateCcw } from "lucide-react";
 
-import { FALLBACK_PUZZLES } from "../../data/fallbackPuzzles";
+import { FALLBACK_PUZZLES } from "@/shared/appearance/fallbackPuzzles";
 // Convert Lichess to ChessPuzzle
 function convertPuzzle(raw: CuratedPuzzle): ChessPuzzle {
   const moveList = raw.moves.split(" ").filter(Boolean);
@@ -92,17 +92,28 @@ export default function StoryModePuzzleNode({
   const currentPuzzle = puzzles[currentIndex];
   const chessPuzzle = useMemo(() => currentPuzzle ? convertPuzzle(currentPuzzle) : null, [currentPuzzle]);
 
-  const handleNextPuzzle = useCallback(() => {
-    if (currentIndex < puzzles.length - 1) {
-      setCurrentIndex(prev => prev + 1);
-    } else {
-      // Finished all puzzles
+  const handleWin = useCallback(() => {
+    if (!nodeComplete) {
       setNodeComplete(true);
       // Reward coins based on difficulty
       const reward = difficulty * 20;
       updateRunState({ coins: runState.coins + reward });
     }
-  }, [currentIndex, puzzles.length, difficulty, runState.coins, updateRunState]);
+  }, [nodeComplete, difficulty, runState.coins, updateRunState]);
+
+  const handleNextPuzzle = useCallback(() => {
+    if (currentIndex < puzzles.length - 1) {
+      setCurrentIndex(prev => prev + 1);
+    } else {
+      handleWin();
+    }
+  }, [currentIndex, puzzles.length, handleWin]);
+
+  useEffect(() => {
+    if (puzzles.length > 0 && currentIndex >= puzzles.length) {
+      handleWin();
+    }
+  }, [currentIndex, puzzles.length, handleWin]);
 
   if (loading) {
     return (
@@ -177,18 +188,36 @@ export default function StoryModePuzzleNode({
               puzzle={chessPuzzle}
               puzzleNumber={currentIndex + 1}
               onNextPuzzle={handleNextPuzzle}
-              isNextDisabled={false}
+              isNextDisabled={undefined}
             />
           </div>
         )}
 
-        <button
-          onClick={onRetreat}
-          className="self-center mt-2 flex items-center gap-2 px-4 py-2 rounded-lg border border-brand-border/60 text-brand-secondary hover:text-brand-text hover:border-brand-accent/40 transition-all text-xs font-medium cursor-pointer"
-        >
-          <RotateCcw className="w-4 h-4" />
-          Retreat (Lose Progress)
-        </button>
+        <div className="flex flex-col sm:flex-row items-center gap-2 mt-2">
+          <button
+            onClick={onRetreat}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg border border-brand-border/60 text-brand-secondary hover:text-brand-text hover:border-brand-accent/40 transition-all text-xs font-medium cursor-pointer"
+          >
+            <RotateCcw className="w-4 h-4" />
+            Retreat (Lose Progress)
+          </button>
+          {import.meta.env.DEV && (
+            <div className="flex items-center gap-2 ml-auto">
+              <button
+                onClick={handleWin}
+                className="px-3 py-1.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-mono font-bold hover:bg-emerald-500/30 cursor-pointer"
+              >
+                [DEV] Win
+              </button>
+              <button
+                onClick={onRetreat}
+                className="px-3 py-1.5 rounded bg-rose-500/20 text-rose-400 border border-rose-500/30 text-xs font-mono font-bold hover:bg-rose-500/30 cursor-pointer"
+              >
+                [DEV] Lose
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </motion.div>
   );

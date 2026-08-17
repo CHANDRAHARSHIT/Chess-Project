@@ -1,5 +1,5 @@
-import type { StoryNode, StoryNodeType } from "../data/storyModeMapData";
-import type { DifficultyLevel } from "../types/chess";
+import type { StoryNode, StoryNodeType } from "@/features/story-mode/storyModeMapData";
+import type { DifficultyLevel } from "./chess.types";
 
 const COLUMNS = 7;
 const FLOORS = 15;
@@ -179,9 +179,9 @@ function pickValidRoomType(f: number, c: number, grid: GridNode[][], parents: Gr
   const pool = [
     { type: "puzzle", weight: 22 },
     { type: "rest", weight: 12 },
-    { type: "elite", weight: 8 },
+    { type: "elite", weight: 25 },
     { type: "merchant", weight: 5 },
-    { type: "enemy", weight: 53 }
+    { type: "enemy", weight: 36 }
   ];
 
   if (f < 5) {

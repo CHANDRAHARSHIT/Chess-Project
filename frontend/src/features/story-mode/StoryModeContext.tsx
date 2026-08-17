@@ -1,14 +1,11 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useSession } from '../../hooks/useSession';
-import { generateStoryMap } from '../../utils/mapGenerator';
-import type { StoryNode } from '../../data/storyModeMapData';
+import { useSession } from "@/features/account/useSession";
+import { generateStoryMap } from "@/shared/chess/mapGenerator";
+import type { StoryNode } from "./storyModeMapData";
 
 export type RelicType = 'undo' | 'hint' | 'evalBar' | 'time' | 'reroll';
 
-export const getMaxCharges = (runState: RunState, type: RelicType) => {
-  // Base 3 charges, plus 1 for each relic of this type owned
-  return 3 + runState.relics.filter(r => r === type).length;
-};
+export const MAX_RELIC_CHARGES = 5;
 
 export interface RunState {
   coins: number;
@@ -122,7 +119,18 @@ export function StoryModeProvider({ children }: { children: React.ReactNode }) {
     const chargeKey = `${type}Charges` as keyof RunState;
     const current = runState[chargeKey] as number;
     if (current > 0) {
-      setRunState(prev => ({ ...prev, [chargeKey]: current - 1 }));
+      setRunState(prev => {
+        const newRelics = [...prev.relics];
+        const idx = newRelics.indexOf(type);
+        if (idx > -1) {
+          newRelics.splice(idx, 1);
+        }
+        return {
+          ...prev,
+          [chargeKey]: current - 1,
+          relics: newRelics
+        };
+      });
       return true;
     }
     return false;
