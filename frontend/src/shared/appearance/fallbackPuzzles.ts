@@ -1,4 +1,4 @@
-import type { CuratedPuzzle } from "../services/puzzle.service";
+import type { CuratedPuzzle } from "@/features/puzzles/puzzle.types";
 
 export const FALLBACK_PUZZLES: CuratedPuzzle[] = [
   { id: "fb1", fen: "6k1/p4ppp/8/8/8/8/3R1PPP/6K1 b - - 0 1", moves: "a7a6 d2d8", rating: 1000, ratingDeviation: 75, popularity: 100, nbPlays: 100, themes: [] },

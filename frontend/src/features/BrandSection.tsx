@@ -9,9 +9,10 @@
 
 import { useRef, useEffect, useCallback } from "react";
 import { Link } from "react-router";
-import { useGSAP } from "../hooks/useGSAP";
-import { gsap, dur } from "../utils/gsapConfig";
+import { useGSAP } from "@/shared/hooks/useGSAP";
+import { gsap, dur } from "@/shared/lib/gsapConfig";
 import { ArrowRight } from "lucide-react";
+
 
 export default function BrandSection() {
   const sectionRef = useRef<HTMLElement>(null);

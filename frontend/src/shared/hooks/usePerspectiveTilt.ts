@@ -29,8 +29,7 @@
  */
 
 import { useRef, useLayoutEffect } from 'react';
-import { gsap } from '../utils/gsapConfig';
-import { prefersReducedMotion } from '../utils/gsapConfig';
+import { gsap, prefersReducedMotion } from '@/shared/lib/gsapConfig';
 
 // ─── Public API ────────────────────────────────────────────────────────────────
 

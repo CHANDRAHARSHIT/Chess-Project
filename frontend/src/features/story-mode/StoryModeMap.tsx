@@ -10,7 +10,6 @@ import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { RotateCcw, Map, Home, X, LogIn, Coins, Lightbulb, Eye, Hourglass, Shuffle } from "lucide-react";
 import {
-  STORY_MAP_NODES,
   type NodeStatus,
 } from "@/features/story-mode/storyModeMapData";
 import StoryModeNodeIcon from "./StoryModeNodeIcon";
