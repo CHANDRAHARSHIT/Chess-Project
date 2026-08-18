@@ -68,15 +68,30 @@ export type ProductFeature = Prisma.ProductFeatureModel
  */
 export type WebhookEvent = Prisma.WebhookEventModel
 /**
+ * Model CuratedPuzzle
+ * 
+ */
+export type CuratedPuzzle = Prisma.CuratedPuzzleModel
+/**
  * Model Opening
  * 
  */
 export type Opening = Prisma.OpeningModel
 /**
- * Model CuratedPuzzle
+ * Model BuilderLesson
  * 
  */
-export type CuratedPuzzle = Prisma.CuratedPuzzleModel
+export type BuilderLesson = Prisma.BuilderLessonModel
+/**
+ * Model BuilderSegment
+ * 
+ */
+export type BuilderSegment = Prisma.BuilderSegmentModel
+/**
+ * Model BuilderSlide
+ * 
+ */
+export type BuilderSlide = Prisma.BuilderSlideModel
 /**
  * Model Course
  * 

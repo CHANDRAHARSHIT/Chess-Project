@@ -9,6 +9,14 @@
 * 🟢 You can import this file directly.
 */
 
+export const BuilderLessonStatus = {
+  DRAFT: 'DRAFT',
+  PUBLISHED: 'PUBLISHED'
+} as const
+
+export type BuilderLessonStatus = (typeof BuilderLessonStatus)[keyof typeof BuilderLessonStatus]
+
+
 export const SubscriptionStatus = {
   ACTIVE: 'ACTIVE',
   TRIALING: 'TRIALING',

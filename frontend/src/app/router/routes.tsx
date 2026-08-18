@@ -10,6 +10,8 @@ import FailedPage from "@/pages/FailedPage";
 import PremiumPage from "@/pages/PremiumPage";
 import OpeningsPage from "@/pages/OpeningsPage";
 import Chess960Page from "@/pages/Chess960Page";
+import LessonDashboardPage from "@/pages/LessonDashboardPage";
+import LessonBuilderPage from "@/pages/LessonBuilderPage";
 import AboutPage from "@/pages/AboutPage";
 import PrivacyPolicyPage from "@/pages/PrivacyPolicyPage";
 import TermsOfServicePage from "@/pages/TermsOfServicePage";
@@ -88,6 +90,24 @@ export const mainRoutes: RouteConfig[] = [
     path: "/play/chess960",
     element: <Chess960Page />,
     title: "Chess 960 | XLChess",
+  },
+  {
+    path: "/lesson-builder",
+    element: (
+      <ProtectedRoute>
+        <LessonDashboardPage />
+      </ProtectedRoute>
+    ),
+    title: "Lesson Builder | XLChess",
+  },
+  {
+    path: "/lesson-builder/:id",
+    element: (
+      <ProtectedRoute>
+        <LessonBuilderPage />
+      </ProtectedRoute>
+    ),
+    title: "Edit Lesson | XLChess",
   },
   {
     // /play/chess → Play Hub Online tab. Navigate replace keeps browser history clean.

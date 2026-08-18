@@ -61,8 +61,11 @@ export const ModelName = {
   Product: 'Product',
   ProductFeature: 'ProductFeature',
   WebhookEvent: 'WebhookEvent',
-  Opening: 'Opening',
   CuratedPuzzle: 'CuratedPuzzle',
+  Opening: 'Opening',
+  BuilderLesson: 'BuilderLesson',
+  BuilderSegment: 'BuilderSegment',
+  BuilderSlide: 'BuilderSlide',
   Course: 'Course',
   Lesson: 'Lesson',
   LessonProgress: 'LessonProgress',
@@ -211,12 +214,12 @@ export const ProductScalarFieldEnum = {
   priceAmount: 'priceAmount',
   currency: 'currency',
   billingInterval: 'billingInterval',
+  gatewayTestPriceId: 'gatewayTestPriceId',
+  gatewayLivePriceId: 'gatewayLivePriceId',
   isActive: 'isActive',
   displayOrder: 'displayOrder',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  gatewayTestPriceId: 'gatewayTestPriceId',
-  gatewayLivePriceId: 'gatewayLivePriceId'
+  updatedAt: 'updatedAt'
 } as const
 
 export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]
@@ -247,17 +250,6 @@ export const WebhookEventScalarFieldEnum = {
 export type WebhookEventScalarFieldEnum = (typeof WebhookEventScalarFieldEnum)[keyof typeof WebhookEventScalarFieldEnum]
 
 
-export const OpeningScalarFieldEnum = {
-  id: 'id',
-  eco: 'eco',
-  name: 'name',
-  pgn: 'pgn',
-  moves: 'moves'
-} as const
-
-export type OpeningScalarFieldEnum = (typeof OpeningScalarFieldEnum)[keyof typeof OpeningScalarFieldEnum]
-
-
 export const CuratedPuzzleScalarFieldEnum = {
   id: 'id',
   fen: 'fen',
@@ -271,6 +263,63 @@ export const CuratedPuzzleScalarFieldEnum = {
 } as const
 
 export type CuratedPuzzleScalarFieldEnum = (typeof CuratedPuzzleScalarFieldEnum)[keyof typeof CuratedPuzzleScalarFieldEnum]
+
+
+export const OpeningScalarFieldEnum = {
+  id: 'id',
+  eco: 'eco',
+  name: 'name',
+  pgn: 'pgn',
+  moves: 'moves'
+} as const
+
+export type OpeningScalarFieldEnum = (typeof OpeningScalarFieldEnum)[keyof typeof OpeningScalarFieldEnum]
+
+
+export const BuilderLessonScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  description: 'description',
+  authorId: 'authorId',
+  authorDisplayName: 'authorDisplayName',
+  status: 'status',
+  category: 'category',
+  coverImage: 'coverImage',
+  slug: 'slug',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  publishedAt: 'publishedAt'
+} as const
+
+export type BuilderLessonScalarFieldEnum = (typeof BuilderLessonScalarFieldEnum)[keyof typeof BuilderLessonScalarFieldEnum]
+
+
+export const BuilderSegmentScalarFieldEnum = {
+  id: 'id',
+  lessonId: 'lessonId',
+  title: 'title',
+  order: 'order',
+  description: 'description',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BuilderSegmentScalarFieldEnum = (typeof BuilderSegmentScalarFieldEnum)[keyof typeof BuilderSegmentScalarFieldEnum]
+
+
+export const BuilderSlideScalarFieldEnum = {
+  id: 'id',
+  segmentId: 'segmentId',
+  order: 'order',
+  title: 'title',
+  coachText: 'coachText',
+  fen: 'fen',
+  annotations: 'annotations',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BuilderSlideScalarFieldEnum = (typeof BuilderSlideScalarFieldEnum)[keyof typeof BuilderSlideScalarFieldEnum]
 
 
 export const CourseScalarFieldEnum = {

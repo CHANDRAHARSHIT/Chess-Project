@@ -208,6 +208,7 @@ export type UserWhereInput = {
   stripeLiveCustomerId?: Prisma.StringNullableFilter<"User"> | string | null
   accounts?: Prisma.AccountListRelationFilter
   billingProfile?: Prisma.XOR<Prisma.BillingProfileNullableScalarRelationFilter, Prisma.BillingProfileWhereInput> | null
+  builderLessons?: Prisma.BuilderLessonListRelationFilter
   customLinks?: Prisma.CustomLinkListRelationFilter
   LessonProgress?: Prisma.LessonProgressListRelationFilter
   payments?: Prisma.PaymentListRelationFilter
@@ -229,6 +230,7 @@ export type UserOrderByWithRelationInput = {
   stripeLiveCustomerId?: Prisma.SortOrderInput | Prisma.SortOrder
   accounts?: Prisma.AccountOrderByRelationAggregateInput
   billingProfile?: Prisma.BillingProfileOrderByWithRelationInput
+  builderLessons?: Prisma.BuilderLessonOrderByRelationAggregateInput
   customLinks?: Prisma.CustomLinkOrderByRelationAggregateInput
   LessonProgress?: Prisma.LessonProgressOrderByRelationAggregateInput
   payments?: Prisma.PaymentOrderByRelationAggregateInput
@@ -253,6 +255,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   accounts?: Prisma.AccountListRelationFilter
   billingProfile?: Prisma.XOR<Prisma.BillingProfileNullableScalarRelationFilter, Prisma.BillingProfileWhereInput> | null
+  builderLessons?: Prisma.BuilderLessonListRelationFilter
   customLinks?: Prisma.CustomLinkListRelationFilter
   LessonProgress?: Prisma.LessonProgressListRelationFilter
   payments?: Prisma.PaymentListRelationFilter
@@ -302,6 +305,7 @@ export type UserCreateInput = {
   stripeLiveCustomerId?: string | null
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   billingProfile?: Prisma.BillingProfileCreateNestedOneWithoutUserInput
+  builderLessons?: Prisma.BuilderLessonCreateNestedManyWithoutAuthorInput
   customLinks?: Prisma.CustomLinkCreateNestedManyWithoutUserInput
   LessonProgress?: Prisma.LessonProgressCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
@@ -323,6 +327,7 @@ export type UserUncheckedCreateInput = {
   stripeLiveCustomerId?: string | null
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   billingProfile?: Prisma.BillingProfileUncheckedCreateNestedOneWithoutUserInput
+  builderLessons?: Prisma.BuilderLessonUncheckedCreateNestedManyWithoutAuthorInput
   customLinks?: Prisma.CustomLinkUncheckedCreateNestedManyWithoutUserInput
   LessonProgress?: Prisma.LessonProgressUncheckedCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
@@ -344,6 +349,7 @@ export type UserUpdateInput = {
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   billingProfile?: Prisma.BillingProfileUpdateOneWithoutUserNestedInput
+  builderLessons?: Prisma.BuilderLessonUpdateManyWithoutAuthorNestedInput
   customLinks?: Prisma.CustomLinkUpdateManyWithoutUserNestedInput
   LessonProgress?: Prisma.LessonProgressUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
@@ -365,6 +371,7 @@ export type UserUncheckedUpdateInput = {
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   billingProfile?: Prisma.BillingProfileUncheckedUpdateOneWithoutUserNestedInput
+  builderLessons?: Prisma.BuilderLessonUncheckedUpdateManyWithoutAuthorNestedInput
   customLinks?: Prisma.CustomLinkUncheckedUpdateManyWithoutUserNestedInput
   LessonProgress?: Prisma.LessonProgressUncheckedUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
@@ -532,6 +539,20 @@ export type UserUpdateOneRequiredWithoutBillingProfileNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutBillingProfileInput, Prisma.UserUpdateWithoutBillingProfileInput>, Prisma.UserUncheckedUpdateWithoutBillingProfileInput>
 }
 
+export type UserCreateNestedOneWithoutBuilderLessonsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutBuilderLessonsInput, Prisma.UserUncheckedCreateWithoutBuilderLessonsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutBuilderLessonsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutBuilderLessonsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutBuilderLessonsInput, Prisma.UserUncheckedCreateWithoutBuilderLessonsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutBuilderLessonsInput
+  upsert?: Prisma.UserUpsertWithoutBuilderLessonsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutBuilderLessonsInput, Prisma.UserUpdateWithoutBuilderLessonsInput>, Prisma.UserUncheckedUpdateWithoutBuilderLessonsInput>
+}
+
 export type UserCreateNestedOneWithoutLessonProgressInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutLessonProgressInput, Prisma.UserUncheckedCreateWithoutLessonProgressInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutLessonProgressInput
@@ -612,6 +633,7 @@ export type UserCreateWithoutAccountsInput = {
   stripeTestCustomerId?: string | null
   stripeLiveCustomerId?: string | null
   billingProfile?: Prisma.BillingProfileCreateNestedOneWithoutUserInput
+  builderLessons?: Prisma.BuilderLessonCreateNestedManyWithoutAuthorInput
   customLinks?: Prisma.CustomLinkCreateNestedManyWithoutUserInput
   LessonProgress?: Prisma.LessonProgressCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
@@ -632,6 +654,7 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   stripeTestCustomerId?: string | null
   stripeLiveCustomerId?: string | null
   billingProfile?: Prisma.BillingProfileUncheckedCreateNestedOneWithoutUserInput
+  builderLessons?: Prisma.BuilderLessonUncheckedCreateNestedManyWithoutAuthorInput
   customLinks?: Prisma.CustomLinkUncheckedCreateNestedManyWithoutUserInput
   LessonProgress?: Prisma.LessonProgressUncheckedCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
@@ -668,6 +691,7 @@ export type UserUpdateWithoutAccountsInput = {
   stripeTestCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   billingProfile?: Prisma.BillingProfileUpdateOneWithoutUserNestedInput
+  builderLessons?: Prisma.BuilderLessonUpdateManyWithoutAuthorNestedInput
   customLinks?: Prisma.CustomLinkUpdateManyWithoutUserNestedInput
   LessonProgress?: Prisma.LessonProgressUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
@@ -688,6 +712,7 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   stripeTestCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   billingProfile?: Prisma.BillingProfileUncheckedUpdateOneWithoutUserNestedInput
+  builderLessons?: Prisma.BuilderLessonUncheckedUpdateManyWithoutAuthorNestedInput
   customLinks?: Prisma.CustomLinkUncheckedUpdateManyWithoutUserNestedInput
   LessonProgress?: Prisma.LessonProgressUncheckedUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
@@ -709,6 +734,7 @@ export type UserCreateWithoutSessionsInput = {
   stripeLiveCustomerId?: string | null
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   billingProfile?: Prisma.BillingProfileCreateNestedOneWithoutUserInput
+  builderLessons?: Prisma.BuilderLessonCreateNestedManyWithoutAuthorInput
   customLinks?: Prisma.CustomLinkCreateNestedManyWithoutUserInput
   LessonProgress?: Prisma.LessonProgressCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
@@ -729,6 +755,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   stripeLiveCustomerId?: string | null
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   billingProfile?: Prisma.BillingProfileUncheckedCreateNestedOneWithoutUserInput
+  builderLessons?: Prisma.BuilderLessonUncheckedCreateNestedManyWithoutAuthorInput
   customLinks?: Prisma.CustomLinkUncheckedCreateNestedManyWithoutUserInput
   LessonProgress?: Prisma.LessonProgressUncheckedCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
@@ -765,6 +792,7 @@ export type UserUpdateWithoutSessionsInput = {
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   billingProfile?: Prisma.BillingProfileUpdateOneWithoutUserNestedInput
+  builderLessons?: Prisma.BuilderLessonUpdateManyWithoutAuthorNestedInput
   customLinks?: Prisma.CustomLinkUpdateManyWithoutUserNestedInput
   LessonProgress?: Prisma.LessonProgressUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
@@ -785,6 +813,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   billingProfile?: Prisma.BillingProfileUncheckedUpdateOneWithoutUserNestedInput
+  builderLessons?: Prisma.BuilderLessonUncheckedUpdateManyWithoutAuthorNestedInput
   customLinks?: Prisma.CustomLinkUncheckedUpdateManyWithoutUserNestedInput
   LessonProgress?: Prisma.LessonProgressUncheckedUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
@@ -805,6 +834,7 @@ export type UserCreateWithoutSubscriptionsInput = {
   stripeLiveCustomerId?: string | null
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   billingProfile?: Prisma.BillingProfileCreateNestedOneWithoutUserInput
+  builderLessons?: Prisma.BuilderLessonCreateNestedManyWithoutAuthorInput
   customLinks?: Prisma.CustomLinkCreateNestedManyWithoutUserInput
   LessonProgress?: Prisma.LessonProgressCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
@@ -825,6 +855,7 @@ export type UserUncheckedCreateWithoutSubscriptionsInput = {
   stripeLiveCustomerId?: string | null
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   billingProfile?: Prisma.BillingProfileUncheckedCreateNestedOneWithoutUserInput
+  builderLessons?: Prisma.BuilderLessonUncheckedCreateNestedManyWithoutAuthorInput
   customLinks?: Prisma.CustomLinkUncheckedCreateNestedManyWithoutUserInput
   LessonProgress?: Prisma.LessonProgressUncheckedCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
@@ -861,6 +892,7 @@ export type UserUpdateWithoutSubscriptionsInput = {
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   billingProfile?: Prisma.BillingProfileUpdateOneWithoutUserNestedInput
+  builderLessons?: Prisma.BuilderLessonUpdateManyWithoutAuthorNestedInput
   customLinks?: Prisma.CustomLinkUpdateManyWithoutUserNestedInput
   LessonProgress?: Prisma.LessonProgressUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
@@ -881,6 +913,7 @@ export type UserUncheckedUpdateWithoutSubscriptionsInput = {
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   billingProfile?: Prisma.BillingProfileUncheckedUpdateOneWithoutUserNestedInput
+  builderLessons?: Prisma.BuilderLessonUncheckedUpdateManyWithoutAuthorNestedInput
   customLinks?: Prisma.CustomLinkUncheckedUpdateManyWithoutUserNestedInput
   LessonProgress?: Prisma.LessonProgressUncheckedUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
@@ -901,6 +934,7 @@ export type UserCreateWithoutPaymentsInput = {
   stripeLiveCustomerId?: string | null
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   billingProfile?: Prisma.BillingProfileCreateNestedOneWithoutUserInput
+  builderLessons?: Prisma.BuilderLessonCreateNestedManyWithoutAuthorInput
   customLinks?: Prisma.CustomLinkCreateNestedManyWithoutUserInput
   LessonProgress?: Prisma.LessonProgressCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
@@ -921,6 +955,7 @@ export type UserUncheckedCreateWithoutPaymentsInput = {
   stripeLiveCustomerId?: string | null
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   billingProfile?: Prisma.BillingProfileUncheckedCreateNestedOneWithoutUserInput
+  builderLessons?: Prisma.BuilderLessonUncheckedCreateNestedManyWithoutAuthorInput
   customLinks?: Prisma.CustomLinkUncheckedCreateNestedManyWithoutUserInput
   LessonProgress?: Prisma.LessonProgressUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
@@ -957,6 +992,7 @@ export type UserUpdateWithoutPaymentsInput = {
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   billingProfile?: Prisma.BillingProfileUpdateOneWithoutUserNestedInput
+  builderLessons?: Prisma.BuilderLessonUpdateManyWithoutAuthorNestedInput
   customLinks?: Prisma.CustomLinkUpdateManyWithoutUserNestedInput
   LessonProgress?: Prisma.LessonProgressUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
@@ -977,6 +1013,7 @@ export type UserUncheckedUpdateWithoutPaymentsInput = {
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   billingProfile?: Prisma.BillingProfileUncheckedUpdateOneWithoutUserNestedInput
+  builderLessons?: Prisma.BuilderLessonUncheckedUpdateManyWithoutAuthorNestedInput
   customLinks?: Prisma.CustomLinkUncheckedUpdateManyWithoutUserNestedInput
   LessonProgress?: Prisma.LessonProgressUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -996,6 +1033,7 @@ export type UserCreateWithoutBillingProfileInput = {
   stripeTestCustomerId?: string | null
   stripeLiveCustomerId?: string | null
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  builderLessons?: Prisma.BuilderLessonCreateNestedManyWithoutAuthorInput
   customLinks?: Prisma.CustomLinkCreateNestedManyWithoutUserInput
   LessonProgress?: Prisma.LessonProgressCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
@@ -1016,6 +1054,7 @@ export type UserUncheckedCreateWithoutBillingProfileInput = {
   stripeTestCustomerId?: string | null
   stripeLiveCustomerId?: string | null
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  builderLessons?: Prisma.BuilderLessonUncheckedCreateNestedManyWithoutAuthorInput
   customLinks?: Prisma.CustomLinkUncheckedCreateNestedManyWithoutUserInput
   LessonProgress?: Prisma.LessonProgressUncheckedCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
@@ -1052,6 +1091,7 @@ export type UserUpdateWithoutBillingProfileInput = {
   stripeTestCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  builderLessons?: Prisma.BuilderLessonUpdateManyWithoutAuthorNestedInput
   customLinks?: Prisma.CustomLinkUpdateManyWithoutUserNestedInput
   LessonProgress?: Prisma.LessonProgressUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
@@ -1072,6 +1112,107 @@ export type UserUncheckedUpdateWithoutBillingProfileInput = {
   stripeTestCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  builderLessons?: Prisma.BuilderLessonUncheckedUpdateManyWithoutAuthorNestedInput
+  customLinks?: Prisma.CustomLinkUncheckedUpdateManyWithoutUserNestedInput
+  LessonProgress?: Prisma.LessonProgressUncheckedUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  gameParticipants?: Prisma.GameParticipantUncheckedUpdateManyWithoutUserNestedInput
+  playerRatings?: Prisma.PlayerRatingUncheckedUpdateManyWithoutUserNestedInput
+  pathwayProgress?: Prisma.PathwayProgressUncheckedUpdateOneWithoutUserNestedInput
+}
+
+export type UserCreateWithoutBuilderLessonsInput = {
+  id?: string
+  name?: string | null
+  email: string
+  emailVerified?: Date | string | null
+  image?: string | null
+  createdAt?: Date | string
+  stripeTestCustomerId?: string | null
+  stripeLiveCustomerId?: string | null
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  billingProfile?: Prisma.BillingProfileCreateNestedOneWithoutUserInput
+  customLinks?: Prisma.CustomLinkCreateNestedManyWithoutUserInput
+  LessonProgress?: Prisma.LessonProgressCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
+  gameParticipants?: Prisma.GameParticipantCreateNestedManyWithoutUserInput
+  playerRatings?: Prisma.PlayerRatingCreateNestedManyWithoutUserInput
+  pathwayProgress?: Prisma.PathwayProgressCreateNestedOneWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutBuilderLessonsInput = {
+  id?: string
+  name?: string | null
+  email: string
+  emailVerified?: Date | string | null
+  image?: string | null
+  createdAt?: Date | string
+  stripeTestCustomerId?: string | null
+  stripeLiveCustomerId?: string | null
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  billingProfile?: Prisma.BillingProfileUncheckedCreateNestedOneWithoutUserInput
+  customLinks?: Prisma.CustomLinkUncheckedCreateNestedManyWithoutUserInput
+  LessonProgress?: Prisma.LessonProgressUncheckedCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
+  gameParticipants?: Prisma.GameParticipantUncheckedCreateNestedManyWithoutUserInput
+  playerRatings?: Prisma.PlayerRatingUncheckedCreateNestedManyWithoutUserInput
+  pathwayProgress?: Prisma.PathwayProgressUncheckedCreateNestedOneWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutBuilderLessonsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutBuilderLessonsInput, Prisma.UserUncheckedCreateWithoutBuilderLessonsInput>
+}
+
+export type UserUpsertWithoutBuilderLessonsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutBuilderLessonsInput, Prisma.UserUncheckedUpdateWithoutBuilderLessonsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutBuilderLessonsInput, Prisma.UserUncheckedCreateWithoutBuilderLessonsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutBuilderLessonsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutBuilderLessonsInput, Prisma.UserUncheckedUpdateWithoutBuilderLessonsInput>
+}
+
+export type UserUpdateWithoutBuilderLessonsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  stripeTestCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  billingProfile?: Prisma.BillingProfileUpdateOneWithoutUserNestedInput
+  customLinks?: Prisma.CustomLinkUpdateManyWithoutUserNestedInput
+  LessonProgress?: Prisma.LessonProgressUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
+  gameParticipants?: Prisma.GameParticipantUpdateManyWithoutUserNestedInput
+  playerRatings?: Prisma.PlayerRatingUpdateManyWithoutUserNestedInput
+  pathwayProgress?: Prisma.PathwayProgressUpdateOneWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutBuilderLessonsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  stripeTestCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  billingProfile?: Prisma.BillingProfileUncheckedUpdateOneWithoutUserNestedInput
   customLinks?: Prisma.CustomLinkUncheckedUpdateManyWithoutUserNestedInput
   LessonProgress?: Prisma.LessonProgressUncheckedUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
@@ -1093,6 +1234,7 @@ export type UserCreateWithoutLessonProgressInput = {
   stripeLiveCustomerId?: string | null
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   billingProfile?: Prisma.BillingProfileCreateNestedOneWithoutUserInput
+  builderLessons?: Prisma.BuilderLessonCreateNestedManyWithoutAuthorInput
   customLinks?: Prisma.CustomLinkCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
@@ -1113,6 +1255,7 @@ export type UserUncheckedCreateWithoutLessonProgressInput = {
   stripeLiveCustomerId?: string | null
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   billingProfile?: Prisma.BillingProfileUncheckedCreateNestedOneWithoutUserInput
+  builderLessons?: Prisma.BuilderLessonUncheckedCreateNestedManyWithoutAuthorInput
   customLinks?: Prisma.CustomLinkUncheckedCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
@@ -1149,6 +1292,7 @@ export type UserUpdateWithoutLessonProgressInput = {
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   billingProfile?: Prisma.BillingProfileUpdateOneWithoutUserNestedInput
+  builderLessons?: Prisma.BuilderLessonUpdateManyWithoutAuthorNestedInput
   customLinks?: Prisma.CustomLinkUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
@@ -1169,6 +1313,7 @@ export type UserUncheckedUpdateWithoutLessonProgressInput = {
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   billingProfile?: Prisma.BillingProfileUncheckedUpdateOneWithoutUserNestedInput
+  builderLessons?: Prisma.BuilderLessonUncheckedUpdateManyWithoutAuthorNestedInput
   customLinks?: Prisma.CustomLinkUncheckedUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -1189,6 +1334,7 @@ export type UserCreateWithoutCustomLinksInput = {
   stripeLiveCustomerId?: string | null
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   billingProfile?: Prisma.BillingProfileCreateNestedOneWithoutUserInput
+  builderLessons?: Prisma.BuilderLessonCreateNestedManyWithoutAuthorInput
   LessonProgress?: Prisma.LessonProgressCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
@@ -1209,6 +1355,7 @@ export type UserUncheckedCreateWithoutCustomLinksInput = {
   stripeLiveCustomerId?: string | null
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   billingProfile?: Prisma.BillingProfileUncheckedCreateNestedOneWithoutUserInput
+  builderLessons?: Prisma.BuilderLessonUncheckedCreateNestedManyWithoutAuthorInput
   LessonProgress?: Prisma.LessonProgressUncheckedCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
@@ -1245,6 +1392,7 @@ export type UserUpdateWithoutCustomLinksInput = {
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   billingProfile?: Prisma.BillingProfileUpdateOneWithoutUserNestedInput
+  builderLessons?: Prisma.BuilderLessonUpdateManyWithoutAuthorNestedInput
   LessonProgress?: Prisma.LessonProgressUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
@@ -1265,6 +1413,7 @@ export type UserUncheckedUpdateWithoutCustomLinksInput = {
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   billingProfile?: Prisma.BillingProfileUncheckedUpdateOneWithoutUserNestedInput
+  builderLessons?: Prisma.BuilderLessonUncheckedUpdateManyWithoutAuthorNestedInput
   LessonProgress?: Prisma.LessonProgressUncheckedUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -1285,6 +1434,7 @@ export type UserCreateWithoutGameParticipantsInput = {
   stripeLiveCustomerId?: string | null
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   billingProfile?: Prisma.BillingProfileCreateNestedOneWithoutUserInput
+  builderLessons?: Prisma.BuilderLessonCreateNestedManyWithoutAuthorInput
   customLinks?: Prisma.CustomLinkCreateNestedManyWithoutUserInput
   LessonProgress?: Prisma.LessonProgressCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
@@ -1305,6 +1455,7 @@ export type UserUncheckedCreateWithoutGameParticipantsInput = {
   stripeLiveCustomerId?: string | null
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   billingProfile?: Prisma.BillingProfileUncheckedCreateNestedOneWithoutUserInput
+  builderLessons?: Prisma.BuilderLessonUncheckedCreateNestedManyWithoutAuthorInput
   customLinks?: Prisma.CustomLinkUncheckedCreateNestedManyWithoutUserInput
   LessonProgress?: Prisma.LessonProgressUncheckedCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
@@ -1341,6 +1492,7 @@ export type UserUpdateWithoutGameParticipantsInput = {
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   billingProfile?: Prisma.BillingProfileUpdateOneWithoutUserNestedInput
+  builderLessons?: Prisma.BuilderLessonUpdateManyWithoutAuthorNestedInput
   customLinks?: Prisma.CustomLinkUpdateManyWithoutUserNestedInput
   LessonProgress?: Prisma.LessonProgressUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
@@ -1361,6 +1513,7 @@ export type UserUncheckedUpdateWithoutGameParticipantsInput = {
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   billingProfile?: Prisma.BillingProfileUncheckedUpdateOneWithoutUserNestedInput
+  builderLessons?: Prisma.BuilderLessonUncheckedUpdateManyWithoutAuthorNestedInput
   customLinks?: Prisma.CustomLinkUncheckedUpdateManyWithoutUserNestedInput
   LessonProgress?: Prisma.LessonProgressUncheckedUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
@@ -1381,6 +1534,7 @@ export type UserCreateWithoutPlayerRatingsInput = {
   stripeLiveCustomerId?: string | null
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   billingProfile?: Prisma.BillingProfileCreateNestedOneWithoutUserInput
+  builderLessons?: Prisma.BuilderLessonCreateNestedManyWithoutAuthorInput
   customLinks?: Prisma.CustomLinkCreateNestedManyWithoutUserInput
   LessonProgress?: Prisma.LessonProgressCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
@@ -1401,6 +1555,7 @@ export type UserUncheckedCreateWithoutPlayerRatingsInput = {
   stripeLiveCustomerId?: string | null
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   billingProfile?: Prisma.BillingProfileUncheckedCreateNestedOneWithoutUserInput
+  builderLessons?: Prisma.BuilderLessonUncheckedCreateNestedManyWithoutAuthorInput
   customLinks?: Prisma.CustomLinkUncheckedCreateNestedManyWithoutUserInput
   LessonProgress?: Prisma.LessonProgressUncheckedCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
@@ -1437,6 +1592,7 @@ export type UserUpdateWithoutPlayerRatingsInput = {
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   billingProfile?: Prisma.BillingProfileUpdateOneWithoutUserNestedInput
+  builderLessons?: Prisma.BuilderLessonUpdateManyWithoutAuthorNestedInput
   customLinks?: Prisma.CustomLinkUpdateManyWithoutUserNestedInput
   LessonProgress?: Prisma.LessonProgressUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
@@ -1457,6 +1613,7 @@ export type UserUncheckedUpdateWithoutPlayerRatingsInput = {
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   billingProfile?: Prisma.BillingProfileUncheckedUpdateOneWithoutUserNestedInput
+  builderLessons?: Prisma.BuilderLessonUncheckedUpdateManyWithoutAuthorNestedInput
   customLinks?: Prisma.CustomLinkUncheckedUpdateManyWithoutUserNestedInput
   LessonProgress?: Prisma.LessonProgressUncheckedUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
@@ -1477,6 +1634,7 @@ export type UserCreateWithoutPathwayProgressInput = {
   stripeLiveCustomerId?: string | null
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   billingProfile?: Prisma.BillingProfileCreateNestedOneWithoutUserInput
+  builderLessons?: Prisma.BuilderLessonCreateNestedManyWithoutAuthorInput
   customLinks?: Prisma.CustomLinkCreateNestedManyWithoutUserInput
   LessonProgress?: Prisma.LessonProgressCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
@@ -1497,6 +1655,7 @@ export type UserUncheckedCreateWithoutPathwayProgressInput = {
   stripeLiveCustomerId?: string | null
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   billingProfile?: Prisma.BillingProfileUncheckedCreateNestedOneWithoutUserInput
+  builderLessons?: Prisma.BuilderLessonUncheckedCreateNestedManyWithoutAuthorInput
   customLinks?: Prisma.CustomLinkUncheckedCreateNestedManyWithoutUserInput
   LessonProgress?: Prisma.LessonProgressUncheckedCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
@@ -1533,6 +1692,7 @@ export type UserUpdateWithoutPathwayProgressInput = {
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   billingProfile?: Prisma.BillingProfileUpdateOneWithoutUserNestedInput
+  builderLessons?: Prisma.BuilderLessonUpdateManyWithoutAuthorNestedInput
   customLinks?: Prisma.CustomLinkUpdateManyWithoutUserNestedInput
   LessonProgress?: Prisma.LessonProgressUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
@@ -1553,6 +1713,7 @@ export type UserUncheckedUpdateWithoutPathwayProgressInput = {
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   billingProfile?: Prisma.BillingProfileUncheckedUpdateOneWithoutUserNestedInput
+  builderLessons?: Prisma.BuilderLessonUncheckedUpdateManyWithoutAuthorNestedInput
   customLinks?: Prisma.CustomLinkUncheckedUpdateManyWithoutUserNestedInput
   LessonProgress?: Prisma.LessonProgressUncheckedUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
@@ -1569,6 +1730,7 @@ export type UserUncheckedUpdateWithoutPathwayProgressInput = {
 
 export type UserCountOutputType = {
   accounts: number
+  builderLessons: number
   customLinks: number
   LessonProgress: number
   payments: number
@@ -1580,6 +1742,7 @@ export type UserCountOutputType = {
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   accounts?: boolean | UserCountOutputTypeCountAccountsArgs
+  builderLessons?: boolean | UserCountOutputTypeCountBuilderLessonsArgs
   customLinks?: boolean | UserCountOutputTypeCountCustomLinksArgs
   LessonProgress?: boolean | UserCountOutputTypeCountLessonProgressArgs
   payments?: boolean | UserCountOutputTypeCountPaymentsArgs
@@ -1604,6 +1767,13 @@ export type UserCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensi
  */
 export type UserCountOutputTypeCountAccountsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.AccountWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountBuilderLessonsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BuilderLessonWhereInput
 }
 
 /**
@@ -1667,6 +1837,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   stripeLiveCustomerId?: boolean
   accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>
   billingProfile?: boolean | Prisma.User$billingProfileArgs<ExtArgs>
+  builderLessons?: boolean | Prisma.User$builderLessonsArgs<ExtArgs>
   customLinks?: boolean | Prisma.User$customLinksArgs<ExtArgs>
   LessonProgress?: boolean | Prisma.User$LessonProgressArgs<ExtArgs>
   payments?: boolean | Prisma.User$paymentsArgs<ExtArgs>
@@ -1715,6 +1886,7 @@ export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = run
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>
   billingProfile?: boolean | Prisma.User$billingProfileArgs<ExtArgs>
+  builderLessons?: boolean | Prisma.User$builderLessonsArgs<ExtArgs>
   customLinks?: boolean | Prisma.User$customLinksArgs<ExtArgs>
   LessonProgress?: boolean | Prisma.User$LessonProgressArgs<ExtArgs>
   payments?: boolean | Prisma.User$paymentsArgs<ExtArgs>
@@ -1733,6 +1905,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   objects: {
     accounts: Prisma.$AccountPayload<ExtArgs>[]
     billingProfile: Prisma.$BillingProfilePayload<ExtArgs> | null
+    builderLessons: Prisma.$BuilderLessonPayload<ExtArgs>[]
     customLinks: Prisma.$CustomLinkPayload<ExtArgs>[]
     LessonProgress: Prisma.$LessonProgressPayload<ExtArgs>[]
     payments: Prisma.$PaymentPayload<ExtArgs>[]
@@ -2147,6 +2320,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   readonly [Symbol.toStringTag]: "PrismaPromise"
   accounts<T extends Prisma.User$accountsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$accountsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   billingProfile<T extends Prisma.User$billingProfileArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$billingProfileArgs<ExtArgs>>): Prisma.Prisma__BillingProfileClient<runtime.Types.Result.GetResult<Prisma.$BillingProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  builderLessons<T extends Prisma.User$builderLessonsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$builderLessonsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BuilderLessonPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   customLinks<T extends Prisma.User$customLinksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$customLinksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CustomLinkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   LessonProgress<T extends Prisma.User$LessonProgressArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$LessonProgressArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LessonProgressPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   payments<T extends Prisma.User$paymentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$paymentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2625,6 +2799,30 @@ export type User$billingProfileArgs<ExtArgs extends runtime.Types.Extensions.Int
    */
   include?: Prisma.BillingProfileInclude<ExtArgs> | null
   where?: Prisma.BillingProfileWhereInput
+}
+
+/**
+ * User.builderLessons
+ */
+export type User$builderLessonsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BuilderLesson
+   */
+  select?: Prisma.BuilderLessonSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BuilderLesson
+   */
+  omit?: Prisma.BuilderLessonOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BuilderLessonInclude<ExtArgs> | null
+  where?: Prisma.BuilderLessonWhereInput
+  orderBy?: Prisma.BuilderLessonOrderByWithRelationInput | Prisma.BuilderLessonOrderByWithRelationInput[]
+  cursor?: Prisma.BuilderLessonWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BuilderLessonScalarFieldEnum | Prisma.BuilderLessonScalarFieldEnum[]
 }
 
 /**

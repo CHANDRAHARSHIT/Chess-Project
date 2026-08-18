@@ -9,6 +9,7 @@ import {
   BookOpen,
   Database,
   ChevronDown,
+  PenTool,
   Clock,
   BarChart2,
   Flag,
@@ -396,11 +397,12 @@ export default function SidebarLayout({
   const baseSection = [{ name: "Home", href: "/", icon: Home }];
 
   const exploreSection = [
-    { name: "Play",    href: "/play",       icon: Swords   },
-    { name: "Lessons", href: "/lessons",    icon: BookOpen },
-    { name: "Puzzles", href: "/puzzles",    icon: Puzzle   },
+    { name: "Play", href: "/play", icon: Swords },
+    { name: "Lessons", href: "/lessons", icon: BookOpen },
+    { name: "Build Lessons", href: "/lesson-builder", icon: PenTool },
+    { name: "Puzzles", href: "/puzzles", icon: Puzzle },
     { name: "Odyssey", href: "/story-mode", icon: Sparkles },
-    { name: "Upgrade", href: "/pricing",    icon: Crown    },
+    { name: "Upgrade", href: "/pricing", icon: Crown },
   ];
 
   const footerLinks = [
