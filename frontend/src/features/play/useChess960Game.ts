@@ -243,7 +243,7 @@ export function useChess960Game(): UseChess960GameReturn {
   const requestHint = useCallback(() => {
     if (status !== 'playing' || isEngineThinking) return;
     setIsHintRequested(true);
-    analyzePosition(gameRef.current.fen(), true);
+    analyzePosition(gameRef.current.fen(), undefined, true);
   }, [status, isEngineThinking, analyzePosition]);
 
   // Update hint square & path when bestMove is received from analyzePosition

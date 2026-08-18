@@ -1,13 +1,8 @@
-/**
- * StoryModeRestSite.tsx
- *
- * Fireplace / rest site screen shown when the player lands on a campfire node.
- * Features an interactive resting sequence with healing animations before continuing.
- */
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Flame, ArrowRight, RotateCcw, Heart, Sparkles } from "lucide-react";
+import { useStoryModeRun, MAX_RELIC_CHARGES } from "./StoryModeContext";
+import type { RelicType } from "./StoryModeContext";
 
 interface StoryModeRestSiteProps {
   nodeLabel: string;
@@ -22,16 +17,141 @@ export default function StoryModeRestSite({
   onComplete,
   onRetreat,
 }: StoryModeRestSiteProps) {
+  const { runState, updateRunState } = useStoryModeRun();
+  
   const [isResting, setIsResting] = useState(false);
   const [hasRested, setHasRested] = useState(false);
 
+  // Local state for randomized restoration
+  const [restores, setRestores] = useState({
+    undo: 0,
+    hint: 0,
+    evalBar: 0,
+    time: 0,
+    reroll: 0,
+  });
+  const [totalRestored, setTotalRestored] = useState(0);
+  const [foundCoins, setFoundCoins] = useState<number | null>(null);
+  const [foundRelic, setFoundRelic] = useState<RelicType | null>(null);
+
+  useEffect(() => {
+    let availablePoints = 5;
+    const current = {
+      undo: runState.undoCharges,
+      hint: runState.hintCharges,
+      evalBar: runState.evalBarCharges,
+      time: runState.timeCharges,
+      reroll: runState.rerollCharges,
+    };
+    const max = {
+      undo: MAX_RELIC_CHARGES,
+      hint: MAX_RELIC_CHARGES,
+      evalBar: MAX_RELIC_CHARGES,
+      time: MAX_RELIC_CHARGES,
+      reroll: MAX_RELIC_CHARGES,
+    };
+    const newRestores = { undo: 0, hint: 0, evalBar: 0, time: 0, reroll: 0 };
+    
+    const keys = ['undo', 'hint', 'evalBar', 'time', 'reroll'] as const;
+    while (availablePoints > 0) {
+      const possibleKeys = keys.filter(k => current[k] + newRestores[k] < max[k]);
+      if (possibleKeys.length === 0) break;
+      const k = possibleKeys[Math.floor(Math.random() * possibleKeys.length)];
+      newRestores[k]++;
+      availablePoints--;
+    }
+    
+    setRestores(newRestores);
+    const restoredPoints = 5 - availablePoints;
+    setTotalRestored(restoredPoints);
+
+    // Random Discovery Logic
+    let willFindCoins = Math.random() < 0.3;
+    let willFindRelic = Math.random() < 0.1;
+
+    const allRelicTypes: RelicType[] = ['undo', 'hint', 'evalBar', 'time', 'reroll'];
+    const unowned = allRelicTypes.filter(r => !runState.relics.includes(r));
+
+    if (restoredPoints === 0) {
+      if (unowned.length > 0 && Math.random() < 0.5) {
+        willFindRelic = true;
+      } else {
+        willFindCoins = true;
+      }
+    }
+
+    if (willFindRelic && unowned.length > 0 && runState.relics.length < 5) {
+      setFoundRelic(unowned[Math.floor(Math.random() * unowned.length)]);
+    } else if (willFindCoins) {
+      setFoundCoins(Math.floor(Math.random() * 21) + 15);
+    }
+  }, []); // Only run once on mount
+
   const handleRest = () => {
     setIsResting(true);
+    
+    // Apply random restores
+    const updates: any = {
+      undoCharges: runState.undoCharges + restores.undo,
+      hintCharges: runState.hintCharges + restores.hint,
+      evalBarCharges: runState.evalBarCharges + restores.evalBar,
+      timeCharges: runState.timeCharges + restores.time,
+      rerollCharges: runState.rerollCharges + restores.reroll,
+    };
+
+    const newRelics = [...runState.relics];
+    
+    // Add any relics that were restored but aren't currently in the inventory
+    (['undo', 'hint', 'evalBar', 'time', 'reroll'] as const).forEach(key => {
+      if (restores[key] > 0 && !newRelics.includes(key)) {
+        newRelics.push(key);
+      }
+    });
+
+    if (foundCoins) {
+      updates.coins = runState.coins + foundCoins;
+    }
+    
+    if (foundRelic) {
+      if (!newRelics.includes(foundRelic)) {
+        newRelics.push(foundRelic);
+      }
+      updates[`${foundRelic}Charges`] = MAX_RELIC_CHARGES;
+    }
+    
+    updates.relics = newRelics;
+
+    updateRunState(updates);
+
     // Simulate rest sequence duration
     setTimeout(() => {
       setIsResting(false);
       setHasRested(true);
     }, 2000);
+  };
+
+  const renderRestoreRow = (label: string, key: keyof typeof restores) => {
+    const currentCharge = runState[`${key}Charges` as keyof typeof runState] as number;
+    const maxCharge = MAX_RELIC_CHARGES;
+    const restored = restores[key];
+    const newTotal = currentCharge + restored;
+
+    return (
+      <div className="flex items-center justify-between w-full py-3 border-b border-brand-border/30 last:border-0">
+        <span className="text-base font-mono text-brand-secondary">{label}</span>
+        <div className="flex items-center gap-4">
+          {restored > 0 && (
+            <span className="text-sm font-mono text-green-400">+{restored}</span>
+          )}
+          <div className="flex items-center gap-1 min-w-[60px] justify-end">
+            <span className={`text-base font-mono font-semibold ${restored > 0 ? "text-green-400" : "text-brand-text"}`}>
+              {newTotal}
+            </span>
+            <span className="text-sm font-mono text-brand-secondary">/ {maxCharge}</span>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -128,15 +248,49 @@ export default function StoryModeRestSite({
               </h2>
               <p className="text-sm text-brand-secondary text-center leading-relaxed max-w-sm px-2">
                 {isResting
-                  ? "You rest by the fire, letting the warmth heal your weary spirit…"
+                  ? "You rest by the fire, allocating your points to restore your mind…"
                   : nodeDescription}
               </p>
 
-              {/* Divider */}
-              <div className="w-24 h-px bg-gradient-to-r from-transparent via-orange-500/30 to-transparent my-2" />
+              {/* Random Restore UI */}
+              <div className="w-full bg-brand-surface/30 border border-brand-border/40 rounded-xl p-4 mt-2">
+                <div className="flex justify-between items-center mb-4">
+                  <span className="text-sm font-semibold text-brand-text">Charges Restored</span>
+                  <div className="flex items-center gap-1.5 bg-orange-500/20 px-2 py-1 rounded text-orange-300 text-xs font-mono border border-orange-500/30">
+                    <Sparkles className="w-3 h-3" />
+                    {totalRestored} Restored
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-1">
+                  {renderRestoreRow("Undo", "undo")}
+                  {renderRestoreRow("Best Move", "hint")}
+                  {renderRestoreRow("Eval Bar", "evalBar")}
+                  {renderRestoreRow("Time", "time")}
+                  {renderRestoreRow("Rerolls", "reroll")}
+                  
+                  {foundCoins && (
+                    <div className="flex items-center justify-between w-full py-3 border-b border-brand-border/30 last:border-0">
+                      <span className="text-base font-mono text-brand-secondary">Found Stash</span>
+                      <span className="text-base font-mono font-semibold text-yellow-400">+{foundCoins} Coins</span>
+                    </div>
+                  )}
+                  {foundRelic && (
+                    <div className="flex items-center justify-between w-full py-3 border-b border-brand-border/30 last:border-0">
+                      <span className="text-base font-mono text-brand-secondary">Found Item</span>
+                      <span className="text-base font-mono font-semibold text-purple-400 uppercase tracking-widest">{foundRelic} Relic</span>
+                    </div>
+                  )}
+                  {totalRestored === 0 && !foundCoins && !foundRelic && (
+                    <div className="text-center py-4 text-sm font-mono text-brand-secondary/60">
+                      Nothing to find or restore here.
+                    </div>
+                  )}
+                </div>
+              </div>
 
               {/* Actions */}
-              <div className="flex gap-3 flex-wrap justify-center w-full">
+              <div className="flex gap-3 flex-wrap justify-center w-full mt-4">
                 <button
                   onClick={onRetreat}
                   disabled={isResting}
@@ -151,12 +305,12 @@ export default function StoryModeRestSite({
                   className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-orange-500/20 border border-orange-500/40 text-orange-300 hover:bg-orange-500/30 hover:border-orange-500/60 transition-all duration-200 text-sm font-medium cursor-pointer disabled:opacity-30 disabled:scale-95"
                 >
                   <Heart className={`w-4 h-4 ${isResting ? "animate-pulse" : ""}`} />
-                  {isResting ? "Resting…" : "Rest"}
+                  {isResting ? "Resting…" : "Rest & Apply"}
                 </button>
               </div>
               
               {/* DEV Only: Skip Button */}
-              {import.meta.env.VITE_ENABLE_STORY_DEV_TOOLS === 'true' && (
+              {(import.meta.env.DEV && import.meta.env.VITE_ENABLE_STORY_DEV_TOOLS !== 'false') && (
                 <div className="mt-4 p-2 rounded border border-dashed border-yellow-500/50 bg-yellow-500/10 flex justify-center opacity-80 hover:opacity-100 transition-opacity w-full">
                   <span className="text-[10px] text-yellow-500 font-mono self-center mr-2">DEV:</span>
                   <button onClick={onComplete} className="px-2 py-1 bg-green-500/20 border border-green-500/50 text-green-400 rounded text-[10px] font-mono hover:bg-green-500/40 cursor-pointer">Skip Rest</button>

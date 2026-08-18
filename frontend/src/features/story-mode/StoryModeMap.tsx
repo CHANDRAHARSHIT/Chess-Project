@@ -6,28 +6,34 @@
  * rest site screens. Manages game state (current node, completed nodes).
  */
 
-import { useState, useCallback, useMemo, useEffect } from "react";
+import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { RotateCcw, Map, Home, X, LogIn } from "lucide-react";
+import { RotateCcw, Map, Home, X, LogIn, Coins, Lightbulb, Eye, Hourglass, Shuffle } from "lucide-react";
 import {
-  STORY_MAP_NODES,
   type NodeStatus,
 } from "@/features/story-mode/storyModeMapData";
 import StoryModeNodeIcon from "./StoryModeNodeIcon";
 import StoryModeMapCanvas from "./StoryModeMapCanvas";
+import StoryModeMerchant from "./StoryModeMerchant"; // Force TS re-index
 import StoryModeBattle from "./StoryModeBattle";
-import StoryModeEncounter from "./StoryModeEncounter";
+
 import StoryModeRestSite from "./StoryModeRestSite";
+import StoryModePuzzleNode from "./StoryModePuzzleNode";
+import StoryModeCharacterSelect from "./StoryModeCharacterSelect";
+import { useStoryModeRun } from "./StoryModeContext";
 import { useSession } from "@/features/account/useSession";
 
 type ActiveView =
   | { kind: "map" }
   | { kind: "battle"; nodeId: number }
-  | { kind: "encounter"; nodeId: number }
-  | { kind: "rest"; nodeId: number };
+  | { kind: "rest"; nodeId: number }
+  | { kind: "merchant"; nodeId: number }
+  | { kind: "puzzle"; nodeId: number }
+  | { kind: "characterSelect"; nodeId: number };
 
 export default function StoryModeMap() {
   const { session, status, signIn } = useSession();
+  const { runState, resetRun } = useStoryModeRun();
 
   // ── Game state persisted in component (resets on page refresh for guests) ──
   const [completedNodes, setCompletedNodes] = useState<Set<number>>(new Set());
@@ -38,6 +44,33 @@ export default function StoryModeMap() {
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [showGuestWarning, setShowGuestWarning] = useState<number | null>(null);
   const [hasIgnoredGuestWarning, setHasIgnoredGuestWarning] = useState(false);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  // ── Auto-scroll to current node or bottom on mount ────────────────────────────────────
+  useEffect(() => {
+    if (activeView.kind === "map" && scrollContainerRef.current) {
+      // Small delay to ensure render is complete
+      setTimeout(() => {
+        const container = scrollContainerRef.current;
+        if (!container) return;
+
+        if (currentNodeId !== -1) {
+          const nodeEl = document.getElementById(`map-node-${currentNodeId}`);
+          if (nodeEl) {
+            const targetTop = nodeEl.offsetTop - (container.offsetHeight / 2) + (nodeEl.offsetHeight / 2);
+            container.scrollTo({
+              top: Math.max(0, targetTop),
+              behavior: 'smooth'
+            });
+            return;
+          }
+        }
+        
+        // Fallback: Scroll to bottom
+        container.scrollTop = container.scrollHeight;
+      }, 100);
+    }
+  }, [activeView.kind, currentNodeId]);
 
   // ── Persistence Logic ────────────────────────────────────────────────
   useEffect(() => {
@@ -99,7 +132,7 @@ export default function StoryModeMap() {
       // You can ONLY progress to edges of your current node,
       // and ONLY if your current node has been completed!
       if (currentNodeId !== -1 && completedNodes.has(currentNodeId)) {
-        const currentNode = STORY_MAP_NODES.find((n) => n.id === currentNodeId);
+        const currentNode = (runState.mapNodes || []).find((n) => n.id === currentNodeId);
         if (currentNode?.edges.includes(id)) {
           return "available";
         }
@@ -113,7 +146,7 @@ export default function StoryModeMap() {
   // ── Node click handler ────────────────────────────────────────────────
   const handleNodeClick = useCallback(
     (nodeId: number, bypassWarning = false) => {
-      const node = STORY_MAP_NODES.find((n) => n.id === nodeId);
+      const node = (runState.mapNodes || []).find((n) => n.id === nodeId);
       if (!node) return;
 
       const nodeStatus = getNodeStatus(nodeId);
@@ -133,18 +166,22 @@ export default function StoryModeMap() {
 
       switch (node.type) {
         case "start":
-          // Legacy start node handling, though we now use monster as node 0
-          setCompletedNodes((prev) => new Set([...prev, nodeId]));
+          setActiveView({ kind: "characterSelect", nodeId });
           break;
-        case "monster":
+        case "enemy":
+        case "elite":
         case "boss":
           setActiveView({ kind: "battle", nodeId });
           break;
-        case "mystery":
-          setActiveView({ kind: "encounter", nodeId });
+        case "puzzle":
+          setActiveView({ kind: "puzzle", nodeId });
           break;
-        case "fireplace":
+
+        case "rest":
           setActiveView({ kind: "rest", nodeId });
+          break;
+        case "merchant":
+          setActiveView({ kind: "merchant", nodeId });
           break;
       }
     },
@@ -163,7 +200,7 @@ export default function StoryModeMap() {
   const handleBattleVictory = useCallback(() => {
     if (activeView.kind !== "battle") return;
     const nodeId = activeView.nodeId;
-    const node = STORY_MAP_NODES.find((n) => n.id === nodeId);
+    const node = (runState.mapNodes || []).find((n) => n.id === nodeId);
 
     setCompletedNodes((prev) => new Set([...prev, nodeId]));
     setActiveView({ kind: "map" });
@@ -182,15 +219,22 @@ export default function StoryModeMap() {
     setActiveView({ kind: "map" });
   }, []);
 
-  // ── Encounter / rest complete ─────────────────────────────────────────
-  const handleEncounterComplete = useCallback(() => {
-    if (activeView.kind !== "encounter") return;
+
+
+  const handleRestComplete = useCallback(() => {
+    if (activeView.kind !== "rest") return;
     setCompletedNodes((prev) => new Set([...prev, activeView.nodeId]));
     setActiveView({ kind: "map" });
   }, [activeView]);
 
-  const handleRestComplete = useCallback(() => {
-    if (activeView.kind !== "rest") return;
+  const handleMerchantComplete = useCallback(() => {
+    if (activeView.kind !== "merchant") return;
+    setCompletedNodes((prev) => new Set([...prev, activeView.nodeId]));
+    setActiveView({ kind: "map" });
+  }, [activeView]);
+
+  const handlePuzzleComplete = useCallback(() => {
+    if (activeView.kind !== "puzzle") return;
     setCompletedNodes((prev) => new Set([...prev, activeView.nodeId]));
     setActiveView({ kind: "map" });
   }, [activeView]);
@@ -204,18 +248,30 @@ export default function StoryModeMap() {
   // rather than the whole `session` object, so this callback doesn't get a new identity
   // whenever `session` is re-fetched with the same user id.
   // eslint-disable-next-line react-hooks/preserve-manual-memoization
-  const confirmReset = useCallback(() => {
+  const confirmReset = useCallback((keepProgress: boolean) => {
     setCompletedNodes(new Set());
     setCurrentNodeId(-1);
     setActiveView({ kind: "map" });
     setJourneyComplete(false);
     setShowResetConfirm(false);
+    
+    // Reset global context run state
+    resetRun(keepProgress);
 
     // Explicitly clear from local storage immediately so it doesn't rely solely on the effect
     if (status === "authenticated" && session?.user?.id) {
-      localStorage.removeItem(`storyProgress_${session.user.id}`);
+      if (!keepProgress) {
+        localStorage.removeItem(`storyProgress_${session.user.id}`);
+      } else {
+        // Just reset the map node progress, keep the entry
+        localStorage.setItem(`storyProgress_${session.user.id}`, JSON.stringify({
+          completedNodes: [],
+          currentNodeId: -1,
+          journeyComplete: false
+        }));
+      }
     }
-  }, [status, session?.user?.id]);
+  }, [status, session?.user?.id, resetRun]);
 
   // ── Progress ──────────────────────────────────────────────────────────
   const progress = useMemo(() => {
@@ -230,7 +286,7 @@ export default function StoryModeMap() {
   return (
     <div className="w-full max-w-4xl mx-auto">
       <AnimatePresence mode="wait">
-        {activeView.kind === "map" ? (
+        {activeView.kind === "map" || activeView.kind === "characterSelect" ? (
           <motion.div
             key="map"
             initial={{ opacity: 0 }}
@@ -239,11 +295,11 @@ export default function StoryModeMap() {
             transition={{ duration: 0.3 }}
           >
             {/* Progress bar & controls */}
-            <div className="flex items-center justify-between mb-4 px-2">
+            <div className="flex flex-wrap items-center justify-between mb-4 px-2 gap-y-4 gap-x-2">
               <div className="flex items-center gap-3">
                 <Map className="w-4 h-4 text-brand-secondary" />
                 <div className="flex items-center gap-2">
-                  <div className="w-32 h-1.5 rounded-full bg-brand-surface/50 overflow-hidden">
+                  <div className="w-24 h-1.5 rounded-full bg-brand-surface/50 overflow-hidden">
                     <motion.div
                       className="h-full rounded-full bg-gradient-to-r from-brand-accent/60 to-brand-accent"
                       initial={{ width: 0 }}
@@ -251,14 +307,53 @@ export default function StoryModeMap() {
                       transition={{ duration: 0.5 }}
                     />
                   </div>
-                  <span className="text-xs font-mono text-brand-secondary">
+                  <span className="text-xs font-mono text-brand-secondary min-w-[30px]">
                     {progress}%
                   </span>
                 </div>
               </div>
+
+              {/* Relic Slots UI */}
+              <div className="flex items-center gap-2 order-3 w-full justify-center sm:order-2 sm:w-auto sm:flex-1">
+                 <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-yellow-500/10 border border-yellow-500/30 shrink-0" title="Coins">
+                   <Coins className="w-4 h-4 text-yellow-400" />
+                   <span className="text-sm font-mono font-bold text-yellow-200">{runState.coins}</span>
+                 </div>
+                 
+                 <div className="flex items-center gap-1.5 ml-2">
+                   {[...Array(5)].map((_, i) => {
+                     const relicType = runState.relics[i];
+                     if (relicType) {
+                       let IconComponent = RotateCcw;
+                       let charges = 0;
+                       if (relicType === 'undo') { IconComponent = RotateCcw; charges = runState.undoCharges; }
+                       if (relicType === 'hint') { IconComponent = Lightbulb; charges = runState.hintCharges; }
+                       if (relicType === 'evalBar') { IconComponent = Eye; charges = runState.evalBarCharges; }
+                       if (relicType === 'time') { IconComponent = Hourglass; charges = runState.timeCharges; }
+                       if (relicType === 'reroll') { IconComponent = Shuffle; charges = runState.rerollCharges; }
+                       
+                       return (
+                         <div key={`slot-${i}`} className="relative w-8 h-8 rounded border border-brand-accent/50 bg-brand-accent/10 flex items-center justify-center shadow-[0_0_8px_rgba(168,85,247,0.3)]" title={`${relicType} (${charges}/3)`}>
+                           <IconComponent className="w-4 h-4 text-brand-accent" />
+                           <span className="absolute -bottom-2 -right-2 text-[10px] font-mono font-bold bg-brand-surface border border-brand-border rounded-full w-4 h-4 flex items-center justify-center text-brand-text">
+                             {charges}
+                           </span>
+                         </div>
+                       );
+                     }
+                     
+                     // Empty slot
+                     return (
+                       <div key={`slot-${i}`} className="w-8 h-8 rounded border border-dashed border-brand-border/40 bg-brand-surface/20 flex items-center justify-center opacity-50" title="Empty Slot">
+                       </div>
+                     );
+                   })}
+                 </div>
+              </div>
+              
               <button
                 onClick={handleReset}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-brand-border/40 text-brand-secondary hover:text-brand-text hover:border-red-500/40 transition-all text-xs font-medium cursor-pointer"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-brand-border/40 text-brand-secondary hover:text-brand-text hover:border-red-500/40 transition-all text-xs font-medium cursor-pointer shrink-0 order-2 sm:order-3"
               >
                 <RotateCcw className="w-3 h-3" />
                 Reset
@@ -267,8 +362,11 @@ export default function StoryModeMap() {
 
             {/* Map wrapper for scrolling */}
             <div className="relative w-full rounded-2xl overflow-hidden">
-              <div className="w-full h-[75vh] min-h-[500px] rounded-2xl border border-[#D4AF6E]/40 overflow-y-auto overflow-x-hidden relative bg-[rgb(var(--obsidian-mid-rgb)/0.4)] custom-scrollbar">
-                <div className="relative w-full min-h-[1200px] sm:min-h-[1400px] overflow-hidden story-map-bg">
+              <div 
+                ref={scrollContainerRef}
+                className="w-full h-[75vh] min-h-[500px] rounded-2xl border border-[#D4AF6E]/40 overflow-y-auto overflow-x-hidden shadow-lg relative bg-[rgb(var(--obsidian-mid-rgb)/0.4)] custom-scrollbar"
+              >
+                <div className="relative w-full min-h-[1600px] sm:min-h-[2200px] overflow-hidden story-map-bg">
                   {/* Fog / atmosphere layers */}
                   <div className="absolute inset-0 pointer-events-none story-map-fog" />
 
@@ -300,12 +398,12 @@ export default function StoryModeMap() {
 
                   {/* SVG path lines */}
                   <StoryModeMapCanvas
-                    nodes={STORY_MAP_NODES}
+                    nodes={(runState.mapNodes || [])}
                     getNodeStatus={getNodeStatus}
                   />
 
                   {/* Node icons */}
-                  {STORY_MAP_NODES.map((node) => (
+                  {(runState.mapNodes || []).map((node) => (
                     <StoryModeNodeIcon
                       key={node.id}
                       id={node.id}
@@ -330,7 +428,7 @@ export default function StoryModeMap() {
                     exit={{ opacity: 0 }}
                   >
                     <motion.div
-                      className="flex flex-col items-center gap-6 p-10 rounded-2xl border border-brand-accent/40 bg-brand-accent/5 backdrop-blur-md max-w-md w-full mx-4"
+                      className="flex flex-col items-center gap-6 p-10 rounded-2xl border border-brand-accent/40 bg-brand-accent/5 backdrop-blur-md max-w-md w-full mx-4 shadow-2xl"
                       initial={{ scale: 0.8, y: 30 }}
                       animate={{ scale: 1, y: 0 }}
                       exit={{ scale: 0.8, y: 30 }}
@@ -365,20 +463,27 @@ export default function StoryModeMap() {
                         </p>
                       </div>
 
-                      <div className="flex flex-col sm:flex-row gap-3 mt-2 w-full max-w-xs">
+                      <div className="flex flex-col gap-3 mt-2 w-full max-w-sm">
                         <button
-                          onClick={() => window.location.href = "/"}
-                          className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-brand-border/40 text-brand-secondary hover:text-brand-text hover:bg-brand-surface transition-all text-sm font-medium cursor-pointer"
-                        >
-                          <Home className="w-4 h-4" />
-                          Return to Home
-                        </button>
-                        <button
-                          onClick={confirmReset}
-                          className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-brand-accent/15 border border-brand-accent/40 text-brand-accent hover:bg-brand-accent/25 transition-all text-sm font-medium cursor-pointer"
+                          onClick={() => confirmReset(true)}
+                          className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-brand-accent/20 border border-brand-accent/50 text-brand-accent hover:bg-brand-accent/30 transition-all text-sm font-bold cursor-pointer"
                         >
                           <RotateCcw className="w-4 h-4" />
-                          Restart Journey
+                          New Game+ (Keep Coins & Relics)
+                        </button>
+                        <button
+                          onClick={() => confirmReset(false)}
+                          className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-brand-border/40 text-brand-secondary hover:text-brand-text hover:bg-brand-surface transition-all text-sm font-medium cursor-pointer"
+                        >
+                          <RotateCcw className="w-4 h-4 opacity-50" />
+                          Fresh Start (50 Coins)
+                        </button>
+                        <button
+                          onClick={() => window.location.href = "/"}
+                          className="w-full flex items-center justify-center gap-2 px-4 py-2 mt-2 text-brand-secondary/60 hover:text-brand-secondary transition-all text-xs font-medium cursor-pointer"
+                        >
+                          <Home className="w-3 h-3" />
+                          Return to Home
                         </button>
                       </div>
                     </motion.div>
@@ -396,7 +501,7 @@ export default function StoryModeMap() {
                     exit={{ opacity: 0 }}
                   >
                     <motion.div
-                      className="flex flex-col items-center gap-5 p-8 rounded-2xl border border-red-500/30 bg-red-500/5 backdrop-blur-md max-w-sm w-full mx-4 relative"
+                      className="flex flex-col items-center gap-5 p-8 rounded-2xl border border-red-500/30 bg-red-500/5 backdrop-blur-md max-w-sm w-full mx-4 shadow-2xl relative"
                       initial={{ scale: 0.8, y: 30 }}
                       animate={{ scale: 1, y: 0 }}
                       exit={{ scale: 0.8, y: 30 }}
@@ -420,18 +525,24 @@ export default function StoryModeMap() {
                         </p>
                       </div>
 
-                      <div className="flex gap-3 mt-4 w-full">
+                      <div className="flex flex-col gap-3 mt-4 w-full">
                         <button
-                          onClick={() => setShowResetConfirm(false)}
-                          className="flex-1 px-4 py-2.5 rounded-xl border border-brand-border/40 text-brand-secondary hover:text-brand-text hover:bg-brand-surface transition-all text-sm font-medium cursor-pointer"
+                          onClick={() => confirmReset(true)}
+                          className="w-full px-4 py-3 rounded-xl bg-red-500/15 border border-red-500/40 text-red-400 hover:bg-red-500/25 transition-all text-sm font-bold cursor-pointer text-center"
                         >
-                          Cancel
+                          New Game+ (Keep Coins & Relics)
                         </button>
                         <button
-                          onClick={confirmReset}
-                          className="flex-1 px-4 py-2.5 rounded-xl bg-red-500/15 border border-red-500/40 text-red-400 hover:bg-red-500/25 transition-all text-sm font-medium cursor-pointer"
+                          onClick={() => confirmReset(false)}
+                          className="w-full px-4 py-3 rounded-xl border border-brand-border/40 text-brand-secondary hover:text-brand-text hover:bg-brand-surface transition-all text-sm font-medium cursor-pointer text-center"
                         >
-                          Confirm
+                          Fresh Start (50 Coins)
+                        </button>
+                        <button
+                          onClick={() => setShowResetConfirm(false)}
+                          className="w-full px-4 py-2 mt-2 text-brand-secondary/60 hover:text-brand-secondary transition-all text-xs font-medium cursor-pointer text-center"
+                        >
+                          Cancel
                         </button>
                       </div>
                     </motion.div>
@@ -449,7 +560,7 @@ export default function StoryModeMap() {
                     exit={{ opacity: 0 }}
                   >
                     <motion.div
-                      className="flex flex-col items-center gap-5 p-8 rounded-2xl border border-[#D4AF6E]/60 bg-brand-accent/5 backdrop-blur-md max-w-sm w-full mx-4 relative"
+                      className="flex flex-col items-center gap-5 p-8 rounded-2xl border border-[#D4AF6E]/60 bg-brand-accent/5 backdrop-blur-md max-w-sm w-full mx-4 shadow-[0_0_30px_rgba(212,175,110,0.15)] relative"
                       initial={{ scale: 0.8, y: 30 }}
                       animate={{ scale: 1, y: 0 }}
                       exit={{ scale: 0.8, y: 30 }}
@@ -494,29 +605,49 @@ export default function StoryModeMap() {
                   </motion.div>
                 )}
               </AnimatePresence>
+
+              {/* Overlays / Modals */}
+              <AnimatePresence>
+                {activeView.kind === "characterSelect" && (
+                  <StoryModeCharacterSelect
+                    onSelect={() => {
+                      // Completes the start node and returns to map
+                      setCompletedNodes((prev) => new Set([...prev, activeView.nodeId]));
+                      setActiveView({ kind: "map" });
+                    }}
+                    onClose={() => setActiveView({ kind: "map" })}
+                  />
+                )}
+              </AnimatePresence>
             </div>
 
             {/* Legend */}
-            <div className="flex flex-wrap items-center justify-center gap-4 mt-4 px-2">
+            <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 mt-6 px-4 py-3 w-full max-w-3xl mx-auto border border-brand-border/30 bg-brand-surface/20 rounded-2xl shadow-inner backdrop-blur-sm">
               {[
-                { color: "#ef4444", label: "Monster" },
-                { color: "#a855f7", label: "Mystery" },
-                { color: "#f97316", label: "Rest Site" },
-                { color: "#eab308", label: "Boss" },
+                { color: "#a855f7", label: "Puzzle" },
+                { color: "#facc15", label: "Merchant" },
+                { color: "#f97316", label: "Rest" },
+                { color: "#ef4444", label: "Enemy" },
+                { color: "#b91c1c", label: "Elite" },
+                { color: "#fbbf24", label: "Boss" },
                 { color: "#22c55e", label: "Completed" },
               ].map((item) => (
                 <div
                   key={item.label}
-                  className="flex items-center gap-1.5 text-xs font-mono text-brand-secondary"
+                  className="flex items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs font-mono text-brand-secondary"
                 >
                   <div
-                    className="w-2.5 h-2.5 rounded-full"
-                    style={{ background: item.color }}
+                    className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full"
+                    style={{ 
+                      background: item.color,
+                      boxShadow: `0 0 8px ${item.color}80` 
+                    }}
                   />
                   {item.label}
                 </div>
               ))}
             </div>
+
           </motion.div>
         ) : activeView.kind === "battle" ? (
           <motion.div
@@ -529,7 +660,7 @@ export default function StoryModeMap() {
             <StoryModeBattle
               nodeId={activeView.nodeId}
               difficulty={
-                STORY_MAP_NODES.find((n) => n.id === activeView.nodeId)
+                (runState.mapNodes || []).find((n) => n.id === activeView.nodeId)
                   ?.difficulty ?? 1
               }
               onVictory={handleBattleVictory}
@@ -537,20 +668,37 @@ export default function StoryModeMap() {
               onRetreat={handleRetreat}
             />
           </motion.div>
-        ) : activeView.kind === "encounter" ? (
+
+        ) : activeView.kind === "merchant" ? (
           <motion.div
-            key="encounter"
+            key="merchant"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
           >
-            <StoryModeEncounter
+            <StoryModeMerchant
+              onComplete={handleMerchantComplete}
+            />
+          </motion.div>
+        ) : activeView.kind === "puzzle" ? (
+          <motion.div
+            key="puzzle"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <StoryModePuzzleNode
               nodeLabel={
-                STORY_MAP_NODES.find((n) => n.id === activeView.nodeId)
-                  ?.label ?? "Unknown"
+                (runState.mapNodes || []).find((n) => n.id === activeView.nodeId)
+                  ?.label ?? "Puzzle Trial"
               }
-              onComplete={handleEncounterComplete}
+              difficulty={
+                (runState.mapNodes || []).find((n) => n.id === activeView.nodeId)
+                  ?.difficulty ?? 1
+              }
+              onComplete={handlePuzzleComplete}
               onRetreat={handleRetreat}
             />
           </motion.div>
@@ -564,11 +712,11 @@ export default function StoryModeMap() {
           >
             <StoryModeRestSite
               nodeLabel={
-                STORY_MAP_NODES.find((n) => n.id === activeView.nodeId)
+                (runState.mapNodes || []).find((n) => n.id === activeView.nodeId)
                   ?.label ?? "Rest Site"
               }
               nodeDescription={
-                STORY_MAP_NODES.find((n) => n.id === activeView.nodeId)
+                (runState.mapNodes || []).find((n) => n.id === activeView.nodeId)
                   ?.description ?? ""
               }
               onComplete={handleRestComplete}

@@ -8,6 +8,7 @@
  */
 
 import { motion } from "framer-motion";
+import { Coins, Crown } from "lucide-react";
 import type { StoryNodeType, NodeStatus } from "@/features/story-mode/storyModeMapData";
 
 interface StoryModeNodeIconProps {
@@ -23,7 +24,7 @@ interface StoryModeNodeIconProps {
 /** SVG icon per node type */
 function NodeSVG({ type, status }: { type: StoryNodeType; status: NodeStatus }) {
   const isCompleted = status === "completed";
-  const size = type === "boss" ? 40 : type === "start" ? 38 : 32;
+  const size = type === "boss" ? 36 : type === "start" ? 32 : 24;
 
   if (isCompleted) {
     // Checkmark for completed nodes
@@ -53,25 +54,25 @@ function NodeSVG({ type, status }: { type: StoryNodeType; status: NodeStatus }) 
           <rect x="6" y="17" width="12" height="3" rx="1" />
         </svg>
       );
-    case "monster":
+    case "enemy":
       return (
         <img
           src="/story mode assets/skull.svg"
-          alt="Monster"
+          alt="Enemy"
           style={{ width: size, height: size }}
           className="object-contain"
         />
       );
-    case "mystery":
+    case "puzzle":
       return (
         <img
           src="/story mode assets/question mark.svg"
-          alt="Mystery"
+          alt="Puzzle Node"
           style={{ width: size, height: size }}
           className="object-contain"
         />
       );
-    case "fireplace":
+    case "rest":
       return (
         <img
           src="/story mode assets/fireplace.svg"
@@ -89,6 +90,11 @@ function NodeSVG({ type, status }: { type: StoryNodeType; status: NodeStatus }) 
           className="object-contain"
         />
       );
+    case "merchant":
+      return <Coins size={size - 4} strokeWidth={2} className="text-[#D4AF6E]" />;
+
+    case "elite":
+      return <Crown size={size - 4} strokeWidth={2.5} className="text-[#ef4444]" />;
     default:
       return null;
   }
@@ -125,17 +131,25 @@ function getNodeColors(type: StoryNodeType, status: NodeStatus) {
     shadow = "0 0 25px rgba(34, 197, 94, 0.5)";
   } else {
     switch (type) {
-      case "monster":
+      case "enemy":
         glowColor = "rgba(239, 68, 68, 0.4)"; // Red
         shadow = "0 0 25px rgba(239, 68, 68, 0.6)";
         break;
-      case "mystery":
+      case "elite":
+        glowColor = "rgba(185, 28, 28, 0.6)"; // Dark Red / Intense
+        shadow = "0 0 35px rgba(185, 28, 28, 0.8)";
+        break;
+      case "puzzle":
         glowColor = "rgba(168, 85, 247, 0.4)"; // Purple
         shadow = "0 0 25px rgba(168, 85, 247, 0.6)";
         break;
-      case "fireplace":
+      case "rest":
         glowColor = "rgba(249, 115, 22, 0.4)"; // Orange
         shadow = "0 0 25px rgba(249, 115, 22, 0.6)";
+        break;
+      case "merchant":
+        glowColor = "rgba(250, 204, 21, 0.5)"; // Yellow/Gold
+        shadow = "0 0 30px rgba(250, 204, 21, 0.7)";
         break;
       case "boss":
         glowColor = "rgba(250, 204, 21, 0.7)"; // Bright Yellow/Gold
@@ -152,6 +166,7 @@ function getNodeColors(type: StoryNodeType, status: NodeStatus) {
 }
 
 export default function StoryModeNodeIcon({
+  id,
   type,
   label,
   status,
@@ -162,10 +177,11 @@ export default function StoryModeNodeIcon({
   const colors = getNodeColors(type, status);
   const isClickable = status === "available" || status === "active";
   const isAvailable = status === "available";
-  const nodeSize = type === "boss" ? 76 : type === "start" ? 70 : 64;
+  const nodeSize = type === "boss" ? 56 : type === "start" ? 52 : 44;
 
   return (
     <div
+      id={`map-node-${id}`}
       className="absolute"
       style={{
         left: `${x}%`,
@@ -240,12 +256,11 @@ export default function StoryModeNodeIcon({
 
           {/* Label */}
           <span
-            className="absolute top-[100%] mt-2 text-xs font-mono font-semibold tracking-wide max-w-[140px] w-max text-center transition-all duration-300 px-3 py-1.5 rounded-lg border backdrop-blur-md leading-tight"
+            className="absolute top-[100%] mt-2 text-[10px] sm:text-xs font-mono font-semibold tracking-wide max-w-[140px] w-max text-center transition-all duration-300 px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg border shadow-sm backdrop-blur-md leading-tight opacity-0 group-hover:opacity-100 pointer-events-none z-50"
             style={{
               color: status === "locked" ? "var(--text-secondary)" : colors.text,
               backgroundColor: status === "locked" ? "var(--obsidian-glass)" : "var(--obsidian-mid)",
               borderColor: status === "locked" ? "transparent" : colors.border,
-              opacity: status === "locked" ? 0.75 : 1,
             }}
           >
             {label}
