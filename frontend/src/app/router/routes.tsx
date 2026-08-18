@@ -1,5 +1,6 @@
 import HomePage from "@/pages/HomePage";
 import ContactPage from "@/pages/ContactPage";
+import JoinUsPage from "@/pages/JoinUsPage";
 import PuzzlePage from "@/pages/PuzzlePage";
 import { Navigate } from "react-router";
 import SettingsPage from "@/pages/SettingsPage";
@@ -230,6 +231,11 @@ export const mainRoutes: RouteConfig[] = [
     path: "/how-xlchess-works",
     element: <HowXLChessWorksPage />,
     title: "How XLChess Works | XLChess",
+  },
+  {
+    path: "/join-us",
+    element: <JoinUsPage />,
+    title: "Join Us | XLChess",
   },
 ];
 

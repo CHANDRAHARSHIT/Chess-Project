@@ -409,6 +409,7 @@ export default function SidebarLayout({
     { name: "About", href: "/about" },
     { name: "Copyright", href: "/copyright" },
     { name: "Contact Us", href: "/contact" },
+    { name: "Join Us", href: "/join-us" },
     { name: "Creator", href: "/creator" },
     { name: "Advertise", href: "/advertise" },
     { name: "Developers", href: "/developers" },
