@@ -222,7 +222,7 @@ export function MultiplayerBoard({
     <div
       role="application"
       aria-label={`Chess board, ${boardOrientation} orientation, ${isMyTurn ? "your move" : "opponent's move"}`}
-      className={`relative w-full max-w-[450px] sm:max-w-[480px] aspect-square rounded-2xl border-2 overflow-hidden bg-brand-surface transition-colors duration-300 ${
+      className={`relative w-full max-w-[450px] sm:max-w-[480px] aspect-square border-2 overflow-hidden bg-brand-surface transition-colors duration-300 ${
         shake ? "border-rose-500/80" : "border-brand-accent/40 hover:border-brand-accent/60"
       } ${!isMyTurn ? "[&_[data-testid^='piece-']]:!cursor-default" : ""}`}
     >
@@ -232,7 +232,7 @@ export function MultiplayerBoard({
           onPieceDrop: ({ sourceSquare, targetSquare }) => handlePieceDrop(sourceSquare, targetSquare ?? ""),
           boardOrientation,
           squareStyles,
-          boardStyle: { borderRadius: "12px" },
+          boardStyle: { borderRadius: "0px" },
           showNotation: false,
           allowDragging: interactive && isMyTurn,
         }}

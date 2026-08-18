@@ -18,15 +18,15 @@ function timeAgo(iso: string): string {
 const RESULT_PILL: Record<string, { label: string; badge: string }> = {
   WIN: {
     label: "VICTORY",
-    badge: "bg-emerald-500/10 border-emerald-500/20 text-emerald-400",
+    badge: "bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400",
   },
   LOSS: {
     label: "DEFEAT",
-    badge: "bg-rose-500/10 border-rose-500/20 text-rose-400",
+    badge: "bg-rose-500/10 border-rose-500/20 text-rose-600 dark:text-rose-400",
   },
   DRAW: {
     label: "DRAW",
-    badge: "bg-brand-surface/40 border-white/10 text-brand-secondary",
+    badge: "bg-brand-text/5 border-brand-text/10 text-brand-secondary",
   },
 };
 
@@ -52,8 +52,8 @@ export function GameHistoryList() {
   }, []);
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-gradient-to-b from-brand-surface/80 to-brand-surface/40 backdrop-blur-xl overflow-hidden shadow-xl flex flex-col h-full">
-      <div className="px-5 py-4 border-b border-white/10 bg-brand-surface/60 flex items-center justify-between">
+    <div className="rounded-3xl border border-brand-text/15 bg-brand-surface overflow-hidden flex flex-col h-full">
+      <div className="px-5 py-4 border-b border-brand-text/10 bg-brand-surface/60 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <History className="w-4 h-4 text-brand-accent" />
           <h3 className="font-display font-bold text-base text-brand-text tracking-tight">
@@ -68,7 +68,7 @@ export function GameHistoryList() {
       <div className="p-4 space-y-2 max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-brand-border/40 flex-1">
         {state === "loading" &&
           Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="h-12 rounded-xl bg-brand-surface/30 animate-pulse border border-white/5" />
+            <div key={i} className="h-12 rounded-xl bg-brand-text/5 animate-pulse border border-brand-text/5" />
           ))}
 
         {state === "empty" && (
@@ -91,7 +91,7 @@ export function GameHistoryList() {
             return (
               <div
                 key={entry.id}
-                className="flex items-center justify-between p-3 rounded-xl bg-brand-bg/30 border border-white/5 hover:border-brand-accent/30 hover:bg-brand-surface/50 transition-all duration-[var(--dur-quick)]"
+                className="flex items-center justify-between p-3 rounded-xl bg-brand-text/5 border border-brand-text/10 hover:border-brand-accent/30 hover:bg-brand-text/10 transition-all duration-[var(--dur-quick)]"
               >
                 <div className="flex items-center gap-3 min-w-0">
                   <span
@@ -108,7 +108,7 @@ export function GameHistoryList() {
                   {typeof entry.ratingDelta === "number" && (
                     <span
                       className={`font-bold ${
-                        entry.ratingDelta >= 0 ? "text-emerald-400" : "text-rose-400"
+                        entry.ratingDelta >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"
                       }`}
                     >
                       {entry.ratingDelta >= 0 ? "+" : ""}
