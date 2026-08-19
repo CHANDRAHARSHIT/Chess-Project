@@ -28,10 +28,19 @@ export function generateStoryMap(): StoryNode[] {
       }))
     );
 
+    // Ensure 3, 4, or 5 symmetrically centered starting nodes
+    // We have 6 paths, so we distribute them among these columns
+    const configurations = [
+      [1, 1, 3, 3, 5, 5], // 3 nodes (wide)
+      [2, 2, 3, 3, 4, 4], // 3 nodes (tight)
+      [1, 2, 2, 4, 4, 5], // 4 nodes
+      [1, 2, 3, 3, 4, 5], // 5 nodes
+    ];
+    const startColumns = configurations[Math.floor(Math.random() * configurations.length)];
+
     // 1. Path Generation Loop
     for (let p = 0; p < PATHS; p++) {
-      // Start slightly centered (columns 1 to 5 instead of 0 to 6)
-      let currentC = 1 + Math.floor(Math.random() * (COLUMNS - 2));
+      let currentC = startColumns[p];
       grid[0][currentC].exists = true;
 
       for (let f = 0; f < FLOORS - 1; f++) {
@@ -66,9 +75,10 @@ export function generateStoryMap(): StoryNode[] {
       }
     }
 
-    // 2. Guarantee at least 2 distinct starting nodes
+    // 2. Guarantee paths don't collapse too much early on
     const startNodes = grid[0].filter((n) => n.exists).length;
-    if (startNodes >= 2) {
+    // As long as we generated successfully, validMap = true
+    if (startNodes >= 3 && startNodes <= 5) {
       validMap = true;
     }
   }

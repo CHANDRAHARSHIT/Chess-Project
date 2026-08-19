@@ -401,7 +401,7 @@ export default function SidebarLayout({
     { name: "Lessons", href: "/lessons", icon: BookOpen },
     { name: "Build Lessons", href: "/lesson-builder", icon: PenTool },
     { name: "Puzzles", href: "/puzzles", icon: Puzzle },
-    { name: "Odyssey", href: "/story-mode", icon: Sparkles },
+    { name: "Odyssey", href: "/odyssey", icon: Sparkles },
     { name: "Upgrade", href: "/pricing", icon: Crown },
   ];
 

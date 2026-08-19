@@ -178,6 +178,44 @@ export default function StoryModeBattle({
     resetEvaluation,
   } = useStockfish();
 
+  // ── Bot Status Conditions ─────────────────────────────────────────────────
+  const STATUS_IMPACT = {
+    CHECK: { confused: 15 },
+    CAPTURE: { distracted: 20 },
+    PASSIVE: { relaxed: 10 },
+    UNDO: { confused: 25 },
+    HINT: { distracted: 15 },
+    EVAL: { relaxed: 15 },
+    TIME_STALL: { relaxed: 10 },
+    TIME_STEAL: { distracted: 20 },
+  };
+
+  const [botStatus, setBotStatus] = useState({
+    confused: 0,
+    relaxed: 0,
+    distracted: 0,
+  });
+
+  const [activePopup, setActivePopup] = useState<'confused' | 'relaxed' | 'distracted' | null>(null);
+  const prevBotStatus = useRef(botStatus);
+
+  useEffect(() => {
+    if (botStatus.confused >= 100 && prevBotStatus.current.confused < 100) {
+      setActivePopup('confused');
+    } else if (botStatus.relaxed >= 100 && prevBotStatus.current.relaxed < 100) {
+      setActivePopup('relaxed');
+    } else if (botStatus.distracted >= 100 && prevBotStatus.current.distracted < 100) {
+      setActivePopup('distracted');
+    }
+    prevBotStatus.current = botStatus;
+  }, [botStatus]);
+
+  useEffect(() => {
+    if (!activePopup) return;
+    const timer = setTimeout(() => setActivePopup(null), 5000);
+    return () => clearTimeout(timer);
+  }, [activePopup]);
+
   // Progressive Eval Bar logic
   const [displayEval, setDisplayEval] = useState<{ type: "cp" | "mate"; value: number; } | null>({ type: "cp", value: 0 });
   const evalTimeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
@@ -262,24 +300,62 @@ export default function StoryModeBattle({
     if (isEditMode) return;
     if (game.turn() === playerColor) return;
 
+    const isConfused = botStatus.confused >= 100;
+    const isRelaxed = botStatus.relaxed >= 100;
+    const isDistracted = botStatus.distracted >= 100;
+
+    let effectiveDifficulty = difficulty;
+    if (isRelaxed) {
+      effectiveDifficulty = 1; // Play weak
+    }
+
+    if (isDistracted) {
+      // Burn 15 seconds from enemy clock
+      setEnemyTime(prev => Math.max(1, prev - 15));
+    }
+
     const timer = setTimeout(() => {
-      getEngineMove(game.fen(), difficulty, (bestMoveStr) => {
-        const { from, to, promotion } = parseUciMove(bestMoveStr);
-        try {
-          const move = gameRef.current.move({ from, to, promotion: promotion || "q" });
-          if (move) {
-            setGameFen(gameRef.current.fen());
-            playMoveSound(gameRef.current, move.flags, !!move.captured);
+      getEngineMove(game.fen(), effectiveDifficulty, (bestMoveStr) => {
+        let moveObj = null;
+
+        // Confused bot has 50% chance to play a random legal move
+        if (isConfused && Math.random() < 0.5) {
+          const legalMoves = gameRef.current.moves({ verbose: true });
+          if (legalMoves.length > 0) {
+            const rm = legalMoves[Math.floor(Math.random() * legalMoves.length)];
+            try {
+              moveObj = gameRef.current.move({ from: rm.from, to: rm.to, promotion: rm.promotion || 'q' });
+            } catch (e) { /* fallback */ }
           }
-        } catch (e) {
-          console.error("AI tried invalid move:", bestMoveStr, e);
-          rollbar.error(e as Error, { context: "StoryModeBattle.applyEngineMove", bestMoveStr });
+        }
+
+        // Normal engine move if not confused or if random move failed
+        if (!moveObj) {
+          const { from, to, promotion } = parseUciMove(bestMoveStr);
+          try {
+            moveObj = gameRef.current.move({ from, to, promotion: promotion || "q" });
+          } catch (e) {
+            console.error("AI tried invalid move:", bestMoveStr, e);
+            rollbar.error(e as Error, { context: "StoryModeBattle.applyEngineMove", bestMoveStr });
+          }
+        }
+
+        if (moveObj) {
+          setGameFen(gameRef.current.fen());
+          playMoveSound(gameRef.current, moveObj.flags, !!moveObj.captured);
+
+          // Reset consumed status conditions after the AI makes its move
+          setBotStatus(prev => ({
+            confused: isConfused ? 0 : prev.confused,
+            relaxed: isRelaxed ? 0 : prev.relaxed,
+            distracted: isDistracted ? 0 : prev.distracted,
+          }));
         }
       });
     }, 400);
 
     return () => clearTimeout(timer);
-  }, [gameFen, playerColor, difficulty, getEngineMove, isEditMode]);
+  }, [gameFen, playerColor, difficulty, getEngineMove, isEditMode, botStatus]);
 
   // Scroll move history
   useEffect(() => {
@@ -334,6 +410,29 @@ export default function StoryModeBattle({
           setEvalMovesRemaining(prev => Math.max(0, prev - 1));
           if (hintTimerRef.current) clearTimeout(hintTimerRef.current);
           playMoveSound(game, move.flags, !!move.captured);
+
+          // Update Bot Status Conditions based on move
+          setBotStatus(prev => {
+            let newConfused = prev.confused;
+            let newRelaxed = prev.relaxed;
+            let newDistracted = prev.distracted;
+
+            // Checking the king adds Confusion
+            if (game.inCheck()) {
+              newConfused = Math.min(100, newConfused + STATUS_IMPACT.CHECK.confused);
+            }
+            // Capturing a piece adds Distraction
+            if (move.flags.includes('c') || move.flags.includes('e')) {
+              newDistracted = Math.min(100, newDistracted + STATUS_IMPACT.CAPTURE.distracted);
+            } 
+            // Passive moves (no check, no capture) add Relaxed
+            if (!game.inCheck() && !move.flags.includes('c') && !move.flags.includes('e')) {
+              newRelaxed = Math.min(100, newRelaxed + STATUS_IMPACT.PASSIVE.relaxed);
+            }
+
+            return { confused: newConfused, relaxed: newRelaxed, distracted: newDistracted };
+          });
+
           return true;
         }
       } catch {
@@ -361,6 +460,12 @@ export default function StoryModeBattle({
     setShowHint(false);
     stopSearch();
     soundManager.playMove();
+
+    // Reversing time severely confuses the bot
+    setBotStatus(prev => ({
+      ...prev,
+      confused: Math.min(100, prev.confused + STATUS_IMPACT.UNDO.confused)
+    }));
   }, [playerColor, stopSearch, runState.undoCharges, useCharge]);
 
   const handleHint = useCallback(() => {
@@ -370,6 +475,12 @@ export default function StoryModeBattle({
 
     setShowHint(true);
     analyzePosition(gameRef.current.fen(), 2500);
+
+    // Using a hint distracts the bot as you consult an external source
+    setBotStatus(prev => ({
+      ...prev,
+      distracted: Math.min(100, prev.distracted + STATUS_IMPACT.HINT.distracted)
+    }));
   }, [analyzePosition, runState.hintCharges, useCharge]);
 
   const handleActivateEval = useCallback(() => {
@@ -379,6 +490,12 @@ export default function StoryModeBattle({
     
     const moves = 5;
     setEvalMovesRemaining(prev => prev + moves);
+
+    // Turning on the eval bar means you're playing carefully, relaxing the bot
+    setBotStatus(prev => ({
+      ...prev,
+      relaxed: Math.min(100, prev.relaxed + STATUS_IMPACT.EVAL.relaxed)
+    }));
   }, [useCharge, runState.evalBarCharges]);
 
   const handleTimeAction = useCallback((action: 'increase_player' | 'decrease_enemy') => {
@@ -388,8 +505,12 @@ export default function StoryModeBattle({
 
     if (action === 'increase_player') {
       setPlayerTime(prev => prev + Math.floor(playerInitialTime * 0.1));
+      // Stalling for time relaxes the bot
+      setBotStatus(prev => ({ ...prev, relaxed: Math.min(100, prev.relaxed + STATUS_IMPACT.TIME_STALL.relaxed) }));
     } else {
       setEnemyTime(prev => Math.max(1, prev - Math.floor(enemyInitialTime * 0.1)));
+      // Stealing the enemy's time distracts/panics them
+      setBotStatus(prev => ({ ...prev, distracted: Math.min(100, prev.distracted + STATUS_IMPACT.TIME_STEAL.distracted) }));
     }
   }, [useCharge, runState.timeCharges]);
 
@@ -413,6 +534,7 @@ export default function StoryModeBattle({
       setEnemyTime(enemyInitialTime);
       resetEvaluation();
       setDisplayEval({ type: "cp", value: 0 });
+      setBotStatus({ confused: 0, relaxed: 0, distracted: 0 });
       evalTimeoutsRef.current.forEach((t) => clearTimeout(t));
       evalTimeoutsRef.current = [];
       if (hintTimerRef.current) clearTimeout(hintTimerRef.current);
@@ -465,6 +587,22 @@ export default function StoryModeBattle({
       backgroundColor: "rgba(0, 200, 100, 0.50)",
       boxShadow: "inset 0 0 0 3px rgba(0, 180, 80, 0.95)",
     };
+  }
+
+  if (gameRef.current.inCheck()) {
+    const turn = gameRef.current.turn();
+    const board = gameRef.current.board();
+    for (const row of board) {
+      for (const piece of row) {
+        if (piece && piece.type === "k" && piece.color === turn) {
+          customSquareStyles[piece.square] = {
+            ...customSquareStyles[piece.square],
+            backgroundColor: "rgba(239, 68, 68, 0.7)",
+            boxShadow: "inset 0 0 20px rgba(220, 38, 38, 0.9)",
+          };
+        }
+      }
+    }
   }
 
   // ── Move History Pairs ────────────────────────────────────────────────────
@@ -544,10 +682,150 @@ export default function StoryModeBattle({
         </div>
       </motion.div>
 
-      {/* Dashboard (From QuickGameBoard) */}
+      {/* Bot Status Conditions */}
+      <motion.div
+        className="flex items-center justify-center gap-4 mt-4 relative"
+        initial={{ y: -10, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.2, duration: 0.5 }}
+      >
+
+        <div className="luxury-card rounded-xl px-5 py-3 flex flex-wrap items-center justify-center gap-4 sm:gap-6 border border-brand-border/40 shadow-xl bg-black/60 relative">
+          {/* Subtle gradient background */}
+          <div className="absolute inset-0 bg-gradient-to-r from-red-500/5 via-green-500/5 to-yellow-500/5 rounded-xl pointer-events-none" />
+
+          {/* Confused */}
+          <div className="relative">
+            <AnimatePresence>
+              {activePopup === 'confused' && (
+                <motion.div
+                  key="popup-confused"
+                  initial={{ opacity: 0, scale: 0.8, y: 10 }}
+                  animate={{ opacity: 1, scale: 1, y: -10 }}
+                  exit={{ opacity: 0, scale: 0.8, y: 0 }}
+                  className="absolute bottom-[calc(100%+15px)] left-1/2 -translate-x-1/2 z-[100] pointer-events-none"
+                >
+                  <div className="luxury-card px-4 py-3 rounded-2xl shadow-xl border border-red-500/60 shadow-[0_0_20px_rgba(239,68,68,0.3)] flex items-center gap-3 whitespace-nowrap">
+                    <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-white border border-red-500/40 overflow-hidden">
+                      <img src="/confused_status.png" alt="Confused" className="w-8 h-8 animate-bounce object-contain" />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-sm font-display font-bold text-red-400 tracking-wider drop-shadow-md">BOT CONFUSED!</span>
+                      <span className="text-[10px] text-brand-secondary font-mono">Random blunder possible</span>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+            <div className={`flex items-center gap-3 relative z-10 transition-transform duration-300 ${activePopup === 'confused' ? 'scale-105' : ''}`}>
+              <div className={`w-10 h-10 rounded-lg flex items-center justify-center bg-white border border-brand-border/30 overflow-hidden relative ${activePopup === 'confused' ? 'animate-pulse drop-shadow-[0_0_12px_rgba(248,113,113,0.5)] border-red-500/50' : ''}`}>
+                <img src="/confused_status.png" alt="Confused" className="w-8 h-8 object-contain" />
+                {activePopup !== 'confused' && <div className="absolute inset-0 bg-black/50" />}
+              </div>
+              <div className="flex flex-col">
+                <span className={`text-[10px] font-bold tracking-wider uppercase transition-colors duration-300 ${activePopup === 'confused' ? 'text-red-400' : 'text-brand-secondary'}`}>
+                  Confused
+                </span>
+                <div className="w-24 h-2.5 bg-black/40 rounded-full mt-2 overflow-hidden shadow-inner border border-brand-border/20">
+                  <div className="h-full bg-red-400 transition-all duration-500 relative" style={{ width: `${Math.min(botStatus.confused, 100)}%` }}>
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent to-white/30" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="w-px h-10 bg-brand-border/40 hidden sm:block"></div>
+
+          {/* Relaxed */}
+          <div className="relative">
+            <AnimatePresence>
+              {activePopup === 'relaxed' && (
+                <motion.div
+                  key="popup-relaxed"
+                  initial={{ opacity: 0, scale: 0.8, y: 10 }}
+                  animate={{ opacity: 1, scale: 1, y: -10 }}
+                  exit={{ opacity: 0, scale: 0.8, y: 0 }}
+                  className="absolute bottom-[calc(100%+15px)] left-1/2 -translate-x-1/2 z-[100] pointer-events-none"
+                >
+                  <div className="luxury-card px-4 py-3 rounded-2xl shadow-xl border border-green-500/60 shadow-[0_0_20px_rgba(74,222,128,0.3)] flex items-center gap-3 whitespace-nowrap">
+                    <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-white border border-green-500/40 overflow-hidden">
+                      <img src="/relaxed_status.png" alt="Relaxed" className="w-8 h-8 animate-pulse object-contain" />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-sm font-display font-bold text-green-400 tracking-wider drop-shadow-md">BOT RELAXED!</span>
+                      <span className="text-[10px] text-brand-secondary font-mono">Difficulty drops to 1</span>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+            <div className={`flex items-center gap-3 relative z-10 transition-transform duration-300 ${activePopup === 'relaxed' ? 'scale-105' : ''}`}>
+              <div className={`w-10 h-10 rounded-lg flex items-center justify-center bg-white border border-brand-border/30 overflow-hidden relative ${activePopup === 'relaxed' ? 'animate-pulse drop-shadow-[0_0_12px_rgba(74,222,128,0.5)] border-green-500/50' : ''}`}>
+                <img src="/relaxed_status.png" alt="Relaxed" className="w-8 h-8 object-contain" />
+                {activePopup !== 'relaxed' && <div className="absolute inset-0 bg-black/50" />}
+              </div>
+              <div className="flex flex-col">
+                <span className={`text-[10px] font-bold tracking-wider uppercase transition-colors duration-300 ${activePopup === 'relaxed' ? 'text-green-400' : 'text-brand-secondary'}`}>
+                  Relaxed
+                </span>
+                <div className="w-24 h-2.5 bg-black/40 rounded-full mt-2 overflow-hidden shadow-inner border border-brand-border/20">
+                  <div className="h-full bg-green-400 transition-all duration-500 relative" style={{ width: `${Math.min(botStatus.relaxed, 100)}%` }}>
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent to-white/30" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="w-px h-10 bg-brand-border/40 hidden sm:block"></div>
+
+          {/* Distracted */}
+          <div className="relative">
+            <AnimatePresence>
+              {activePopup === 'distracted' && (
+                <motion.div
+                  key="popup-distracted"
+                  initial={{ opacity: 0, scale: 0.8, y: 10 }}
+                  animate={{ opacity: 1, scale: 1, y: -10 }}
+                  exit={{ opacity: 0, scale: 0.8, y: 0 }}
+                  className="absolute bottom-[calc(100%+15px)] left-1/2 -translate-x-1/2 z-[100] pointer-events-none"
+                >
+                  <div className="luxury-card px-4 py-3 rounded-2xl shadow-xl border border-yellow-500/60 shadow-[0_0_20px_rgba(250,204,21,0.3)] flex items-center gap-3 whitespace-nowrap">
+                    <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-white border border-yellow-500/40 overflow-hidden">
+                      <img src="/distracted_status.png" alt="Distracted" className="w-8 h-8 animate-pulse object-contain" />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-sm font-display font-bold text-yellow-400 tracking-wider drop-shadow-md">BOT DISTRACTED!</span>
+                      <span className="text-[10px] text-brand-secondary font-mono">Lost 15 seconds</span>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+            <div className={`flex items-center gap-3 relative z-10 transition-transform duration-300 ${botStatus.distracted >= 100 ? 'scale-105' : ''}`}>
+              <div className={`w-10 h-10 rounded-lg flex items-center justify-center bg-white border border-brand-border/30 overflow-hidden relative ${botStatus.distracted >= 100 ? 'animate-pulse drop-shadow-[0_0_12px_rgba(250,204,21,0.5)] border-yellow-500/50' : ''}`}>
+                <img src="/distracted_status.png" alt="Distracted" className="w-8 h-8 object-contain" />
+                {botStatus.distracted < 100 && <div className="absolute inset-0 bg-black/50" />}
+              </div>
+              <div className="flex flex-col">
+                <span className={`text-[10px] font-bold tracking-wider uppercase transition-colors duration-300 ${botStatus.distracted >= 100 ? 'text-yellow-400' : 'text-brand-secondary'}`}>
+                  Distracted
+                </span>
+                <div className="w-24 h-2.5 bg-black/40 rounded-full mt-2 overflow-hidden shadow-inner border border-brand-border/20">
+                  <div className="h-full bg-yellow-400 transition-all duration-500 relative" style={{ width: `${Math.min(botStatus.distracted, 100)}%` }}>
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent to-white/30" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </motion.div>
       <div
         ref={dashboardRef}
-        className="luxury-card rounded-sm shadow-2xl p-4 sm:p-6 lg:p-8 w-full max-w-6xl mx-auto"
+        className="luxury-card rounded-sm shadow-2xl p-4 sm:p-6 lg:p-8 w-full max-w-6xl mx-auto relative"
         style={{ opacity: 0 }}
       >
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:items-stretch">
