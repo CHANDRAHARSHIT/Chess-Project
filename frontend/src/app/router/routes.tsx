@@ -52,7 +52,7 @@ export const mainRoutes: RouteConfig[] = [
     title: "Chess Puzzles | XLChess",
   },
   {
-    path: "/story-mode",
+    path: "/odyssey",
     element: <StoryModePage />,
     title: "Story Mode | XLChess",
   },
