@@ -690,7 +690,7 @@ export default function StoryModeBattle({
         transition={{ delay: 0.2, duration: 0.5 }}
       >
 
-        <div className="luxury-card rounded-xl px-5 py-3 flex flex-wrap items-center justify-center gap-4 sm:gap-6 border border-brand-border/40 shadow-xl bg-black/60 relative">
+        <div className="luxury-card rounded-xl px-2 sm:px-5 py-2 sm:py-3 flex items-center justify-center gap-2 sm:gap-6 border border-brand-border/40 shadow-xl bg-black/60 relative w-full sm:w-auto overflow-hidden sm:overflow-visible">
           {/* Subtle gradient background */}
           <div className="absolute inset-0 bg-gradient-to-r from-red-500/5 via-green-500/5 to-yellow-500/5 rounded-xl pointer-events-none" />
 
@@ -717,16 +717,16 @@ export default function StoryModeBattle({
                 </motion.div>
               )}
             </AnimatePresence>
-            <div className={`flex items-center gap-3 relative z-10 transition-transform duration-300 ${activePopup === 'confused' ? 'scale-105' : ''}`}>
-              <div className={`w-10 h-10 rounded-lg flex items-center justify-center bg-white border border-brand-border/30 overflow-hidden relative ${activePopup === 'confused' ? 'animate-pulse drop-shadow-[0_0_12px_rgba(248,113,113,0.5)] border-red-500/50' : ''}`}>
-                <img src="/confused_status.png" alt="Confused" className="w-8 h-8 object-contain" />
+            <div className={`flex items-center gap-1.5 sm:gap-3 relative z-10 transition-transform duration-300 ${activePopup === 'confused' ? 'scale-105' : ''}`}>
+              <div className={`w-7 h-7 sm:w-10 sm:h-10 shrink-0 rounded-md sm:rounded-lg flex items-center justify-center bg-white border border-brand-border/30 overflow-hidden relative ${activePopup === 'confused' ? 'animate-pulse drop-shadow-[0_0_12px_rgba(248,113,113,0.5)] border-red-500/50' : ''}`}>
+                <img src="/confused_status.png" alt="Confused" className="w-5 h-5 sm:w-8 sm:h-8 object-contain" />
                 {activePopup !== 'confused' && <div className="absolute inset-0 bg-black/50" />}
               </div>
               <div className="flex flex-col">
-                <span className={`text-[10px] font-bold tracking-wider uppercase transition-colors duration-300 ${activePopup === 'confused' ? 'text-red-400' : 'text-brand-secondary'}`}>
+                <span className={`text-[8px] sm:text-[10px] font-bold tracking-wider uppercase transition-colors duration-300 ${activePopup === 'confused' ? 'text-red-400' : 'text-brand-secondary'}`}>
                   Confused
                 </span>
-                <div className="w-24 h-2.5 bg-black/40 rounded-full mt-2 overflow-hidden shadow-inner border border-brand-border/20">
+                <div className="w-12 sm:w-24 h-1.5 sm:h-2.5 bg-black/40 rounded-full mt-0.5 sm:mt-2 overflow-hidden shadow-inner border border-brand-border/20">
                   <div className="h-full bg-red-400 transition-all duration-500 relative" style={{ width: `${Math.min(botStatus.confused, 100)}%` }}>
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent to-white/30" />
                   </div>
@@ -760,16 +760,16 @@ export default function StoryModeBattle({
                 </motion.div>
               )}
             </AnimatePresence>
-            <div className={`flex items-center gap-3 relative z-10 transition-transform duration-300 ${activePopup === 'relaxed' ? 'scale-105' : ''}`}>
-              <div className={`w-10 h-10 rounded-lg flex items-center justify-center bg-white border border-brand-border/30 overflow-hidden relative ${activePopup === 'relaxed' ? 'animate-pulse drop-shadow-[0_0_12px_rgba(74,222,128,0.5)] border-green-500/50' : ''}`}>
-                <img src="/relaxed_status.png" alt="Relaxed" className="w-8 h-8 object-contain" />
+            <div className={`flex items-center gap-1.5 sm:gap-3 relative z-10 transition-transform duration-300 ${activePopup === 'relaxed' ? 'scale-105' : ''}`}>
+              <div className={`w-7 h-7 sm:w-10 sm:h-10 shrink-0 rounded-md sm:rounded-lg flex items-center justify-center bg-white border border-brand-border/30 overflow-hidden relative ${activePopup === 'relaxed' ? 'animate-pulse drop-shadow-[0_0_12px_rgba(74,222,128,0.5)] border-green-500/50' : ''}`}>
+                <img src="/relaxed_status.png" alt="Relaxed" className="w-5 h-5 sm:w-8 sm:h-8 object-contain" />
                 {activePopup !== 'relaxed' && <div className="absolute inset-0 bg-black/50" />}
               </div>
               <div className="flex flex-col">
-                <span className={`text-[10px] font-bold tracking-wider uppercase transition-colors duration-300 ${activePopup === 'relaxed' ? 'text-green-400' : 'text-brand-secondary'}`}>
+                <span className={`text-[8px] sm:text-[10px] font-bold tracking-wider uppercase transition-colors duration-300 ${activePopup === 'relaxed' ? 'text-green-400' : 'text-brand-secondary'}`}>
                   Relaxed
                 </span>
-                <div className="w-24 h-2.5 bg-black/40 rounded-full mt-2 overflow-hidden shadow-inner border border-brand-border/20">
+                <div className="w-12 sm:w-24 h-1.5 sm:h-2.5 bg-black/40 rounded-full mt-0.5 sm:mt-2 overflow-hidden shadow-inner border border-brand-border/20">
                   <div className="h-full bg-green-400 transition-all duration-500 relative" style={{ width: `${Math.min(botStatus.relaxed, 100)}%` }}>
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent to-white/30" />
                   </div>
@@ -803,16 +803,16 @@ export default function StoryModeBattle({
                 </motion.div>
               )}
             </AnimatePresence>
-            <div className={`flex items-center gap-3 relative z-10 transition-transform duration-300 ${botStatus.distracted >= 100 ? 'scale-105' : ''}`}>
-              <div className={`w-10 h-10 rounded-lg flex items-center justify-center bg-white border border-brand-border/30 overflow-hidden relative ${botStatus.distracted >= 100 ? 'animate-pulse drop-shadow-[0_0_12px_rgba(250,204,21,0.5)] border-yellow-500/50' : ''}`}>
-                <img src="/distracted_status.png" alt="Distracted" className="w-8 h-8 object-contain" />
+            <div className={`flex items-center gap-1.5 sm:gap-3 relative z-10 transition-transform duration-300 ${botStatus.distracted >= 100 ? 'scale-105' : ''}`}>
+              <div className={`w-7 h-7 sm:w-10 sm:h-10 shrink-0 rounded-md sm:rounded-lg flex items-center justify-center bg-white border border-brand-border/30 overflow-hidden relative ${botStatus.distracted >= 100 ? 'animate-pulse drop-shadow-[0_0_12px_rgba(250,204,21,0.5)] border-yellow-500/50' : ''}`}>
+                <img src="/distracted_status.png" alt="Distracted" className="w-5 h-5 sm:w-8 sm:h-8 object-contain" />
                 {botStatus.distracted < 100 && <div className="absolute inset-0 bg-black/50" />}
               </div>
               <div className="flex flex-col">
-                <span className={`text-[10px] font-bold tracking-wider uppercase transition-colors duration-300 ${botStatus.distracted >= 100 ? 'text-yellow-400' : 'text-brand-secondary'}`}>
+                <span className={`text-[8px] sm:text-[10px] font-bold tracking-wider uppercase transition-colors duration-300 ${botStatus.distracted >= 100 ? 'text-yellow-400' : 'text-brand-secondary'}`}>
                   Distracted
                 </span>
-                <div className="w-24 h-2.5 bg-black/40 rounded-full mt-2 overflow-hidden shadow-inner border border-brand-border/20">
+                <div className="w-12 sm:w-24 h-1.5 sm:h-2.5 bg-black/40 rounded-full mt-0.5 sm:mt-2 overflow-hidden shadow-inner border border-brand-border/20">
                   <div className="h-full bg-yellow-400 transition-all duration-500 relative" style={{ width: `${Math.min(botStatus.distracted, 100)}%` }}>
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent to-white/30" />
                   </div>

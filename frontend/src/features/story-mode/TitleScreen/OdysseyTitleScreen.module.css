@@ -1,0 +1,306 @@
+/* OdysseyTitleScreen.module.css */
+
+.menuScreen {
+  position: absolute; /* Changed from relative to absolute to fit full screen */
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 640px;
+  overflow: hidden;
+  isolation: isolate;
+  color: #fff7dd;
+  background: #03101c;
+  font-family: Georgia, "Times New Roman", serif;
+  z-index: 50; /* Make sure it stays on top of the map during transition */
+}
+
+.bg {
+  position: absolute;
+  inset: 0;
+  z-index: -4;
+  background: linear-gradient(rgba(1, 8, 15, 0.04), rgba(1, 8, 15, 0.12)),
+    url("/odyssey-background.jpg") center/cover no-repeat;
+  transform: scale(1.01);
+}
+
+.cloudLayer {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  opacity: 0.1;
+  mix-blend-mode: screen;
+  background-repeat: repeat-x;
+  background-size: 70% 36%;
+  background-position-y: 8%;
+  filter: blur(14px);
+}
+
+.cloudA {
+  background-image: radial-gradient(ellipse at 15% 50%, rgba(150, 185, 215, 0.42) 0 18%, transparent 45%),
+    radial-gradient(ellipse at 45% 52%, rgba(150, 185, 215, 0.32) 0 17%, transparent 43%),
+    radial-gradient(ellipse at 75% 48%, rgba(150, 185, 215, 0.35) 0 18%, transparent 45%);
+  animation: cloudDrift 58s linear infinite;
+}
+
+.cloudB {
+  background-image: radial-gradient(ellipse at 20% 55%, rgba(110, 150, 180, 0.26) 0 20%, transparent 48%),
+    radial-gradient(ellipse at 58% 50%, rgba(110, 150, 180, 0.24) 0 16%, transparent 44%);
+  animation: cloudDriftReverse 82s linear infinite;
+  opacity: 0.07;
+}
+
+.starLayer {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.star {
+  position: absolute;
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  background: rgba(214, 240, 255, 0.95);
+  box-shadow: 0 0 7px rgba(160, 220, 255, 0.65);
+  opacity: var(--opacity);
+  animation: twinkle var(--duration) ease-in-out infinite;
+  animation-delay: var(--delay);
+}
+
+.menuShell {
+  position: absolute;
+  left: 50%;
+  top: 17%;
+  transform: translateX(-50%);
+  width: min(620px, 86vw);
+  text-align: center;
+}
+
+.logo {
+  margin: 0 0 clamp(44px, 8vh, 88px);
+  font-size: clamp(72px, 10vw, 150px);
+  line-height: 0.9;
+  letter-spacing: -0.035em;
+  font-weight: 700;
+  color: #e7b64b;
+  text-shadow: 0 3px 0 #7d4e13, 0 6px 0 #3d260a, 0 10px 24px rgba(0, 0, 0, 0.7);
+  animation: logoFloat 5.5s ease-in-out infinite;
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(8px, 1.25vh, 16px);
+}
+
+.menuItem {
+  --scale: 1;
+  position: relative;
+  min-width: 310px;
+  border: 0;
+  padding: 3px 56px;
+  background: transparent;
+  color: #f7ecd3;
+  font-size: clamp(25px, 2.2vw, 38px);
+  font-family: inherit;
+  font-weight: 700;
+  text-shadow: 0 2px 0 #0a0a0a, 0 4px 7px rgba(0, 0, 0, 0.65);
+  cursor: pointer;
+  transform: scale(var(--scale));
+  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), color 0.2s ease, text-shadow 0.2s ease;
+}
+
+.wing {
+  position: absolute;
+  top: 50%;
+  opacity: 0;
+  color: #e7b64b;
+  font-size: 0.82em;
+  transform: translateY(-50%) scale(0.7);
+  transition: opacity 0.18s ease, transform 0.24s cubic-bezier(0.2, 0.8, 0.2, 1);
+  text-shadow: 0 0 12px rgba(235, 184, 75, 0.7);
+}
+
+.wingLeft {
+  left: 7px;
+}
+
+.wingRight {
+  right: 7px;
+}
+
+.menuItem:hover,
+.menuItem:focus-visible,
+.menuItemActive {
+  --scale: 1.08;
+  color: #f2c74f;
+  outline: none;
+  text-shadow: 0 2px 0 #0a0a0a, 0 0 12px rgba(245, 197, 76, 0.35);
+}
+
+.menuItem:hover .wing,
+.menuItem:focus-visible .wing,
+.menuItemActive .wing {
+  opacity: 1;
+}
+
+.menuItem:hover .wingLeft,
+.menuItem:focus-visible .wingLeft,
+.menuItemActive .wingLeft {
+  transform: translateY(-50%) translateX(-4px) scale(1);
+}
+
+.menuItem:hover .wingRight,
+.menuItem:focus-visible .wingRight,
+.menuItemActive .wingRight {
+  transform: translateY(-50%) translateX(4px) scale(1);
+}
+
+.cornerNote,
+.version {
+  position: absolute;
+  z-index: 4;
+  color: #f4cc52;
+  text-shadow: 0 2px 3px rgba(0, 0, 0, 0.9);
+  font-weight: 700;
+}
+
+.cornerNote {
+  top: 12px;
+  left: 16px;
+  font-size: clamp(16px, 1.3vw, 23px);
+}
+
+.cornerNote span {
+  color: #9ddfff;
+  font-size: 0.8em;
+  font-weight: 400;
+}
+
+.version {
+  top: 12px;
+  right: 18px;
+  text-align: right;
+  font-size: 12px;
+  opacity: 0.6;
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: calc(var(--opacity) * 0.25);
+    transform: scale(0.75);
+  }
+  50% {
+    opacity: var(--opacity);
+    transform: scale(1.45);
+  }
+}
+
+@keyframes cloudDrift {
+  from {
+    transform: translateX(-7%);
+  }
+  to {
+    transform: translateX(7%);
+  }
+}
+
+@keyframes cloudDriftReverse {
+  from {
+    transform: translateX(7%);
+  }
+  to {
+    transform: translateX(-7%);
+  }
+}
+
+@keyframes logoFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@media (max-width: 900px) {
+  .menuShell {
+    top: 14%;
+  }
+  .logo {
+    margin-bottom: 52px;
+  }
+  .menuItem {
+    min-width: 270px;
+    font-size: clamp(24px, 4vw, 32px);
+  }
+  .bg {
+    background-position: 60% center;
+  }
+}
+
+@media (max-width: 600px) {
+  .menuScreen {
+    min-height: 720px;
+  }
+  .bg {
+    background-size: auto 100%;
+    background-position: 55% center;
+  }
+  .menuShell {
+    top: 16%;
+    width: 94vw;
+  }
+  .logo {
+    font-size: clamp(62px, 18vw, 92px);
+    margin-bottom: 52px;
+  }
+  .menu {
+    gap: 12px;
+  }
+  .menuItem {
+    min-width: 240px;
+    padding-inline: 42px;
+    font-size: clamp(23px, 7vw, 31px);
+  }
+  .cornerNote {
+    font-size: 14px;
+  }
+  .version {
+    font-size: 10px;
+  }
+}
+
+@media (max-height: 720px) and (min-width: 700px) {
+  .menuShell {
+    top: 9%;
+  }
+  .logo {
+    font-size: clamp(62px, 8vw, 110px);
+    margin-bottom: 34px;
+  }
+  .menu {
+    gap: 6px;
+  }
+  .menuItem {
+    font-size: clamp(22px, 2vw, 31px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .star,
+  .cloudLayer,
+  .logo {
+    animation: none !important;
+  }
+  .menuItem,
+  .wing {
+    transition: none !important;
+  }
+}

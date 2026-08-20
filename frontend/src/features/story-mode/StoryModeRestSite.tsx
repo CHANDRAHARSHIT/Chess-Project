@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Flame, ArrowRight, RotateCcw, Heart, Sparkles } from "lucide-react";
 import { useStoryModeRun, MAX_RELIC_CHARGES } from "./StoryModeContext";
@@ -154,6 +154,16 @@ export default function StoryModeRestSite({
     );
   };
 
+  const particles = useMemo(() => {
+    return [...Array(12)].map(() => ({
+      left: `${30 + Math.random() * 40}%`,
+      yTarget: -60 - Math.random() * 60,
+      xTarget: (Math.random() - 0.5) * 40,
+      durationResting: 1 + Math.random(),
+      durationIdle: 1.5 + Math.random(),
+    }));
+  }, []);
+
   return (
     <motion.div
       className="min-h-[60vh] flex items-center justify-center p-4 sm:p-6"
@@ -208,24 +218,24 @@ export default function StoryModeRestSite({
           </motion.div>
 
           {/* Floating embers / healing particles */}
-          {[...Array(isResting ? 12 : 4)].map((_, i) => (
+          {particles.slice(0, isResting ? 12 : 4).map((p, i) => (
             <motion.div
               key={i}
               className="absolute w-1.5 h-1.5 rounded-full"
               style={{
-                left: `${30 + Math.random() * 40}%`,
+                left: p.left,
                 bottom: "50%",
                 backgroundColor: isResting ? "#4ade80" : "#fb923c",
               }}
               initial={{ opacity: 0, scale: 0 }}
               animate={{
-                y: [0, -60 - Math.random() * 60],
-                x: [0, (Math.random() - 0.5) * 40],
+                y: [0, p.yTarget],
+                x: [0, p.xTarget],
                 opacity: [0.8, 0],
                 scale: [1, 0.2],
               }}
               transition={{
-                duration: isResting ? 1 + Math.random() : 1.5 + Math.random(),
+                duration: isResting ? p.durationResting : p.durationIdle,
                 repeat: Infinity,
                 delay: i * (isResting ? 0.1 : 0.4),
                 ease: "easeOut",
