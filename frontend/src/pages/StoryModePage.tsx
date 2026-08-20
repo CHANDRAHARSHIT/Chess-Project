@@ -117,7 +117,7 @@ function StoryModeContent() {
 
                 {/* Map */}
                 <div className="flex-1 flex flex-col w-full relative">
-                  <StoryModeMap />
+                  <StoryModeMap onResetToTitle={() => setViewState("title")} />
                 </div>
               </main>
             </motion.div>

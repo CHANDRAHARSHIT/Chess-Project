@@ -31,7 +31,11 @@ type ActiveView =
   | { kind: "puzzle"; nodeId: number }
   | { kind: "characterSelect"; nodeId: number };
 
-export default function StoryModeMap() {
+interface StoryModeMapProps {
+  onResetToTitle?: () => void;
+}
+
+export default function StoryModeMap({ onResetToTitle }: StoryModeMapProps = {}) {
   const { runState, resetRun, updateRunState } = useStoryModeRun();
 
   // ── Game state derived from Context ──
@@ -195,7 +199,10 @@ export default function StoryModeMap() {
     
     // Reset global context run state (this automatically clears/resets everything)
     resetRun(keepProgress);
-  }, [resetRun]);
+    
+    // Call the callback to go back to title screen
+    onResetToTitle?.();
+  }, [resetRun, onResetToTitle]);
 
   // ── Progress ──────────────────────────────────────────────────────────
   const progress = useMemo(() => {
