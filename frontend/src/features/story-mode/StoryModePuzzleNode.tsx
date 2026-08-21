@@ -164,12 +164,12 @@ export default function StoryModePuzzleNode({
 
   return (
     <motion.div
-      className="flex flex-col lg:flex-row items-center justify-center gap-2 p-1 sm:p-2 flex-1 min-h-0 h-full w-full"
+      className="flex flex-col lg:flex-row items-center justify-center gap-2 p-1 sm:p-2 flex-1 min-h-0 w-full"
       initial={{ opacity: 0 }} animate={{ opacity: 1 }}
     >
-      <div className="w-full max-w-[500px] mx-auto flex flex-col gap-2 flex-1 min-h-0 h-full">
+      <div className="w-full max-w-[500px] mx-auto flex flex-col gap-2 h-fit max-h-full my-auto">
         {/* Header */}
-        <div className="flex items-center justify-between bg-brand-surface/30 p-4 rounded-xl border border-brand-border/40">
+        <div className="flex items-center justify-between bg-brand-surface/30 p-4 rounded-xl border border-brand-border/40 shrink-0">
           <div className="flex items-center gap-3">
             <Swords className="w-5 h-5 text-brand-accent" />
             <div>
@@ -184,7 +184,7 @@ export default function StoryModePuzzleNode({
 
         {/* Board */}
         {chessPuzzle && (
-          <div className="bg-brand-surface/20 p-1 sm:p-2 rounded-2xl border border-brand-border/40 backdrop-blur-sm flex-1 min-h-0 flex flex-col justify-center">
+          <div className="bg-brand-surface/20 p-1 sm:p-2 rounded-2xl border border-brand-border/40 backdrop-blur-sm min-h-0 flex flex-col justify-center">
             <PuzzleBoard
               puzzle={chessPuzzle}
               puzzleNumber={currentIndex + 1}
