@@ -8,7 +8,7 @@
 
 import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { RotateCcw, Map, Home, X, LogIn, Coins, Lightbulb, Eye, Hourglass, Shuffle } from "lucide-react";
+import { RotateCcw, Map, Home, Coins, Lightbulb, Eye, Hourglass, Shuffle } from "lucide-react";
 import {
   type NodeStatus,
 } from "@/features/story-mode/storyModeMapData";
@@ -20,8 +20,8 @@ import StoryModeBattle from "./StoryModeBattle";
 import StoryModeRestSite from "./StoryModeRestSite";
 import StoryModePuzzleNode from "./StoryModePuzzleNode";
 import StoryModeCharacterSelect from "./StoryModeCharacterSelect";
+import { ConfirmAbandonModal } from "./TitleScreen/ConfirmAbandonModal";
 import { useStoryModeRun } from "./StoryModeContext";
-import { useSession } from "@/features/account/useSession";
 
 type ActiveView =
   | { kind: "map" }
@@ -31,19 +31,20 @@ type ActiveView =
   | { kind: "puzzle"; nodeId: number }
   | { kind: "characterSelect"; nodeId: number };
 
-export default function StoryModeMap() {
-  const { session, status, signIn } = useSession();
-  const { runState, resetRun } = useStoryModeRun();
+interface StoryModeMapProps {
+  onResetToTitle?: () => void;
+}
 
-  // ── Game state persisted in component (resets on page refresh for guests) ──
-  const [completedNodes, setCompletedNodes] = useState<Set<number>>(new Set());
-  const [currentNodeId, setCurrentNodeId] = useState<number>(-1);
+export default function StoryModeMap({ onResetToTitle }: StoryModeMapProps = {}) {
+  const { runState, resetRun, updateRunState } = useStoryModeRun();
+
+  // ── Game state derived from Context ──
+  const completedNodes = useMemo(() => new Set(runState.completedNodes || []), [runState.completedNodes]);
+  const currentNodeId = runState.currentNodeId ?? -1;
+  const journeyComplete = runState.journeyComplete ?? false;
+
   const [activeView, setActiveView] = useState<ActiveView>({ kind: "map" });
-  const [journeyComplete, setJourneyComplete] = useState(false);
-  const [isLoaded, setIsLoaded] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
-  const [showGuestWarning, setShowGuestWarning] = useState<number | null>(null);
-  const [hasIgnoredGuestWarning, setHasIgnoredGuestWarning] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   // ── Auto-scroll to current node or bottom on mount ────────────────────────────────────
@@ -71,47 +72,6 @@ export default function StoryModeMap() {
       }, 100);
     }
   }, [activeView.kind, currentNodeId]);
-
-  // ── Persistence Logic ────────────────────────────────────────────────
-  useEffect(() => {
-    if (status === "loading") return;
-
-    if (status === "authenticated" && session?.user?.id) {
-      const stored = localStorage.getItem(`storyProgress_${session.user.id}`);
-      if (stored) {
-        try {
-          const parsed = JSON.parse(stored);
-          setCompletedNodes(new Set(parsed.completedNodes || []));
-          setCurrentNodeId(parsed.currentNodeId ?? -1);
-          setJourneyComplete(parsed.journeyComplete ?? false);
-        } catch (e) {
-          console.error("Failed to parse story progress", e);
-        }
-      }
-    } else {
-      // Unauthenticated or guest: reset progress
-      setCompletedNodes(new Set());
-      setCurrentNodeId(-1);
-      setJourneyComplete(false);
-    }
-    setIsLoaded(true);
-  }, [status, session?.user?.id]);
-
-  useEffect(() => {
-    if (!isLoaded) return;
-
-    if (status === "authenticated" && session?.user?.id) {
-      const key = `storyProgress_${session.user.id}`;
-      localStorage.setItem(
-        key,
-        JSON.stringify({
-          completedNodes: Array.from(completedNodes),
-          currentNodeId,
-          journeyComplete,
-        })
-      );
-    }
-  }, [completedNodes, currentNodeId, journeyComplete, status, session?.user?.id, isLoaded]);
 
   // ── Node status calculation ───────────────────────────────────────────
   const getNodeStatus = useCallback(
@@ -145,24 +105,16 @@ export default function StoryModeMap() {
 
   // ── Node click handler ────────────────────────────────────────────────
   const handleNodeClick = useCallback(
-    (nodeId: number, bypassWarning = false) => {
+    (nodeId: number) => {
       const node = (runState.mapNodes || []).find((n) => n.id === nodeId);
       if (!node) return;
 
       const nodeStatus = getNodeStatus(nodeId);
       if (nodeStatus !== "available" && nodeStatus !== "active") return;
 
-      if (
-        nodeId === 0 &&
-        status === "unauthenticated" &&
-        !bypassWarning &&
-        !hasIgnoredGuestWarning
-      ) {
-        setShowGuestWarning(nodeId);
-        return;
-      }
+      if (nodeStatus !== "available" && nodeStatus !== "active") return;
 
-      setCurrentNodeId(nodeId);
+      updateRunState({ currentNodeId: nodeId });
 
       switch (node.type) {
         case "start":
@@ -185,16 +137,10 @@ export default function StoryModeMap() {
           break;
       }
     },
-    [getNodeStatus, status, hasIgnoredGuestWarning]
+    [getNodeStatus, runState.mapNodes, updateRunState]
   );
 
-  const handleContinueAsGuest = useCallback(() => {
-    setHasIgnoredGuestWarning(true);
-    if (showGuestWarning !== null) {
-      handleNodeClick(showGuestWarning, true);
-    }
-    setShowGuestWarning(null);
-  }, [showGuestWarning, handleNodeClick]);
+
 
   // ── Battle callbacks ──────────────────────────────────────────────────
   const handleBattleVictory = useCallback(() => {
@@ -202,13 +148,12 @@ export default function StoryModeMap() {
     const nodeId = activeView.nodeId;
     const node = (runState.mapNodes || []).find((n) => n.id === nodeId);
 
-    setCompletedNodes((prev) => new Set([...prev, nodeId]));
+    updateRunState((prev) => ({
+      completedNodes: [...(prev.completedNodes || []), nodeId],
+      journeyComplete: node?.type === "boss" ? true : prev.journeyComplete
+    }));
     setActiveView({ kind: "map" });
-
-    if (node?.type === "boss") {
-      setJourneyComplete(true);
-    }
-  }, [activeView]);
+  }, [activeView, runState.mapNodes, updateRunState]);
 
   const handleBattleDefeat = useCallback(() => {
     // Stay on map, node is NOT completed
@@ -223,21 +168,21 @@ export default function StoryModeMap() {
 
   const handleRestComplete = useCallback(() => {
     if (activeView.kind !== "rest") return;
-    setCompletedNodes((prev) => new Set([...prev, activeView.nodeId]));
+    updateRunState((prev) => ({ completedNodes: [...(prev.completedNodes || []), activeView.nodeId] }));
     setActiveView({ kind: "map" });
-  }, [activeView]);
+  }, [activeView, updateRunState]);
 
   const handleMerchantComplete = useCallback(() => {
     if (activeView.kind !== "merchant") return;
-    setCompletedNodes((prev) => new Set([...prev, activeView.nodeId]));
+    updateRunState((prev) => ({ completedNodes: [...(prev.completedNodes || []), activeView.nodeId] }));
     setActiveView({ kind: "map" });
-  }, [activeView]);
+  }, [activeView, updateRunState]);
 
   const handlePuzzleComplete = useCallback(() => {
     if (activeView.kind !== "puzzle") return;
-    setCompletedNodes((prev) => new Set([...prev, activeView.nodeId]));
+    updateRunState((prev) => ({ completedNodes: [...(prev.completedNodes || []), activeView.nodeId] }));
     setActiveView({ kind: "map" });
-  }, [activeView]);
+  }, [activeView, updateRunState]);
 
   // ── Reset adventure ───────────────────────────────────────────────────
   const handleReset = useCallback(() => {
@@ -249,35 +194,21 @@ export default function StoryModeMap() {
   // whenever `session` is re-fetched with the same user id.
   // eslint-disable-next-line react-hooks/preserve-manual-memoization
   const confirmReset = useCallback((keepProgress: boolean) => {
-    setCompletedNodes(new Set());
-    setCurrentNodeId(-1);
     setActiveView({ kind: "map" });
-    setJourneyComplete(false);
     setShowResetConfirm(false);
     
-    // Reset global context run state
+    // Reset global context run state (this automatically clears/resets everything)
     resetRun(keepProgress);
-
-    // Explicitly clear from local storage immediately so it doesn't rely solely on the effect
-    if (status === "authenticated" && session?.user?.id) {
-      if (!keepProgress) {
-        localStorage.removeItem(`storyProgress_${session.user.id}`);
-      } else {
-        // Just reset the map node progress, keep the entry
-        localStorage.setItem(`storyProgress_${session.user.id}`, JSON.stringify({
-          completedNodes: [],
-          currentNodeId: -1,
-          journeyComplete: false
-        }));
-      }
-    }
-  }, [status, session?.user?.id, resetRun]);
+    
+    // Call the callback to go back to title screen
+    onResetToTitle?.();
+  }, [resetRun, onResetToTitle]);
 
   // ── Progress ──────────────────────────────────────────────────────────
   const progress = useMemo(() => {
     if (journeyComplete) return 100;
-    // A single full run from start to boss consists of exactly 8 nodes
-    const MAX_PATH_LENGTH = 8;
+    // A single full run from start to boss consists of exactly 16 nodes (Start + 15 Floors + Boss = 17 total steps, so 16 edges/nodes to complete)
+    const MAX_PATH_LENGTH = 16;
     const completedCount = completedNodes.size;
     return Math.min(100, Math.round((completedCount / MAX_PATH_LENGTH) * 100));
   }, [completedNodes, journeyComplete]);
@@ -495,113 +426,15 @@ export default function StoryModeMap() {
               <AnimatePresence>
                 {showResetConfirm && (
                   <motion.div
-                    className="absolute inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm rounded-2xl"
+                    className="absolute inset-0 z-50 flex items-center justify-center"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                   >
-                    <motion.div
-                      className="flex flex-col items-center gap-5 p-8 rounded-2xl border border-red-500/30 bg-red-500/5 backdrop-blur-md max-w-sm w-full mx-4 shadow-2xl relative"
-                      initial={{ scale: 0.8, y: 30 }}
-                      animate={{ scale: 1, y: 0 }}
-                      exit={{ scale: 0.8, y: 30 }}
-                      transition={{ type: "spring", duration: 0.5 }}
-                    >
-                      <button
-                        onClick={() => setShowResetConfirm(false)}
-                        className="absolute top-4 right-4 text-brand-secondary hover:text-brand-text transition-colors cursor-pointer"
-                      >
-                        <X className="w-5 h-5" />
-                      </button>
-
-                      <div className="w-16 h-16 rounded-full bg-red-500/10 border-2 border-red-500/30 flex items-center justify-center text-red-400">
-                        <RotateCcw className="w-8 h-8" />
-                      </div>
-
-                      <div className="text-center">
-                        <h3 className="text-2xl font-display font-bold text-red-400">Abandon Run?</h3>
-                        <p className="text-sm text-brand-secondary mt-2">
-                          Are you sure you want to abandon this run and start over? All your current progress will be lost.
-                        </p>
-                      </div>
-
-                      <div className="flex flex-col gap-3 mt-4 w-full">
-                        <button
-                          onClick={() => confirmReset(true)}
-                          className="w-full px-4 py-3 rounded-xl bg-red-500/15 border border-red-500/40 text-red-400 hover:bg-red-500/25 transition-all text-sm font-bold cursor-pointer text-center"
-                        >
-                          New Game+ (Keep Coins & Relics)
-                        </button>
-                        <button
-                          onClick={() => confirmReset(false)}
-                          className="w-full px-4 py-3 rounded-xl border border-brand-border/40 text-brand-secondary hover:text-brand-text hover:bg-brand-surface transition-all text-sm font-medium cursor-pointer text-center"
-                        >
-                          Fresh Start (50 Coins)
-                        </button>
-                        <button
-                          onClick={() => setShowResetConfirm(false)}
-                          className="w-full px-4 py-2 mt-2 text-brand-secondary/60 hover:text-brand-secondary transition-all text-xs font-medium cursor-pointer text-center"
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    </motion.div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              {/* Guest Warning Overlay */}
-              <AnimatePresence>
-                {showGuestWarning !== null && (
-                  <motion.div
-                    className="absolute inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm rounded-2xl"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                  >
-                    <motion.div
-                      className="flex flex-col items-center gap-5 p-8 rounded-2xl border border-[#D4AF6E]/60 bg-brand-accent/5 backdrop-blur-md max-w-sm w-full mx-4 shadow-[0_0_30px_rgba(212,175,110,0.15)] relative"
-                      initial={{ scale: 0.8, y: 30 }}
-                      animate={{ scale: 1, y: 0 }}
-                      exit={{ scale: 0.8, y: 30 }}
-                      transition={{ type: "spring", duration: 0.5 }}
-                    >
-                      <button
-                        onClick={() => setShowGuestWarning(null)}
-                        className="absolute top-4 right-4 text-brand-secondary hover:text-brand-text transition-colors cursor-pointer"
-                      >
-                        <X className="w-5 h-5" />
-                      </button>
-
-                      <div className="w-16 h-16 rounded-full bg-brand-accent/10 border-2 border-brand-accent/30 flex items-center justify-center text-brand-accent">
-                        <LogIn className="w-8 h-8" />
-                      </div>
-
-                      <div className="text-center">
-                        <h3 className="text-2xl font-display font-bold text-brand-accent">Sign In to Save</h3>
-                        <p className="text-sm text-brand-secondary mt-2">
-                          You are currently playing as a guest.<br />
-                          Your progress will be lost if you refresh<br />
-                          or close the page.
-                        </p>
-                      </div>
-
-                      <div className="flex flex-col gap-3 mt-4 w-full">
-                        <button
-                          onClick={() => signIn()}
-                          className="w-full px-4 py-2.5 rounded-xl bg-brand-accent/15 border border-brand-accent/40 text-brand-accent hover:bg-brand-accent/25 transition-all text-sm font-medium cursor-pointer flex items-center justify-center gap-2"
-                        >
-                          <LogIn className="w-4 h-4" />
-                          Sign In
-                        </button>
-                        <button
-                          onClick={handleContinueAsGuest}
-                          className="w-full px-4 py-2.5 rounded-xl border border-brand-border/40 text-brand-secondary hover:text-brand-text hover:bg-brand-surface transition-all text-sm font-medium cursor-pointer"
-                        >
-                          Continue without sign in
-                        </button>
-                      </div>
-                    </motion.div>
+                    <ConfirmAbandonModal
+                      onCancel={() => setShowResetConfirm(false)}
+                      onConfirm={() => confirmReset(false)}
+                    />
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -612,7 +445,7 @@ export default function StoryModeMap() {
                   <StoryModeCharacterSelect
                     onSelect={() => {
                       // Completes the start node and returns to map
-                      setCompletedNodes((prev) => new Set([...prev, activeView.nodeId]));
+                      updateRunState((prev) => ({ completedNodes: [...(prev.completedNodes || []), activeView.nodeId] }));
                       setActiveView({ kind: "map" });
                     }}
                     onClose={() => setActiveView({ kind: "map" })}

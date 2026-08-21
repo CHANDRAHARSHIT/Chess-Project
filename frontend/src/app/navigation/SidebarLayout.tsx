@@ -111,6 +111,8 @@ export default function SidebarLayout({
   const location = useLocation();
   const { push } = useNavigationStack();
 
+  const isTheaterMode = location.pathname === "/odyssey";
+
   const openModal = (mode: "login" | "register") => {
     setModalMode(mode);
     setIsModalOpen(true);
@@ -386,7 +388,7 @@ export default function SidebarLayout({
 
   const handleToggle = () => {
     soundManager.playButtonClick();
-    if (window.innerWidth < 768) {
+    if (window.innerWidth < 768 || isTheaterMode) {
       setIsMobileOpen(!isMobileOpen);
     } else {
       setIsExpanded(!isExpanded);
@@ -746,7 +748,7 @@ export default function SidebarLayout({
       <div className="flex flex-1 pt-16">
         {/* Desktop Sidebar (Fixed) */}
         <aside
-          className={`fixed top-16 left-0 bottom-0 z-30 bg-brand-bg/95 backdrop-blur-md flex flex-col py-2 transition-all duration-300 hidden md:flex overflow-y-auto overscroll-contain pb-6 sidebar-scrollbar ${isExpanded ? "w-64" : "w-20"
+          className={`fixed top-16 left-0 bottom-0 z-30 bg-brand-bg/95 backdrop-blur-md flex flex-col py-2 transition-all duration-300 ${isTheaterMode ? "hidden" : "hidden md:flex"} overflow-y-auto overscroll-contain pb-6 sidebar-scrollbar ${isExpanded ? "w-64" : "w-20"
             }`}
         >
           <nav className="flex-1 flex flex-col space-y-1">
@@ -1037,12 +1039,12 @@ export default function SidebarLayout({
 
         {/* Mobile Sidebar (Slide-out) */}
         <div
-          className={`fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity duration-300 md:hidden ${isMobileOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+          className={`fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${!isTheaterMode ? "md:hidden" : ""} ${isMobileOpen ? "opacity-100" : "opacity-0 pointer-events-none"
             }`}
           onClick={() => setIsMobileOpen(false)}
         />
         <aside
-          className={`fixed top-0 left-0 bottom-0 w-64 z-50 bg-brand-bg flex flex-col py-2 transition-transform duration-300 ease-in-out md:hidden overflow-y-auto overscroll-contain sidebar-scrollbar ${isMobileOpen ? "translate-x-0" : "-translate-x-full"
+          className={`fixed top-0 left-0 bottom-0 w-64 z-50 bg-brand-bg flex flex-col py-2 transition-transform duration-300 ease-in-out ${!isTheaterMode ? "md:hidden" : ""} overflow-y-auto overscroll-contain sidebar-scrollbar ${isMobileOpen ? "translate-x-0" : "-translate-x-full"
             }`}
         >
           <div className="flex items-center mb-2 h-14">
@@ -1367,7 +1369,7 @@ export default function SidebarLayout({
 
         {/* ── MAIN CONTENT WORKSPACE ─────────────────────────────────────────── */}
         <div
-          className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${isExpanded ? "md:pl-64" : "md:pl-20"}`}
+          className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${isTheaterMode ? "pl-0" : isExpanded ? "md:pl-64" : "md:pl-20"}`}
         >
           {children}
         </div>

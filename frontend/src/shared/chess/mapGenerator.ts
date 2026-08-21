@@ -131,11 +131,24 @@ export function generateStoryMap(): StoryNode[] {
     .filter(n => n.exists)
     .map(n => idMap.get(`0,${n.c}`)!);
 
+  /*
   storyNodes.push({
     id: startNodeId,
     type: "start",
     label: "Beginning",
     description: "The journey begins. Choose your path.",
+    x: 50,
+    y: 95,
+    edges: startingEdges
+  });
+  */
+
+  storyNodes.push({
+    id: startNodeId,
+    type: "enemy",
+    label: "Pawn Sentinel",
+    difficulty: 1,
+    description: "Your journey begins here. A lumbering pawn golem blocks the path.",
     x: 50,
     y: 95,
     edges: startingEdges
