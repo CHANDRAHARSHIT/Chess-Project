@@ -11,11 +11,11 @@ import {
   Info,
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router";
-import { useSession } from "../hooks/useSession";
-import { AuthModal } from "../components/AuthModal";
-import { PaymentService } from "../services/payment";
-import { usePricing } from "../hooks/usePricing";
-import rollbar from "../config/rollbar";
+import { useSession } from "@/features/account/useSession";
+import { AuthModal } from "@/features/account/AuthModal";
+import { PaymentService } from "@/features/billing/payment.service";
+import { usePricing } from "@/features/billing/usePricing";
+import rollbar from "@/shared/lib/rollbar";
 
 export default function CheckoutPage() {
   const navigate = useNavigate();
@@ -156,11 +156,11 @@ export default function CheckoutPage() {
         );
         setIsProcessing(false);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("[CheckoutPage] Payment redirect error:", error);
-      rollbar.error(error, { context: "CheckoutPage.handleUpgrade" });
+      rollbar.error(error instanceof Error ? error : new Error(String(error)), { context: "CheckoutPage.handleUpgrade" });
       setPaymentError(
-        error?.message ||
+        (error instanceof Error ? error.message : null) ||
           "An unexpected error occurred while establishing a secure billing session. Please try again.",
       );
       setIsProcessing(false);
@@ -191,13 +191,8 @@ export default function CheckoutPage() {
 
         {/* Lock Gate Screen */}
         <main className="relative z-10 flex-1 flex flex-col items-center justify-center max-w-md mx-auto px-4 text-center mt-12 sm:mt-16">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.92 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5 }}
-            className="w-full bg-brand-surface/75 backdrop-blur-xl border border-brand-border rounded-3xl p-8 shadow-2xl shadow-brand-bg/50"
-          >
-            <div className="w-16 h-16 rounded-full bg-brand-accent/10 border border-brand-accent/25 flex items-center justify-center mx-auto mb-6 text-brand-accent shadow-[0_0_15px_rgba(212,175,110,0.1)]">
+          <div className="w-full bg-brand-surface/75 backdrop-blur-xl border border-brand-border rounded-3xl p-8">
+            <div className="w-16 h-16 rounded-full bg-brand-accent/10 border border-brand-accent/25 flex items-center justify-center mx-auto mb-6 text-brand-accent">
               <Lock className="w-6 h-6 animate-pulse" />
             </div>
 
@@ -213,7 +208,7 @@ export default function CheckoutPage() {
             <div className="space-y-4">
               <button
                 onClick={() => handleOpenAuth("login")}
-                className="w-full py-3 px-6 rounded-xl font-mono text-xs uppercase tracking-widest font-semibold btn-premium-cta cta-shine text-brand-accent border-brand-accent/40 shadow-lg cursor-pointer"
+                className="w-full py-3 px-6 rounded-xl font-mono text-xs uppercase tracking-widest font-semibold btn-premium-cta cta-shine text-brand-accent border-brand-accent/40 cursor-pointer"
               >
                 Sign In
               </button>
@@ -225,7 +220,7 @@ export default function CheckoutPage() {
                 Create Account
               </button>
             </div>
-          </motion.div>
+          </div>
 
           <button
             onClick={() => navigate("/pricing")}
@@ -284,7 +279,7 @@ export default function CheckoutPage() {
       {/* SidebarLayout handles header globally */}
 
       {/* Main Container */}
-      <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-14 w-full flex-1 flex flex-col">
+      <main className="relative z-10 max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 pt-6 sm:pt-14 w-full flex-1 flex flex-col">
         <div className="w-full flex justify-start mb-6">
           <button
             onClick={() => navigate("/pricing")}
@@ -314,7 +309,7 @@ export default function CheckoutPage() {
 
         {/* Payment Error Alert Banner */}
         {paymentError && (
-          <div className="mb-8 p-4 rounded-sm bg-red-500/10 border border-red-500/30 text-red-400 text-sm font-sans flex items-start gap-3 shadow-md">
+          <div className="mb-8 p-4 rounded-sm bg-red-500/10 border border-red-500/30 text-red-400 text-sm font-sans flex items-start gap-3">
             <Info className="w-5 h-5 shrink-0 mt-0.5 text-red-400" />
             <div className="flex-1 text-left">
               <p className="font-semibold text-red-300 mb-1">
@@ -481,7 +476,7 @@ export default function CheckoutPage() {
           {/* RIGHT SIDE COLUMN (35% - Sticky) */}
           <div className="lg:col-span-4 lg:sticky lg:top-[90px]">
             {/* Sticky Order Summary Card */}
-            <div className="bg-brand-surface/90 backdrop-blur-xl border border-brand-border rounded-sm p-6 text-left shadow-xl relative overflow-hidden">
+            <div className="bg-brand-surface/90 backdrop-blur-xl border border-brand-border rounded-sm p-6 text-left relative overflow-hidden">
               {/* Radial gradient background accent */}
               <div className="absolute -top-[100px] -right-[100px] w-[200px] h-[200px] bg-brand-accent/5 rounded-full blur-[50px] pointer-events-none" />
 
@@ -556,7 +551,7 @@ export default function CheckoutPage() {
               {/* Proceed Button */}
               <button
                 onClick={handleProceedToPayment}
-                className="w-full py-4 px-6 rounded-sm font-mono text-xs uppercase tracking-widest font-bold btn-premium-cta btn-glow-container btn-glow-accent cta-shine cursor-pointer shadow-lg hover:scale-[1.01] flex items-center justify-center gap-2 mb-4"
+                className="w-full py-4 px-6 rounded-sm font-mono text-xs uppercase tracking-widest font-bold btn-premium-cta btn-glow-container btn-glow-accent cta-shine cursor-pointer hover:scale-[1.01] flex items-center justify-center gap-2 mb-4"
               >
                 <span>Proceed to Payment</span>
                 <ArrowRight className="w-4 h-4" />

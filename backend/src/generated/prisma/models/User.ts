@@ -208,11 +208,15 @@ export type UserWhereInput = {
   stripeLiveCustomerId?: Prisma.StringNullableFilter<"User"> | string | null
   accounts?: Prisma.AccountListRelationFilter
   billingProfile?: Prisma.XOR<Prisma.BillingProfileNullableScalarRelationFilter, Prisma.BillingProfileWhereInput> | null
+  builderLessons?: Prisma.BuilderLessonListRelationFilter
   customLinks?: Prisma.CustomLinkListRelationFilter
   LessonProgress?: Prisma.LessonProgressListRelationFilter
   payments?: Prisma.PaymentListRelationFilter
   sessions?: Prisma.SessionListRelationFilter
   subscriptions?: Prisma.SubscriptionListRelationFilter
+  gameParticipants?: Prisma.GameParticipantListRelationFilter
+  playerRatings?: Prisma.PlayerRatingListRelationFilter
+  pathwayProgress?: Prisma.XOR<Prisma.PathwayProgressNullableScalarRelationFilter, Prisma.PathwayProgressWhereInput> | null
 }
 
 export type UserOrderByWithRelationInput = {
@@ -226,11 +230,15 @@ export type UserOrderByWithRelationInput = {
   stripeLiveCustomerId?: Prisma.SortOrderInput | Prisma.SortOrder
   accounts?: Prisma.AccountOrderByRelationAggregateInput
   billingProfile?: Prisma.BillingProfileOrderByWithRelationInput
+  builderLessons?: Prisma.BuilderLessonOrderByRelationAggregateInput
   customLinks?: Prisma.CustomLinkOrderByRelationAggregateInput
   LessonProgress?: Prisma.LessonProgressOrderByRelationAggregateInput
   payments?: Prisma.PaymentOrderByRelationAggregateInput
   sessions?: Prisma.SessionOrderByRelationAggregateInput
   subscriptions?: Prisma.SubscriptionOrderByRelationAggregateInput
+  gameParticipants?: Prisma.GameParticipantOrderByRelationAggregateInput
+  playerRatings?: Prisma.PlayerRatingOrderByRelationAggregateInput
+  pathwayProgress?: Prisma.PathwayProgressOrderByWithRelationInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -247,11 +255,15 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   accounts?: Prisma.AccountListRelationFilter
   billingProfile?: Prisma.XOR<Prisma.BillingProfileNullableScalarRelationFilter, Prisma.BillingProfileWhereInput> | null
+  builderLessons?: Prisma.BuilderLessonListRelationFilter
   customLinks?: Prisma.CustomLinkListRelationFilter
   LessonProgress?: Prisma.LessonProgressListRelationFilter
   payments?: Prisma.PaymentListRelationFilter
   sessions?: Prisma.SessionListRelationFilter
   subscriptions?: Prisma.SubscriptionListRelationFilter
+  gameParticipants?: Prisma.GameParticipantListRelationFilter
+  playerRatings?: Prisma.PlayerRatingListRelationFilter
+  pathwayProgress?: Prisma.XOR<Prisma.PathwayProgressNullableScalarRelationFilter, Prisma.PathwayProgressWhereInput> | null
 }, "id" | "email" | "stripeTestCustomerId" | "stripeLiveCustomerId">
 
 export type UserOrderByWithAggregationInput = {
@@ -293,11 +305,15 @@ export type UserCreateInput = {
   stripeLiveCustomerId?: string | null
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   billingProfile?: Prisma.BillingProfileCreateNestedOneWithoutUserInput
+  builderLessons?: Prisma.BuilderLessonCreateNestedManyWithoutAuthorInput
   customLinks?: Prisma.CustomLinkCreateNestedManyWithoutUserInput
   LessonProgress?: Prisma.LessonProgressCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
+  gameParticipants?: Prisma.GameParticipantCreateNestedManyWithoutUserInput
+  playerRatings?: Prisma.PlayerRatingCreateNestedManyWithoutUserInput
+  pathwayProgress?: Prisma.PathwayProgressCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -311,11 +327,15 @@ export type UserUncheckedCreateInput = {
   stripeLiveCustomerId?: string | null
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   billingProfile?: Prisma.BillingProfileUncheckedCreateNestedOneWithoutUserInput
+  builderLessons?: Prisma.BuilderLessonUncheckedCreateNestedManyWithoutAuthorInput
   customLinks?: Prisma.CustomLinkUncheckedCreateNestedManyWithoutUserInput
   LessonProgress?: Prisma.LessonProgressUncheckedCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
+  gameParticipants?: Prisma.GameParticipantUncheckedCreateNestedManyWithoutUserInput
+  playerRatings?: Prisma.PlayerRatingUncheckedCreateNestedManyWithoutUserInput
+  pathwayProgress?: Prisma.PathwayProgressUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -329,11 +349,15 @@ export type UserUpdateInput = {
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   billingProfile?: Prisma.BillingProfileUpdateOneWithoutUserNestedInput
+  builderLessons?: Prisma.BuilderLessonUpdateManyWithoutAuthorNestedInput
   customLinks?: Prisma.CustomLinkUpdateManyWithoutUserNestedInput
   LessonProgress?: Prisma.LessonProgressUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
+  gameParticipants?: Prisma.GameParticipantUpdateManyWithoutUserNestedInput
+  playerRatings?: Prisma.PlayerRatingUpdateManyWithoutUserNestedInput
+  pathwayProgress?: Prisma.PathwayProgressUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -347,11 +371,15 @@ export type UserUncheckedUpdateInput = {
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   billingProfile?: Prisma.BillingProfileUncheckedUpdateOneWithoutUserNestedInput
+  builderLessons?: Prisma.BuilderLessonUncheckedUpdateManyWithoutAuthorNestedInput
   customLinks?: Prisma.CustomLinkUncheckedUpdateManyWithoutUserNestedInput
   LessonProgress?: Prisma.LessonProgressUncheckedUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  gameParticipants?: Prisma.GameParticipantUncheckedUpdateManyWithoutUserNestedInput
+  playerRatings?: Prisma.PlayerRatingUncheckedUpdateManyWithoutUserNestedInput
+  pathwayProgress?: Prisma.PathwayProgressUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -511,6 +539,20 @@ export type UserUpdateOneRequiredWithoutBillingProfileNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutBillingProfileInput, Prisma.UserUpdateWithoutBillingProfileInput>, Prisma.UserUncheckedUpdateWithoutBillingProfileInput>
 }
 
+export type UserCreateNestedOneWithoutBuilderLessonsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutBuilderLessonsInput, Prisma.UserUncheckedCreateWithoutBuilderLessonsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutBuilderLessonsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutBuilderLessonsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutBuilderLessonsInput, Prisma.UserUncheckedCreateWithoutBuilderLessonsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutBuilderLessonsInput
+  upsert?: Prisma.UserUpsertWithoutBuilderLessonsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutBuilderLessonsInput, Prisma.UserUpdateWithoutBuilderLessonsInput>, Prisma.UserUncheckedUpdateWithoutBuilderLessonsInput>
+}
+
 export type UserCreateNestedOneWithoutLessonProgressInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutLessonProgressInput, Prisma.UserUncheckedCreateWithoutLessonProgressInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutLessonProgressInput
@@ -539,6 +581,48 @@ export type UserUpdateOneRequiredWithoutCustomLinksNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCustomLinksInput, Prisma.UserUpdateWithoutCustomLinksInput>, Prisma.UserUncheckedUpdateWithoutCustomLinksInput>
 }
 
+export type UserCreateNestedOneWithoutGameParticipantsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutGameParticipantsInput, Prisma.UserUncheckedCreateWithoutGameParticipantsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutGameParticipantsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutGameParticipantsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutGameParticipantsInput, Prisma.UserUncheckedCreateWithoutGameParticipantsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutGameParticipantsInput
+  upsert?: Prisma.UserUpsertWithoutGameParticipantsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutGameParticipantsInput, Prisma.UserUpdateWithoutGameParticipantsInput>, Prisma.UserUncheckedUpdateWithoutGameParticipantsInput>
+}
+
+export type UserCreateNestedOneWithoutPlayerRatingsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPlayerRatingsInput, Prisma.UserUncheckedCreateWithoutPlayerRatingsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPlayerRatingsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutPlayerRatingsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPlayerRatingsInput, Prisma.UserUncheckedCreateWithoutPlayerRatingsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPlayerRatingsInput
+  upsert?: Prisma.UserUpsertWithoutPlayerRatingsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPlayerRatingsInput, Prisma.UserUpdateWithoutPlayerRatingsInput>, Prisma.UserUncheckedUpdateWithoutPlayerRatingsInput>
+}
+
+export type UserCreateNestedOneWithoutPathwayProgressInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPathwayProgressInput, Prisma.UserUncheckedCreateWithoutPathwayProgressInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPathwayProgressInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutPathwayProgressNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPathwayProgressInput, Prisma.UserUncheckedCreateWithoutPathwayProgressInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPathwayProgressInput
+  upsert?: Prisma.UserUpsertWithoutPathwayProgressInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPathwayProgressInput, Prisma.UserUpdateWithoutPathwayProgressInput>, Prisma.UserUncheckedUpdateWithoutPathwayProgressInput>
+}
+
 export type UserCreateWithoutAccountsInput = {
   id?: string
   name?: string | null
@@ -549,11 +633,15 @@ export type UserCreateWithoutAccountsInput = {
   stripeTestCustomerId?: string | null
   stripeLiveCustomerId?: string | null
   billingProfile?: Prisma.BillingProfileCreateNestedOneWithoutUserInput
+  builderLessons?: Prisma.BuilderLessonCreateNestedManyWithoutAuthorInput
   customLinks?: Prisma.CustomLinkCreateNestedManyWithoutUserInput
   LessonProgress?: Prisma.LessonProgressCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
+  gameParticipants?: Prisma.GameParticipantCreateNestedManyWithoutUserInput
+  playerRatings?: Prisma.PlayerRatingCreateNestedManyWithoutUserInput
+  pathwayProgress?: Prisma.PathwayProgressCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAccountsInput = {
@@ -566,11 +654,15 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   stripeTestCustomerId?: string | null
   stripeLiveCustomerId?: string | null
   billingProfile?: Prisma.BillingProfileUncheckedCreateNestedOneWithoutUserInput
+  builderLessons?: Prisma.BuilderLessonUncheckedCreateNestedManyWithoutAuthorInput
   customLinks?: Prisma.CustomLinkUncheckedCreateNestedManyWithoutUserInput
   LessonProgress?: Prisma.LessonProgressUncheckedCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
+  gameParticipants?: Prisma.GameParticipantUncheckedCreateNestedManyWithoutUserInput
+  playerRatings?: Prisma.PlayerRatingUncheckedCreateNestedManyWithoutUserInput
+  pathwayProgress?: Prisma.PathwayProgressUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAccountsInput = {
@@ -599,11 +691,15 @@ export type UserUpdateWithoutAccountsInput = {
   stripeTestCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   billingProfile?: Prisma.BillingProfileUpdateOneWithoutUserNestedInput
+  builderLessons?: Prisma.BuilderLessonUpdateManyWithoutAuthorNestedInput
   customLinks?: Prisma.CustomLinkUpdateManyWithoutUserNestedInput
   LessonProgress?: Prisma.LessonProgressUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
+  gameParticipants?: Prisma.GameParticipantUpdateManyWithoutUserNestedInput
+  playerRatings?: Prisma.PlayerRatingUpdateManyWithoutUserNestedInput
+  pathwayProgress?: Prisma.PathwayProgressUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -616,11 +712,15 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   stripeTestCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   billingProfile?: Prisma.BillingProfileUncheckedUpdateOneWithoutUserNestedInput
+  builderLessons?: Prisma.BuilderLessonUncheckedUpdateManyWithoutAuthorNestedInput
   customLinks?: Prisma.CustomLinkUncheckedUpdateManyWithoutUserNestedInput
   LessonProgress?: Prisma.LessonProgressUncheckedUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  gameParticipants?: Prisma.GameParticipantUncheckedUpdateManyWithoutUserNestedInput
+  playerRatings?: Prisma.PlayerRatingUncheckedUpdateManyWithoutUserNestedInput
+  pathwayProgress?: Prisma.PathwayProgressUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSessionsInput = {
@@ -634,10 +734,14 @@ export type UserCreateWithoutSessionsInput = {
   stripeLiveCustomerId?: string | null
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   billingProfile?: Prisma.BillingProfileCreateNestedOneWithoutUserInput
+  builderLessons?: Prisma.BuilderLessonCreateNestedManyWithoutAuthorInput
   customLinks?: Prisma.CustomLinkCreateNestedManyWithoutUserInput
   LessonProgress?: Prisma.LessonProgressCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
+  gameParticipants?: Prisma.GameParticipantCreateNestedManyWithoutUserInput
+  playerRatings?: Prisma.PlayerRatingCreateNestedManyWithoutUserInput
+  pathwayProgress?: Prisma.PathwayProgressCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -651,10 +755,14 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   stripeLiveCustomerId?: string | null
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   billingProfile?: Prisma.BillingProfileUncheckedCreateNestedOneWithoutUserInput
+  builderLessons?: Prisma.BuilderLessonUncheckedCreateNestedManyWithoutAuthorInput
   customLinks?: Prisma.CustomLinkUncheckedCreateNestedManyWithoutUserInput
   LessonProgress?: Prisma.LessonProgressUncheckedCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
+  gameParticipants?: Prisma.GameParticipantUncheckedCreateNestedManyWithoutUserInput
+  playerRatings?: Prisma.PlayerRatingUncheckedCreateNestedManyWithoutUserInput
+  pathwayProgress?: Prisma.PathwayProgressUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -684,10 +792,14 @@ export type UserUpdateWithoutSessionsInput = {
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   billingProfile?: Prisma.BillingProfileUpdateOneWithoutUserNestedInput
+  builderLessons?: Prisma.BuilderLessonUpdateManyWithoutAuthorNestedInput
   customLinks?: Prisma.CustomLinkUpdateManyWithoutUserNestedInput
   LessonProgress?: Prisma.LessonProgressUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
+  gameParticipants?: Prisma.GameParticipantUpdateManyWithoutUserNestedInput
+  playerRatings?: Prisma.PlayerRatingUpdateManyWithoutUserNestedInput
+  pathwayProgress?: Prisma.PathwayProgressUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -701,10 +813,14 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   billingProfile?: Prisma.BillingProfileUncheckedUpdateOneWithoutUserNestedInput
+  builderLessons?: Prisma.BuilderLessonUncheckedUpdateManyWithoutAuthorNestedInput
   customLinks?: Prisma.CustomLinkUncheckedUpdateManyWithoutUserNestedInput
   LessonProgress?: Prisma.LessonProgressUncheckedUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  gameParticipants?: Prisma.GameParticipantUncheckedUpdateManyWithoutUserNestedInput
+  playerRatings?: Prisma.PlayerRatingUncheckedUpdateManyWithoutUserNestedInput
+  pathwayProgress?: Prisma.PathwayProgressUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSubscriptionsInput = {
@@ -718,10 +834,14 @@ export type UserCreateWithoutSubscriptionsInput = {
   stripeLiveCustomerId?: string | null
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   billingProfile?: Prisma.BillingProfileCreateNestedOneWithoutUserInput
+  builderLessons?: Prisma.BuilderLessonCreateNestedManyWithoutAuthorInput
   customLinks?: Prisma.CustomLinkCreateNestedManyWithoutUserInput
   LessonProgress?: Prisma.LessonProgressCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  gameParticipants?: Prisma.GameParticipantCreateNestedManyWithoutUserInput
+  playerRatings?: Prisma.PlayerRatingCreateNestedManyWithoutUserInput
+  pathwayProgress?: Prisma.PathwayProgressCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSubscriptionsInput = {
@@ -735,10 +855,14 @@ export type UserUncheckedCreateWithoutSubscriptionsInput = {
   stripeLiveCustomerId?: string | null
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   billingProfile?: Prisma.BillingProfileUncheckedCreateNestedOneWithoutUserInput
+  builderLessons?: Prisma.BuilderLessonUncheckedCreateNestedManyWithoutAuthorInput
   customLinks?: Prisma.CustomLinkUncheckedCreateNestedManyWithoutUserInput
   LessonProgress?: Prisma.LessonProgressUncheckedCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  gameParticipants?: Prisma.GameParticipantUncheckedCreateNestedManyWithoutUserInput
+  playerRatings?: Prisma.PlayerRatingUncheckedCreateNestedManyWithoutUserInput
+  pathwayProgress?: Prisma.PathwayProgressUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSubscriptionsInput = {
@@ -768,10 +892,14 @@ export type UserUpdateWithoutSubscriptionsInput = {
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   billingProfile?: Prisma.BillingProfileUpdateOneWithoutUserNestedInput
+  builderLessons?: Prisma.BuilderLessonUpdateManyWithoutAuthorNestedInput
   customLinks?: Prisma.CustomLinkUpdateManyWithoutUserNestedInput
   LessonProgress?: Prisma.LessonProgressUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  gameParticipants?: Prisma.GameParticipantUpdateManyWithoutUserNestedInput
+  playerRatings?: Prisma.PlayerRatingUpdateManyWithoutUserNestedInput
+  pathwayProgress?: Prisma.PathwayProgressUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSubscriptionsInput = {
@@ -785,10 +913,14 @@ export type UserUncheckedUpdateWithoutSubscriptionsInput = {
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   billingProfile?: Prisma.BillingProfileUncheckedUpdateOneWithoutUserNestedInput
+  builderLessons?: Prisma.BuilderLessonUncheckedUpdateManyWithoutAuthorNestedInput
   customLinks?: Prisma.CustomLinkUncheckedUpdateManyWithoutUserNestedInput
   LessonProgress?: Prisma.LessonProgressUncheckedUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  gameParticipants?: Prisma.GameParticipantUncheckedUpdateManyWithoutUserNestedInput
+  playerRatings?: Prisma.PlayerRatingUncheckedUpdateManyWithoutUserNestedInput
+  pathwayProgress?: Prisma.PathwayProgressUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPaymentsInput = {
@@ -802,10 +934,14 @@ export type UserCreateWithoutPaymentsInput = {
   stripeLiveCustomerId?: string | null
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   billingProfile?: Prisma.BillingProfileCreateNestedOneWithoutUserInput
+  builderLessons?: Prisma.BuilderLessonCreateNestedManyWithoutAuthorInput
   customLinks?: Prisma.CustomLinkCreateNestedManyWithoutUserInput
   LessonProgress?: Prisma.LessonProgressCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
+  gameParticipants?: Prisma.GameParticipantCreateNestedManyWithoutUserInput
+  playerRatings?: Prisma.PlayerRatingCreateNestedManyWithoutUserInput
+  pathwayProgress?: Prisma.PathwayProgressCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPaymentsInput = {
@@ -819,10 +955,14 @@ export type UserUncheckedCreateWithoutPaymentsInput = {
   stripeLiveCustomerId?: string | null
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   billingProfile?: Prisma.BillingProfileUncheckedCreateNestedOneWithoutUserInput
+  builderLessons?: Prisma.BuilderLessonUncheckedCreateNestedManyWithoutAuthorInput
   customLinks?: Prisma.CustomLinkUncheckedCreateNestedManyWithoutUserInput
   LessonProgress?: Prisma.LessonProgressUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
+  gameParticipants?: Prisma.GameParticipantUncheckedCreateNestedManyWithoutUserInput
+  playerRatings?: Prisma.PlayerRatingUncheckedCreateNestedManyWithoutUserInput
+  pathwayProgress?: Prisma.PathwayProgressUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPaymentsInput = {
@@ -852,10 +992,14 @@ export type UserUpdateWithoutPaymentsInput = {
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   billingProfile?: Prisma.BillingProfileUpdateOneWithoutUserNestedInput
+  builderLessons?: Prisma.BuilderLessonUpdateManyWithoutAuthorNestedInput
   customLinks?: Prisma.CustomLinkUpdateManyWithoutUserNestedInput
   LessonProgress?: Prisma.LessonProgressUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
+  gameParticipants?: Prisma.GameParticipantUpdateManyWithoutUserNestedInput
+  playerRatings?: Prisma.PlayerRatingUpdateManyWithoutUserNestedInput
+  pathwayProgress?: Prisma.PathwayProgressUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPaymentsInput = {
@@ -869,10 +1013,14 @@ export type UserUncheckedUpdateWithoutPaymentsInput = {
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   billingProfile?: Prisma.BillingProfileUncheckedUpdateOneWithoutUserNestedInput
+  builderLessons?: Prisma.BuilderLessonUncheckedUpdateManyWithoutAuthorNestedInput
   customLinks?: Prisma.CustomLinkUncheckedUpdateManyWithoutUserNestedInput
   LessonProgress?: Prisma.LessonProgressUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  gameParticipants?: Prisma.GameParticipantUncheckedUpdateManyWithoutUserNestedInput
+  playerRatings?: Prisma.PlayerRatingUncheckedUpdateManyWithoutUserNestedInput
+  pathwayProgress?: Prisma.PathwayProgressUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutBillingProfileInput = {
@@ -885,11 +1033,15 @@ export type UserCreateWithoutBillingProfileInput = {
   stripeTestCustomerId?: string | null
   stripeLiveCustomerId?: string | null
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  builderLessons?: Prisma.BuilderLessonCreateNestedManyWithoutAuthorInput
   customLinks?: Prisma.CustomLinkCreateNestedManyWithoutUserInput
   LessonProgress?: Prisma.LessonProgressCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
+  gameParticipants?: Prisma.GameParticipantCreateNestedManyWithoutUserInput
+  playerRatings?: Prisma.PlayerRatingCreateNestedManyWithoutUserInput
+  pathwayProgress?: Prisma.PathwayProgressCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutBillingProfileInput = {
@@ -902,11 +1054,15 @@ export type UserUncheckedCreateWithoutBillingProfileInput = {
   stripeTestCustomerId?: string | null
   stripeLiveCustomerId?: string | null
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  builderLessons?: Prisma.BuilderLessonUncheckedCreateNestedManyWithoutAuthorInput
   customLinks?: Prisma.CustomLinkUncheckedCreateNestedManyWithoutUserInput
   LessonProgress?: Prisma.LessonProgressUncheckedCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
+  gameParticipants?: Prisma.GameParticipantUncheckedCreateNestedManyWithoutUserInput
+  playerRatings?: Prisma.PlayerRatingUncheckedCreateNestedManyWithoutUserInput
+  pathwayProgress?: Prisma.PathwayProgressUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutBillingProfileInput = {
@@ -935,11 +1091,15 @@ export type UserUpdateWithoutBillingProfileInput = {
   stripeTestCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  builderLessons?: Prisma.BuilderLessonUpdateManyWithoutAuthorNestedInput
   customLinks?: Prisma.CustomLinkUpdateManyWithoutUserNestedInput
   LessonProgress?: Prisma.LessonProgressUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
+  gameParticipants?: Prisma.GameParticipantUpdateManyWithoutUserNestedInput
+  playerRatings?: Prisma.PlayerRatingUpdateManyWithoutUserNestedInput
+  pathwayProgress?: Prisma.PathwayProgressUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutBillingProfileInput = {
@@ -952,11 +1112,115 @@ export type UserUncheckedUpdateWithoutBillingProfileInput = {
   stripeTestCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  builderLessons?: Prisma.BuilderLessonUncheckedUpdateManyWithoutAuthorNestedInput
   customLinks?: Prisma.CustomLinkUncheckedUpdateManyWithoutUserNestedInput
   LessonProgress?: Prisma.LessonProgressUncheckedUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  gameParticipants?: Prisma.GameParticipantUncheckedUpdateManyWithoutUserNestedInput
+  playerRatings?: Prisma.PlayerRatingUncheckedUpdateManyWithoutUserNestedInput
+  pathwayProgress?: Prisma.PathwayProgressUncheckedUpdateOneWithoutUserNestedInput
+}
+
+export type UserCreateWithoutBuilderLessonsInput = {
+  id?: string
+  name?: string | null
+  email: string
+  emailVerified?: Date | string | null
+  image?: string | null
+  createdAt?: Date | string
+  stripeTestCustomerId?: string | null
+  stripeLiveCustomerId?: string | null
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  billingProfile?: Prisma.BillingProfileCreateNestedOneWithoutUserInput
+  customLinks?: Prisma.CustomLinkCreateNestedManyWithoutUserInput
+  LessonProgress?: Prisma.LessonProgressCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
+  gameParticipants?: Prisma.GameParticipantCreateNestedManyWithoutUserInput
+  playerRatings?: Prisma.PlayerRatingCreateNestedManyWithoutUserInput
+  pathwayProgress?: Prisma.PathwayProgressCreateNestedOneWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutBuilderLessonsInput = {
+  id?: string
+  name?: string | null
+  email: string
+  emailVerified?: Date | string | null
+  image?: string | null
+  createdAt?: Date | string
+  stripeTestCustomerId?: string | null
+  stripeLiveCustomerId?: string | null
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  billingProfile?: Prisma.BillingProfileUncheckedCreateNestedOneWithoutUserInput
+  customLinks?: Prisma.CustomLinkUncheckedCreateNestedManyWithoutUserInput
+  LessonProgress?: Prisma.LessonProgressUncheckedCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
+  gameParticipants?: Prisma.GameParticipantUncheckedCreateNestedManyWithoutUserInput
+  playerRatings?: Prisma.PlayerRatingUncheckedCreateNestedManyWithoutUserInput
+  pathwayProgress?: Prisma.PathwayProgressUncheckedCreateNestedOneWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutBuilderLessonsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutBuilderLessonsInput, Prisma.UserUncheckedCreateWithoutBuilderLessonsInput>
+}
+
+export type UserUpsertWithoutBuilderLessonsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutBuilderLessonsInput, Prisma.UserUncheckedUpdateWithoutBuilderLessonsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutBuilderLessonsInput, Prisma.UserUncheckedCreateWithoutBuilderLessonsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutBuilderLessonsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutBuilderLessonsInput, Prisma.UserUncheckedUpdateWithoutBuilderLessonsInput>
+}
+
+export type UserUpdateWithoutBuilderLessonsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  stripeTestCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  billingProfile?: Prisma.BillingProfileUpdateOneWithoutUserNestedInput
+  customLinks?: Prisma.CustomLinkUpdateManyWithoutUserNestedInput
+  LessonProgress?: Prisma.LessonProgressUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
+  gameParticipants?: Prisma.GameParticipantUpdateManyWithoutUserNestedInput
+  playerRatings?: Prisma.PlayerRatingUpdateManyWithoutUserNestedInput
+  pathwayProgress?: Prisma.PathwayProgressUpdateOneWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutBuilderLessonsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  stripeTestCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  billingProfile?: Prisma.BillingProfileUncheckedUpdateOneWithoutUserNestedInput
+  customLinks?: Prisma.CustomLinkUncheckedUpdateManyWithoutUserNestedInput
+  LessonProgress?: Prisma.LessonProgressUncheckedUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  gameParticipants?: Prisma.GameParticipantUncheckedUpdateManyWithoutUserNestedInput
+  playerRatings?: Prisma.PlayerRatingUncheckedUpdateManyWithoutUserNestedInput
+  pathwayProgress?: Prisma.PathwayProgressUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutLessonProgressInput = {
@@ -970,10 +1234,14 @@ export type UserCreateWithoutLessonProgressInput = {
   stripeLiveCustomerId?: string | null
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   billingProfile?: Prisma.BillingProfileCreateNestedOneWithoutUserInput
+  builderLessons?: Prisma.BuilderLessonCreateNestedManyWithoutAuthorInput
   customLinks?: Prisma.CustomLinkCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
+  gameParticipants?: Prisma.GameParticipantCreateNestedManyWithoutUserInput
+  playerRatings?: Prisma.PlayerRatingCreateNestedManyWithoutUserInput
+  pathwayProgress?: Prisma.PathwayProgressCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutLessonProgressInput = {
@@ -987,10 +1255,14 @@ export type UserUncheckedCreateWithoutLessonProgressInput = {
   stripeLiveCustomerId?: string | null
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   billingProfile?: Prisma.BillingProfileUncheckedCreateNestedOneWithoutUserInput
+  builderLessons?: Prisma.BuilderLessonUncheckedCreateNestedManyWithoutAuthorInput
   customLinks?: Prisma.CustomLinkUncheckedCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
+  gameParticipants?: Prisma.GameParticipantUncheckedCreateNestedManyWithoutUserInput
+  playerRatings?: Prisma.PlayerRatingUncheckedCreateNestedManyWithoutUserInput
+  pathwayProgress?: Prisma.PathwayProgressUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutLessonProgressInput = {
@@ -1020,10 +1292,14 @@ export type UserUpdateWithoutLessonProgressInput = {
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   billingProfile?: Prisma.BillingProfileUpdateOneWithoutUserNestedInput
+  builderLessons?: Prisma.BuilderLessonUpdateManyWithoutAuthorNestedInput
   customLinks?: Prisma.CustomLinkUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
+  gameParticipants?: Prisma.GameParticipantUpdateManyWithoutUserNestedInput
+  playerRatings?: Prisma.PlayerRatingUpdateManyWithoutUserNestedInput
+  pathwayProgress?: Prisma.PathwayProgressUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutLessonProgressInput = {
@@ -1037,10 +1313,14 @@ export type UserUncheckedUpdateWithoutLessonProgressInput = {
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   billingProfile?: Prisma.BillingProfileUncheckedUpdateOneWithoutUserNestedInput
+  builderLessons?: Prisma.BuilderLessonUncheckedUpdateManyWithoutAuthorNestedInput
   customLinks?: Prisma.CustomLinkUncheckedUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  gameParticipants?: Prisma.GameParticipantUncheckedUpdateManyWithoutUserNestedInput
+  playerRatings?: Prisma.PlayerRatingUncheckedUpdateManyWithoutUserNestedInput
+  pathwayProgress?: Prisma.PathwayProgressUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutCustomLinksInput = {
@@ -1054,10 +1334,14 @@ export type UserCreateWithoutCustomLinksInput = {
   stripeLiveCustomerId?: string | null
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   billingProfile?: Prisma.BillingProfileCreateNestedOneWithoutUserInput
+  builderLessons?: Prisma.BuilderLessonCreateNestedManyWithoutAuthorInput
   LessonProgress?: Prisma.LessonProgressCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
+  gameParticipants?: Prisma.GameParticipantCreateNestedManyWithoutUserInput
+  playerRatings?: Prisma.PlayerRatingCreateNestedManyWithoutUserInput
+  pathwayProgress?: Prisma.PathwayProgressCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutCustomLinksInput = {
@@ -1071,10 +1355,14 @@ export type UserUncheckedCreateWithoutCustomLinksInput = {
   stripeLiveCustomerId?: string | null
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   billingProfile?: Prisma.BillingProfileUncheckedCreateNestedOneWithoutUserInput
+  builderLessons?: Prisma.BuilderLessonUncheckedCreateNestedManyWithoutAuthorInput
   LessonProgress?: Prisma.LessonProgressUncheckedCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
+  gameParticipants?: Prisma.GameParticipantUncheckedCreateNestedManyWithoutUserInput
+  playerRatings?: Prisma.PlayerRatingUncheckedCreateNestedManyWithoutUserInput
+  pathwayProgress?: Prisma.PathwayProgressUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutCustomLinksInput = {
@@ -1104,10 +1392,14 @@ export type UserUpdateWithoutCustomLinksInput = {
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   billingProfile?: Prisma.BillingProfileUpdateOneWithoutUserNestedInput
+  builderLessons?: Prisma.BuilderLessonUpdateManyWithoutAuthorNestedInput
   LessonProgress?: Prisma.LessonProgressUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
+  gameParticipants?: Prisma.GameParticipantUpdateManyWithoutUserNestedInput
+  playerRatings?: Prisma.PlayerRatingUpdateManyWithoutUserNestedInput
+  pathwayProgress?: Prisma.PathwayProgressUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCustomLinksInput = {
@@ -1121,10 +1413,314 @@ export type UserUncheckedUpdateWithoutCustomLinksInput = {
   stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   billingProfile?: Prisma.BillingProfileUncheckedUpdateOneWithoutUserNestedInput
+  builderLessons?: Prisma.BuilderLessonUncheckedUpdateManyWithoutAuthorNestedInput
   LessonProgress?: Prisma.LessonProgressUncheckedUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  gameParticipants?: Prisma.GameParticipantUncheckedUpdateManyWithoutUserNestedInput
+  playerRatings?: Prisma.PlayerRatingUncheckedUpdateManyWithoutUserNestedInput
+  pathwayProgress?: Prisma.PathwayProgressUncheckedUpdateOneWithoutUserNestedInput
+}
+
+export type UserCreateWithoutGameParticipantsInput = {
+  id?: string
+  name?: string | null
+  email: string
+  emailVerified?: Date | string | null
+  image?: string | null
+  createdAt?: Date | string
+  stripeTestCustomerId?: string | null
+  stripeLiveCustomerId?: string | null
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  billingProfile?: Prisma.BillingProfileCreateNestedOneWithoutUserInput
+  builderLessons?: Prisma.BuilderLessonCreateNestedManyWithoutAuthorInput
+  customLinks?: Prisma.CustomLinkCreateNestedManyWithoutUserInput
+  LessonProgress?: Prisma.LessonProgressCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
+  playerRatings?: Prisma.PlayerRatingCreateNestedManyWithoutUserInput
+  pathwayProgress?: Prisma.PathwayProgressCreateNestedOneWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutGameParticipantsInput = {
+  id?: string
+  name?: string | null
+  email: string
+  emailVerified?: Date | string | null
+  image?: string | null
+  createdAt?: Date | string
+  stripeTestCustomerId?: string | null
+  stripeLiveCustomerId?: string | null
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  billingProfile?: Prisma.BillingProfileUncheckedCreateNestedOneWithoutUserInput
+  builderLessons?: Prisma.BuilderLessonUncheckedCreateNestedManyWithoutAuthorInput
+  customLinks?: Prisma.CustomLinkUncheckedCreateNestedManyWithoutUserInput
+  LessonProgress?: Prisma.LessonProgressUncheckedCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
+  playerRatings?: Prisma.PlayerRatingUncheckedCreateNestedManyWithoutUserInput
+  pathwayProgress?: Prisma.PathwayProgressUncheckedCreateNestedOneWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutGameParticipantsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutGameParticipantsInput, Prisma.UserUncheckedCreateWithoutGameParticipantsInput>
+}
+
+export type UserUpsertWithoutGameParticipantsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutGameParticipantsInput, Prisma.UserUncheckedUpdateWithoutGameParticipantsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutGameParticipantsInput, Prisma.UserUncheckedCreateWithoutGameParticipantsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutGameParticipantsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutGameParticipantsInput, Prisma.UserUncheckedUpdateWithoutGameParticipantsInput>
+}
+
+export type UserUpdateWithoutGameParticipantsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  stripeTestCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  billingProfile?: Prisma.BillingProfileUpdateOneWithoutUserNestedInput
+  builderLessons?: Prisma.BuilderLessonUpdateManyWithoutAuthorNestedInput
+  customLinks?: Prisma.CustomLinkUpdateManyWithoutUserNestedInput
+  LessonProgress?: Prisma.LessonProgressUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
+  playerRatings?: Prisma.PlayerRatingUpdateManyWithoutUserNestedInput
+  pathwayProgress?: Prisma.PathwayProgressUpdateOneWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutGameParticipantsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  stripeTestCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  billingProfile?: Prisma.BillingProfileUncheckedUpdateOneWithoutUserNestedInput
+  builderLessons?: Prisma.BuilderLessonUncheckedUpdateManyWithoutAuthorNestedInput
+  customLinks?: Prisma.CustomLinkUncheckedUpdateManyWithoutUserNestedInput
+  LessonProgress?: Prisma.LessonProgressUncheckedUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  playerRatings?: Prisma.PlayerRatingUncheckedUpdateManyWithoutUserNestedInput
+  pathwayProgress?: Prisma.PathwayProgressUncheckedUpdateOneWithoutUserNestedInput
+}
+
+export type UserCreateWithoutPlayerRatingsInput = {
+  id?: string
+  name?: string | null
+  email: string
+  emailVerified?: Date | string | null
+  image?: string | null
+  createdAt?: Date | string
+  stripeTestCustomerId?: string | null
+  stripeLiveCustomerId?: string | null
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  billingProfile?: Prisma.BillingProfileCreateNestedOneWithoutUserInput
+  builderLessons?: Prisma.BuilderLessonCreateNestedManyWithoutAuthorInput
+  customLinks?: Prisma.CustomLinkCreateNestedManyWithoutUserInput
+  LessonProgress?: Prisma.LessonProgressCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
+  gameParticipants?: Prisma.GameParticipantCreateNestedManyWithoutUserInput
+  pathwayProgress?: Prisma.PathwayProgressCreateNestedOneWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutPlayerRatingsInput = {
+  id?: string
+  name?: string | null
+  email: string
+  emailVerified?: Date | string | null
+  image?: string | null
+  createdAt?: Date | string
+  stripeTestCustomerId?: string | null
+  stripeLiveCustomerId?: string | null
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  billingProfile?: Prisma.BillingProfileUncheckedCreateNestedOneWithoutUserInput
+  builderLessons?: Prisma.BuilderLessonUncheckedCreateNestedManyWithoutAuthorInput
+  customLinks?: Prisma.CustomLinkUncheckedCreateNestedManyWithoutUserInput
+  LessonProgress?: Prisma.LessonProgressUncheckedCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
+  gameParticipants?: Prisma.GameParticipantUncheckedCreateNestedManyWithoutUserInput
+  pathwayProgress?: Prisma.PathwayProgressUncheckedCreateNestedOneWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutPlayerRatingsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutPlayerRatingsInput, Prisma.UserUncheckedCreateWithoutPlayerRatingsInput>
+}
+
+export type UserUpsertWithoutPlayerRatingsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutPlayerRatingsInput, Prisma.UserUncheckedUpdateWithoutPlayerRatingsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutPlayerRatingsInput, Prisma.UserUncheckedCreateWithoutPlayerRatingsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutPlayerRatingsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutPlayerRatingsInput, Prisma.UserUncheckedUpdateWithoutPlayerRatingsInput>
+}
+
+export type UserUpdateWithoutPlayerRatingsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  stripeTestCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  billingProfile?: Prisma.BillingProfileUpdateOneWithoutUserNestedInput
+  builderLessons?: Prisma.BuilderLessonUpdateManyWithoutAuthorNestedInput
+  customLinks?: Prisma.CustomLinkUpdateManyWithoutUserNestedInput
+  LessonProgress?: Prisma.LessonProgressUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
+  gameParticipants?: Prisma.GameParticipantUpdateManyWithoutUserNestedInput
+  pathwayProgress?: Prisma.PathwayProgressUpdateOneWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutPlayerRatingsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  stripeTestCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  billingProfile?: Prisma.BillingProfileUncheckedUpdateOneWithoutUserNestedInput
+  builderLessons?: Prisma.BuilderLessonUncheckedUpdateManyWithoutAuthorNestedInput
+  customLinks?: Prisma.CustomLinkUncheckedUpdateManyWithoutUserNestedInput
+  LessonProgress?: Prisma.LessonProgressUncheckedUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  gameParticipants?: Prisma.GameParticipantUncheckedUpdateManyWithoutUserNestedInput
+  pathwayProgress?: Prisma.PathwayProgressUncheckedUpdateOneWithoutUserNestedInput
+}
+
+export type UserCreateWithoutPathwayProgressInput = {
+  id?: string
+  name?: string | null
+  email: string
+  emailVerified?: Date | string | null
+  image?: string | null
+  createdAt?: Date | string
+  stripeTestCustomerId?: string | null
+  stripeLiveCustomerId?: string | null
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  billingProfile?: Prisma.BillingProfileCreateNestedOneWithoutUserInput
+  builderLessons?: Prisma.BuilderLessonCreateNestedManyWithoutAuthorInput
+  customLinks?: Prisma.CustomLinkCreateNestedManyWithoutUserInput
+  LessonProgress?: Prisma.LessonProgressCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
+  gameParticipants?: Prisma.GameParticipantCreateNestedManyWithoutUserInput
+  playerRatings?: Prisma.PlayerRatingCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutPathwayProgressInput = {
+  id?: string
+  name?: string | null
+  email: string
+  emailVerified?: Date | string | null
+  image?: string | null
+  createdAt?: Date | string
+  stripeTestCustomerId?: string | null
+  stripeLiveCustomerId?: string | null
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  billingProfile?: Prisma.BillingProfileUncheckedCreateNestedOneWithoutUserInput
+  builderLessons?: Prisma.BuilderLessonUncheckedCreateNestedManyWithoutAuthorInput
+  customLinks?: Prisma.CustomLinkUncheckedCreateNestedManyWithoutUserInput
+  LessonProgress?: Prisma.LessonProgressUncheckedCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
+  gameParticipants?: Prisma.GameParticipantUncheckedCreateNestedManyWithoutUserInput
+  playerRatings?: Prisma.PlayerRatingUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutPathwayProgressInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutPathwayProgressInput, Prisma.UserUncheckedCreateWithoutPathwayProgressInput>
+}
+
+export type UserUpsertWithoutPathwayProgressInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutPathwayProgressInput, Prisma.UserUncheckedUpdateWithoutPathwayProgressInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutPathwayProgressInput, Prisma.UserUncheckedCreateWithoutPathwayProgressInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutPathwayProgressInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutPathwayProgressInput, Prisma.UserUncheckedUpdateWithoutPathwayProgressInput>
+}
+
+export type UserUpdateWithoutPathwayProgressInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  stripeTestCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  billingProfile?: Prisma.BillingProfileUpdateOneWithoutUserNestedInput
+  builderLessons?: Prisma.BuilderLessonUpdateManyWithoutAuthorNestedInput
+  customLinks?: Prisma.CustomLinkUpdateManyWithoutUserNestedInput
+  LessonProgress?: Prisma.LessonProgressUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
+  gameParticipants?: Prisma.GameParticipantUpdateManyWithoutUserNestedInput
+  playerRatings?: Prisma.PlayerRatingUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutPathwayProgressInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  stripeTestCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeLiveCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  billingProfile?: Prisma.BillingProfileUncheckedUpdateOneWithoutUserNestedInput
+  builderLessons?: Prisma.BuilderLessonUncheckedUpdateManyWithoutAuthorNestedInput
+  customLinks?: Prisma.CustomLinkUncheckedUpdateManyWithoutUserNestedInput
+  LessonProgress?: Prisma.LessonProgressUncheckedUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  gameParticipants?: Prisma.GameParticipantUncheckedUpdateManyWithoutUserNestedInput
+  playerRatings?: Prisma.PlayerRatingUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -1134,20 +1730,26 @@ export type UserUncheckedUpdateWithoutCustomLinksInput = {
 
 export type UserCountOutputType = {
   accounts: number
+  builderLessons: number
   customLinks: number
   LessonProgress: number
   payments: number
   sessions: number
   subscriptions: number
+  gameParticipants: number
+  playerRatings: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   accounts?: boolean | UserCountOutputTypeCountAccountsArgs
+  builderLessons?: boolean | UserCountOutputTypeCountBuilderLessonsArgs
   customLinks?: boolean | UserCountOutputTypeCountCustomLinksArgs
   LessonProgress?: boolean | UserCountOutputTypeCountLessonProgressArgs
   payments?: boolean | UserCountOutputTypeCountPaymentsArgs
   sessions?: boolean | UserCountOutputTypeCountSessionsArgs
   subscriptions?: boolean | UserCountOutputTypeCountSubscriptionsArgs
+  gameParticipants?: boolean | UserCountOutputTypeCountGameParticipantsArgs
+  playerRatings?: boolean | UserCountOutputTypeCountPlayerRatingsArgs
 }
 
 /**
@@ -1165,6 +1767,13 @@ export type UserCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensi
  */
 export type UserCountOutputTypeCountAccountsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.AccountWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountBuilderLessonsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BuilderLessonWhereInput
 }
 
 /**
@@ -1202,6 +1811,20 @@ export type UserCountOutputTypeCountSubscriptionsArgs<ExtArgs extends runtime.Ty
   where?: Prisma.SubscriptionWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountGameParticipantsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.GameParticipantWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountPlayerRatingsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PlayerRatingWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1214,11 +1837,15 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   stripeLiveCustomerId?: boolean
   accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>
   billingProfile?: boolean | Prisma.User$billingProfileArgs<ExtArgs>
+  builderLessons?: boolean | Prisma.User$builderLessonsArgs<ExtArgs>
   customLinks?: boolean | Prisma.User$customLinksArgs<ExtArgs>
   LessonProgress?: boolean | Prisma.User$LessonProgressArgs<ExtArgs>
   payments?: boolean | Prisma.User$paymentsArgs<ExtArgs>
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
   subscriptions?: boolean | Prisma.User$subscriptionsArgs<ExtArgs>
+  gameParticipants?: boolean | Prisma.User$gameParticipantsArgs<ExtArgs>
+  playerRatings?: boolean | Prisma.User$playerRatingsArgs<ExtArgs>
+  pathwayProgress?: boolean | Prisma.User$pathwayProgressArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -1259,11 +1886,15 @@ export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = run
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>
   billingProfile?: boolean | Prisma.User$billingProfileArgs<ExtArgs>
+  builderLessons?: boolean | Prisma.User$builderLessonsArgs<ExtArgs>
   customLinks?: boolean | Prisma.User$customLinksArgs<ExtArgs>
   LessonProgress?: boolean | Prisma.User$LessonProgressArgs<ExtArgs>
   payments?: boolean | Prisma.User$paymentsArgs<ExtArgs>
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
   subscriptions?: boolean | Prisma.User$subscriptionsArgs<ExtArgs>
+  gameParticipants?: boolean | Prisma.User$gameParticipantsArgs<ExtArgs>
+  playerRatings?: boolean | Prisma.User$playerRatingsArgs<ExtArgs>
+  pathwayProgress?: boolean | Prisma.User$pathwayProgressArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1274,11 +1905,15 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   objects: {
     accounts: Prisma.$AccountPayload<ExtArgs>[]
     billingProfile: Prisma.$BillingProfilePayload<ExtArgs> | null
+    builderLessons: Prisma.$BuilderLessonPayload<ExtArgs>[]
     customLinks: Prisma.$CustomLinkPayload<ExtArgs>[]
     LessonProgress: Prisma.$LessonProgressPayload<ExtArgs>[]
     payments: Prisma.$PaymentPayload<ExtArgs>[]
     sessions: Prisma.$SessionPayload<ExtArgs>[]
     subscriptions: Prisma.$SubscriptionPayload<ExtArgs>[]
+    gameParticipants: Prisma.$GameParticipantPayload<ExtArgs>[]
+    playerRatings: Prisma.$PlayerRatingPayload<ExtArgs>[]
+    pathwayProgress: Prisma.$PathwayProgressPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1685,11 +2320,15 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   readonly [Symbol.toStringTag]: "PrismaPromise"
   accounts<T extends Prisma.User$accountsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$accountsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   billingProfile<T extends Prisma.User$billingProfileArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$billingProfileArgs<ExtArgs>>): Prisma.Prisma__BillingProfileClient<runtime.Types.Result.GetResult<Prisma.$BillingProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  builderLessons<T extends Prisma.User$builderLessonsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$builderLessonsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BuilderLessonPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   customLinks<T extends Prisma.User$customLinksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$customLinksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CustomLinkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   LessonProgress<T extends Prisma.User$LessonProgressArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$LessonProgressArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LessonProgressPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   payments<T extends Prisma.User$paymentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$paymentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   sessions<T extends Prisma.User$sessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   subscriptions<T extends Prisma.User$subscriptionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$subscriptionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SubscriptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  gameParticipants<T extends Prisma.User$gameParticipantsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$gameParticipantsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GameParticipantPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  playerRatings<T extends Prisma.User$playerRatingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$playerRatingsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PlayerRatingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  pathwayProgress<T extends Prisma.User$pathwayProgressArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$pathwayProgressArgs<ExtArgs>>): Prisma.Prisma__PathwayProgressClient<runtime.Types.Result.GetResult<Prisma.$PathwayProgressPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2163,6 +2802,30 @@ export type User$billingProfileArgs<ExtArgs extends runtime.Types.Extensions.Int
 }
 
 /**
+ * User.builderLessons
+ */
+export type User$builderLessonsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BuilderLesson
+   */
+  select?: Prisma.BuilderLessonSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BuilderLesson
+   */
+  omit?: Prisma.BuilderLessonOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BuilderLessonInclude<ExtArgs> | null
+  where?: Prisma.BuilderLessonWhereInput
+  orderBy?: Prisma.BuilderLessonOrderByWithRelationInput | Prisma.BuilderLessonOrderByWithRelationInput[]
+  cursor?: Prisma.BuilderLessonWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BuilderLessonScalarFieldEnum | Prisma.BuilderLessonScalarFieldEnum[]
+}
+
+/**
  * User.customLinks
  */
 export type User$customLinksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2280,6 +2943,73 @@ export type User$subscriptionsArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.SubscriptionScalarFieldEnum | Prisma.SubscriptionScalarFieldEnum[]
+}
+
+/**
+ * User.gameParticipants
+ */
+export type User$gameParticipantsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the GameParticipant
+   */
+  select?: Prisma.GameParticipantSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the GameParticipant
+   */
+  omit?: Prisma.GameParticipantOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GameParticipantInclude<ExtArgs> | null
+  where?: Prisma.GameParticipantWhereInput
+  orderBy?: Prisma.GameParticipantOrderByWithRelationInput | Prisma.GameParticipantOrderByWithRelationInput[]
+  cursor?: Prisma.GameParticipantWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.GameParticipantScalarFieldEnum | Prisma.GameParticipantScalarFieldEnum[]
+}
+
+/**
+ * User.playerRatings
+ */
+export type User$playerRatingsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PlayerRating
+   */
+  select?: Prisma.PlayerRatingSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PlayerRating
+   */
+  omit?: Prisma.PlayerRatingOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PlayerRatingInclude<ExtArgs> | null
+  where?: Prisma.PlayerRatingWhereInput
+  orderBy?: Prisma.PlayerRatingOrderByWithRelationInput | Prisma.PlayerRatingOrderByWithRelationInput[]
+  cursor?: Prisma.PlayerRatingWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PlayerRatingScalarFieldEnum | Prisma.PlayerRatingScalarFieldEnum[]
+}
+
+/**
+ * User.pathwayProgress
+ */
+export type User$pathwayProgressArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PathwayProgress
+   */
+  select?: Prisma.PathwayProgressSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PathwayProgress
+   */
+  omit?: Prisma.PathwayProgressOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PathwayProgressInclude<ExtArgs> | null
+  where?: Prisma.PathwayProgressWhereInput
 }
 
 /**

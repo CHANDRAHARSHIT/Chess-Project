@@ -68,15 +68,30 @@ export type ProductFeature = Prisma.ProductFeatureModel
  */
 export type WebhookEvent = Prisma.WebhookEventModel
 /**
+ * Model CuratedPuzzle
+ * 
+ */
+export type CuratedPuzzle = Prisma.CuratedPuzzleModel
+/**
  * Model Opening
  * 
  */
 export type Opening = Prisma.OpeningModel
 /**
- * Model CuratedPuzzle
+ * Model BuilderLesson
  * 
  */
-export type CuratedPuzzle = Prisma.CuratedPuzzleModel
+export type BuilderLesson = Prisma.BuilderLessonModel
+/**
+ * Model BuilderSegment
+ * 
+ */
+export type BuilderSegment = Prisma.BuilderSegmentModel
+/**
+ * Model BuilderSlide
+ * 
+ */
+export type BuilderSlide = Prisma.BuilderSlideModel
 /**
  * Model Course
  * 
@@ -97,3 +112,23 @@ export type LessonProgress = Prisma.LessonProgressModel
  * 
  */
 export type CustomLink = Prisma.CustomLinkModel
+/**
+ * Model GameRecord
+ * 
+ */
+export type GameRecord = Prisma.GameRecordModel
+/**
+ * Model GameParticipant
+ * 
+ */
+export type GameParticipant = Prisma.GameParticipantModel
+/**
+ * Model PlayerRating
+ * 
+ */
+export type PlayerRating = Prisma.PlayerRatingModel
+/**
+ * Model PathwayProgress
+ * 
+ */
+export type PathwayProgress = Prisma.PathwayProgressModel

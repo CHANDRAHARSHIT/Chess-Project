@@ -1,30 +1,16 @@
-import { motion, type Variants } from "framer-motion";
 import { useNavigate } from "react-router";
 import { Crown, Target, Users, Zap, BookOpen, Globe, ArrowLeft } from "lucide-react";
-import { soundManager } from "../utils/SoundManager";
+import { soundManager } from "@/shared/lib/SoundManager";
 
-const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.08, duration: 0.5, ease: "easeOut" },
-  }),
-};
 interface ValueCardProps {
   icon: React.ComponentType<{ className?: string }>;
   title: string;
   description: string;
-  index: number;
 }
 
-function ValueCard({ icon: Icon, title, description, index }: ValueCardProps) {
+function ValueCard({ icon: Icon, title, description }: ValueCardProps) {
   return (
-    <motion.div
-      custom={index}
-      variants={fadeUp}
-      initial="hidden"
-      animate="visible"
+    <div
       className="flex gap-4 p-5 rounded-2xl border border-brand-border/40 bg-brand-surface/30 hover:border-brand-accent/30 hover:bg-brand-surface/50 transition-all duration-300"
     >
       <div className="shrink-0 w-10 h-10 rounded-xl bg-brand-accent/10 border border-brand-accent/20 flex items-center justify-center mt-0.5">
@@ -34,7 +20,7 @@ function ValueCard({ icon: Icon, title, description, index }: ValueCardProps) {
         <h3 className="text-base font-display font-semibold text-brand-text mb-1">{title}</h3>
         <p className="text-sm text-brand-secondary leading-relaxed">{description}</p>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -86,7 +72,7 @@ export default function AboutPage() {
       <div className="relative overflow-hidden border-b border-brand-border/30">
         <div className="absolute inset-0 bg-gradient-to-br from-brand-accent/5 via-transparent to-brand-accent/3 pointer-events-none" />
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[300px] bg-brand-accent/5 rounded-full blur-[120px] pointer-events-none" />
-        <div className="max-w-4xl mx-auto px-6 pt-6 pb-16 sm:pb-20 relative z-10">
+        <div className="max-w-4xl mx-auto px-2.5 sm:px-6 pt-6 pb-16 sm:pb-20 relative z-10">
           <div className="mb-6">
             <button
               type="button"
@@ -101,11 +87,7 @@ export default function AboutPage() {
               <span>Back to Home</span>
             </button>
           </div>
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
+          <div>
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-accent/30 bg-brand-accent/5 mb-6">
               <Crown className="w-3.5 h-3.5 text-brand-accent" />
               <span className="text-xs font-mono text-brand-accent uppercase tracking-widest font-semibold">
@@ -120,18 +102,14 @@ export default function AboutPage() {
               level truly excel. We believe that world-class chess education
               should not be locked behind expensive tutors or obscure resources.
             </p>
-          </motion.div>
+          </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="max-w-4xl mx-auto px-6 py-12">
+      <div className="max-w-4xl mx-auto px-2.5 sm:px-6 py-8 sm:py-12">
         {/* Mission */}
-        <motion.section
-          custom={0}
-          variants={fadeUp}
-          initial="hidden"
-          animate="visible"
+        <section
           className="mb-14"
         >
           <h2 className="text-xl font-display font-semibold mb-4 text-brand-text">Our Mission</h2>
@@ -159,24 +137,20 @@ export default function AboutPage() {
               chess growth.
             </p>
           </div>
-        </motion.section>
+        </section>
 
         <div className="w-full h-px bg-gradient-to-r from-transparent via-brand-accent/20 to-transparent mb-14" />
 
         {/* Values Grid */}
         <section className="mb-14">
-          <motion.h2
-            custom={1}
-            variants={fadeUp}
-            initial="hidden"
-            animate="visible"
+          <h2
             className="text-xl font-display font-semibold mb-6 text-brand-text"
           >
             What We Stand For
-          </motion.h2>
+          </h2>
           <div className="grid sm:grid-cols-2 gap-4">
-            {values.map((v, i) => (
-              <ValueCard key={v.title} {...v} index={i + 2} />
+            {values.map((v) => (
+              <ValueCard key={v.title} {...v} />
             ))}
           </div>
         </section>
@@ -184,11 +158,7 @@ export default function AboutPage() {
         <div className="w-full h-px bg-gradient-to-r from-transparent via-brand-accent/20 to-transparent mb-14" />
 
         {/* Team */}
-        <motion.section
-          custom={9}
-          variants={fadeUp}
-          initial="hidden"
-          animate="visible"
+        <section
           className="mb-14"
         >
           <h2 className="text-xl font-display font-semibold mb-4 text-brand-text">The Team</h2>
@@ -208,16 +178,12 @@ export default function AboutPage() {
               we build to make your chess better.
             </p>
           </div>
-        </motion.section>
+        </section>
 
         <div className="w-full h-px bg-gradient-to-r from-transparent via-brand-accent/20 to-transparent mb-14" />
 
         {/* Contact CTA */}
-        <motion.section
-          custom={10}
-          variants={fadeUp}
-          initial="hidden"
-          animate="visible"
+        <section
           className="rounded-2xl border border-brand-accent/20 bg-brand-accent/5 p-8 text-center"
         >
           <h2 className="text-xl font-display font-semibold mb-3 text-brand-text">
@@ -234,7 +200,7 @@ export default function AboutPage() {
           >
             Contact Us
           </a>
-        </motion.section>
+        </section>
       </div>
     </div>
   );

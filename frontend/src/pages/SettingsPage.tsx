@@ -19,13 +19,13 @@ import {
   CreditCard,
   Check,
 } from "lucide-react";
-import { useBoardSettings } from "../hooks/useBoardSettings";
-import { BOARD_THEMES } from "../data/boardThemes";
-import { PIECE_SETS } from "../data/pieceSets";
-import BoardPreview from "../components/BoardPreview";
-import ProfileContent from "../components/ProfileContent";
-import { soundManager } from "../utils/SoundManager";
-import { useNavigationStack } from "../hooks/useNavigationStack";
+import { useBoardSettings } from "@/shared/appearance/useBoardSettings";
+import { BOARD_THEMES } from "@/shared/appearance/boardThemes";
+import { PIECE_SETS } from "@/shared/appearance/pieceSets";
+import BoardPreview from "@/shared/ui/BoardPreview";
+import ProfileContent from "@/features/account/ProfileContent";
+import { soundManager } from "@/shared/lib/SoundManager";
+import { useNavigationStack } from "@/app/navigation/useNavigationStack";
 
 type TabId = "boards" | "pieces" | "background" | "presets";
 
@@ -189,7 +189,7 @@ export default function SettingsPage() {
 
   return (
     <div className="min-h-screen text-brand-text flex flex-col bg-transparent selection:bg-brand-accent selection:text-brand-text">
-      <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-5 pb-16 relative z-10 flex flex-col gap-6">
+      <main className="flex-1 max-w-6xl w-full mx-auto px-2.5 sm:px-6 lg:px-8 pt-5 pb-16 relative z-10 flex flex-col gap-6">
         {/* Back link */}
         <div className="mt-4">
           <button
@@ -350,7 +350,7 @@ export default function SettingsPage() {
                                 : "ring-1 ring-brand-border/40 hover:ring-brand-border/80 hover:bg-brand-text/[0.03]"
                             }`}
                           >
-                            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg overflow-hidden grid grid-cols-2 grid-rows-2 shadow-inner shadow-black/30">
+                            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg overflow-hidden grid grid-cols-2 grid-rows-2">
                               <div style={{ backgroundColor: theme.light }} />
                               <div style={{ backgroundColor: theme.dark }} />
                               <div style={{ backgroundColor: theme.dark }} />
@@ -360,7 +360,7 @@ export default function SettingsPage() {
                               {theme.name}
                             </span>
                             {isSelected && (
-                              <span className="absolute -top-1.5 -left-1.5 w-5 h-5 rounded-full bg-brand-accent flex items-center justify-center shadow-md shadow-black/40">
+                              <span className="absolute -top-1.5 -left-1.5 w-5 h-5 rounded-full bg-brand-accent flex items-center justify-center">
                                 <Check
                                   className="w-3 h-3 text-brand-bg"
                                   strokeWidth={3}
@@ -404,7 +404,7 @@ export default function SettingsPage() {
                               {set.name}
                             </span>
                             {isSelected && (
-                              <span className="absolute -top-1.5 -left-1.5 w-5 h-5 rounded-full bg-brand-accent flex items-center justify-center shadow-md shadow-black/40">
+                              <span className="absolute -top-1.5 -left-1.5 w-5 h-5 rounded-full bg-brand-accent flex items-center justify-center">
                                 <Check
                                   className="w-3 h-3 text-brand-bg"
                                   strokeWidth={3}

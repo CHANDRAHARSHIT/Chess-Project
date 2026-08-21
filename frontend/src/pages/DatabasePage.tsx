@@ -1,6 +1,6 @@
 import { ArrowLeft, Search } from "lucide-react";
 import { useNavigate } from "react-router";
-import { soundManager } from "../utils/SoundManager";
+import { soundManager } from "@/shared/lib/SoundManager";
 
 const PLAYERS = [
   {
@@ -57,7 +57,7 @@ export default function DatabasePage() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-brand-bg text-brand-text font-sans p-6 md:p-10 lg:p-12 overflow-y-auto w-full">
+    <div className="min-h-screen bg-brand-bg text-brand-text font-sans px-2.5 py-6 sm:p-6 md:p-10 lg:p-12 overflow-y-auto w-full">
       <div className="max-w-[1200px] mx-auto flex flex-col lg:flex-row gap-10">
         {/* Left Content Area */}
         <div className="flex-1">
@@ -132,7 +132,7 @@ export default function DatabasePage() {
                   player.active && navigate(`/database/${player.id}`)
                 }
                 className={`group flex flex-col rounded-xl overflow-hidden bg-brand-surface border border-brand-text/20 transition-all duration-300
-                  ${player.active ? "cursor-pointer hover:border-brand-accent hover:shadow-[0_4px_20px_rgba(212,175,110,0.15)] hover:-translate-y-1" : "opacity-80 cursor-not-allowed"}
+                  ${player.active ? "cursor-pointer hover:border-brand-accent hover:-translate-y-1" : "opacity-80 cursor-not-allowed"}
                 `}
               >
                 <div className="h-48 w-full overflow-hidden relative bg-brand-bg">
@@ -144,7 +144,7 @@ export default function DatabasePage() {
                     />
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="px-4 py-1.5 bg-brand-surface rounded border border-brand-text/20 text-xs font-semibold tracking-widest uppercase text-brand-secondary shadow-lg">
+                      <span className="px-4 py-1.5 bg-brand-surface rounded border border-brand-text/20 text-xs font-semibold tracking-widest uppercase text-brand-secondary">
                         Coming Soon
                       </span>
                     </div>
@@ -169,7 +169,7 @@ export default function DatabasePage() {
 
         {/* Right Sidebar (Search Panel) */}
         <div className="w-full lg:w-80 flex-shrink-0 flex flex-col items-center gap-6">
-          <div className="w-full rounded-xl border border-brand-border bg-brand-surface p-5 shadow-2xl opacity-40 pointer-events-none">
+          <div className="w-full rounded-xl border border-brand-border bg-brand-surface p-5 opacity-40 pointer-events-none">
             <h2 className="text-lg font-semibold font-display text-brand-text mb-4">
               Games
             </h2>
@@ -216,7 +216,7 @@ export default function DatabasePage() {
               </label>
 
               <div className="pt-4 flex items-center justify-between">
-                <button className="px-6 py-2 bg-[#7FA650] hover:bg-[#8CB758] text-white font-bold rounded-lg text-sm shadow-lg transition-colors">
+                <button className="px-6 py-2 bg-[#7FA650] hover:bg-[#8CB758] text-white font-bold rounded-lg text-sm transition-colors">
                   Search
                 </button>
                 <button className="text-xs text-brand-secondary hover:text-brand-text flex items-center gap-1 transition-colors">
@@ -226,7 +226,7 @@ export default function DatabasePage() {
             </div>
           </div>
 
-          <div className="bg-brand-surface px-6 py-2.5 rounded-lg border border-brand-border/40 text-brand-accent font-semibold shadow-xl">
+          <div className="bg-brand-surface px-6 py-2.5 rounded-lg border border-brand-border/40 text-brand-accent font-semibold">
             Coming Soon
           </div>
         </div>

@@ -1,30 +1,15 @@
-import { motion, type Variants } from "framer-motion";
 import { useNavigate } from "react-router";
 import { Shield, ArrowLeft } from "lucide-react";
-import { soundManager } from "../utils/SoundManager";
-
-const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 16 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.06, duration: 0.5, ease: "easeOut" },
-  }),
-};
+import { soundManager } from "@/shared/lib/SoundManager";
 
 interface SectionProps {
   title: string;
   children: React.ReactNode;
-  index: number;
 }
 
-function Section({ title, children, index }: SectionProps) {
+function Section({ title, children }: SectionProps) {
   return (
-    <motion.section
-      custom={index}
-      variants={fadeUp}
-      initial="hidden"
-      animate="visible"
+    <section
       className="mb-10"
     >
       <h2 className="text-xl font-display font-semibold mt-8 mb-3 text-brand-text border-b border-brand-border/40 pb-2">
@@ -33,7 +18,7 @@ function Section({ title, children, index }: SectionProps) {
       <div className="space-y-3 text-brand-secondary leading-relaxed text-[15px]">
         {children}
       </div>
-    </motion.section>
+    </section>
   );
 }
 
@@ -46,7 +31,7 @@ export default function PrivacyPolicyPage() {
       <div className="relative overflow-hidden border-b border-brand-border/30">
         <div className="absolute inset-0 bg-gradient-to-br from-brand-accent/5 via-transparent to-brand-accent/3 pointer-events-none" />
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[250px] bg-brand-accent/5 rounded-full blur-[100px] pointer-events-none" />
-        <div className="max-w-4xl mx-auto px-6 pt-6 pb-14 sm:pb-18 relative z-10">
+        <div className="max-w-4xl mx-auto px-2.5 sm:px-6 pt-6 pb-14 sm:pb-18 relative z-10">
           <div className="mb-5">
             <button
               type="button"
@@ -61,11 +46,7 @@ export default function PrivacyPolicyPage() {
               <span>Back to Home</span>
             </button>
           </div>
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
+          <div>
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-accent/30 bg-brand-accent/5 mb-5">
               <Shield className="w-3.5 h-3.5 text-brand-accent" />
               <span className="text-xs font-mono text-brand-accent uppercase tracking-widest font-semibold">
@@ -78,17 +59,13 @@ export default function PrivacyPolicyPage() {
             <p className="text-sm text-brand-secondary">
               Last updated: August 2026
             </p>
-          </motion.div>
+          </div>
         </div>
       </div>
 
       {/* Content */}
-      <div className="max-w-4xl mx-auto px-6 py-10">
-        <motion.p
-          custom={0}
-          variants={fadeUp}
-          initial="hidden"
-          animate="visible"
+      <div className="max-w-4xl mx-auto px-2.5 sm:px-6 py-10">
+        <p
           className="text-brand-secondary leading-relaxed text-[15px] mb-2"
         >
           At XLChess, your privacy is a core responsibility, not an
@@ -96,9 +73,9 @@ export default function PrivacyPolicyPage() {
           collect, why we collect it, how we use it, and the choices you have
           regarding your data. By using XLChess, you agree to the practices
           described in this policy.
-        </motion.p>
+        </p>
 
-        <Section title="1. Information We Collect" index={1}>
+        <Section title="1. Information We Collect">
           <p>
             We collect information you provide directly to us, such as your
             name, email address, username, and password when you create an
@@ -120,7 +97,7 @@ export default function PrivacyPolicyPage() {
           </p>
         </Section>
 
-        <Section title="2. How We Use Your Information" index={2}>
+        <Section title="2. How We Use Your Information">
           <p>We use the information we collect to:</p>
           <ul className="list-disc list-inside space-y-1 pl-2">
             <li>Create and manage your XLChess account</li>
@@ -138,7 +115,7 @@ export default function PrivacyPolicyPage() {
           </p>
         </Section>
 
-        <Section title="3. Cookies and Tracking Technologies" index={3}>
+        <Section title="3. Cookies and Tracking Technologies">
           <p>
             XLChess uses cookies and similar tracking technologies to keep you
             signed in, remember your preferences (such as board theme and
@@ -154,7 +131,7 @@ export default function PrivacyPolicyPage() {
           </p>
         </Section>
 
-        <Section title="4. Data Sharing and Disclosure" index={4}>
+        <Section title="4. Data Sharing and Disclosure">
           <p>
             We share your information only in the following limited
             circumstances:
@@ -181,7 +158,7 @@ export default function PrivacyPolicyPage() {
           </p>
         </Section>
 
-        <Section title="5. Data Retention" index={5}>
+        <Section title="5. Data Retention">
           <p>
             We retain your account information for as long as your account is
             active. If you delete your account, we will delete or anonymize
@@ -196,7 +173,7 @@ export default function PrivacyPolicyPage() {
           </p>
         </Section>
 
-        <Section title="6. Your Rights and Choices" index={6}>
+        <Section title="6. Your Rights and Choices">
           <p>
             Depending on your location, you may have the right to access,
             correct, or delete your personal data; restrict or object to
@@ -217,7 +194,7 @@ export default function PrivacyPolicyPage() {
           </p>
         </Section>
 
-        <Section title="7. Security" index={7}>
+        <Section title="7. Security">
           <p>
             We use industry-standard security measures to protect your
             information, including encryption of data in transit (TLS) and at
@@ -228,7 +205,7 @@ export default function PrivacyPolicyPage() {
           </p>
         </Section>
 
-        <Section title="8. Children's Privacy" index={8}>
+        <Section title="8. Children's Privacy">
           <p>
             XLChess is not directed at children under the age of 13. We do not
             knowingly collect personal information from children under 13. If
@@ -237,7 +214,7 @@ export default function PrivacyPolicyPage() {
           </p>
         </Section>
 
-        <Section title="9. Changes to This Policy" index={9}>
+        <Section title="9. Changes to This Policy">
           <p>
             We may update this Privacy Policy from time to time to reflect
             changes in our practices or legal requirements. When we make
@@ -247,7 +224,7 @@ export default function PrivacyPolicyPage() {
           </p>
         </Section>
 
-        <Section title="10. Contact Us" index={10}>
+        <Section title="10. Contact Us">
           <p>
             If you have questions, concerns, or requests regarding this Privacy
             Policy or the handling of your personal data, please reach out to

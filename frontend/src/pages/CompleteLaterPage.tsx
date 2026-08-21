@@ -12,7 +12,7 @@ import {
   Clock,
   ArrowLeft
 } from "lucide-react";
-import { soundManager } from "../utils/SoundManager";
+import { soundManager } from "@/shared/lib/SoundManager";
 
 type QueueItemType = "Lesson" | "Puzzle" | "Game";
 
@@ -138,7 +138,7 @@ export default function CompleteLaterPage() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] bg-brand-bg flex justify-center p-3 md:p-6 lg:p-8">
+    <div className="min-h-[calc(100vh-4rem)] bg-brand-bg flex justify-center px-2.5 py-4 md:p-6 lg:p-8">
       <div className="max-w-[1400px] w-full flex flex-col">
         
         <button
@@ -174,7 +174,7 @@ export default function CompleteLaterPage() {
             
             <div className="relative z-10 p-4 sm:p-6 flex flex-col md:flex-row lg:flex-col items-start gap-4 md:gap-6 lg:gap-0 h-full text-left">
               {/* Cover Image Placeholder */}
-              <div className="w-full md:w-64 lg:w-full shrink-0 aspect-video rounded-lg lg:mb-6 flex flex-col items-center justify-center bg-brand-bg/60 backdrop-blur-md border border-brand-accent/20 shadow-lg relative overflow-hidden">
+              <div className="w-full md:w-64 lg:w-full shrink-0 aspect-video rounded-lg lg:mb-6 flex flex-col items-center justify-center bg-brand-bg/60 backdrop-blur-md border border-brand-accent/20 relative overflow-hidden">
                 <Clock className="w-10 h-10 md:w-12 md:h-12 text-brand-secondary mb-2 opacity-50" />
                 <span className="text-brand-secondary font-semibold tracking-widest uppercase text-xs md:text-sm opacity-80">Coming Soon</span>
               </div>
@@ -228,7 +228,7 @@ export default function CompleteLaterPage() {
                 onDragEnd={handleDragEnd}
                 onDrop={handleDragEnd}
                 className={`group flex items-center gap-2 sm:gap-4 p-2 sm:p-3 rounded-xl transition-colors cursor-pointer border border-transparent relative
-                  ${draggedIndex === index ? 'opacity-40 bg-white/5 border-white/20 shadow-xl' : 'hover:bg-white/5 hover:border-white/10'}
+                  ${draggedIndex === index ? 'opacity-40 bg-white/5 border-white/20' : 'hover:bg-white/5 hover:border-white/10'}
                 `}
               >
                 {/* Drag Handle & Index */}
@@ -245,7 +245,7 @@ export default function CompleteLaterPage() {
                 </div>
 
                 {/* Thumbnail */}
-                <div className="relative w-28 sm:w-40 aspect-video rounded-lg overflow-hidden shrink-0 bg-brand-accent flex items-center justify-center shadow-md">
+                <div className="relative w-28 sm:w-40 aspect-video rounded-lg overflow-hidden shrink-0 bg-brand-accent flex items-center justify-center">
                   {getIconForType(item.type)}
                   
                   {/* Duration Badge */}
@@ -260,7 +260,7 @@ export default function CompleteLaterPage() {
                     title="Coming Soon"
                     className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px] cursor-not-allowed"
                   >
-                    <Play className="w-6 h-6 sm:w-8 sm:h-8 text-white/50 fill-white/50 drop-shadow-lg" />
+                    <Play className="w-6 h-6 sm:w-8 sm:h-8 text-white/50 fill-white/50" />
                   </div>
                 </div>
 

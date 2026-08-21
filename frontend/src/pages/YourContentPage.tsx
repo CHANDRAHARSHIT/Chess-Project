@@ -8,10 +8,10 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router";
 import { ArrowLeft } from "lucide-react";
-import { ContentFilterBar } from "../components/creator/ContentFilterBar";
-import { ContentGridCard } from "../components/creator/ContentGridCard";
-import { MASTERCLASSES } from "../data/creatorMockData";
-import { soundManager } from "../utils/SoundManager";
+import { ContentFilterBar } from "@/features/creator/ContentFilterBar";
+import { ContentGridCard } from "@/features/creator/ContentGridCard";
+import { MASTERCLASSES } from "@/features/creator/creatorMockData";
+import { soundManager } from "@/shared/lib/SoundManager";
 
 export default function YourContentPage() {
   const navigate = useNavigate();
@@ -32,7 +32,7 @@ export default function YourContentPage() {
   }, [selectedCategory]);
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] bg-brand-bg text-brand-text py-6 sm:py-8 md:py-10 px-4 sm:px-6 lg:px-8 max-w-[1400px] mx-auto space-y-6 sm:space-y-8 animate-fadeIn overflow-x-hidden">
+    <div className="min-h-[calc(100vh-4rem)] bg-brand-bg text-brand-text py-6 sm:py-8 md:py-10 px-2.5 sm:px-6 lg:px-8 max-w-[1400px] mx-auto space-y-6 sm:space-y-8 animate-fadeIn overflow-x-hidden">
       {/* Back Navigation */}
       <div>
         <button
@@ -58,7 +58,7 @@ export default function YourContentPage() {
 
       {/* Content Library Grid */}
       {filteredItems.length === 0 ? (
-        <div className="w-full rounded-3xl border border-brand-text/10 bg-obsidian-mid p-12 text-center space-y-3 shadow-xl">
+        <div className="w-full rounded-3xl border border-brand-text/10 bg-obsidian-mid p-12 text-center space-y-3">
           <span className="text-3xl">♟️</span>
           <h3 className="text-lg font-display font-bold text-brand-text">No content matches your filter</h3>
           <p className="text-xs sm:text-sm font-sans text-brand-secondary">

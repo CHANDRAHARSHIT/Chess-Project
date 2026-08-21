@@ -61,12 +61,19 @@ export const ModelName = {
   Product: 'Product',
   ProductFeature: 'ProductFeature',
   WebhookEvent: 'WebhookEvent',
-  Opening: 'Opening',
   CuratedPuzzle: 'CuratedPuzzle',
+  Opening: 'Opening',
+  BuilderLesson: 'BuilderLesson',
+  BuilderSegment: 'BuilderSegment',
+  BuilderSlide: 'BuilderSlide',
   Course: 'Course',
   Lesson: 'Lesson',
   LessonProgress: 'LessonProgress',
-  CustomLink: 'CustomLink'
+  CustomLink: 'CustomLink',
+  GameRecord: 'GameRecord',
+  GameParticipant: 'GameParticipant',
+  PlayerRating: 'PlayerRating',
+  PathwayProgress: 'PathwayProgress'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -207,12 +214,12 @@ export const ProductScalarFieldEnum = {
   priceAmount: 'priceAmount',
   currency: 'currency',
   billingInterval: 'billingInterval',
+  gatewayTestPriceId: 'gatewayTestPriceId',
+  gatewayLivePriceId: 'gatewayLivePriceId',
   isActive: 'isActive',
   displayOrder: 'displayOrder',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  gatewayTestPriceId: 'gatewayTestPriceId',
-  gatewayLivePriceId: 'gatewayLivePriceId'
+  updatedAt: 'updatedAt'
 } as const
 
 export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]
@@ -243,17 +250,6 @@ export const WebhookEventScalarFieldEnum = {
 export type WebhookEventScalarFieldEnum = (typeof WebhookEventScalarFieldEnum)[keyof typeof WebhookEventScalarFieldEnum]
 
 
-export const OpeningScalarFieldEnum = {
-  id: 'id',
-  eco: 'eco',
-  name: 'name',
-  pgn: 'pgn',
-  moves: 'moves'
-} as const
-
-export type OpeningScalarFieldEnum = (typeof OpeningScalarFieldEnum)[keyof typeof OpeningScalarFieldEnum]
-
-
 export const CuratedPuzzleScalarFieldEnum = {
   id: 'id',
   fen: 'fen',
@@ -267,6 +263,63 @@ export const CuratedPuzzleScalarFieldEnum = {
 } as const
 
 export type CuratedPuzzleScalarFieldEnum = (typeof CuratedPuzzleScalarFieldEnum)[keyof typeof CuratedPuzzleScalarFieldEnum]
+
+
+export const OpeningScalarFieldEnum = {
+  id: 'id',
+  eco: 'eco',
+  name: 'name',
+  pgn: 'pgn',
+  moves: 'moves'
+} as const
+
+export type OpeningScalarFieldEnum = (typeof OpeningScalarFieldEnum)[keyof typeof OpeningScalarFieldEnum]
+
+
+export const BuilderLessonScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  description: 'description',
+  authorId: 'authorId',
+  authorDisplayName: 'authorDisplayName',
+  status: 'status',
+  category: 'category',
+  coverImage: 'coverImage',
+  slug: 'slug',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  publishedAt: 'publishedAt'
+} as const
+
+export type BuilderLessonScalarFieldEnum = (typeof BuilderLessonScalarFieldEnum)[keyof typeof BuilderLessonScalarFieldEnum]
+
+
+export const BuilderSegmentScalarFieldEnum = {
+  id: 'id',
+  lessonId: 'lessonId',
+  title: 'title',
+  order: 'order',
+  description: 'description',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BuilderSegmentScalarFieldEnum = (typeof BuilderSegmentScalarFieldEnum)[keyof typeof BuilderSegmentScalarFieldEnum]
+
+
+export const BuilderSlideScalarFieldEnum = {
+  id: 'id',
+  segmentId: 'segmentId',
+  order: 'order',
+  title: 'title',
+  coachText: 'coachText',
+  fen: 'fen',
+  annotations: 'annotations',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BuilderSlideScalarFieldEnum = (typeof BuilderSlideScalarFieldEnum)[keyof typeof BuilderSlideScalarFieldEnum]
 
 
 export const CourseScalarFieldEnum = {
@@ -332,6 +385,72 @@ export const CustomLinkScalarFieldEnum = {
 } as const
 
 export type CustomLinkScalarFieldEnum = (typeof CustomLinkScalarFieldEnum)[keyof typeof CustomLinkScalarFieldEnum]
+
+
+export const GameRecordScalarFieldEnum = {
+  id: 'id',
+  gameSessionId: 'gameSessionId',
+  matchId: 'matchId',
+  variantId: 'variantId',
+  rated: 'rated',
+  provenance: 'provenance',
+  outcomeKind: 'outcomeKind',
+  winningSide: 'winningSide',
+  terminationReason: 'terminationReason',
+  moveCount: 'moveCount',
+  moveHistory: 'moveHistory',
+  initialSeconds: 'initialSeconds',
+  incrementSeconds: 'incrementSeconds',
+  timeControlLabel: 'timeControlLabel',
+  ratingPoolId: 'ratingPoolId',
+  tournamentContext: 'tournamentContext',
+  metadata: 'metadata',
+  durationSeconds: 'durationSeconds',
+  endedAt: 'endedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type GameRecordScalarFieldEnum = (typeof GameRecordScalarFieldEnum)[keyof typeof GameRecordScalarFieldEnum]
+
+
+export const GameParticipantScalarFieldEnum = {
+  id: 'id',
+  gameRecordId: 'gameRecordId',
+  userId: 'userId',
+  side: 'side',
+  result: 'result',
+  ratingBefore: 'ratingBefore',
+  ratingAfter: 'ratingAfter',
+  ratingDelta: 'ratingDelta'
+} as const
+
+export type GameParticipantScalarFieldEnum = (typeof GameParticipantScalarFieldEnum)[keyof typeof GameParticipantScalarFieldEnum]
+
+
+export const PlayerRatingScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  variantId: 'variantId',
+  rating: 'rating',
+  gamesPlayed: 'gamesPlayed',
+  version: 'version',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PlayerRatingScalarFieldEnum = (typeof PlayerRatingScalarFieldEnum)[keyof typeof PlayerRatingScalarFieldEnum]
+
+
+export const PathwayProgressScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  completedIds: 'completedIds',
+  streak: 'streak',
+  totalSolved: 'totalSolved',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PathwayProgressScalarFieldEnum = (typeof PathwayProgressScalarFieldEnum)[keyof typeof PathwayProgressScalarFieldEnum]
 
 
 export const SortOrder = {

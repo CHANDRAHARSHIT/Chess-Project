@@ -9,6 +9,14 @@
 * 🟢 You can import this file directly.
 */
 
+export const BuilderLessonStatus = {
+  DRAFT: 'DRAFT',
+  PUBLISHED: 'PUBLISHED'
+} as const
+
+export type BuilderLessonStatus = (typeof BuilderLessonStatus)[keyof typeof BuilderLessonStatus]
+
+
 export const SubscriptionStatus = {
   ACTIVE: 'ACTIVE',
   TRIALING: 'TRIALING',
@@ -30,3 +38,47 @@ export const PaymentStatus = {
 } as const
 
 export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus]
+
+
+export const MatchProvenance = {
+  queue: 'queue',
+  tournament: 'tournament',
+  invite: 'invite',
+  bot: 'bot',
+  internal: 'internal'
+} as const
+
+export type MatchProvenance = (typeof MatchProvenance)[keyof typeof MatchProvenance]
+
+
+export const GameOutcomeKind = {
+  win: 'win',
+  draw: 'draw'
+} as const
+
+export type GameOutcomeKind = (typeof GameOutcomeKind)[keyof typeof GameOutcomeKind]
+
+
+export const GameParticipantResult = {
+  WIN: 'WIN',
+  LOSS: 'LOSS',
+  DRAW: 'DRAW'
+} as const
+
+export type GameParticipantResult = (typeof GameParticipantResult)[keyof typeof GameParticipantResult]
+
+
+export const GameTerminationReason = {
+  checkmate: 'checkmate',
+  stalemate: 'stalemate',
+  draw_agreement: 'draw_agreement',
+  draw_repetition: 'draw_repetition',
+  draw_fifty_move: 'draw_fifty_move',
+  draw_insufficient_material: 'draw_insufficient_material',
+  resignation: 'resignation',
+  timeout: 'timeout',
+  forfeit: 'forfeit',
+  abort: 'abort'
+} as const
+
+export type GameTerminationReason = (typeof GameTerminationReason)[keyof typeof GameTerminationReason]

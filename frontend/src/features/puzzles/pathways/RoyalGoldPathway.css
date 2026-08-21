@@ -1,0 +1,225 @@
+/* ══════════════════════════════════════════════════════════════════════════════
+   RoyalGoldPathway.css — Self-Contained Styles for Royal Gold Pathway
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+.royal-gold-container {
+  position: relative;
+  width: 100%;
+  max-width: 396px;
+  margin-left: auto;
+  margin-right: auto;
+  aspect-ratio: 1024 / 1536;
+  overflow: hidden;
+  border-radius: 1rem;
+  border: 1px solid rgba(212, 175, 110, 0.35);
+  background-color: #080b14;
+  user-select: none;
+}
+
+@media (min-width: 1024px) {
+  .royal-gold-container {
+    height: 100%;
+    max-width: none;
+    aspect-ratio: auto;
+  }
+}
+
+.royal-gold-bg {
+  position: absolute;
+  inset: 0;
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  transition: all 0.5s ease-in-out;
+}
+
+@media (min-width: 1024px) {
+  .royal-gold-bg {
+    background-size: cover;
+  }
+}
+
+.royal-gold-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.royal-gold-bridge-wrap {
+  position: absolute;
+  pointer-events: none;
+  z-index: 10;
+  transform: translate(-50%, -50%);
+}
+
+.royal-gold-bridge-img {
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  filter: none;
+  transition: all 0.5s ease;
+}
+
+.royal-gold-bridge-unlocked {
+  opacity: 1;
+  filter: brightness(1.15) saturate(1.2);
+}
+
+.royal-gold-bridge-locked {
+  opacity: 0.4;
+  filter: grayscale(100%);
+}
+
+.royal-gold-tile-wrap {
+  position: absolute;
+  z-index: 20;
+  transform: translate(-50%, -50%);
+  transition: transform 0.3s ease;
+}
+
+.royal-gold-tile-wrap:hover {
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+.royal-gold-tile-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.825rem;
+  height: 3.825rem;
+  user-select: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+@media (min-width: 480px) {
+  .royal-gold-tile-button {
+    width: 4.275rem;
+    height: 4.275rem;
+  }
+}
+
+@media (min-width: 640px) {
+  .royal-gold-tile-button {
+    width: 4.95rem;
+    height: 4.95rem;
+  }
+}
+
+.royal-gold-tile-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  filter: grayscale(100%);
+}
+
+.royal-gold-active-aura {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background-color: rgba(212, 175, 110, 0.45);
+  filter: blur(16px);
+  animation: royalGoldPulse 2s infinite ease-in-out;
+  pointer-events: none;
+}
+
+@keyframes royalGoldPulse {
+
+  0%,
+  100% {
+    transform: scale(1.2);
+    opacity: 0.7;
+  }
+
+  50% {
+    transform: scale(1.35);
+    opacity: 1;
+  }
+}
+
+.royal-gold-tile-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: none;
+  transition: all 0.3s ease;
+}
+
+.royal-gold-current-img {
+  transform: scale(1.1);
+  filter: brightness(1.15);
+}
+
+.royal-gold-number {
+  font-family: 'Bonheur Royale', cursive;
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1;
+  color: #fef3c7;
+  text-shadow: none;
+  pointer-events: none;
+}
+
+@media (min-width: 480px) {
+  .royal-gold-number {
+    font-size: 2rem;
+  }
+}
+
+@media (min-width: 640px) {
+  .royal-gold-number {
+    font-size: 2.25rem;
+  }
+}
+
+.royal-gold-number-current {
+  color: #fde047;
+  font-weight: 800;
+  transform: scale(1.1);
+}
+
+.royal-gold-badge {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: none;
+}
+
+.royal-gold-badge-locked {
+  background-color: rgba(15, 23, 42, 0.9);
+  border: 1px solid #334155;
+  color: #94a3b8;
+}
+
+.royal-gold-badge-completed {
+  background-color: #059669;
+  border: 1px solid #34d399;
+  color: #ffffff;
+}
+
+.royal-gold-badge-current {
+  background-color: #f59e0b;
+  border: 1px solid #fde047;
+  color: #020617;
+  animation: royalGoldBounce 2.5s infinite;
+}
+
+@keyframes royalGoldBounce {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-4px);
+  }
+}

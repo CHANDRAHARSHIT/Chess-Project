@@ -10,11 +10,11 @@ import {
   Rewind,
   Compass,
 } from "lucide-react";
-import { ThemedChessboard } from "../components/ThemedChessboard";
-import { BoardCoordinates } from "../components/BoardCoordinates";
+import { ThemedChessboard } from "@/shared/ui/ThemedChessboard";
+import { BoardCoordinates } from "@/shared/ui/BoardCoordinates";
 
-import { useStockfish } from "../hooks/useStockfish";
-import { MOCK_GAMES } from "../data/mockGames";
+import { useStockfish } from "@/shared/hooks/useStockfish";
+import { MOCK_GAMES } from "@/features/database/mockGames";
 
 type Tab = "Moves" | "Info";
 
@@ -27,7 +27,11 @@ export default function DatabaseGamePage() {
   const [currentMoveIndex, setCurrentMoveIndex] = useState(-1);
   const isAnalyzing = false; // Fixed to false as analysis toggle was removed
 
-  // Initialize chess instance and parse history
+  // Initialize chess instance and parse history.
+  // Intentionally depend on game?.pgn (the string actually consumed here) rather than the
+  // whole `game` object, so this doesn't re-parse the PGN if `game` is ever re-fetched with
+  // an unchanged pgn string.
+  // eslint-disable-next-line react-hooks/preserve-manual-memoization
   const { history } = useMemo(() => {
     const c = new Chess();
     if (game?.pgn) {
@@ -105,7 +109,7 @@ export default function DatabaseGamePage() {
     <div className="md:h-[calc(100vh-64px)] min-h-[calc(100vh-64px)] bg-brand-surface text-brand-text font-sans flex flex-col w-full relative overflow-y-auto md:overflow-hidden">
       <div className="flex-1 flex flex-col md:flex-row w-full md:h-full md:overflow-hidden">
         {/* Left Area (Board & Players) */}
-        <div className="md:flex-1 flex flex-col items-center justify-center p-4 lg:p-8 relative bg-brand-surface shrink-0">
+        <div className="md:flex-1 flex flex-col items-center justify-center p-2.5 sm:p-4 lg:p-8 relative bg-brand-surface shrink-0">
           {/* Back Navigation */}
           <div className="w-full max-w-[70vh] mb-3">
             <button
@@ -134,7 +138,7 @@ export default function DatabaseGamePage() {
             {/* Board Area */}
             <div className="flex w-full relative items-stretch">
               {/* Chessboard */}
-              <div className="flex-1 aspect-square overflow-hidden shadow-2xl border-[3px] border-brand-border rounded-sm relative">
+              <div className="flex-1 aspect-square overflow-hidden border-[3px] border-brand-border rounded-sm relative">
                 <ThemedChessboard
                   options={{
                     position: currentFen,
@@ -229,7 +233,7 @@ export default function DatabaseGamePage() {
           <div className="flex-1 overflow-y-auto bg-brand-surface">
             {activeTab === "Info" ? (
               <div className="p-4 space-y-4">
-                <div className="bg-white text-black text-center py-2 font-bold rounded shadow-sm">
+                <div className="bg-white text-black text-center py-2 font-bold rounded">
                   {whiteWon
                     ? "White Won (1-0)"
                     : blackWon

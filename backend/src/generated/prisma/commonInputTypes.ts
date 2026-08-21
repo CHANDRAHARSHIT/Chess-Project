@@ -287,6 +287,23 @@ export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
   _max?: Prisma.NestedJsonNullableFilter<$PrismaModel>
 }
 
+export type EnumBuilderLessonStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.BuilderLessonStatus | Prisma.EnumBuilderLessonStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.BuilderLessonStatus[] | Prisma.ListEnumBuilderLessonStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.BuilderLessonStatus[] | Prisma.ListEnumBuilderLessonStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumBuilderLessonStatusFilter<$PrismaModel> | $Enums.BuilderLessonStatus
+}
+
+export type EnumBuilderLessonStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.BuilderLessonStatus | Prisma.EnumBuilderLessonStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.BuilderLessonStatus[] | Prisma.ListEnumBuilderLessonStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.BuilderLessonStatus[] | Prisma.ListEnumBuilderLessonStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumBuilderLessonStatusWithAggregatesFilter<$PrismaModel> | $Enums.BuilderLessonStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumBuilderLessonStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumBuilderLessonStatusFilter<$PrismaModel>
+}
+
 export type JsonFilter<$PrismaModel = never> =
 | Prisma.PatchUndefined<
     Prisma.Either<Required<JsonFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonFilterBase<$PrismaModel>>, 'path'>>,
@@ -363,6 +380,74 @@ export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
   _sum?: Prisma.NestedFloatNullableFilter<$PrismaModel>
   _min?: Prisma.NestedFloatNullableFilter<$PrismaModel>
   _max?: Prisma.NestedFloatNullableFilter<$PrismaModel>
+}
+
+export type EnumMatchProvenanceFilter<$PrismaModel = never> = {
+  equals?: $Enums.MatchProvenance | Prisma.EnumMatchProvenanceFieldRefInput<$PrismaModel>
+  in?: $Enums.MatchProvenance[] | Prisma.ListEnumMatchProvenanceFieldRefInput<$PrismaModel>
+  notIn?: $Enums.MatchProvenance[] | Prisma.ListEnumMatchProvenanceFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumMatchProvenanceFilter<$PrismaModel> | $Enums.MatchProvenance
+}
+
+export type EnumGameOutcomeKindFilter<$PrismaModel = never> = {
+  equals?: $Enums.GameOutcomeKind | Prisma.EnumGameOutcomeKindFieldRefInput<$PrismaModel>
+  in?: $Enums.GameOutcomeKind[] | Prisma.ListEnumGameOutcomeKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.GameOutcomeKind[] | Prisma.ListEnumGameOutcomeKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumGameOutcomeKindFilter<$PrismaModel> | $Enums.GameOutcomeKind
+}
+
+export type EnumGameTerminationReasonFilter<$PrismaModel = never> = {
+  equals?: $Enums.GameTerminationReason | Prisma.EnumGameTerminationReasonFieldRefInput<$PrismaModel>
+  in?: $Enums.GameTerminationReason[] | Prisma.ListEnumGameTerminationReasonFieldRefInput<$PrismaModel>
+  notIn?: $Enums.GameTerminationReason[] | Prisma.ListEnumGameTerminationReasonFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumGameTerminationReasonFilter<$PrismaModel> | $Enums.GameTerminationReason
+}
+
+export type EnumMatchProvenanceWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.MatchProvenance | Prisma.EnumMatchProvenanceFieldRefInput<$PrismaModel>
+  in?: $Enums.MatchProvenance[] | Prisma.ListEnumMatchProvenanceFieldRefInput<$PrismaModel>
+  notIn?: $Enums.MatchProvenance[] | Prisma.ListEnumMatchProvenanceFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumMatchProvenanceWithAggregatesFilter<$PrismaModel> | $Enums.MatchProvenance
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumMatchProvenanceFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumMatchProvenanceFilter<$PrismaModel>
+}
+
+export type EnumGameOutcomeKindWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.GameOutcomeKind | Prisma.EnumGameOutcomeKindFieldRefInput<$PrismaModel>
+  in?: $Enums.GameOutcomeKind[] | Prisma.ListEnumGameOutcomeKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.GameOutcomeKind[] | Prisma.ListEnumGameOutcomeKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumGameOutcomeKindWithAggregatesFilter<$PrismaModel> | $Enums.GameOutcomeKind
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumGameOutcomeKindFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumGameOutcomeKindFilter<$PrismaModel>
+}
+
+export type EnumGameTerminationReasonWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.GameTerminationReason | Prisma.EnumGameTerminationReasonFieldRefInput<$PrismaModel>
+  in?: $Enums.GameTerminationReason[] | Prisma.ListEnumGameTerminationReasonFieldRefInput<$PrismaModel>
+  notIn?: $Enums.GameTerminationReason[] | Prisma.ListEnumGameTerminationReasonFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumGameTerminationReasonWithAggregatesFilter<$PrismaModel> | $Enums.GameTerminationReason
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumGameTerminationReasonFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumGameTerminationReasonFilter<$PrismaModel>
+}
+
+export type EnumGameParticipantResultFilter<$PrismaModel = never> = {
+  equals?: $Enums.GameParticipantResult | Prisma.EnumGameParticipantResultFieldRefInput<$PrismaModel>
+  in?: $Enums.GameParticipantResult[] | Prisma.ListEnumGameParticipantResultFieldRefInput<$PrismaModel>
+  notIn?: $Enums.GameParticipantResult[] | Prisma.ListEnumGameParticipantResultFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumGameParticipantResultFilter<$PrismaModel> | $Enums.GameParticipantResult
+}
+
+export type EnumGameParticipantResultWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.GameParticipantResult | Prisma.EnumGameParticipantResultFieldRefInput<$PrismaModel>
+  in?: $Enums.GameParticipantResult[] | Prisma.ListEnumGameParticipantResultFieldRefInput<$PrismaModel>
+  notIn?: $Enums.GameParticipantResult[] | Prisma.ListEnumGameParticipantResultFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumGameParticipantResultWithAggregatesFilter<$PrismaModel> | $Enums.GameParticipantResult
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumGameParticipantResultFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumGameParticipantResultFilter<$PrismaModel>
 }
 
 export type NestedStringFilter<$PrismaModel = never> = {
@@ -624,6 +709,23 @@ export type NestedJsonNullableFilterBase<$PrismaModel = never> = {
   not?: runtime.InputJsonValue | Prisma.JsonFieldRefInput<$PrismaModel> | Prisma.JsonNullValueFilter
 }
 
+export type NestedEnumBuilderLessonStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.BuilderLessonStatus | Prisma.EnumBuilderLessonStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.BuilderLessonStatus[] | Prisma.ListEnumBuilderLessonStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.BuilderLessonStatus[] | Prisma.ListEnumBuilderLessonStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumBuilderLessonStatusFilter<$PrismaModel> | $Enums.BuilderLessonStatus
+}
+
+export type NestedEnumBuilderLessonStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.BuilderLessonStatus | Prisma.EnumBuilderLessonStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.BuilderLessonStatus[] | Prisma.ListEnumBuilderLessonStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.BuilderLessonStatus[] | Prisma.ListEnumBuilderLessonStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumBuilderLessonStatusWithAggregatesFilter<$PrismaModel> | $Enums.BuilderLessonStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumBuilderLessonStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumBuilderLessonStatusFilter<$PrismaModel>
+}
+
 export type NestedJsonFilter<$PrismaModel = never> =
 | Prisma.PatchUndefined<
     Prisma.Either<Required<NestedJsonFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>,
@@ -662,6 +764,74 @@ export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
   _sum?: Prisma.NestedFloatNullableFilter<$PrismaModel>
   _min?: Prisma.NestedFloatNullableFilter<$PrismaModel>
   _max?: Prisma.NestedFloatNullableFilter<$PrismaModel>
+}
+
+export type NestedEnumMatchProvenanceFilter<$PrismaModel = never> = {
+  equals?: $Enums.MatchProvenance | Prisma.EnumMatchProvenanceFieldRefInput<$PrismaModel>
+  in?: $Enums.MatchProvenance[] | Prisma.ListEnumMatchProvenanceFieldRefInput<$PrismaModel>
+  notIn?: $Enums.MatchProvenance[] | Prisma.ListEnumMatchProvenanceFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumMatchProvenanceFilter<$PrismaModel> | $Enums.MatchProvenance
+}
+
+export type NestedEnumGameOutcomeKindFilter<$PrismaModel = never> = {
+  equals?: $Enums.GameOutcomeKind | Prisma.EnumGameOutcomeKindFieldRefInput<$PrismaModel>
+  in?: $Enums.GameOutcomeKind[] | Prisma.ListEnumGameOutcomeKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.GameOutcomeKind[] | Prisma.ListEnumGameOutcomeKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumGameOutcomeKindFilter<$PrismaModel> | $Enums.GameOutcomeKind
+}
+
+export type NestedEnumGameTerminationReasonFilter<$PrismaModel = never> = {
+  equals?: $Enums.GameTerminationReason | Prisma.EnumGameTerminationReasonFieldRefInput<$PrismaModel>
+  in?: $Enums.GameTerminationReason[] | Prisma.ListEnumGameTerminationReasonFieldRefInput<$PrismaModel>
+  notIn?: $Enums.GameTerminationReason[] | Prisma.ListEnumGameTerminationReasonFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumGameTerminationReasonFilter<$PrismaModel> | $Enums.GameTerminationReason
+}
+
+export type NestedEnumMatchProvenanceWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.MatchProvenance | Prisma.EnumMatchProvenanceFieldRefInput<$PrismaModel>
+  in?: $Enums.MatchProvenance[] | Prisma.ListEnumMatchProvenanceFieldRefInput<$PrismaModel>
+  notIn?: $Enums.MatchProvenance[] | Prisma.ListEnumMatchProvenanceFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumMatchProvenanceWithAggregatesFilter<$PrismaModel> | $Enums.MatchProvenance
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumMatchProvenanceFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumMatchProvenanceFilter<$PrismaModel>
+}
+
+export type NestedEnumGameOutcomeKindWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.GameOutcomeKind | Prisma.EnumGameOutcomeKindFieldRefInput<$PrismaModel>
+  in?: $Enums.GameOutcomeKind[] | Prisma.ListEnumGameOutcomeKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.GameOutcomeKind[] | Prisma.ListEnumGameOutcomeKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumGameOutcomeKindWithAggregatesFilter<$PrismaModel> | $Enums.GameOutcomeKind
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumGameOutcomeKindFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumGameOutcomeKindFilter<$PrismaModel>
+}
+
+export type NestedEnumGameTerminationReasonWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.GameTerminationReason | Prisma.EnumGameTerminationReasonFieldRefInput<$PrismaModel>
+  in?: $Enums.GameTerminationReason[] | Prisma.ListEnumGameTerminationReasonFieldRefInput<$PrismaModel>
+  notIn?: $Enums.GameTerminationReason[] | Prisma.ListEnumGameTerminationReasonFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumGameTerminationReasonWithAggregatesFilter<$PrismaModel> | $Enums.GameTerminationReason
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumGameTerminationReasonFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumGameTerminationReasonFilter<$PrismaModel>
+}
+
+export type NestedEnumGameParticipantResultFilter<$PrismaModel = never> = {
+  equals?: $Enums.GameParticipantResult | Prisma.EnumGameParticipantResultFieldRefInput<$PrismaModel>
+  in?: $Enums.GameParticipantResult[] | Prisma.ListEnumGameParticipantResultFieldRefInput<$PrismaModel>
+  notIn?: $Enums.GameParticipantResult[] | Prisma.ListEnumGameParticipantResultFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumGameParticipantResultFilter<$PrismaModel> | $Enums.GameParticipantResult
+}
+
+export type NestedEnumGameParticipantResultWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.GameParticipantResult | Prisma.EnumGameParticipantResultFieldRefInput<$PrismaModel>
+  in?: $Enums.GameParticipantResult[] | Prisma.ListEnumGameParticipantResultFieldRefInput<$PrismaModel>
+  notIn?: $Enums.GameParticipantResult[] | Prisma.ListEnumGameParticipantResultFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumGameParticipantResultWithAggregatesFilter<$PrismaModel> | $Enums.GameParticipantResult
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumGameParticipantResultFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumGameParticipantResultFilter<$PrismaModel>
 }
 
 

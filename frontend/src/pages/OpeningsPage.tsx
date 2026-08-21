@@ -37,14 +37,14 @@ import {
   ChevronRight,
   ChevronLeft,
 } from "lucide-react";
-import { useOpeningTrainer } from "../hooks/useOpeningTrainer";
-import { useOpenings } from "../hooks/useOpenings";
-import { OpeningBoard } from "../components/openings/OpeningBoard";
-import { OpeningCoachPanel } from "../components/openings/OpeningCoachPanel";
-import { OpeningProgressBar } from "../components/openings/OpeningProgressBar";
-import { OpeningCompletionCard } from "../components/openings/OpeningCompletionCard";
-import { soundManager } from "../utils/SoundManager";
-import type { Opening } from "../types/opening";
+import { useOpeningTrainer } from "@/features/openings/useOpeningTrainer";
+import { useOpenings } from "@/features/openings/useOpenings";
+import { OpeningBoard } from "@/features/openings/OpeningBoard";
+import { OpeningCoachPanel } from "@/features/openings/OpeningCoachPanel";
+import { OpeningProgressBar } from "@/features/openings/OpeningProgressBar";
+import { OpeningCompletionCard } from "@/features/openings/OpeningCompletionCard";
+import { soundManager } from "@/shared/lib/SoundManager";
+import type { Opening } from "@/features/openings/openings.types";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -324,7 +324,7 @@ export default function OpeningsPage() {
   const totalUserSteps = Math.ceil(totalSteps / 2);
 
   return (
-    <div className="min-h-screen flex flex-col px-4 sm:px-6 lg:px-8 py-6 gap-6 max-w-[1400px] mx-auto w-full">
+    <div className="min-h-screen flex flex-col px-2.5 sm:px-6 lg:px-8 py-6 gap-6 max-w-[1400px] mx-auto w-full">
       {/* ── Top bar ──────────────────────────────────────────────────────── */}
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <button
@@ -486,7 +486,7 @@ export default function OpeningsPage() {
                 background: "var(--glass-bg)",
                 border: "1px solid rgba(212,175,110,0.12)",
                 backdropFilter: "blur(12px)",
-                boxShadow: "0 8px 32px rgba(0,0,0,0.4)",
+                boxShadow: "none",
               }}
             >
               <OpeningCoachPanel

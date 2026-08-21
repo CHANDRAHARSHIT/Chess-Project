@@ -1,30 +1,15 @@
-import { motion, type Variants } from "framer-motion";
 import { useNavigate } from "react-router";
 import { FileText, ArrowLeft } from "lucide-react";
-import { soundManager } from "../utils/SoundManager";
-
-const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 16 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.06, duration: 0.5, ease: "easeOut" },
-  }),
-};
+import { soundManager } from "@/shared/lib/SoundManager";
 
 interface SectionProps {
   title: string;
   children: React.ReactNode;
-  index: number;
 }
 
-function Section({ title, children, index }: SectionProps) {
+function Section({ title, children }: SectionProps) {
   return (
-    <motion.section
-      custom={index}
-      variants={fadeUp}
-      initial="hidden"
-      animate="visible"
+    <section
       className="mb-10"
     >
       <h2 className="text-xl font-display font-semibold mt-8 mb-3 text-brand-text border-b border-brand-border/40 pb-2">
@@ -33,7 +18,7 @@ function Section({ title, children, index }: SectionProps) {
       <div className="space-y-3 text-brand-secondary leading-relaxed text-[15px]">
         {children}
       </div>
-    </motion.section>
+    </section>
   );
 }
 
@@ -46,7 +31,7 @@ export default function TermsOfServicePage() {
       <div className="relative overflow-hidden border-b border-brand-border/30">
         <div className="absolute inset-0 bg-gradient-to-br from-brand-accent/5 via-transparent to-brand-accent/3 pointer-events-none" />
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[250px] bg-brand-accent/5 rounded-full blur-[100px] pointer-events-none" />
-        <div className="max-w-4xl mx-auto px-6 pt-6 pb-14 sm:pb-18 relative z-10">
+        <div className="max-w-4xl mx-auto px-2.5 sm:px-6 pt-6 pb-14 sm:pb-18 relative z-10">
           <div className="mb-5">
             <button
               type="button"
@@ -61,11 +46,7 @@ export default function TermsOfServicePage() {
               <span>Back to Home</span>
             </button>
           </div>
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
+          <div>
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-accent/30 bg-brand-accent/5 mb-5">
               <FileText className="w-3.5 h-3.5 text-brand-accent" />
               <span className="text-xs font-mono text-brand-accent uppercase tracking-widest font-semibold">
@@ -78,26 +59,22 @@ export default function TermsOfServicePage() {
             <p className="text-sm text-brand-secondary">
               Last updated: August 2026
             </p>
-          </motion.div>
+          </div>
         </div>
       </div>
 
       {/* Content */}
-      <div className="max-w-4xl mx-auto px-6 py-10">
-        <motion.p
-          custom={0}
-          variants={fadeUp}
-          initial="hidden"
-          animate="visible"
+      <div className="max-w-4xl mx-auto px-2.5 sm:px-6 py-10">
+        <p
           className="text-brand-secondary leading-relaxed text-[15px] mb-2"
         >
           Please read these Terms of Service carefully before using XLChess.
           By accessing or using our platform, you agree to be bound by these
           terms. If you do not agree to these terms, please do not use
           XLChess.
-        </motion.p>
+        </p>
 
-        <Section title="1. Acceptance of Terms" index={1}>
+        <Section title="1. Acceptance of Terms">
           <p>
             These Terms of Service ("Terms") constitute a legally binding
             agreement between you ("User," "you," or "your") and XLChess
@@ -115,7 +92,7 @@ export default function TermsOfServicePage() {
           </p>
         </Section>
 
-        <Section title="2. Account Registration and Security" index={2}>
+        <Section title="2. Account Registration and Security">
           <p>
             To access certain features of XLChess, you must create an account.
             You agree to provide accurate, current, and complete information
@@ -133,7 +110,7 @@ export default function TermsOfServicePage() {
           </p>
         </Section>
 
-        <Section title="3. Permitted Use and Prohibited Conduct" index={3}>
+        <Section title="3. Permitted Use and Prohibited Conduct">
           <p>
             XLChess grants you a limited, non-exclusive, non-transferable,
             revocable license to access and use the Service for your personal,
@@ -153,7 +130,7 @@ export default function TermsOfServicePage() {
           </ul>
         </Section>
 
-        <Section title="4. Content and Intellectual Property" index={4}>
+        <Section title="4. Content and Intellectual Property">
           <p>
             All content on XLChess — including text, graphics, software, audio,
             video, chess lessons, puzzles, and the platform design — is owned
@@ -171,7 +148,7 @@ export default function TermsOfServicePage() {
           </p>
         </Section>
 
-        <Section title="5. Subscriptions and Payments" index={5}>
+        <Section title="5. Subscriptions and Payments">
           <p>
             XLChess offers both free and paid subscription tiers. Paid
             subscriptions are billed on a recurring basis (monthly or
@@ -188,7 +165,7 @@ export default function TermsOfServicePage() {
           </p>
         </Section>
 
-        <Section title="6. Termination and Suspension" index={6}>
+        <Section title="6. Termination and Suspension">
           <p>
             XLChess reserves the right to suspend or terminate your account
             at any time, with or without notice, if we determine that you have
@@ -203,7 +180,7 @@ export default function TermsOfServicePage() {
           </p>
         </Section>
 
-        <Section title="7. Disclaimers and Limitation of Liability" index={7}>
+        <Section title="7. Disclaimers and Limitation of Liability">
           <p>
             The Service is provided "as is" and "as available" without
             warranties of any kind, either express or implied. XLChess does
@@ -220,7 +197,7 @@ export default function TermsOfServicePage() {
           </p>
         </Section>
 
-        <Section title="8. Governing Law and Dispute Resolution" index={8}>
+        <Section title="8. Governing Law and Dispute Resolution">
           <p>
             These Terms are governed by and construed in accordance with the
             laws of the jurisdiction in which XLChess is incorporated, without
@@ -237,7 +214,7 @@ export default function TermsOfServicePage() {
           </p>
         </Section>
 
-        <Section title="9. Changes to These Terms" index={9}>
+        <Section title="9. Changes to These Terms">
           <p>
             XLChess may modify these Terms at any time. We will provide notice
             of material changes by updating the date at the top of this page
@@ -248,7 +225,7 @@ export default function TermsOfServicePage() {
           </p>
         </Section>
 
-        <Section title="10. Contact Us" index={10}>
+        <Section title="10. Contact Us">
           <p>
             If you have questions about these Terms or would like to report a
             violation, please reach out through our{" "}

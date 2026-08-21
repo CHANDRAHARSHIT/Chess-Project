@@ -1,30 +1,15 @@
-import { motion, type Variants } from "framer-motion";
 import { useNavigate } from "react-router";
 import { Copyright, ArrowLeft } from "lucide-react";
-import { soundManager } from "../utils/SoundManager";
-
-const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 16 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.06, duration: 0.5, ease: "easeOut" },
-  }),
-};
+import { soundManager } from "@/shared/lib/SoundManager";
 
 interface SectionProps {
   title: string;
   children: React.ReactNode;
-  index: number;
 }
 
-function Section({ title, children, index }: SectionProps) {
+function Section({ title, children }: SectionProps) {
   return (
-    <motion.section
-      custom={index}
-      variants={fadeUp}
-      initial="hidden"
-      animate="visible"
+    <section
       className="mb-10"
     >
       <h2 className="text-xl font-display font-semibold mt-8 mb-3 text-brand-text border-b border-brand-border/40 pb-2">
@@ -33,7 +18,7 @@ function Section({ title, children, index }: SectionProps) {
       <div className="space-y-3 text-brand-secondary leading-relaxed text-[15px]">
         {children}
       </div>
-    </motion.section>
+    </section>
   );
 }
 
@@ -46,7 +31,7 @@ export default function CopyrightPage() {
       <div className="relative overflow-hidden border-b border-brand-border/30">
         <div className="absolute inset-0 bg-gradient-to-br from-brand-accent/5 via-transparent to-brand-accent/3 pointer-events-none" />
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[250px] bg-brand-accent/5 rounded-full blur-[100px] pointer-events-none" />
-        <div className="max-w-4xl mx-auto px-6 pt-6 pb-14 sm:pb-18 relative z-10">
+        <div className="max-w-4xl mx-auto px-2.5 sm:px-6 pt-6 pb-14 sm:pb-18 relative z-10">
           <div className="mb-5">
             <button
               type="button"
@@ -61,11 +46,7 @@ export default function CopyrightPage() {
               <span>Back to Home</span>
             </button>
           </div>
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
+          <div>
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-accent/30 bg-brand-accent/5 mb-5">
               <Copyright className="w-3.5 h-3.5 text-brand-accent" />
               <span className="text-xs font-mono text-brand-accent uppercase tracking-widest font-semibold">
@@ -78,26 +59,22 @@ export default function CopyrightPage() {
             <p className="text-sm text-brand-secondary">
               Last updated: August 2026
             </p>
-          </motion.div>
+          </div>
         </div>
       </div>
 
       {/* Content */}
-      <div className="max-w-4xl mx-auto px-6 py-10">
-        <motion.p
-          custom={0}
-          variants={fadeUp}
-          initial="hidden"
-          animate="visible"
+      <div className="max-w-4xl mx-auto px-2.5 sm:px-6 py-10">
+        <p
           className="text-brand-secondary leading-relaxed text-[15px] mb-2"
         >
           XLChess takes intellectual property rights seriously. This page
           describes how copyright applies to content on the XLChess platform,
           the rights you retain over content you create, and the process for
           reporting copyright infringement.
-        </motion.p>
+        </p>
 
-        <Section title="Ownership of XLChess Content" index={1}>
+        <Section title="Ownership of XLChess Content">
           <p>
             All original content produced by XLChess — including but not
             limited to chess lessons, instructional videos, puzzle sets, user
@@ -116,7 +93,7 @@ export default function CopyrightPage() {
           </p>
         </Section>
 
-        <Section title="User-Generated Content" index={2}>
+        <Section title="User-Generated Content">
           <p>
             When you submit content to XLChess — such as annotated games,
             written commentary, forum posts, channel videos, or lesson
@@ -134,7 +111,7 @@ export default function CopyrightPage() {
           </p>
         </Section>
 
-        <Section title="DMCA and Copyright Takedown Requests" index={3}>
+        <Section title="DMCA and Copyright Takedown Requests">
           <p>
             XLChess complies with the Digital Millennium Copyright Act (DMCA)
             and equivalent legislation in other jurisdictions. If you believe
@@ -156,7 +133,7 @@ export default function CopyrightPage() {
           </p>
         </Section>
 
-        <Section title="Fair Use and Educational Content" index={4}>
+        <Section title="Fair Use and Educational Content">
           <p>
             XLChess supports the educational use of chess content. Short
             excerpts from publicly available chess games, opening theory, and
@@ -173,7 +150,7 @@ export default function CopyrightPage() {
           </p>
         </Section>
 
-        <Section title="Third-Party Content and Licenses" index={5}>
+        <Section title="Third-Party Content and Licenses">
           <p>
             XLChess may include content licensed from third parties, including
             chess engine technology, font licenses, icon libraries, and music.
@@ -184,7 +161,7 @@ export default function CopyrightPage() {
           </p>
         </Section>
 
-        <Section title="Contact" index={6}>
+        <Section title="Contact">
           <p>
             For all copyright-related inquiries — including takedown requests,
             licensing questions, and fair use determinations — please use our{" "}

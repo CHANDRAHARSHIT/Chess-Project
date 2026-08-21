@@ -6,21 +6,21 @@
 
 import { useNavigate } from "react-router";
 import { ArrowLeft } from "lucide-react";
-import { ChannelHero } from "../components/creator/ChannelHero";
-import { MasterclassCard } from "../components/creator/MasterclassCard";
-import { StudentBreakthroughs } from "../components/creator/StudentBreakthroughs";
+import { ChannelHero } from "@/features/creator/ChannelHero";
+import { MasterclassCard } from "@/features/creator/MasterclassCard";
+import { StudentBreakthroughs } from "@/features/creator/StudentBreakthroughs";
 import {
   CREATOR_PROFILE,
   MASTERCLASSES,
   STUDENT_BREAKTHROUGHS,
-} from "../data/creatorMockData";
-import { soundManager } from "../utils/SoundManager";
+} from "@/features/creator/creatorMockData";
+import { soundManager } from "@/shared/lib/SoundManager";
 
 export default function YourChannelPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] bg-brand-bg text-brand-text py-6 sm:py-8 md:py-10 px-4 sm:px-6 lg:px-8 max-w-[1400px] mx-auto space-y-6 sm:space-y-8 animate-fadeIn overflow-x-hidden">
+    <div className="min-h-[calc(100vh-4rem)] bg-brand-bg text-brand-text py-6 sm:py-8 md:py-10 px-2.5 sm:px-6 lg:px-8 max-w-[1400px] mx-auto space-y-6 sm:space-y-8 animate-fadeIn overflow-x-hidden">
       {/* Back Navigation */}
       <div>
         <button

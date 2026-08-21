@@ -1,4 +1,10 @@
 import { prisma } from "./config/prisma.js";
+import { readFileSync, existsSync } from "fs";
+import { resolve, dirname } from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 async function seed() {
   console.log("Seeding subscription products...");
@@ -190,9 +196,71 @@ async function seedOpenings() {
   console.log(`Finished seeding openings. Imported/Updated records: ${importedCount}`);
 }
 
+interface RawRow {
+  PuzzleId: string;
+  FEN: string;
+  Moves: string;
+  Rating: string;
+  RatingDeviation: string;
+  Popularity: string;
+  NbPlays: string;
+  Themes: string;
+}
+
+function parseCsv(content: string): RawRow[] {
+  const lines = content.split(/\r?\n/).filter(Boolean);
+  if (lines.length < 2) return [];
+
+  const headers = lines[0].split(",");
+  return lines.slice(1).map((line) => {
+    const values = line.split(",");
+    const row: Record<string, string> = {};
+    headers.forEach((h, i) => {
+      row[h.trim()] = (values[i] ?? "").trim();
+    });
+    return row as unknown as RawRow;
+  });
+}
+
+async function seedCuratedPuzzles() {
+  const CSV_PATH = resolve(__dirname, "../prisma/data/puzzles_curated.csv");
+  if (!existsSync(CSV_PATH)) {
+    console.warn(`⚠️ Curated puzzles CSV not found at ${CSV_PATH}. Skipping puzzle seed.`);
+    return;
+  }
+
+  console.log(`📂 Reading CSV from: ${CSV_PATH}`);
+  const csvContent = readFileSync(CSV_PATH, "utf-8");
+  const rows = parseCsv(csvContent);
+  console.log(`📋 Parsed ${rows.length} puzzle rows`);
+
+  const puzzles = rows
+    .filter((row) => row.PuzzleId && row.FEN && row.Moves)
+    .map((row) => ({
+      id: row.PuzzleId,
+      fen: row.FEN,
+      moves: row.Moves,
+      rating: parseInt(row.Rating, 10) || 0,
+      ratingDeviation: parseInt(row.RatingDeviation, 10) || 0,
+      popularity: parseInt(row.Popularity, 10) || 0,
+      nbPlays: parseInt(row.NbPlays, 10) || 0,
+      themes: row.Themes ? row.Themes.split(" ").filter(Boolean) : [],
+    }));
+
+  console.log(`🧩 Seeding ${puzzles.length} curated puzzles…`);
+
+  const result = await prisma.curatedPuzzle.createMany({
+    data: puzzles,
+    skipDuplicates: true,
+  });
+
+  console.log(`✅ Done! Inserted ${result.count} new puzzles.`);
+}
+
 async function main() {
   await seed();
   await seedOpenings();
+  await seedCuratedPuzzles();
 }
 
 main()
