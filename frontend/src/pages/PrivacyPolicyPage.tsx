@@ -31,7 +31,7 @@ export default function PrivacyPolicyPage() {
       <div className="relative overflow-hidden border-b border-brand-border/30">
         <div className="absolute inset-0 bg-gradient-to-br from-brand-accent/5 via-transparent to-brand-accent/3 pointer-events-none" />
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[250px] bg-brand-accent/5 rounded-full blur-[100px] pointer-events-none" />
-        <div className="max-w-4xl mx-auto px-6 pt-6 pb-14 sm:pb-18 relative z-10">
+        <div className="max-w-4xl mx-auto px-2.5 sm:px-6 pt-6 pb-14 sm:pb-18 relative z-10">
           <div className="mb-5">
             <button
               type="button"
@@ -64,7 +64,7 @@ export default function PrivacyPolicyPage() {
       </div>
 
       {/* Content */}
-      <div className="max-w-4xl mx-auto px-6 py-10">
+      <div className="max-w-4xl mx-auto px-2.5 sm:px-6 py-10">
         <p
           className="text-brand-secondary leading-relaxed text-[15px] mb-2"
         >

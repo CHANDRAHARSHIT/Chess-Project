@@ -9,7 +9,6 @@ import {
   BookOpen,
   Database,
   ChevronDown,
-  PenTool,
   Clock,
   BarChart2,
   Flag,
@@ -21,7 +20,6 @@ import {
   MoveUp,
   Archive,
   Swords,
-  Sparkles,
   Loader2,
 } from "lucide-react";
 import { soundManager } from "@/shared/lib/SoundManager";
@@ -398,9 +396,7 @@ export default function SidebarLayout({
   const exploreSection = [
     { name: "Play", href: "/play", icon: Swords },
     { name: "Lessons", href: "/lessons", icon: BookOpen },
-    { name: "Build Lessons", href: "/lesson-builder", icon: PenTool },
     { name: "Puzzles", href: "/puzzles", icon: Puzzle },
-    { name: "Odyssey", href: "/odyssey", icon: Sparkles },
     { name: "Upgrade", href: "/pricing", icon: Crown },
   ];
 
@@ -408,7 +404,6 @@ export default function SidebarLayout({
     { name: "About", href: "/about" },
     { name: "Copyright", href: "/copyright" },
     { name: "Contact Us", href: "/contact" },
-    { name: "Join Us", href: "/join-us" },
     { name: "Creator", href: "/creator" },
     { name: "Advertise", href: "/advertise" },
     { name: "Developers", href: "/developers" },
@@ -690,10 +685,10 @@ export default function SidebarLayout({
   return (
     <div className="min-h-screen text-brand-text bg-brand-bg flex flex-col relative select-none">
       {/* ── TOP HEADER ──────────────────────────────────────────────────────── */}
-      <header className="fixed top-0 left-0 right-0 h-16 z-40 bg-brand-bg/95 backdrop-blur-md flex items-center justify-between pr-4 md:pr-6 border-b border-transparent">
+      <header className="fixed top-0 left-0 right-0 h-16 z-40 bg-brand-bg/95 backdrop-blur-md flex items-center justify-between pr-2.5 sm:pr-4 md:pr-6 border-b border-transparent">
         {/* Left: Hamburger & Logo */}
         <div className="flex items-center h-full">
-          <div className="w-20 flex justify-center items-center shrink-0">
+          <div className="w-14 sm:w-20 flex justify-center items-center shrink-0">
             <button
               onClick={handleToggle}
               className="p-2 text-brand-secondary hover:text-brand-text rounded-full hover:bg-brand-text/10 transition-colors cursor-pointer"

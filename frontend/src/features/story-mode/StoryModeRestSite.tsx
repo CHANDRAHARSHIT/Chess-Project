@@ -166,7 +166,7 @@ export default function StoryModeRestSite({
 
   return (
     <motion.div
-      className="min-h-[60vh] flex items-center justify-center p-4 sm:p-6"
+      className="min-h-[60vh] flex items-center justify-center px-2.5 py-4 sm:p-6"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -182,7 +182,7 @@ export default function StoryModeRestSite({
       />
 
       <motion.div
-        className="relative z-10 max-w-lg w-full flex flex-col items-center gap-6 py-8 px-4 sm:px-6 rounded-2xl border border-orange-500/20 bg-orange-500/5 backdrop-blur-sm mx-auto"
+        className="relative z-10 max-w-lg w-full flex flex-col items-center gap-6 py-8 px-2.5 sm:px-6 rounded-2xl border border-orange-500/20 bg-orange-500/5 backdrop-blur-sm mx-auto"
         initial={{ scale: 0.9, y: 20 }}
         animate={{ scale: 1, y: 0 }}
         transition={{ duration: 0.5, type: "spring" }}

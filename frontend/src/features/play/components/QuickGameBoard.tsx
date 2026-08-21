@@ -404,11 +404,11 @@ export default function QuickGameBoard() {
     >
       <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[600px] h-[600px] bg-[rgba(212,175,110,0.05)] rounded-full blur-[140px] pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 relative z-10">
         {/* Dashboard */}
         <div
           ref={dashboardRef}
-          className="luxury-card rounded-sm p-6 sm:p-8 lg:p-10 max-w-5xl mx-auto"
+          className="luxury-card rounded-sm p-2.5 sm:p-8 lg:p-10 max-w-5xl mx-auto"
           style={{ opacity: 0 }}
         >
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:items-stretch">

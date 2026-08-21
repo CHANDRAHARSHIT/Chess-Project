@@ -491,7 +491,7 @@ export default function LessonDashboardPage() {
     : null;
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-8 select-none">
+    <div className="min-h-[calc(100vh-4rem)] px-2.5 py-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-8 select-none">
       {/* Hidden File Picker Input */}
       <input
         ref={fileInputRef}

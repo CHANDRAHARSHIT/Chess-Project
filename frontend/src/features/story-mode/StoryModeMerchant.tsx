@@ -137,7 +137,7 @@ export default function StoryModeMerchant({
 
   return (
     <motion.div
-      className="min-h-[70vh] flex items-center justify-center p-4 sm:p-6"
+      className="min-h-[70vh] flex items-center justify-center px-2.5 py-4 sm:p-6"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -148,7 +148,7 @@ export default function StoryModeMerchant({
       />
 
       <motion.div
-        className="relative z-10 max-w-2xl w-full flex flex-col items-center gap-6 py-8 px-4 sm:px-6 rounded-2xl border border-yellow-500/20 bg-yellow-500/5 backdrop-blur-md mx-auto shadow-2xl"
+        className="relative z-10 max-w-2xl w-full flex flex-col items-center gap-6 py-8 px-2.5 sm:px-6 rounded-2xl border border-yellow-500/20 bg-yellow-500/5 backdrop-blur-md mx-auto shadow-2xl"
         initial={{ scale: 0.9, y: 20 }}
         animate={{ scale: 1, y: 0 }}
         transition={{ duration: 0.5, type: "spring" }}

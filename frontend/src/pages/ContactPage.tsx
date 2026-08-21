@@ -14,7 +14,7 @@ export default function ContactPage() {
   return (
     <div className="min-h-[calc(100vh-4rem)] bg-brand-bg flex flex-col pt-6 pb-12">
       {/* Page-level Header / Navigation Bar (matches PuzzlePage max-w-7xl layout) */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full mb-6 sm:mb-8">
+      <div className="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 w-full mb-6 sm:mb-8">
         <button
           type="button"
           onClick={() => {

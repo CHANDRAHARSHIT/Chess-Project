@@ -90,7 +90,7 @@ function StoryModeContent() {
                 </button>
               </div>
 
-              <main className="flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 pt-16 pb-8 sm:py-12 flex flex-col relative z-10">
+              <main className="flex-1 w-full max-w-5xl mx-auto px-2.5 sm:px-6 pt-16 pb-8 sm:py-12 flex flex-col relative z-10">
                 {/* Header */}
                 <div className="flex flex-col items-center gap-4 mb-8 text-center shrink-0">
                   {/* Icon */}
