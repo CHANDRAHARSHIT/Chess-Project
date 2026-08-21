@@ -24,7 +24,6 @@ import {
   Sparkles,
   Loader2,
 } from "lucide-react";
-import { useLogoAnimation } from "@/app/navigation/useLogoAnimation";
 import { soundManager } from "@/shared/lib/SoundManager";
 import { useSession } from "@/features/account/useSession";
 import { AvatarDropdown } from "./AvatarDropdown";
@@ -118,8 +117,6 @@ export default function SidebarLayout({
     setIsModalOpen(true);
     setIsMobileOpen(false);
   };
-
-  const { containerRef, logoRef } = useLogoAnimation();
 
   // Custom Links (active, shown in Explore)
   type CustomLink = {
@@ -707,12 +704,10 @@ export default function SidebarLayout({
           </div>
 
           <div
-            ref={containerRef}
             className="flex items-center gap-2 cursor-pointer select-none"
             onClick={(e) => handleLinkClick("/", e)}
           >
             <img
-              ref={logoRef}
               src="/logo-without-text.png"
               alt="XLChess logo"
               className="h-10 w-auto object-contain"
