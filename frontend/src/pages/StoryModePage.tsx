@@ -33,7 +33,7 @@ function StoryModeContent() {
   return (
     <div className="min-h-screen text-brand-text flex flex-col items-center justify-center p-2 sm:p-6 md:p-8 bg-brand-bg">
       {/* Game Screen Outer Rectangle */}
-      <div className="w-full max-w-[1400px] border border-[#D4AF6E]/60 rounded-3xl overflow-hidden relative flex flex-col min-h-[90vh] bg-[#03101c]">
+      <div className="w-full max-w-[1400px] border border-[#D4AF6E]/60 rounded-3xl overflow-hidden relative flex flex-col min-h-[90vh] bg-brand-surface">
         
         <AnimatePresence mode="wait">
           {viewState === "title" && (
