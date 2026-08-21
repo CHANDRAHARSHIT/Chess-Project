@@ -117,7 +117,7 @@ export default function StoryModePuzzleNode({
 
   if (loading) {
     return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center p-4">
+      <div className="flex flex-col items-center justify-center p-4 flex-1">
         <Loader2 className="w-8 h-8 text-brand-accent animate-spin mb-4" />
         <p className="text-brand-secondary font-mono text-sm">Loading Trial Puzzles...</p>
       </div>
@@ -126,7 +126,7 @@ export default function StoryModePuzzleNode({
 
   if (error) {
     return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center p-4 gap-4">
+      <div className="flex flex-col items-center justify-center p-4 gap-4 flex-1">
         <p className="text-red-400 font-mono text-sm">{error}</p>
         <button onClick={onRetreat} className="px-4 py-2 border border-brand-border rounded text-brand-secondary hover:text-brand-text">
           Retreat
@@ -138,7 +138,7 @@ export default function StoryModePuzzleNode({
   if (nodeComplete) {
     return (
       <motion.div
-        className="min-h-[60vh] flex items-center justify-center p-4 sm:p-6"
+        className="flex items-center justify-center p-4 sm:p-6 flex-1"
         initial={{ opacity: 0 }} animate={{ opacity: 1 }}
       >
         <div className="max-w-md w-full flex flex-col items-center gap-6 py-8 px-6 rounded-2xl border border-green-500/30 bg-green-500/10 backdrop-blur-sm shadow-xl">
@@ -148,11 +148,12 @@ export default function StoryModePuzzleNode({
             <p className="text-sm text-brand-secondary mt-2">You solved all the puzzles.</p>
           </div>
           <div className="flex items-center gap-2 bg-yellow-500/20 px-4 py-2 rounded-lg border border-yellow-500/40">
-            <span className="text-yellow-400 font-bold font-mono">+{difficulty * 20} Coins</span>
+            <span className="text-yellow-400 font-bold font-mono" style={{ textShadow: "0 1px 2px rgba(0,0,0,0.8)" }}>+{difficulty * 20} Coins</span>
           </div>
           <button
             onClick={onComplete}
-            className="flex items-center gap-2 px-6 py-2 rounded-lg bg-green-500/20 border border-green-500/40 text-green-300 hover:bg-green-500/30 transition-all font-medium cursor-pointer"
+            className="flex items-center gap-2 px-6 py-2 rounded-lg bg-green-500/20 border border-green-500/40 text-green-400 hover:bg-green-500/30 transition-all font-medium cursor-pointer"
+            style={{ textShadow: "0 1px 2px rgba(0,0,0,0.8)" }}
           >
             Continue Journey
           </button>
@@ -163,10 +164,10 @@ export default function StoryModePuzzleNode({
 
   return (
     <motion.div
-      className="min-h-[60vh] flex flex-col lg:flex-row items-start justify-center gap-6 p-4 sm:p-6"
+      className="flex flex-col lg:flex-row items-center justify-center gap-2 p-1 sm:p-2 flex-1 min-h-0 h-full w-full"
       initial={{ opacity: 0 }} animate={{ opacity: 1 }}
     >
-      <div className="w-full max-w-[600px] mx-auto flex flex-col gap-4">
+      <div className="w-full max-w-[500px] mx-auto flex flex-col gap-2 flex-1 min-h-0 h-full">
         {/* Header */}
         <div className="flex items-center justify-between bg-brand-surface/30 p-4 rounded-xl border border-brand-border/40">
           <div className="flex items-center gap-3">
@@ -183,7 +184,7 @@ export default function StoryModePuzzleNode({
 
         {/* Board */}
         {chessPuzzle && (
-          <div className="bg-brand-surface/20 p-2 sm:p-4 rounded-2xl border border-brand-border/40 backdrop-blur-sm">
+          <div className="bg-brand-surface/20 p-1 sm:p-2 rounded-2xl border border-brand-border/40 backdrop-blur-sm flex-1 min-h-0 flex flex-col justify-center">
             <PuzzleBoard
               puzzle={chessPuzzle}
               puzzleNumber={currentIndex + 1}
