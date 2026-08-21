@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Volume2, VolumeX, Heart, Coins, Brain, Check, ArrowLeft, Lock, User } from "lucide-react";
+import { Volume2, VolumeX, Heart, Coins, Brain, Check, ArrowLeft, Lock } from "lucide-react";
 
 type StrategistPageProps = {
   onBack: () => void;
@@ -229,6 +229,7 @@ export function StrategistPage({ onBack, onConfirm }: StrategistPageProps) {
           border-color: #a867dc;
           box-shadow: 0 0 0 3px #743ca0, 0 0 18px #a456da, 0 10px 20px rgba(0,0,0,.5);
           color: #f1d4ff;
+          background: url('/assets/strategist/strategist_card.jpg') center/cover no-repeat;
         }
 
         .strat-portrait.locked {
@@ -446,10 +447,8 @@ export function StrategistPage({ onBack, onConfirm }: StrategistPageProps) {
         </section>
 
         <nav className="strat-portraits" aria-label="Character selection">
-          <button className="strat-portrait selected" aria-label="The Strategist">
-            <User size={40} />
-          </button>
-          <button className="strat-portrait locked" aria-label="Locked character">
+          <button className="strat-portrait selected" aria-label="The Strategist" />
+          <button className="strat-portrait locked" aria-label="Locked character 1">
             <Lock size={30} />
           </button>
           <button className="strat-portrait locked" aria-label="Locked character">
