@@ -1,5 +1,5 @@
-export { handleGameResult } from "./results-listener.js";
-export { persistGameResult } from "./results.repository.js";
+export { handleGameResult, createResultsListener } from "./results-listener.js";
+export { persistGameResult } from "../../repositories/results.repository.js";
 export {
   DEFAULT_RATING,
   PROVISIONAL_K,
@@ -8,4 +8,4 @@ export {
   ELO_SCORE,
   kFactorFor,
   computeEloDelta,
-} from "./rating.service.js";
+} from "../../services/rating.service.js";

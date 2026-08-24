@@ -13,7 +13,7 @@ import { puzzleRouter } from "./routes/puzzle.routes.js";
 import { openingRouter } from "./routes/opening.routes.js";
 import { builderLessonRouter } from "./routes/builder-lesson.routes.js";
 import { publicLessonRouter } from "./routes/public-lesson.routes.js";
-import { matchmakingRouter } from "./realtime/matchmaking/index.js";
+import { matchmakingRouter } from "./routes/matchmaking.routes.js";
 import { pathwayProgressRouter } from "./routes/pathway-progress.routes.js";
 import { gamesRouter } from "./routes/games.routes.js";
 import { errorHandler } from "./middleware/error.middleware.js";

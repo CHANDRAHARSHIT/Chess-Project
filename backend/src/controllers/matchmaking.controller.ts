@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { matchmakingQueue } from "./matchmaking-queue.js";
+import { matchmakingQueue } from "../realtime/matchmaking/index.js";
 
 /**
  * Thin Express HTTP controller adapter.

@@ -17,7 +17,7 @@
 import type { GameResult } from "../../contracts/index.js";
 import type { ResultEmitter } from "../session/index.js";
 import { reportError } from "../observability/index.js";
-import { persistGameResult } from "./results.repository.js";
+import { persistGameResult } from "../../repositories/results.repository.js";
 
 /**
  * Builds a fire-and-forget ResultEmitter around a persistence function.

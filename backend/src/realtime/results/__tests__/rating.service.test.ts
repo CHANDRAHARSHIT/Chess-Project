@@ -7,7 +7,7 @@ import {
   ESTABLISHED_K,
   PROVISIONAL_GAMES_THRESHOLD,
   ELO_SCORE,
-} from "../rating.service.js";
+} from "../../../services/rating.service.js";
 
 describe("ratingService — frozen Elo constants (m4_implementation_plan.md §2)", () => {
   test("equal ratings, win, K=40 -> +20 (half of K, expected score is 0.5)", () => {

@@ -9,11 +9,11 @@
  * reportError(). See resultsListener.ts for why that guarantee matters.
  */
 
-import { prisma } from "../../config/prisma.js";
-import { Prisma } from "../../generated/prisma/client.js";
-import type { GameResult, ResultOutcome } from "../../contracts/index.js";
-import { reportError } from "../observability/index.js";
-import { DEFAULT_RATING, ELO_SCORE, computeEloDelta, kFactorFor } from "./rating.service.js";
+import { prisma } from "../config/prisma.js";
+import { Prisma } from "../generated/prisma/client.js";
+import type { GameResult, ResultOutcome } from "../contracts/index.js";
+import { reportError } from "../realtime/observability/index.js";
+import { DEFAULT_RATING, ELO_SCORE, computeEloDelta, kFactorFor } from "../services/rating.service.js";
 
 const MAX_RATING_RETRY_ATTEMPTS = 3;
 
