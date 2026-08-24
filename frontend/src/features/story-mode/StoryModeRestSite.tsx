@@ -141,10 +141,10 @@ export default function StoryModeRestSite({
         <span className="text-base font-mono text-brand-secondary">{label}</span>
         <div className="flex items-center gap-4">
           {restored > 0 && (
-            <span className="text-sm font-mono text-green-400">+{restored}</span>
+            <span className="text-sm font-mono text-green-400" style={{ textShadow: "0 1px 2px rgba(0,0,0,0.8)" }}>+{restored}</span>
           )}
           <div className="flex items-center gap-1 min-w-[60px] justify-end">
-            <span className={`text-base font-mono font-semibold ${restored > 0 ? "text-green-400" : "text-brand-text"}`}>
+            <span className={`text-base font-mono font-semibold ${restored > 0 ? "text-green-400" : "text-brand-text"}`} style={restored > 0 ? { textShadow: "0 1px 2px rgba(0,0,0,0.8)" } : undefined}>
               {newTotal}
             </span>
             <span className="text-sm font-mono text-brand-secondary">/ {maxCharge}</span>
@@ -166,7 +166,7 @@ export default function StoryModeRestSite({
 
   return (
     <motion.div
-      className="min-h-[60vh] flex items-center justify-center p-4 sm:p-6"
+      className="flex-1 min-h-0 flex items-center justify-center p-2 sm:p-4"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -182,7 +182,7 @@ export default function StoryModeRestSite({
       />
 
       <motion.div
-        className="relative z-10 max-w-lg w-full flex flex-col items-center gap-6 py-8 px-4 sm:px-6 rounded-2xl border border-orange-500/20 bg-orange-500/5 backdrop-blur-sm mx-auto"
+        className="relative z-10 max-w-lg w-full max-h-full overflow-y-auto flex flex-col items-center gap-4 py-6 px-4 sm:px-6 rounded-2xl border border-orange-500/20 bg-orange-500/5 backdrop-blur-sm mx-auto"
         initial={{ scale: 0.9, y: 20 }}
         animate={{ scale: 1, y: 0 }}
         transition={{ duration: 0.5, type: "spring" }}
@@ -268,7 +268,7 @@ export default function StoryModeRestSite({
                   <span className="text-sm font-semibold text-brand-text">Charges Restored</span>
                   <div className="flex items-center gap-1.5 bg-orange-500/20 px-2 py-1 rounded text-orange-300 text-xs font-mono border border-orange-500/30">
                     <Sparkles className="w-3 h-3" />
-                    {totalRestored} Restored
+                    <span style={{ textShadow: "0 1px 2px rgba(0,0,0,0.8)" }}>{totalRestored} Restored</span>
                   </div>
                 </div>
 
@@ -313,6 +313,7 @@ export default function StoryModeRestSite({
                   onClick={handleRest}
                   disabled={isResting}
                   className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-orange-500/20 border border-orange-500/40 text-orange-300 hover:bg-orange-500/30 hover:border-orange-500/60 transition-all duration-200 text-sm font-medium cursor-pointer disabled:opacity-30 disabled:scale-95"
+                  style={{ textShadow: "0 1px 2px rgba(0,0,0,0.8)" }}
                 >
                   <Heart className={`w-4 h-4 ${isResting ? "animate-pulse" : ""}`} />
                   {isResting ? "Resting…" : "Rest & Apply"}
@@ -347,6 +348,7 @@ export default function StoryModeRestSite({
               <button
                 onClick={onComplete}
                 className="flex items-center gap-2 px-6 py-3 rounded-xl bg-green-500/20 border border-green-500/40 text-green-300 hover:bg-green-500/30 hover:border-green-500/60 transition-all duration-200 text-sm font-medium cursor-pointer"
+                style={{ textShadow: "0 1px 2px rgba(0,0,0,0.8)" }}
               >
                 Continue Journey
                 <ArrowRight className="w-4 h-4" />

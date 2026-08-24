@@ -626,7 +626,7 @@ export default function StoryModeBattle({
 
   return (
     <motion.div
-      className="w-full flex flex-col items-center gap-6 py-4 px-2 sm:px-4 mb-24"
+      className="w-full flex flex-col items-center gap-1 py-1 px-1 sm:px-2 flex-1 min-h-0 h-full"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -825,10 +825,10 @@ export default function StoryModeBattle({
       </motion.div>
       <div
         ref={dashboardRef}
-        className="luxury-card rounded-sm shadow-2xl p-4 sm:p-6 lg:p-8 w-full max-w-6xl mx-auto relative"
+        className="luxury-card rounded-sm shadow-2xl p-2 sm:p-4 lg:p-4 w-full max-w-full mx-auto relative h-fit max-h-full my-auto flex flex-col"
         style={{ opacity: 0 }}
       >
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:items-stretch">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:items-center flex-1 min-h-0">
           {/* ── Col 1: Eval Bar ────────────────────────────────────────── */}
           <div
             className="lg:col-span-1 flex lg:flex-col items-center lg:justify-start justify-center gap-0 relative"
@@ -851,11 +851,11 @@ export default function StoryModeBattle({
           </div>
 
           {/* ── Col 2: Chessboard ────────────────────────────────────────── */}
-          <div className="lg:col-span-7 flex flex-col lg:justify-start justify-center">
+          <div className="lg:col-span-7 flex flex-col lg:justify-start justify-center flex-1 min-h-0 items-center overflow-hidden w-full h-full">
             <div
               ref={boardContainerRef}
-              className="aspect-square w-full shadow-xl border border-brand-border relative overflow-hidden"
-              style={{ borderRadius: "4px", transform: "translateZ(0)" }}
+              className="aspect-square mx-auto shadow-xl border border-brand-border relative overflow-hidden flex-shrink"
+              style={{ borderRadius: "4px", transform: "translateZ(0)", maxWidth: "100%", maxHeight: "100%", width: "100%" }}
             >
               <ThemedChessboard
                 options={{
@@ -939,8 +939,8 @@ export default function StoryModeBattle({
                   className="flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-lg border border-brand-border bg-brand-bg hover:bg-brand-text/5 hover:border-[rgba(212,175,110,0.4)] text-brand-secondary hover:text-brand-text transition-all duration-200 disabled:opacity-40 group cursor-pointer"
                   style={{ cursor: !canUndo || isThinking || isEditMode || runState.undoCharges <= 0 ? "not-allowed" : "pointer" }}
                 >
-                  <CornerUpLeft className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                  <span className="text-[10px] font-medium font-sans tracking-wide">Undo ({runState.undoCharges})</span>
+                  <CornerUpLeft className="w-5 h-5 group-hover:scale-110 transition-transform" style={{ filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.8))" }} />
+                  <span className="text-[10px] font-medium font-sans tracking-wide" style={{ textShadow: "0 1px 2px rgba(0,0,0,0.8)" }}>Undo ({runState.undoCharges})</span>
                 </button>
 
                 <button
@@ -950,8 +950,8 @@ export default function StoryModeBattle({
                   className="flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-lg border border-brand-border bg-brand-bg hover:bg-brand-text/5 hover:border-[rgba(212,175,110,0.4)] text-brand-secondary hover:text-yellow-400 transition-all duration-200 disabled:opacity-40 group cursor-pointer"
                   style={{ cursor: !!gameOverReason || isThinking || isEditMode || currentTurn !== playerColor || runState.hintCharges <= 0 ? "not-allowed" : "pointer" }}
                 >
-                  <Lightbulb className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                  <span className="text-[10px] font-medium font-sans tracking-wide">Hint ({runState.hintCharges})</span>
+                  <Lightbulb className="w-5 h-5 group-hover:scale-110 transition-transform" style={{ filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.8))" }} />
+                  <span className="text-[10px] font-medium font-sans tracking-wide" style={{ textShadow: "0 1px 2px rgba(0,0,0,0.8)" }}>Hint ({runState.hintCharges})</span>
                 </button>
 
                 <button
@@ -961,8 +961,8 @@ export default function StoryModeBattle({
                   className="flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-lg border border-brand-border bg-brand-bg hover:bg-brand-text/5 hover:border-red-500/40 text-brand-secondary hover:text-red-400 transition-all duration-200 disabled:opacity-40 group cursor-pointer"
                   style={{ cursor: !canUndo || isEditMode ? "not-allowed" : "pointer" }}
                 >
-                  <RotateCcw className="w-5 h-5 group-hover:rotate-[-45deg] transition-transform duration-300" />
-                  <span className="text-[10px] font-medium font-sans tracking-wide">Reset</span>
+                  <RotateCcw className="w-5 h-5 group-hover:rotate-[-45deg] transition-transform duration-300" style={{ filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.8))" }} />
+                  <span className="text-[10px] font-medium font-sans tracking-wide" style={{ textShadow: "0 1px 2px rgba(0,0,0,0.8)" }}>Reset</span>
                 </button>
 
                 <button
@@ -972,8 +972,8 @@ export default function StoryModeBattle({
                   className="w-full flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-lg border border-brand-border bg-brand-bg hover:bg-brand-text/5 hover:border-emerald-500/40 text-brand-secondary hover:text-emerald-400 transition-all duration-200 disabled:opacity-40 group cursor-pointer"
                   style={{ cursor: runState.evalBarCharges <= 0 || isEditMode ? "not-allowed" : "pointer" }}
                 >
-                  <Eye className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                  <span className="text-[10px] font-medium font-sans tracking-wide">Eval ({runState.evalBarCharges})</span>
+                  <Eye className="w-5 h-5 group-hover:scale-110 transition-transform" style={{ filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.8))" }} />
+                  <span className="text-[10px] font-medium font-sans tracking-wide" style={{ textShadow: "0 1px 2px rgba(0,0,0,0.8)" }}>Eval ({runState.evalBarCharges})</span>
                 </button>
 
                 <div className="relative">
@@ -985,8 +985,8 @@ export default function StoryModeBattle({
                     className={`w-full flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-lg border transition-all duration-200 group cursor-pointer disabled:opacity-40 ${showTimeMenu ? "border-blue-500/60 bg-blue-500/10 text-blue-400" : "border-brand-border bg-brand-bg hover:bg-brand-text/5 hover:border-blue-500/40 text-brand-secondary hover:text-blue-400"}`}
                     style={{ cursor: runState.timeCharges <= 0 || isEditMode ? "not-allowed" : "pointer" }}
                   >
-                    <Hourglass className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                    <span className="text-[10px] font-medium font-sans tracking-wide">Time ({runState.timeCharges})</span>
+                    <Hourglass className="w-5 h-5 group-hover:scale-110 transition-transform" style={{ filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.8))" }} />
+                    <span className="text-[10px] font-medium font-sans tracking-wide" style={{ textShadow: "0 1px 2px rgba(0,0,0,0.8)" }}>Time ({runState.timeCharges})</span>
                   </button>
 
                   {showTimeMenu && (
@@ -1024,10 +1024,10 @@ export default function StoryModeBattle({
               {/* Difficulty (Read Only in Story Mode) */}
               <div className="space-y-2 text-left opacity-75">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-sans text-brand-secondary">
+                  <label className="text-xs font-sans text-brand-secondary" style={{ textShadow: "0 1px 2px rgba(0,0,0,0.8)" }}>
                     Required Difficulty
                   </label>
-                  <span className="text-xs font-semibold text-brand-accent font-sans">
+                  <span className="text-xs font-semibold text-brand-accent font-sans" style={{ textShadow: "0 1px 2px rgba(0,0,0,0.8)" }}>
                     {currentConfig.name} ({currentConfig.rating})
                   </span>
                 </div>
@@ -1040,6 +1040,7 @@ export default function StoryModeBattle({
                           ? "bg-brand-accent text-brand-bg shadow-sm font-bold"
                           : "text-brand-secondary/50"
                       }`}
+                      style={{ textShadow: difficulty === level ? "none" : "0 1px 2px rgba(0,0,0,0.8)" }}
                     >
                       {level}
                     </div>
