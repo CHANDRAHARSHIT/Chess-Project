@@ -12,6 +12,7 @@ import { pricingRouter } from "./modules/billing/pricing.routes.js";
 import { puzzleRouter } from "./modules/puzzles/puzzle.routes.js";
 import { openingRouter } from "./modules/openings/opening.routes.js";
 import { builderLessonRouter } from "./modules/lessons/builder-lesson.routes.js";
+import { publicLessonRouter } from "./modules/lessons/public-lesson.routes.js";
 import { matchmakingRouter } from "./realtime/matchmaking/index.js";
 import { pathwayProgressRouter } from "./modules/puzzles/pathway-progress.routes.js";
 import { gamesRouter } from "./modules/gameplay/games.routes.js";
@@ -87,7 +88,6 @@ app.use("/api/custom-links", customLinksRouter);
 app.use("/api/payments", paymentRouter);
 app.use("/api/pricing", pricingRouter);
 
-import { publicLessonRouter } from "./modules/lessons/public-lesson.routes.js";
 
 app.use("/api/puzzles", puzzleRouter);
 app.use("/api/openings", openingRouter);
