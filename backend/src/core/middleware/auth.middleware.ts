@@ -1,6 +1,6 @@
 import { getSession } from "@auth/express";
 import type { Request, Response, NextFunction } from "express";
-import { authConfig } from "../config/auth.js";
+import { authConfig } from "../../config/auth.js";
 
 /**
  * Express middleware that checks for a valid session using Auth.js.

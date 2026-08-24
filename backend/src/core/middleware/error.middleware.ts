@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { env } from "../config/env.js";
-import { reportError } from "../observability/index.js";
+import { reportError } from "../../observability/index.js";
 
 export interface CustomError extends Error {
   statusCode?: number;

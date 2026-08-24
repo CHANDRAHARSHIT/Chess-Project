@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import { rateLimit } from "express-rate-limit";
-import { env } from "./config/env.js";
+import { env } from "./core/config/env.js";
 import { authRouter } from "./routes/auth.route.js";
 import { userRouter } from "./routes/user.route.js";
 import { customLinksRouter } from "./routes/customLinks.route.js";
@@ -15,7 +15,7 @@ import { builderLessonRouter } from "./routes/builderLesson.route.js";
 import { matchmakingRouter } from "./matchmaking/index.js";
 import { pathwayProgressRouter } from "./routes/pathway-progress.route.js";
 import { gamesRouter } from "./routes/games.route.js";
-import { errorHandler } from "./middleware/error.middleware.js";
+import { errorHandler } from "./core/middleware/error.middleware.js";
 
 const app = express();
 

@@ -1,6 +1,6 @@
-import { prisma } from "../../config/prisma.js";
+import { prisma } from "../../core/database/prisma.js";
 import { SubscriptionStatus } from "../../generated/prisma/enums.js";
-import rollbar from "../../config/rollbar.js";
+import rollbar from "../../core/config/rollbar.config.js";
 
 export function normalizeSubscriptionStatus(status: string): SubscriptionStatus {
   switch (status) {

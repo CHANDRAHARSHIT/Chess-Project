@@ -1,5 +1,5 @@
-import { prisma } from "../config/prisma.js";
-import { env } from "../config/env.js";
+import { prisma } from "../core/database/prisma.js";
+import { env } from "../core/config/env.js";
 import Stripe from "stripe";
 import { CurrencyFormatter } from "../utils/CurrencyFormatter.js";
 import {

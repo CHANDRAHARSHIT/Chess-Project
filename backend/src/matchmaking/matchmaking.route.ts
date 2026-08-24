@@ -1,6 +1,6 @@
-import { Router } from "express";
-import { env } from "../config/env.js";
-import { requireAuth } from "../middleware/auth.middleware.js";
+import { Router, Request, Response, NextFunction } from "express";
+import { env } from "../core/config/env.js";
+import { requireAuth } from "../core/middleware/auth.middleware.js";
 import { enqueueTicket, cancelTicket, getTicketStatus } from "./matchmaking.controller.js";
 
 export const matchmakingRouter = Router();

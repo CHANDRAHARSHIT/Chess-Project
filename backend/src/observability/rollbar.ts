@@ -13,7 +13,7 @@
  */
 
 import Rollbar from "rollbar";
-import { env } from "../config/env.js";
+import { env } from "../core/config/env.js";
 
 let instance: Rollbar | null = null;
 

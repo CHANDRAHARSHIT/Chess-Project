@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { prisma } from "../config/prisma.js";
+import { prisma } from "../core/database/prisma.js";
 import { matchmakingQueue } from "../matchmaking/index.js";
 import type { SessionManager, GameSession } from "../session/index.js";
 import type { ParticipantAssignment } from "../contracts/index.js";

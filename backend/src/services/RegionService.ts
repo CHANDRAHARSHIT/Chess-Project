@@ -1,5 +1,5 @@
 import type { Request } from "express";
-import rollbar from "../config/rollbar.js";
+import rollbar from "../core/config/rollbar.config.js";
 
 export interface RegionInfo {
   country: string;

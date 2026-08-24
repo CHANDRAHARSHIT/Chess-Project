@@ -1,5 +1,5 @@
 import { ExchangeRateCache } from "../cache/ExchangeRateCache.js";
-import rollbar from "../config/rollbar.js";
+import rollbar from "../core/config/rollbar.config.js";
 
 const FALLBACK_NZD_EXCHANGE_RATES: Record<string, number> = {
   NZD: 1.0,

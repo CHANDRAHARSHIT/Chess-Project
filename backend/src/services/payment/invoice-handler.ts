@@ -1,5 +1,5 @@
-import { prisma } from "../../config/prisma.js";
-import rollbar from "../../config/rollbar.js";
+import { prisma } from "../../core/database/prisma.js";
+import rollbar from "../../core/config/rollbar.config.js";
 
 export async function handleInvoicePaymentSucceeded(payload: any) {
   const customerId = payload.customer;

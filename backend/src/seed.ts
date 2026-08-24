@@ -1,4 +1,4 @@
-import { prisma } from "./config/prisma.js";
+import { prisma } from "./core/database/prisma.js";
 import { readFileSync, existsSync } from "fs";
 import { resolve, dirname } from "path";
 import { fileURLToPath } from "url";

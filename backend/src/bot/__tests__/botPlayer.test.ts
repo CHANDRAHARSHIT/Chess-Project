@@ -2,7 +2,7 @@ import crypto from "crypto";
 import { test, describe } from "node:test";
 import assert from "node:assert/strict";
 import { attachBot, acquireBot, releaseBot, maybePlayBotTurn } from "../botPlayer.js";
-import { prisma } from "../../config/prisma.js";
+import { prisma } from "../../core/database/prisma.js";
 import { SessionManager, wireMatchmakingSessionBridge } from "../../session/index.js";
 import { matchmakingQueue } from "../../matchmaking/index.js";
 import type {

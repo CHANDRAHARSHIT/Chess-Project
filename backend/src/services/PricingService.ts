@@ -2,7 +2,7 @@ import type { Request } from "express";
 import { RegionService } from "./RegionService.js";
 import { CurrencyService } from "./CurrencyService.js";
 import { CurrencyFormatter } from "../utils/CurrencyFormatter.js";
-import rollbar from "../config/rollbar.js";
+import rollbar from "../core/config/rollbar.config.js";
 
 export interface PricingDTO {
   country: string;

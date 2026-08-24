@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { requireAuth } from "../middleware/auth.middleware.js";
+import { requireAuth } from "../core/middleware/auth.middleware.js";
 import {
   getLessons,
   createLesson,

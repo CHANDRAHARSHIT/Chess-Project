@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { env } from "../config/env.js";
-import { requireAuth } from "../middleware/auth.middleware.js";
+import { env } from "../core/config/env.js";
+import { requireAuth } from "../core/middleware/auth.middleware.js";
 import { GamesController } from "../controllers/games.controller.js";
 
 export const gamesRouter = Router();

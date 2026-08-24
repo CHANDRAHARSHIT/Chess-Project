@@ -1,4 +1,4 @@
-import { env } from "./config/env.js";
+import { env } from "./core/config/env.js";
 import { app } from "./app.js";
 import { initRollbar, reportError } from "./observability/index.js";
 import { bootstrapTransport } from "./transport/index.js";

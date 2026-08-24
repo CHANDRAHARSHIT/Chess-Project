@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { PathwayProgressController } from "../controllers/pathway-progress.controller.js";
-import { requireAuth } from "../middleware/auth.middleware.js";
+import { requireAuth } from "../core/middleware/auth.middleware.js";
 
 export const pathwayProgressRouter = Router();
 

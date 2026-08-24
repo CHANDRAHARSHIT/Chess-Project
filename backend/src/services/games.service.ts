@@ -1,4 +1,4 @@
-import { prisma } from "../config/prisma.js";
+import { prisma } from "../core/database/prisma.js";
 
 const DEFAULT_LIST_LIMIT = 20;
 
