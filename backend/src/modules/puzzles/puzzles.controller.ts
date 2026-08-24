@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
-import { PuzzleService } from "../services/puzzle.service.js";
+import { PuzzleService } from "./puzzles.service.js";
 
 export class PuzzleController {
   /**

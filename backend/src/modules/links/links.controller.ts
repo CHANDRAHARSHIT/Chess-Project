@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
-import { prisma } from "../core/database/prisma.js";
+import { prisma } from "../../core/database/prisma.js";
 
 /**
  * CustomLinksController

@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
-import { UserService } from "../services/user.service.js";
+import { UserService } from "./users.service.js";
 
 export class UserController {
   /**
