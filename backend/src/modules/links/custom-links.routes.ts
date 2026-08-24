@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { CustomLinksController } from "./links.controller.js";
+import { CustomLinksController } from "./custom-links.controller.js";
 import { requireAuth } from "../../core/middleware/auth.middleware.js";
 
 export const customLinksRouter = Router();

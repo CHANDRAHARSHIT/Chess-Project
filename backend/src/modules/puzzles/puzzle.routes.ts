@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { PuzzleController } from "./puzzles.controller.js";
+import { PuzzleController } from "./puzzle.controller.js";
 
 export const puzzleRouter = Router();
 

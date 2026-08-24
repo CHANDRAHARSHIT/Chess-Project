@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { OpeningController } from "./openings.controller.js";
+import { OpeningController } from "./opening.controller.js";
 
 export const openingRouter = Router();
 

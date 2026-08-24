@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
-import { OpeningService } from "./openings.service.js";
+import { OpeningService } from "./opening.service.js";
 
 export class OpeningController {
   /**

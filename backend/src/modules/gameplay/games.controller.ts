@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
-import { GamesService } from "./gameplay.service.js";
+import { GamesService } from "./games.service.js";
 
 export class GamesController {
   /**
