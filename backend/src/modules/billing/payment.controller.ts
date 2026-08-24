@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
-import { PaymentService } from "../services/payment.service.js";
-import { SubscriptionTier } from "../types/payment.js";
+import { PaymentService } from "./payment.service.js";
+import { SubscriptionTier } from "./billing.types.js";
 
 export class PaymentController {
   /**

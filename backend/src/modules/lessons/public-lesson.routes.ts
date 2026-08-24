@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getPublishedLessons, getPublishedLessonById } from "../controllers/publicLesson.controller.js";
+import { getPublishedLessons, getPublishedLessonById } from "./public-lesson.controller.js";
 
 const publicLessonRouter = Router();
 

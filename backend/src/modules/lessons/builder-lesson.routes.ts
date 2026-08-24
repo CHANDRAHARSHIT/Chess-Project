@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { requireAuth } from "../core/middleware/auth.middleware.js";
+import { requireAuth } from "../../core/middleware/auth.middleware.js";
 import {
   getLessons,
   createLesson,
@@ -12,7 +12,7 @@ import {
   createSlide,
   updateSlide,
   deleteSlide,
-} from "../controllers/builderLesson.controller.js";
+} from "./builder-lesson.controller.js";
 
 const builderLessonRouter = Router();
 

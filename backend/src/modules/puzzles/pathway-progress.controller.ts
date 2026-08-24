@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
-import { PathwayProgressService } from "../services/pathway-progress.service.js";
+import { PathwayProgressService } from "./pathway-progress.service.js";
 
 export class PathwayProgressController {
   /**

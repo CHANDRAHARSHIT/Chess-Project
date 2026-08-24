@@ -1,8 +1,8 @@
 import Google from "@auth/express/providers/google";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import type { ExpressAuthConfig } from "@auth/express";
-import { prisma } from "../core/database/prisma.js";
-import { env } from "../core/config/env.js";
+import { prisma } from "../../core/database/prisma.js";
+import { env } from "../../core/config/env.js";
 
 export const authConfig: ExpressAuthConfig = {
   // Bind Auth.js to the database via Prisma Adapter

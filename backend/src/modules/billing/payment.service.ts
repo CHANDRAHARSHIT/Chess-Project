@@ -1,26 +1,26 @@
-import { prisma } from "../core/database/prisma.js";
-import { env } from "../core/config/env.js";
+import { prisma } from "../../core/database/prisma.js";
+import { env } from "../../core/config/env.js";
 import Stripe from "stripe";
-import { CurrencyFormatter } from "../utils/CurrencyFormatter.js";
+import { CurrencyFormatter } from "./currency.formatter.js";
 import {
   handleSubscriptionCreatedOrUpdated,
   handleSubscriptionDeleted,
   handleSubscriptionTrialWillEnd,
-} from "./payment/subscription-handler.js";
+} from "./handlers/subscription.handler.js";
 import {
   handleCheckoutSessionCompleted,
   handleCheckoutSessionExpired,
   handleCheckoutSessionAsyncPaymentSucceeded,
   handleCheckoutSessionAsyncPaymentFailed,
-} from "./payment/checkout-handler.js";
+} from "./handlers/checkout.handler.js";
 import {
   handleInvoicePaymentSucceeded,
   handleInvoicePaymentFailed,
   handleInvoicePaymentActionRequired,
-} from "./payment/invoice-handler.js";
+} from "./handlers/invoice.handler.js";
 import {
   handleChargeDisputeCreated,
-} from "./payment/charge-handler.js";
+} from "./handlers/charge.handler.js";
 
 const stripe = new Stripe(env.STRIPE_SECRET_KEY || "", {
   apiVersion: "2026-06-24.dahlia" as any,

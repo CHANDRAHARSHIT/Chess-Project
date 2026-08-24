@@ -2,7 +2,7 @@ import type http from "http";
 import { WebSocketServer, WebSocket } from "ws";
 import { getSession } from "@auth/express";
 import { env } from "../core/config/env.js";
-import { authConfig } from "../config/auth.js";
+import { authConfig } from "../modules/auth/auth.config.js";
 import { connectionManager } from "./ConnectionManager.js";
 import { heartbeatTicker } from "./heartbeat.js";
 import type { InboundMessage } from "./types.js";

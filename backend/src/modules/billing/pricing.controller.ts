@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
-import { PricingService } from "../services/PricingService.js";
-import rollbar from "../core/config/rollbar.config.js";
+import { PricingService } from "./pricing.service.js";
+import rollbar from "../../core/config/rollbar.config.js";
 
 export class PricingController {
   public static async getPricing(req: Request, res: Response, next: NextFunction): Promise<void> {

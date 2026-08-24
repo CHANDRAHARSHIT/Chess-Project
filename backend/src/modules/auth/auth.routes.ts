@@ -1,5 +1,5 @@
 import { ExpressAuth } from "@auth/express";
-import { authConfig } from "../config/auth.js";
+import { authConfig } from "./auth.config.js";
 
 // Export the ExpressAuth middleware handler directly.
 // This must be mounted on a wildcard route (e.g. /api/auth/*) in the main app configuration

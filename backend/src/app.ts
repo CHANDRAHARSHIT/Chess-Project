@@ -3,17 +3,17 @@ import cors from "cors";
 import helmet from "helmet";
 import { rateLimit } from "express-rate-limit";
 import { env } from "./core/config/env.js";
-import { authRouter } from "./routes/auth.route.js";
+import { authRouter } from "./modules/auth/auth.routes.js";
 import { userRouter } from "./modules/users/user.routes.js";
 import { customLinksRouter } from "./modules/links/custom-links.routes.js";
-import { paymentRouter } from "./routes/payment.route.js";
-import { pricingRouter } from "./routes/pricing.route.js";
+import { paymentRouter } from "./modules/billing/payment.routes.js";
+import { pricingRouter } from "./modules/billing/pricing.routes.js";
 
 import { puzzleRouter } from "./modules/puzzles/puzzle.routes.js";
 import { openingRouter } from "./modules/openings/opening.routes.js";
-import { builderLessonRouter } from "./routes/builderLesson.route.js";
+import { builderLessonRouter } from "./modules/lessons/builder-lesson.routes.js";
 import { matchmakingRouter } from "./matchmaking/index.js";
-import { pathwayProgressRouter } from "./routes/pathway-progress.route.js";
+import { pathwayProgressRouter } from "./modules/puzzles/pathway-progress.routes.js";
 import { gamesRouter } from "./modules/gameplay/games.routes.js";
 import { errorHandler } from "./core/middleware/error.middleware.js";
 
@@ -87,7 +87,7 @@ app.use("/api/custom-links", customLinksRouter);
 app.use("/api/payments", paymentRouter);
 app.use("/api/pricing", pricingRouter);
 
-import { publicLessonRouter } from "./routes/publicLesson.route.js";
+import { publicLessonRouter } from "./modules/lessons/public-lesson.routes.js";
 
 app.use("/api/puzzles", puzzleRouter);
 app.use("/api/openings", openingRouter);
