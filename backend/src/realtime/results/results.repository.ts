@@ -9,7 +9,7 @@
  * reportError(). See resultsListener.ts for why that guarantee matters.
  */
 
-import { prisma } from "../../core/database/prisma.js";
+import { prisma } from "../../config/prisma.js";
 import { Prisma } from "../../generated/prisma/client.js";
 import type { GameResult, ResultOutcome } from "../../contracts/index.js";
 import { reportError } from "../observability/index.js";

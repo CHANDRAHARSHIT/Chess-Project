@@ -2,21 +2,21 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import { rateLimit } from "express-rate-limit";
-import { env } from "./core/config/env.js";
-import { authRouter } from "./modules/auth/auth.routes.js";
-import { userRouter } from "./modules/users/user.routes.js";
-import { customLinksRouter } from "./modules/links/custom-links.routes.js";
-import { paymentRouter } from "./modules/billing/payment.routes.js";
-import { pricingRouter } from "./modules/billing/pricing.routes.js";
+import { env } from "./config/env.js";
+import { authRouter } from "./routes/auth.routes.js";
+import { userRouter } from "./routes/user.routes.js";
+import { customLinksRouter } from "./routes/custom-links.routes.js";
+import { paymentRouter } from "./routes/payment.routes.js";
+import { pricingRouter } from "./routes/pricing.routes.js";
 
-import { puzzleRouter } from "./modules/puzzles/puzzle.routes.js";
-import { openingRouter } from "./modules/openings/opening.routes.js";
-import { builderLessonRouter } from "./modules/lessons/builder-lesson.routes.js";
-import { publicLessonRouter } from "./modules/lessons/public-lesson.routes.js";
+import { puzzleRouter } from "./routes/puzzle.routes.js";
+import { openingRouter } from "./routes/opening.routes.js";
+import { builderLessonRouter } from "./routes/builder-lesson.routes.js";
+import { publicLessonRouter } from "./routes/public-lesson.routes.js";
 import { matchmakingRouter } from "./realtime/matchmaking/index.js";
-import { pathwayProgressRouter } from "./modules/puzzles/pathway-progress.routes.js";
-import { gamesRouter } from "./modules/gameplay/games.routes.js";
-import { errorHandler } from "./core/middleware/error.middleware.js";
+import { pathwayProgressRouter } from "./routes/pathway-progress.routes.js";
+import { gamesRouter } from "./routes/games.routes.js";
+import { errorHandler } from "./middleware/error.middleware.js";
 
 const app = express();
 
