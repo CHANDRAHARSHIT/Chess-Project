@@ -73,7 +73,9 @@ export const ModelName = {
   GameRecord: 'GameRecord',
   GameParticipant: 'GameParticipant',
   PlayerRating: 'PlayerRating',
-  PathwayProgress: 'PathwayProgress'
+  PathwayProgress: 'PathwayProgress',
+  AssessmentTemplate: 'AssessmentTemplate',
+  AssessmentAttempt: 'AssessmentAttempt'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -451,6 +453,44 @@ export const PathwayProgressScalarFieldEnum = {
 } as const
 
 export type PathwayProgressScalarFieldEnum = (typeof PathwayProgressScalarFieldEnum)[keyof typeof PathwayProgressScalarFieldEnum]
+
+
+export const AssessmentTemplateScalarFieldEnum = {
+  id: 'id',
+  trackSlug: 'trackSlug',
+  version: 'version',
+  isActive: 'isActive',
+  data: 'data',
+  gradingRules: 'gradingRules',
+  createdAt: 'createdAt'
+} as const
+
+export type AssessmentTemplateScalarFieldEnum = (typeof AssessmentTemplateScalarFieldEnum)[keyof typeof AssessmentTemplateScalarFieldEnum]
+
+
+export const AssessmentAttemptScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  trackSlug: 'trackSlug',
+  templateId: 'templateId',
+  status: 'status',
+  result: 'result',
+  lastAccessedAt: 'lastAccessedAt',
+  answers: 'answers',
+  radioValues: 'radioValues',
+  textValues: 'textValues',
+  bookmarks: 'bookmarks',
+  estimateMinutes: 'estimateMinutes',
+  timedSectionStartedAt: 'timedSectionStartedAt',
+  timedDeadlineAt: 'timedDeadlineAt',
+  extensionUsed: 'extensionUsed',
+  wrongCount: 'wrongCount',
+  submittedAt: 'submittedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AssessmentAttemptScalarFieldEnum = (typeof AssessmentAttemptScalarFieldEnum)[keyof typeof AssessmentAttemptScalarFieldEnum]
 
 
 export const SortOrder = {

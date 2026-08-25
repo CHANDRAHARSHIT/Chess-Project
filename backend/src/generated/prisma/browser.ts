@@ -132,3 +132,13 @@ export type PlayerRating = Prisma.PlayerRatingModel
  * 
  */
 export type PathwayProgress = Prisma.PathwayProgressModel
+/**
+ * Model AssessmentTemplate
+ * 
+ */
+export type AssessmentTemplate = Prisma.AssessmentTemplateModel
+/**
+ * Model AssessmentAttempt
+ * 
+ */
+export type AssessmentAttempt = Prisma.AssessmentAttemptModel
