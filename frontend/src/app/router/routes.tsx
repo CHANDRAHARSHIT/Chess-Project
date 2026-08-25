@@ -249,7 +249,11 @@ export const mainRoutes: RouteConfig[] = [
 export const minimalRoutes: RouteConfig[] = [
   {
     path: "/join-us/:roleId/assessment",
-    element: <AssessmentPage />,
+    element: (
+      <ProtectedRoute>
+        <AssessmentPage />
+      </ProtectedRoute>
+    ),
     title: "Assessment | XLChess",
   },
   { path: "/payment", element: <CheckoutPage />, title: "Checkout | XLChess" },
