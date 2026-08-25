@@ -1,0 +1,238 @@
+{
+  "id": "growth-assessment",
+  "roleIdPrefix": "growth-marketing",
+  "roleTitle": "Growth & Marketing Assessment",
+  "totalTimeMinutes": 90,
+  "totalQuestions": 6,
+  "pages": [
+    {
+      "id": "growth-page-1",
+      "pageNumber": 1,
+      "pageTitle": "Outreach & Lead Acquisition",
+      "purpose": "These questions are designed around the types of situations and decisions you would encounter while working in the Growth & Marketing role.",
+      "questionIds": [
+        "gq1"
+      ],
+      "submitButtonText": "Submit and continue to next question",
+      "questions": [
+        {
+          "id": "gq1",
+          "questionNumber": 1,
+          "type": "checkbox-group",
+          "questionText": "You are preparing a cold-email outreach campaign targeting 10 potential clients. The purpose of the outreach is to get a response from the potential client.\n\nFrom the actions below, select the three that you believe would have the greatest impact on increasing the likelihood that a potential client responds to your email.\n\nYour answer will be considered correct if your top 3 is inside the top 4.",
+          "options": [
+            {
+              "value": "A",
+              "label": "Keep the email under 100 words."
+            },
+            {
+              "value": "B",
+              "label": "Use a spell checker to correct spelling and grammar before sending."
+            },
+            {
+              "value": "C",
+              "label": "Before sending the outreach emails, identify which of the 10 potential clients have active email addresses that are regularly monitored."
+            },
+            {
+              "value": "D",
+              "label": "Send the email from business@company.com rather than company@gmail.com."
+            },
+            {
+              "value": "E",
+              "label": "Create and use a professional company email signature."
+            },
+            {
+              "value": "F",
+              "label": "Avoid including attachments in the initial outreach email."
+            },
+            {
+              "value": "G",
+              "label": "Send a customized email to each potential client."
+            }
+          ],
+          "maxSelections": 3,
+          "tips": "Select exactly 3 actions that have the highest conversion impact."
+        }
+      ]
+    },
+    {
+      "id": "growth-page-2",
+      "pageNumber": 2,
+      "pageTitle": "Early-Stage Social Strategy",
+      "purpose": "Evaluate strategic prioritization and resource allocation when launching a brand new chess product from zero audience.",
+      "questionIds": [
+        "gq2"
+      ],
+      "submitButtonText": "Submit and continue to next question",
+      "questions": [
+        {
+          "id": "gq2",
+          "questionNumber": 2,
+          "type": "multiple-choice",
+          "questionText": "You are responsible for setting up and managing social media for a startup that is preparing to launch a new chess web app similar to Chess.com.\n\nThe company currently has no established social media audience.\n\n• Goal: Within 1 month, acquire at least 1 paying subscriber/user through social media.\n• Budget: $0\n• Resources: You will be primarily responsible for managing the company's social media, so the amount of time available for creating content, posting, engaging with users, and growing accounts is 10 hours a week.\n\nWhich approach would you take to maximize the chance to achieve the goal?",
+          "options": [
+            {
+              "value": "A",
+              "label": "Focus on a single social media platform. First, research which platform is most suitable for what we want to achieve, then focus on that platform rather than diluting limited resources across several platforms. Giving 20% effort to five platforms is less effective than giving 100% effort to one well-chosen platform."
+            },
+            {
+              "value": "B",
+              "label": "Try all social media platforms."
+            }
+          ],
+          "tips": "Consider resource constraints (10 hrs/week) and conversion focus."
+        }
+      ]
+    },
+    {
+      "id": "growth-page-3",
+      "pageNumber": 3,
+      "pageTitle": "Channel Optimization & Paid Conversions",
+      "purpose": "Assess analytical decision-making and ROI-driven marketing prioritization when scaling an existing high-performing channel.",
+      "questionIds": [
+        "gq3"
+      ],
+      "submitButtonText": "Submit and continue to next question",
+      "questions": [
+        {
+          "id": "gq3",
+          "questionNumber": 3,
+          "type": "multiple-choice",
+          "questionText": "Your manager tells you:\n\"Our YouTube channel is doing much better than everything else. Can you make a new plan to focus on YouTube this month and see if we can increase the number of paid members we are getting?\"\n\nThe objective is specifically to increase the number of paid members acquired through YouTube.\n\nIf you could choose only one option as the primary basis for your plan, which would you choose?",
+          "options": [
+            {
+              "value": "A",
+              "label": "Increase the number of videos posted per day."
+            },
+            {
+              "value": "B",
+              "label": "Analyze which existing videos are generating the most paid-member conversions, identify what those videos have in common, and use these findings to create and test more content."
+            },
+            {
+              "value": "C",
+              "label": "Focus on increasing the number of YouTube subscribers, since a larger subscriber count should eventually result in more paid members."
+            },
+            {
+              "value": "D",
+              "label": "Focus on increasing total video views by choosing topics with the greatest potential reach, regardless of whether those viewers have previously converted into paid members."
+            },
+            {
+              "value": "E",
+              "label": "Study other chess YouTube channels."
+            }
+          ],
+          "tips": "Focus on direct member conversion drivers rather than vanity metrics."
+        }
+      ]
+    },
+    {
+      "id": "growth-page-4",
+      "pageNumber": 4,
+      "pageTitle": "Content Strategy & Practical Judgment",
+      "purpose": "Examine practical marketing judgment and willingness to question assumptions in real-world startup scenarios.",
+      "questionIds": [
+        "gq4"
+      ],
+      "submitButtonText": "Submit and continue to next question",
+      "questions": [
+        {
+          "id": "gq4",
+          "questionNumber": 4,
+          "type": "multiple-choice",
+          "questionText": "The company has just created its Instagram account. You are responsible for planning and creating the company's very first Instagram post.\n\nThe account currently has no followers and no previous posts.\n\nYou are allocated 3 days of your time to complete this task, plus whatever additional time is required from the Design Team to create the necessary graphics.\n\nWhat option would you choose?",
+          "options": [
+            {
+              "value": "A",
+              "label": "Create a professional \"Welcome to XLChess\" post introducing the company, explaining what XLChess is, and briefly describing what the product offers."
+            },
+            {
+              "value": "B",
+              "label": "Create an entertaining or highly shareable chess-related post designed to attract attention, while introducing XLChess naturally rather than making the entire post an advertisement."
+            },
+            {
+              "value": "C",
+              "label": "Create a detailed promotional post explaining the main features of XLChess and why chess players should use it instead of existing chess platforms."
+            },
+            {
+              "value": "D",
+              "label": "Create a promotional offer, such as a discount or special benefit for people who become one of the company's first paid members."
+            },
+            {
+              "value": "E",
+              "label": "Before proceeding, raise the task with your manager or the person in charge because you believe there is a significant problem with the proposed approach."
+            },
+            {
+              "value": "F",
+              "label": "Do not do the task, while communicating your reasons for not doing it."
+            }
+          ],
+          "tips": "Consider the time cost (3 days + design team) vs expected ROI on a 0-follower account."
+        }
+      ]
+    },
+    {
+      "id": "growth-page-5",
+      "pageNumber": 5,
+      "pageTitle": "Concise Promotional Strategy",
+      "purpose": "Evaluate clarity, precision, and concise tactical thinking when deploying direct response promotional offers.",
+      "questionIds": [
+        "gq5"
+      ],
+      "submitButtonText": "Submit and continue to next question",
+      "questions": [
+        {
+          "id": "gq5",
+          "questionNumber": 5,
+          "type": "long-text",
+          "questionText": "You are asked to create a Facebook post that includes the discount code \"XO1\", which customers can use on the website to receive a discount.\n\nHow would you approach and complete this task?",
+          "wordLimit": 10,
+          "placeholder": "State your approach in 10 words or fewer...",
+          "tips": "Strict 10-word limit. Be direct, clear, and action-oriented."
+        }
+      ]
+    },
+    {
+      "id": "growth-page-6",
+      "pageNumber": 6,
+      "pageTitle": "3-Month Growth Plan & Execution Timeline",
+      "purpose": "Assess end-to-end strategic planning, practical resource allocation ($100 budget), cross-functional execution with engineering, and roadmap structuring.",
+      "questionIds": [
+        "gq6"
+      ],
+      "submitButtonText": "Submit and complete assessment",
+      "questions": [
+        {
+          "id": "gq6",
+          "questionNumber": 6,
+          "type": "long-text",
+          "questionText": "XLChess is a startup developing a chess web application similar to Chess.com. The product will offer free features as well as a paid membership.\n\nThe company's immediate objective is to acquire its first 100 paid subscribers. The company believes that reaching the first 100 is the most difficult stage; once this has been achieved, it expects to have enough information and traction to make further growth significantly easier.\n\nYour Task:\nSpend as much time as you need to identify how you fit into this 3-month plan and write a timeline/task breakdown of what you would do.\nThe goal is for you to show us that you understand what is needed and that you know how to execute it.\nNot much detail is required. A sentence giving an overview of what you intend to do is enough.\nTreat this as a realistic exercise. Write the plan as if you had been hired for the Growth & Marketing role.",
+          "supportingTabs": [
+            {
+              "id": "month1",
+              "label": "Month 1 — Build & Prepare",
+              "content": "Development Team (3 FTE):\n• Complete and launch the beta version.\n• Prioritise core features that give users a reason to become paid members.\n\nGrowth & Marketing (1 FTE):\n• Establish and begin growing company's social media presence across multiple platforms.\n• Start testing different types of content and approaches."
+            },
+            {
+              "id": "month2",
+              "label": "Month 2 — Membership Growth",
+              "content": "Primary Focus: Acquiring paid members.\n\nDev Team Support:\n• Write technical/dev content for social media and product showcase.\n\nTesting ~20 Acquisition Approaches:\n• Advertisement emails to smaller/mid-sized chess YouTube channels.\n• Daily YouTube and social content.\n• Approaching chess clubs.\n• Approaching famous chess GMs.\n• Sponsoring online chess tournaments."
+            },
+            {
+              "id": "month3",
+              "label": "Month 3 — Scale What Works",
+              "content": "• Review results from Month 2.\n• Stop or reduce low-performing activities.\n• Concentrate resources on high-potential approaches.\n• Scale and expand strategies successfully generating paid members."
+            },
+            {
+              "id": "budget",
+              "label": "Budget & Autonomy",
+              "content": "Budget: $100 total for this 3-month plan.\nYou can spend this money without requiring any prior approval."
+            }
+          ],
+          "wordLimit": 1200,
+          "placeholder": "Write your 3-month timeline and task breakdown (Month 1, Month 2, Month 3, and budget allocation)...",
+          "tips": "Highlight high-leverage activities, budget use, collaboration with developers, and timeline."
+        }
+      ]
+    }
+  ]
+}

@@ -11,7 +11,8 @@
     "prisma:migrate": "prisma migrate dev",
     "db:seed": "tsx src/seed.ts",
     "db:seed:puzzles": "tsx src/scripts/seed-puzzles.ts",
-    "test": "tsx --test src/**/__tests__/*.test.ts"
+    "test": "tsx --test src/**/__tests__/*.test.ts",
+    "db:seed:assessments": "tsx src/scripts/seed-assessments.ts"
   },
   "dependencies": {
     "@auth/core": "^0.37.4",
