@@ -1,14 +1,14 @@
-import { useState } from 'react';
-import { Bookmark, Info, Code2 } from 'lucide-react';
-import { soundManager } from '@/shared/lib/SoundManager';
-import type { AssessmentQuestion } from '../assessmentTypes';
-import ShortTextInput from './inputs/ShortTextInput';
-import LongTextInput from './inputs/LongTextInput';
-import MultipleChoiceInput from './inputs/MultipleChoiceInput';
-import CheckboxGroupInput from './inputs/CheckboxGroupInput';
-import RadioWithTextInput from './inputs/RadioWithTextInput';
-import NumberInput from './inputs/NumberInput';
-import CodeInput from './inputs/CodeInput';
+import { useState } from "react";
+import { Bookmark, Info, Code2 } from "lucide-react";
+import { soundManager } from "@/shared/lib/SoundManager";
+import type { AssessmentQuestion } from "../assessmentTypes";
+import ShortTextInput from "./inputs/ShortTextInput";
+import LongTextInput from "./inputs/LongTextInput";
+import MultipleChoiceInput from "./inputs/MultipleChoiceInput";
+import CheckboxGroupInput from "./inputs/CheckboxGroupInput";
+import RadioWithTextInput from "./inputs/RadioWithTextInput";
+import NumberInput from "./inputs/NumberInput";
+import CodeInput from "./inputs/CodeInput";
 
 interface QuestionCardProps {
   question: AssessmentQuestion;
@@ -31,17 +31,17 @@ export default function QuestionCard({
   onAnswerChange,
   isBookmarked,
   onToggleBookmark,
-  radioValue = '',
-  textValue = '',
+  radioValue = "",
+  textValue = "",
   onRadioValueChange,
   onTextValueChange,
 }: QuestionCardProps) {
   const [activeTabId, setActiveTabId] = useState<string>(
-    question.supportingTabs?.[0]?.id || ''
+    question.supportingTabs?.[0]?.id || "",
   );
 
   const activeTab = question.supportingTabs?.find(
-    (tab) => tab.id === activeTabId
+    (tab) => tab.id === activeTabId,
   );
 
   return (
@@ -69,18 +69,20 @@ export default function QuestionCard({
           }}
           className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-mono font-medium transition-all duration-200 cursor-pointer ${
             isBookmarked
-              ? 'bg-amber-500/15 border-amber-500/50 text-amber-400'
-              : 'bg-brand-surface border-brand-text/15 text-brand-secondary hover:text-brand-text hover:border-brand-text/30'
+              ? "bg-amber-500/15 border-amber-500/50 text-amber-400"
+              : "bg-brand-surface border-brand-text/15 text-brand-secondary hover:text-brand-text hover:border-brand-text/30"
           }`}
-          aria-label={isBookmarked ? 'Remove bookmark' : 'Bookmark question for later'}
+          aria-label={
+            isBookmarked ? "Remove bookmark" : "Bookmark question for later"
+          }
         >
           <Bookmark
             className={`w-4 h-4 ${
-              isBookmarked ? 'fill-amber-400 text-amber-400' : ''
+              isBookmarked ? "fill-amber-400 text-amber-400" : ""
             }`}
           />
           <span className="hidden sm:inline">
-            {isBookmarked ? 'Bookmarked' : 'Bookmark'}
+            {isBookmarked ? "Marked for Later" : "Review Later"}
           </span>
         </button>
       </div>
@@ -146,8 +148,8 @@ export default function QuestionCard({
                     }}
                     className={`px-4 py-2 text-xs sm:text-sm font-medium rounded-t-xl transition-all cursor-pointer select-none whitespace-nowrap ${
                       isActive
-                        ? 'bg-brand-surface text-brand-accent shadow-sm'
-                        : 'text-brand-secondary hover:text-brand-text hover:bg-brand-surface/50'
+                        ? "bg-brand-surface text-brand-accent shadow-sm"
+                        : "text-brand-secondary hover:text-brand-text hover:bg-brand-surface/50"
                     }`}
                   >
                     {tab.label}
@@ -187,7 +189,7 @@ export default function QuestionCard({
 
         {/* Input Switch based on question.type */}
         <div>
-          {question.type === 'short-text' && (
+          {question.type === "short-text" && (
             <ShortTextInput
               id={`question-${question.id}-input`}
               value={answer}
@@ -197,7 +199,7 @@ export default function QuestionCard({
             />
           )}
 
-          {question.type === 'long-text' && (
+          {question.type === "long-text" && (
             <LongTextInput
               id={`question-${question.id}-input`}
               value={answer}
@@ -208,7 +210,7 @@ export default function QuestionCard({
             />
           )}
 
-          {question.type === 'multiple-choice' && (
+          {question.type === "multiple-choice" && (
             <MultipleChoiceInput
               id={`question-${question.id}-input`}
               value={answer}
@@ -217,7 +219,7 @@ export default function QuestionCard({
             />
           )}
 
-          {question.type === 'checkbox-group' && (
+          {question.type === "checkbox-group" && (
             <CheckboxGroupInput
               id={`question-${question.id}-input`}
               value={answer}
@@ -227,7 +229,7 @@ export default function QuestionCard({
             />
           )}
 
-          {question.type === 'radio-with-text' && (
+          {question.type === "radio-with-text" && (
             <RadioWithTextInput
               id={`question-${question.id}-input`}
               selectedRadio={radioValue || answer}
@@ -245,7 +247,7 @@ export default function QuestionCard({
             />
           )}
 
-          {question.type === 'number' && (
+          {question.type === "number" && (
             <NumberInput
               id={`question-${question.id}-input`}
               value={answer}
@@ -256,13 +258,13 @@ export default function QuestionCard({
             />
           )}
 
-          {question.type === 'code' && (
+          {question.type === "code" && (
             <CodeInput
               id={`question-${question.id}-input`}
-              value={answer || question.prefillValue || ''}
+              value={answer || question.prefillValue || ""}
               onChange={onAnswerChange}
               originalValue={question.prefillValue}
-              language={question.codeLanguage || 'Pseudocode'}
+              language={question.codeLanguage || "Pseudocode"}
             />
           )}
         </div>

@@ -114,10 +114,10 @@ export default function AssessmentResultScreen({
               <p className="text-xs sm:text-sm text-brand-secondary leading-relaxed">
                 If you have any questions, please contact us at{' '}
                 <a
-                  href="mailto:careers@xlchess.com"
+                  href="mailto:jimmy@xlchess.com"
                   className="text-brand-accent underline hover:text-brand-accent/80 transition-colors"
                 >
-                  careers@xlchess.com
+                  jimmy@xlchess.com
                 </a>
                 .
               </p>
@@ -136,10 +136,10 @@ export default function AssessmentResultScreen({
         <p className="text-sm sm:text-base text-brand-secondary/80 leading-relaxed">
           If you would like to reattempt this assessment, please email{' '}
           <a
-            href="mailto:careers@xlchess.com"
+            href="mailto:jimmy@xlchess.com"
             className="text-brand-accent underline hover:text-brand-accent/80 transition-colors"
           >
-            careers@xlchess.com
+            jimmy@xlchess.com
           </a>{' '}
           and we will evaluate your request.
         </p>

@@ -82,7 +82,7 @@ const sharedGrowthMarketingAssessmentContent = {
   rulesFootnote:
     '*Some questions may allow referencing public marketing case studies or chess industry benchmarks when specified.',
   timeRequirement:
-    'Please set aside approximately 1 to 2 hours to complete the assessment and strategy exercises. Individual questions may indicate specific time allocations.',
+    'Please set aside approximately 1 hour to complete the assessment and strategy exercises. Individual questions may indicate specific time allocations.',
   ctaText: 'Begin Assessment',
 };
 
