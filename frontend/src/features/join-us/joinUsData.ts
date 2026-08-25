@@ -1,5 +1,10 @@
 export type JobLevel = 'Intern' | 'Junior' | 'Intermediate' | 'Senior';
-export type Department = 'Business & Management' | 'Backend' | 'Frontend' | 'Design';
+export type Department =
+  | 'Manager'
+  | 'Growth & Marketing'
+  | 'Backend'
+  | 'Frontend'
+  | 'Design';
 export type OpeningStatus = 'open' | 'closed';
 
 export interface JobOpening {
@@ -21,7 +26,8 @@ export interface JobOpening {
 }
 
 export const DEPARTMENTS: Department[] = [
-  'Business & Management',
+  'Manager',
+  'Growth & Marketing',
   'Backend',
   'Frontend',
   'Design',
@@ -57,7 +63,31 @@ const sharedBackendAssessmentContent = {
   ctaText: 'Begin Assessment',
 };
 
+const sharedGrowthMarketingAssessmentContent = {
+  title: 'Joining our Team',
+  overview:
+    'Thank you for your interest in joining our Growth & Marketing team.\n\nTo join us in Growth & Marketing, you must complete our Stage 1 Assessment. This assessment is designed to evaluate your strategic thinking, user acquisition frameworks, community-building instincts, viral loops, and analytical marketing decision-making.\n\nWe expect our growth team to be exceptionally proactive, creative, and data-driven—capable of identifying scalable acquisition channels, crafting compelling campaigns, and accelerating our community of passionate chess players globally.',
+  evaluationTitle: 'What We Evaluate',
+  evaluationDetails:
+    'User acquisition strategies, viral mechanics, retention & engagement funnels, social campaigns, community growth, conversion analytics, and brand positioning under realistic growth scenarios.',
+  rulesHeading: 'Before You Begin',
+  rulesSubheading:
+    'The initial section of this assessment evaluates your strategic marketing instincts, structured problem-solving, and core growth frameworks.',
+  rules: [
+    'Provide clear, actionable strategies and real-world execution plans.',
+    'Back your recommendations with logical reasoning, metrics, and KPI frameworks.',
+    'Demonstrate an understanding of chess communities, modern social distribution, and product-led growth.',
+    'Complete the assessment using your own original strategic thinking and creativity.',
+  ],
+  rulesFootnote:
+    '*Some questions may allow referencing public marketing case studies or chess industry benchmarks when specified.',
+  timeRequirement:
+    'Please set aside approximately 1 hour to complete the assessment and strategy exercises. Individual questions may indicate specific time allocations.',
+  ctaText: 'Begin Assessment',
+};
+
 export const jobOpenings: JobOpening[] = [
+  // Backend Openings
   {
     id: 'backend-intern',
     department: 'Backend',
@@ -90,11 +120,45 @@ export const jobOpenings: JobOpening[] = [
     status: 'open',
     ...sharedBackendAssessmentContent,
   },
+
+  // Growth & Marketing Openings
+  {
+    id: 'growth-marketing-junior',
+    department: 'Growth & Marketing',
+    level: 'Junior',
+    roleSubtitle: 'Growth & Marketing Assessment (Junior)',
+    status: 'open',
+    ...sharedGrowthMarketingAssessmentContent,
+  },
+  {
+    id: 'growth-marketing-intermediate',
+    department: 'Growth & Marketing',
+    level: 'Intermediate',
+    roleSubtitle: 'Growth & Marketing Assessment (Intermediate)',
+    status: 'open',
+    ...sharedGrowthMarketingAssessmentContent,
+  },
+  {
+    id: 'growth-marketing-senior',
+    department: 'Growth & Marketing',
+    level: 'Senior',
+    roleSubtitle: 'Growth & Marketing Assessment (Senior)',
+    status: 'open',
+    ...sharedGrowthMarketingAssessmentContent,
+  },
 ];
 
 /** Helper function to look up an active opening for a department and job level */
-export function getOpening(department: Department, level: JobLevel): JobOpening | undefined {
+export function getOpening(
+  department: Department,
+  level: JobLevel
+): JobOpening | undefined {
   return jobOpenings.find(
     (o) => o.department === department && o.level === level && o.status === 'open'
   );
+}
+
+/** Helper function to look up an opening by unique ID */
+export function getOpeningById(id: string): JobOpening | undefined {
+  return jobOpenings.find((o) => o.id === id);
 }
