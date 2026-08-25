@@ -1,9 +1,9 @@
 import { useNavigate } from 'react-router';
-import { CheckCircle2, XCircle, Calendar, Mail, Home } from 'lucide-react';
+import { CheckCircle2, XCircle, Calendar, Mail, Home, Clock3 } from 'lucide-react';
 import { soundManager } from '@/shared/lib/SoundManager';
 
 interface AssessmentResultScreenProps {
-  status?: 'pass' | 'fail';
+  status?: 'pass' | 'fail' | 'review';
   roleTitle?: string;
 }
 
@@ -13,6 +13,7 @@ export default function AssessmentResultScreen({
 }: AssessmentResultScreenProps) {
   const navigate = useNavigate();
   const isPass = status === 'pass';
+  const isReview = status === 'review';
 
   return (
     <div className="min-h-screen bg-brand-bg text-brand-text flex items-center justify-center p-4 sm:p-6">
@@ -20,15 +21,18 @@ export default function AssessmentResultScreen({
         {/* Glow effect */}
         <div
           className={`absolute top-0 right-0 w-80 h-80 blur-[120px] rounded-full pointer-events-none ${
-            isPass ? 'bg-emerald-500/10' : 'bg-brand-accent/5'
+            isPass || isReview ? 'bg-emerald-500/10' : 'bg-red-500/10'
           }`}
         />
 
         {/* Brand Header */}
         <div className="flex justify-between items-center pb-6 border-b border-brand-text/10">
-          <div className="font-display font-bold text-xl sm:text-2xl tracking-wider text-brand-text">
-            XL<span className="text-brand-accent">Chess</span>
-          </div>
+          <img
+            src="/logo-without-text.png"
+            alt="XLChess logo"
+            className="h-9 w-auto object-contain"
+            draggable={false}
+          />
           <span className="text-xs font-mono uppercase tracking-widest text-brand-secondary">
             Assessment Status
           </span>
@@ -40,11 +44,15 @@ export default function AssessmentResultScreen({
             className={`w-24 h-24 rounded-full flex items-center justify-center border-2 ${
               isPass
                 ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-400'
-                : 'bg-brand-surface border-brand-text/30 text-brand-secondary'
+                : isReview
+                ? 'bg-brand-accent/15 border-brand-accent/40 text-brand-accent'
+                : 'bg-red-500/15 border-red-500/40 text-red-400'
             }`}
           >
             {isPass ? (
               <CheckCircle2 className="w-14 h-14" />
+            ) : isReview ? (
+              <Clock3 className="w-14 h-14" />
             ) : (
               <XCircle className="w-14 h-14" />
             )}
@@ -57,10 +65,10 @@ export default function AssessmentResultScreen({
             {roleTitle}
           </div>
           <h1 className="text-2xl sm:text-4xl font-display font-bold text-brand-text">
-            {isPass ? 'Assessment Completed!' : 'Assessment Completed'}
+            Assessment Completed{isPass ? '!' : ''}
           </h1>
           <p className="text-lg sm:text-xl font-medium text-brand-accent">
-            {isPass ? 'Congratulations!' : 'Thank You!'}
+            {isPass ? 'Congratulations!' : isReview ? 'Thank You!' : 'Thank You!'}
           </p>
         </div>
 
@@ -71,6 +79,11 @@ export default function AssessmentResultScreen({
               You have successfully completed the assessment and have progressed to{' '}
               <strong className="text-brand-text">manual review</strong>.
             </p>
+          ) : isReview ? (
+            <p>
+              Your answers have been submitted. We do not automatically grade this
+              assessment — a member of our team will personally review your responses.
+            </p>
           ) : (
             <p>
               Unfortunately, you did not meet the requirements to progress to the next
@@ -80,7 +93,7 @@ export default function AssessmentResultScreen({
         </div>
 
         {/* Next Steps Cards */}
-        {isPass ? (
+        {isPass || isReview ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
             <div className="p-5 rounded-2xl bg-brand-surface/40 border border-brand-text/10 space-y-2">
               <div className="flex items-center gap-2 text-brand-accent text-sm font-semibold">
@@ -88,8 +101,8 @@ export default function AssessmentResultScreen({
                 <span>What happens next?</span>
               </div>
               <p className="text-xs sm:text-sm text-brand-secondary leading-relaxed">
-                Our engineering team will review your responses and get back to you
-                within <span className="text-brand-text font-semibold">3 – 5 business days</span>.
+                Our team will review your responses and get back to you within{' '}
+                <span className="text-brand-text font-semibold">7 days</span>.
               </p>
             </div>
 
@@ -118,6 +131,18 @@ export default function AssessmentResultScreen({
             </p>
           </div>
         )}
+
+        {/* Reattempt note — no reattempts are currently supported */}
+        <p className="text-sm sm:text-base text-brand-secondary/80 leading-relaxed">
+          If you would like to reattempt this assessment, please email{' '}
+          <a
+            href="mailto:careers@xlchess.com"
+            className="text-brand-accent underline hover:text-brand-accent/80 transition-colors"
+          >
+            careers@xlchess.com
+          </a>{' '}
+          and we will evaluate your request.
+        </p>
 
         {/* Return Button */}
         <div className="pt-4 flex justify-center">

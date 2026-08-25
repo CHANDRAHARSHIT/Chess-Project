@@ -45,7 +45,10 @@ export default function QuestionCard({
   );
 
   return (
-    <div className="bg-brand-surface rounded-3xl border border-brand-text/15 p-6 sm:p-8 space-y-6 relative overflow-hidden backdrop-blur-sm">
+    <div
+      id={`question-${question.questionNumber}`}
+      className="bg-brand-surface rounded-3xl border border-brand-text/15 p-6 sm:p-8 space-y-6 relative overflow-hidden backdrop-blur-sm scroll-mt-28"
+    >
       {/* Question Header */}
       <div className="flex items-center justify-between pb-4 border-b border-brand-text/10">
         <div>
@@ -143,7 +146,7 @@ export default function QuestionCard({
                     }}
                     className={`px-4 py-2 text-xs sm:text-sm font-medium rounded-t-xl transition-all cursor-pointer select-none whitespace-nowrap ${
                       isActive
-                        ? 'bg-brand-surface text-brand-accent border-t-2 border-brand-accent shadow-sm'
+                        ? 'bg-brand-surface text-brand-accent shadow-sm'
                         : 'text-brand-secondary hover:text-brand-text hover:bg-brand-surface/50'
                     }`}
                   >
@@ -154,7 +157,7 @@ export default function QuestionCard({
             </div>
 
             {/* Tab Content */}
-            <div className="p-4 sm:p-5 text-xs sm:text-sm leading-relaxed text-brand-secondary whitespace-pre-line font-mono bg-[#080B14]/60">
+            <div className="p-4 sm:p-5 text-xs sm:text-sm leading-relaxed text-brand-secondary whitespace-pre-line font-mono bg-brand-bg/60">
               {activeTab?.content}
             </div>
           </div>
@@ -168,7 +171,7 @@ export default function QuestionCard({
             <Code2 className="w-4 h-4 text-brand-accent" />
             <span>Function / Code Information</span>
           </div>
-          <div className="rounded-2xl border border-brand-text/20 bg-[#080B14] p-4 font-mono text-xs sm:text-sm text-brand-text whitespace-pre overflow-x-auto leading-relaxed shadow-inner">
+          <div className="rounded-2xl border border-brand-text/20 bg-brand-bg p-4 font-mono text-xs sm:text-sm text-brand-text whitespace-pre overflow-x-auto leading-relaxed shadow-inner">
             {question.codeBlock}
           </div>
         </div>

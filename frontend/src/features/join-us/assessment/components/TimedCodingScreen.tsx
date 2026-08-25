@@ -1,8 +1,7 @@
-import { useState, useMemo } from 'react';
-import { AlertTriangle, ArrowLeft, CheckCircle2, Clock, Code2 } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { AlertTriangle, ArrowLeft, Clock, Code2, TimerReset } from 'lucide-react';
 import { soundManager } from '@/shared/lib/SoundManager';
 import type { TimedCodingConfig } from '../assessmentTypes';
-import AssessmentTimer from './AssessmentTimer';
 import ShortTextInput from './inputs/ShortTextInput';
 
 interface TimedCodingScreenProps {
@@ -11,7 +10,19 @@ interface TimedCodingScreenProps {
   answer: string;
   onAnswerChange: (val: string) => void;
   onBackToPrevious: () => void;
-  onSubmitAssessment: () => void;
+  /** Absolute deadline (ISO string) from the server — null while the estimate hasn't been submitted yet. */
+  deadlineAt: string | null;
+  extensionUsed: boolean;
+  onRequestExtension: () => void;
+  /** Called once, when the countdown reaches zero. */
+  onExpire: () => void;
+}
+
+function formatRemaining(ms: number): string {
+  const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 }
 
 export default function TimedCodingScreen({
@@ -20,16 +31,43 @@ export default function TimedCodingScreen({
   answer,
   onAnswerChange,
   onBackToPrevious,
-  onSubmitAssessment,
+  deadlineAt,
+  extensionUsed,
+  onRequestExtension,
+  onExpire,
 }: TimedCodingScreenProps) {
   const estimatedMinutes = parseInt(estimatedMinutesRaw, 10) || 0;
   const exceedsLimit = estimatedMinutes > config.maxEstimateMinutes;
 
-  const allowedMinutes = estimatedMinutes + config.bonusMinutes;
-  const allowedSeconds = useMemo(
-    () => Math.max(allowedMinutes, 1) * 60,
-    [allowedMinutes]
-  );
+  // Countdown is derived from the server's absolute deadline timestamp, never
+  // stored as a ticking duration — remaining time is always `deadline - now`.
+  const [remainingMs, setRemainingMs] = useState<number | null>(null);
+  const hasExpiredRef = useRef(false);
+
+  useEffect(() => {
+    hasExpiredRef.current = false;
+
+    const tick = () => {
+      if (!deadlineAt) {
+        setRemainingMs(null);
+        return;
+      }
+      const remaining = new Date(deadlineAt).getTime() - Date.now();
+      setRemainingMs(remaining);
+      if (remaining <= 0 && !hasExpiredRef.current) {
+        hasExpiredRef.current = true;
+        onExpire();
+      }
+    };
+
+    tick();
+    if (!deadlineAt) return;
+    const interval = setInterval(tick, 1000);
+    return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [deadlineAt]);
+
+  const isDanger = remainingMs !== null && remainingMs <= 5 * 60_000;
 
   const [activeTabId, setActiveTabId] = useState<string>(
     config.question.supportingTabs?.[0]?.id || ''
@@ -103,34 +141,24 @@ export default function TimedCodingScreen({
   return (
     <div className="space-y-8">
       {/* Time Allocation Banner */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {/* Estimated Time Card */}
-        <div className="bg-brand-surface rounded-2xl border border-brand-text/15 p-5 text-center space-y-1">
-          <div className="text-xs font-mono uppercase tracking-widest text-brand-secondary">
-            Your Estimated Time
-          </div>
-          <div className="text-2xl sm:text-3xl font-mono font-bold text-brand-text">
-            {estimatedMinutes} minutes
-          </div>
+      <div className="bg-brand-accent/10 rounded-2xl border border-brand-accent/30 p-5 text-center space-y-1">
+        <div className="text-xs font-mono uppercase tracking-widest text-brand-accent font-semibold">
+          Your Time Allotted
         </div>
-
-        {/* Allowed Time Card with Bonus */}
-        <div className="bg-brand-accent/10 rounded-2xl border border-brand-accent/30 p-5 text-center space-y-1">
-          <div className="text-xs font-mono uppercase tracking-widest text-brand-accent font-semibold">
-            Allowed Time
-          </div>
-          <div className="text-2xl sm:text-3xl font-mono font-bold text-brand-accent">
-            {allowedMinutes} minutes
-          </div>
-          <div className="text-[11px] font-mono text-brand-secondary">
-            (Estimate + 15 minutes)
-          </div>
+        <div className="text-2xl sm:text-3xl font-mono font-bold text-brand-accent">
+          {estimatedMinutes} minutes
+        </div>
+        <div className="text-[11px] font-mono text-brand-secondary">
+          (As estimated in the previous question — need more? Use the button below.)
         </div>
       </div>
 
       {/* Main Coding Question Card */}
-      <div className="bg-brand-surface rounded-3xl border border-brand-text/15 p-6 sm:p-8 space-y-6">
-        {/* Header & Dedicated Countdown */}
+      <div
+        id={`question-${config.question.questionNumber}`}
+        className="bg-brand-surface rounded-3xl border border-brand-text/15 p-6 sm:p-8 space-y-6 scroll-mt-28"
+      >
+        {/* Header & Countdown */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-brand-text/10">
           <div>
             <span className="text-xs font-mono uppercase tracking-widest text-brand-accent font-semibold">
@@ -141,12 +169,42 @@ export default function TimedCodingScreen({
             </h2>
           </div>
 
-          <AssessmentTimer
-            initialSeconds={allowedSeconds}
-            onExpire={() => {
-              onSubmitAssessment();
-            }}
-          />
+          {remainingMs !== null && (
+            <div className="flex items-center gap-3">
+              <div
+                className={`inline-flex items-center gap-2.5 px-4 py-2 rounded-2xl border select-none ${
+                  isDanger
+                    ? 'bg-red-500/15 border-red-500/40 text-red-400'
+                    : 'bg-brand-surface/80 border-brand-text/15 text-brand-text'
+                }`}
+              >
+                <Clock className={`w-5 h-5 ${isDanger ? 'text-red-400' : 'text-brand-accent'}`} />
+                <div className="flex flex-col text-right">
+                  <span className="font-mono text-base font-bold tracking-wider leading-none">
+                    {formatRemaining(remainingMs)}
+                  </span>
+                  <span className="text-[10px] uppercase font-mono tracking-widest text-brand-secondary/80 mt-0.5">
+                    Time Remaining
+                  </span>
+                </div>
+              </div>
+
+              {!extensionUsed && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    soundManager.playButtonClick();
+                    onRequestExtension();
+                  }}
+                  className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-brand-accent/30 text-brand-accent text-xs font-semibold hover:bg-brand-accent/10 transition-colors cursor-pointer"
+                  title="One-time only"
+                >
+                  <TimerReset className="w-3.5 h-3.5" />
+                  <span>Need 15 more min?</span>
+                </button>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Purpose / Instructions */}
@@ -194,7 +252,7 @@ export default function TimedCodingScreen({
                       }}
                       className={`px-4 py-2 text-xs sm:text-sm font-medium rounded-t-xl transition-all cursor-pointer ${
                         isActive
-                          ? 'bg-brand-surface text-brand-accent border-t-2 border-brand-accent'
+                          ? 'bg-brand-surface text-brand-accent'
                           : 'text-brand-secondary hover:text-brand-text'
                       }`}
                     >
@@ -204,7 +262,7 @@ export default function TimedCodingScreen({
                 })}
               </div>
 
-              <div className="p-4 sm:p-5 text-xs sm:text-sm leading-relaxed text-brand-secondary whitespace-pre-line font-mono bg-[#080B14]">
+              <div className="p-4 sm:p-5 text-xs sm:text-sm leading-relaxed text-brand-secondary whitespace-pre-line font-mono bg-brand-bg">
                 {activeTab?.content}
               </div>
             </div>
@@ -224,33 +282,6 @@ export default function TimedCodingScreen({
             wordLimit={config.question.wordLimit || 1}
             placeholder={config.question.placeholder || 'Enter output value'}
           />
-        </div>
-
-        {/* Footer Navigation Buttons */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-brand-text/10">
-          <button
-            type="button"
-            onClick={() => {
-              soundManager.playButtonClick();
-              onBackToPrevious();
-            }}
-            className="inline-flex items-center gap-2 px-5 py-3 rounded-xl border border-brand-text/25 text-brand-text hover:bg-brand-surface/80 transition-colors cursor-pointer w-full sm:w-auto justify-center text-sm font-semibold"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Previous Question</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => {
-              soundManager.playButtonClick();
-              onSubmitAssessment();
-            }}
-            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-brand-accent text-brand-bg font-bold hover:bg-brand-accent/90 transition-transform active:scale-95 shadow-[0_0_20px_rgba(212,175,110,0.3)] cursor-pointer w-full sm:w-auto justify-center text-sm"
-          >
-            <CheckCircle2 className="w-4 h-4" />
-            <span>Complete Assessment</span>
-          </button>
         </div>
       </div>
     </div>

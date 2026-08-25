@@ -1,14 +1,12 @@
 import React from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { soundManager } from '@/shared/lib/SoundManager';
-import AssessmentTimer from './AssessmentTimer';
 import ProgressBar from './ProgressBar';
 import QuestionNavigator from './QuestionNavigator';
 import type { AssessmentQuestion } from '../assessmentTypes';
 
 interface AssessmentShellProps {
   roleTitle: string;
-  totalTimeMinutes: number;
   totalQuestions: number;
   currentQuestionNumber: number;
   answeredQuestionNumbers: Set<number>;
@@ -21,13 +19,11 @@ interface AssessmentShellProps {
   onNavigateToQuestion: (qNum: number) => void;
   onPreviousPage: () => void;
   onNextPage: () => void;
-  onTimerExpire?: () => void;
   children: React.ReactNode;
 }
 
 export default function AssessmentShell({
   roleTitle,
-  totalTimeMinutes,
   totalQuestions,
   currentQuestionNumber,
   answeredQuestionNumbers,
@@ -40,7 +36,6 @@ export default function AssessmentShell({
   onNavigateToQuestion,
   onPreviousPage,
   onNextPage,
-  onTimerExpire,
   children,
 }: AssessmentShellProps) {
   return (
@@ -53,9 +48,12 @@ export default function AssessmentShell({
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
           {/* Logo & Assessment Title */}
           <div className="flex items-center gap-3">
-            <div className="font-display font-bold text-xl sm:text-2xl tracking-wider text-brand-text">
-              XL<span className="text-brand-accent">Chess</span>
-            </div>
+            <img
+              src="/logo-without-text.png"
+              alt="XLChess logo"
+              className="h-9 w-auto object-contain"
+              draggable={false}
+            />
             <div className="h-5 w-px bg-brand-text/20" />
             <div className="flex flex-col">
               <span className="text-xs font-mono uppercase tracking-wider text-brand-accent font-semibold">
@@ -66,12 +64,6 @@ export default function AssessmentShell({
               </span>
             </div>
           </div>
-
-          {/* Global Countdown Timer */}
-          <AssessmentTimer
-            initialSeconds={totalTimeMinutes * 60}
-            onExpire={onTimerExpire}
-          />
         </div>
       </header>
 
@@ -87,7 +79,7 @@ export default function AssessmentShell({
 
         {/* Page Purpose Callout (if present) */}
         {pagePurpose && (
-          <div className="bg-brand-surface/80 rounded-2xl border border-brand-text/15 p-5 border-l-4 border-l-brand-accent backdrop-blur-sm">
+          <div className="bg-brand-surface/80 rounded-2xl border border-brand-text/15 p-5 backdrop-blur-sm">
             <h3 className="text-xs font-mono uppercase tracking-wider text-brand-accent font-semibold mb-1">
               Purpose
             </h3>
