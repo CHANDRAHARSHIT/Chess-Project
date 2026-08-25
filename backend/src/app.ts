@@ -15,6 +15,7 @@ import { builderLessonRouter } from "./routes/builderLesson.route.js";
 import { matchmakingRouter } from "./matchmaking/index.js";
 import { pathwayProgressRouter } from "./routes/pathway-progress.route.js";
 import { gamesRouter } from "./routes/games.route.js";
+import { assessmentRouter } from "./routes/assessment.route.js";
 import { errorHandler } from "./middleware/error.middleware.js";
 
 const app = express();
@@ -97,6 +98,7 @@ app.use("/api/published-lessons", publicLessonRouter);
 app.use("/api/matchmaking", matchmakingRouter);
 app.use("/api/pathway-progress", pathwayProgressRouter);
 app.use("/api/games", gamesRouter);
+app.use("/api/assessments", assessmentRouter);
 
 // Catch-all centralized error handler
 app.use(errorHandler);
