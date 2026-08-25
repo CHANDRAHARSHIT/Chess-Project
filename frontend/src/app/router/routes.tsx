@@ -237,6 +237,11 @@ export const mainRoutes: RouteConfig[] = [
     element: <JoinUsPage />,
     title: "Join Us | XLChess",
   },
+  {
+    path: "/join-us/:roleId",
+    element: <JoinUsPage />,
+    title: "Join Us | XLChess",
+  },
 ];
 
 // Routes that run inside the MinimalLayout (Navbar only, no Sidebar/Footer)
