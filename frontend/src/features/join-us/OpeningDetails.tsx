@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router";
 import { type JobOpening } from "./joinUsData";
 import { soundManager } from "@/shared/lib/SoundManager";
 import {
@@ -20,11 +21,11 @@ export default function OpeningDetails({
   opening,
   onBack,
 }: OpeningDetailsProps) {
+  const navigate = useNavigate();
+
   const handleBeginAssessment = () => {
     soundManager.playButtonClick();
-    alert(
-      `Assessment for ${opening.roleSubtitle || opening.title} coming soon.`,
-    );
+    navigate(`/join-us/${opening.id}/assessment`);
   };
 
   const getDepartmentIcon = () => {
