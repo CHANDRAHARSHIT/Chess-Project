@@ -1,5 +1,6 @@
 import { AlertTriangle, ArrowLeft, Send } from 'lucide-react';
 import { soundManager } from '@/shared/lib/SoundManager';
+import { pluralize } from '@/shared/lib/pluralize';
 
 interface AssessmentSubmitConfirmModalProps {
   unattemptedQuestionNumbers: number[];
@@ -33,11 +34,11 @@ export default function AssessmentSubmitConfirmModal({
           <div>
             <h2
               id="submit-confirm-title"
-              className="text-lg sm:text-xl font-display font-bold text-brand-text"
+              className="text-xl sm:text-2xl font-display font-bold text-brand-text"
             >
-              {count} question{count === 1 ? '' : 's'} not attempted
+              {count} {pluralize(count, 'question')} not attempted
             </h2>
-            <p className="text-xs sm:text-sm text-brand-secondary mt-1">
+            <p className="text-sm sm:text-base text-brand-secondary mt-1">
               Would you like to attempt them, or submit what you have?
             </p>
           </div>

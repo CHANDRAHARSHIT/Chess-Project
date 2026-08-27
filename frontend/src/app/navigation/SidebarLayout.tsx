@@ -410,7 +410,7 @@ export default function SidebarLayout({
   const footerLinks = [
     { name: "About", href: "/about" },
     { name: "Copyright", href: "/copyright" },
-    { name: "Contact Us", href: "/contact" },
+    { name: "Contact Us", href: "/contact-us" },
     { name: "Join Us", href: "/join-us" },
     { name: "Creator", href: "/creator" },
     { name: "Advertise", href: "/advertise" },

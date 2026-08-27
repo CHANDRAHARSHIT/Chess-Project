@@ -212,7 +212,7 @@ export default function AdvertisePage() {
             team to discuss your goals and explore what we can build together.
           </p>
           <a
-            href="/contact"
+            href="/contact-us"
             className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full border border-brand-accent/50 text-brand-accent hover:bg-brand-accent/10 transition-all duration-200 text-sm font-semibold font-sans"
           >
             Contact Our Partnerships Team

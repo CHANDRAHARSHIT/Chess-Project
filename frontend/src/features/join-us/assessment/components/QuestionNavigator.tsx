@@ -1,6 +1,8 @@
 import { soundManager } from '@/shared/lib/SoundManager';
 import { Bookmark, HelpCircle } from 'lucide-react';
 import type { AssessmentQuestion } from '../assessmentTypes';
+import { pluralize } from '@/shared/lib/pluralize';
+import { getQuestionTypeLabel } from '../questionTypeLabel';
 
 interface QuestionNavigatorProps {
   totalQuestions: number;
@@ -11,6 +13,7 @@ interface QuestionNavigatorProps {
   activeQuestion?: AssessmentQuestion;
 }
 
+/** Desktop question navigator — full legend + grid + tips card. See MobileQuestionNav for the small-screen equivalent. */
 export default function QuestionNavigator({
   totalQuestions,
   currentQuestionNumber,
@@ -19,25 +22,6 @@ export default function QuestionNavigator({
   onNavigateToQuestion,
   activeQuestion,
 }: QuestionNavigatorProps) {
-  const getQuestionTypeLabel = (type?: string) => {
-    switch (type) {
-      case 'short-text':
-        return 'Short Text Answer';
-      case 'long-text':
-        return 'Long Text Answer';
-      case 'multiple-choice':
-        return 'Multiple Choice';
-      case 'radio-with-text':
-        return 'Choice with Explanation';
-      case 'number':
-        return 'Numeric Input';
-      case 'code':
-        return 'Code / Pseudocode';
-      default:
-        return 'Problem Solving';
-    }
-  };
-
   return (
     <div className="space-y-6">
       {/* Question Navigator Card */}
@@ -135,8 +119,7 @@ export default function QuestionNavigator({
                   Word Limit
                 </div>
                 <div className="text-sm font-semibold text-brand-accent font-mono">
-                  {activeQuestion.wordLimit}{' '}
-                  {activeQuestion.wordLimit === 1 ? 'word' : 'words'}
+                  {activeQuestion.wordLimit} {pluralize(activeQuestion.wordLimit, 'word')}
                 </div>
               </div>
             )}

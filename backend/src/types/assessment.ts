@@ -20,6 +20,8 @@ export interface SupportingInfoTab {
   id: string;
   label: string;
   content: string;
+  /** Renders content as a line-numbered code block instead of prose. */
+  isCode?: boolean;
 }
 
 export interface AssessmentQuestion {

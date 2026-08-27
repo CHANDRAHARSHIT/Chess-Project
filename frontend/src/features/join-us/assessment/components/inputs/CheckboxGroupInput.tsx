@@ -89,7 +89,7 @@ export default function CheckboxGroupInput({
             >
               {/* Checkbox box */}
               <div
-                className={`w-5 h-5 rounded-lg border flex items-center justify-center shrink-0 mt-0.5 transition-all ${
+                className={`w-5 h-5 rounded-none border flex items-center justify-center shrink-0 mt-0.5 transition-all ${
                   isSelected
                     ? 'border-brand-accent bg-brand-accent text-brand-bg font-bold'
                     : 'border-brand-text/30 bg-transparent'

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Bookmark, Info, Code2 } from "lucide-react";
 import { soundManager } from "@/shared/lib/SoundManager";
 import type { AssessmentQuestion } from "../assessmentTypes";
+import CodeBlock from "./CodeBlock";
 import ShortTextInput from "./inputs/ShortTextInput";
 import LongTextInput from "./inputs/LongTextInput";
 import MultipleChoiceInput from "./inputs/MultipleChoiceInput";
@@ -22,6 +23,9 @@ interface QuestionCardProps {
   textValue?: string;
   onRadioValueChange?: (val: string) => void;
   onTextValueChange?: (val: string) => void;
+  /** Locks the answer input — used for the Q10 time estimate once it's been submitted and can't be changed. */
+  disabled?: boolean;
+  disabledNote?: string;
 }
 
 export default function QuestionCard({
@@ -35,6 +39,8 @@ export default function QuestionCard({
   textValue = "",
   onRadioValueChange,
   onTextValueChange,
+  disabled = false,
+  disabledNote,
 }: QuestionCardProps) {
   const [activeTabId, setActiveTabId] = useState<string>(
     question.supportingTabs?.[0]?.id || "",
@@ -51,14 +57,9 @@ export default function QuestionCard({
     >
       {/* Question Header */}
       <div className="flex items-center justify-between pb-4 border-b border-brand-text/10">
-        <div>
-          <span className="text-xs font-mono uppercase tracking-widest text-brand-accent font-semibold">
-            Question {question.questionNumber} of {totalQuestions}
-          </span>
-          <h2 className="text-xl sm:text-2xl font-display font-bold text-brand-text mt-0.5">
-            Question {question.questionNumber}
-          </h2>
-        </div>
+        <span className="text-xs font-mono uppercase tracking-widest text-brand-accent font-semibold">
+          Question {question.questionNumber} of {totalQuestions}
+        </span>
 
         {/* Bookmark button */}
         <button
@@ -117,13 +118,8 @@ export default function QuestionCard({
       )}
 
       {/* Question Text */}
-      <div className="space-y-2">
-        <h3 className="text-xs font-mono uppercase tracking-wider text-brand-secondary font-semibold">
-          Question
-        </h3>
-        <div className="bg-brand-surface/50 border border-brand-text/10 rounded-2xl p-4 sm:p-5 text-brand-text text-sm sm:text-base leading-relaxed whitespace-pre-line font-sans">
-          {question.questionText}
-        </div>
+      <div className="bg-brand-surface/50 border border-brand-text/10 rounded-2xl p-4 sm:p-5 text-brand-text text-sm sm:text-base leading-relaxed whitespace-pre-wrap font-sans">
+        {question.questionText}
       </div>
 
       {/* Supporting Information (Tabs) */}
@@ -159,9 +155,13 @@ export default function QuestionCard({
             </div>
 
             {/* Tab Content */}
-            <div className="p-4 sm:p-5 text-xs sm:text-sm leading-relaxed text-brand-secondary whitespace-pre-line font-mono bg-brand-bg/60">
-              {activeTab?.content}
-            </div>
+            {activeTab?.isCode ? (
+              <CodeBlock code={activeTab.content} showHeader={false} />
+            ) : (
+              <div className="p-4 sm:p-5 text-xs sm:text-sm leading-relaxed text-brand-secondary whitespace-pre-wrap font-mono bg-brand-bg/60">
+                {activeTab?.content}
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -173,8 +173,8 @@ export default function QuestionCard({
             <Code2 className="w-4 h-4 text-brand-accent" />
             <span>Function / Code Information</span>
           </div>
-          <div className="rounded-2xl border border-brand-text/20 bg-brand-bg p-4 font-mono text-xs sm:text-sm text-brand-text whitespace-pre overflow-x-auto leading-relaxed shadow-inner">
-            {question.codeBlock}
+          <div className="rounded-2xl border border-brand-text/20 overflow-hidden shadow-inner">
+            <CodeBlock code={question.codeBlock} language={question.codeLanguage} />
           </div>
         </div>
       )}
@@ -248,14 +248,20 @@ export default function QuestionCard({
           )}
 
           {question.type === "number" && (
-            <NumberInput
-              id={`question-${question.id}-input`}
-              value={answer}
-              onChange={onAnswerChange}
-              prefix={question.numberPrefix}
-              suffix={question.numberSuffix}
-              placeholder={question.placeholder}
-            />
+            <div className="space-y-2">
+              <NumberInput
+                id={`question-${question.id}-input`}
+                value={answer}
+                onChange={onAnswerChange}
+                prefix={question.numberPrefix}
+                suffix={question.numberSuffix}
+                placeholder={question.placeholder}
+                disabled={disabled}
+              />
+              {disabled && disabledNote && (
+                <p className="text-xs text-brand-accent/80 font-medium">{disabledNote}</p>
+              )}
+            </div>
           )}
 
           {question.type === "code" && (
