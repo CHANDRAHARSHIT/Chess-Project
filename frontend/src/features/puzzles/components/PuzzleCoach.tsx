@@ -319,30 +319,87 @@ export function PuzzleCoach({
 // A self-contained coach panel for the Custom Puzzles flow.
 // It accepts a raw CuratedPuzzle and derives display context from it.
 
+/**
+ * Converts a raw Lichess theme tag into human-readable text using only
+ * string transformation — no lookup table.
+ *   "hangingPiece" → "Hanging Piece"
+ *   "mateIn2"      → "Mate In 2"
+ *   "xRayAttack"   → "X Ray Attack"
+ */
+function formatThemeLabel(theme: string): string {
+  return theme
+    // Insert a space before each uppercase letter (camelCase split)
+    .replace(/([A-Z])/g, ' $1')
+    // Insert a space before a digit sequence that follows a letter
+    .replace(/([a-zA-Z])(\d)/g, '$1 $2')
+    // Trim any leading space produced by the first rule
+    .trim()
+    // Capitalise the very first character
+    .replace(/^./, (s) => s.toUpperCase());
+}
+
+// Tags that convey very little tactical specificity on their own.
+// They are deprioritised if any more specific theme is present.
+const LOW_SIGNAL_THEMES = new Set([
+  'middlegame', 'endgame', 'opening',
+  'advantage', 'equality', 'crushing',
+  'long', 'short', 'master', 'superGM',
+]);
+
+/**
+ * Builds a unique idle hint for a custom puzzle derived entirely from its
+ * own `themes` array — no per-theme hardcoded sentences.
+ *
+ * Algorithm:
+ *   1. Return a default message when puzzle is null or themes is empty.
+ *   2. Filter out low-signal tags when more specific ones are available.
+ *   3. Take up to the first 2 remaining themes.
+ *   4. Convert them with formatThemeLabel and join into a template message.
+ */
+function deriveCustomIdleHint(puzzle: CuratedPuzzle | null): string {
+  if (!puzzle) return 'Select a puzzle to begin.';
+  const themes = puzzle.themes ?? [];
+  if (themes.length === 0) {
+    // No theme data — fall back to move-count inference
+    const moveList = (puzzle.moves ?? '').trim().split(/\s+/).filter(Boolean);
+    const playerMoves = moveList.slice(1);
+    const hasPromotion = playerMoves.some((m) => /[qrbn]$/i.test(m));
+    if (hasPromotion) return 'A pawn can promote. Find the winning path.';
+    const count = playerMoves.length;
+    if (count === 1) return 'One precise move decides the game. Find it.';
+    if (count === 2) return 'A two-move combination wins. Calculate both moves.';
+    if (count >= 3) return 'A multi-move combination. Work out the full sequence.';
+    return 'Find the best move for the winning side.';
+  }
+
+  // Prefer specific themes over generic/context ones
+  const specific = themes.filter((t) => !LOW_SIGNAL_THEMES.has(t));
+  const pool = specific.length > 0 ? specific : themes;
+
+  // Take at most 2 themes to keep the message concise
+  const picked = pool.slice(0, 2);
+  const labels = picked.map(formatThemeLabel);
+
+  if (labels.length === 1) {
+    return `Theme: ${labels[0]}. Find the winning move.`;
+  }
+  return `Theme: ${labels[0]} + ${labels[1]}. Find the winning move.`;
+}
+
 function getCustomMessage(status: CoachStatus, puzzle: CuratedPuzzle | null): string {
   if (status === 'correct') return 'Excellent! You found the winning move.';
   if (status === 'wrong') {
     const themes = puzzle?.themes ?? [];
-    if (themes.some((t) => t.toLowerCase().includes('mate')))
+    if (themes.some((t) => /mate/i.test(t)))
       return "Not quite — the checkmate is still there. Look again.";
+    if (themes.some((t) => t === 'fork'))
+      return "The fork is still available. Find the square that attacks two pieces.";
+    if (themes.some((t) => t === 'pin'))
+      return "Think about which piece is pinned and how to press that advantage.";
     return "That's not the right move. Think it through and try again.";
   }
-  // idle
-  if (!puzzle) return 'Select a puzzle to begin.';
-  const themes = puzzle.themes ?? [];
-  if (themes.some((t) => t.toLowerCase().includes('mate'))) {
-    const mateTag = themes.find((t) => /^mateIn(\d)$/.test(t));
-    if (mateTag) {
-      const n = mateTag.replace('mateIn', '');
-      return `Checkmate in ${n}. Can you find the forced sequence?`;
-    }
-    return 'Deliver the checkmate — find the forced sequence.';
-  }
-  if (themes.some((t) => t === 'fork')) return 'A fork wins material — find the double attack.';
-  if (themes.some((t) => t === 'pin')) return 'Use a pin to your advantage.';
-  if (themes.some((t) => t === 'skewer')) return 'A skewer forces a decisive trade.';
-  if (themes.some((t) => t === 'sacrifice')) return 'A sacrifice opens the decisive line.';
-  return 'Find the best move for the winning side.';
+  // idle — fully derived from the puzzle's own data, no static fallback strings
+  return deriveCustomIdleHint(puzzle);
 }
 
 function customSideToMove(fen?: string): 'White' | 'Black' {
@@ -371,6 +428,15 @@ function getCustomTitle(puzzle: CuratedPuzzle): string {
     const label = themes[0].replace(/([A-Z])/g, ' $1').replace(/^./, (s) => s.toUpperCase());
     return label;
   }
+  // Infer from moves when no themes
+  const moveList = (puzzle.moves ?? '').trim().split(/\s+/).filter(Boolean);
+  const playerMoves = moveList.slice(1);
+  const hasPromotion = playerMoves.some((m) => /[qrbn]$/i.test(m));
+  if (hasPromotion) return 'Promotion Puzzle';
+  const count = playerMoves.length;
+  if (count === 1) return 'One Move';
+  if (count === 2) return 'Two-Move Combo';
+  if (count >= 3) return 'Combination';
   return 'Tactics Puzzle';
 }
 
