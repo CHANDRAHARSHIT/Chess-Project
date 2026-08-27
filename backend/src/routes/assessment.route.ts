@@ -9,6 +9,11 @@ assessmentRouter.put("/:trackSlug/answer", requireAuth, AssessmentController.sav
 assessmentRouter.put("/:trackSlug/bookmark", requireAuth, AssessmentController.setBookmark);
 assessmentRouter.put("/:trackSlug/estimate", requireAuth, AssessmentController.submitEstimate);
 assessmentRouter.post(
+  "/:trackSlug/start-timed-section",
+  requireAuth,
+  AssessmentController.startTimedSection
+);
+assessmentRouter.post(
   "/:trackSlug/extend-time",
   requireAuth,
   AssessmentController.requestExtension

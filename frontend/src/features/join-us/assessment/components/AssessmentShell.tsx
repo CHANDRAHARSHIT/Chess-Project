@@ -12,10 +12,14 @@ interface AssessmentShellProps {
   currentQuestionNumber: number;
   answeredQuestionNumbers: Set<number>;
   bookmarkedQuestionNumbers: Set<number>;
+  /** Question numbers that can't be jumped to yet (e.g. Q11 before the Q10 estimate is submitted). */
+  lockedQuestionNumbers?: Set<number>;
   activeQuestion?: AssessmentQuestion;
   pagePurpose?: string;
   submitButtonText?: string;
   isFirstPage: boolean;
+  /** True while Q11's timer is running — the candidate can't leave it until they finish or time runs out. */
+  previousDisabled?: boolean;
   isLastPage: boolean;
   onNavigateToQuestion: (qNum: number) => void;
   onPreviousPage: () => void;
@@ -29,10 +33,12 @@ export default function AssessmentShell({
   currentQuestionNumber,
   answeredQuestionNumbers,
   bookmarkedQuestionNumbers,
+  lockedQuestionNumbers,
   activeQuestion,
   pagePurpose,
   submitButtonText = 'Save & Continue',
   isFirstPage,
+  previousDisabled = false,
   isLastPage: _isLastPage,
   onNavigateToQuestion,
   onPreviousPage,
@@ -96,6 +102,7 @@ export default function AssessmentShell({
             currentQuestionNumber={currentQuestionNumber}
             answeredQuestionNumbers={answeredQuestionNumbers}
             bookmarkedQuestionNumbers={bookmarkedQuestionNumbers}
+            lockedQuestionNumbers={lockedQuestionNumbers}
             onNavigateToQuestion={onNavigateToQuestion}
             activeQuestion={activeQuestion}
           />
@@ -113,6 +120,7 @@ export default function AssessmentShell({
               currentQuestionNumber={currentQuestionNumber}
               answeredQuestionNumbers={answeredQuestionNumbers}
               bookmarkedQuestionNumbers={bookmarkedQuestionNumbers}
+              lockedQuestionNumbers={lockedQuestionNumbers}
               onNavigateToQuestion={onNavigateToQuestion}
               activeQuestion={activeQuestion}
             />
@@ -124,13 +132,24 @@ export default function AssessmentShell({
           {!isFirstPage ? (
             <button
               type="button"
+              disabled={previousDisabled}
               onClick={() => {
+                if (previousDisabled) return;
                 soundManager.playButtonClick();
                 onPreviousPage();
               }}
-              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl border border-brand-text/25 text-brand-text hover:bg-brand-surface/80 transition-colors cursor-pointer w-full sm:w-auto justify-center text-sm font-semibold group"
+              title={previousDisabled ? "You can't leave this question until the timer runs out" : undefined}
+              className={`inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl border transition-colors w-full sm:w-auto justify-center text-sm font-semibold group ${
+                previousDisabled
+                  ? 'border-brand-text/10 text-brand-secondary/40 cursor-not-allowed'
+                  : 'border-brand-text/25 text-brand-text hover:bg-brand-surface/80 cursor-pointer'
+              }`}
             >
-              <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+              <ArrowLeft
+                className={`w-4 h-4 transition-transform ${
+                  previousDisabled ? '' : 'group-hover:-translate-x-1'
+                }`}
+              />
               <span>Previous</span>
             </button>
           ) : (

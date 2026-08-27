@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useSearchParams } from 'react-router';
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, Lock } from 'lucide-react';
 import {
   AssessmentService,
   AssessmentApiError,
@@ -13,6 +13,7 @@ import AssessmentResultScreen from '@/features/join-us/assessment/components/Ass
 import AssessmentAlreadyCompleteScreen from '@/features/join-us/assessment/components/AssessmentAlreadyCompleteScreen';
 import AssessmentShell from '@/features/join-us/assessment/components/AssessmentShell';
 import AssessmentSubmitConfirmModal from '@/features/join-us/assessment/components/AssessmentSubmitConfirmModal';
+import TimedSectionWarningModal from '@/features/join-us/assessment/components/TimedSectionWarningModal';
 import QuestionCard from '@/features/join-us/assessment/components/QuestionCard';
 import TimedCodingScreen from '@/features/join-us/assessment/components/TimedCodingScreen';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -78,6 +79,18 @@ export default function AssessmentPage() {
   // frozen for that round trip.
   const [pageTransitioning, setPageTransitioning] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
+  // Shown when the candidate clicks the locked Q11 nav pill before an
+  // estimate exists — distinct from actionError (red/failure) since this
+  // isn't a failure, just a nudge back to Q10.
+  const [noticeMessage, setNoticeMessage] = useState<string | null>(null);
+  // Loading state for the "I'm Ready — Start the Timer" button on the Q11
+  // entry-warning modal, while startTimedSection's round trip is in flight.
+  const [startingTimedSection, setStartingTimedSection] = useState(false);
+  // Ticks once a second while the timed section's deadline is live, purely
+  // so the navigation-lock check below re-evaluates as the deadline passes
+  // (Q11 must unlock the rest of the assessment the moment time runs out,
+  // with no user action required to notice that).
+  const [nowMs, setNowMs] = useState(() => Date.now());
 
   const saveTimers = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
 
@@ -88,6 +101,12 @@ export default function AssessmentPage() {
     const timer = setTimeout(() => setActionError(null), TOAST_AUTO_DISMISS_MS);
     return () => clearTimeout(timer);
   }, [actionError]);
+
+  useEffect(() => {
+    if (!noticeMessage) return;
+    const timer = setTimeout(() => setNoticeMessage(null), TOAST_AUTO_DISMISS_MS);
+    return () => clearTimeout(timer);
+  }, [noticeMessage]);
 
   const loadAttempt = useCallback(async () => {
     if (!trackSlug) {
@@ -153,6 +172,58 @@ export default function AssessmentPage() {
     return config.pages[pageIndex]?.questions[0]?.questionNumber ?? 1;
   };
 
+  // Safety net: if this page is somehow reached without a submitted Q10
+  // estimate (e.g. a stale bookmark/back-forward nav), bounce back to the
+  // previous page rather than rendering Q11 unlocked. Inlined instead of
+  // calling handlePreviousPage (declared later) to avoid a TDZ reference.
+  useEffect(() => {
+    if (!(isTimedCodingPage && attempt && attempt.estimateMinutes == null && currentPageIndex > 0)) {
+      return;
+    }
+    const prevIndex = currentPageIndex - 1;
+    const timer = setTimeout(() => {
+      setCurrentPageIndex(prevIndex);
+      setFocusedQuestionNumber(firstQuestionNumberOfPage(prevIndex));
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [isTimedCodingPage, attempt, currentPageIndex]);
+
+  useEffect(() => {
+    if (!attempt?.timedDeadlineAt) return;
+    const interval = setInterval(() => setNowMs(Date.now()), 1000);
+    return () => clearInterval(interval);
+  }, [attempt?.timedDeadlineAt]);
+
+  // The candidate is freed from the Q11-only lock either once time runs
+  // out OR the moment they've actually answered it — there's no reason to
+  // keep them trapped on a question they've already completed just because
+  // the clock hasn't hit zero yet.
+  const timedQuestionId = config?.timedCodingConfig?.question.id;
+  const hasAnsweredTimedQuestion = !!timedQuestionId && (answers[timedQuestionId]?.trim().length ?? 0) > 0;
+
+  // True while the candidate has actually opened Q11, its deadline hasn't
+  // passed yet, AND they haven't answered it. Drives the "locked into Q11"
+  // rule below — an exceeds-limit estimate never gets a deadline, so that
+  // dead-end path is correctly never "running."
+  const isTimedSectionRunning =
+    !!attempt?.timedSectionStartedAt &&
+    !!attempt?.timedDeadlineAt &&
+    nowMs < new Date(attempt.timedDeadlineAt).getTime() &&
+    !hasAnsweredTimedQuestion;
+
+  // Safety net for the reverse direction: once the timer is running, force
+  // the candidate back onto Q11 if anything (stale nav, back/forward) lands
+  // them elsewhere — they must finish or run out the clock before leaving.
+  useEffect(() => {
+    if (!config?.timedCodingConfig || !isTimedSectionRunning || isTimedCodingPage) return;
+    const timedQNum = config.timedCodingConfig.question.questionNumber;
+    const timer = setTimeout(() => {
+      setCurrentPageIndex(config.pages.length);
+      setFocusedQuestionNumber(timedQNum);
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [isTimedSectionRunning, isTimedCodingPage, config]);
+
   useEffect(() => {
     const el = document.getElementById(`question-${focusedQuestionNumber}`);
     if (el) {
@@ -186,6 +257,31 @@ export default function AssessmentPage() {
         (qNum) => !answeredQuestionNumbers.has(qNum)
       )
     : [];
+
+  // Two distinct locks share this one set, never active at the same time:
+  // - Before a Q10 estimate is submitted, Q11 itself is unclickable.
+  // - Once the timer is actually running, every OTHER question is
+  //   unclickable — the candidate must finish or run out the clock on Q11
+  //   before they can go anywhere else. The lock lifts the instant
+  //   isTimedSectionRunning goes false (timer expired), no action needed.
+  const lockedQuestionNumbers = (() => {
+    const locked = new Set<number>();
+    if (!config?.timedCodingConfig) return locked;
+    const timedQNum = config.timedCodingConfig.question.questionNumber;
+
+    if (attempt?.estimateMinutes == null) {
+      locked.add(timedQNum);
+      return locked;
+    }
+
+    if (isTimedSectionRunning) {
+      for (let qNum = 1; qNum <= config.totalQuestions; qNum++) {
+        if (qNum !== timedQNum) locked.add(qNum);
+      }
+    }
+
+    return locked;
+  })();
 
   // Backoff schedule (ms) between retries for a save that fails at the
   // network level (not a real server rejection). Spread out to comfortably
@@ -269,7 +365,34 @@ export default function AssessmentPage() {
 
   const handleNavigateToQuestion = (qNum: number) => {
     if (!config) return;
-    if (config.timedCodingConfig && qNum === config.timedCodingConfig.question.questionNumber) {
+    const timedConfig = config.timedCodingConfig;
+    const isTimedQuestion = !!timedConfig && qNum === timedConfig.question.questionNumber;
+
+    // Clicking the locked Q11 pill before an estimate exists doesn't just
+    // no-op — it sends the candidate to Q10 and tells them what to do.
+    if (isTimedQuestion && timedConfig && attempt?.estimateMinutes == null) {
+      const q10PageIndex = config.pages.findIndex((page) =>
+        page.questions.some((q) => q.id === timedConfig.estimateQuestionId)
+      );
+      if (q10PageIndex !== -1) {
+        const q10Question = config.pages[q10PageIndex].questions.find(
+          (q) => q.id === timedConfig.estimateQuestionId
+        );
+        setCurrentPageIndex(q10PageIndex);
+        setFocusedQuestionNumber(q10Question?.questionNumber ?? firstQuestionNumberOfPage(q10PageIndex));
+      }
+      setNoticeMessage(
+        'Question 11 is locked. Enter and submit your time estimate on Question 10 first.'
+      );
+      return;
+    }
+
+    // Direct-navigation guard, mirroring the disabled nav buttons — belt
+    // and suspenders against any other path (e.g. a stale click) trying to
+    // jump to a question locked because Q11's timer is currently running.
+    if (lockedQuestionNumbers.has(qNum)) return;
+
+    if (isTimedQuestion) {
       setCurrentPageIndex(config.pages.length);
       setFocusedQuestionNumber(qNum);
       return;
@@ -360,10 +483,35 @@ export default function AssessmentPage() {
   };
 
   const handlePreviousPage = () => {
+    // While Q11's timer is running, the candidate must finish or run out
+    // the clock before leaving it — mirrors the disabled Previous button.
+    if (isTimedSectionRunning) return;
     if (currentPageIndex > 0) {
       const prevIndex = currentPageIndex - 1;
       setCurrentPageIndex(prevIndex);
       setFocusedQuestionNumber(firstQuestionNumberOfPage(prevIndex));
+    }
+  };
+
+  // Fires when the candidate confirms the "timer starts now" warning on
+  // Q11 — stamps the server-side deadline for the first time. A no-op on
+  // the server if it's already been started, so this is safe to fire at
+  // most once per attempt from the UI's perspective.
+  const handleStartTimedSection = async () => {
+    if (!trackSlug) return;
+    setStartingTimedSection(true);
+    setActionError(null);
+    try {
+      const updated = await AssessmentService.startTimedSection(trackSlug);
+      setAttempt(updated);
+    } catch (error) {
+      if (isUnauthorized(error)) {
+        redirectToLogin();
+        return;
+      }
+      setActionError('Failed to start the timed question. Please try again.');
+    } finally {
+      setStartingTimedSection(false);
     }
   };
 
@@ -417,6 +565,14 @@ export default function AssessmentPage() {
         ? String(attempt.estimateMinutes)
         : answers[config.timedCodingConfig.estimateQuestionId] || '0';
 
+    // An estimate over the template's limit is a dead end (TimedCodingScreen
+    // renders its own "exceeds limit" screen, no countdown involved) — the
+    // "timer starts now" warning only applies to the real timed challenge.
+    const exceedsEstimateLimit =
+      attempt.estimateMinutes != null &&
+      attempt.estimateMinutes > config.timedCodingConfig.maxEstimateMinutes;
+    const timerNotYetStarted = attempt.timedSectionStartedAt == null && !exceedsEstimateLimit;
+
     return (
       <>
         <AssessmentShell
@@ -425,29 +581,60 @@ export default function AssessmentPage() {
           currentQuestionNumber={config.timedCodingConfig.question.questionNumber}
           answeredQuestionNumbers={answeredQuestionNumbers}
           bookmarkedQuestionNumbers={bookmarkedQuestionNumbers}
+          lockedQuestionNumbers={lockedQuestionNumbers}
           activeQuestion={config.timedCodingConfig.question}
           isFirstPage={false}
+          previousDisabled={isTimedSectionRunning}
           isLastPage={true}
           onNavigateToQuestion={handleNavigateToQuestion}
           onPreviousPage={handlePreviousPage}
           onNextPage={attemptSubmit}
           submitButtonText={submitting ? 'Submitting...' : 'Complete Assessment'}
         >
-          <TimedCodingScreen
-            config={config.timedCodingConfig}
-            estimatedMinutesRaw={q10Answer}
-            answer={answers[config.timedCodingConfig.question.id] || ''}
-            onAnswerChange={(val) =>
-              handleAnswerChange(config.timedCodingConfig!.question.id, val)
-            }
-            onBackToPrevious={handlePreviousPage}
-            deadlineAt={attempt.timedDeadlineAt}
-          />
+          {timerNotYetStarted ? (
+            <div className="max-w-2xl mx-auto py-16 text-center space-y-4">
+              <div className="mx-auto w-16 h-16 rounded-full bg-brand-accent/15 border border-brand-accent/30 flex items-center justify-center">
+                <Lock className="w-8 h-8 text-brand-accent" />
+              </div>
+              <h2 className="text-xl font-display font-bold text-brand-text">
+                Timed Question Locked
+              </h2>
+              <p className="text-brand-secondary text-sm">
+                Confirm you're ready to begin in the dialog above — the timer starts the moment you do.
+              </p>
+            </div>
+          ) : (
+            <TimedCodingScreen
+              config={config.timedCodingConfig}
+              estimatedMinutesRaw={q10Answer}
+              answer={answers[config.timedCodingConfig.question.id] || ''}
+              onAnswerChange={(val) =>
+                handleAnswerChange(config.timedCodingConfig!.question.id, val)
+              }
+              onBackToPrevious={handlePreviousPage}
+              deadlineAt={attempt.timedDeadlineAt}
+            />
+          )}
         </AssessmentShell>
+
+        {timerNotYetStarted && (
+          <TimedSectionWarningModal
+            estimatedMinutes={attempt.estimateMinutes ?? 0}
+            onGoBack={handlePreviousPage}
+            onProceed={handleStartTimedSection}
+            proceeding={startingTimedSection}
+          />
+        )}
 
         {actionError && (
           <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 bg-red-600 border border-red-700 text-white text-sm font-medium px-4 py-2.5 rounded-xl shadow-lg">
             {actionError}
+          </div>
+        )}
+
+        {noticeMessage && (
+          <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 bg-brand-accent text-brand-bg text-sm font-semibold px-4 py-2.5 rounded-xl shadow-lg">
+            {noticeMessage}
           </div>
         )}
 
@@ -471,6 +658,7 @@ export default function AssessmentPage() {
         currentQuestionNumber={focusedQuestionNumber}
         answeredQuestionNumbers={answeredQuestionNumbers}
         bookmarkedQuestionNumbers={bookmarkedQuestionNumbers}
+        lockedQuestionNumbers={lockedQuestionNumbers}
         activeQuestion={activeQuestion}
         pagePurpose={currentPage?.purpose}
         submitButtonText={
@@ -481,6 +669,7 @@ export default function AssessmentPage() {
             : currentPage?.submitButtonText || 'Submit and continue to next question'
         }
         isFirstPage={currentPageIndex === 0}
+        previousDisabled={isTimedSectionRunning}
         isLastPage={currentPageIndex === totalPages - 1}
         onNavigateToQuestion={handleNavigateToQuestion}
         onPreviousPage={handlePreviousPage}
@@ -496,13 +685,16 @@ export default function AssessmentPage() {
             className="space-y-6"
           >
             {currentPage?.questions.map((q) => {
-              // The time estimate (Q10) is locked server-side after the first
-              // submission — once locked, show/enforce that locked value here
-              // too, instead of whatever might still be sitting in local state
-              // from an edit the server already silently ignored.
+              // The time estimate (Q10) stays editable up until the timed
+              // section actually starts (see submitEstimate) — only once
+              // timedSectionStartedAt is set does the server stop accepting
+              // changes, so that's the only thing that should lock this
+              // input too. Locking on estimateMinutes alone would strand a
+              // candidate who clicked "Go Back" on the Q11 warning modal
+              // with no way to revise their estimate.
               const isEstimateQuestion =
                 config.timedCodingConfig?.estimateQuestionId === q.id;
-              const isEstimateLocked = isEstimateQuestion && attempt.estimateMinutes != null;
+              const isEstimateLocked = isEstimateQuestion && attempt.timedSectionStartedAt != null;
               const displayAnswer = isEstimateLocked
                 ? String(attempt.estimateMinutes)
                 : answers[q.id] || '';
@@ -532,6 +724,12 @@ export default function AssessmentPage() {
       {actionError && (
         <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 bg-red-600 border border-red-700 text-white text-sm font-medium px-4 py-2.5 rounded-xl shadow-lg">
           {actionError}
+        </div>
+      )}
+
+      {noticeMessage && (
+        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 bg-brand-accent text-brand-bg text-sm font-semibold px-4 py-2.5 rounded-xl shadow-lg">
+          {noticeMessage}
         </div>
       )}
 

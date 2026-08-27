@@ -122,6 +122,13 @@ export default function QuestionCard({
         {question.questionText}
       </div>
 
+      {/* Trace Snippet — its own code block, separate from the Functions Definition below */}
+      {question.traceCode && (
+        <div className="rounded-2xl border border-brand-text/20 overflow-hidden shadow-inner">
+          <CodeBlock code={question.traceCode} language={question.codeLanguage} />
+        </div>
+      )}
+
       {/* Supporting Information (Tabs) */}
       {question.supportingTabs && question.supportingTabs.length > 0 && (
         <div className="space-y-3">

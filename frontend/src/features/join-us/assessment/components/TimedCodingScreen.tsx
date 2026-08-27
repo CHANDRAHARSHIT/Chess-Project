@@ -206,13 +206,32 @@ export default function TimedCodingScreen({
           </div>
         </div>
 
-        {/* Supporting Information / Functions Definition */}
-        {config.question.supportingTabs && config.question.supportingTabs.length > 0 && (
-          <div className="space-y-3">
+        {/* Trace Snippet — its own code block, separate from the Functions Definition below */}
+        {config.question.traceCode && (
+          <div className="rounded-2xl border border-brand-text/20 overflow-hidden shadow-inner">
+            <CodeBlock code={config.question.traceCode} language={config.question.codeLanguage} />
+          </div>
+        )}
+
+        {/* Read-Only Code Block — always visible, matches Q7's layout */}
+        {config.question.codeBlock && (
+          <div className="space-y-2">
             <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-brand-secondary font-semibold">
               <Code2 className="w-4 h-4 text-brand-accent" />
               <span>Function / Code Information</span>
             </div>
+            <div className="rounded-2xl border border-brand-text/20 overflow-hidden shadow-inner">
+              <CodeBlock code={config.question.codeBlock} language={config.question.codeLanguage} />
+            </div>
+          </div>
+        )}
+
+        {/* Any remaining prose-only supporting tabs (kept for future non-code tabs) */}
+        {config.question.supportingTabs && config.question.supportingTabs.length > 0 && (
+          <div className="space-y-3">
+            <h3 className="text-xs font-mono uppercase tracking-wider text-brand-secondary font-semibold">
+              Supporting Information
+            </h3>
 
             <div className="border border-brand-text/15 rounded-2xl overflow-hidden bg-brand-surface/40">
               <div className="flex items-center border-b border-brand-text/15 bg-brand-surface/80 px-2 pt-2 gap-1 overflow-x-auto">

@@ -24,6 +24,8 @@ export interface AssessmentQuestion {
   purpose?: string;
   scenario?: string;
   supportingTabs?: SupportingInfoTab[];
+  /** A short snippet shown as its own code block directly under the question text (e.g. the call site to trace), separate from `codeBlock`. */
+  traceCode?: string;
   codeBlock?: string;
   prefillValue?: string;
   wordLimit?: number;

@@ -8,6 +8,8 @@ interface MobileQuestionNavProps {
   currentQuestionNumber: number;
   answeredQuestionNumbers: Set<number>;
   bookmarkedQuestionNumbers: Set<number>;
+  /** Question numbers that can't be jumped to yet (e.g. Q11 before the Q10 estimate is submitted). */
+  lockedQuestionNumbers?: Set<number>;
   onNavigateToQuestion: (qNum: number) => void;
   activeQuestion?: AssessmentQuestion;
 }
@@ -25,6 +27,7 @@ export default function MobileQuestionNav({
   currentQuestionNumber,
   answeredQuestionNumbers,
   bookmarkedQuestionNumbers,
+  lockedQuestionNumbers,
   onNavigateToQuestion,
   activeQuestion,
 }: MobileQuestionNavProps) {
@@ -36,6 +39,7 @@ export default function MobileQuestionNav({
           const isCurrent = qNum === currentQuestionNumber;
           const isAnswered = answeredQuestionNumbers.has(qNum);
           const isBookmarked = bookmarkedQuestionNumbers.has(qNum);
+          const isLocked = lockedQuestionNumbers?.has(qNum) ?? false;
 
           let buttonStyle =
             'bg-brand-surface/70 border-brand-text/20 text-brand-secondary';
@@ -45,22 +49,33 @@ export default function MobileQuestionNav({
           } else if (isAnswered) {
             buttonStyle = 'bg-brand-accent/20 border-brand-accent/60 text-brand-text font-semibold';
           }
+          if (isLocked) {
+            buttonStyle = 'bg-brand-surface/40 border-brand-text/10 text-brand-secondary/40 cursor-not-allowed';
+          }
 
           return (
             <button
               key={qNum}
               type="button"
+              aria-disabled={isLocked}
               onClick={() => {
+                // Locked clicks still fire — onNavigateToQuestion decides
+                // what happens (e.g. Q11 redirects to Q10 with a prompt
+                // instead of doing nothing).
                 soundManager.playButtonClick();
                 onNavigateToQuestion(qNum);
               }}
               className={`relative flex items-center justify-center h-10 w-10 shrink-0 rounded-xl border text-sm font-mono transition-all duration-200 cursor-pointer ${buttonStyle}`}
-              aria-label={`Jump to Question ${qNum}${isCurrent ? ' (Current)' : ''}${
-                isAnswered ? ' (Answered)' : ''
-              }${isBookmarked ? ' (Bookmarked)' : ''}`}
+              aria-label={
+                isLocked
+                  ? `Question ${qNum} is currently locked`
+                  : `Jump to Question ${qNum}${isCurrent ? ' (Current)' : ''}${
+                      isAnswered ? ' (Answered)' : ''
+                    }${isBookmarked ? ' (Bookmarked)' : ''}`
+              }
             >
               <span>{qNum}</span>
-              {isBookmarked && (
+              {isBookmarked && !isLocked && (
                 <span className="absolute -bottom-1 -right-1">
                   <Bookmark className="w-3 h-3 text-amber-400 fill-amber-400" />
                 </span>

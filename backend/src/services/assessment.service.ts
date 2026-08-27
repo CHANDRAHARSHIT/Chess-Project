@@ -162,27 +162,26 @@ export class AssessmentService {
   }
 
   /**
-   * Records the candidate's Q10 time estimate and — if it's within the
-   * template's limit — starts the timed section: timedSectionStartedAt is
-   * stamped now, and timedDeadlineAt = now + (estimate + bonusMinutes).
-   * Both are absolute timestamps; remaining time is always derived as
-   * `deadline - now()`, never stored as a countdown value.
+   * Records the candidate's Q10 time estimate — re-callable (the number can
+   * still be changed) right up until the timed section actually starts.
+   * Submitting an estimate unlocks Q11 for navigation, but that alone
+   * doesn't start the countdown (see startTimedSection), so there's nothing
+   * exploitable about letting the candidate keep adjusting the number while
+   * they're still just looking at earlier questions.
    *
-   * Locked after the first successful call: without this, a candidate could
-   * submit an estimate, see the timed question, go back to Q10 via
-   * "Previous," change the number, and come forward again to get a fresh
-   * deadline computed from "now" — repeatable indefinitely, defeating the
-   * whole point of committing to an estimate before seeing the real time
-   * pressure. Once estimateMinutes is set, further calls are a no-op that
-   * just returns the attempt unchanged (not an error — the frontend calls
-   * this on every "Next" from Q10 regardless, so silently ignoring repeat
-   * calls keeps that flow seamless).
+   * Locked only once startTimedSection has stamped timedSectionStartedAt —
+   * from that point a call here is a no-op that returns the attempt
+   * unchanged (not an error — the frontend calls this on every "Next" from
+   * Q10 regardless, so silently ignoring repeat calls keeps that flow
+   * seamless). This is what actually prevents the exploit: once the
+   * candidate has opened Q11 and the clock is running, going back to Q10
+   * can no longer change the number the deadline was computed from.
    */
   static async submitEstimate(userId: string, trackSlug: string, estimateMinutes: number) {
     const attempt = await AssessmentService.getOrCreateAttempt(userId, trackSlug);
     AssessmentService.assertInProgress(attempt);
 
-    if (attempt.estimateMinutes !== null) {
+    if (attempt.timedSectionStartedAt !== null) {
       return attempt;
     }
 
@@ -200,20 +199,55 @@ export class AssessmentService {
       [timedConfig.estimateQuestionId]: String(estimateMinutes),
     };
 
+    return prisma.assessmentAttempt.update({
+      where: { id: attempt.id },
+      data: { answers, estimateMinutes },
+      include: { template: true },
+    });
+  }
+
+  /**
+   * Starts the timed section's countdown — stamps timedSectionStartedAt now
+   * and timedDeadlineAt = now + estimateMinutes. Called only when the
+   * candidate actually opens Q11 (after acknowledging the "timer starts now"
+   * warning), never at estimate-submission time, so waiting around on
+   * earlier questions after estimating doesn't cost them time.
+   *
+   * Requires an estimate to already be locked in. Idempotent once started:
+   * a candidate navigating away from Q11 and back must see the *same*
+   * deadline, not a fresh one, so a second call is a no-op that returns the
+   * attempt unchanged.
+   */
+  static async startTimedSection(userId: string, trackSlug: string) {
+    const attempt = await AssessmentService.getOrCreateAttempt(userId, trackSlug);
+    AssessmentService.assertInProgress(attempt);
+
+    if (attempt.estimateMinutes === null) {
+      throw new HttpError(400, "Submit your time estimate before starting the timed section.");
+    }
+
+    if (attempt.timedSectionStartedAt !== null) {
+      return attempt;
+    }
+
+    const config = attempt.template.data as unknown as AssessmentConfig;
+    const timedConfig = config.timedCodingConfig;
+    if (!timedConfig) {
+      throw new HttpError(400, "This track has no timed section.");
+    }
+
     // The deadline is exactly the candidate's own estimate — no automatic
     // bonus. Extra time is only ever granted via the one-time extension
     // (requestExtension), which the candidate has to explicitly ask for.
-    const exceedsLimit = estimateMinutes > timedConfig.maxEstimateMinutes;
+    const exceedsLimit = attempt.estimateMinutes > timedConfig.maxEstimateMinutes;
     const startedAt = new Date();
     const deadline = exceedsLimit
       ? null
-      : new Date(startedAt.getTime() + estimateMinutes * 60_000);
+      : new Date(startedAt.getTime() + attempt.estimateMinutes * 60_000);
 
     return prisma.assessmentAttempt.update({
       where: { id: attempt.id },
       data: {
-        answers,
-        estimateMinutes,
         timedSectionStartedAt: exceedsLimit ? null : startedAt,
         timedDeadlineAt: deadline,
       },

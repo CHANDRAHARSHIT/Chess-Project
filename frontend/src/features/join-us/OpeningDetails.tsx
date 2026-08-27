@@ -10,6 +10,7 @@ import {
   ArrowRight,
   TrendingUp,
   Server,
+  Lock,
 } from "lucide-react";
 
 interface OpeningDetailsProps {
@@ -159,6 +160,20 @@ export default function OpeningDetails({
                 </div>
               </div>
             </>
+          )}
+
+          {opening.timedSectionNotice && (
+            <div className="bg-brand-surface/60 p-5 sm:p-6 rounded-2xl border border-brand-text/15 flex gap-4 mb-10">
+              <Lock className="text-brand-accent shrink-0 mt-1 w-6 h-6" />
+              <div>
+                <h3 className="text-brand-text font-semibold text-base mb-1">
+                  Final Question Is Time-Based
+                </h3>
+                <p className="text-brand-secondary text-sm leading-relaxed">
+                  {opening.timedSectionNotice}
+                </p>
+              </div>
+            </div>
           )}
 
           {/* CTA Action Area */}

@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from "react";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import { ArrowLeft, Briefcase } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { soundManager } from "@/shared/lib/SoundManager";

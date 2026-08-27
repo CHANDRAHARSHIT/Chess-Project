@@ -22,6 +22,8 @@ export interface JobOpening {
   rules?: string[];
   rulesFootnote?: string;
   timeRequirement?: string;
+  /** Shown as its own callout when a track ends with a locked, timed question (e.g. Backend's Q11). */
+  timedSectionNotice?: string;
   ctaText?: string;
 }
 
@@ -60,6 +62,8 @@ const sharedBackendAssessmentContent = {
     '*Some questions may explicitly state that AI or other assistance is permitted. Only use assistance when the question specifically allows it.',
   timeRequirement:
     'Please set aside approximately 2 hours to complete the assessment. Individual questions may have their own time requirements, which will be clearly indicated.',
+  timedSectionNotice:
+    "The final question (Question 11) is a timed coding challenge and stays locked until you provide a time estimate on Question 10. Once you submit that estimate, Question 11 unlocks — but its timer only starts once you actually open it, so you won't lose time reviewing earlier questions first.",
   ctaText: 'Begin Assessment',
 };
 
