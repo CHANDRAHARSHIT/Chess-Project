@@ -27,29 +27,18 @@ export class HttpError extends Error {
   }
 }
 
-function wordCount(value: string): number {
-  const trimmed = value.trim();
-  return trimmed === "" ? 0 : trimmed.split(/\s+/).length;
-}
-
-/** Finds a question's wordLimit (if any) by id, across regular pages and the timed challenge. */
-function findWordLimit(config: AssessmentConfig, questionId: string): number | undefined {
-  for (const page of config.pages) {
-    const q = page.questions.find((q) => q.id === questionId);
-    if (q) return q.wordLimit;
-  }
-  if (config.timedCodingConfig?.question.id === questionId) {
-    return config.timedCodingConfig.question.wordLimit;
-  }
-  return undefined;
-}
-
 export class AssessmentService {
   /**
-   * Fetches (or creates) the authenticated user's attempt for a track,
-   * lazily auto-submitting it first if its timed section deadline has
-   * already passed (see submitEstimate/requestExtension for how that
-   * deadline gets set).
+   * Fetches (or creates) the authenticated user's attempt for a track.
+   *
+   * NOTE: deadline-based auto-submit-on-touch (autoExpireIfNeeded) is
+   * currently disabled — it was submitting the whole assessment the moment
+   * a candidate merely revisited Q11 after the timer ran out, even if they
+   * were still legitimately reviewing earlier questions via "Previous."
+   * The timedDeadlineAt value is still computed/stored and shown to the
+   * candidate as a countdown; it just has no enforcement consequence until
+   * this is redesigned properly (e.g. explicit submit-on-expiry only while
+   * actually viewing Q11, not as a side effect of any unrelated request).
    */
   static async getOrCreateAttempt(userId: string, trackSlug: string) {
     const existing = await prisma.assessmentAttempt.findUnique({
@@ -58,8 +47,7 @@ export class AssessmentService {
     });
 
     if (existing) {
-      const afterTimedExpiry = await AssessmentService.autoExpireIfNeeded(existing);
-      return AssessmentService.autoResetIfStale(afterTimedExpiry);
+      return AssessmentService.autoResetIfStale(existing);
     }
 
     const template = await prisma.assessmentTemplate.findFirst({
@@ -77,23 +65,6 @@ export class AssessmentService {
     });
 
     return created;
-  }
-
-  /** Auto-submits an in-progress attempt if its timed deadline has already passed. */
-  private static async autoExpireIfNeeded<
-    T extends {
-      id: string;
-      status: string;
-      timedDeadlineAt: Date | null;
-    },
-  >(attempt: T & { template: { data: unknown; gradingRules: unknown } }) {
-    if (attempt.status !== "IN_PROGRESS" || !attempt.timedDeadlineAt) {
-      return attempt;
-    }
-    if (attempt.timedDeadlineAt.getTime() > Date.now()) {
-      return attempt;
-    }
-    return AssessmentService.finalizeSubmit(attempt.id);
   }
 
   /**
@@ -153,12 +124,10 @@ export class AssessmentService {
     const attempt = await AssessmentService.getOrCreateAttempt(userId, trackSlug);
     AssessmentService.assertInProgress(attempt);
 
-    const config = attempt.template.data as unknown as AssessmentConfig;
-    const wordLimit = findWordLimit(config, questionId);
-    if (wordLimit && wordCount(value) > wordLimit) {
-      throw new HttpError(400, `Answer exceeds the ${wordLimit}-word limit for this question.`);
-    }
-
+    // Deliberately not enforced: whether a candidate can follow a stated
+    // word limit is itself part of what's being evaluated (manually, from
+    // the DB dump), so an over-limit answer is still saved as-is rather
+    // than rejected.
     const answers = { ...(attempt.answers as AttemptAnswers), [questionId]: value };
     const radioValues = { ...(attempt.radioValues as AttemptAnswers) };
     const textValues = { ...(attempt.textValues as AttemptAnswers) };
@@ -193,15 +162,28 @@ export class AssessmentService {
   }
 
   /**
-   * Records the candidate's Q10 time estimate and — if it's within the
-   * template's limit — starts the timed section: timedSectionStartedAt is
-   * stamped now, and timedDeadlineAt = now + (estimate + bonusMinutes).
-   * Both are absolute timestamps; remaining time is always derived as
-   * `deadline - now()`, never stored as a countdown value.
+   * Records the candidate's Q10 time estimate — re-callable (the number can
+   * still be changed) right up until the timed section actually starts.
+   * Submitting an estimate unlocks Q11 for navigation, but that alone
+   * doesn't start the countdown (see startTimedSection), so there's nothing
+   * exploitable about letting the candidate keep adjusting the number while
+   * they're still just looking at earlier questions.
+   *
+   * Locked only once startTimedSection has stamped timedSectionStartedAt —
+   * from that point a call here is a no-op that returns the attempt
+   * unchanged (not an error — the frontend calls this on every "Next" from
+   * Q10 regardless, so silently ignoring repeat calls keeps that flow
+   * seamless). This is what actually prevents the exploit: once the
+   * candidate has opened Q11 and the clock is running, going back to Q10
+   * can no longer change the number the deadline was computed from.
    */
   static async submitEstimate(userId: string, trackSlug: string, estimateMinutes: number) {
     const attempt = await AssessmentService.getOrCreateAttempt(userId, trackSlug);
     AssessmentService.assertInProgress(attempt);
+
+    if (attempt.timedSectionStartedAt !== null) {
+      return attempt;
+    }
 
     const config = attempt.template.data as unknown as AssessmentConfig;
     const timedConfig = config.timedCodingConfig;
@@ -217,20 +199,55 @@ export class AssessmentService {
       [timedConfig.estimateQuestionId]: String(estimateMinutes),
     };
 
+    return prisma.assessmentAttempt.update({
+      where: { id: attempt.id },
+      data: { answers, estimateMinutes },
+      include: { template: true },
+    });
+  }
+
+  /**
+   * Starts the timed section's countdown — stamps timedSectionStartedAt now
+   * and timedDeadlineAt = now + estimateMinutes. Called only when the
+   * candidate actually opens Q11 (after acknowledging the "timer starts now"
+   * warning), never at estimate-submission time, so waiting around on
+   * earlier questions after estimating doesn't cost them time.
+   *
+   * Requires an estimate to already be locked in. Idempotent once started:
+   * a candidate navigating away from Q11 and back must see the *same*
+   * deadline, not a fresh one, so a second call is a no-op that returns the
+   * attempt unchanged.
+   */
+  static async startTimedSection(userId: string, trackSlug: string) {
+    const attempt = await AssessmentService.getOrCreateAttempt(userId, trackSlug);
+    AssessmentService.assertInProgress(attempt);
+
+    if (attempt.estimateMinutes === null) {
+      throw new HttpError(400, "Submit your time estimate before starting the timed section.");
+    }
+
+    if (attempt.timedSectionStartedAt !== null) {
+      return attempt;
+    }
+
+    const config = attempt.template.data as unknown as AssessmentConfig;
+    const timedConfig = config.timedCodingConfig;
+    if (!timedConfig) {
+      throw new HttpError(400, "This track has no timed section.");
+    }
+
     // The deadline is exactly the candidate's own estimate — no automatic
     // bonus. Extra time is only ever granted via the one-time extension
     // (requestExtension), which the candidate has to explicitly ask for.
-    const exceedsLimit = estimateMinutes > timedConfig.maxEstimateMinutes;
+    const exceedsLimit = attempt.estimateMinutes > timedConfig.maxEstimateMinutes;
     const startedAt = new Date();
     const deadline = exceedsLimit
       ? null
-      : new Date(startedAt.getTime() + estimateMinutes * 60_000);
+      : new Date(startedAt.getTime() + attempt.estimateMinutes * 60_000);
 
     return prisma.assessmentAttempt.update({
       where: { id: attempt.id },
       data: {
-        answers,
-        estimateMinutes,
         timedSectionStartedAt: exceedsLimit ? null : startedAt,
         timedDeadlineAt: deadline,
       },

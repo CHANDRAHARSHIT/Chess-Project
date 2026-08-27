@@ -22,6 +22,8 @@ export interface JobOpening {
   rules?: string[];
   rulesFootnote?: string;
   timeRequirement?: string;
+  /** Shown as its own callout when a track ends with a locked, timed question (e.g. Backend's Q11). */
+  timedSectionNotice?: string;
   ctaText?: string;
 }
 
@@ -60,6 +62,8 @@ const sharedBackendAssessmentContent = {
     '*Some questions may explicitly state that AI or other assistance is permitted. Only use assistance when the question specifically allows it.',
   timeRequirement:
     'Please set aside approximately 2 hours to complete the assessment. Individual questions may have their own time requirements, which will be clearly indicated.',
+  timedSectionNotice:
+    "The final question (Question 11) is a timed coding challenge and stays locked until you provide a time estimate on Question 10. Once you submit that estimate, Question 11 unlocks — but its timer only starts once you actually open it, so you won't lose time reviewing earlier questions first.",
   ctaText: 'Begin Assessment',
 };
 
@@ -148,6 +152,22 @@ export const jobOpenings: JobOpening[] = [
   },
 ];
 
+/**
+ * Maps a department to its backend assessment track slug. All levels
+ * (Intern/Junior/Intermediate/Senior) within a department share the exact
+ * same assessment, so the track is keyed by department only.
+ */
+const DEPARTMENT_TRACK_SLUG: Partial<Record<Department, string>> = {
+  Backend: 'backend',
+  'Growth & Marketing': 'growth-marketing',
+  Manager: 'manager',
+};
+
+/** Returns the assessment track slug for a department, or null if that department has no assessment yet. */
+export function getAssessmentTrackSlug(department: Department): string | null {
+  return DEPARTMENT_TRACK_SLUG[department] ?? null;
+}
+
 /** Helper function to look up an active opening for a department and job level */
 export function getOpening(
   department: Department,
@@ -161,4 +181,18 @@ export function getOpening(
 /** Helper function to look up an opening by unique ID */
 export function getOpeningById(id: string): JobOpening | undefined {
   return jobOpenings.find((o) => o.id === id);
+}
+
+/**
+ * Looks up any open opening for a track slug (e.g. "backend"). Since every
+ * level within a department shares the exact same assessment/overview
+ * content, the specific level returned doesn't matter — this just needs
+ * *an* open opening for that department to source display copy from.
+ */
+export function getOpeningByTrackSlug(trackSlug: string): JobOpening | undefined {
+  const department = (Object.keys(DEPARTMENT_TRACK_SLUG) as Department[]).find(
+    (dept) => DEPARTMENT_TRACK_SLUG[dept] === trackSlug
+  );
+  if (!department) return undefined;
+  return jobOpenings.find((o) => o.department === department && o.status === 'open');
 }

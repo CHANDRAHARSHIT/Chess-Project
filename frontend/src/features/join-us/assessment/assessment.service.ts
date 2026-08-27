@@ -14,6 +14,7 @@ export interface AssessmentAttempt {
   textValues: Record<string, string>;
   bookmarks: number[];
   estimateMinutes: number | null;
+  timedSectionStartedAt: string | null;
   timedDeadlineAt: string | null;
   extensionUsed: boolean;
   wrongCount: number | null;
@@ -132,6 +133,19 @@ export class AssessmentService {
       return await parseOrThrow<AssessmentAttempt>(res);
     } catch (error) {
       reportServiceError('submitEstimate', error, { trackSlug });
+      throw error;
+    }
+  }
+
+  static async startTimedSection(trackSlug: string): Promise<AssessmentAttempt> {
+    try {
+      const res = await fetch(`/api/assessments/${trackSlug}/start-timed-section`, {
+        method: 'POST',
+        credentials: 'include',
+      });
+      return await parseOrThrow<AssessmentAttempt>(res);
+    } catch (error) {
+      reportServiceError('startTimedSection', error, { trackSlug });
       throw error;
     }
   }

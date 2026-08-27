@@ -1,28 +1,36 @@
 import { useEffect, useMemo } from "react";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import { ArrowLeft, Briefcase } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { soundManager } from "@/shared/lib/SoundManager";
 import DepartmentOpeningsTable from "@/features/join-us/DepartmentOpeningsTable";
 import DepartmentOpeningsCards from "@/features/join-us/DepartmentOpeningsCards";
 import OpeningDetails from "@/features/join-us/OpeningDetails";
-import { getOpeningById, type JobOpening } from "@/features/join-us/joinUsData";
+import {
+  getAssessmentTrackSlug,
+  getOpeningByTrackSlug,
+  type JobOpening,
+} from "@/features/join-us/joinUsData";
 
 export default function JoinUsPage() {
   const navigate = useNavigate();
-  const { roleId } = useParams<{ roleId?: string }>();
+  const [searchParams] = useSearchParams();
+  const role = searchParams.get("role");
 
+  // One page per department, not per level — every level within a
+  // department shares the exact same assessment and overview content.
   const selectedOpening = useMemo<JobOpening | null>(() => {
-    if (!roleId) return null;
-    return getOpeningById(roleId) ?? null;
-  }, [roleId]);
+    if (!role) return null;
+    return getOpeningByTrackSlug(role) ?? null;
+  }, [role]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [selectedOpening]);
 
   const handleSelectOpening = (opening: JobOpening) => {
-    navigate(`/join-us/${opening.id}`);
+    const trackSlug = getAssessmentTrackSlug(opening.department);
+    navigate(`/join-us?role=${trackSlug ?? opening.department.toLowerCase()}`);
   };
 
   const handleBackToOpenings = () => {

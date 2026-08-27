@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import { type JobOpening } from "./joinUsData";
+import { getAssessmentTrackSlug, type JobOpening } from "./joinUsData";
 import { soundManager } from "@/shared/lib/SoundManager";
 import {
   ArrowLeft,
@@ -10,6 +10,7 @@ import {
   ArrowRight,
   TrendingUp,
   Server,
+  Lock,
 } from "lucide-react";
 
 interface OpeningDetailsProps {
@@ -25,7 +26,8 @@ export default function OpeningDetails({
 
   const handleBeginAssessment = () => {
     soundManager.playButtonClick();
-    navigate(`/join-us/${opening.id}/assessment`);
+    const trackSlug = getAssessmentTrackSlug(opening.department);
+    navigate(`/join-us/assessment?role=${trackSlug ?? opening.department.toLowerCase()}`);
   };
 
   const getDepartmentIcon = () => {
@@ -116,7 +118,7 @@ export default function OpeningDetails({
                 )}
 
                 <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-5 sm:p-6">
-                  <p className="mb-4 font-semibold text-amber-600 dark:text-amber-400 text-sm sm:text-base">
+                  <p className="mb-4 font-semibold text-amber-950 dark:text-amber-400 text-sm sm:text-base">
                     During this section:
                   </p>
                   <ul className="space-y-3">
@@ -158,6 +160,20 @@ export default function OpeningDetails({
                 </div>
               </div>
             </>
+          )}
+
+          {opening.timedSectionNotice && (
+            <div className="bg-brand-surface/60 p-5 sm:p-6 rounded-2xl border border-brand-text/15 flex gap-4 mb-10">
+              <Lock className="text-brand-accent shrink-0 mt-1 w-6 h-6" />
+              <div>
+                <h3 className="text-brand-text font-semibold text-base mb-1">
+                  Final Question Is Time-Based
+                </h3>
+                <p className="text-brand-secondary text-sm leading-relaxed">
+                  {opening.timedSectionNotice}
+                </p>
+              </div>
+            </div>
           )}
 
           {/* CTA Action Area */}

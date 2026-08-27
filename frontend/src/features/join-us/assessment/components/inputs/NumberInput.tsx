@@ -1,4 +1,5 @@
 import React from 'react';
+import { pluralize } from '@/shared/lib/pluralize';
 
 interface NumberInputProps {
   id: string;
@@ -10,6 +11,15 @@ interface NumberInputProps {
   min?: number;
   max?: number;
   disabled?: boolean;
+}
+
+/** Singularizes a plural unit word (e.g. "minutes." -> "minute.") when the count is 1. */
+function pluralizeSuffix(value: string, suffix: string): string {
+  const count = parseInt(value, 10);
+  if (!Number.isFinite(count) || count !== 1) return suffix;
+  return suffix.replace(/(\w+)s(\W*)$/, (_match, word, trailing) =>
+    pluralize(1, word, `${word}s`) + trailing
+  );
 }
 
 export default function NumberInput({
@@ -49,13 +59,15 @@ export default function NumberInput({
           onChange={handleChange}
           disabled={disabled}
           placeholder={placeholder}
-          className="w-full px-3 py-2 text-center bg-brand-surface border border-brand-text/25 rounded-xl font-mono text-base font-bold text-brand-accent focus:outline-none focus:border-brand-accent focus:ring-1 focus:ring-brand-accent transition-colors"
+          className={`w-full px-3 py-2 text-center bg-brand-surface border border-brand-text/25 rounded-xl font-mono text-base font-bold text-brand-accent focus:outline-none focus:border-brand-accent focus:ring-1 focus:ring-brand-accent transition-colors ${
+            disabled ? 'opacity-60 cursor-not-allowed' : ''
+          }`}
         />
       </div>
 
       {suffix && (
         <span className="text-brand-text text-sm sm:text-base font-medium">
-          {suffix}
+          {pluralizeSuffix(value, suffix)}
         </span>
       )}
     </div>

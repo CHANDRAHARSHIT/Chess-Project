@@ -46,7 +46,7 @@ export interface RouteConfig {
 // Routes that run inside the MainLayout (Navbar + Sidebar + Footer)
 export const mainRoutes: RouteConfig[] = [
   { path: "/", element: <HomePage />, title: "XLChess - Play Chess Online" },
-  { path: "/contact", element: <ContactPage />, title: "Contact Us | XLChess" },
+  { path: "/contact-us", element: <ContactPage />, title: "Contact Us | XLChess" },
   {
     path: "/puzzles",
     element: <PuzzlePage />,
@@ -238,17 +238,12 @@ export const mainRoutes: RouteConfig[] = [
     element: <JoinUsPage />,
     title: "Join Us | XLChess",
   },
-  {
-    path: "/join-us/:roleId",
-    element: <JoinUsPage />,
-    title: "Join Us | XLChess",
-  },
 ];
 
 // Routes that run inside the MinimalLayout (Navbar only, no Sidebar/Footer)
 export const minimalRoutes: RouteConfig[] = [
   {
-    path: "/join-us/:roleId/assessment",
+    path: "/join-us/assessment",
     element: (
       <ProtectedRoute>
         <AssessmentPage />

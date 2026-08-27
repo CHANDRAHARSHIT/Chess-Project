@@ -19,6 +19,7 @@ function serializeAttempt(attempt: {
   textValues: unknown;
   bookmarks: number[];
   estimateMinutes: number | null;
+  timedSectionStartedAt: Date | null;
   timedDeadlineAt: Date | null;
   extensionUsed: boolean;
   wrongCount: number | null;
@@ -34,6 +35,7 @@ function serializeAttempt(attempt: {
     textValues: attempt.textValues,
     bookmarks: attempt.bookmarks,
     estimateMinutes: attempt.estimateMinutes,
+    timedSectionStartedAt: attempt.timedSectionStartedAt,
     timedDeadlineAt: attempt.timedDeadlineAt,
     extensionUsed: attempt.extensionUsed,
     wrongCount: attempt.wrongCount,
@@ -140,6 +142,22 @@ export class AssessmentController {
       }
 
       const attempt = await AssessmentService.submitEstimate(userId, trackSlug, estimateMinutes);
+      res.status(200).json({ status: "success", data: serializeAttempt(attempt) });
+    } catch (error) {
+      handleServiceError(error, res, next);
+    }
+  }
+
+  /**
+   * POST /api/assessments/:trackSlug/start-timed-section
+   * Stamps the timed section's start/deadline the first time the candidate
+   * actually opens Q11. No-op if it's already been started.
+   */
+  static async startTimedSection(req: Request, res: Response, next: NextFunction) {
+    try {
+      const userId = req.user?.id as string;
+      const { trackSlug } = req.params;
+      const attempt = await AssessmentService.startTimedSection(userId, trackSlug);
       res.status(200).json({ status: "success", data: serializeAttempt(attempt) });
     } catch (error) {
       handleServiceError(error, res, next);

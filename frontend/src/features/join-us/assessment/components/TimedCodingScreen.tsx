@@ -1,8 +1,10 @@
-import { useState, useEffect, useRef } from 'react';
-import { AlertTriangle, ArrowLeft, Clock, Code2, TimerReset } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { AlertTriangle, ArrowLeft, Clock, Code2 } from 'lucide-react';
 import { soundManager } from '@/shared/lib/SoundManager';
 import type { TimedCodingConfig } from '../assessmentTypes';
+import CodeBlock from './CodeBlock';
 import ShortTextInput from './inputs/ShortTextInput';
+import { pluralize } from '@/shared/lib/pluralize';
 
 interface TimedCodingScreenProps {
   config: TimedCodingConfig;
@@ -10,12 +12,13 @@ interface TimedCodingScreenProps {
   answer: string;
   onAnswerChange: (val: string) => void;
   onBackToPrevious: () => void;
-  /** Absolute deadline (ISO string) from the server — null while the estimate hasn't been submitted yet. */
+  /**
+   * Absolute deadline (ISO string) from the server — null while the estimate
+   * hasn't been submitted yet. Display-only for now: running out has no
+   * consequence (no auto-submit) until the "go back to a previous question"
+   * interaction with a global deadline is redesigned properly.
+   */
   deadlineAt: string | null;
-  extensionUsed: boolean;
-  onRequestExtension: () => void;
-  /** Called once, when the countdown reaches zero. */
-  onExpire: () => void;
 }
 
 function formatRemaining(ms: number): string {
@@ -32,39 +35,28 @@ export default function TimedCodingScreen({
   onAnswerChange,
   onBackToPrevious,
   deadlineAt,
-  extensionUsed,
-  onRequestExtension,
-  onExpire,
 }: TimedCodingScreenProps) {
   const estimatedMinutes = parseInt(estimatedMinutesRaw, 10) || 0;
   const exceedsLimit = estimatedMinutes > config.maxEstimateMinutes;
 
   // Countdown is derived from the server's absolute deadline timestamp, never
   // stored as a ticking duration — remaining time is always `deadline - now`.
+  // Purely informational: running out has no consequence right now.
   const [remainingMs, setRemainingMs] = useState<number | null>(null);
-  const hasExpiredRef = useRef(false);
 
   useEffect(() => {
-    hasExpiredRef.current = false;
-
     const tick = () => {
       if (!deadlineAt) {
         setRemainingMs(null);
         return;
       }
-      const remaining = new Date(deadlineAt).getTime() - Date.now();
-      setRemainingMs(remaining);
-      if (remaining <= 0 && !hasExpiredRef.current) {
-        hasExpiredRef.current = true;
-        onExpire();
-      }
+      setRemainingMs(new Date(deadlineAt).getTime() - Date.now());
     };
 
     tick();
     if (!deadlineAt) return;
     const interval = setInterval(tick, 1000);
     return () => clearInterval(interval);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [deadlineAt]);
 
   const isDanger = remainingMs !== null && remainingMs <= 5 * 60_000;
@@ -102,7 +94,7 @@ export default function TimedCodingScreen({
           {/* Big Estimate Pill */}
           <div className="inline-block px-8 py-3 rounded-2xl bg-brand-surface/90 border border-brand-text/20">
             <span className="font-mono text-2xl sm:text-3xl font-bold text-brand-accent">
-              {estimatedMinutes} minutes
+              {estimatedMinutes} {pluralize(estimatedMinutes, 'minute')}
             </span>
           </div>
 
@@ -111,7 +103,8 @@ export default function TimedCodingScreen({
               Your Estimate Exceeds 90 Minutes
             </p>
             <p>
-              We expect a backend developer to be able to complete this task within 90 minutes. Your estimate was {estimatedMinutes} minutes.
+              We expect a backend developer to be able to complete this task within 90 minutes. Your estimate was {estimatedMinutes}{' '}
+              {pluralize(estimatedMinutes, 'minute')}.
             </p>
             <p>
               Unfortunately, we do not consider this to be a reasonable time estimate for this task, and this will be taken into consideration when evaluating your assessment.
@@ -146,7 +139,7 @@ export default function TimedCodingScreen({
           Your Time Allotted
         </div>
         <div className="text-2xl sm:text-3xl font-mono font-bold text-brand-accent">
-          {estimatedMinutes} minutes
+          {estimatedMinutes} {pluralize(estimatedMinutes, 'minute')}
         </div>
         <div className="text-[11px] font-mono text-brand-secondary">
           (As estimated in the previous question — need more? Use the button below.)
@@ -170,39 +163,22 @@ export default function TimedCodingScreen({
           </div>
 
           {remainingMs !== null && (
-            <div className="flex items-center gap-3">
-              <div
-                className={`inline-flex items-center gap-2.5 px-4 py-2 rounded-2xl border select-none ${
-                  isDanger
-                    ? 'bg-red-500/15 border-red-500/40 text-red-400'
-                    : 'bg-brand-surface/80 border-brand-text/15 text-brand-text'
-                }`}
-              >
-                <Clock className={`w-5 h-5 ${isDanger ? 'text-red-400' : 'text-brand-accent'}`} />
-                <div className="flex flex-col text-right">
-                  <span className="font-mono text-base font-bold tracking-wider leading-none">
-                    {formatRemaining(remainingMs)}
-                  </span>
-                  <span className="text-[10px] uppercase font-mono tracking-widest text-brand-secondary/80 mt-0.5">
-                    Time Remaining
-                  </span>
-                </div>
+            <div
+              className={`inline-flex items-center gap-2.5 px-4 py-2 rounded-2xl border select-none ${
+                isDanger
+                  ? 'bg-red-500/15 border-red-500/40 text-red-400'
+                  : 'bg-brand-surface/80 border-brand-text/15 text-brand-text'
+              }`}
+            >
+              <Clock className={`w-5 h-5 ${isDanger ? 'text-red-400' : 'text-brand-accent'}`} />
+              <div className="flex flex-col text-right">
+                <span className="font-mono text-base font-bold tracking-wider leading-none">
+                  {formatRemaining(remainingMs)}
+                </span>
+                <span className="text-[10px] uppercase font-mono tracking-widest text-brand-secondary/80 mt-0.5">
+                  Time Remaining
+                </span>
               </div>
-
-              {!extensionUsed && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    soundManager.playButtonClick();
-                    onRequestExtension();
-                  }}
-                  className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-brand-accent/30 text-brand-accent text-xs font-semibold hover:bg-brand-accent/10 transition-colors cursor-pointer"
-                  title="One-time only"
-                >
-                  <TimerReset className="w-3.5 h-3.5" />
-                  <span>Need 15 more min?</span>
-                </button>
-              )}
             </div>
           )}
         </div>
@@ -225,21 +201,40 @@ export default function TimedCodingScreen({
           <h3 className="text-xs font-mono uppercase tracking-wider text-brand-secondary font-semibold">
             Question
           </h3>
-          <div className="bg-brand-surface/50 border border-brand-text/10 rounded-2xl p-4 sm:p-5 text-brand-text text-sm sm:text-base leading-relaxed whitespace-pre-line font-sans">
+          <div className="bg-brand-surface/50 border border-brand-text/10 rounded-2xl p-4 sm:p-5 text-brand-text text-sm sm:text-base leading-relaxed whitespace-pre-wrap font-sans">
             {config.question.questionText}
           </div>
         </div>
 
-        {/* Supporting Information / Functions Definition */}
-        {config.question.supportingTabs && config.question.supportingTabs.length > 0 && (
-          <div className="space-y-3">
+        {/* Trace Snippet — its own code block, separate from the Functions Definition below */}
+        {config.question.traceCode && (
+          <div className="rounded-2xl border border-brand-text/20 overflow-hidden shadow-inner">
+            <CodeBlock code={config.question.traceCode} language={config.question.codeLanguage} />
+          </div>
+        )}
+
+        {/* Read-Only Code Block — always visible, matches Q7's layout */}
+        {config.question.codeBlock && (
+          <div className="space-y-2">
             <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-brand-secondary font-semibold">
               <Code2 className="w-4 h-4 text-brand-accent" />
               <span>Function / Code Information</span>
             </div>
+            <div className="rounded-2xl border border-brand-text/20 overflow-hidden shadow-inner">
+              <CodeBlock code={config.question.codeBlock} language={config.question.codeLanguage} />
+            </div>
+          </div>
+        )}
+
+        {/* Any remaining prose-only supporting tabs (kept for future non-code tabs) */}
+        {config.question.supportingTabs && config.question.supportingTabs.length > 0 && (
+          <div className="space-y-3">
+            <h3 className="text-xs font-mono uppercase tracking-wider text-brand-secondary font-semibold">
+              Supporting Information
+            </h3>
 
             <div className="border border-brand-text/15 rounded-2xl overflow-hidden bg-brand-surface/40">
-              <div className="flex items-center border-b border-brand-text/15 bg-brand-surface/80 px-2 pt-2 gap-1">
+              <div className="flex items-center border-b border-brand-text/15 bg-brand-surface/80 px-2 pt-2 gap-1 overflow-x-auto">
                 {config.question.supportingTabs.map((tab) => {
                   const isActive = tab.id === activeTabId;
                   return (
@@ -262,9 +257,13 @@ export default function TimedCodingScreen({
                 })}
               </div>
 
-              <div className="p-4 sm:p-5 text-xs sm:text-sm leading-relaxed text-brand-secondary whitespace-pre-line font-mono bg-brand-bg">
-                {activeTab?.content}
-              </div>
+              {activeTab?.isCode ? (
+                <CodeBlock code={activeTab.content} showHeader={false} />
+              ) : (
+                <div className="p-4 sm:p-5 text-xs sm:text-sm leading-relaxed text-brand-secondary whitespace-pre-wrap font-mono bg-brand-bg">
+                  {activeTab?.content}
+                </div>
+              )}
             </div>
           </div>
         )}

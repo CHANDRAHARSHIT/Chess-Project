@@ -1,5 +1,5 @@
-import { useNavigate } from 'react-router';
-import { CheckCircle2, XCircle, Calendar, Mail, Home, Clock3 } from 'lucide-react';
+import { useNavigate, Link } from 'react-router';
+import { Calendar, Mail, ArrowLeft } from 'lucide-react';
 import { soundManager } from '@/shared/lib/SoundManager';
 
 interface AssessmentResultScreenProps {
@@ -17,46 +17,23 @@ export default function AssessmentResultScreen({
 
   return (
     <div className="min-h-screen bg-brand-bg text-brand-text flex items-center justify-center p-4 sm:p-6">
-      <div className="max-w-2xl w-full bg-brand-surface rounded-3xl border border-brand-text/15 p-8 sm:p-12 text-center space-y-8 shadow-2xl relative overflow-hidden backdrop-blur-sm">
+      <div className="max-w-2xl w-full bg-brand-surface rounded-3xl border border-brand-text/15 p-8 sm:p-12 text-center space-y-8 relative overflow-hidden">
         {/* Glow effect */}
         <div
-          className={`absolute top-0 right-0 w-80 h-80 blur-[120px] rounded-full pointer-events-none ${
-            isPass || isReview ? 'bg-emerald-500/10' : 'bg-red-500/10'
-          }`}
+          className={`absolute top-0 right-0 w-80 h-80 blur-[120px] rounded-full pointer-events-none ${isPass || isReview ? 'bg-emerald-500/10' : 'bg-red-500/10'
+            }`}
         />
 
         {/* Brand Header */}
-        <div className="flex justify-between items-center pb-6 border-b border-brand-text/10">
-          <img
-            src="/logo-without-text.png"
-            alt="XLChess logo"
-            className="h-9 w-auto object-contain"
-            draggable={false}
-          />
-          <span className="text-xs font-mono uppercase tracking-widest text-brand-secondary">
-            Assessment Status
-          </span>
-        </div>
-
-        {/* Status Icon */}
-        <div className="flex justify-center">
-          <div
-            className={`w-24 h-24 rounded-full flex items-center justify-center border-2 ${
-              isPass
-                ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-400'
-                : isReview
-                ? 'bg-brand-accent/15 border-brand-accent/40 text-brand-accent'
-                : 'bg-red-500/15 border-red-500/40 text-red-400'
-            }`}
-          >
-            {isPass ? (
-              <CheckCircle2 className="w-14 h-14" />
-            ) : isReview ? (
-              <Clock3 className="w-14 h-14" />
-            ) : (
-              <XCircle className="w-14 h-14" />
-            )}
-          </div>
+        <div className="flex justify-center pb-6 border-b border-brand-text/10">
+          <Link to="/" onClick={() => soundManager.playButtonClick()} aria-label="Go to XLChess home">
+            <img
+              src="/logo-without-text.png"
+              alt="XLChess logo"
+              className="h-9 w-auto object-contain"
+              draggable={false}
+            />
+          </Link>
         </div>
 
         {/* Title & Subtitle */}
@@ -132,17 +109,19 @@ export default function AssessmentResultScreen({
           </div>
         )}
 
-        {/* Reattempt note — no reattempts are currently supported */}
-        <p className="text-sm sm:text-base text-brand-secondary/80 leading-relaxed">
-          If you would like to reattempt this assessment, please email{' '}
-          <a
-            href="mailto:jimmy@xlchess.com"
-            className="text-brand-accent underline hover:text-brand-accent/80 transition-colors"
-          >
-            jimmy@xlchess.com
-          </a>{' '}
-          and we will evaluate your request.
-        </p>
+        {/* Reattempt note — no reattempts are currently supported. Only relevant on failure. */}
+        {!isPass && !isReview && (
+          <p className="text-sm sm:text-base text-brand-secondary/80 leading-relaxed">
+            If you would like to reattempt this assessment, please email{' '}
+            <a
+              href="mailto:jimmy@xlchess.com"
+              className="text-brand-accent underline hover:text-brand-accent/80 transition-colors"
+            >
+              jimmy@xlchess.com
+            </a>{' '}
+            and we will evaluate your request.
+          </p>
+        )}
 
         {/* Return Button */}
         <div className="pt-4 flex justify-center">
@@ -150,12 +129,12 @@ export default function AssessmentResultScreen({
             type="button"
             onClick={() => {
               soundManager.playButtonClick();
-              navigate('/');
+              navigate('/join-us');
             }}
             className="inline-flex items-center gap-2 px-8 py-3.5 rounded-2xl border border-brand-text/25 text-brand-text hover:bg-brand-surface/80 hover:border-brand-accent transition-all cursor-pointer font-semibold text-sm"
           >
-            <Home className="w-4 h-4" />
-            <span>Return to Home</span>
+            <ArrowLeft className="w-4 h-4" />
+            <span>Return to Join Us</span>
           </button>
         </div>
       </div>

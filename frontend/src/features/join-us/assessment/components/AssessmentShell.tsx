@@ -1,8 +1,9 @@
 import React from 'react';
+import { Link } from 'react-router';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { soundManager } from '@/shared/lib/SoundManager';
-import ProgressBar from './ProgressBar';
 import QuestionNavigator from './QuestionNavigator';
+import MobileQuestionNav from './MobileQuestionNav';
 import type { AssessmentQuestion } from '../assessmentTypes';
 
 interface AssessmentShellProps {
@@ -11,10 +12,14 @@ interface AssessmentShellProps {
   currentQuestionNumber: number;
   answeredQuestionNumbers: Set<number>;
   bookmarkedQuestionNumbers: Set<number>;
+  /** Question numbers that can't be jumped to yet (e.g. Q11 before the Q10 estimate is submitted). */
+  lockedQuestionNumbers?: Set<number>;
   activeQuestion?: AssessmentQuestion;
   pagePurpose?: string;
   submitButtonText?: string;
   isFirstPage: boolean;
+  /** True while Q11's timer is running — the candidate can't leave it until they finish or time runs out. */
+  previousDisabled?: boolean;
   isLastPage: boolean;
   onNavigateToQuestion: (qNum: number) => void;
   onPreviousPage: () => void;
@@ -28,10 +33,12 @@ export default function AssessmentShell({
   currentQuestionNumber,
   answeredQuestionNumbers,
   bookmarkedQuestionNumbers,
+  lockedQuestionNumbers,
   activeQuestion,
   pagePurpose,
   submitButtonText = 'Save & Continue',
   isFirstPage,
+  previousDisabled = false,
   isLastPage: _isLastPage,
   onNavigateToQuestion,
   onPreviousPage,
@@ -39,7 +46,7 @@ export default function AssessmentShell({
   children,
 }: AssessmentShellProps) {
   return (
-    <div className="min-h-screen bg-brand-bg text-brand-text flex flex-col relative pb-20">
+    <div className="min-h-screen bg-brand-bg text-brand-text flex flex-col relative pb-20 overflow-x-hidden">
       {/* Background ambient lighting */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-brand-accent/5 rounded-full blur-[160px] pointer-events-none" />
 
@@ -48,12 +55,19 @@ export default function AssessmentShell({
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
           {/* Logo & Assessment Title */}
           <div className="flex items-center gap-3">
-            <img
-              src="/logo-without-text.png"
-              alt="XLChess logo"
-              className="h-9 w-auto object-contain"
-              draggable={false}
-            />
+            <Link
+              to="/"
+              onClick={() => soundManager.playButtonClick()}
+              aria-label="Go to XLChess home"
+              className="shrink-0"
+            >
+              <img
+                src="/logo-without-text.png"
+                alt="XLChess logo"
+                className="h-9 w-auto object-contain"
+                draggable={false}
+              />
+            </Link>
             <div className="h-5 w-px bg-brand-text/20" />
             <div className="flex flex-col">
               <span className="text-xs font-mono uppercase tracking-wider text-brand-accent font-semibold">
@@ -69,14 +83,6 @@ export default function AssessmentShell({
 
       {/* Main Content Area */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-6 sm:pt-8 flex-1 relative z-10 space-y-6">
-        {/* Progress Bar Section */}
-        <div className="bg-brand-surface/70 rounded-2xl border border-brand-text/15 p-4 sm:p-5 backdrop-blur-sm">
-          <ProgressBar
-            currentQuestion={currentQuestionNumber}
-            totalQuestions={totalQuestions}
-          />
-        </div>
-
         {/* Page Purpose Callout (if present) */}
         {pagePurpose && (
           <div className="bg-brand-surface/80 rounded-2xl border border-brand-text/15 p-5 backdrop-blur-sm">
@@ -89,18 +95,32 @@ export default function AssessmentShell({
           </div>
         )}
 
-        {/* Two-Column Grid: Questions on Left, Navigator on Right */}
+        {/* Mobile Question Navigator — above the question, not below it */}
+        <div className="lg:hidden">
+          <MobileQuestionNav
+            totalQuestions={totalQuestions}
+            currentQuestionNumber={currentQuestionNumber}
+            answeredQuestionNumbers={answeredQuestionNumbers}
+            bookmarkedQuestionNumbers={bookmarkedQuestionNumbers}
+            lockedQuestionNumbers={lockedQuestionNumbers}
+            onNavigateToQuestion={onNavigateToQuestion}
+            activeQuestion={activeQuestion}
+          />
+        </div>
+
+        {/* Two-Column Grid: Questions on Left, Navigator on Right (Desktop) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           {/* Left Column: Questions List */}
           <div className="lg:col-span-8 space-y-6">{children}</div>
 
           {/* Right Column: Question Navigator (Desktop Sticky) */}
-          <div className="lg:col-span-4 lg:sticky lg:top-24 space-y-6">
+          <div className="hidden lg:block lg:col-span-4 lg:sticky lg:top-24 space-y-6">
             <QuestionNavigator
               totalQuestions={totalQuestions}
               currentQuestionNumber={currentQuestionNumber}
               answeredQuestionNumbers={answeredQuestionNumbers}
               bookmarkedQuestionNumbers={bookmarkedQuestionNumbers}
+              lockedQuestionNumbers={lockedQuestionNumbers}
               onNavigateToQuestion={onNavigateToQuestion}
               activeQuestion={activeQuestion}
             />
@@ -112,13 +132,24 @@ export default function AssessmentShell({
           {!isFirstPage ? (
             <button
               type="button"
+              disabled={previousDisabled}
               onClick={() => {
+                if (previousDisabled) return;
                 soundManager.playButtonClick();
                 onPreviousPage();
               }}
-              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl border border-brand-text/25 text-brand-text hover:bg-brand-surface/80 transition-colors cursor-pointer w-full sm:w-auto justify-center text-sm font-semibold group"
+              title={previousDisabled ? "You can't leave this question until the timer runs out" : undefined}
+              className={`inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl border transition-colors w-full sm:w-auto justify-center text-sm font-semibold group ${
+                previousDisabled
+                  ? 'border-brand-text/10 text-brand-secondary/40 cursor-not-allowed'
+                  : 'border-brand-text/25 text-brand-text hover:bg-brand-surface/80 cursor-pointer'
+              }`}
             >
-              <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+              <ArrowLeft
+                className={`w-4 h-4 transition-transform ${
+                  previousDisabled ? '' : 'group-hover:-translate-x-1'
+                }`}
+              />
               <span>Previous</span>
             </button>
           ) : (

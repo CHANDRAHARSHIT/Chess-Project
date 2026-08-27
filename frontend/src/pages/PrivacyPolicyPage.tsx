@@ -174,7 +174,7 @@ export default function PrivacyPolicyPage() {
             certain processing; and port your data to another service. To
             exercise any of these rights, please contact us at{" "}
             <a
-              href="/contact"
+              href="/contact-us"
               className="text-brand-accent hover:underline transition-colors"
             >
               our contact page
@@ -224,7 +224,7 @@ export default function PrivacyPolicyPage() {
             Policy or the handling of your personal data, please reach out to
             us through our{" "}
             <a
-              href="/contact"
+              href="/contact-us"
               className="text-brand-accent hover:underline transition-colors"
             >
               contact page

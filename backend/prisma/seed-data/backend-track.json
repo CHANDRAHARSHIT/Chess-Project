@@ -205,14 +205,10 @@
           "id": "q8",
           "questionNumber": 8,
           "type": "multiple-choice",
-          "questionText": "Given these functions, what is the output of?\n\na ← 1\nWHILE NOT (x(a,2) AND y(a)):\n    a ← a + 1\nOUTPUT(a)",
-          "supportingTabs": [
-            {
-              "id": "functions",
-              "label": "Functions Definition",
-              "content": "FUNCTION x(number, y):\n    total ← 0\n\n    WHILE number > 0:\n        digit ← number MOD 10\n        total ← total + digit\n        number ← number DIV 10\n\n    RETURN total equals y\nEND FUNCTION\n\n\nFUNCTION y(number):\n    b ← 2\n\n    WHILE b < (number):\n        IF number MOD b == 0:\n            RETURN FALSE\n\n        b ← b + 1\n\n    RETURN TRUE\nEND FUNCTION"
-            }
-          ],
+          "questionText": "Given these functions, what is the output of?",
+          "traceCode": "a ← 1\nWHILE NOT (x(a,2) AND y(a)):\n\ta ← a + 1\nOUTPUT(a)",
+          "codeBlock": "FUNCTION x(number, y):\n    total ← 0\n\n    WHILE number > 0:\n        digit ← number MOD 10\n        total ← total + digit\n        number ← number DIV 10\n\n    RETURN total equals y\nEND FUNCTION\n\n\nFUNCTION y(number):\n    b ← 2\n\n    WHILE b < (number):\n        IF number MOD b == 0:\n            RETURN FALSE\n\n        b ← b + 1\n\n    RETURN TRUE\nEND FUNCTION",
+          "codeLanguage": "Pseudocode",
           "options": [
             {
               "value": "3",
@@ -237,7 +233,10 @@
           "id": "q9",
           "questionNumber": 9,
           "type": "multiple-choice",
-          "questionText": "Given the functions in Q8, what is the output of?\n\na ← 1\nWHILE NOT (x(a,4) AND y(a)):\n    a ← a + 1\nOUTPUT(a)",
+          "questionText": "Given the functions in Q8, what is the output of?",
+          "traceCode": "a ← 1\nWHILE NOT (x(a,4) AND y(a)):\n\ta ← a + 1\nOUTPUT(a)",
+          "codeBlock": "FUNCTION x(number, y):\n    total ← 0\n\n    WHILE number > 0:\n        digit ← number MOD 10\n        total ← total + digit\n        number ← number DIV 10\n\n    RETURN total equals y\nEND FUNCTION\n\n\nFUNCTION y(number):\n    b ← 2\n\n    WHILE b < (number):\n        IF number MOD b == 0:\n            RETURN FALSE\n\n        b ← b + 1\n\n    RETURN TRUE\nEND FUNCTION",
+          "codeLanguage": "Pseudocode",
           "options": [
             {
               "value": "4",
@@ -262,7 +261,10 @@
           "id": "q10",
           "questionNumber": 10,
           "type": "number",
-          "questionText": "Given the functions in Q8, how much time would it take you to find the output?\n\nImportant: Do not rush your estimate. Take time to ensure your estimate is accurate, as it will be relevant to the next question.\n\na ← 1\nWHILE NOT (x(a,73) AND y(a)):\n    a ← a + 1\nOUTPUT(a)",
+          "questionText": "Given the functions in Q8, how much time would it take you to find the output?\n\nImportant: Do not rush your estimate. Take time to ensure your estimate is accurate, as it will be relevant to the next question.",
+          "traceCode": "a ← 1\nWHILE NOT (x(a,73) AND y(a)):\n\ta ← a + 1\nOUTPUT(a)",
+          "codeBlock": "FUNCTION x(number, y):\n    total ← 0\n\n    WHILE number > 0:\n        digit ← number MOD 10\n        total ← total + digit\n        number ← number DIV 10\n\n    RETURN total equals y\nEND FUNCTION\n\n\nFUNCTION y(number):\n    b ← 2\n\n    WHILE b < (number):\n        IF number MOD b == 0:\n            RETURN FALSE\n\n        b ← b + 1\n\n    RETURN TRUE\nEND FUNCTION",
+          "codeLanguage": "Pseudocode",
           "numberPrefix": "It would take me",
           "numberSuffix": "minutes.",
           "placeholder": "e.g. 30",
@@ -279,15 +281,11 @@
       "id": "q11",
       "questionNumber": 11,
       "type": "short-text",
-      "questionText": "The question was:\nGiven these functions, what is the output of?\n\na ← 1\nWHILE NOT (x(a,73) AND y(a)):\n    a ← a + 1\nOUTPUT(a)",
+      "questionText": "The question was:\nGiven these functions, what is the output of?",
       "purpose": "We want to assess your estimation skills. You estimated that this task would take you a certain amount of time, and we now want to see whether your estimate reflects how long the task actually takes.\n\nTreat this task as you would a task you received in a real-world development environment. You may use any tools or resources that you would normally use when completing work, including GPT, IDEs, documentation, search engines, and other development tools.\n\nUltimately, we want to test what matters most: can you write working code that solves the problem? Writing code to solve problems is a fundamental part of backend development.",
-      "supportingTabs": [
-        {
-          "id": "functions",
-          "label": "Functions Definition",
-          "content": "FUNCTION x(number, y):\n    total ← 0\n\n    WHILE number > 0:\n        digit ← number MOD 10\n        total ← total + digit\n        number ← number DIV 10\n\n    RETURN total equals y\nEND FUNCTION\n\n\nFUNCTION y(number):\n    b ← 2\n\n    WHILE b < (number):\n        IF number MOD b == 0:\n            RETURN FALSE\n            \n        b ← b + 1\n\n    RETURN TRUE\nEND FUNCTION"
-        }
-      ],
+      "traceCode": "a ← 1\nWHILE NOT (x(a,73) AND y(a)):\n\ta ← a + 1\nOUTPUT(a)",
+      "codeBlock": "FUNCTION x(number, y):\n    total ← 0\n\n    WHILE number > 0:\n        digit ← number MOD 10\n        total ← total + digit\n        number ← number DIV 10\n\n    RETURN total equals y\nEND FUNCTION\n\n\nFUNCTION y(number):\n    b ← 2\n\n    WHILE b < (number):\n        IF number MOD b == 0:\n            RETURN FALSE\n\n        b ← b + 1\n\n    RETURN TRUE\nEND FUNCTION",
+      "codeLanguage": "Pseudocode",
       "wordLimit": 1,
       "placeholder": "Enter calculated output value",
       "tips": "You can write a script in any language or environment to solve this.",

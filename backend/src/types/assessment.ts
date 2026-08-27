@@ -20,6 +20,8 @@ export interface SupportingInfoTab {
   id: string;
   label: string;
   content: string;
+  /** Renders content as a line-numbered code block instead of prose. */
+  isCode?: boolean;
 }
 
 export interface AssessmentQuestion {
@@ -31,6 +33,8 @@ export interface AssessmentQuestion {
   purpose?: string;
   scenario?: string;
   supportingTabs?: SupportingInfoTab[];
+  /** A short snippet shown as its own code block directly under the question text (e.g. the call site to trace), separate from `codeBlock`. */
+  traceCode?: string;
   codeBlock?: string;
   prefillValue?: string;
   wordLimit?: number;
