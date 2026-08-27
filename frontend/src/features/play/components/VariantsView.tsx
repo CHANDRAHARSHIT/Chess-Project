@@ -6,7 +6,7 @@
  * state, and layout logic is unchanged.
  */
 import { useState, useMemo } from 'react';
-import { Search, X, Dices, Sparkles, Flame, ShieldAlert, Cpu, Trophy, Zap } from 'lucide-react';
+import { Search, X, Dices, Flame, ShieldAlert, Cpu, Trophy, Zap } from 'lucide-react';
 import { VariantCard, type VariantCardProps } from './VariantCard';
 
 const VARIANTS_LIST: VariantCardProps[] = [
@@ -90,11 +90,6 @@ export function VariantsView() {
         </div>
 
         <div className="space-y-4 max-w-3xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-accent/15 text-brand-accent font-mono text-[11px] uppercase tracking-widest font-bold border border-brand-accent/30">
-            <Sparkles className="w-3.5 h-3.5 animate-pulse" />
-            <span>Chess Reinvented • Infinite Strategy</span>
-          </div>
-
           <h1 className="font-display font-extrabold text-4xl sm:text-5xl lg:text-6xl text-brand-text tracking-tight leading-[1.1]">
             Explore <span className="bg-gradient-to-r from-amber-200 via-amber-400 to-amber-100 bg-clip-text text-transparent">Chess Variants</span>
           </h1>

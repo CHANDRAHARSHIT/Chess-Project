@@ -5,7 +5,6 @@ import {
   Play,
   Lock,
   Clock,
-  Sparkles,
   Award,
   Layers,
   Search,
@@ -202,10 +201,6 @@ export default function LessonsPage() {
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-brand-surface via-brand-surface/90 to-brand-bg border border-brand-border p-6 sm:p-8 lg:p-10">
         <div className="absolute right-0 top-0 -mr-16 -mt-16 w-80 h-80 rounded-full bg-brand-accent/10 blur-3xl pointer-events-none" />
         <div className="relative z-10 space-y-4 max-w-2xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-accent/10 border border-brand-accent/30 text-brand-accent text-xs font-semibold uppercase tracking-wider">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Interactive Learning Feed</span>
-          </div>
           <h1 className="font-display font-extrabold text-3xl sm:text-4xl lg:text-5xl text-brand-text tracking-tight">
             Lesson Library
           </h1>
