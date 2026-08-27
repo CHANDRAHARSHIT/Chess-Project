@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from "react";
-import { useNavigate, useSearchParams } from "react-router";
-import { ArrowLeft, Briefcase, Sparkles } from "lucide-react";
+import { useNavigate, useParams } from "react-router";
+import { ArrowLeft, Briefcase } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { soundManager } from "@/shared/lib/SoundManager";
 import DepartmentOpeningsTable from "@/features/join-us/DepartmentOpeningsTable";
@@ -70,13 +70,6 @@ export default function JoinUsPage() {
               </div>
 
               <div>
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-accent/30 bg-brand-accent/5 mb-6">
-                  <Sparkles className="w-3.5 h-3.5 text-brand-accent" />
-                  <span className="text-xs font-mono text-brand-accent uppercase tracking-widest font-semibold">
-                    Careers at XLChess
-                  </span>
-                </div>
-
                 <h1 className="text-3xl sm:text-5xl font-display font-bold text-brand-text mb-4 leading-tight">
                   Build the Future of <br className="hidden sm:inline" />
                   <span className="text-brand-accent italic">Online Chess</span>

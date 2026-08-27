@@ -14,10 +14,6 @@ export function LobbyView({ historyRefreshKey }: { historyRefreshKey: number }) 
               <Swords className="w-7 h-7" />
             </div>
             <div className="space-y-1">
-              <div className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-brand-accent font-semibold px-2.5 py-0.5 rounded-full bg-brand-accent/10 border border-brand-accent/20">
-                <span className="h-1.5 w-1.5 rounded-full bg-brand-accent animate-ping" />
-                Online Chess
-              </div>
               <h1 className="font-display font-bold text-3xl sm:text-4xl text-brand-text tracking-tight">
                 Play Chess Online
               </h1>

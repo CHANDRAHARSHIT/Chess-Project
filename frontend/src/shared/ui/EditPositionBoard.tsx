@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { type PositionDataType } from 'react-chessboard';
 import { ThemedChessboard } from './ThemedChessboard';
+import { BoardCoordinates } from './BoardCoordinates';
 import { getSquareFromPointer, type BoardOrientation } from '@/shared/chess/editModeInteraction';
 import {
   movePieceBetweenSquares,
@@ -9,9 +10,6 @@ import {
   type EditorTool,
 } from '@/shared/chess/positionEditor';
 import { useBoardSettings } from '@/shared/appearance/useBoardSettings';
-
-const FILE_LABELS = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'] as const;
-const RANK_LABELS = ['8', '7', '6', '5', '4', '3', '2', '1'] as const;
 
 interface DragState {
   pointerId: number;
@@ -39,7 +37,7 @@ export function EditPositionBoard({
 }: EditPositionBoardProps) {
   const boardFrameRef = useRef<HTMLDivElement>(null);
   const [dragState, setDragState] = useState<DragState | null>(null);
-  const { boardTheme, pieceSet } = useBoardSettings();
+  const { pieceSet } = useBoardSettings();
 
   useEffect(() => {
     setDragState(null);
@@ -136,13 +134,10 @@ export function EditPositionBoard({
     onPositionChange(setPieceOnSquare(position, square, selectedTool));
   };
 
-  const fileLabels = boardOrientation === 'white' ? FILE_LABELS : [...FILE_LABELS].reverse();
-  const rankLabels = boardOrientation === 'white' ? [...RANK_LABELS].reverse() : RANK_LABELS;
-
   return (
     <div
       ref={boardFrameRef}
-      className="relative aspect-square overflow-hidden rounded-xl border border-brand-border touch-none select-none"
+      className="relative aspect-square overflow-hidden rounded-sm border border-brand-border bg-brand-surface shadow-2xl transition-all duration-300 touch-none select-none"
       onContextMenu={(event) => event.preventDefault()}
       style={boardSize ? { width: `${boardSize}px`, height: `${boardSize}px`, maxWidth: '100%' } : {}}
     >
@@ -209,39 +204,7 @@ export function EditPositionBoard({
         }}
       />
 
-      <div className="pointer-events-none absolute inset-0 z-10">
-        {/* File labels (a-h) inside the bottom-left corner of the bottom square in each column */}
-        {fileLabels.map((file, i) => (
-          <span
-            key={`file-${file}`}
-            className="absolute text-[12px] font-semibold"
-            style={{
-              bottom: '4px',
-              left: `calc(${i * 12.5}% + 4px)`,
-              color: i % 2 === 0 ? boardTheme.light : boardTheme.dark,
-              lineHeight: 1,
-            }}
-          >
-            {file}
-          </span>
-        ))}
-
-        {/* Rank labels (1-8) inside the bottom-left corner of the leftmost square in each row, offset vertically to prevent overlap with file labels */}
-        {rankLabels.map((rank, i) => (
-          <span
-            key={`rank-${rank}`}
-            className="absolute text-[12px] font-semibold"
-            style={{
-              bottom: `calc(${i * 12.5}% + 16px)`,
-              left: '4px',
-              color: i % 2 === 0 ? boardTheme.light : boardTheme.dark,
-              lineHeight: 1,
-            }}
-          >
-            {rank}
-          </span>
-        ))}
-      </div>
+      <BoardCoordinates boardOrientation={boardOrientation} />
 
       {dragState && (
         <div
