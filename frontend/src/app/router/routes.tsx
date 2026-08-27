@@ -35,6 +35,7 @@ import LessonViewerPage from "@/pages/LessonViewerPage";
 import StoryModePage from "@/pages/StoryModePage";
 import PlayHubPage from "@/pages/PlayHubPage";
 import StatsPage from "@/pages/StatsPage";
+import AssessmentPage from "@/pages/AssessmentPage";
 
 export interface RouteConfig {
   path: string;
@@ -237,10 +238,24 @@ export const mainRoutes: RouteConfig[] = [
     element: <JoinUsPage />,
     title: "Join Us | XLChess",
   },
+  {
+    path: "/join-us/:roleId",
+    element: <JoinUsPage />,
+    title: "Join Us | XLChess",
+  },
 ];
 
 // Routes that run inside the MinimalLayout (Navbar only, no Sidebar/Footer)
 export const minimalRoutes: RouteConfig[] = [
+  {
+    path: "/join-us/:roleId/assessment",
+    element: (
+      <ProtectedRoute>
+        <AssessmentPage />
+      </ProtectedRoute>
+    ),
+    title: "Assessment | XLChess",
+  },
   { path: "/payment", element: <CheckoutPage />, title: "Checkout | XLChess" },
   {
     path: "/successful",

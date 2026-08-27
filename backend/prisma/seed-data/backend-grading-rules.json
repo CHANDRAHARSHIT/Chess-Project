@@ -1,0 +1,12 @@
+{
+  "maxWrongAllowed": 2,
+  "rules": [
+    { "questionId": "q1", "field": "answer", "type": "wrongIfNotEqual", "value": "10" },
+    { "questionId": "q2", "field": "answer", "type": "wrongIfNotEqual", "value": "no" },
+    { "questionId": "q4", "field": "radioValue", "type": "wrongIfEquals", "value": "no_change" },
+    { "questionId": "q5", "field": "radioValue", "type": "wrongIfEquals", "value": "no" },
+    { "questionId": "q8", "field": "answer", "type": "wrongIfNotEqual", "value": "2" },
+    { "questionId": "q9", "field": "answer", "type": "wrongIfNotEqual", "value": "13" },
+    { "questionId": "q10", "field": "answer", "type": "wrongIfGreaterThan", "threshold": 90 }
+  ]
+}

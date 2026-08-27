@@ -28,6 +28,7 @@ model User {
   gameParticipants     GameParticipant[]
   playerRatings        PlayerRating[]
   pathwayProgress      PathwayProgress?
+  assessmentAttempts   AssessmentAttempt[]
 }
 
 model Account {
@@ -439,4 +440,68 @@ model PathwayProgress {
   totalSolved  Int      @default(0)
   updatedAt    DateTime @updatedAt
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Join Us — Candidate Assessments
+//
+// AssessmentTemplate holds a frozen, versioned snapshot of a track's full
+// question set (pages/questions, shaped exactly like the frontend's
+// AssessmentConfig) plus its grading rules. Only one template per trackSlug
+// is `isActive` at a time — that's the version new attempts bind to.
+// In-progress attempts keep whatever template they started with even after
+// a newer version is activated (see AssessmentService.getOrCreateAttempt).
+// ─────────────────────────────────────────────────────────────────────────
+
+enum AssessmentAttemptStatus {
+  IN_PROGRESS
+  SUBMITTED
+}
+
+enum AssessmentResult {
+  PENDING
+  PASS
+  FAIL
+  REVIEW
+}
+
+model AssessmentTemplate {
+  id           String              @id @default(cuid())
+  trackSlug    String
+  version      Int
+  isActive     Boolean             @default(true)
+  data         Json
+  gradingRules Json?
+  createdAt    DateTime            @default(now())
+  attempts     AssessmentAttempt[]
+
+  @@unique([trackSlug, version])
+  @@index([trackSlug, isActive])
+}
+
+model AssessmentAttempt {
+  id              String                  @id @default(cuid())
+  userId          String
+  trackSlug       String
+  templateId      String
+  status          AssessmentAttemptStatus @default(IN_PROGRESS)
+  result          AssessmentResult        @default(PENDING)
+  lastAccessedAt  DateTime                @default(now())
+  answers         Json                    @default("{}")
+  radioValues     Json                    @default("{}")
+  textValues      Json                    @default("{}")
+  bookmarks       Int[]                   @default([])
+  estimateMinutes Int?
+  timedSectionStartedAt DateTime?
+  timedDeadlineAt DateTime?
+  extensionUsed   Boolean                 @default(false)
+  wrongCount      Int?
+  submittedAt     DateTime?
+  createdAt       DateTime                @default(now())
+  updatedAt       DateTime                @updatedAt
+  user            User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  template        AssessmentTemplate      @relation(fields: [templateId], references: [id])
+
+  @@unique([userId, trackSlug])
+  @@index([trackSlug])
 }
