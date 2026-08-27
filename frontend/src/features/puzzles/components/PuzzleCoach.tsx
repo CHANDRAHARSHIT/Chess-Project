@@ -456,7 +456,7 @@ export function CustomPuzzleCoach({ puzzle, status, onExit }: CustomPuzzleCoachP
 
   return (
     <div
-      className="w-full flex flex-col rounded-2xl overflow-hidden border relative"
+      className="w-full h-full flex flex-col rounded-2xl overflow-hidden border relative"
       style={{ background: PALETTE.panelBg, borderColor: 'rgba(212,175,110,0.18)' }}
     >
       {/* Header row */}
@@ -491,7 +491,7 @@ export function CustomPuzzleCoach({ puzzle, status, onExit }: CustomPuzzleCoachP
       </div>
 
       {/* Body */}
-      <div className="flex flex-col items-center text-center px-5 pt-6 pb-4 gap-4">
+      <div className="flex flex-col items-center text-center px-5 pt-6 pb-4 gap-4 flex-1 min-h-0 justify-center">
         {/* Avatar */}
         <div
           className="w-20 h-20 rounded-2xl overflow-hidden border-2 flex-shrink-0"

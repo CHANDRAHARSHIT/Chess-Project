@@ -383,7 +383,7 @@ export default function PuzzlePage() {
         </div>
 
         {customFilters ? (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch w-full">
             <div className="lg:col-span-7 flex justify-center w-full">
               <CustomPuzzleSession
                 filters={customFilters}
@@ -393,7 +393,7 @@ export default function PuzzlePage() {
               />
             </div>
 
-            <div className="lg:col-span-5 flex flex-col">
+            <div className="lg:col-span-5 flex flex-col h-full">
               <CustomPuzzleCoach
                 puzzle={currentCustomPuzzle}
                 status={customCoachStatus}
