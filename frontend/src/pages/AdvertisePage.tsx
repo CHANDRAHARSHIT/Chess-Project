@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import { Megaphone, Target, Users, BarChart2, Globe, Zap, ArrowLeft } from "lucide-react";
+import { Target, Users, BarChart2, Globe, Zap, ArrowLeft } from "lucide-react";
 import { soundManager } from "@/shared/lib/SoundManager";
 
 interface AdFormatCardProps {
@@ -93,12 +93,6 @@ export default function AdvertisePage() {
             </button>
           </div>
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-accent/30 bg-brand-accent/5 mb-6">
-              <Megaphone className="w-3.5 h-3.5 text-brand-accent" />
-              <span className="text-xs font-mono text-brand-accent uppercase tracking-widest font-semibold">
-                Partners
-              </span>
-            </div>
             <h1 className="text-3xl sm:text-4xl font-display font-bold mb-4 leading-tight tracking-tight">
               Advertise on XLChess
             </h1>

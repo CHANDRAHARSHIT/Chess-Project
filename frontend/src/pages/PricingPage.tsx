@@ -414,16 +414,6 @@ export default function PricingPage() {
 
         {/* ─── HERO ─── */}
         <section className="text-center pt-16 sm:pt-20 pb-12 sm:pb-16 max-w-3xl flex flex-col items-center">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-surface/80 border border-brand-border backdrop-blur-sm text-brand-accent text-xs font-sans tracking-wide mb-6"
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Trusted by thousands of chess players</span>
-          </motion.div>
-
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-display font-medium tracking-tight text-brand-text mb-6 leading-[1.05]">
             Unlock Your Full <br className="sm:block hidden" />
             <span className="text-gold-gradient font-bold italic">

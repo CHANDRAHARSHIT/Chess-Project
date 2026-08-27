@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router";
 import { motion } from "framer-motion";
-import { ArrowLeft, Clock, FileText } from "lucide-react";
+import { ArrowLeft, FileText } from "lucide-react";
 
 interface ComingSoonPageProps {
   featureName: string;
@@ -35,14 +35,6 @@ export default function ComingSoonPage({
           <h1 className="coming-soon-heading text-4xl md:text-5xl font-display font-extrabold tracking-tight leading-tight">
             {featureName}
           </h1>
-
-          {/* Coming Soon badge */}
-          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full border border-brand-accent/30 bg-brand-accent/5">
-            <Clock className="w-3 h-3 text-brand-accent" />
-            <span className="text-xs font-mono text-brand-accent uppercase tracking-widest font-semibold">
-              Coming Soon
-            </span>
-          </div>
         </div>
 
         {/* Description */}
