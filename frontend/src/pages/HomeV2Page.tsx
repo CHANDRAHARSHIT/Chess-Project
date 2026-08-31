@@ -9,9 +9,10 @@
  *  3. Legends   — 9-tile coach grid with rotating quotes (3rd.html inspiration, text LEFT / grid RIGHT)
  */
 
-import HeroV2 from '@/features/landing/HeroV2';
-import LessonsSectionV2 from '@/features/landing/LessonsSectionV2';
-import LegendsSectionV2 from '@/features/landing/LegendsSectionV2';
+import HeroV2 from "@/features/landing/HeroV2";
+import LessonsSectionV2 from "@/features/landing/LessonsSectionV2";
+import LegendsSectionV2 from "@/features/landing/LegendsSectionV2";
+import PuzzleSectionV2 from "@/features/landing/PuzzleSectionV2";
 
 export default function HomeV2Page() {
   return (
@@ -20,6 +21,7 @@ export default function HomeV2Page() {
         <HeroV2 />
         <LessonsSectionV2 />
         <LegendsSectionV2 />
+        <PuzzleSectionV2 />
       </main>
     </div>
   );
