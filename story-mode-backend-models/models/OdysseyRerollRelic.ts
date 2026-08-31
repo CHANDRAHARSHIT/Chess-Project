@@ -1,0 +1,15 @@
+import { OdysseyShopRelic } from "./OdysseyShopRelic.js";
+import { ERelicType } from "../enums/ERelicType.js";
+import type { OdysseyMerchant } from "./OdysseyMerchant.js";
+import type { OdysseyPlayer } from "./OdysseyPlayer.js";
+
+export class OdysseyRerollRelic extends OdysseyShopRelic {
+  constructor(charges = 0) {
+    super(ERelicType.Reroll, "Moirai's Thread", "+1 to max Rerolls.", charges);
+  }
+
+  /** Re-selects 3 offerings from the merchant's existing priced catalog (prices are not re-rolled). */
+  applyInShop(merchant: OdysseyMerchant, player: OdysseyPlayer): void {
+    throw new Error("Not implemented");
+  }
+}
