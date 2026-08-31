@@ -117,8 +117,10 @@ export default function PuzzleSectionV2() {
 
   // Handle piece drop validation and puzzle rules
   const handlePieceDrop = useCallback(
-    (args: { sourceSquare: string; targetSquare: string }): boolean => {
+    (args: { piece: any; sourceSquare: string; targetSquare: string | null }): boolean => {
       const { sourceSquare, targetSquare } = args;
+
+      if (!targetSquare) return false;
 
       // Prevent interaction if puzzle is completed, animating, or not White's turn
       if (isSolved || isAnimating) return false;
