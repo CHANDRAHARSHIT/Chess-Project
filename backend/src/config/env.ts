@@ -54,6 +54,11 @@ export const env = {
     return Number.isFinite(parsed) && parsed > 0 ? parsed : 10_000;
   })(),
 
+  // Anti-cheat (optional — ANTICHEAT_ENABLED=false disables all ACS behaviour).
+  // Gates the post-game analysis hook and the /analysis endpoint. Analysis runs
+  // a WASM engine per finished game, so it stays off until deliberately enabled.
+  ANTICHEAT_ENABLED: process.env.ANTICHEAT_ENABLED === "true",
+
   // Rollbar error monitoring
   ROLLBAR_ACCESS_TOKEN: process.env.ROLLBAR_ACCESS_TOKEN!,
 };

@@ -32,6 +32,26 @@ export type {
   ReviewCase,
 } from "./types.js";
 
+// ── Post-game analysis (implemented) ─────────────────────────────────────────
+export {
+  analyseGame,
+  analyseGameAsText,
+  analyseOnGameCompleted,
+  loadAnalysableGame,
+  shutdownAnalysis,
+  GameNotAnalysableError,
+} from "./AnalysisService.js";
+export { StockfishEngine } from "./detection/engine/StockfishEngine.js";
+export type { PositionEval } from "./detection/engine/StockfishEngine.js";
+export { GameReplay, parseStoredMoves } from "./detection/GameReplay.js";
+export type { StoredMove, ReplayInput } from "./detection/GameReplay.js";
+export { BlunderAnalyzer } from "./detection/BlunderAnalyzer.js";
+export type { MoveQuality, ClassifiedMove, BlunderSummary } from "./detection/BlunderAnalyzer.js";
+export { PostGameAnalysis, startingFenFromMetadata } from "./detection/PostGameAnalysis.js";
+export type { AnalysableGame, GameAnalysisReport } from "./detection/PostGameAnalysis.js";
+export { renderTextReport } from "./detection/AnalysisReport.js";
+export type { MoveQualityBands } from "./feedback/PolicyRegistry.js";
+
 // ── Detection ────────────────────────────────────────────────────────────────
 export { Check } from "./detection/Check.js";
 export { DetectionEngine } from "./detection/DetectionEngine.js";

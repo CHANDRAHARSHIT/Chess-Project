@@ -1,8 +1,10 @@
-# Anti-Cheat System (ACS) — Class Framework
+# Anti-Cheat System (ACS)
 
-> **Status: framework only.** Every method body is `throw new Error("Not implemented")`.
-> This PR establishes the class structure, properties, and method signatures.
-> No behaviour, no database models, no routes, no wiring into other domains.
+> **Status: framework, plus one working slice.**
+>
+> Most method bodies are `throw new Error("Not implemented")` — the structure
+> exists, the behaviour does not. The exception is **post-game blunder review**,
+> which is implemented end to end and wired into the Play flow. See §9.
 
 Source of truth: `reference_docs/Feature Definition: Anti-cheat System`.
 That document is itself marked ~50% complete by its author, so this framework is
@@ -39,13 +41,12 @@ trigger → detection → red flags → escalation → case → arbiter decision
 
 ## 2. Acceptance Criteria
 
-This PR is complete when:
-
 - [x] Every module in the spec has a corresponding class with typed signatures.
 - [x] The spec's two non-negotiable rules are enforced structurally (see §3).
 - [x] `npx tsc --noEmit` passes across the whole backend.
-- [x] No behaviour is implemented — every body throws.
-- [x] No existing file is modified; no schema or migration changes.
+- [x] Post-game blunder review runs end to end against a real engine (§9).
+- [x] A finished game in the Play flow produces a text report.
+- [x] No schema or migration changes.
 
 ---
 
@@ -58,10 +59,11 @@ Every decision-making signature takes a `Situation` (proficiency × event type).
 There is no situation-less overload anywhere in the module.
 
 **"Never have static rules or policies."**
-No numeric constant appears anywhere in `anticheat/`. Every threshold, weight,
-and certainty bar is resolved at call time from `PolicyRegistry`, which the
-Feedback & Correction module can change without a deploy. **A hardcoded
-threshold anywhere else in this directory should fail review.**
+No decision threshold appears outside `PolicyRegistry`. Every weight, band, and
+certainty bar is resolved at call time, so Feedback & Correction can change one
+without a deploy. **A hardcoded threshold anywhere else in this directory should
+fail review.** The centipawn bands that classify blunders live in
+`PolicyRegistry.getMoveQualityBands()` for exactly this reason.
 
 ### 3.2 Detection intensity varies by Situation; penalties do not
 
@@ -126,7 +128,7 @@ These are prerequisites, not follow-up polish. Each blocks real work downstream.
 | # | Blocker | Blocks | Notes |
 |---|---|---|---|
 | 1 | **No per-ply timing.** `GameRecord.moveHistory` is opaque JSON; `Move` is `Record<string, unknown>`. No think-time is recorded. | `MoveTimeCheck`, all Type 3 detection | Requires a Session change. Must be server-measured — a client-reported time is trivially forged. |
-| 2 | **No server-side engine.** Stockfish exists only in the frontend (`frontend/src/shared/hooks/useStockfish.ts`). | Every accuracy, blunder, and engine-correlation check | A client-side engine cannot be trusted for evidence. |
+| 2 | ~~No server-side engine.~~ **RESOLVED** — `detection/engine/StockfishEngine.ts` runs Stockfish 18 in Node. | — | See §9. |
 | 3 | **No baseline data.** The spec's own expected-accuracy table is unfinished (800 guessed, 1000 and 1200 left as `?`). | All of `StatisticalBaselines`, and therefore most checks | Needs an OTB corpus + engine analysis over it. This is the dominant compute cost in the ACS. |
 | 4 | **No tournament domain.** `GameRecord.tournamentContext` is an opaque passthrough JSON field. | Prize compensation, tournament triggers, tournament simulation | A large share of the spec assumes tournaments exist. |
 | 5 | **Reports do not reach our database.** `frontend/src/features/report/ReportForm.tsx` POSTs to web3forms.com, a third-party email relay. | `ReportService` | Smallest high-value fix in the ACS; depends on nothing else. |
@@ -137,12 +139,19 @@ These are prerequisites, not follow-up polish. Each blocks real work downstream.
 
 ## 6. Consumed By / Dependency Map
 
-Nothing consumes this module yet. Intended consumers once implemented:
+Live today:
+
+| Producer | Hook | Purpose |
+|---|---|---|
+| `results/resultsListener` | `analyseOnGameCompleted` | Post-game blunder review, fire-and-forget |
+| `GET /api/games/:id/analysis` | `analyseGameAsText` | On-demand text report for a participant |
+| `matchmaking/MatchmakingQueue` | `metadata.positionId` | Makes a finished game replayable |
+
+Intended consumers once the rest is implemented:
 
 | Producer | Hook | Purpose |
 |---|---|---|
 | `session/SessionManager` | `onMovePlayed` | In-game detection in high-risk Situations |
-| `results/resultsListener` | `onGameCompleted` | Post-game analysis |
 | Tournament engine (does not exist) | `onTournamentRoundCompleted` | Between-round and end-of-event analysis |
 | Matchmaking / event entry | `checkEventEligibility` | Gate unclassifiable accounts out of rated and prize events |
 | Frontend report form | `ReportService.submitReport` | Replaces the web3forms path |
@@ -155,7 +164,13 @@ Nothing consumes this module yet. Intended consumers once implemented:
 |---|---|
 | `types.ts` | Shared vocabulary: `Situation`, `Suspect`, `AnalyzedMove`, `DetectionOutcome`, escalation and case types |
 | `AntiCheatSystem.ts` | Facade; the only class other domains should import |
+| `AnalysisService.ts` | **Implemented.** Composition root for post-game analysis; DB↔analysis boundary |
 | `index.ts` | Public barrel — import from here, never from internal paths |
+| `detection/engine/StockfishEngine.ts` | **Implemented.** Serialised UCI adapter for Stockfish 18 in Node |
+| `detection/GameReplay.ts` | **Implemented.** Replays stored moves into engine-evaluated plies |
+| `detection/BlunderAnalyzer.ts` | **Implemented.** Classifies moves by centipawn loss |
+| `detection/PostGameAnalysis.ts` | **Implemented.** Orchestrates load → replay → classify |
+| `detection/AnalysisReport.ts` | **Implemented.** Renders the plain-text report |
 | `detection/DetectionEngine.ts` | Runs checks, sums DCS, produces the verdict |
 | `detection/Check.ts` | Abstract base for all checks |
 | `detection/checks/*.ts` | The four spec checks + engine correlation + personality |
@@ -188,3 +203,66 @@ Everything else should wait on direction from the founder, particularly:
 - The offender review section the spec marks `[TODO]`.
 - Whether tournaments are in scope before or after ACS detection.
 - Which OTB corpus to use for baselines (a sourcing and licensing decision).
+
+---
+
+## 9. Post-Game Blunder Review (implemented)
+
+The first working slice of the Detection module. It produces a report a human
+reads. It does **not** score, flag, or penalise anyone — wiring it into
+`DetectionEngine` as a scored `Check` waits on `StatisticalBaselines`, because a
+blunder count means nothing without knowing what is normal for that rating.
+
+### Pipeline
+
+```
+GameRecord ──► AnalysisService.loadAnalysableGame
+                 └─ startingFen from metadata.positionId
+           ──► GameReplay        (chess.js + Stockfish, one eval per ply)
+           ──► BlunderAnalyzer   (centipawn loss → quality band)
+           ──► renderTextReport  (plain text)
+```
+
+### Reaching it
+
+- `GET /api/games/:id/analysis` → `text/plain`. Auth required, and restricted to
+  the game's own participants — the report names every mistake a player made, so
+  a public endpoint would be a scouting tool.
+- Automatically on game completion via `resultsListener`, logged server-side.
+
+Both are gated behind `ANTICHEAT_ENABLED` (default `false`).
+
+### Why the starting position is duplicated into metadata
+
+Games are Chess960 with a random `positionId`, chosen in `MatchmakingQueue` and
+placed only on `MatchDescriptor.variantParams` — which is never persisted. Stored
+moves are `{from, to}` coordinates with no board attached, so **a finished game
+could not be replayed at all**, and therefore could not be analysed.
+
+`metadata` is the only field that reaches `GameRecord` intact, so `positionId` is
+written there too. This avoids a schema change. It does bend the `contracts/`
+README line that metadata is audit-only and acted on by no domain; a nullable
+`startingFen` column is the cleaner long-term fix.
+
+**Games played before this change cannot be analysed** and return HTTP 422 with
+an explanation rather than a misleading report from a guessed starting board.
+
+### Measured behaviour
+
+| | |
+|---|---|
+| Engine | Stockfish 18 Lite (WASM, single-threaded), from the `stockfish` npm package |
+| Boot | ~200ms, once per process, lazily |
+| Throughput | 56 plies at depth 12 in ~2.0s; at depth 10 in ~0.8s |
+| Concurrency | Serialised — a UCI engine holds one position at a time |
+
+### Known limitations
+
+- **Depth 12 is not a strong opinion.** No tuning has been done, because tuning
+  requires the Simulation module.
+- **Centipawn loss is clamped at 1000.** A move allowing mate scores ~10000cp and
+  would otherwise make an average centipawn loss meaningless.
+- **`thinkTimeMs` is 0 on every move** — blocker #1. Timing-based checks must
+  treat it as absent, not as instant play.
+- **One engine per process, serialised.** Fine for the current volume; it needs a
+  worker pool before analysis runs on every game at scale.
