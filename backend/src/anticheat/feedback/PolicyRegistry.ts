@@ -32,7 +32,51 @@ export interface CheckWeighting {
   readonly enabled: boolean;
 }
 
+/** Centipawn-loss boundaries separating move qualities. */
+export interface MoveQualityBands {
+  /** Loss at or above this is a blunder. */
+  readonly blunder: number;
+  readonly mistake: number;
+  readonly inaccuracy: number;
+  /** Loss at or below this counts as a best move. */
+  readonly best: number;
+  /**
+   * Ceiling applied to any single move's centipawn loss.
+   *
+   * Mate scores sit around ±10000, so one move that allows mate would otherwise
+   * push an average centipawn loss into the thousands and make the statistic
+   * meaningless. Clamping keeps the average comparable across games.
+   */
+  readonly maxLoss: number;
+}
+
+/**
+ * Provisional bands, uniform across Situations until the Simulation module
+ * produces real per-Situation figures. Roughly the conventional thresholds:
+ * a blunder loses at least a piece's worth of evaluation.
+ *
+ * These live here rather than in BlunderAnalyzer precisely so that changing them
+ * is a policy edit, not a code edit.
+ */
+const PROVISIONAL_QUALITY_BANDS: MoveQualityBands = {
+  blunder: 300,
+  mistake: 150,
+  inaccuracy: 50,
+  best: 10,
+  maxLoss: 1000,
+};
+
 export class PolicyRegistry {
+  /**
+   * Centipawn-loss bands for move classification.
+   *
+   * The only implemented getter: post-game blunder review needs it. Everything
+   * else still throws until the Simulation module can justify a number.
+   */
+  getMoveQualityBands(situation: Situation): MoveQualityBands {
+    return PROVISIONAL_QUALITY_BANDS;
+  }
+
   /** Summed-DCS value above which detection is reported. Spec's `> 100` is a placeholder. */
   getDetectionThreshold(situation: Situation): number {
     throw new Error("Not implemented");

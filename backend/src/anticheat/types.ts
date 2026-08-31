@@ -53,6 +53,8 @@ export interface AnalyzedMove {
   readonly side: number;
   readonly fenBefore: string;
   readonly san: string;
+  /** The move in UCI ("e2e4", "e7e8q"), for comparison against engine output. */
+  readonly uci?: string;
   /** Server-measured. A client-reported time is trivially forged. */
   readonly thinkTimeMs: number;
   readonly clockRemainingMs: number;
