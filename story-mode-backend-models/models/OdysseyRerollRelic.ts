@@ -1,7 +1,7 @@
 import { OdysseyShopRelic } from "./OdysseyShopRelic.js";
 import { ERelicType } from "../enums/ERelicType.js";
 import type { OdysseyMerchant } from "./OdysseyMerchant.js";
-import type { OdysseyPlayer } from "./OdysseyPlayer.js";
+import type { OdysseyGame } from "./OdysseyGame.js";
 
 export class OdysseyRerollRelic extends OdysseyShopRelic {
   constructor(charges = 0) {
@@ -9,7 +9,10 @@ export class OdysseyRerollRelic extends OdysseyShopRelic {
   }
 
   /** Re-selects 3 offerings from the merchant's existing priced catalog (prices are not re-rolled). */
-  applyInShop(merchant: OdysseyMerchant, player: OdysseyPlayer): void {
-    throw new Error("Not implemented");
+  applyInShop(merchant: OdysseyMerchant, game: OdysseyGame): void {
+    if (!this.consume()) {
+      return;
+    }
+    merchant.rollOfferings();
   }
 }

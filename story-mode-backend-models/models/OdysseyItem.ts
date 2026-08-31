@@ -1,11 +1,10 @@
 /**
- * Common base for anything a player can own during a run.
+ * Common base for anything a run can own.
  *
- * 
- * shared identity fields live here, owning-behavior lives on subclasses.
+ * Shared identity fields live here, owning-behavior lives on subclasses.
  * Today OdysseyRelic is the only concrete branch, but the base exists so a
  * future item type (e.g. a one-shot consumable) has somewhere to attach
- * without reshaping OdysseyPlayer's inventory handling.
+ * without reshaping OdysseyGame's inventory handling.
  */
 export abstract class OdysseyItem {
   readonly id: string;
@@ -13,6 +12,8 @@ export abstract class OdysseyItem {
   readonly description: string;
 
   protected constructor(id: string, name: string, description: string) {
-    throw new Error("Not implemented"); // would assign the three fields above
+    this.id = id;
+    this.name = name;
+    this.description = description;
   }
 }

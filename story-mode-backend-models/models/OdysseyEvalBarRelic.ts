@@ -1,7 +1,10 @@
 import { OdysseyBattleRelic } from "./OdysseyBattleRelic.js";
 import { ERelicType } from "../enums/ERelicType.js";
+import { EBotCondition } from "../enums/EBotCondition.js";
 import type { OdysseyBattle } from "./OdysseyBattle.js";
-import type { OdysseyPlayer } from "./OdysseyPlayer.js";
+import type { OdysseyGame } from "./OdysseyGame.js";
+
+const EVAL_BAR_MOVE_WINDOW = 5;
 
 export class OdysseyEvalBarRelic extends OdysseyBattleRelic {
   constructor(charges = 0) {
@@ -12,7 +15,11 @@ export class OdysseyEvalBarRelic extends OdysseyBattleRelic {
    * Grants +5 evalMovesRemaining (the window during which the eval bar is
    * shown, decremented by 1 per player move); battle.botConditions.increase(Relaxed, 15).
    */
-  applyInBattle(battle: OdysseyBattle, player: OdysseyPlayer): void {
-    throw new Error("Not implemented");
+  applyInBattle(battle: OdysseyBattle, game: OdysseyGame): void {
+    if (!this.consume()) {
+      return;
+    }
+    battle.evalMovesRemaining += EVAL_BAR_MOVE_WINDOW;
+    battle.botConditions.increase(EBotCondition.Relaxed, 15);
   }
 }

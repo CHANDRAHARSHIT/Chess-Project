@@ -8,6 +8,6 @@ export class OdysseyPuzzleNode extends OdysseyNode {
 
   constructor(id: number, label: string, x: number, y: number, edges: number[], description: string, difficulty: EDifficulty) {
     super(id, ENodeType.Puzzle, label, x, y, edges, description);
-    throw new Error("Not implemented"); // would assign difficulty
+    this.difficulty = difficulty;
   }
 }

@@ -2,7 +2,7 @@ import { OdysseyBattleRelic } from "./OdysseyBattleRelic.js";
 import { ERelicType } from "../enums/ERelicType.js";
 import { EBotCondition } from "../enums/EBotCondition.js";
 import type { OdysseyBattle } from "./OdysseyBattle.js";
-import type { OdysseyPlayer } from "./OdysseyPlayer.js";
+import type { OdysseyGame } from "./OdysseyGame.js";
 
 export class OdysseyUndoRelic extends OdysseyBattleRelic {
   constructor(charges = 0) {
@@ -12,8 +12,15 @@ export class OdysseyUndoRelic extends OdysseyBattleRelic {
   /**
    * Undoes 1-2 plies (the bot's then the player's) so it's the player's
    * turn again; battle.botConditions.increase(Confused, 25).
+   *
+   * The actual board rewind is the caller's job (it owns the live chess
+   * position, not this model) — this only spends the charge and applies
+   * the meta-effect on the battle.
    */
-  applyInBattle(battle: OdysseyBattle, player: OdysseyPlayer): void {
-    throw new Error("Not implemented");
+  applyInBattle(battle: OdysseyBattle, game: OdysseyGame): void {
+    if (!this.consume()) {
+      return;
+    }
+    battle.botConditions.increase(EBotCondition.Confused, 25);
   }
 }

@@ -1,6 +1,8 @@
 import { ERelicType } from "../enums/ERelicType.js";
 import { MAX_RELIC_CHARGES } from "./OdysseyRelic.js";
 
+const MIN_COST_PER_CHARGE = 5; // the floor from OdysseyMerchant's price roll: max(5, 20 + rand[0..10] - 5)
+
 /**
  * A purchasable listing in OdysseyMerchant's offerings — NOT the same as
  * an owned OdysseyRelic instance. A class rather than a plain data shape
@@ -10,20 +12,24 @@ import { MAX_RELIC_CHARGES } from "./OdysseyRelic.js";
  */
 export class OdysseyShopItem {
   readonly relicType: ERelicType;
-  readonly costPerCharge: number; // uniformly 15-25, see OdysseyMerchant.generatePricedCatalog
+  readonly costPerCharge: number; // uniformly 15-25, see OdysseyMerchant.open
 
   /** Validates costPerCharge falls in the game's valid price band before assigning. */
   constructor(relicType: ERelicType, costPerCharge: number) {
-    throw new Error("Not implemented");
+    if (costPerCharge < MIN_COST_PER_CHARGE) {
+      throw new RangeError(`costPerCharge must be at least ${MIN_COST_PER_CHARGE}, got ${costPerCharge}`);
+    }
+    this.relicType = relicType;
+    this.costPerCharge = costPerCharge;
   }
 
   /** cost * quantity — linear, no bulk discount. */
   totalCost(quantity: number): number {
-    throw new Error("Not implemented");
+    return this.costPerCharge * quantity;
   }
 
   /** MAX_RELIC_CHARGES - currentCharges, floored at 0. */
   maxPurchasableQuantity(currentCharges: number): number {
-    throw new Error("Not implemented");
+    return Math.max(0, MAX_RELIC_CHARGES - currentCharges);
   }
 }

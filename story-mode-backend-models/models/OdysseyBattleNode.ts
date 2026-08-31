@@ -19,6 +19,7 @@ export class OdysseyBattleNode extends OdysseyNode {
     difficulty: EDifficulty
   ) {
     super(id, type, label, x, y, edges, description);
-    throw new Error("Not implemented"); // would assign difficulty and resolve this.monster via OdysseyMonster.forNode(this)
+    this.difficulty = difficulty;
+    this.monster = OdysseyMonster.forNode(this);
   }
 }

@@ -1,6 +1,6 @@
 import { ENodeType } from "../enums/ENodeType.js";
 import { ENodeStatus } from "../enums/ENodeStatus.js";
-import type { OdysseyPlayer } from "./OdysseyPlayer.js";
+import type { OdysseyGame } from "./OdysseyGame.js";
 
 /**
  * A single point on the run map.
@@ -24,27 +24,55 @@ export class OdysseyNode {
   readonly description: string;
 
   constructor(id: number, type: ENodeType, label: string, x: number, y: number, edges: number[], description: string) {
-    throw new Error("Not implemented");
+    this.id = id;
+    this.type = type;
+    this.label = label;
+    this.x = x;
+    this.y = y;
+    this.edges = edges;
+    this.description = description;
   }
 
   isAdjacentTo(nodeId: number): boolean {
-    throw new Error("Not implemented"); // edges.includes(nodeId)
+    return this.edges.includes(nodeId);
   }
 
   /**
-   * This node's own status given the player's progress — mirrors
-   * Session.isActive(): the entity that owns the rule computes it, not
-   * the caller. OdysseyMap.getNodeStatus becomes a one-line delegate to
-   * this. Exact port of StoryModeMap.getNodeStatus:
-   * - "completed" if this.id is in player.completedNodes
+   * This node's own status given the run's progress — the entity that
+   * owns the rule computes it, not the caller. OdysseyMap.getNodeStatus
+   * becomes a one-line delegate to this. Exact port of
+   * StoryModeMap.getNodeStatus:
+   * - "completed" if this.id is in game.completedNodes
    * - bootstrap case (nothing completed yet): only the start node (id 0)
    *   is "active"/"available", everything else "locked"
-   * - "active" if this.id === player.currentNodeId
-   * - "available" if player.currentNodeId is completed AND that node's
+   * - "active" if this.id === game.currentNodeId
+   * - "available" if game.currentNodeId is completed AND that node's
    *   edges include this.id
    * - otherwise "locked"
    */
-  statusFor(player: OdysseyPlayer): ENodeStatus {
-    throw new Error("Not implemented");
+  statusFor(game: OdysseyGame): ENodeStatus {
+    if (game.completedNodes.includes(this.id)) {
+      return ENodeStatus.Completed;
+    }
+
+    if (game.completedNodes.length === 0) {
+      if (this.id === 0) {
+        return this.id === game.currentNodeId ? ENodeStatus.Active : ENodeStatus.Available;
+      }
+      return ENodeStatus.Locked;
+    }
+
+    if (this.id === game.currentNodeId) {
+      return ENodeStatus.Active;
+    }
+
+    if (game.currentNodeId !== -1 && game.completedNodes.includes(game.currentNodeId)) {
+      const currentNode = game.map.getNode(game.currentNodeId);
+      if (currentNode?.isAdjacentTo(this.id)) {
+        return ENodeStatus.Available;
+      }
+    }
+
+    return ENodeStatus.Locked;
   }
 }
