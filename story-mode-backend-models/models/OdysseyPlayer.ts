@@ -3,8 +3,7 @@ import type { OdysseyRelic } from "./OdysseyRelic.js";
 import type { ERelicType } from "../enums/ERelicType.js";
 
 /**
- * One save slot's run state. No persistence methods live here — per the
- * owner's instruction, Everything below is
+ * One save slot's run state. No persistence methods live here, Everything below is
  * pure domain logic operating on already-loaded fields.
  */
 export class OdysseyPlayer {
