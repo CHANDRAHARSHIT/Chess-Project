@@ -20,6 +20,8 @@ import {
 interface CustomPuzzleSessionProps {
   filters: PuzzleFilters;
   onExit: () => void;
+  onStatusChange?: (status: 'idle' | 'correct' | 'wrong') => void;
+  onPuzzleChange?: (puzzle: CuratedPuzzle | null) => void;
 }
 
 /**
@@ -67,7 +69,7 @@ function formatThemeLabel(tag: string): string {
   return tag.replace(/([A-Z])/g, " $1").replace(/^./, (s) => s.toUpperCase());
 }
 
-export function CustomPuzzleSession({ filters, onExit }: CustomPuzzleSessionProps) {
+export function CustomPuzzleSession({ filters, onExit, onStatusChange, onPuzzleChange }: CustomPuzzleSessionProps) {
   const [puzzles, setPuzzles] = useState<CuratedPuzzle[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -106,11 +108,13 @@ export function CustomPuzzleSession({ filters, onExit }: CustomPuzzleSessionProp
   const handleSolved = useCallback(() => {
     setSessionSolved((prev) => prev + 1);
     setSessionStreak((prev) => prev + 1);
-  }, []);
+    onStatusChange?.('correct');
+  }, [onStatusChange]);
 
   const handleFailed = useCallback(() => {
     setSessionStreak(0);
-  }, []);
+    onStatusChange?.('wrong');
+  }, [onStatusChange]);
 
   const handleNextPuzzle = useCallback(() => {
     if (currentIndex >= puzzles.length - 1) {
@@ -118,7 +122,8 @@ export function CustomPuzzleSession({ filters, onExit }: CustomPuzzleSessionProp
     } else {
       setCurrentIndex((prev) => prev + 1);
     }
-  }, [currentIndex, puzzles.length]);
+    onStatusChange?.('idle');
+  }, [currentIndex, puzzles.length, onStatusChange]);
 
   // ─── Memoize current puzzle (MUST be before any early returns to follow Rules of Hooks) ───
   const currentRawPuzzle = puzzles[currentIndex];
@@ -126,6 +131,11 @@ export function CustomPuzzleSession({ filters, onExit }: CustomPuzzleSessionProp
     if (!currentRawPuzzle) return null;
     return convertPuzzle(currentRawPuzzle);
   }, [currentRawPuzzle]);
+
+  // Notify parent when active puzzle changes (for coach display)
+  useEffect(() => {
+    onPuzzleChange?.(currentRawPuzzle ?? null);
+  }, [currentRawPuzzle, onPuzzleChange]);
 
   // ─── Loading State ───────────────────────────────────────────────────────────
   // Mirrors the full active-puzzle layout (header, progress bar, PuzzleBoard's own
