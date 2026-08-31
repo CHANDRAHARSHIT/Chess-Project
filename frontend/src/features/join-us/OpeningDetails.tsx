@@ -27,7 +27,9 @@ export default function OpeningDetails({
   const handleBeginAssessment = () => {
     soundManager.playButtonClick();
     const trackSlug = getAssessmentTrackSlug(opening.department);
-    navigate(`/join-us/assessment?role=${trackSlug ?? opening.department.toLowerCase()}`);
+    navigate(
+      `/join-us/assessment?role=${trackSlug ?? opening.department.toLowerCase()}`,
+    );
   };
 
   const getDepartmentIcon = () => {
@@ -118,7 +120,7 @@ export default function OpeningDetails({
                 )}
 
                 <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-5 sm:p-6">
-                  <p className="mb-4 font-semibold text-amber-950 dark:text-amber-400 text-sm sm:text-base">
+                  <p className="mb-4 font-semibold text-amber-950 dark:text-emerald-500 text-sm sm:text-base">
                     During this section:
                   </p>
                   <ul className="space-y-3">
