@@ -1,0 +1,94 @@
+/**
+ * ACS public barrel. Import from here, never from internal paths (matches
+ * `contracts/index.ts`).
+ *
+ * Other domains should depend on `AntiCheatSystem` alone; the individual modules
+ * are exported for tests, the simulation harness, and internal admin surfaces.
+ */
+
+// ── Facade ───────────────────────────────────────────────────────────────────
+export { AntiCheatSystem } from "./AntiCheatSystem.js";
+export type { AntiCheatSystemDeps } from "./AntiCheatSystem.js";
+
+// ── Shared domain types ──────────────────────────────────────────────────────
+export type {
+  ProficiencyLevel,
+  EventType,
+  Situation,
+  Suspect,
+  AffectedUser,
+  CheaterType,
+  AnalyzedMove,
+  AnalysisWindow,
+  CheckId,
+  CheckResult,
+  RedFlag,
+  DetectionOutcome,
+  TriggerPoint,
+  EscalationLevel,
+  PenaltyAction,
+  AppliedPenalty,
+  CaseStatus,
+  ReviewCase,
+} from "./types.js";
+
+// ── Detection ────────────────────────────────────────────────────────────────
+export { Check } from "./detection/Check.js";
+export { DetectionEngine } from "./detection/DetectionEngine.js";
+export { TriggerScheduler } from "./detection/TriggerScheduler.js";
+export type { TriggerContext } from "./detection/TriggerScheduler.js";
+export { StatisticalBaselines } from "./detection/StatisticalBaselines.js";
+export type { RatingBand, BaselineMetrics } from "./detection/StatisticalBaselines.js";
+export { PlayingPersonalityService } from "./detection/PlayingPersonality.js";
+export type { PersonalityProfile, PersonalityDeviation } from "./detection/PlayingPersonality.js";
+
+export { ErrorRateCheck } from "./detection/checks/ErrorRateCheck.js";
+export { BlunderRateCheck } from "./detection/checks/BlunderRateCheck.js";
+export { OpeningCheck } from "./detection/checks/OpeningCheck.js";
+export { MoveTimeCheck } from "./detection/checks/MoveTimeCheck.js";
+export { EngineCorrelationCheck } from "./detection/checks/EngineCorrelationCheck.js";
+export { PlayingPersonalityCheck } from "./detection/checks/PlayingPersonalityCheck.js";
+
+// ── Penalty ──────────────────────────────────────────────────────────────────
+export { PenaltyManager } from "./penalty/PenaltyManager.js";
+export { EscalationLadder } from "./penalty/EscalationLadder.js";
+export type { EscalationState } from "./penalty/EscalationLadder.js";
+
+// ── Compensation ─────────────────────────────────────────────────────────────
+export { CompensationManager } from "./compensation/CompensationManager.js";
+export type { CompensationRecord } from "./compensation/CompensationManager.js";
+
+// ── Review (offender review & appeals) ───────────────────────────────────────
+export { CaseManager } from "./review/CaseManager.js";
+export type { ArbiterDecision, ArbiterPacket } from "./review/CaseManager.js";
+export { AppealService } from "./review/AppealService.js";
+export type { Appeal, AppealStatus } from "./review/AppealService.js";
+
+// ── Simulation ───────────────────────────────────────────────────────────────
+export { CheatInjector } from "./simulation/CheatInjector.js";
+export type { CheatMethod, InjectionSpec, InjectedGame } from "./simulation/CheatInjector.js";
+export { SimulationRunner } from "./simulation/SimulationRunner.js";
+export type {
+  CheatingLevel,
+  SimulationScenario,
+  SimulationRunConfig,
+  SimulationOutcome,
+} from "./simulation/SimulationRunner.js";
+export { DetectionMetrics } from "./simulation/DetectionMetrics.js";
+export type { MetricsReport, CheckEffectiveness } from "./simulation/DetectionMetrics.js";
+
+// ── Feedback & Correction ────────────────────────────────────────────────────
+export { PolicyRegistry } from "./feedback/PolicyRegistry.js";
+export type { PolicyValue, CheckWeighting } from "./feedback/PolicyRegistry.js";
+export { EffectivenessReview } from "./feedback/EffectivenessReview.js";
+export type { PolicyProposal, DocumentFeedback } from "./feedback/EffectivenessReview.js";
+
+// ── Public ───────────────────────────────────────────────────────────────────
+export { ReportService } from "./public/ReportService.js";
+export type { CheatReport, ReportCategory, ReportStatus } from "./public/ReportService.js";
+export { EligibilityService } from "./public/EligibilityService.js";
+export type {
+  EligibilityVerdict,
+  EligibilityRoute,
+  PlacementResult,
+} from "./public/EligibilityService.js";
