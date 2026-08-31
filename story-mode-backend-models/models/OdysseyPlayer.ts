@@ -4,8 +4,7 @@ import type { ERelicType } from "../enums/ERelicType.js";
 
 /**
  * One save slot's run state. No persistence methods live here — per the
- * owner's instruction, the Repository layer that would own database
- * access is deliberately out of scope for this pass. Everything below is
+ * owner's instruction, Everything below is
  * pure domain logic operating on already-loaded fields.
  */
 export class OdysseyPlayer {
