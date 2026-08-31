@@ -10,7 +10,7 @@
  * Quotes provided by the user (Fischer, Morphy, Steinitz, Lasker, Capablanca + placeholders).
  */
 
-import { useRef, useEffect, useCallback } from "react";
+import { useRef, useEffect, useState, useCallback } from "react";
 import { useScrollReveal } from "@/shared/hooks/useScrollReveal";
 import { Link } from "react-router";
 
@@ -78,11 +78,9 @@ export default function LegendsSectionV2() {
   const sectionRef = useRef<HTMLElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
-  const titleRef = useRef<HTMLHeadingElement>(null);
-  const nameRef = useRef<HTMLHeadingElement>(null);
-  const epithetRef = useRef<HTMLDivElement>(null);
-  const quoteRef = useRef<HTMLParagraphElement>(null);
-  const copyBoxRef = useRef<HTMLDivElement>(null);
+
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isChanging, setIsChanging] = useState(false);
 
   const activeIndexRef = useRef(0);
   const demoRunningRef = useRef(true);
@@ -101,34 +99,19 @@ export default function LegendsSectionV2() {
     start: "top 85%",
   });
 
-  // ── Update copy box (fade out → update text → fade in) ──────────────────
+  // ── Smooth copy transition ───────────────────────────────────────────────
   const updateCopy = useCallback((index: number) => {
-    const player = PLAYERS[index];
-    if (!player || !copyBoxRef.current) return;
-
-    copyBoxRef.current.style.opacity = "0";
-    copyBoxRef.current.style.transform = "translateY(5px)";
-
+    setIsChanging(true);
     setTimeout(() => {
-      if (nameRef.current) nameRef.current.textContent = player.name;
-      if (epithetRef.current) epithetRef.current.textContent = player.epithet;
-      if (quoteRef.current) quoteRef.current.textContent = player.quote;
-      if (copyBoxRef.current) {
-        copyBoxRef.current.style.opacity = "1";
-        copyBoxRef.current.style.transform = "translateY(0)";
-      }
+      setActiveIndex(index);
+      setIsChanging(false);
     }, 120);
   }, []);
 
-  // ── Activate a card visually ─────────────────────────────────────────────
+  // ── Activate a card ──────────────────────────────────────────────────────
   const activateCard = useCallback(
     (index: number) => {
-      if (!gridRef.current) return;
-      const cards =
-        gridRef.current.querySelectorAll<HTMLButtonElement>(".legend-card");
-      cards.forEach((c) => c.classList.remove("demo-active"));
-      const card = cards[index];
-      if (card) card.classList.add("demo-active");
+      activeIndexRef.current = index;
       updateCopy(index);
     },
     [updateCopy],
@@ -141,24 +124,19 @@ export default function LegendsSectionV2() {
     if (demoTimerRef.current) clearInterval(demoTimerRef.current);
     activateCard(activeIndexRef.current);
     demoTimerRef.current = setInterval(() => {
-      activeIndexRef.current = (activeIndexRef.current + 1) % PLAYERS.length;
-      activateCard(activeIndexRef.current);
+      const nextIndex = (activeIndexRef.current + 1) % PLAYERS.length;
+      activateCard(nextIndex);
     }, 1600);
   }, [activateCard]);
 
   const pauseDemo = useCallback(() => {
     demoRunningRef.current = false;
     if (demoTimerRef.current) clearInterval(demoTimerRef.current);
-    if (!gridRef.current) return;
-    gridRef.current
-      .querySelectorAll<HTMLButtonElement>(".legend-card")
-      .forEach((c) => c.classList.remove("demo-active"));
   }, []);
 
   const scheduleResume = useCallback(() => {
     if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current);
     resumeTimerRef.current = setTimeout(() => {
-      activeIndexRef.current = 0;
       startDemo();
     }, 1000);
   }, [startDemo]);
@@ -170,6 +148,8 @@ export default function LegendsSectionV2() {
       if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current);
     };
   }, [startDemo]);
+
+  const activePlayer = PLAYERS[activeIndex];
 
   return (
     <section
@@ -184,17 +164,10 @@ export default function LegendsSectionV2() {
         style={{ background: "var(--obsidian)" }}
         aria-hidden="true"
       />
-      {/* Ambient gold orb */}
-      <div
-        className="absolute top-1/2 left-1/4 w-[425px] h-[425px] rounded-full blur-[140px] pointer-events-none -translate-y-1/2"
-        style={{ background: "rgba(155,122,214,0.04)" }}
-        aria-hidden="true"
-      />
 
       <div className="max-w-[1275px] mx-auto px-2 sm:px-6 lg:px-8 relative z-10">
         {/*
           Layout: text LEFT (~0.78fr) | grid RIGHT (~1.55fr)
-          Opposite of 3rd.html which had grid-left, text-right.
         */}
         <div className="grid grid-cols-1 lg:grid-cols-[0.78fr_1.55fr] items-center gap-10 lg:gap-16">
           {/* ── Left: Text content + rotating quote ─────────────────────── */}
@@ -204,7 +177,6 @@ export default function LegendsSectionV2() {
             style={{ opacity: 0 }}
           >
             <h2
-              ref={titleRef}
               className="font-display"
               style={{
                 fontSize: "clamp(32px, 3vw, 49px)",
@@ -218,20 +190,20 @@ export default function LegendsSectionV2() {
               Play Chess Legends
             </h2>
 
-            {/* Dynamic copy — fades in/out on card change */}
+            {/* Dynamic copy — reacts to active legend */}
             <div
-              ref={copyBoxRef}
               aria-live="polite"
               style={{
                 minHeight: "185px",
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "center",
+                opacity: isChanging ? 0 : 1,
+                transform: isChanging ? "translateY(5px)" : "translateY(0)",
                 transition: "opacity 0.14s ease, transform 0.14s ease",
               }}
             >
               <h3
-                ref={nameRef}
                 className="font-display font-bold"
                 style={{
                   fontSize: "clamp(20px, 1.7vw, 26px)",
@@ -240,10 +212,9 @@ export default function LegendsSectionV2() {
                   marginBottom: "5px",
                 }}
               >
-                Choose a legend
+                {activePlayer.name}
               </h3>
               <div
-                ref={epithetRef}
                 className="font-sans font-bold text-xs tracking-wide"
                 style={{
                   color: "rgba(155,122,214,0.9)",
@@ -251,10 +222,9 @@ export default function LegendsSectionV2() {
                   letterSpacing: "0.01em",
                 }}
               >
-                Hover over a player
+                {activePlayer.epithet}
               </div>
               <p
-                ref={quoteRef}
                 className="font-serif"
                 style={{
                   fontSize: "clamp(15px, 1.2vw, 19px)",
@@ -264,18 +234,8 @@ export default function LegendsSectionV2() {
                   fontStyle: "italic",
                 }}
               >
-                Every player has a different personality, style, and story.
+                &ldquo;{activePlayer.quote}&rdquo;
               </p>
-              {/* Attribution line — appears alongside the quote */}
-              <div
-                id="legends-v2-attribution"
-                className="font-mono text-[11px] mt-3"
-                style={{
-                  color: "var(--text-tertiary)",
-                  letterSpacing: "0.08em",
-                  minHeight: "1em",
-                }}
-              />
             </div>
 
             {/* CTA */}
@@ -335,11 +295,12 @@ export default function LegendsSectionV2() {
                   key={player.name}
                   player={player}
                   index={index}
+                  isActive={activeIndex === index}
                   onHover={(idx) => {
                     pauseDemo();
                     if (resumeTimerRef.current)
                       clearTimeout(resumeTimerRef.current);
-                    updateCopy(idx);
+                    activateCard(idx);
                   }}
                 />
               ))}
@@ -384,16 +345,18 @@ type PlayerData = (typeof PLAYERS)[number];
 function LegendCard({
   player,
   index,
+  isActive,
   onHover,
 }: {
   player: PlayerData;
   index: number;
+  isActive: boolean;
   onHover: (idx: number) => void;
 }) {
   return (
     <button
       type="button"
-      className="legend-card"
+      className={`legend-card ${isActive ? "demo-active" : ""}`}
       aria-label={player.name}
       data-index={index}
       onMouseEnter={() => onHover(index)}
