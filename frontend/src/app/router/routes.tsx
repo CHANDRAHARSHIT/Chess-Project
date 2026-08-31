@@ -1,4 +1,5 @@
 import HomePage from "@/pages/HomePage";
+import HomeV2Page from "@/pages/HomeV2Page";
 import ContactPage from "@/pages/ContactPage";
 import JoinUsPage from "@/pages/JoinUsPage";
 import PuzzlePage from "@/pages/PuzzlePage";
@@ -46,6 +47,7 @@ export interface RouteConfig {
 // Routes that run inside the MainLayout (Navbar + Sidebar + Footer)
 export const mainRoutes: RouteConfig[] = [
   { path: "/", element: <HomePage />, title: "XLChess - Play Chess Online" },
+  { path: "/home-v2", element: <HomeV2Page />, title: "XLChess - Home V2" },
   { path: "/contact-us", element: <ContactPage />, title: "Contact Us | XLChess" },
   {
     path: "/puzzles",
