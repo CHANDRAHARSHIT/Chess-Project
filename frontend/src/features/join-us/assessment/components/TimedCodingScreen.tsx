@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
-import { AlertTriangle, ArrowLeft, Clock, Code2 } from 'lucide-react';
-import { soundManager } from '@/shared/lib/SoundManager';
-import type { TimedCodingConfig } from '../assessmentTypes';
-import CodeBlock from './CodeBlock';
-import ShortTextInput from './inputs/ShortTextInput';
-import { pluralize } from '@/shared/lib/pluralize';
+import { useState, useEffect } from "react";
+import { AlertTriangle, ArrowLeft, Clock, Code2 } from "lucide-react";
+import { soundManager } from "@/shared/lib/SoundManager";
+import type { TimedCodingConfig } from "../assessmentTypes";
+import CodeBlock from "./CodeBlock";
+import ShortTextInput from "./inputs/ShortTextInput";
+import { pluralize } from "@/shared/lib/pluralize";
 
 interface TimedCodingScreenProps {
   config: TimedCodingConfig;
@@ -25,7 +25,7 @@ function formatRemaining(ms: number): string {
   const totalSeconds = Math.max(0, Math.floor(ms / 1000));
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;
-  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 }
 
 export default function TimedCodingScreen({
@@ -62,11 +62,11 @@ export default function TimedCodingScreen({
   const isDanger = remainingMs !== null && remainingMs <= 5 * 60_000;
 
   const [activeTabId, setActiveTabId] = useState<string>(
-    config.question.supportingTabs?.[0]?.id || ''
+    config.question.supportingTabs?.[0]?.id || "",
   );
 
   const activeTab = config.question.supportingTabs?.find(
-    (tab) => tab.id === activeTabId
+    (tab) => tab.id === activeTabId,
   );
 
   // STATE A: Estimate Exceeds 90 Minutes
@@ -94,7 +94,7 @@ export default function TimedCodingScreen({
           {/* Big Estimate Pill */}
           <div className="inline-block px-8 py-3 rounded-2xl bg-brand-surface/90 border border-brand-text/20">
             <span className="font-mono text-2xl sm:text-3xl font-bold text-brand-accent">
-              {estimatedMinutes} {pluralize(estimatedMinutes, 'minute')}
+              {estimatedMinutes} {pluralize(estimatedMinutes, "minute")}
             </span>
           </div>
 
@@ -103,11 +103,14 @@ export default function TimedCodingScreen({
               Your Estimate Exceeds 90 Minutes
             </p>
             <p>
-              We expect a backend developer to be able to complete this task within 90 minutes. Your estimate was {estimatedMinutes}{' '}
-              {pluralize(estimatedMinutes, 'minute')}.
+              We expect a backend developer to be able to complete this task
+              within 90 minutes. Your estimate was {estimatedMinutes}{" "}
+              {pluralize(estimatedMinutes, "minute")}.
             </p>
             <p>
-              Unfortunately, we do not consider this to be a reasonable time estimate for this task, and this will be taken into consideration when evaluating your assessment.
+              Unfortunately, we do not consider this to be a reasonable time
+              estimate for this task, and this will be taken into consideration
+              when evaluating your assessment.
             </p>
           </div>
 
@@ -139,10 +142,10 @@ export default function TimedCodingScreen({
           Your Time Allotted
         </div>
         <div className="text-2xl sm:text-3xl font-mono font-bold text-brand-accent">
-          {estimatedMinutes} {pluralize(estimatedMinutes, 'minute')}
+          {estimatedMinutes} {pluralize(estimatedMinutes, "minute")}
         </div>
         <div className="text-[11px] font-mono text-brand-secondary">
-          (As estimated in the previous question — need more? Use the button below.)
+          (As estimated in the previous question)
         </div>
       </div>
 
@@ -166,11 +169,13 @@ export default function TimedCodingScreen({
             <div
               className={`inline-flex items-center gap-2.5 px-4 py-2 rounded-2xl border select-none ${
                 isDanger
-                  ? 'bg-red-500/15 border-red-500/40 text-red-400'
-                  : 'bg-brand-surface/80 border-brand-text/15 text-brand-text'
+                  ? "bg-red-500/15 border-red-500/40 text-red-400"
+                  : "bg-brand-surface/80 border-brand-text/15 text-brand-text"
               }`}
             >
-              <Clock className={`w-5 h-5 ${isDanger ? 'text-red-400' : 'text-brand-accent'}`} />
+              <Clock
+                className={`w-5 h-5 ${isDanger ? "text-red-400" : "text-brand-accent"}`}
+              />
               <div className="flex flex-col text-right">
                 <span className="font-mono text-base font-bold tracking-wider leading-none">
                   {formatRemaining(remainingMs)}
@@ -209,7 +214,10 @@ export default function TimedCodingScreen({
         {/* Trace Snippet — its own code block, separate from the Functions Definition below */}
         {config.question.traceCode && (
           <div className="rounded-2xl border border-brand-text/20 overflow-hidden shadow-inner">
-            <CodeBlock code={config.question.traceCode} language={config.question.codeLanguage} />
+            <CodeBlock
+              code={config.question.traceCode}
+              language={config.question.codeLanguage}
+            />
           </div>
         )}
 
@@ -221,52 +229,56 @@ export default function TimedCodingScreen({
               <span>Function / Code Information</span>
             </div>
             <div className="rounded-2xl border border-brand-text/20 overflow-hidden shadow-inner">
-              <CodeBlock code={config.question.codeBlock} language={config.question.codeLanguage} />
+              <CodeBlock
+                code={config.question.codeBlock}
+                language={config.question.codeLanguage}
+              />
             </div>
           </div>
         )}
 
         {/* Any remaining prose-only supporting tabs (kept for future non-code tabs) */}
-        {config.question.supportingTabs && config.question.supportingTabs.length > 0 && (
-          <div className="space-y-3">
-            <h3 className="text-xs font-mono uppercase tracking-wider text-brand-secondary font-semibold">
-              Supporting Information
-            </h3>
+        {config.question.supportingTabs &&
+          config.question.supportingTabs.length > 0 && (
+            <div className="space-y-3">
+              <h3 className="text-xs font-mono uppercase tracking-wider text-brand-secondary font-semibold">
+                Supporting Information
+              </h3>
 
-            <div className="border border-brand-text/15 rounded-2xl overflow-hidden bg-brand-surface/40">
-              <div className="flex items-center border-b border-brand-text/15 bg-brand-surface/80 px-2 pt-2 gap-1 overflow-x-auto">
-                {config.question.supportingTabs.map((tab) => {
-                  const isActive = tab.id === activeTabId;
-                  return (
-                    <button
-                      key={tab.id}
-                      type="button"
-                      onClick={() => {
-                        soundManager.playButtonClick();
-                        setActiveTabId(tab.id);
-                      }}
-                      className={`px-4 py-2 text-xs sm:text-sm font-medium rounded-t-xl transition-all cursor-pointer ${
-                        isActive
-                          ? 'bg-brand-surface text-brand-accent'
-                          : 'text-brand-secondary hover:text-brand-text'
-                      }`}
-                    >
-                      {tab.label}
-                    </button>
-                  );
-                })}
-              </div>
-
-              {activeTab?.isCode ? (
-                <CodeBlock code={activeTab.content} showHeader={false} />
-              ) : (
-                <div className="p-4 sm:p-5 text-xs sm:text-sm leading-relaxed text-brand-secondary whitespace-pre-wrap font-mono bg-brand-bg">
-                  {activeTab?.content}
+              <div className="border border-brand-text/15 rounded-2xl overflow-hidden bg-brand-surface/40">
+                <div className="flex items-center border-b border-brand-text/15 bg-brand-surface/80 px-2 pt-2 gap-1 overflow-x-auto">
+                  {config.question.supportingTabs.map((tab) => {
+                    const isActive = tab.id === activeTabId;
+                    return (
+                      <button
+                        key={tab.id}
+                        type="button"
+                        onClick={() => {
+                          soundManager.playButtonClick();
+                          setActiveTabId(tab.id);
+                        }}
+                        className={`px-4 py-2 text-xs sm:text-sm font-medium rounded-t-xl transition-all cursor-pointer ${
+                          isActive
+                            ? "bg-brand-surface text-brand-accent"
+                            : "text-brand-secondary hover:text-brand-text"
+                        }`}
+                      >
+                        {tab.label}
+                      </button>
+                    );
+                  })}
                 </div>
-              )}
+
+                {activeTab?.isCode ? (
+                  <CodeBlock code={activeTab.content} showHeader={false} />
+                ) : (
+                  <div className="p-4 sm:p-5 text-xs sm:text-sm leading-relaxed text-brand-secondary whitespace-pre-wrap font-mono bg-brand-bg">
+                    {activeTab?.content}
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
         {/* Answer Input */}
         <div className="space-y-3 pt-2">
@@ -279,7 +291,7 @@ export default function TimedCodingScreen({
             value={answer}
             onChange={onAnswerChange}
             wordLimit={config.question.wordLimit || 1}
-            placeholder={config.question.placeholder || 'Enter output value'}
+            placeholder={config.question.placeholder || "Enter output value"}
           />
         </div>
       </div>
