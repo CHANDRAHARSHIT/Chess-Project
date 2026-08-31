@@ -26,11 +26,13 @@ export function CoachChatBox({
   resetLabel = "Reset puzzle",
   className = "",
 }: CoachChatBoxProps) {
-  const chatEndRef = useRef<HTMLDivElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll chat to bottom when messages update
+  // Auto-scroll chat container to bottom when messages update
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
   }, [messages]);
 
   return (
@@ -81,6 +83,7 @@ export function CoachChatBox({
 
       {/* Chat Message Bubble List */}
       <div
+        ref={chatContainerRef}
         className="flex-1 my-3 overflow-y-auto space-y-2.5 pr-1 max-h-[220px] md:max-h-[280px]"
         aria-live="polite"
       >
@@ -118,7 +121,6 @@ export function CoachChatBox({
             </div>
           );
         })}
-        <div ref={chatEndRef} />
       </div>
 
       {/* Optional Reset Button */}
