@@ -6,7 +6,7 @@ concrete subclasses that each carry real data or behavior, and
 `E`-prefixed enum files for closed vocabularies.
 
 This is the model layer only — properties, method signatures, and class
-relationships. No method bodies, no persistence/repository layer.
+relationships. No method bodies.
 
 ```
 enums/    8 enum files
