@@ -1,0 +1,28 @@
+# Railway build config.
+#
+# Exists because the backend now needs Python alongside Node: Maia-3 is a PyTorch
+# model and runs as a `maia3-uci` child process. Railway's auto-detection sees a
+# Node repo and installs Node only, so without this the Maia routes 503.
+#
+# Nothing else about the build changes. With MAIA_ENABLED unset, none of this is
+# reached at runtime.
+
+[phases.setup]
+nixPkgs = ["nodejs_22", "python313", "gcc"]
+
+[phases.install]
+cmds = [
+  "npm ci",
+  # CPU-only torch — the default wheel pulls ~2.5GB of CUDA that Railway cannot use.
+  "python -m pip install --break-system-packages --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu",
+  "python -m pip install --break-system-packages --no-cache-dir 'git+https://github.com/CSSLab/maia3.git'",
+  # Bake the weights into the image; otherwise the first player waits on a
+  # 302MB Hugging Face download.
+  "python -m maia3.cache --model maia3-79m",
+]
+
+[phases.build]
+cmds = ["npm run build:backend"]
+
+[start]
+cmd = "npm run start -w backend"

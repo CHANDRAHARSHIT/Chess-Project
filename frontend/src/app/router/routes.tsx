@@ -12,6 +12,7 @@ import FailedPage from "@/pages/FailedPage";
 import PremiumPage from "@/pages/PremiumPage";
 import OpeningsPage from "@/pages/OpeningsPage";
 import Chess960Page from "@/pages/Chess960Page";
+import TestMaiaPage from "@/pages/TestMaiaPage";
 import LessonDashboardPage from "@/pages/LessonDashboardPage";
 import LessonBuilderPage from "@/pages/LessonBuilderPage";
 import AboutPage from "@/pages/AboutPage";
@@ -94,6 +95,12 @@ export const mainRoutes: RouteConfig[] = [
     path: "/play/chess960",
     element: <Chess960Page />,
     title: "Chess 960 | XLChess",
+  },
+  {
+    // Scratch page for evaluating Maia-3. Not in navigation — reached by URL.
+    path: "/test-maia",
+    element: <TestMaiaPage />,
+    title: "Test Maia | XLChess",
   },
   {
     path: "/lesson-builder",

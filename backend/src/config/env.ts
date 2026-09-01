@@ -54,6 +54,19 @@ export const env = {
     return Number.isFinite(parsed) && parsed > 0 ? parsed : 10_000;
   })(),
 
+  // Maia-3 human-like engine (optional — MAIA_ENABLED=false leaves the route returning 503).
+  // Unlike Stockfish, which runs in the browser, Maia is a PyTorch model and must
+  // run here as a Python child process. The host needs Python with the `maia3`
+  // package installed and `maia3-uci` on PATH.
+  MAIA_ENABLED: process.env.MAIA_ENABLED === "true",
+  MAIA_UCI_COMMAND: process.env.MAIA_UCI_COMMAND ?? "maia3-uci",
+  // 79M is the default because it keeps the Elo bands distinct — 5M collapses
+  // 1600/2000/2600 onto the same move, which defeats the point of the strength
+  // selector. Costs 302MB on disk and ~236ms per move versus 21MB and ~40ms;
+  // both are hidden behind the UI's human-like reply delay. Must match the model
+  // baked in by nixpacks.toml, or the first request downloads it at runtime.
+  MAIA_MODEL: process.env.MAIA_MODEL ?? "maia3-79m",
+
   // Rollbar error monitoring
   ROLLBAR_ACCESS_TOKEN: process.env.ROLLBAR_ACCESS_TOKEN!,
 };
