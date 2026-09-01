@@ -55,8 +55,10 @@ maiaRouter.get("/status", async (req: Request, res: Response) => {
     status: "success",
     data: {
       model: env.MAIA_MODEL,
+      configuredCommand: env.MAIA_UCI_COMMAND || "(auto-detect)",
       running: engine.isRunning(),
       command: engine.getResolvedCommand(),
+      ...(req.query.boot === "1" ? { interpreters: await engine.diagnose() } : {}),
       ...(bootError ? { bootError } : {}),
     },
   });

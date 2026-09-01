@@ -66,6 +66,46 @@ export class MaiaEngine {
   }
 
   /**
+   * Reports what each candidate interpreter actually is on this host.
+   *
+   * Exists because two staging deploys failed with only "could not start" to go
+   * on, and distinguishing "no Python" from "Python without maia3" from "wrong
+   * Python" needed server-log access. This turns that into one request.
+   */
+  async diagnose(): Promise<Record<string, string>> {
+    const names = [this.command, "python3", "python"].filter(Boolean) as string[];
+    const report: Record<string, string> = {};
+
+    for (const name of names) {
+      report[name] = await new Promise<string>((resolve) => {
+        let settled = false;
+        const done = (value: string) => {
+          if (settled) return;
+          settled = true;
+          clearTimeout(timer);
+          resolve(value);
+        };
+        const timer = setTimeout(() => {
+          probe.kill();
+          done("timed out — likely a shim that never answers");
+        }, PROBE_TIMEOUT_MS);
+
+        let out = "";
+        const probe = spawn(name, ["-c", "import maia3, sys; print(sys.version.split()[0])"], {
+          stdio: ["ignore", "pipe", "pipe"],
+        });
+        probe.stdout.on("data", (c: Buffer) => (out += c.toString()));
+        probe.stderr.on("data", (c: Buffer) => (out += c.toString()));
+        probe.on("error", (err) => done(`not runnable — ${err.message}`));
+        probe.on("exit", (code) =>
+          done(code === 0 ? `maia3 OK on Python ${out.trim()}` : `exit ${code} — ${out.trim().slice(-200)}`)
+        );
+      });
+    }
+    return report;
+  }
+
+  /**
    * Finds a Python that can import maia3.
    *
    * Probing with `-c "import maia3"` rather than booting the engine per
