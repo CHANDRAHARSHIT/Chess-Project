@@ -13,7 +13,10 @@
  */
 import { useState } from "react";
 import { useSearchParams } from "react-router";
-import { PlayTabBar, type PlayTab } from "@/features/play/components/PlayTabBar";
+import {
+  PlayTabBar,
+  type PlayTab,
+} from "@/features/play/components/PlayTabBar";
 import { QuickGameView } from "@/features/play/components/QuickGameView";
 import { PlayOnlineView } from "@/features/play/components/PlayOnlineView";
 import { VariantsView } from "@/features/play/components/VariantsView";
@@ -22,7 +25,7 @@ import { ProtectedRoute } from "@/features/account/ProtectedRoute";
 import { useGameSession } from "@/features/play/useGameSession";
 import { useMatchmaking } from "@/features/play/useMatchmaking";
 
-const VALID_TABS: PlayTab[] = ["quick", "variants"];
+const VALID_TABS: PlayTab[] = ["quick", "online", "variants"];
 
 function isValidTab(value: string | null): value is PlayTab {
   return VALID_TABS.includes(value as PlayTab);
