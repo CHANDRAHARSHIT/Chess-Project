@@ -22,7 +22,7 @@ The host running the backend needs **Python plus the `maia3` package**, and
 
 ```bash
 pip install "git+https://github.com/CSSLab/maia3.git"
-maia3-cache --model maia3-5m     # pre-download weights, or the first request pays for it
+maia3-cache --model maia3-79m    # pre-download weights, or the first request pays for it
 ```
 
 Weights come from Hugging Face on first use and are cached on disk. **Pre-cache

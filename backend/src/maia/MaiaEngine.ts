@@ -52,7 +52,7 @@ export class MaiaEngine {
 
   constructor(
     private readonly command = "maia3-uci",
-    private readonly model = "maia3-5m"
+    private readonly model = "maia3-79m"
   ) {}
 
   /** Boots the engine. Idempotent; a failed boot clears itself so it can be retried. */
