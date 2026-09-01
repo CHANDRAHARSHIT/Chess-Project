@@ -77,7 +77,7 @@ export default function HeroV2() {
         headlineRef.current.innerHTML = words
           .map(
             (w) =>
-              `<span class="inline-block overflow-hidden"><span class="inline-block" style="display:inline-block;opacity:0;transform:translateY(28px)">${w}</span></span>`,
+              `<span class="inline-block overflow-hidden pb-3 -mb-3"><span class="inline-block" style="display:inline-block;opacity:0;transform:translateY(32px);padding-bottom:6px">${w}</span></span>`,
           )
           .join(" ");
 
@@ -140,7 +140,7 @@ export default function HeroV2() {
         if (isPointer) {
           const onMouseEnter = () => {
             gsap.to(chars, {
-              y: -18,
+              y: -22,
               opacity: 0,
               duration: 0.22,
               stagger: 0.028,
@@ -151,7 +151,7 @@ export default function HeroV2() {
           const resetChars = () => {
             gsap.fromTo(
               chars,
-              { y: 16, opacity: 0 },
+              { y: 22, opacity: 0 },
               {
                 y: 0,
                 opacity: 1,
@@ -194,7 +194,7 @@ export default function HeroV2() {
           className="w-full flex justify-center lg:justify-start"
           style={{ opacity: 0 }}
         >
-          <div className="v2-video-frame relative w-full max-w-[760px]">
+          <div className="v2-video-frame relative w-full max-w-[912px]">
             {/* Actual video element */}
             <video
               id="hero-v2-video"
@@ -237,14 +237,14 @@ export default function HeroV2() {
               />
               <span
                 ref={playTextRef}
-                className="font-extrabold flex overflow-hidden tracking-tight"
-                style={{ lineHeight: 1 }}
+                className="font-extrabold flex overflow-hidden tracking-tight pb-2 -mb-2 pt-0.5"
+                style={{ lineHeight: 1.25 }}
               >
                 {"Play".split("").map((char, i) => (
                   <span
                     key={i}
                     className="play-char inline-block"
-                    style={{ display: "inline-block" }}
+                    style={{ display: "inline-block", paddingBottom: "4px" }}
                   >
                     {char}
                   </span>

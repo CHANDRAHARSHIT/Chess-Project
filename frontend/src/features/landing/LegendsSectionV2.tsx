@@ -11,7 +11,6 @@
  */
 
 import { useRef, useEffect, useState, useCallback } from "react";
-import { useScrollReveal } from "@/shared/hooks/useScrollReveal";
 import { Link } from "react-router";
 
 // ── Player data ──────────────────────────────────────────────────────────────
@@ -76,8 +75,6 @@ const PLAYERS = [
 
 export default function LegendsSectionV2() {
   const sectionRef = useRef<HTMLElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-  const gridRef = useRef<HTMLDivElement>(null);
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [isChanging, setIsChanging] = useState(false);
@@ -86,18 +83,6 @@ export default function LegendsSectionV2() {
   const demoRunningRef = useRef(true);
   const demoTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const resumeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useScrollReveal(contentRef as React.RefObject<Element>, {
-    y: 50,
-    duration: 0.9,
-  });
-  useScrollReveal(gridRef as React.RefObject<Element>, {
-    selector: ".legend-card",
-    y: 40,
-    stagger: 0.06,
-    duration: 0.75,
-    start: "top 85%",
-  });
 
   // ── Smooth copy transition ───────────────────────────────────────────────
   const updateCopy = useCallback((index: number) => {
@@ -161,11 +146,7 @@ export default function LegendsSectionV2() {
       <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-12 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(360px,0.78fr)_minmax(600px,1.55fr)] items-center gap-10 lg:gap-16">
           {/* ── Left: Text content + rotating quote ── */}
-          <div
-            ref={contentRef}
-            className="v2-content max-w-[570px] text-left lg:text-left justify-self-center lg:justify-self-start"
-            style={{ opacity: 0 }}
-          >
+          <div className="v2-content max-w-[570px] text-left lg:text-left justify-self-center lg:justify-self-start">
             <h2 className="v2-h1">Play Chess Legends</h2>
 
             {/* Dynamic copy — reacts to active legend */}
@@ -199,7 +180,6 @@ export default function LegendsSectionV2() {
           {/* ── Right: 3×3 coach image grid ── */}
           <div className="relative">
             <div
-              ref={gridRef}
               id="legends-v2-grid"
               className="v2-bot-grid bot-grid"
               onMouseLeave={() => {

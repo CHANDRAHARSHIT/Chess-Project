@@ -8,8 +8,7 @@
  * "Explore" button navigates to /lessons.
  */
 
-import { useRef, useState } from "react";
-import { useScrollReveal } from "@/shared/hooks/useScrollReveal";
+import { useRef } from "react";
 import { Link } from "react-router";
 
 // Tile colour palette matching 2nd.html stone colours
@@ -78,23 +77,8 @@ const TILES = [
 
 export default function LessonsSectionV2() {
   const sectionRef = useRef<HTMLElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-  const gridRef = useRef<HTMLDivElement>(null);
   const hintRef = useRef<HTMLDivElement>(null);
   let hintDismissed = false;
-
-  useScrollReveal(contentRef as React.RefObject<Element>, {
-    y: 50,
-    duration: 0.9,
-    stagger: 0,
-  });
-  useScrollReveal(gridRef as React.RefObject<Element>, {
-    selector: ".lesson-tile",
-    y: 40,
-    stagger: 0.07,
-    duration: 0.8,
-    start: "top 85%",
-  });
 
   const dismissHint = () => {
     if (hintDismissed || !hintRef.current) return;
@@ -114,11 +98,7 @@ export default function LessonsSectionV2() {
       <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-12 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(340px,0.75fr)_minmax(600px,1.55fr)] items-center gap-10 lg:gap-16">
           {/* ── Left: Text content ── */}
-          <div
-            ref={contentRef}
-            className="v2-content max-w-[560px] text-left justify-self-center lg:justify-self-start"
-            style={{ opacity: 0 }}
-          >
+          <div className="v2-content max-w-[560px] text-left justify-self-center lg:justify-self-start">
             <h2 className="v2-h1">Level Up with Lessons</h2>
 
             <p className="v2-subtitle">
@@ -138,7 +118,6 @@ export default function LessonsSectionV2() {
           {/* ── Right: 3×2 tile grid ── */}
           <div className="flex flex-col items-center gap-2.5 w-full">
             <div
-              ref={gridRef}
               className="v2-stone-path stone-path"
               aria-label="Lesson tiles"
             >

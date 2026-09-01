@@ -5,7 +5,6 @@ import { Sparkles } from "lucide-react";
 import { ThemedChessboard } from "@/shared/ui/ThemedChessboard";
 import { BoardCoordinates } from "@/shared/ui/BoardCoordinates";
 import { soundManager } from "@/shared/lib/SoundManager";
-import { useScrollReveal } from "@/shared/hooks/useScrollReveal";
 import {
   CoachChatBox,
   type CoachMessage,
@@ -23,8 +22,6 @@ const INITIAL_MESSAGES: CoachMessage[] = [
 
 export default function PuzzleSectionV2() {
   const sectionRef = useRef<HTMLElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-  const visualRef = useRef<HTMLDivElement>(null);
 
   // Chess game reference - mutated in place to prevent unnecessary remounts
   const gameRef = useRef(new Chess(INITIAL_FEN));
@@ -38,17 +35,6 @@ export default function PuzzleSectionV2() {
   const [queenSliding, setQueenSliding] = useState(false);
   const [coachMessages, setCoachMessages] =
     useState<CoachMessage[]>(INITIAL_MESSAGES);
-
-  // Animation reveal
-  useScrollReveal(contentRef as React.RefObject<Element>, {
-    y: 45,
-    duration: 0.85,
-  });
-  useScrollReveal(visualRef as React.RefObject<Element>, {
-    y: 45,
-    duration: 0.85,
-    delay: 0.1,
-  });
 
   const addCoachMessage = useCallback(
     (text: string, type: "default" | "correct" | "hint" = "default") => {
@@ -266,11 +252,7 @@ export default function PuzzleSectionV2() {
       <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-12 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(340px,0.75fr)_minmax(600px,1.55fr)] items-center gap-10 lg:gap-16">
           {/* ── Left Column: Text & Explore Button ── */}
-          <div
-            ref={contentRef}
-            className="v2-content max-w-[560px] text-left justify-self-center lg:justify-self-start"
-            style={{ opacity: 0 }}
-          >
+          <div className="v2-content max-w-[560px] text-left justify-self-center lg:justify-self-start">
             <h2 className="v2-h1">Level Up with Puzzles</h2>
 
             <p className="v2-subtitle">Train your tactics or just have fun.</p>
@@ -286,9 +268,7 @@ export default function PuzzleSectionV2() {
 
           {/* ── Right Column: Visual Frame (Chessboard + Coach Panel) ──── */}
           <div
-            ref={visualRef}
             className="w-full max-w-[760px] mx-auto grid grid-cols-1 md:grid-cols-[1fr_240px] lg:grid-cols-[1fr_260px] gap-4 sm:gap-5 items-stretch"
-            style={{ opacity: 0 }}
             aria-label="Interactive puzzle preview"
           >
             {/* 1. Chessboard Container */}
