@@ -180,7 +180,7 @@ export default function LessonsPage() {
   const totalFilteredCount = filteredDbLessons.length + filteredStaticLessons.length;
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-6 select-none">
+    <div className="min-h-[calc(100vh-4rem)] px-2.5 py-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-6 select-none">
       {/* Back Navigation */}
       <div>
         <button
@@ -198,7 +198,7 @@ export default function LessonsPage() {
       </div>
 
       {/* Top Banner / Header */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-brand-surface via-brand-surface/90 to-brand-bg border border-brand-border p-6 sm:p-8 lg:p-10">
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-brand-surface via-brand-surface/90 to-brand-bg border border-brand-border p-3.5 sm:p-8 lg:p-10">
         <div className="absolute right-0 top-0 -mr-16 -mt-16 w-80 h-80 rounded-full bg-brand-accent/10 blur-3xl pointer-events-none" />
         <div className="relative z-10 space-y-4 max-w-2xl">
           <h1 className="font-display font-extrabold text-3xl sm:text-4xl lg:text-5xl text-brand-text tracking-tight">

@@ -350,7 +350,7 @@ export default function PuzzlePage() {
 
       <div className="absolute top-[15%] left-1/2 -translate-x-1/2 w-[80vw] max-w-[1200px] h-[400px] rounded-full blur-[160px] bg-brand-accent/5 pointer-events-none z-0" />
 
-      <main className="relative z-10 flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex flex-col justify-center">
+      <main className="relative z-10 flex-1 max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 w-full flex flex-col justify-center">
 
         <div className="mb-4 flex items-center justify-between w-full">
           <button

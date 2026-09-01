@@ -109,7 +109,7 @@ export default function DatabaseGamePage() {
     <div className="md:h-[calc(100vh-64px)] min-h-[calc(100vh-64px)] bg-brand-surface text-brand-text font-sans flex flex-col w-full relative overflow-y-auto md:overflow-hidden">
       <div className="flex-1 flex flex-col md:flex-row w-full md:h-full md:overflow-hidden">
         {/* Left Area (Board & Players) */}
-        <div className="md:flex-1 flex flex-col items-center justify-center p-4 lg:p-8 relative bg-brand-surface shrink-0">
+        <div className="md:flex-1 flex flex-col items-center justify-center p-2.5 sm:p-4 lg:p-8 relative bg-brand-surface shrink-0">
           {/* Back Navigation */}
           <div className="w-full max-w-[70vh] mb-3">
             <button

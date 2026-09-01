@@ -61,7 +61,7 @@ export const MembershipFeatureBanner: React.FC<
   };
 
   return (
-    <section className="w-full max-w-6xl mx-auto py-16 sm:py-24 px-4 sm:px-6 z-10 relative overflow-hidden">
+    <section className="w-full max-w-6xl mx-auto py-16 sm:py-24 px-2.5 sm:px-6 z-10 relative overflow-hidden">
       <div
         className={`flex flex-col md:flex-row items-center justify-between gap-12 lg:gap-24 ${reverse ? "md:flex-row-reverse" : ""}`}
       >

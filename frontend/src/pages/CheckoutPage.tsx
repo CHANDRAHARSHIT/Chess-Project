@@ -279,7 +279,7 @@ export default function CheckoutPage() {
       {/* SidebarLayout handles header globally */}
 
       {/* Main Container */}
-      <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-14 w-full flex-1 flex flex-col">
+      <main className="relative z-10 max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 pt-6 sm:pt-14 w-full flex-1 flex flex-col">
         <div className="w-full flex justify-start mb-6">
           <button
             onClick={() => navigate("/pricing")}

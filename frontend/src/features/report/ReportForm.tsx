@@ -114,7 +114,7 @@ export default function ReportForm() {
     <section
       ref={ctaSectionRef}
       id="report-section"
-      className="relative z-10 w-full flex items-center justify-center py-6 px-4 sm:px-6 lg:px-8 overflow-hidden bg-brand-bg"
+      className="relative z-10 w-full flex items-center justify-center py-6 px-2.5 sm:px-6 lg:px-8 overflow-hidden bg-brand-bg"
     >
       {/* Gold grid background pattern */}
       <div className="contact-page-bg" />

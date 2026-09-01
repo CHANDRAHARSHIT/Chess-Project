@@ -169,7 +169,7 @@ export default function LessonViewerPage() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-6 select-none">
+    <div className="min-h-[calc(100vh-4rem)] px-2.5 py-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-6 select-none">
       {/* Header Bar */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-brand-surface/60 border border-brand-border p-4 rounded-2xl">
         <div className="flex items-center gap-3">

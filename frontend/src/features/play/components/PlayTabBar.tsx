@@ -18,13 +18,22 @@ interface PlayTabBarProps {
   isOnlineActive?: boolean;
 }
 
-const TABS: { id: PlayTab; label: string; Icon: React.ElementType }[] = [
+const TABS: {
+  id: PlayTab;
+  label: string;
+  Icon: React.ElementType;
+  disabled?: boolean;
+}[] = [
   { id: "quick", label: "Quick Game", Icon: Zap },
   { id: "online", label: "Play Online", Icon: Swords },
   { id: "variants", label: "Variants", Icon: Shuffle },
 ];
 
-export function PlayTabBar({ activeTab, onTabChange, isOnlineActive = false }: PlayTabBarProps) {
+export function PlayTabBar({
+  activeTab,
+  onTabChange,
+  isOnlineActive = false,
+}: PlayTabBarProps) {
   return (
     <div className="flex items-center gap-1 p-1 rounded-2xl bg-brand-surface/60 border border-white/5 backdrop-blur-md w-full sm:w-auto">
       {TABS.map(({ id, label, Icon }) => {
@@ -38,10 +47,11 @@ export function PlayTabBar({ activeTab, onTabChange, isOnlineActive = false }: P
               soundManager.playButtonClick();
               onTabChange(id);
             }}
-            className={`relative flex items-center justify-center gap-2 flex-1 sm:flex-none sm:px-5 px-3 py-2.5 rounded-xl text-xs font-mono font-bold transition-all duration-200 cursor-pointer ${isActive
-              ? "bg-brand-accent text-black"
-              : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5"
-              }`}
+            className={`relative flex items-center justify-center gap-2 flex-1 sm:flex-none sm:px-5 px-3 py-2.5 rounded-xl text-xs font-mono font-bold transition-all duration-200 cursor-pointer ${
+              isActive
+                ? "bg-brand-accent text-black"
+                : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5"
+            }`}
             aria-selected={isActive}
             role="tab"
           >

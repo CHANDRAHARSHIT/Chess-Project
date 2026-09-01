@@ -53,7 +53,7 @@ export default function JoinUsPage() {
             transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
             className="overflow-hidden relative z-10"
           >
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-8 sm:pb-12">
+            <div className="max-w-6xl mx-auto px-2.5 sm:px-6 lg:px-8 pt-6 pb-8 sm:pb-12">
               <div className="mb-6">
                 <button
                   type="button"
@@ -88,7 +88,7 @@ export default function JoinUsPage() {
       </AnimatePresence>
 
       {/* Main Content Area */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-4 sm:pt-6 relative z-10">
+      <div className="max-w-6xl mx-auto px-2.5 sm:px-6 lg:px-8 w-full pt-4 sm:pt-6 relative z-10">
         <AnimatePresence mode="wait">
           {selectedOpening ? (
             <motion.div

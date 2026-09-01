@@ -378,7 +378,7 @@ export default function PricingPage() {
         </motion.div>
       </div>
 
-      <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-1 flex flex-col items-center w-full pt-8">
+      <main className="relative z-10 max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 flex-1 flex flex-col items-center w-full pt-8">
         {/* ─── Back ─── */}
         <div className="w-full flex justify-start mb-6">
           <button
