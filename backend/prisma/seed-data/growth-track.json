@@ -13,7 +13,7 @@
       "questionIds": [
         "gq1"
       ],
-      "submitButtonText": "Submit and continue to next question",
+      "submitButtonText": "Next",
       "questions": [
         {
           "id": "gq1",
@@ -63,7 +63,7 @@
       "questionIds": [
         "gq2"
       ],
-      "submitButtonText": "Submit and continue to next question",
+      "submitButtonText": "Next",
       "questions": [
         {
           "id": "gq2",
@@ -92,7 +92,7 @@
       "questionIds": [
         "gq3"
       ],
-      "submitButtonText": "Submit and continue to next question",
+      "submitButtonText": "Next",
       "questions": [
         {
           "id": "gq3",
@@ -133,7 +133,7 @@
       "questionIds": [
         "gq4"
       ],
-      "submitButtonText": "Submit and continue to next question",
+      "submitButtonText": "Next",
       "questions": [
         {
           "id": "gq4",
@@ -178,7 +178,7 @@
       "questionIds": [
         "gq5"
       ],
-      "submitButtonText": "Submit and continue to next question",
+      "submitButtonText": "Next",
       "questions": [
         {
           "id": "gq5",
@@ -186,7 +186,7 @@
           "type": "long-text",
           "questionText": "You are asked to create a Facebook post that includes the discount code \"XO1\", which customers can use on the website to receive a discount.\n\nHow would you approach and complete this task?",
           "wordLimit": 10,
-          "placeholder": "State your approach in 10 words or fewer...",
+          "placeholder": "Answer",
           "tips": "Strict 10-word limit. Be direct, clear, and action-oriented."
         }
       ]
@@ -229,7 +229,7 @@
             }
           ],
           "wordLimit": 1200,
-          "placeholder": "Write your 3-month timeline and task breakdown (Month 1, Month 2, Month 3, and budget allocation)...",
+          "placeholder": "Answer",
           "tips": "Highlight high-leverage activities, budget use, collaboration with developers, and timeline."
         }
       ]
