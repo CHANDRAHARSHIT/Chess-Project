@@ -56,3 +56,61 @@ describe("resultsListener — Session never blocks on Results (Invariant 14)", (
     }
   });
 });
+
+describe("resultsListener — post-game analysis hook", () => {
+  const flush = () => new Promise((resolve) => setImmediate(resolve));
+
+  test("runs the hook with the session id once persistence succeeds", async () => {
+    const seen: string[] = [];
+    const listener = createResultsListener(async () => {}, (id) => seen.push(id));
+
+    listener(sampleResult);
+    await flush();
+
+    assert.deepEqual(seen, ["session-1"]);
+  });
+
+  test("does not run the hook when persistence fails", async () => {
+    // Analysis reads the record Results was supposed to write. Running it after
+    // a failed persist would only produce a spurious 'game not found'.
+    let called = false;
+    const listener = createResultsListener(
+      async () => {
+        throw new Error("simulated DB outage");
+      },
+      () => {
+        called = true;
+      }
+    );
+
+    listener(sampleResult);
+    await flush();
+
+    assert.equal(called, false);
+  });
+
+  test("a throwing hook cannot escape as an unhandled rejection", async () => {
+    let unhandled = false;
+    const onUnhandledRejection = () => {
+      unhandled = true;
+    };
+    process.on("unhandledRejection", onUnhandledRejection);
+
+    try {
+      const listener = createResultsListener(
+        async () => {},
+        () => {
+          throw new Error("analysis exploded");
+        }
+      );
+
+      assert.doesNotThrow(() => listener(sampleResult));
+      await flush();
+      await flush();
+
+      assert.equal(unhandled, false);
+    } finally {
+      process.off("unhandledRejection", onUnhandledRejection);
+    }
+  });
+});
