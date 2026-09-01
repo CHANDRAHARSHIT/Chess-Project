@@ -282,16 +282,12 @@ export default function TimedCodingScreen({
 
         {/* Answer Input */}
         <div className="space-y-3 pt-2">
-          <h3 className="text-xs font-mono uppercase tracking-wider text-brand-accent font-semibold">
-            Your Output Answer
-          </h3>
-
           <ShortTextInput
             id="timed-coding-answer-input"
             value={answer}
             onChange={onAnswerChange}
             wordLimit={config.question.wordLimit || 1}
-            placeholder={config.question.placeholder || "Enter output value"}
+            placeholder={config.question.placeholder || "Answer"}
           />
         </div>
       </div>

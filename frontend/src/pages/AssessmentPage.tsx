@@ -1,36 +1,38 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { useSearchParams } from 'react-router';
-import { AlertTriangle, Lock } from 'lucide-react';
+import { useState, useEffect, useRef, useCallback } from "react";
+import { useSearchParams } from "react-router";
+import { AlertTriangle, Lock } from "lucide-react";
 import {
   AssessmentService,
   AssessmentApiError,
   type AssessmentAttempt,
-} from '@/features/join-us/assessment/assessment.service';
-import type { AssessmentConfig } from '@/features/join-us/assessment/assessmentTypes';
-import AssessmentComingSoon from '@/features/join-us/assessment/components/AssessmentComingSoon';
-import AssessmentSkeleton from '@/features/join-us/assessment/components/AssessmentSkeleton';
-import AssessmentResultScreen from '@/features/join-us/assessment/components/AssessmentResultScreen';
-import AssessmentAlreadyCompleteScreen from '@/features/join-us/assessment/components/AssessmentAlreadyCompleteScreen';
-import AssessmentShell from '@/features/join-us/assessment/components/AssessmentShell';
-import AssessmentSubmitConfirmModal from '@/features/join-us/assessment/components/AssessmentSubmitConfirmModal';
-import TimedSectionWarningModal from '@/features/join-us/assessment/components/TimedSectionWarningModal';
-import QuestionCard from '@/features/join-us/assessment/components/QuestionCard';
-import TimedCodingScreen from '@/features/join-us/assessment/components/TimedCodingScreen';
-import { motion, AnimatePresence } from 'framer-motion';
+} from "@/features/join-us/assessment/assessment.service";
+import type { AssessmentConfig } from "@/features/join-us/assessment/assessmentTypes";
+import AssessmentComingSoon from "@/features/join-us/assessment/components/AssessmentComingSoon";
+import AssessmentSkeleton from "@/features/join-us/assessment/components/AssessmentSkeleton";
+import AssessmentResultScreen from "@/features/join-us/assessment/components/AssessmentResultScreen";
+import AssessmentAlreadyCompleteScreen from "@/features/join-us/assessment/components/AssessmentAlreadyCompleteScreen";
+import AssessmentShell from "@/features/join-us/assessment/components/AssessmentShell";
+import AssessmentSubmitConfirmModal from "@/features/join-us/assessment/components/AssessmentSubmitConfirmModal";
+import TimedSectionWarningModal from "@/features/join-us/assessment/components/TimedSectionWarningModal";
+import QuestionCard from "@/features/join-us/assessment/components/QuestionCard";
+import TimedCodingScreen from "@/features/join-us/assessment/components/TimedCodingScreen";
+import { motion, AnimatePresence } from "framer-motion";
 
-const KNOWN_TRACK_SLUGS = new Set(['backend', 'growth-marketing', 'manager']);
+const KNOWN_TRACK_SLUGS = new Set(["backend", "growth-marketing", "manager"]);
 
 function humanizeRole(role: string): string {
   return role
-    .split('-')
+    .split("-")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
+    .join(" ");
 }
 
-function mapResultToStatus(result: AssessmentAttempt['result']): 'pass' | 'fail' | 'review' {
-  if (result === 'PASS') return 'pass';
-  if (result === 'FAIL') return 'fail';
-  return 'review';
+function mapResultToStatus(
+  result: AssessmentAttempt["result"],
+): "pass" | "fail" | "review" {
+  if (result === "PASS") return "pass";
+  if (result === "FAIL") return "fail";
+  return "review";
 }
 
 /** True if the session expired mid-assessment (server returns 401 on every endpoint via requireAuth). */
@@ -40,7 +42,7 @@ function isUnauthorized(error: unknown): boolean {
 
 /** Sends the candidate back to sign in — matches ProtectedRoute's own unauthenticated redirect. */
 function redirectToLogin() {
-  window.location.href = '/?login=true';
+  window.location.href = "/?login=true";
 }
 
 const ANSWER_SAVE_DEBOUNCE_MS = 600;
@@ -48,7 +50,7 @@ const TOAST_AUTO_DISMISS_MS = 10_000;
 
 export default function AssessmentPage() {
   const [searchParams] = useSearchParams();
-  const role = searchParams.get('role') || '';
+  const role = searchParams.get("role") || "";
   const trackSlug = KNOWN_TRACK_SLUGS.has(role) ? role : null;
 
   const [loading, setLoading] = useState(true);
@@ -66,9 +68,9 @@ export default function AssessmentPage() {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [radioValues, setRadioValues] = useState<Record<string, string>>({});
   const [textValues, setTextValues] = useState<Record<string, string>>({});
-  const [bookmarkedQuestionNumbers, setBookmarkedQuestionNumbers] = useState<Set<number>>(
-    new Set()
-  );
+  const [bookmarkedQuestionNumbers, setBookmarkedQuestionNumbers] = useState<
+    Set<number>
+  >(new Set());
 
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const [focusedQuestionNumber, setFocusedQuestionNumber] = useState(1);
@@ -86,11 +88,6 @@ export default function AssessmentPage() {
   // Loading state for the "I'm Ready — Start the Timer" button on the Q11
   // entry-warning modal, while startTimedSection's round trip is in flight.
   const [startingTimedSection, setStartingTimedSection] = useState(false);
-  // Ticks once a second while the timed section's deadline is live, purely
-  // so the navigation-lock check below re-evaluates as the deadline passes
-  // (Q11 must unlock the rest of the assessment the moment time runs out,
-  // with no user action required to notice that).
-  const [nowMs, setNowMs] = useState(() => Date.now());
 
   const saveTimers = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
 
@@ -104,7 +101,10 @@ export default function AssessmentPage() {
 
   useEffect(() => {
     if (!noticeMessage) return;
-    const timer = setTimeout(() => setNoticeMessage(null), TOAST_AUTO_DISMISS_MS);
+    const timer = setTimeout(
+      () => setNoticeMessage(null),
+      TOAST_AUTO_DISMISS_MS,
+    );
     return () => clearTimeout(timer);
   }, [noticeMessage]);
 
@@ -117,7 +117,8 @@ export default function AssessmentPage() {
     setLoading(true);
     setLoadError(null);
     try {
-      const { template, attempt: loadedAttempt } = await AssessmentService.get(trackSlug);
+      const { template, attempt: loadedAttempt } =
+        await AssessmentService.get(trackSlug);
       setConfig(template);
       setAttempt(loadedAttempt);
       setAnswers(loadedAttempt.answers || {});
@@ -133,7 +134,9 @@ export default function AssessmentPage() {
         setNotFound(true);
       } else {
         setLoadError(
-          error instanceof Error ? error.message : 'Failed to load the assessment.'
+          error instanceof Error
+            ? error.message
+            : "Failed to load the assessment.",
         );
       }
     } finally {
@@ -150,7 +153,8 @@ export default function AssessmentPage() {
     : 0;
   const isTimedCodingPage =
     !!config?.timedCodingConfig && currentPageIndex === config.pages.length;
-  const currentPage = config && !isTimedCodingPage ? config.pages[currentPageIndex] : null;
+  const currentPage =
+    config && !isTimedCodingPage ? config.pages[currentPageIndex] : null;
 
   const getQuestionByNumber = (qNum: number) => {
     if (!config) return undefined;
@@ -177,7 +181,14 @@ export default function AssessmentPage() {
   // previous page rather than rendering Q11 unlocked. Inlined instead of
   // calling handlePreviousPage (declared later) to avoid a TDZ reference.
   useEffect(() => {
-    if (!(isTimedCodingPage && attempt && attempt.estimateMinutes == null && currentPageIndex > 0)) {
+    if (
+      !(
+        isTimedCodingPage &&
+        attempt &&
+        attempt.estimateMinutes == null &&
+        currentPageIndex > 0
+      )
+    ) {
       return;
     }
     const prevIndex = currentPageIndex - 1;
@@ -189,47 +200,11 @@ export default function AssessmentPage() {
   }, [isTimedCodingPage, attempt, currentPageIndex]);
 
   useEffect(() => {
-    if (!attempt?.timedDeadlineAt) return;
-    const interval = setInterval(() => setNowMs(Date.now()), 1000);
-    return () => clearInterval(interval);
-  }, [attempt?.timedDeadlineAt]);
-
-  // The candidate is freed from the Q11-only lock either once time runs
-  // out OR the moment they've actually answered it — there's no reason to
-  // keep them trapped on a question they've already completed just because
-  // the clock hasn't hit zero yet.
-  const timedQuestionId = config?.timedCodingConfig?.question.id;
-  const hasAnsweredTimedQuestion = !!timedQuestionId && (answers[timedQuestionId]?.trim().length ?? 0) > 0;
-
-  // True while the candidate has actually opened Q11, its deadline hasn't
-  // passed yet, AND they haven't answered it. Drives the "locked into Q11"
-  // rule below — an exceeds-limit estimate never gets a deadline, so that
-  // dead-end path is correctly never "running."
-  const isTimedSectionRunning =
-    !!attempt?.timedSectionStartedAt &&
-    !!attempt?.timedDeadlineAt &&
-    nowMs < new Date(attempt.timedDeadlineAt).getTime() &&
-    !hasAnsweredTimedQuestion;
-
-  // Safety net for the reverse direction: once the timer is running, force
-  // the candidate back onto Q11 if anything (stale nav, back/forward) lands
-  // them elsewhere — they must finish or run out the clock before leaving.
-  useEffect(() => {
-    if (!config?.timedCodingConfig || !isTimedSectionRunning || isTimedCodingPage) return;
-    const timedQNum = config.timedCodingConfig.question.questionNumber;
-    const timer = setTimeout(() => {
-      setCurrentPageIndex(config.pages.length);
-      setFocusedQuestionNumber(timedQNum);
-    }, 0);
-    return () => clearTimeout(timer);
-  }, [isTimedSectionRunning, isTimedCodingPage, config]);
-
-  useEffect(() => {
     const el = document.getElementById(`question-${focusedQuestionNumber}`);
     if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
     } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   }, [focusedQuestionNumber, currentPageIndex]);
 
@@ -254,16 +229,11 @@ export default function AssessmentPage() {
 
   const unattemptedQuestionNumbers = config
     ? Array.from({ length: config.totalQuestions }, (_, i) => i + 1).filter(
-        (qNum) => !answeredQuestionNumbers.has(qNum)
+        (qNum) => !answeredQuestionNumbers.has(qNum),
       )
     : [];
 
-  // Two distinct locks share this one set, never active at the same time:
-  // - Before a Q10 estimate is submitted, Q11 itself is unclickable.
-  // - Once the timer is actually running, every OTHER question is
-  //   unclickable — the candidate must finish or run out the clock on Q11
-  //   before they can go anywhere else. The lock lifts the instant
-  //   isTimedSectionRunning goes false (timer expired), no action needed.
+  // Lock Q11 before a Q10 estimate is submitted. Once estimate exists, all questions can be navigated.
   const lockedQuestionNumbers = (() => {
     const locked = new Set<number>();
     if (!config?.timedCodingConfig) return locked;
@@ -272,12 +242,6 @@ export default function AssessmentPage() {
     if (attempt?.estimateMinutes == null) {
       locked.add(timedQNum);
       return locked;
-    }
-
-    if (isTimedSectionRunning) {
-      for (let qNum = 1; qNum <= config.totalQuestions; qNum++) {
-        if (qNum !== timedQNum) locked.add(qNum);
-      }
     }
 
     return locked;
@@ -309,10 +273,15 @@ export default function AssessmentPage() {
         return;
       }
       if (attemptsMade < RETRY_DELAYS_MS.length) {
-        setTimeout(() => saveWithRetry(fn, attemptsMade + 1), RETRY_DELAYS_MS[attemptsMade]);
+        setTimeout(
+          () => saveWithRetry(fn, attemptsMade + 1),
+          RETRY_DELAYS_MS[attemptsMade],
+        );
         return;
       }
-      setActionError('Failed to save your answer. Please check your connection.');
+      setActionError(
+        "Failed to save your answer. Please check your connection.",
+      );
     });
   };
 
@@ -323,30 +292,52 @@ export default function AssessmentPage() {
     questionId: string,
     value: string,
     radioValue?: string,
-    textValue?: string
+    textValue?: string,
   ) => {
     if (!trackSlug) return;
-    if (saveTimers.current[questionId]) clearTimeout(saveTimers.current[questionId]);
+    if (saveTimers.current[questionId])
+      clearTimeout(saveTimers.current[questionId]);
     saveTimers.current[questionId] = setTimeout(() => {
       saveWithRetry(() =>
-        AssessmentService.saveAnswer(trackSlug, questionId, value, radioValue, textValue)
+        AssessmentService.saveAnswer(
+          trackSlug,
+          questionId,
+          value,
+          radioValue,
+          textValue,
+        ),
       );
     }, ANSWER_SAVE_DEBOUNCE_MS);
   };
 
   const handleAnswerChange = (questionId: string, value: string) => {
     setAnswers((prev) => ({ ...prev, [questionId]: value }));
-    scheduleSave(questionId, value, radioValues[questionId], textValues[questionId]);
+    scheduleSave(
+      questionId,
+      value,
+      radioValues[questionId],
+      textValues[questionId],
+    );
   };
 
   const handleRadioChange = (questionId: string, value: string) => {
     setRadioValues((prev) => ({ ...prev, [questionId]: value }));
-    scheduleSave(questionId, answers[questionId] ?? value, value, textValues[questionId]);
+    scheduleSave(
+      questionId,
+      answers[questionId] ?? value,
+      value,
+      textValues[questionId],
+    );
   };
 
   const handleTextChange = (questionId: string, value: string) => {
     setTextValues((prev) => ({ ...prev, [questionId]: value }));
-    scheduleSave(questionId, answers[questionId] ?? '', radioValues[questionId], value);
+    scheduleSave(
+      questionId,
+      answers[questionId] ?? "",
+      radioValues[questionId],
+      value,
+    );
   };
 
   const handleToggleBookmark = (questionNumber: number) => {
@@ -359,30 +350,34 @@ export default function AssessmentPage() {
       return next;
     });
     saveWithRetry(() =>
-      AssessmentService.setBookmark(trackSlug, questionNumber, !isBookmarked)
+      AssessmentService.setBookmark(trackSlug, questionNumber, !isBookmarked),
     );
   };
 
   const handleNavigateToQuestion = (qNum: number) => {
     if (!config) return;
     const timedConfig = config.timedCodingConfig;
-    const isTimedQuestion = !!timedConfig && qNum === timedConfig.question.questionNumber;
+    const isTimedQuestion =
+      !!timedConfig && qNum === timedConfig.question.questionNumber;
 
     // Clicking the locked Q11 pill before an estimate exists doesn't just
     // no-op — it sends the candidate to Q10 and tells them what to do.
     if (isTimedQuestion && timedConfig && attempt?.estimateMinutes == null) {
       const q10PageIndex = config.pages.findIndex((page) =>
-        page.questions.some((q) => q.id === timedConfig.estimateQuestionId)
+        page.questions.some((q) => q.id === timedConfig.estimateQuestionId),
       );
       if (q10PageIndex !== -1) {
         const q10Question = config.pages[q10PageIndex].questions.find(
-          (q) => q.id === timedConfig.estimateQuestionId
+          (q) => q.id === timedConfig.estimateQuestionId,
         );
         setCurrentPageIndex(q10PageIndex);
-        setFocusedQuestionNumber(q10Question?.questionNumber ?? firstQuestionNumberOfPage(q10PageIndex));
+        setFocusedQuestionNumber(
+          q10Question?.questionNumber ??
+            firstQuestionNumberOfPage(q10PageIndex),
+        );
       }
       setNoticeMessage(
-        'Question 11 is locked. Enter and submit your time estimate on Question 10 first.'
+        "Question 11 is locked. Enter and submit your time estimate on Question 10 first.",
       );
       return;
     }
@@ -398,7 +393,7 @@ export default function AssessmentPage() {
       return;
     }
     const targetPageIndex = config.pages.findIndex((page) =>
-      page.questions.some((q) => q.questionNumber === qNum)
+      page.questions.some((q) => q.questionNumber === qNum),
     );
     if (targetPageIndex !== -1) {
       setCurrentPageIndex(targetPageIndex);
@@ -427,10 +422,10 @@ export default function AssessmentPage() {
           const { attempt: latest } = await AssessmentService.get(trackSlug);
           setAttempt(latest);
         } catch {
-          setActionError('Failed to load your assessment result.');
+          setActionError("Failed to load your assessment result.");
         }
       } else {
-        setActionError('Failed to submit your assessment. Please try again.');
+        setActionError("Failed to submit your assessment. Please try again.");
       }
     } finally {
       setSubmitting(false);
@@ -452,21 +447,27 @@ export default function AssessmentPage() {
     // estimate first so the server can start the countdown (absolute deadline).
     const timedConfig = config.timedCodingConfig;
     const leavingEstimatePage =
-      timedConfig && currentPage?.questions.some((q) => q.id === timedConfig.estimateQuestionId);
+      timedConfig &&
+      currentPage?.questions.some(
+        (q) => q.id === timedConfig.estimateQuestionId,
+      );
 
     if (leavingEstimatePage && timedConfig) {
       const estimateRaw = answers[timedConfig.estimateQuestionId];
-      const estimateMinutes = parseInt(estimateRaw || '0', 10) || 0;
+      const estimateMinutes = parseInt(estimateRaw || "0", 10) || 0;
       setPageTransitioning(true);
       try {
-        const updated = await AssessmentService.submitEstimate(trackSlug, estimateMinutes);
+        const updated = await AssessmentService.submitEstimate(
+          trackSlug,
+          estimateMinutes,
+        );
         setAttempt(updated);
       } catch (error) {
         if (isUnauthorized(error)) {
           redirectToLogin();
           return;
         }
-        setActionError('Failed to save your time estimate. Please try again.');
+        setActionError("Failed to save your time estimate. Please try again.");
         return;
       } finally {
         setPageTransitioning(false);
@@ -483,9 +484,6 @@ export default function AssessmentPage() {
   };
 
   const handlePreviousPage = () => {
-    // While Q11's timer is running, the candidate must finish or run out
-    // the clock before leaving it — mirrors the disabled Previous button.
-    if (isTimedSectionRunning) return;
     if (currentPageIndex > 0) {
       const prevIndex = currentPageIndex - 1;
       setCurrentPageIndex(prevIndex);
@@ -509,7 +507,7 @@ export default function AssessmentPage() {
         redirectToLogin();
         return;
       }
-      setActionError('Failed to start the timed question. Please try again.');
+      setActionError("Failed to start the timed question. Please try again.");
     } finally {
       setStartingTimedSection(false);
     }
@@ -521,7 +519,9 @@ export default function AssessmentPage() {
   }
 
   if (notFound) {
-    return <AssessmentComingSoon roleTitle={role ? humanizeRole(role) : undefined} />;
+    return (
+      <AssessmentComingSoon roleTitle={role ? humanizeRole(role) : undefined} />
+    );
   }
 
   if (loadError || !config || !attempt) {
@@ -529,7 +529,7 @@ export default function AssessmentPage() {
       <div className="min-h-screen bg-brand-bg text-brand-text flex flex-col justify-center items-center px-4 text-center">
         <AlertTriangle className="w-10 h-10 text-red-400" />
         <p className="mt-4 font-sans text-brand-secondary text-sm max-w-md">
-          {loadError || 'Something went wrong loading the assessment.'}
+          {loadError || "Something went wrong loading the assessment."}
         </p>
         <button
           type="button"
@@ -542,7 +542,7 @@ export default function AssessmentPage() {
     );
   }
 
-  if (attempt.status === 'SUBMITTED') {
+  if (attempt.status === "SUBMITTED") {
     if (justSubmitted) {
       return (
         <AssessmentResultScreen
@@ -552,7 +552,10 @@ export default function AssessmentPage() {
       );
     }
     return (
-      <AssessmentAlreadyCompleteScreen result={attempt.result} submittedAt={attempt.submittedAt} />
+      <AssessmentAlreadyCompleteScreen
+        result={attempt.result}
+        submittedAt={attempt.submittedAt}
+      />
     );
   }
 
@@ -563,7 +566,7 @@ export default function AssessmentPage() {
     const q10Answer =
       attempt.estimateMinutes != null
         ? String(attempt.estimateMinutes)
-        : answers[config.timedCodingConfig.estimateQuestionId] || '0';
+        : answers[config.timedCodingConfig.estimateQuestionId] || "0";
 
     // An estimate over the template's limit is a dead end (TimedCodingScreen
     // renders its own "exceeds limit" screen, no countdown involved) — the
@@ -571,25 +574,30 @@ export default function AssessmentPage() {
     const exceedsEstimateLimit =
       attempt.estimateMinutes != null &&
       attempt.estimateMinutes > config.timedCodingConfig.maxEstimateMinutes;
-    const timerNotYetStarted = attempt.timedSectionStartedAt == null && !exceedsEstimateLimit;
+    const timerNotYetStarted =
+      attempt.timedSectionStartedAt == null && !exceedsEstimateLimit;
 
     return (
       <>
         <AssessmentShell
           roleTitle={config.roleTitle}
           totalQuestions={config.totalQuestions}
-          currentQuestionNumber={config.timedCodingConfig.question.questionNumber}
+          currentQuestionNumber={
+            config.timedCodingConfig.question.questionNumber
+          }
           answeredQuestionNumbers={answeredQuestionNumbers}
           bookmarkedQuestionNumbers={bookmarkedQuestionNumbers}
           lockedQuestionNumbers={lockedQuestionNumbers}
           activeQuestion={config.timedCodingConfig.question}
           isFirstPage={false}
-          previousDisabled={isTimedSectionRunning}
+          previousDisabled={false}
           isLastPage={true}
           onNavigateToQuestion={handleNavigateToQuestion}
           onPreviousPage={handlePreviousPage}
           onNextPage={attemptSubmit}
-          submitButtonText={submitting ? 'Submitting...' : 'Complete Assessment'}
+          submitButtonText={
+            submitting ? "Submitting..." : "Complete Assessment"
+          }
         >
           {timerNotYetStarted ? (
             <div className="max-w-2xl mx-auto py-16 text-center space-y-4">
@@ -600,14 +608,15 @@ export default function AssessmentPage() {
                 Timed Question Locked
               </h2>
               <p className="text-brand-secondary text-sm">
-                Confirm you're ready to begin in the dialog above — the timer starts the moment you do.
+                Confirm you're ready to begin in the dialog above — the timer
+                starts the moment you do.
               </p>
             </div>
           ) : (
             <TimedCodingScreen
               config={config.timedCodingConfig}
               estimatedMinutesRaw={q10Answer}
-              answer={answers[config.timedCodingConfig.question.id] || ''}
+              answer={answers[config.timedCodingConfig.question.id] || ""}
               onAnswerChange={(val) =>
                 handleAnswerChange(config.timedCodingConfig!.question.id, val)
               }
@@ -663,13 +672,13 @@ export default function AssessmentPage() {
         pagePurpose={currentPage?.purpose}
         submitButtonText={
           submitting
-            ? 'Submitting...'
+            ? "Submitting..."
             : pageTransitioning
-            ? 'Saving...'
-            : currentPage?.submitButtonText || 'Submit and continue to next question'
+              ? "Saving..."
+              : currentPage?.submitButtonText || "Next"
         }
         isFirstPage={currentPageIndex === 0}
-        previousDisabled={isTimedSectionRunning}
+        previousDisabled={false}
         isLastPage={currentPageIndex === totalPages - 1}
         onNavigateToQuestion={handleNavigateToQuestion}
         onPreviousPage={handlePreviousPage}
@@ -681,7 +690,7 @@ export default function AssessmentPage() {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -15 }}
-            transition={{ duration: 0.25, ease: 'easeOut' }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
             className="space-y-6"
           >
             {currentPage?.questions.map((q) => {
@@ -694,10 +703,11 @@ export default function AssessmentPage() {
               // with no way to revise their estimate.
               const isEstimateQuestion =
                 config.timedCodingConfig?.estimateQuestionId === q.id;
-              const isEstimateLocked = isEstimateQuestion && attempt.timedSectionStartedAt != null;
+              const isEstimateLocked =
+                isEstimateQuestion && attempt.timedSectionStartedAt != null;
               const displayAnswer = isEstimateLocked
                 ? String(attempt.estimateMinutes)
-                : answers[q.id] || '';
+                : answers[q.id] || "";
 
               return (
                 <QuestionCard
@@ -707,9 +717,11 @@ export default function AssessmentPage() {
                   answer={displayAnswer}
                   onAnswerChange={(val) => handleAnswerChange(q.id, val)}
                   isBookmarked={bookmarkedQuestionNumbers.has(q.questionNumber)}
-                  onToggleBookmark={() => handleToggleBookmark(q.questionNumber)}
-                  radioValue={radioValues[q.id] || ''}
-                  textValue={textValues[q.id] || ''}
+                  onToggleBookmark={() =>
+                    handleToggleBookmark(q.questionNumber)
+                  }
+                  radioValue={radioValues[q.id] || ""}
+                  textValue={textValues[q.id] || ""}
                   onRadioValueChange={(val) => handleRadioChange(q.id, val)}
                   onTextValueChange={(val) => handleTextChange(q.id, val)}
                   disabled={isEstimateLocked}
