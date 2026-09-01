@@ -17,6 +17,12 @@ RUN apt-get update \
   && apt-get install -y --no-install-recommends python3 python3-venv git ca-certificates \
   && rm -rf /var/lib/apt/lists/*
 
+# Which Maia model is baked into the image. Must match MAIA_MODEL at runtime, or
+# the first request downloads a different one. See src/maia/README.md for the
+# size/latency trade-off.
+ARG MAIA_MODEL=maia3-23m
+ENV MAIA_MODEL=${MAIA_MODEL}
+
 ENV MAIA_VENV=/opt/maia-venv
 # The engine probes this first. It also probes /opt/maia-venv by path, so a
 # Railway service variable shadowing this cannot break startup.
@@ -32,7 +38,7 @@ RUN python3 -m venv ${MAIA_VENV} \
 
 # Weights are baked in before any source is copied, so a code change does not
 # re-download 302MB.
-RUN ${MAIA_VENV}/bin/python -m maia3.cache --model maia3-79m
+RUN ${MAIA_VENV}/bin/python -m maia3.cache --model ${MAIA_MODEL}
 
 WORKDIR /app
 

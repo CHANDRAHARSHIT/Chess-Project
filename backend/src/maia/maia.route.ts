@@ -27,6 +27,30 @@ export function stopMaiaEngine(): void {
   engine = null;
 }
 
+/**
+ * Boots the engine and plays one throwaway move at server start.
+ *
+ * Loading the 79M model into memory takes several seconds and only happens on
+ * the first `go`. Without this the first player pays that cost and, on a small
+ * container, hits the request timeout. Fire-and-forget: a failure here must not
+ * stop the server, and the route still reports it.
+ */
+export function warmMaiaEngine(): void {
+  if (!env.MAIA_ENABLED) return;
+
+  getEngine()
+    .getMove({ moves: [], elo: 1500 })
+    .then(({ latencyMs }) => console.log(`[maia] engine warm (first move ${latencyMs}ms)`))
+    .catch((err) =>
+      reportError({
+        domain: "maia",
+        error: err as Error,
+        fatal: false,
+        context: { reason: "warmup_failed" },
+      })
+    );
+}
+
 maiaRouter.use((_req, res, next) => {
   if (!env.MAIA_ENABLED) {
     res.status(503).json({ status: "fail", message: "Maia is not enabled on this server." });

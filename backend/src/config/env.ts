@@ -60,7 +60,7 @@ export const env = {
   // Empty lets the engine probe for a usable Python itself.
   MAIA_UCI_COMMAND: process.env.MAIA_UCI_COMMAND ?? "",
   // Must match the model nixpacks.toml pre-caches, or the first request downloads it.
-  MAIA_MODEL: process.env.MAIA_MODEL ?? "maia3-79m",
+  MAIA_MODEL: process.env.MAIA_MODEL ?? "maia3-23m",
 
   // Rollbar error monitoring
   ROLLBAR_ACCESS_TOKEN: process.env.ROLLBAR_ACCESS_TOKEN!,

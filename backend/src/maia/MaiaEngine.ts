@@ -37,7 +37,12 @@ interface QueuedRequest {
 const MIN_ELO = 800;
 const MAX_ELO = 2600;
 
-const MOVE_TIMEOUT_MS = 20_000;
+/**
+ * Generous because the first request also pays for loading the model into
+ * memory — measured at ~14s on one CPU. Steady-state moves are far quicker;
+ * `warmMaiaEngine()` moves that first cost to server start.
+ */
+const MOVE_TIMEOUT_MS = 90_000;
 const BOOT_TIMEOUT_MS = 120_000;
 /** Interpreter probe only — must be short so a hung candidate cannot stall boot. */
 const PROBE_TIMEOUT_MS = 10_000;
@@ -60,7 +65,7 @@ export class MaiaEngine {
 
   constructor(
     private readonly command = "",
-    private readonly model = "maia3-79m"
+    private readonly model = "maia3-23m"
   ) {}
 
   /** What launched, or null before the first successful boot. */
