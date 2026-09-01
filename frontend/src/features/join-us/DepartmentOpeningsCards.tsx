@@ -39,7 +39,7 @@ export default function DepartmentOpeningsCards({
                     className="bg-brand-surface/50 border border-brand-text/15 p-3 rounded-2xl flex flex-col items-center text-center space-y-2 hover:border-brand-accent/40 transition-colors"
                   >
                     <span className="text-[11px] text-brand-secondary font-mono uppercase tracking-wider">
-                      Level: {level}
+                      {level}
                     </span>
                     {activeOpening ? (
                       <button
@@ -67,8 +67,8 @@ export default function DepartmentOpeningsCards({
       <div className="p-4 border-t border-brand-text/15 bg-brand-surface/30 flex items-start gap-2.5 text-brand-secondary text-xs leading-relaxed">
         <Clock className="w-4 h-4 text-brand-accent shrink-0 mt-0.5" />
         <p>
-          We are flexible with the hours and can make it work around your availability,
-          even if you are not able to work full-time.
+          We are flexible with the hours and can make it work around your
+          availability, even if you are not able to work full-time.
         </p>
       </div>
     </div>

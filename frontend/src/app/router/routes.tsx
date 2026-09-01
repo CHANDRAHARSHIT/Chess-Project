@@ -235,15 +235,15 @@ export const mainRoutes: RouteConfig[] = [
     element: <HowXLChessWorksPage />,
     title: "How XLChess Works | XLChess",
   },
+];
+
+// Routes that run inside the MinimalLayout (Navbar only, no Sidebar/Footer)
+export const minimalRoutes: RouteConfig[] = [
   {
     path: "/join-us",
     element: <JoinUsPage />,
     title: "Join Us | XLChess",
   },
-];
-
-// Routes that run inside the MinimalLayout (Navbar only, no Sidebar/Footer)
-export const minimalRoutes: RouteConfig[] = [
   {
     path: "/join-us/assessment",
     element: (
