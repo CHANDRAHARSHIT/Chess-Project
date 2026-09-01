@@ -20,12 +20,13 @@ import {
 import { QuickGameView } from "@/features/play/components/QuickGameView";
 import { PlayOnlineView } from "@/features/play/components/PlayOnlineView";
 import { VariantsView } from "@/features/play/components/VariantsView";
+import TestMaiaBoard from "@/features/test-maia/TestMaiaBoard";
 import { LeaveGameConfirmModal } from "@/features/play/components/LeaveGameConfirmModal";
 import { ProtectedRoute } from "@/features/account/ProtectedRoute";
 import { useGameSession } from "@/features/play/useGameSession";
 import { useMatchmaking } from "@/features/play/useMatchmaking";
 
-const VALID_TABS: PlayTab[] = ["quick", "online", "variants"];
+const VALID_TABS: PlayTab[] = ["quick", "online", "variants", "maia"];
 
 function isValidTab(value: string | null): value is PlayTab {
   return VALID_TABS.includes(value as PlayTab);
@@ -106,6 +107,8 @@ export default function PlayHubPage() {
         )}
 
         {activeTab === "variants" && <VariantsView />}
+
+        {activeTab === "maia" && <TestMaiaBoard />}
       </div>
 
       {/* ── Active-Game Guard Modal ── */}

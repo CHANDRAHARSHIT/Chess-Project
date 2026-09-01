@@ -2,14 +2,14 @@
  * PlayTabBar.tsx
  *
  * Purely presentational tab navigation bar for the Play Hub.
- * Renders three tabs: Quick Game, Play Online, Variants.
+ * Renders four tabs: Quick Game, Play Online, Variants, Maia.
  * All state and event handling lives in the parent (PlayHubPage).
  */
-import { Zap, Swords, Shuffle } from "lucide-react";
+import { Zap, Swords, Shuffle, Brain } from "lucide-react";
 import { soundManager } from "@/shared/lib/SoundManager";
 import { featureFlags } from "@/shared/lib/featureFlags";
 
-export type PlayTab = "quick" | "online" | "variants";
+export type PlayTab = "quick" | "online" | "variants" | "maia";
 
 interface PlayTabBarProps {
   activeTab: PlayTab;
@@ -33,6 +33,7 @@ const TABS: {
     disabled: !featureFlags.enablePlayOnline,
   },
   { id: "variants", label: "Variants", Icon: Shuffle },
+  { id: "maia", label: "Maia", Icon: Brain },
 ];
 
 export function PlayTabBar({
