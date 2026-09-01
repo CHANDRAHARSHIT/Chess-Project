@@ -334,6 +334,7 @@ export default function SidebarLayout({
     }
   };
 
+  /* Subscriptions mock data - commented out for later implementation
   const knightAvatar = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><circle cx='32' cy='32' r='32' fill='%236366f1'/><path d='M20 48h24v-4c0-2.2-1.8-4-4-4H24c-2.2 0-4 1.8-4 4v4zm5-10h14c3-4 5-8.5 4-13 0-3.5-1.8-6.8-4.5-9-2.2-1.8-4.5-2-6.5-1-2 1-3 3-4 3.5-1.5-1-3-1.5-4.5-.5-2 1.3-2.5 3.5-1.5 5.5 1.5 3 4 5 5 8.5 1 3.5.5 6.5-2 9.5z' fill='%23ffffff'/></svg>`;
   const crownAvatar = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><circle cx='32' cy='32' r='32' fill='%23d97706'/><path d='M20 48h24v-4H20v4zm0-6h24l2-16-7 5-5-10-4 6-4-6-5 10-7-5 2 16z' fill='%23ffffff'/></svg>`;
   const rookAvatar = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><circle cx='32' cy='32' r='32' fill='%230d9488'/><path d='M20 48h24v-4H20v4zm2-6h20l-2-14h2v-6h-5v3h-3v-3h-4v3h-3v-3h-5v6h2l-2 14z' fill='%23ffffff'/></svg>`;
@@ -355,6 +356,7 @@ export default function SidebarLayout({
       href: "/subscriptions?c=endgame-masters",
     },
   ];
+  */
 
   const handleLinkClick = (href: string | undefined, e: React.MouseEvent) => {
     e.preventDefault();
@@ -846,6 +848,7 @@ export default function SidebarLayout({
               )
             ) : (
               <>
+                {/* Subscriptions panel - commented out for later implementation
                 {isExpanded && (
                   <div className="flex items-center px-6 py-2">
                     <span className="text-[15px] font-semibold text-brand-text">
@@ -863,6 +866,7 @@ export default function SidebarLayout({
                       </div>
                     )}
                 <Divider />
+                */}
 
                 {/* YOU SECTION */}
                 {isExpanded && (
@@ -1145,6 +1149,7 @@ export default function SidebarLayout({
               </div>
             ) : (
               <>
+                {/* Subscriptions panel - commented out for later implementation
                 <div className="mx-2 px-3 py-2">
                   <span className="text-[15px] font-semibold text-brand-text">
                     Subscriptions
@@ -1161,6 +1166,7 @@ export default function SidebarLayout({
                 )}
 
                 <Divider />
+                */}
 
                 <div
                   className="flex items-center justify-between mx-2 px-3 py-2 cursor-pointer group rounded-xl hover:bg-brand-text/5 transition-colors"
