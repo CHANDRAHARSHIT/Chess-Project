@@ -35,11 +35,30 @@ maiaRouter.use((_req, res, next) => {
   next();
 });
 
-/** Reports whether the engine is configured and which model is loaded. */
-maiaRouter.get("/status", (_req: Request, res: Response) => {
+/**
+ * Reports engine state. `boot` actually starts the engine and returns the error
+ * if it fails — the only way to diagnose a deploy without reading server logs.
+ */
+maiaRouter.get("/status", async (req: Request, res: Response) => {
+  const engine = getEngine();
+  let bootError: string | null = null;
+
+  if (req.query.boot === "1") {
+    try {
+      await engine.init();
+    } catch (err) {
+      bootError = (err as Error).message;
+    }
+  }
+
   res.status(200).json({
     status: "success",
-    data: { model: env.MAIA_MODEL, running: getEngine().isRunning() },
+    data: {
+      model: env.MAIA_MODEL,
+      running: engine.isRunning(),
+      command: engine.getResolvedCommand(),
+      ...(bootError ? { bootError } : {}),
+    },
   });
 });
 

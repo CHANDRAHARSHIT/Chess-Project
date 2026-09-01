@@ -39,6 +39,8 @@ const MAX_ELO = 2600;
 
 const MOVE_TIMEOUT_MS = 20_000;
 const BOOT_TIMEOUT_MS = 120_000;
+/** Interpreter probe only — must be short so a hung candidate cannot stall boot. */
+const PROBE_TIMEOUT_MS = 10_000;
 
 export class MaiaEngine {
   private proc: ChildProcessWithoutNullStreams | null = null;
@@ -50,23 +52,97 @@ export class MaiaEngine {
   private stdoutBuffer = "";
   private currentElo: number | null = null;
 
+  /** The interpreter that actually started, once one has. Reported by /status. */
+  private resolvedCommand: string | null = null;
+
   constructor(
-    private readonly command = "maia3-uci",
+    private readonly command = "",
     private readonly model = "maia3-79m"
   ) {}
+
+  /** What launched, or null before the first successful boot. */
+  getResolvedCommand(): string | null {
+    return this.resolvedCommand;
+  }
+
+  /**
+   * Finds a Python that can import maia3.
+   *
+   * Probing with `-c "import maia3"` rather than booting the engine per
+   * candidate: on Windows `python3` is an App Execution Alias that hangs instead
+   * of failing, so a candidate that never answers must not block the next one.
+   */
+  private async resolvePython(): Promise<string | null> {
+    const names = this.command ? [this.command, "python3", "python"] : ["python3", "python"];
+
+    for (const name of names) {
+      const ok = await new Promise<boolean>((resolve) => {
+        let settled = false;
+        const done = (value: boolean) => {
+          if (settled) return;
+          settled = true;
+          clearTimeout(timer);
+          resolve(value);
+        };
+        const timer = setTimeout(() => {
+          probe.kill();
+          done(false);
+        }, PROBE_TIMEOUT_MS);
+
+        const probe = spawn(name, ["-c", "import maia3"], { stdio: "ignore" });
+        probe.on("error", () => done(false));
+        probe.on("exit", (code) => done(code === 0));
+      });
+
+      if (ok) return name;
+    }
+    return null;
+  }
 
   /** Boots the engine. Idempotent; a failed boot clears itself so it can be retried. */
   async init(): Promise<void> {
     if (this.ready) return this.ready;
 
-    const booting = new Promise<void>((resolve, reject) => {
-      let proc: ChildProcessWithoutNullStreams;
+    this.ready = (async () => {
+      const python = await this.resolvePython();
+      if (python) {
+        await this.spawnAttempt({
+          cmd: python,
+          args: ["-m", "maia3.uci", "--model", this.model, "--use-uci-history"],
+        });
+        return;
+      }
+
+      // No importable maia3 — fall back to the console script, which may exist
+      // even when the module is installed somewhere this process cannot import.
+      const binary = this.command || "maia3-uci";
       try {
-        proc = spawn(this.command, ["--model", this.model, "--use-uci-history"], {
-          stdio: ["pipe", "pipe", "pipe"],
+        await this.spawnAttempt({
+          cmd: binary,
+          args: ["--model", this.model, "--use-uci-history"],
         });
       } catch (err) {
-        reject(new Error(`Could not start Maia (${this.command}): ${(err as Error).message}`));
+        throw new Error(
+          `Could not start Maia. No Python could 'import maia3', and '${binary}' failed: ` +
+            `${(err as Error).message}. Install with: pip install "git+https://github.com/CSSLab/maia3.git"`
+        );
+      }
+    })().catch((err) => {
+      this.ready = null;
+      throw err;
+    });
+
+    return this.ready;
+  }
+
+  /** One spawn attempt. Rejects with the raw error so init() can inspect its code. */
+  private spawnAttempt(attempt: { cmd: string; args: string[] }): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      let proc: ChildProcessWithoutNullStreams;
+      try {
+        proc = spawn(attempt.cmd, attempt.args, { stdio: ["pipe", "pipe", "pipe"] });
+      } catch (err) {
+        reject(err);
         return;
       }
 
@@ -76,7 +152,7 @@ export class MaiaEngine {
 
       proc.on("error", (err) => {
         clearTimeout(timer);
-        reject(new Error(`Maia process error: ${err.message}. Is '${this.command}' on PATH?`));
+        reject(err);
       });
 
       proc.on("exit", (code) => {
@@ -95,17 +171,12 @@ export class MaiaEngine {
         if (line.startsWith("uciok")) {
           clearTimeout(timer);
           this.activeHandler = null;
+          this.resolvedCommand = `${attempt.cmd} ${attempt.args.join(" ")}`;
           resolve();
         }
       };
       this.send("uci");
     });
-
-    this.ready = booting.catch((err) => {
-      this.ready = null;
-      throw err;
-    });
-    return this.ready;
   }
 
   /** Asks Maia for the move a player of `elo` would most likely play. */

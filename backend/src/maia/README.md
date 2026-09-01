@@ -31,7 +31,7 @@ during the image build** — otherwise the first player waits for a model downlo
 | Env var | Default | Notes |
 |---|---|---|
 | `MAIA_ENABLED` | `false` | Off returns 503 from every route here |
-| `MAIA_UCI_COMMAND` | `maia3-uci` | Override if the binary is not on `PATH` |
+| `MAIA_UCI_COMMAND` | *(empty)* | A Python interpreter to prefer. Empty tries `python3`, then `python`, then the `maia3-uci` script |
 | `MAIA_MODEL` | `maia3-79m` | Must match the model `nixpacks.toml` pre-caches |
 
 ### Which model
@@ -49,10 +49,23 @@ Measured on the same Italian Game position:
 defeats the strength selector. 236ms is invisible behind the UI's 600–1800ms
 reply delay, so the only real cost is disk and memory.
 
+### How the engine is launched
+
+`python -m maia3.uci`, not the `maia3-uci` console script. pip drops that script
+into whichever bin directory it likes — `~/.local/bin`, a nix store path, a venv
+— and on the first Railway deploy it landed somewhere not on the runtime `PATH`,
+producing `spawn maia3-uci ENOENT`. Module invocation only needs the package to
+be importable.
+
+Interpreters are probed with `python -c "import maia3"` before the engine is
+booted, so a candidate that hangs (on Windows `python3` is an App Execution Alias
+that never answers) cannot stall startup.
+
 ## API
 
 ```
-GET  /api/maia/status   → { model, running }
+GET  /api/maia/status        → { model, running, command }
+GET  /api/maia/status?boot=1 → same, but starts the engine and reports bootError
 POST /api/maia/move     { moves: string[], elo: number } → { move, elo, latencyMs }
 ```
 
