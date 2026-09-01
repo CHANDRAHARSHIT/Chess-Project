@@ -8,7 +8,7 @@
  * "Explore" button navigates to /lessons.
  */
 
-import { useRef } from "react";
+import { useRef, useState, useCallback } from "react";
 import { Link } from "react-router";
 
 // Tile colour palette matching 2nd.html stone colours
@@ -77,16 +77,11 @@ const TILES = [
 
 export default function LessonsSectionV2() {
   const sectionRef = useRef<HTMLElement>(null);
-  const hintRef = useRef<HTMLDivElement>(null);
-  let hintDismissed = false;
+  const [hintDismissed, setHintDismissed] = useState(false);
 
-  const dismissHint = () => {
-    if (hintDismissed || !hintRef.current) return;
-    hintDismissed = true;
-    hintRef.current.style.opacity = "0";
-    hintRef.current.style.transform = "translateY(4px)";
-    hintRef.current.style.pointerEvents = "none";
-  };
+  const dismissHint = useCallback(() => {
+    setHintDismissed(true);
+  }, []);
 
   return (
     <section
@@ -120,6 +115,7 @@ export default function LessonsSectionV2() {
             <div
               className="v2-stone-path stone-path"
               aria-label="Lesson tiles"
+              onMouseEnter={dismissHint}
             >
               {TILES.map((tile) => (
                 <LessonTile
@@ -131,7 +127,10 @@ export default function LessonsSectionV2() {
             </div>
 
             {/* Hover hint */}
-            <div ref={hintRef} className="v2-hint hint">
+            <div
+              className={`v2-hint hint ${hintDismissed ? "is-hidden" : ""}`}
+              aria-hidden={hintDismissed}
+            >
               Hover over a lesson tile
             </div>
           </div>
