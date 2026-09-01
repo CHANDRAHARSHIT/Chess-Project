@@ -42,6 +42,9 @@ const BOOT_TIMEOUT_MS = 120_000;
 /** Interpreter probe only — must be short so a hung candidate cannot stall boot. */
 const PROBE_TIMEOUT_MS = 10_000;
 
+/** Virtualenvs the Dockerfile creates. Probed by path so the env var is optional. */
+const VENV_PYTHONS = ["/opt/maia-venv/bin/python", "/opt/venv/bin/python"];
+
 export class MaiaEngine {
   private proc: ChildProcessWithoutNullStreams | null = null;
   private ready: Promise<void> | null = null;
@@ -73,7 +76,7 @@ export class MaiaEngine {
    * Python" needed server-log access. This turns that into one request.
    */
   async diagnose(): Promise<Record<string, string>> {
-    const names = [this.command, "python3", "python"].filter(Boolean) as string[];
+    const names = [this.command, ...VENV_PYTHONS, "python3", "python"].filter(Boolean) as string[];
     const report: Record<string, string> = {};
 
     for (const name of names) {
@@ -113,7 +116,14 @@ export class MaiaEngine {
    * of failing, so a candidate that never answers must not block the next one.
    */
   private async resolvePython(): Promise<string | null> {
-    const names = this.command ? [this.command, "python3", "python"] : ["python3", "python"];
+    const names = [
+      ...(this.command ? [this.command] : []),
+      // The image's venv, tried by path. A Railway service variable can shadow
+      // the Dockerfile's ENV, so the interpreter must be findable without it.
+      ...VENV_PYTHONS,
+      "python3",
+      "python",
+    ];
 
     for (const name of names) {
       const ok = await new Promise<boolean>((resolve) => {
