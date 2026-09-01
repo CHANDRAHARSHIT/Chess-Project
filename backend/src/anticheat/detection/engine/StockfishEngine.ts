@@ -58,6 +58,12 @@ export class StockfishEngine {
   private chess960Enabled = false;
   /** Set for the duration of one `go`. UCI output outside a request is discarded. */
   private activeHandler: ((line: string) => void) | null = null;
+  /**
+   * Set after a timeout, when the engine is still searching and will emit a
+   * `bestmove` for a request nobody is waiting for. Without this, that late line
+   * would resolve the *next* request with the previous position's evaluation.
+   */
+  private discardNextBestmove = false;
 
   constructor(private readonly defaultDepth = 12) {}
 
@@ -65,7 +71,7 @@ export class StockfishEngine {
   async init(): Promise<void> {
     if (this.ready) return this.ready;
 
-    this.ready = new Promise<void>((resolve, reject) => {
+    const booting = new Promise<void>((resolve, reject) => {
       let initEngine: (p: string, cb: (err: unknown, e: unknown) => void) => unknown;
       let binPath: string;
       try {
@@ -85,13 +91,30 @@ export class StockfishEngine {
           this.engine = e as EngineModule;
           // One persistent listener; per-request handlers attach through it so
           // engine chatter between requests is dropped rather than logged.
-          this.engine.listener = (line: string) => this.activeHandler?.(line);
+          this.engine.listener = (line: string) => {
+            // Consume the flag on the first bestmove seen, whether or not a
+            // handler is attached — the abandoned search may finish either side
+            // of the next request starting.
+            if (line.startsWith("bestmove") && this.discardNextBestmove) {
+              this.discardNextBestmove = false;
+              return;
+            }
+            this.activeHandler?.(line);
+          };
           this.send("uci");
           resolve();
         });
       } catch (err) {
         reject(err as Error);
       }
+    });
+
+    // Clear the cached promise on failure, otherwise a transient boot error is
+    // replayed to every later caller and the engine is dead for the process's
+    // whole lifetime.
+    this.ready = booting.catch((err) => {
+      this.ready = null;
+      throw err;
     });
 
     return this.ready;
@@ -113,6 +136,12 @@ export class StockfishEngine {
 
   /** Frees the engine. Safe to call when it never booted. */
   quit(): void {
+    // Settle anything still queued, or those callers wait forever.
+    const abandoned = this.queue.splice(0);
+    for (const request of abandoned) {
+      request.reject(new Error("Stockfish engine shut down before this position was evaluated."));
+    }
+
     if (!this.engine) return;
     try {
       this.send("quit");
@@ -121,6 +150,7 @@ export class StockfishEngine {
     }
     this.engine = null;
     this.ready = null;
+    this.activeHandler = null;
   }
 
   private send(command: string): void {
@@ -140,6 +170,9 @@ export class StockfishEngine {
           request.resolve(await this.runOne(request));
         } catch (err) {
           request.reject(err as Error);
+          // Give the halted search a moment to settle before issuing the next
+          // `position`. Sending one mid-search is undefined in UCI.
+          await new Promise((r) => setTimeout(r, 250));
         }
       }
     } finally {
@@ -175,6 +208,14 @@ export class StockfishEngine {
       };
 
       const timer = setTimeout(() => {
+        // Halt the abandoned search and swallow the bestmove it still owes us,
+        // so it cannot leak into the next request.
+        this.discardNextBestmove = true;
+        try {
+          this.send("stop");
+        } catch {
+          // Engine is unreachable; the queue drain handles the settle delay.
+        }
         finish(() =>
           reject(new Error(`Stockfish timed out evaluating position at depth ${request.depth}.`))
         );

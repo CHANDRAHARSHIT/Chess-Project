@@ -10,7 +10,12 @@
 
 import { Chess } from "chess.js";
 import type { Situation } from "../types.js";
-import { BlunderAnalyzer, type BlunderSummary, type ClassifiedMove } from "./BlunderAnalyzer.js";
+import {
+  BlunderAnalyzer,
+  type BlunderSummary,
+  type ClassifiedMove,
+  type TurningPoint,
+} from "./BlunderAnalyzer.js";
 import { GameReplay, parseStoredMoves, type StoredMove } from "./GameReplay.js";
 import type { StockfishEngine } from "./engine/StockfishEngine.js";
 import type { PolicyRegistry } from "../feedback/PolicyRegistry.js";
@@ -36,6 +41,8 @@ export interface GameAnalysisReport {
   readonly depth: number;
   readonly moves: readonly ClassifiedMove[];
   readonly summaries: readonly BlunderSummary[];
+  /** Absent when the game stayed competitive to the end. */
+  readonly turningPoint?: TurningPoint;
   readonly participants: readonly { userId: string; side: number; name?: string }[];
   readonly terminationReason: string;
   readonly outcomeKind: string;
@@ -88,6 +95,7 @@ export class PostGameAnalysis {
 
     const classified = this.analyzer.classify(analysed, situation);
     const sides = [...new Set(classified.map((m) => m.side))].sort();
+    const turningPoint = this.analyzer.findTurningPoint(classified, situation);
 
     return {
       gameRecordId: game.gameRecordId,
@@ -97,6 +105,7 @@ export class PostGameAnalysis {
       depth: this.depth,
       moves: classified,
       summaries: sides.map((side) => this.analyzer.summarise(classified, side)),
+      ...(turningPoint ? { turningPoint } : {}),
       participants: game.participants,
       terminationReason: game.terminationReason,
       outcomeKind: game.outcomeKind,

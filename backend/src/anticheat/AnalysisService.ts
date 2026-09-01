@@ -123,16 +123,15 @@ export function analyseOnGameCompleted(gameSessionId: string): void {
       console.log(`\n${await analyseGameAsText(gameRecordId)}\n`);
     })
     .catch((err) => {
-      const gameRecordId = gameSessionId;
       if (err instanceof GameNotAnalysableError) {
-        console.warn(`[anticheat] Skipped analysis for ${gameRecordId}: ${err.message}`);
+        console.warn(`[anticheat] Skipped analysis for session ${gameSessionId}: ${err.message}`);
         return;
       }
       reportError({
         domain: "anticheat",
         error: err as Error,
         fatal: false,
-        context: { gameRecordId, reason: "post_game_analysis_failed" },
+        context: { gameSessionId, reason: "post_game_analysis_failed" },
       });
     });
 }

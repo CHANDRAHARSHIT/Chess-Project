@@ -253,8 +253,31 @@ an explanation rather than a misleading report from a guessed starting board.
 |---|---|
 | Engine | Stockfish 18 Lite (WASM, single-threaded), from the `stockfish` npm package |
 | Boot | ~200ms, once per process, lazily |
-| Throughput | 56 plies at depth 12 in ~2.0s; at depth 10 in ~0.8s |
+| Throughput | ~46 plies at depth 12 in ~1.5s |
 | Concurrency | Serialised — a UCI engine holds one position at a time |
+
+### What the report contains
+
+Per side: accuracy, blunder/mistake/inaccuracy counts, average centipawn loss,
+engine-best rate, longest engine-best streak, and the worst single move. Plus the
+game's turning point, and a list of every notable move with the engine's
+preference.
+
+**Accuracy** uses Lichess's published model — centipawns become a win
+percentage, and accuracy decays exponentially with the win percentage given away.
+Raw centipawn loss is a poor proxy on its own: giving away 100cp from a level
+position matters far more than giving it away from +900.
+
+**Longest engine-best streak** counts consecutive moves matching the engine's
+first choice. It is a Type 1 signal — a player can hold an unremarkable game
+average while following the engine through one decisive stretch. Reported only,
+never judged: streaks of 4–5 are normal in ordinary strong play (measured on a GM
+game), and forced sequences inflate it. Judging it needs `StatisticalBaselines`.
+
+**Turning point** is the earliest move after which one side stays decisively
+ahead for the rest of the game. Deliberately not "the biggest mistake" — that is
+already the worst-move line, and a game can be decided by accumulation rather
+than by one error.
 
 ### Known limitations
 

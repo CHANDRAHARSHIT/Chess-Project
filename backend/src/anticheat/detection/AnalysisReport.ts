@@ -13,6 +13,9 @@ const SIDE_NAMES = ["White", "Black"];
 /** Only these appear in the mistake list; "good" and "best" are noise there. */
 const NOTABLE: readonly MoveQuality[] = ["blunder", "mistake", "inaccuracy"];
 
+/** Above this, an eval came from a forced mate rather than a material count. */
+const MATE_EVAL_FLOOR_CP = 9000;
+
 export function renderTextReport(report: GameAnalysisReport): string {
   const lines: string[] = [];
   const rule = "=".repeat(64);
@@ -31,15 +34,28 @@ export function renderTextReport(report: GameAnalysisReport): string {
     const label = `${sideName(summary.side)}${player?.name ? ` (${player.name})` : ""}`;
 
     lines.push(`--- ${label} `.padEnd(64, "-"));
+    lines.push(`  Accuracy:            ${summary.accuracy.toFixed(1)}%`);
     lines.push(`  Moves analysed:      ${summary.movesAnalysed}`);
     lines.push(`  Blunders:            ${summary.blunders}`);
     lines.push(`  Mistakes:            ${summary.mistakes}`);
     lines.push(`  Inaccuracies:        ${summary.inaccuracies}`);
     lines.push(`  Avg centipawn loss:  ${summary.averageCentipawnLoss}`);
     lines.push(`  Engine-best moves:   ${(summary.bestMoveRate * 100).toFixed(1)}%`);
+    lines.push(`  Longest best streak: ${summary.longestEngineBestStreak}`);
     if (summary.worstMove) {
       lines.push(`  Worst move:          ${formatMove(summary.worstMove)}`);
     }
+    lines.push("");
+  }
+
+  if (report.turningPoint) {
+    const tp = report.turningPoint;
+    lines.push(`--- Turning point `.padEnd(64, "-"));
+    lines.push(
+      `  ${sideName(tp.favouredSide)} was decisively ahead from ` +
+        `${tp.moveNumber}${tp.side === 0 ? "." : "..."} ${tp.san} onward ` +
+        `(${formatEval(tp.evalCp)}).`
+    );
     lines.push("");
   }
 
@@ -74,4 +90,15 @@ function describeResult(report: GameAnalysisReport): string {
 
 function sideName(side: number): string {
   return SIDE_NAMES[side] ?? `Side ${side}`;
+}
+
+/**
+ * Evaluations are conventionally shown in pawns from White's point of view.
+ * Mate is collapsed into the centipawn scale upstream (~±10000), which would
+ * otherwise render as a meaningless "+100.0 pawns".
+ */
+function formatEval(cp: number): string {
+  if (Math.abs(cp) >= MATE_EVAL_FLOOR_CP) return cp > 0 ? "mate for White" : "mate for Black";
+  const pawns = (cp / 100).toFixed(1);
+  return cp > 0 ? `+${pawns}` : pawns;
 }

@@ -66,6 +66,9 @@ const PROVISIONAL_QUALITY_BANDS: MoveQualityBands = {
   maxLoss: 1000,
 };
 
+/** Roughly a clear extra piece — provisional, like the bands above. */
+const DECISIVE_ADVANTAGE_CP = 300;
+
 export class PolicyRegistry {
   /**
    * Centipawn-loss bands for move classification.
@@ -75,6 +78,14 @@ export class PolicyRegistry {
    */
   getMoveQualityBands(situation: Situation): MoveQualityBands {
     return PROVISIONAL_QUALITY_BANDS;
+  }
+
+  /**
+   * Evaluation above which a position counts as decisively won, in centipawns.
+   * Used to locate the point a game stopped being competitive.
+   */
+  getDecisiveAdvantageCp(situation: Situation): number {
+    return DECISIVE_ADVANTAGE_CP;
   }
 
   /** Summed-DCS value above which detection is reported. Spec's `> 100` is a placeholder. */

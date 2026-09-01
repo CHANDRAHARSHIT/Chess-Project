@@ -117,6 +117,153 @@ describe("BlunderAnalyzer", () => {
     assert.equal(summary.movesAnalysed, 0);
     assert.equal(summary.averageCentipawnLoss, 0);
     assert.equal(summary.bestMoveRate, 0);
+    assert.equal(summary.accuracy, 0);
+    assert.equal(summary.longestEngineBestStreak, 0);
+  });
+});
+
+describe("BlunderAnalyzer — accuracy", () => {
+  const analyzer = new BlunderAnalyzer(new PolicyRegistry());
+  const accuracyOf = (before: number, after: number) =>
+    analyzer.classify([move(0, 0, { evalBeforeCp: before, evalAfterCp: after })], SITUATION)[0]
+      .accuracy;
+
+  it("scores a move that loses nothing as 100", () => {
+    assert.equal(accuracyOf(50, 50), 100);
+  });
+
+  it("scores a move that improves the position as 100 rather than above it", () => {
+    assert.equal(accuracyOf(0, 300), 100);
+  });
+
+  it("falls as the move gives away more of the win probability", () => {
+    const small = accuracyOf(0, -50);
+    const large = accuracyOf(0, -500);
+
+    // A 50cp slip from level costs ~4.6 win percentage points, scoring ~81 on
+    // the Lichess curve. Single-move accuracy is harsher than a game average,
+    // where most moves score at or near 100.
+    assert.ok(small > large, `expected ${small} > ${large}`);
+    assert.ok(small > 75 && small < 90, `small loss scored ${small}`);
+    assert.ok(large < 40, `large loss scored ${large}`);
+  });
+
+  it("stays within 0–100 even for a mate-sized swing", () => {
+    const accuracy = accuracyOf(0, -10_000);
+
+    assert.ok(accuracy >= 0 && accuracy <= 100, `accuracy was ${accuracy}`);
+  });
+
+  it("penalises the same centipawn loss less when the position is already won", () => {
+    // 100cp given away from level matters more than from +900. Raw centipawn
+    // loss cannot see this difference; win percentage can.
+    const fromLevel = accuracyOf(0, -100);
+    const fromWinning = accuracyOf(900, 800);
+
+    assert.ok(fromWinning > fromLevel, `expected ${fromWinning} > ${fromLevel}`);
+  });
+});
+
+describe("BlunderAnalyzer — engine-best streak", () => {
+  const analyzer = new BlunderAnalyzer(new PolicyRegistry());
+  /** White moves (even plies) that either match the engine or do not. */
+  const run = (matches: boolean[]) =>
+    analyzer.classify(
+      matches.map((matched, i) =>
+        move(i * 2, 0, {
+          uci: matched ? "d2d4" : "h2h3",
+          engineBestMoves: ["d2d4"],
+        })
+      ),
+      SITUATION
+    );
+
+  it("counts the longest consecutive run, not the total", () => {
+    const summary = analyzer.summarise(run([true, true, false, true, true, true]), 0);
+
+    assert.equal(summary.longestEngineBestStreak, 3);
+    assert.equal(summary.bestMoveRate, 5 / 6);
+  });
+
+  it("is zero when no move matched", () => {
+    assert.equal(analyzer.summarise(run([false, false]), 0).longestEngineBestStreak, 0);
+  });
+
+  it("counts a fully matching game as one unbroken streak", () => {
+    assert.equal(analyzer.summarise(run([true, true, true]), 0).longestEngineBestStreak, 3);
+  });
+
+  it("excludes low-loss moves that did not match the engine", () => {
+    // A 5cp loss is classified "best" by band, but it is not an engine match —
+    // counting it would overstate correlation, which is a cheating signal.
+    const classified = analyzer.classify(
+      [move(0, 5, { uci: "h2h3", engineBestMoves: ["d2d4"] })],
+      SITUATION
+    );
+    const summary = analyzer.summarise(classified, 0);
+
+    assert.equal(classified[0].quality, "best");
+    assert.equal(classified[0].matchedEngineBest, false);
+    assert.equal(summary.bestMoveRate, 0);
+  });
+});
+
+describe("BlunderAnalyzer — turning point", () => {
+  const analyzer = new BlunderAnalyzer(new PolicyRegistry());
+
+  /** Builds plies from White-perspective evals, alternating sides. */
+  const fromWhiteEvals = (evals: number[]) =>
+    analyzer.classify(
+      evals.map((whiteCp, ply) =>
+        move(ply, 0, {
+          evalBeforeCp: 0,
+          // Stored per-mover, so Black's plies are negated.
+          evalAfterCp: ply % 2 === 0 ? whiteCp : -whiteCp,
+        })
+      ),
+      SITUATION
+    );
+
+  it("is absent when the game stays competitive", () => {
+    assert.equal(analyzer.findTurningPoint(fromWhiteEvals([10, -20, 50, 0]), SITUATION), undefined);
+  });
+
+  it("reports the move the advantage became decisive", () => {
+    const tp = analyzer.findTurningPoint(fromWhiteEvals([0, 0, 500, 600, 700]), SITUATION);
+
+    assert.equal(tp?.ply, 2);
+    assert.equal(tp?.favouredSide, 0);
+  });
+
+  it("ignores a lead that is given back", () => {
+    // Decisive at ply 1, level again at 2, decisive again at 3 — the real
+    // turning point is the last one, not the first.
+    const tp = analyzer.findTurningPoint(fromWhiteEvals([0, 500, 20, 600, 700]), SITUATION);
+
+    assert.equal(tp?.ply, 3);
+  });
+
+  it("attributes the advantage to Black when Black is winning", () => {
+    const tp = analyzer.findTurningPoint(fromWhiteEvals([0, -500, -600]), SITUATION);
+
+    assert.equal(tp?.favouredSide, 1);
+    assert.ok(tp!.evalCp < 0);
+  });
+
+  it("records the side that played the move, not the side it favoured", () => {
+    // Black's ply 1 hands White a decisive advantage. The move must be notated
+    // as Black's ("3...Nf6"), while the advantage belongs to White.
+    const tp = analyzer.findTurningPoint(fromWhiteEvals([0, 500, 600]), SITUATION);
+
+    assert.equal(tp?.side, 1);
+    assert.equal(tp?.favouredSide, 0);
+  });
+
+  it("restarts when the advantage changes hands", () => {
+    const tp = analyzer.findTurningPoint(fromWhiteEvals([500, 600, -500, -600]), SITUATION);
+
+    assert.equal(tp?.favouredSide, 1);
+    assert.equal(tp?.ply, 2);
   });
 });
 
@@ -213,5 +360,49 @@ describe("renderTextReport", () => {
     const text = renderTextReport({ ...report, winningSide: null, terminationReason: "stalemate" });
 
     assert.match(text, /draw by stalemate/);
+  });
+
+  it("reports accuracy and the engine-best streak per side", () => {
+    const text = renderTextReport(report);
+
+    assert.match(text, /Accuracy:\s+\d+\.\d%/);
+    assert.match(text, /Longest best streak:\s+\d+/);
+  });
+
+  it("notates the turning point by the side that played it", () => {
+    const text = renderTextReport({
+      ...report,
+      turningPoint: {
+        ply: 1,
+        moveNumber: 3,
+        san: "Nf6",
+        side: 1,
+        favouredSide: 0,
+        evalCp: 600,
+      },
+    });
+
+    assert.match(text, /White was decisively ahead from 3\.\.\. Nf6 onward \(\+6\.0\)/);
+  });
+
+  it("renders a mate-scale evaluation as mate rather than 100 pawns", () => {
+    const text = renderTextReport({
+      ...report,
+      turningPoint: {
+        ply: 1,
+        moveNumber: 3,
+        san: "Nf6",
+        side: 1,
+        favouredSide: 0,
+        evalCp: 10_000,
+      },
+    });
+
+    assert.match(text, /mate for White/);
+    assert.doesNotMatch(text, /\+100\.0/);
+  });
+
+  it("omits the turning point section when the game stayed competitive", () => {
+    assert.doesNotMatch(renderTextReport(report), /Turning point/);
   });
 });
