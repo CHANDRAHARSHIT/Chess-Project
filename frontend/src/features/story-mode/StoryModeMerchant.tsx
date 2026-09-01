@@ -167,7 +167,7 @@ export default function StoryModeMerchant({
           <div className="flex flex-col items-end gap-1">
             <div className="flex items-center gap-1.5 bg-yellow-500/20 px-3 py-1.5 rounded-lg border border-yellow-500/40 shadow-[0_0_10px_rgba(234,179,8,0.2)]">
               <Coins className="w-4 h-4 text-yellow-400" />
-              <span className="text-sm font-mono font-bold text-yellow-100">{runState.coins} Coins</span>
+              <span className="text-sm font-mono font-bold text-yellow-100" style={{ textShadow: "0 1px 2px rgba(0,0,0,0.8)" }}>{runState.coins} Coins</span>
             </div>
             <div className="text-xs font-mono text-brand-secondary mt-1">
               Slots: {runState.relics.length} / {MAX_SLOTS}
@@ -184,6 +184,7 @@ export default function StoryModeMerchant({
                 ? 'bg-yellow-500/20 text-yellow-300 border-b-2 border-yellow-400' 
                 : 'text-brand-secondary hover:text-brand-text'
             }`}
+            style={activeTab === 'buy' ? { textShadow: "0 1px 2px rgba(0,0,0,0.8)" } : undefined}
           >
             Buy Relics
           </button>
@@ -194,6 +195,7 @@ export default function StoryModeMerchant({
                 ? 'bg-yellow-500/20 text-yellow-300 border-b-2 border-yellow-400' 
                 : 'text-brand-secondary hover:text-brand-text'
             }`}
+            style={activeTab === 'sell' ? { textShadow: "0 1px 2px rgba(0,0,0,0.8)" } : undefined}
           >
             Sell Relics
           </button>
@@ -246,7 +248,7 @@ export default function StoryModeMerchant({
                       className={`flex flex-col gap-2 p-3 rounded-xl border ${isPurchased ? 'border-green-500/30 bg-green-500/5' : 'border-yellow-500/20 bg-yellow-500/5 hover:bg-yellow-500/10'} transition-all`}
                     >
                       <div className="flex-1">
-                        <h4 className="text-sm font-bold text-yellow-200 mb-1 leading-tight">{item.name}</h4>
+                        <h4 className="text-sm font-bold text-yellow-400 mb-1 leading-tight" style={{ textShadow: "0 1px 2px rgba(0,0,0,0.8)" }}>{item.name}</h4>
                         <p className="text-xs text-brand-secondary leading-snug">{item.description}</p>
                       </div>
                       
@@ -264,7 +266,7 @@ export default function StoryModeMerchant({
                             >
                               -
                             </button>
-                            <span className="text-xs font-mono font-bold text-yellow-300">
+                            <span className="text-xs font-mono font-bold text-yellow-400" style={{ textShadow: "0 1px 2px rgba(0,0,0,0.8)" }}>
                               {qty} {qty === 1 ? 'Use' : 'Uses'}
                             </span>
                             <button 
@@ -286,7 +288,9 @@ export default function StoryModeMerchant({
                             }`}
                           >
                             <Coins className="w-3 h-3" />
-                            {maxBuyable === 0 ? "MAXED" : totalCost}
+                            <span style={{ textShadow: "0 1px 2px rgba(0,0,0,0.8)" }}>
+                              {maxBuyable === 0 ? "MAXED" : totalCost}
+                            </span>
                           </button>
                         </>
                       )}

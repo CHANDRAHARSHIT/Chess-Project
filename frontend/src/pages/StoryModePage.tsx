@@ -8,33 +8,77 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { Swords, ArrowLeft } from "lucide-react";
 import StoryModeMap from "@/features/story-mode/StoryModeMap";
-import { StoryModeProvider, useStoryModeRun } from "@/features/story-mode/StoryModeContext";
+import {
+  StoryModeProvider,
+  useStoryModeRun,
+} from "@/features/story-mode/StoryModeContext";
 import { OdysseyTitleScreen } from "@/features/story-mode/TitleScreen/OdysseyTitleScreen";
 import { StrategistPage } from "@/features/story-mode/TitleScreen/StrategistPage";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 function StoryModeContent() {
-  const [viewState, setViewState] = useState<"title" | "strategist" | "map">("title");
+  const [viewState, setViewState] = useState<"title" | "strategist" | "map">(
+    "title",
+  );
   const { runState, updateRunState } = useStoryModeRun();
+  const pageContainerRef = useRef<HTMLDivElement>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
-  const hasActiveRun = runState.currentNodeId !== -1 || runState.completedNodes.length > 0;
+  const hasActiveRun =
+    runState.currentNodeId !== -1 || runState.completedNodes.length > 0;
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () =>
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+  }, []);
+
+  const enterFullscreen = async () => {
+    if (
+      pageContainerRef.current &&
+      pageContainerRef.current.requestFullscreen
+    ) {
+      try {
+        await pageContainerRef.current.requestFullscreen();
+      } catch (err) {
+        console.error("Error attempting to enable fullscreen:", err);
+      }
+    }
+  };
 
   // Playtime Tracker
   useEffect(() => {
     if (viewState !== "map") return; // Only track time when actively in the map/game
 
     const interval = setInterval(() => {
-      updateRunState(prev => ({ playtimeSeconds: (prev.playtimeSeconds || 0) + 1 }));
+      updateRunState((prev) => ({
+        playtimeSeconds: (prev.playtimeSeconds || 0) + 1,
+      }));
     }, 1000);
 
     return () => clearInterval(interval);
   }, [viewState, updateRunState]);
 
   return (
-    <div className="min-h-screen text-brand-text flex flex-col items-center justify-center p-2 sm:p-6 md:p-8 bg-brand-bg">
+    <div
+      ref={pageContainerRef}
+      className={`h-screen w-screen text-brand-text flex flex-col items-center justify-center bg-brand-bg overflow-hidden transition-all duration-[1200ms] ${
+        isFullscreen ? "p-0" : "p-1 sm:p-2 md:p-3"
+      }`}
+    >
       {/* Game Screen Outer Rectangle */}
-      <div className="w-full max-w-[1400px] border border-[#D4AF6E]/60 rounded-3xl overflow-hidden relative flex flex-col min-h-[90vh] bg-brand-surface">
-        
+      <motion.div
+        layout
+        transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+        className={`overflow-hidden relative flex flex-col bg-brand-surface ${
+          isFullscreen
+            ? "w-full h-full border-transparent rounded-none max-w-none"
+            : "w-[90vw] max-w-[1400px] h-[95vh] border border-[#D4AF6E]/60 rounded-3xl"
+        }`}
+      >
         <AnimatePresence mode="wait">
           {viewState === "title" && (
             <motion.div
@@ -45,13 +89,16 @@ function StoryModeContent() {
               transition={{ duration: 0.8, ease: "easeInOut" }}
               className="absolute inset-0 z-30 flex flex-col"
             >
-              <OdysseyTitleScreen onStartSingleplayer={() => {
-                if (hasActiveRun) {
-                  setViewState("map");
-                } else {
-                  setViewState("strategist");
-                }
-              }} />
+              <OdysseyTitleScreen
+                onStartSingleplayer={() => {
+                  enterFullscreen();
+                  if (hasActiveRun) {
+                    setViewState("map");
+                  } else {
+                    setViewState("strategist");
+                  }
+                }}
+              />
             </motion.div>
           )}
 
@@ -77,7 +124,7 @@ function StoryModeContent() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 1, ease: "easeInOut", delay: 0.2 }}
-              className="flex-1 flex flex-col relative w-full h-full z-10"
+              className="absolute inset-0 flex flex-col w-full h-full z-10"
             >
               {/* Back button */}
               <div className="absolute top-6 left-4 sm:left-8 z-20">
@@ -90,41 +137,41 @@ function StoryModeContent() {
                 </button>
               </div>
 
-              <main className="flex-1 w-full max-w-5xl mx-auto px-2.5 sm:px-6 pt-16 pb-8 sm:py-12 flex flex-col relative z-10">
+              <main className="flex-1 w-full max-w-[1600px] mx-auto px-2.5 sm:px-6 pt-14 pb-4 sm:pt-12 sm:pb-6 flex flex-col relative z-10 min-h-0 overflow-hidden">
                 {/* Header */}
-                <div className="flex flex-col items-center gap-4 mb-8 text-center shrink-0">
+                <div className="flex flex-col items-center gap-2 mb-2 text-center shrink-0">
                   {/* Icon */}
                   <motion.div
-                    className="w-14 h-14 rounded-full bg-brand-accent/8 border border-brand-accent/20 flex items-center justify-center shadow-[0_0_15px_rgba(168,85,247,0.15)]"
+                    className="w-12 h-12 rounded-full bg-brand-accent/8 border border-brand-accent/20 flex items-center justify-center shadow-[0_0_15px_rgba(168,85,247,0.15)]"
                     animate={{ y: [0, -5, 0] }}
-                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                    transition={{
+                      duration: 4,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    }}
                   >
-                    <Swords className="w-7 h-7 text-brand-accent" />
+                    <Swords className="w-6 h-6 text-brand-accent" />
                   </motion.div>
 
                   <div>
                     <h1 className="text-3xl sm:text-4xl font-display font-extrabold tracking-tight bg-gradient-to-br from-brand-text to-brand-text/70 bg-clip-text text-transparent">
                       Odyssey
                     </h1>
-                    <p className="text-sm text-brand-secondary mt-2 max-w-md leading-relaxed">
-                      Embark on a chess adventure! Battle AI opponents, uncover mysteries, and conquer the Dark King. Each victory unlocks the path forward.
-                    </p>
                   </div>
 
                   {/* Decorative divider */}
-                  <div className="w-32 h-px bg-gradient-to-r from-transparent via-[#D4AF6E]/40 to-transparent my-2" />
+                  <div className="w-32 h-px bg-gradient-to-r from-transparent via-[#D4AF6E]/40 to-transparent" />
                 </div>
 
                 {/* Map */}
-                <div className="flex-1 flex flex-col w-full relative">
+                <div className="flex-1 flex flex-col w-full relative min-h-0">
                   <StoryModeMap onResetToTitle={() => setViewState("title")} />
                 </div>
               </main>
             </motion.div>
           )}
         </AnimatePresence>
-
-      </div>
+      </motion.div>
     </div>
   );
 }

@@ -303,7 +303,7 @@ export function PuzzleBoard({
   const isNextBtnDisabled = isNextDisabled !== undefined ? isNextDisabled : (puzzleStatus !== "solved");
 
   return (
-    <div className="flex flex-col items-center gap-3 sm:gap-3.5 w-full">
+    <div className="flex flex-col items-center gap-1 sm:gap-2 w-full flex-1 min-h-0">
       {/* Top Heading */}
       <div className="text-center space-y-0.5 z-10">
         {puzzleNumber !== undefined && (
@@ -315,13 +315,13 @@ export function PuzzleBoard({
 
       <div
         ref={boardContainerRef}
-        className={`relative w-full max-w-[500px] sm:max-w-[540px] aspect-square border overflow-hidden bg-brand-surface transition-all duration-300 z-10 ${isShaking
+        className={`relative aspect-square border overflow-hidden bg-brand-surface transition-all duration-300 z-10 ${isShaking
           ? "border-rose-500 ring-4 ring-rose-500/25"
           : puzzleStatus === "solved"
             ? "border-emerald-500 ring-4 ring-emerald-500/25 animate-pulse"
             : "border-[rgba(212,175,110,0.80)]"
           }`}
-        style={{ transform: "translateZ(0)" }}
+        style={{ transform: "translateZ(0)", height: "100%", maxHeight: "100%", maxWidth: "100%" }}
       >
         <ThemedChessboard
           options={{

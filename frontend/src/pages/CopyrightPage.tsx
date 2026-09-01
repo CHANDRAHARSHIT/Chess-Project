@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import { Copyright, ArrowLeft } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { soundManager } from "@/shared/lib/SoundManager";
 
 interface SectionProps {
@@ -47,12 +47,6 @@ export default function CopyrightPage() {
             </button>
           </div>
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-accent/30 bg-brand-accent/5 mb-5">
-              <Copyright className="w-3.5 h-3.5 text-brand-accent" />
-              <span className="text-xs font-mono text-brand-accent uppercase tracking-widest font-semibold">
-                Legal
-              </span>
-            </div>
             <h1 className="text-3xl sm:text-4xl font-display font-bold mb-3 leading-tight tracking-tight">
               Copyright Information
             </h1>
@@ -166,7 +160,7 @@ export default function CopyrightPage() {
             For all copyright-related inquiries — including takedown requests,
             licensing questions, and fair use determinations — please use our{" "}
             <a
-              href="/contact"
+              href="/contact-us"
               className="text-brand-accent hover:underline transition-colors"
             >
               contact page

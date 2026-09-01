@@ -1,0 +1,9 @@
+{
+  "maxWrongAllowed": 1,
+  "rules": [
+    { "questionId": "gq1", "field": "answer", "type": "wrongIfNotSubsetOf", "values": ["A", "B", "D", "E"] },
+    { "questionId": "gq2", "field": "answer", "type": "wrongIfNotEqual", "value": "B" },
+    { "questionId": "gq3", "field": "answer", "type": "wrongIfNotEqual", "value": "E" },
+    { "questionId": "gq4", "field": "answer", "type": "wrongIfNotEqual", "value": "F" }
+  ]
+}

@@ -9,6 +9,7 @@ import {
   BookOpen,
   Database,
   ChevronDown,
+  PenTool,
   Clock,
   BarChart2,
   Flag,
@@ -20,6 +21,7 @@ import {
   MoveUp,
   Archive,
   Swords,
+  Sparkles,
   Loader2,
 } from "lucide-react";
 import { soundManager } from "@/shared/lib/SoundManager";
@@ -30,6 +32,7 @@ import { MoreMenu } from "./MoreMenu";
 import { useNavigate, useLocation } from "react-router";
 import { useNavigationStack } from "@/app/navigation/useNavigationStack";
 import rollbar from "@/shared/lib/rollbar";
+import { featureFlags } from "@/shared/lib/featureFlags";
 
 // Hook for clicking outside the custom dropdown
 function useOnClickOutside(
@@ -173,8 +176,8 @@ export default function SidebarLayout({
     if (newLinkName && newLinkUrl) {
       setIsSubmittingLink(true);
       // Artificial delay so you can see the spinner
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       try {
         if (editLinkIndex !== null) {
           const isMore = editLinkSection === "more";
@@ -396,14 +399,21 @@ export default function SidebarLayout({
   const exploreSection = [
     { name: "Play", href: "/play", icon: Swords },
     { name: "Lessons", href: "/lessons", icon: BookOpen },
+    ...(featureFlags.showBuildLessons
+      ? [{ name: "Build Lessons", href: "/lesson-builder", icon: PenTool }]
+      : []),
     { name: "Puzzles", href: "/puzzles", icon: Puzzle },
+    ...(featureFlags.showOdyssey
+      ? [{ name: "Odyssey", href: "/odyssey", icon: Sparkles }]
+      : []),
     { name: "Upgrade", href: "/pricing", icon: Crown },
   ];
 
   const footerLinks = [
     { name: "About", href: "/about" },
     { name: "Copyright", href: "/copyright" },
-    { name: "Contact Us", href: "/contact" },
+    { name: "Contact Us", href: "/contact-us" },
+    { name: "Join Us", href: "/join-us" },
     { name: "Creator", href: "/creator" },
     { name: "Advertise", href: "/advertise" },
     { name: "Developers", href: "/developers" },
@@ -469,7 +479,8 @@ export default function SidebarLayout({
     // and for /variants during the redirect-migration period.
     const isPlayHubItem = item.href === "/play";
     const isActive = isPlayHubItem
-      ? location.pathname.startsWith("/play") || location.pathname === "/variants"
+      ? location.pathname.startsWith("/play") ||
+        location.pathname === "/variants"
       : currentPathWithSearch === item.href ||
         (Boolean(item.href) &&
           !item.href?.includes("?") &&
@@ -531,16 +542,19 @@ export default function SidebarLayout({
               }
             }}
             title={isComingSoon ? "Coming soon" : undefined}
-            className={`relative w-full flex transition-all duration-200 cursor-pointer ${isExpanded || isMobileOpen
-              ? `items-center py-2.5 mx-2 px-3 rounded-xl ${isActive
-                ? "text-brand-accent bg-brand-text/10 font-medium"
-                : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 group-hover/navitem:bg-brand-text/5 group-hover/navitem:text-brand-text"
-              }`
-              : `flex-col items-center justify-center py-[14px] mx-2 rounded-lg text-center ${isActive
-                ? "text-brand-accent bg-brand-text/10 font-medium"
-                : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 group-hover/navitem:bg-brand-text/5 group-hover/navitem:text-brand-text"
-              }`
-              }`}
+            className={`relative w-full flex transition-all duration-200 cursor-pointer ${
+              isExpanded || isMobileOpen
+                ? `items-center py-2.5 mx-2 px-3 rounded-xl ${
+                    isActive
+                      ? "text-brand-accent bg-brand-text/10 font-medium"
+                      : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 group-hover/navitem:bg-brand-text/5 group-hover/navitem:text-brand-text"
+                  }`
+                : `flex-col items-center justify-center py-[14px] mx-2 rounded-lg text-center ${
+                    isActive
+                      ? "text-brand-accent bg-brand-text/10 font-medium"
+                      : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 group-hover/navitem:bg-brand-text/5 group-hover/navitem:text-brand-text"
+                  }`
+            }`}
           >
             <div
               className={`flex items-center justify-center shrink-0 ${isExpanded || isMobileOpen ? "w-10" : "w-full"}`}
@@ -559,10 +573,11 @@ export default function SidebarLayout({
             </div>
 
             <span
-              className={`font-sans transition-all ${isExpanded || isMobileOpen
-                ? "flex-1 text-left text-[14px] ml-2 tracking-wide truncate"
-                : "w-full text-center text-[10px] mt-1.5 leading-[1.15] whitespace-normal tracking-normal line-clamp-2 break-words"
-                } ${!(isExpanded || isMobileOpen) && isAvatar ? "hidden" : ""}`}
+              className={`font-sans transition-all ${
+                isExpanded || isMobileOpen
+                  ? "flex-1 text-left text-[14px] ml-2 tracking-wide truncate"
+                  : "w-full text-center text-[10px] mt-1.5 leading-[1.15] whitespace-normal tracking-normal line-clamp-2 break-words"
+              } ${!(isExpanded || isMobileOpen) && isAvatar ? "hidden" : ""}`}
             >
               {item.name}
             </span>
@@ -577,10 +592,11 @@ export default function SidebarLayout({
           {/* Custom Link Actions */}
           {isCustomLink && (isExpanded || isMobileOpen) && (
             <div
-              className={`absolute right-4 flex items-center z-10 bg-brand-bg/80 backdrop-blur-sm rounded-full transition-all ${isMobileOpen
-                ? "opacity-100"
-                : "opacity-0 group-hover/navitem:opacity-100"
-                }`}
+              className={`absolute right-4 flex items-center z-10 bg-brand-bg/80 backdrop-blur-sm rounded-full transition-all ${
+                isMobileOpen
+                  ? "opacity-100"
+                  : "opacity-0 group-hover/navitem:opacity-100"
+              }`}
             >
               {/* Move to More / Move to Active */}
               {section === "active" ? (
@@ -658,12 +674,13 @@ export default function SidebarLayout({
                   onClick={(e) => {
                     handleLinkClick(subItem.href, e);
                   }}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-sans transition-colors duration-150 cursor-pointer ${subIsComingSoon
-                    ? "opacity-60 hover:opacity-100 text-brand-secondary hover:text-brand-text hover:bg-brand-text/5"
-                    : isSubActive
-                      ? "text-brand-accent bg-brand-text/10 font-medium"
-                      : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5"
-                    }`}
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-sans transition-colors duration-150 cursor-pointer ${
+                    subIsComingSoon
+                      ? "opacity-60 hover:opacity-100 text-brand-secondary hover:text-brand-text hover:bg-brand-text/5"
+                      : isSubActive
+                        ? "text-brand-accent bg-brand-text/10 font-medium"
+                        : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5"
+                  }`}
                 >
                   {SubIcon && (
                     <SubIcon
@@ -738,8 +755,9 @@ export default function SidebarLayout({
       <div className="flex flex-1 pt-16">
         {/* Desktop Sidebar (Fixed) */}
         <aside
-          className={`fixed top-16 left-0 bottom-0 z-30 bg-brand-bg/95 backdrop-blur-md flex flex-col py-2 transition-all duration-300 ${isTheaterMode ? "hidden" : "hidden md:flex"} overflow-y-auto overscroll-contain pb-6 sidebar-scrollbar ${isExpanded ? "w-64" : "w-20"
-            }`}
+          className={`fixed top-16 left-0 bottom-0 z-30 bg-brand-bg/95 backdrop-blur-md flex flex-col py-2 transition-all duration-300 ${isTheaterMode ? "hidden" : "hidden md:flex"} overflow-y-auto overscroll-contain pb-6 sidebar-scrollbar ${
+            isExpanded ? "w-64" : "w-20"
+          }`}
         >
           <nav className="flex-1 flex flex-col space-y-1">
             {/* BASE SECTION */}
@@ -789,10 +807,11 @@ export default function SidebarLayout({
                 )}
                 <div className="flex flex-col w-full">
                   <div
-                    className={`flex items-center mx-2 rounded-xl ${isExpanded
-                      ? "py-2.5 px-3"
-                      : "flex-col justify-center py-[14px]"
-                      }`}
+                    className={`flex items-center mx-2 rounded-xl ${
+                      isExpanded
+                        ? "py-2.5 px-3"
+                        : "flex-col justify-center py-[14px]"
+                    }`}
                   >
                     <div
                       className={`flex items-center justify-center shrink-0 ${isExpanded ? "w-10" : "w-full"}`}
@@ -836,13 +855,13 @@ export default function SidebarLayout({
                 )}
                 {MOCK_SUBSCRIPTIONS.length > 0
                   ? MOCK_SUBSCRIPTIONS.map((sub) =>
-                    renderNavItem({ ...sub, href: sub.href }),
-                  )
+                      renderNavItem({ ...sub, href: sub.href }),
+                    )
                   : isExpanded && (
-                    <div className="px-6 py-2 text-[13px] text-brand-secondary">
-                      No subscriptions yet.
-                    </div>
-                  )}
+                      <div className="px-6 py-2 text-[13px] text-brand-secondary">
+                        No subscriptions yet.
+                      </div>
+                    )}
                 <Divider />
 
                 {/* YOU SECTION */}
@@ -865,7 +884,6 @@ export default function SidebarLayout({
                   {youSection.map((item) => renderNavItem(item))}
                 </div>
                 <Divider />
-
               </>
             )}
 
@@ -1008,12 +1026,13 @@ export default function SidebarLayout({
                     setHoveredSubMenu(null);
                     handleLinkClick(subItem.href, e);
                   }}
-                  className={`w-full flex items-center gap-4 px-5 py-3 text-[14px] font-sans text-left transition-colors duration-150 cursor-pointer ${hoverSubIsComingSoon
-                    ? "opacity-60 hover:opacity-100 text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06]"
-                    : isSubActive
-                      ? "text-brand-accent bg-brand-text/[0.06] font-medium"
-                      : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06]"
-                    }`}
+                  className={`w-full flex items-center gap-4 px-5 py-3 text-[14px] font-sans text-left transition-colors duration-150 cursor-pointer ${
+                    hoverSubIsComingSoon
+                      ? "opacity-60 hover:opacity-100 text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06]"
+                      : isSubActive
+                        ? "text-brand-accent bg-brand-text/[0.06] font-medium"
+                        : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06]"
+                  }`}
                 >
                   {SubIcon && (
                     <SubIcon
@@ -1029,13 +1048,15 @@ export default function SidebarLayout({
 
         {/* Mobile Sidebar (Slide-out) */}
         <div
-          className={`fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${!isTheaterMode ? "md:hidden" : ""} ${isMobileOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-            }`}
+          className={`fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${!isTheaterMode ? "md:hidden" : ""} ${
+            isMobileOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+          }`}
           onClick={() => setIsMobileOpen(false)}
         />
         <aside
-          className={`fixed top-0 left-0 bottom-0 w-64 z-50 bg-brand-bg flex flex-col py-2 transition-transform duration-300 ease-in-out ${!isTheaterMode ? "md:hidden" : ""} overflow-y-auto overscroll-contain sidebar-scrollbar ${isMobileOpen ? "translate-x-0" : "-translate-x-full"
-            }`}
+          className={`fixed top-0 left-0 bottom-0 w-64 z-50 bg-brand-bg flex flex-col py-2 transition-transform duration-300 ease-in-out ${!isTheaterMode ? "md:hidden" : ""} overflow-y-auto overscroll-contain sidebar-scrollbar ${
+            isMobileOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
         >
           <div className="flex items-center mb-2 h-14">
             <div className="w-20 flex justify-center items-center shrink-0">
@@ -1315,10 +1336,11 @@ export default function SidebarLayout({
                             setNewLinkUrl(option.value);
                             setIsUrlDropdownOpen(false);
                           }}
-                          className={`w-full text-left px-4 py-2.5 text-[14px] transition-colors cursor-pointer ${newLinkUrl === option.value
-                            ? "bg-[#2563EB] text-brand-text font-medium"
-                            : "text-brand-secondary hover:bg-brand-text/5 hover:text-brand-text"
-                            }`}
+                          className={`w-full text-left px-4 py-2.5 text-[14px] transition-colors cursor-pointer ${
+                            newLinkUrl === option.value
+                              ? "bg-[#2563EB] text-brand-text font-medium"
+                              : "text-brand-secondary hover:bg-brand-text/5 hover:text-brand-text"
+                          }`}
                         >
                           {option.label}
                         </button>
@@ -1345,11 +1367,16 @@ export default function SidebarLayout({
                     disabled={isSubmittingLink}
                     className="btn-gold-solid flex items-center justify-center gap-2 bg-brand-accent text-brand-bg font-semibold px-5 py-2.5 rounded-xl hover:bg-brand-accent/90 hover:scale-[1.02] transition-all cursor-pointer text-[14px] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                   >
-                    {isSubmittingLink && <Loader2 className="w-4 h-4 animate-spin" />}
-                    {editLinkIndex !== null 
-                      ? (isSubmittingLink ? "Saving..." : "Save Changes") 
-                      : (isSubmittingLink ? "Saving..." : "Save Link")
-                    }
+                    {isSubmittingLink && (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    )}
+                    {editLinkIndex !== null
+                      ? isSubmittingLink
+                        ? "Saving..."
+                        : "Save Changes"
+                      : isSubmittingLink
+                        ? "Saving..."
+                        : "Save Link"}
                   </button>
                 </div>
               </form>

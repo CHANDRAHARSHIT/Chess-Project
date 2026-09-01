@@ -66,7 +66,7 @@ export default function StoryModeMap({ onResetToTitle }: StoryModeMapProps = {})
             return;
           }
         }
-        
+
         // Fallback: Scroll to bottom
         container.scrollTop = container.scrollHeight;
       }, 100);
@@ -196,10 +196,10 @@ export default function StoryModeMap({ onResetToTitle }: StoryModeMapProps = {})
   const confirmReset = useCallback((keepProgress: boolean) => {
     setActiveView({ kind: "map" });
     setShowResetConfirm(false);
-    
+
     // Reset global context run state (this automatically clears/resets everything)
     resetRun(keepProgress);
-    
+
     // Call the callback to go back to title screen
     onResetToTitle?.();
   }, [resetRun, onResetToTitle]);
@@ -215,7 +215,7 @@ export default function StoryModeMap({ onResetToTitle }: StoryModeMapProps = {})
 
   // ── Render ────────────────────────────────────────────────────────────
   return (
-    <div className="w-full max-w-4xl mx-auto">
+    <div className="w-full max-w-4xl mx-auto flex flex-col min-h-0 flex-1">
       <AnimatePresence mode="wait">
         {activeView.kind === "map" || activeView.kind === "characterSelect" ? (
           <motion.div
@@ -224,9 +224,10 @@ export default function StoryModeMap({ onResetToTitle }: StoryModeMapProps = {})
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
+            className="flex flex-col min-h-0 flex-1"
           >
             {/* Progress bar & controls */}
-            <div className="flex flex-wrap items-center justify-between mb-4 px-2 gap-y-4 gap-x-2">
+            <div className="flex flex-wrap items-center justify-between mb-2 px-2 gap-y-2 gap-x-2 shrink-0">
               <div className="flex items-center gap-3">
                 <Map className="w-4 h-4 text-brand-secondary" />
                 <div className="flex items-center gap-2">
@@ -246,45 +247,44 @@ export default function StoryModeMap({ onResetToTitle }: StoryModeMapProps = {})
 
               {/* Relic Slots UI */}
               <div className="flex items-center gap-2 order-3 w-full justify-center sm:order-2 sm:w-auto sm:flex-1">
-                 <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-yellow-500/10 border border-yellow-500/30 shrink-0" title="Coins">
-                   <Coins className="w-4 h-4 text-yellow-400" />
-                   <span className="text-sm font-mono font-bold text-yellow-200">{runState.coins}</span>
-                 </div>
-                 
-                 <div className="flex items-center gap-1.5 ml-2">
-                   {[...Array(5)].map((_, i) => {
-                     const relicType = runState.relics[i];
-                     if (relicType) {
-                       let IconComponent = RotateCcw;
-                       let charges = 0;
-                       if (relicType === 'undo') { IconComponent = RotateCcw; charges = runState.undoCharges; }
-                       if (relicType === 'hint') { IconComponent = Lightbulb; charges = runState.hintCharges; }
-                       if (relicType === 'evalBar') { IconComponent = Eye; charges = runState.evalBarCharges; }
-                       if (relicType === 'time') { IconComponent = Hourglass; charges = runState.timeCharges; }
-                       if (relicType === 'reroll') { IconComponent = Shuffle; charges = runState.rerollCharges; }
-                       
-                       return (
-                         <div key={`slot-${i}`} className="relative w-8 h-8 rounded border border-brand-accent/50 bg-brand-accent/10 flex items-center justify-center shadow-[0_0_8px_rgba(168,85,247,0.3)]" title={`${relicType} (${charges}/3)`}>
-                           <IconComponent className="w-4 h-4 text-brand-accent" />
-                           <span className="absolute -bottom-2 -right-2 text-[10px] font-mono font-bold bg-brand-surface border border-brand-border rounded-full w-4 h-4 flex items-center justify-center text-brand-text">
-                             {charges}
-                           </span>
-                         </div>
-                       );
-                     }
-                     
-                     // Empty slot
-                     return (
-                       <div key={`slot-${i}`} className="w-8 h-8 rounded border border-dashed border-brand-border/40 bg-brand-surface/20 flex items-center justify-center opacity-50" title="Empty Slot">
-                       </div>
-                     );
-                   })}
-                 </div>
+                <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-black/20 dark:bg-yellow-500/10 border border-black/30 dark:border-yellow-500/30 shadow-[inset_0_2px_12px_rgba(0,0,0,0.5)] dark:shadow-none" title="Coins">
+                  <Coins className="w-4 h-4 text-amber-600 dark:text-yellow-400 drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)] dark:drop-shadow-none" />
+                  <span className="text-sm font-mono font-bold text-amber-600 dark:text-yellow-200" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.4)' }}>{runState.coins}</span>
+                </div>
+
+                <div className="flex items-center gap-1.5 ml-2">
+                  {[...Array(5)].map((_, i) => {
+                    const relicType = runState.relics[i];
+                    if (relicType) {
+                      let IconComponent = RotateCcw;
+                      let charges = 0;
+                      if (relicType === 'undo') { IconComponent = RotateCcw; charges = runState.undoCharges; }
+                      if (relicType === 'hint') { IconComponent = Lightbulb; charges = runState.hintCharges; }
+                      if (relicType === 'evalBar') { IconComponent = Eye; charges = runState.evalBarCharges; }
+                      if (relicType === 'time') { IconComponent = Hourglass; charges = runState.timeCharges; }
+                      if (relicType === 'reroll') { IconComponent = Shuffle; charges = runState.rerollCharges; }
+
+                      return (
+                        <div key={`slot-${i}`} className="relative w-8 h-8 rounded border border-brand-accent/50 bg-brand-accent/10 flex items-center justify-center shadow-[0_0_8px_rgba(168,85,247,0.3)]" title={`${relicType} (${charges}/3)`}>
+                          <IconComponent className="w-4 h-4 text-brand-accent" />
+                          <span className="absolute -bottom-2 -right-2 text-[10px] font-mono font-bold bg-brand-surface border border-brand-border rounded-full w-4 h-4 flex items-center justify-center text-brand-text">
+                            {charges}
+                          </span>
+                        </div>
+                      );
+                    }
+
+                    return (
+                      <div key={`slot-${i}`} className="w-8 h-8 rounded border border-dashed border-brand-text/50 dark:border-brand-border/40 bg-black/10 dark:bg-brand-surface/20 flex items-center justify-center opacity-100 dark:opacity-80" title="Empty Slot">
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-              
+
               <button
                 onClick={handleReset}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-brand-border/40 text-brand-secondary hover:text-brand-text hover:border-red-500/40 transition-all text-xs font-medium cursor-pointer shrink-0 order-2 sm:order-3"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-brand-text/60 dark:border-brand-border/40 text-brand-text dark:text-brand-secondary hover:text-brand-text hover:border-red-600 dark:hover:border-red-500/40 transition-all text-xs font-medium cursor-pointer shrink-0 order-2 sm:order-3 hover:bg-black/10 dark:hover:bg-white/5"
               >
                 <RotateCcw className="w-3 h-3" />
                 Reset
@@ -292,10 +292,10 @@ export default function StoryModeMap({ onResetToTitle }: StoryModeMapProps = {})
             </div>
 
             {/* Map wrapper for scrolling */}
-            <div className="relative w-full rounded-2xl overflow-hidden">
-              <div 
+            <div className="relative w-full rounded-2xl overflow-hidden flex-1 min-h-0 flex flex-col">
+              <div
                 ref={scrollContainerRef}
-                className="w-full h-[75vh] min-h-[500px] rounded-2xl border border-[#D4AF6E]/40 overflow-y-auto overflow-x-hidden shadow-lg relative bg-[rgb(var(--obsidian-mid-rgb)/0.4)] custom-scrollbar"
+                className="w-full flex-1 min-h-0 rounded-2xl border border-[#D4AF6E]/40 overflow-y-auto overflow-x-hidden shadow-lg relative bg-[rgb(var(--obsidian-mid-rgb)/0.4)] custom-scrollbar"
               >
                 <div className="relative w-full min-h-[1600px] sm:min-h-[2200px] overflow-hidden story-map-bg">
                   {/* Fog / atmosphere layers */}
@@ -455,7 +455,7 @@ export default function StoryModeMap({ onResetToTitle }: StoryModeMapProps = {})
             </div>
 
             {/* Legend */}
-            <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 mt-6 px-4 py-3 w-full max-w-3xl mx-auto border border-brand-border/30 bg-brand-surface/20 rounded-2xl shadow-inner backdrop-blur-sm">
+            <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 mt-2 px-4 py-2 w-full max-w-3xl mx-auto border border-brand-border/30 bg-brand-surface/20 rounded-2xl shadow-inner backdrop-blur-sm shrink-0">
               {[
                 { color: "#a855f7", label: "Puzzle" },
                 { color: "#facc15", label: "Merchant" },
@@ -471,9 +471,9 @@ export default function StoryModeMap({ onResetToTitle }: StoryModeMapProps = {})
                 >
                   <div
                     className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full"
-                    style={{ 
+                    style={{
                       background: item.color,
-                      boxShadow: `0 0 8px ${item.color}80` 
+                      boxShadow: `0 0 8px ${item.color}80`
                     }}
                   />
                   {item.label}
@@ -489,6 +489,7 @@ export default function StoryModeMap({ onResetToTitle }: StoryModeMapProps = {})
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
+            className="flex-1 min-h-0 overflow-hidden flex flex-col"
           >
             <StoryModeBattle
               nodeId={activeView.nodeId}
@@ -509,6 +510,7 @@ export default function StoryModeMap({ onResetToTitle }: StoryModeMapProps = {})
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
+            className="flex-1 min-h-0 overflow-hidden flex flex-col"
           >
             <StoryModeMerchant
               onComplete={handleMerchantComplete}
@@ -521,6 +523,7 @@ export default function StoryModeMap({ onResetToTitle }: StoryModeMapProps = {})
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
+            className="flex-1 min-h-0 overflow-hidden flex flex-col"
           >
             <StoryModePuzzleNode
               nodeLabel={
@@ -542,6 +545,7 @@ export default function StoryModeMap({ onResetToTitle }: StoryModeMapProps = {})
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
+            className="flex-1 min-h-0 overflow-hidden flex flex-col"
           >
             <StoryModeRestSite
               nodeLabel={

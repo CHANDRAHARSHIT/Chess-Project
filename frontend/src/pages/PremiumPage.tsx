@@ -75,10 +75,6 @@ export default function PremiumPage() {
 
         <div className="flex flex-col items-center gap-4">
           <div>
-            <span className="text-xs md:text-sm font-mono text-brand-accent uppercase tracking-widest font-semibold flex items-center gap-2 justify-center mb-4">
-              <Sparkles className="w-3.5 h-3.5" />
-              Pro Member Access
-            </span>
             <h1 className="text-4xl md:text-6xl font-display font-extrabold text-transparent bg-clip-text bg-gradient-to-b from-brand-text via-brand-text/90 to-brand-secondary tracking-tighter leading-tight">
               Premium Features<br />Coming Soon
             </h1>

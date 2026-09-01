@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router";
 import {
-  HelpCircle,
   Zap,
   Puzzle,
   BookOpen,
@@ -215,12 +214,6 @@ export default function HowXLChessWorksPage() {
             </button>
           </div>
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-accent/30 bg-brand-accent/5 mb-6">
-              <HelpCircle className="w-3.5 h-3.5 text-brand-accent" />
-              <span className="text-xs font-mono text-brand-accent uppercase tracking-widest font-semibold">
-                Guide
-              </span>
-            </div>
             <h1 className="text-3xl sm:text-4xl font-display font-bold mb-4 leading-tight tracking-tight">
               How XLChess Works
             </h1>
@@ -312,7 +305,7 @@ export default function HowXLChessWorksPage() {
             forum where experienced players are happy to help newcomers.
           </p>
           <a
-            href="/contact"
+            href="/contact-us"
             className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full border border-brand-accent/50 text-brand-accent hover:bg-brand-accent/10 transition-all duration-200 text-sm font-semibold font-sans"
           >
             Contact Support

@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import { FileText, ArrowLeft } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { soundManager } from "@/shared/lib/SoundManager";
 
 interface SectionProps {
@@ -47,12 +47,6 @@ export default function TermsOfServicePage() {
             </button>
           </div>
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-accent/30 bg-brand-accent/5 mb-5">
-              <FileText className="w-3.5 h-3.5 text-brand-accent" />
-              <span className="text-xs font-mono text-brand-accent uppercase tracking-widest font-semibold">
-                Legal
-              </span>
-            </div>
             <h1 className="text-3xl sm:text-4xl font-display font-bold mb-3 leading-tight tracking-tight">
               Terms of Service
             </h1>
@@ -230,7 +224,7 @@ export default function TermsOfServicePage() {
             If you have questions about these Terms or would like to report a
             violation, please reach out through our{" "}
             <a
-              href="/contact"
+              href="/contact-us"
               className="text-brand-accent hover:underline transition-colors"
             >
               contact page

@@ -1,22 +1,41 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router";
-import { ArrowLeft, Briefcase, Sparkles } from "lucide-react";
+import { useEffect, useMemo } from "react";
+import { useNavigate, useSearchParams } from "react-router";
+import { ArrowLeft, Briefcase } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { soundManager } from "@/shared/lib/SoundManager";
 import DepartmentOpeningsTable from "@/features/join-us/DepartmentOpeningsTable";
 import DepartmentOpeningsCards from "@/features/join-us/DepartmentOpeningsCards";
 import OpeningDetails from "@/features/join-us/OpeningDetails";
-import type { JobOpening } from "@/features/join-us/joinUsData";
+import {
+  getAssessmentTrackSlug,
+  getOpeningByTrackSlug,
+  type JobOpening,
+} from "@/features/join-us/joinUsData";
 
 export default function JoinUsPage() {
   const navigate = useNavigate();
-  const [selectedOpening, setSelectedOpening] = useState<JobOpening | null>(
-    null
-  );
+  const [searchParams] = useSearchParams();
+  const role = searchParams.get("role");
+
+  // One page per department, not per level — every level within a
+  // department shares the exact same assessment and overview content.
+  const selectedOpening = useMemo<JobOpening | null>(() => {
+    if (!role) return null;
+    return getOpeningByTrackSlug(role) ?? null;
+  }, [role]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [selectedOpening]);
+
+  const handleSelectOpening = (opening: JobOpening) => {
+    const trackSlug = getAssessmentTrackSlug(opening.department);
+    navigate(`/join-us?role=${trackSlug ?? opening.department.toLowerCase()}`);
+  };
+
+  const handleBackToOpenings = () => {
+    navigate("/join-us");
+  };
 
   return (
     <div className="min-h-screen bg-brand-bg text-brand-text flex flex-col pb-16 relative overflow-hidden">
@@ -51,13 +70,6 @@ export default function JoinUsPage() {
               </div>
 
               <div>
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-accent/30 bg-brand-accent/5 mb-6">
-                  <Sparkles className="w-3.5 h-3.5 text-brand-accent" />
-                  <span className="text-xs font-mono text-brand-accent uppercase tracking-widest font-semibold">
-                    Careers at XLChess
-                  </span>
-                </div>
-
                 <h1 className="text-3xl sm:text-5xl font-display font-bold text-brand-text mb-4 leading-tight">
                   Build the Future of <br className="hidden sm:inline" />
                   <span className="text-brand-accent italic">Online Chess</span>
@@ -66,7 +78,7 @@ export default function JoinUsPage() {
                 <div className="w-16 h-0.5 bg-brand-accent mb-6" />
 
                 <p className="text-brand-secondary max-w-2xl text-base sm:text-lg leading-relaxed font-sans">
-                  Join our team of passionate developers, designers, and chess enthusiasts.
+                  Join our team of passionate developers, marketers, designers, and chess enthusiasts.
                   Help us build the ultimate platform to play, learn, compete, and grow.
                 </p>
               </div>
@@ -80,7 +92,7 @@ export default function JoinUsPage() {
         <AnimatePresence mode="wait">
           {selectedOpening ? (
             <motion.div
-              key="details-view"
+              key={`details-view-${selectedOpening.id}`}
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 24 }}
@@ -88,7 +100,7 @@ export default function JoinUsPage() {
             >
               <OpeningDetails
                 opening={selectedOpening}
-                onBack={() => setSelectedOpening(null)}
+                onBack={handleBackToOpenings}
               />
             </motion.div>
           ) : (
@@ -98,10 +110,10 @@ export default function JoinUsPage() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 16 }}
               transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-              className="bg-brand-surface/40 border border-brand-border/40 rounded-2xl overflow-hidden backdrop-blur-sm"
+              className="bg-brand-surface rounded-3xl border border-brand-text/15 overflow-hidden backdrop-blur-sm"
             >
-              <div className="p-5 sm:p-6 border-b border-brand-border/40 flex items-center space-x-3 bg-brand-surface/60">
-                <div className="p-2 rounded-xl bg-brand-accent/10 border border-brand-accent/20">
+              <div className="p-5 sm:p-6 border-b border-brand-text/15 flex items-center space-x-3 bg-brand-surface/60">
+                <div className="p-2 rounded-xl bg-brand-accent/10 border border-brand-accent/30">
                   <Briefcase className="text-brand-accent w-5 h-5" />
                 </div>
                 <h2 className="text-xl sm:text-2xl font-display font-semibold text-brand-text">
@@ -111,12 +123,12 @@ export default function JoinUsPage() {
 
               {/* Desktop Table View */}
               <DepartmentOpeningsTable
-                onSelectOpening={(opening) => setSelectedOpening(opening)}
+                onSelectOpening={handleSelectOpening}
               />
 
               {/* Mobile Card View */}
               <DepartmentOpeningsCards
-                onSelectOpening={(opening) => setSelectedOpening(opening)}
+                onSelectOpening={handleSelectOpening}
               />
             </motion.div>
           )}

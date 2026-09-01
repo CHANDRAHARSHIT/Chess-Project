@@ -82,3 +82,21 @@ export const GameTerminationReason = {
 } as const
 
 export type GameTerminationReason = (typeof GameTerminationReason)[keyof typeof GameTerminationReason]
+
+
+export const AssessmentAttemptStatus = {
+  IN_PROGRESS: 'IN_PROGRESS',
+  SUBMITTED: 'SUBMITTED'
+} as const
+
+export type AssessmentAttemptStatus = (typeof AssessmentAttemptStatus)[keyof typeof AssessmentAttemptStatus]
+
+
+export const AssessmentResult = {
+  PENDING: 'PENDING',
+  PASS: 'PASS',
+  FAIL: 'FAIL',
+  REVIEW: 'REVIEW'
+} as const
+
+export type AssessmentResult = (typeof AssessmentResult)[keyof typeof AssessmentResult]

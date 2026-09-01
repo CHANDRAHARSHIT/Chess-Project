@@ -1,4 +1,5 @@
 import HomePage from "@/pages/HomePage";
+import HomeV2Page from "@/pages/HomeV2Page";
 import ContactPage from "@/pages/ContactPage";
 import JoinUsPage from "@/pages/JoinUsPage";
 import PuzzlePage from "@/pages/PuzzlePage";
@@ -35,6 +36,7 @@ import LessonViewerPage from "@/pages/LessonViewerPage";
 import StoryModePage from "@/pages/StoryModePage";
 import PlayHubPage from "@/pages/PlayHubPage";
 import StatsPage from "@/pages/StatsPage";
+import AssessmentPage from "@/pages/AssessmentPage";
 
 export interface RouteConfig {
   path: string;
@@ -45,7 +47,8 @@ export interface RouteConfig {
 // Routes that run inside the MainLayout (Navbar + Sidebar + Footer)
 export const mainRoutes: RouteConfig[] = [
   { path: "/", element: <HomePage />, title: "XLChess - Play Chess Online" },
-  { path: "/contact", element: <ContactPage />, title: "Contact Us | XLChess" },
+  { path: "/home-v2", element: <HomeV2Page />, title: "XLChess - Home V2" },
+  { path: "/contact-us", element: <ContactPage />, title: "Contact Us | XLChess" },
   {
     path: "/puzzles",
     element: <PuzzlePage />,
@@ -241,6 +244,15 @@ export const mainRoutes: RouteConfig[] = [
 
 // Routes that run inside the MinimalLayout (Navbar only, no Sidebar/Footer)
 export const minimalRoutes: RouteConfig[] = [
+  {
+    path: "/join-us/assessment",
+    element: (
+      <ProtectedRoute>
+        <AssessmentPage />
+      </ProtectedRoute>
+    ),
+    title: "Assessment | XLChess",
+  },
   { path: "/payment", element: <CheckoutPage />, title: "Checkout | XLChess" },
   {
     path: "/successful",

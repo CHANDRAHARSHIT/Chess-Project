@@ -1,24 +1,26 @@
-import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router';
 import { RoyalGoldPathway } from '@/features/puzzles/pathways/RoyalGoldPathway';
 import { ROYAL_GOLD_NODES } from '@/features/puzzles/pathways/royalGoldNodes';
 import { PATHWAY_NODES } from '@/features/puzzles/pathways';
 import type { PathNode, PlayerProgress } from '@/features/puzzles/pathway.types';
 import { PuzzleBoard } from '@/features/puzzles/components/PuzzleBoard';
+import { PuzzleCoach, CustomPuzzleCoach, type CoachStatus } from '@/features/puzzles/components/PuzzleCoach';
+import { ThemedChessboard } from '@/shared/ui/ThemedChessboard';
 import { CustomPuzzlePanel } from '@/features/puzzles/components/CustomPuzzlePanel';
 import { CustomPuzzleSession } from '@/features/puzzles/components/CustomPuzzleSession';
-import type { PuzzleFilters } from '@/features/puzzles/puzzle.types';
+import type { PuzzleFilters, CuratedPuzzle } from '@/features/puzzles/puzzle.types';
 import {
-  HelpCircle,
-  SlidersHorizontal,
   ArrowLeft,
   ArrowRight,
+  SlidersHorizontal,
 } from 'lucide-react';
 import type { ChessPuzzle } from '@/features/puzzles/puzzleLoader';
 import { Chess } from 'chess.js';
 import { Confetti } from '@/shared/ui/Confetti';
 import rollbar from '@/shared/lib/rollbar';
 import { usePuzzleProgress } from '@/features/puzzles/usePuzzleProgress';
+import { motion, AnimatePresence } from 'framer-motion';
 
 // Tailwind's `lg` breakpoint. Keep in sync with tailwind config if changed.
 const DESKTOP_BREAKPOINT_PX = 1024;
@@ -61,14 +63,42 @@ function useIsDesktop(breakpointPx: number = DESKTOP_BREAKPOINT_PX): boolean {
   return isDesktop;
 }
 
+// Standard chess starting FEN — shown on the static board before any puzzle is selected.
+// Kept at module level so it never changes reference across renders.
+const STARTING_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+
 export default function PuzzlePage() {
   const navigate = useNavigate();
 
   // ── Right-panel mode: 'pathway' | 'config' ──────────────────────────────────
   const [rightPanelMode, setRightPanelMode] = useState<'pathway' | 'config'>('pathway');
 
+  // Panel display mode — DERIVED from activePuzzleId, not stored directly.
+  // This ensures the correct panel is shown on mount/reload without needing
+  // a click event to fire first.
+  const [activePuzzleId, setActivePuzzleId] = useState<string | null>(null);
+
+  // 'solve' whenever any puzzle is active; 'browse' when the user has
+  // explicitly returned to the map (activePuzzleId cleared).
+  const panelMode = useMemo<'browse' | 'solve'>(
+    () => (activePuzzleId ? 'solve' : 'browse'),
+    [activePuzzleId]
+  );
+
+  // Coach status lifted from PuzzleBoard callbacks
+  const [coachStatus, setCoachStatus] = useState<CoachStatus>('idle');
+  const coachResetRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   // Active custom session filters (null = no session running)
   const [customFilters, setCustomFilters] = useState<PuzzleFilters | null>(null);
+
+  // Custom puzzle coach state
+  const [customCoachStatus, setCustomCoachStatus] = useState<CoachStatus>('idle');
+  const [currentCustomPuzzle, setCurrentCustomPuzzle] = useState<CuratedPuzzle | null>(null);
+
+  const handleCustomStatusChange = useCallback((status: 'idle' | 'correct' | 'wrong') => {
+    setCustomCoachStatus(status);
+  }, []);
 
   // Mobile view state
   const [mobileView, setMobileView] = useState<'pathway' | 'board'>('pathway');
@@ -85,10 +115,8 @@ export default function PuzzlePage() {
 
   const [showConfetti, setShowConfetti] = useState(false);
 
-  // Active selected puzzle node
-  const [selectedNode, setSelectedNode] = useState<PathNode | null>(() => {
-    return activePathwayNodes[0] || null;
-  });
+  // Active selected puzzle node — null until the user explicitly picks one
+  const [selectedNode, setSelectedNode] = useState<PathNode | null>(null);
 
   // Compute current player progress
   const playerProgress: PlayerProgress = useMemo(() => {
@@ -100,40 +128,42 @@ export default function PuzzlePage() {
     };
   }, [completedIds, selectedNode?.id, activePathwayNodes, streak, solvedCount]);
 
-  // Defensive validation of active chess puzzle
-  const safeChessPuzzle: ChessPuzzle = useMemo(() => {
-    const defaultNode = activePathwayNodes[0];
-    const targetNode = selectedNode || defaultNode;
 
+  // Defensive validation of active chess puzzle.
+  // When no puzzle is selected, safeChessPuzzle is not used (PuzzleBoard isn't mounted),
+  // but we still compute it to satisfy the type system for the mobile path.
+  const safeChessPuzzle: ChessPuzzle = useMemo(() => {
+    if (!selectedNode) {
+      return { id: '__none__', fen: STARTING_FEN, solution: '', rating: 0 };
+    }
     try {
-      if (targetNode?.fen) {
-        new Chess(targetNode.fen);
-      }
+      new Chess(selectedNode.fen || STARTING_FEN);
       return {
-        id: targetNode?.id || defaultNode?.id || 'placeholder_004',
-        fen: targetNode?.fen || defaultNode?.fen || 'rnbqkn1r/ppppp2p/5p2/6p1/4P3/3P4/PPP2PPP/RNBQKBNR w KQkq - 0 3',
-        solution: targetNode?.solution || defaultNode?.solution || 'Qh5#',
-        rating: targetNode?.rating || defaultNode?.rating || 500,
+        id: selectedNode.id,
+        fen: selectedNode.fen || STARTING_FEN,
+        solution: selectedNode.solution || '',
+        rating: selectedNode.rating || 0,
       };
     } catch (e) {
-      console.error('Invalid FEN in selected puzzle node, falling back to default:', e);
-      // Falls back to the default node below, so this never reaches the
-      // ErrorBoundary — report it manually since it points at bad puzzle data.
-      rollbar.error(e as Error, { context: 'PuzzlePage.safeChessPuzzle', nodeId: targetNode?.id });
+      console.error('Invalid FEN in selected puzzle node, falling back to starting position:', e);
+      rollbar.error(e as Error, { context: 'PuzzlePage.safeChessPuzzle', nodeId: selectedNode.id });
+      const fallback = activePathwayNodes[0];
       return {
-        id: defaultNode?.id || 'placeholder_004',
-        fen: defaultNode?.fen || 'rnbqkn1r/ppppp2p/5p2/6p1/4P3/3P4/PPP2PPP/RNBQKBNR w KQkq - 0 3',
-        solution: defaultNode?.solution || 'Qh5#',
-        rating: defaultNode?.rating || 500,
+        id: fallback?.id || '__none__',
+        fen: fallback?.fen || STARTING_FEN,
+        solution: fallback?.solution || '',
+        rating: fallback?.rating || 0,
       };
     }
   }, [selectedNode, activePathwayNodes]);
 
-  // Select node callback from pathway
+  // Select node callback from pathway — enters Solve mode
   const handleSelectNode = useCallback((node: PathNode) => {
     setSelectedNode(node);
     setShowConfetti(false);
     setMobileView('board');
+    setActivePuzzleId(node.id);
+    setCoachStatus('idle');
   }, []);
 
   // Return to pathway callback (mobile)
@@ -171,6 +201,8 @@ export default function PuzzlePage() {
       const nextNode = activePathwayNodes[currentIndex + 1];
       setSelectedNode(nextNode);
       setShowConfetti(false);
+      setCoachStatus('idle');
+      setActivePuzzleId(nextNode.id);
     }
   }, [selectedNode, activePathwayNodes, completedIds]);
 
@@ -184,6 +216,7 @@ export default function PuzzlePage() {
   // Solve callback from left puzzle board
   const handleSolved = useCallback(() => {
     setShowConfetti(true);
+    setCoachStatus('correct');
     if (selectedNode) {
       markSolved(selectedNode.id);
     }
@@ -192,12 +225,27 @@ export default function PuzzlePage() {
   // Failed callback from left puzzle board
   const handleFailed = useCallback(() => {
     markFailed();
+    setCoachStatus('wrong');
+    if (coachResetRef.current) clearTimeout(coachResetRef.current);
+    coachResetRef.current = setTimeout(() => setCoachStatus('idle'), 1200);
   }, [markFailed]);
 
 
   const handleNavigateHome = useCallback(() => {
     navigate('/');
   }, [navigate]);
+
+  // Return to Browse mode — clears activePuzzleId so panelMode derives to 'browse'
+  const handleBackToMap = useCallback(() => {
+    setActivePuzzleId(null);
+  }, []);
+
+  // Cleanup coach reset timer on unmount
+  useEffect(() => {
+    return () => {
+      if (coachResetRef.current) clearTimeout(coachResetRef.current);
+    };
+  }, []);
 
   // ── Custom Puzzle handlers ──────────────────────────────────────────────────
 
@@ -216,6 +264,8 @@ export default function PuzzlePage() {
 
   const handleExitCustomSession = useCallback(() => {
     setCustomFilters(null);
+    setCustomCoachStatus('idle');
+    setCurrentCustomPuzzle(null);
   }, []);
 
   // ── Right panel content selector ─────────────────────────────────────────
@@ -231,36 +281,65 @@ export default function PuzzlePage() {
       );
     }
 
+    // ── Browse mode: full-height path map + Custom Puzzles button ─────────
+    // ── Solve mode: full-height Coach panel ───────────────────────────────
     return (
-      <div className="flex flex-col w-full h-full gap-4 relative">
-        <div className="relative z-10 flex-1 min-h-0">
-          <RoyalGoldPathway
-            playerProgress={playerProgress}
-            onSelectPuzzle={handleSelectNode}
-          />
-        </div>
-
-        <div className="relative z-20 flex-shrink-0">
-          <button
-            id="custom-puzzles-btn"
-            onClick={handleOpenCustomConfig}
-            className="btn-gold-outline w-full flex items-center justify-center gap-2 px-4.5 py-3.5 rounded-xl text-xs font-mono uppercase tracking-wider font-bold transition-all duration-300 cursor-pointer bg-brand-surface border border-brand-accent/35 text-brand-accent hover:border-brand-accent/60 hover:-translate-y-0.5"
-            style={{
-              background: "linear-gradient(135deg, rgba(212,175,110,0.14) 0%, rgba(184,147,74,0.08) 100%), var(--obsidian-mid)",
-            }}
-            onMouseEnter={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.background =
-                "linear-gradient(135deg, rgba(212,175,110,0.22) 0%, rgba(184,147,74,0.14) 100%), var(--obsidian-mid)";
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.background =
-                "linear-gradient(135deg, rgba(212,175,110,0.14) 0%, rgba(184,147,74,0.08) 100%), var(--obsidian-mid)";
-            }}
-          >
-            <SlidersHorizontal className="w-3.5 h-3.5 text-brand-accent" />
-            <span>Custom Puzzles</span>
-          </button>
-        </div>
+      <div className="relative w-full h-full">
+        <AnimatePresence mode="wait" initial={false}>
+          {panelMode === 'browse' ? (
+            <motion.div
+              key="browse"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.25, ease: 'easeInOut' }}
+              className="absolute inset-0 flex flex-col gap-4"
+            >
+              <div className="relative z-10 flex-1 min-h-0">
+                <RoyalGoldPathway
+                  playerProgress={playerProgress}
+                  onSelectPuzzle={handleSelectNode}
+                />
+              </div>
+              <div className="relative z-20 flex-shrink-0">
+                <button
+                  id="custom-puzzles-btn"
+                  onClick={handleOpenCustomConfig}
+                  className="btn-gold-outline w-full flex items-center justify-center gap-2 px-4.5 py-3.5 rounded-xl text-xs font-mono uppercase tracking-wider font-bold transition-all duration-300 cursor-pointer bg-brand-surface border border-brand-accent/35 text-brand-accent hover:border-brand-accent/60 hover:-translate-y-0.5"
+                  style={{
+                    background: "linear-gradient(135deg, rgba(212,175,110,0.14) 0%, rgba(184,147,74,0.08) 100%), var(--obsidian-mid)",
+                  }}
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLButtonElement).style.background =
+                      "linear-gradient(135deg, rgba(212,175,110,0.22) 0%, rgba(184,147,74,0.14) 100%), var(--obsidian-mid)";
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLButtonElement).style.background =
+                      "linear-gradient(135deg, rgba(212,175,110,0.14) 0%, rgba(184,147,74,0.08) 100%), var(--obsidian-mid)";
+                  }}
+                >
+                  <SlidersHorizontal className="w-3.5 h-3.5 text-brand-accent" />
+                  <span>Custom Puzzles</span>
+                </button>
+              </div>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="solve"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              transition={{ duration: 0.25, ease: 'easeInOut' }}
+              className="absolute inset-0"
+            >
+              <PuzzleCoach
+                selectedNode={selectedNode}
+                status={coachStatus}
+                onBackToMap={handleBackToMap}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     );
   };
@@ -304,117 +383,107 @@ export default function PuzzlePage() {
         </div>
 
         {customFilters ? (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch w-full">
             <div className="lg:col-span-7 flex justify-center w-full">
               <CustomPuzzleSession
                 filters={customFilters}
                 onExit={handleExitCustomSession}
+                onStatusChange={handleCustomStatusChange}
+                onPuzzleChange={setCurrentCustomPuzzle}
               />
             </div>
 
-            <div className="lg:col-span-5 flex flex-col space-y-6">
-              <div
-                className="rounded-2xl p-6 text-left relative overflow-hidden bg-brand-surface/80 backdrop-blur-xl border border-brand-border/40"
-              >
-                <div
-                  className="absolute top-0 right-0 w-[150px] h-[150px] pointer-events-none"
-                  style={{
-                    background: "radial-gradient(ellipse at top right, rgba(212,175,110,0.05) 0%, transparent 70%)",
-                  }}
-                />
-                <div className="flex items-center gap-3 mb-4 pb-4 border-b border-brand-border/40">
-                  <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 bg-brand-accent/10 border border-brand-accent/20">
-                    <SlidersHorizontal className="w-4 h-4 text-brand-accent" />
-                  </div>
-                  <div>
-                    <h2 className="text-xl font-semibold text-brand-text font-display">
-                      Custom Session
-                    </h2>
-                    <p className="text-xs mt-0.5 text-brand-secondary">
-                      Rated {customFilters.minRating ?? 0} – {customFilters.maxRating ?? 3000}
-                    </p>
-                  </div>
-                </div>
-                {customFilters.themes && customFilters.themes.length > 0 && (
-                  <div>
-                    <p className="text-[10px] font-mono uppercase tracking-widest mb-2 text-brand-secondary">
-                      Active Themes
-                    </p>
-                    <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto pr-1">
-                      {customFilters.themes.map((t) => (
-                        <span
-                          key={t}
-                          className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-brand-accent/10 border border-brand-accent/20 text-brand-accent"
-                        >
-                          {t}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                {(!customFilters.themes || customFilters.themes.length === 0) && (
-                  <p className="text-xs text-brand-secondary">
-                    All themes included in this session.
-                  </p>
-                )}
-              </div>
-
-
-              <div className="bg-brand-surface/30 backdrop-blur-sm border border-brand-border/60 rounded-2xl p-5 text-left flex items-start gap-3.5">
-                <div className="w-8 h-8 rounded-lg bg-brand-accent/10 border border-brand-accent/20 text-brand-accent flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <HelpCircle className="w-4 h-4" />
-                </div>
-                <div>
-                  <h4 className="text-xs font-mono text-brand-text uppercase tracking-wider font-semibold mb-1">
-                    Tactics Training Advice
-                  </h4>
-                  <p className="text-xs text-brand-secondary font-sans leading-relaxed">
-                    Puzzles are sorted by rating — easiest first. After solving, click "Next Puzzle" to advance. Incorrect moves auto-reset so you can try again.
-                  </p>
-                </div>
-              </div>
+            <div className="lg:col-span-5 flex flex-col h-full">
+              <CustomPuzzleCoach
+                puzzle={currentCustomPuzzle}
+                status={customCoachStatus}
+                onExit={handleExitCustomSession}
+              />
             </div>
           </div>
         ) : isDesktop ? (
           /* ── DESKTOP VIEW (only mounted when isDesktop is true) ──────────── */
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch w-full">
             <div className="lg:col-span-7 flex flex-col items-center w-full space-y-6">
-              <div className="w-full bg-brand-surface/70 backdrop-blur-xl border border-brand-border rounded-2xl p-5 text-left relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h1 className="text-xl sm:text-2xl font-display lining-nums font-semibold text-brand-text tracking-wide">
-                      {selectedNode ? `Level ${selectedNode.levelNumber}: ${selectedNode.title || 'Mate in 1'}` : 'Mate in 1 Tactics'}
-                    </h1>
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider bg-amber-500/10 border border-amber-500/30 text-amber-400">
-                      Rating {safeChessPuzzle.rating}
-                    </span>
-                  </div>
-                  <p className="text-xs text-brand-secondary font-sans mt-0.5">
-                    {selectedNode?.description || 'Solve tactics to train your checkmate vision.'}
-                  </p>
-                </div>
 
-                <button
-                  type="button"
-                  onClick={handleNextPuzzle}
-                  disabled={!isNextEnabled}
-                  className="px-4 py-2 rounded-xl text-xs font-mono uppercase tracking-wider font-semibold bg-amber-500 text-slate-950 hover:bg-amber-400 transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-amber-500"
-                >
-                  <span>Next Level</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </button>
+              {/* ── Header card — changes based on whether a puzzle is active ── */}
+              <div className="w-full bg-brand-surface/70 backdrop-blur-xl border border-brand-border rounded-2xl p-5 text-left relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                {selectedNode ? (
+                  // Puzzle active — show level info
+                  <>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h1 className="text-xl sm:text-2xl font-display lining-nums font-semibold text-brand-text tracking-wide">
+                          {`Level ${selectedNode.levelNumber}: ${selectedNode.title || 'Mate in 1'}`}
+                        </h1>
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider bg-amber-500/10 border border-amber-500/30 text-amber-400">
+                          Rating {safeChessPuzzle.rating}
+                        </span>
+                      </div>
+                      <p className="text-xs text-brand-secondary font-sans mt-0.5">
+                        {selectedNode.description || 'Solve tactics to train your checkmate vision.'}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleNextPuzzle}
+                      disabled={!isNextEnabled}
+                      className="px-4 py-2 rounded-xl text-xs font-mono uppercase tracking-wider font-semibold bg-amber-500 text-slate-950 hover:bg-amber-400 transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-amber-500"
+                    >
+                      <span>Next Level</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  </>
+                ) : (
+                  // No puzzle selected — invite the user to pick one
+                  <div>
+                    <h1 className="text-xl sm:text-2xl font-display font-semibold text-brand-text tracking-wide">
+                      Tactics Trainer
+                    </h1>
+                    <p className="text-xs text-brand-secondary font-sans mt-0.5">
+                      Select a level from the map to begin solving.
+                    </p>
+                  </div>
+                )}
               </div>
 
+              {/* ── Board area ── */}
               <div className="flex justify-center w-full">
-                <PuzzleBoard
-                  boardId="desktop-puzzle-board"
-                  puzzle={safeChessPuzzle}
-                  puzzleNumber={selectedNode?.levelNumber || 1}
-                  onSolved={handleSolved}
-                  onFailed={handleFailed}
-                  onNextPuzzle={handleNextPuzzle}
-                  isNextDisabled={!isNextEnabled}
-                />
+                {selectedNode ? (
+                  // Active puzzle — full interactive PuzzleBoard
+                  <PuzzleBoard
+                    boardId="desktop-puzzle-board"
+                    puzzle={safeChessPuzzle}
+                    puzzleNumber={selectedNode.levelNumber}
+                    onSolved={handleSolved}
+                    onFailed={handleFailed}
+                    onNextPuzzle={handleNextPuzzle}
+                    isNextDisabled={!isNextEnabled}
+                  />
+                ) : (
+                  // No puzzle selected — static starting position, no interaction
+                  <div className="flex flex-col items-center gap-1 sm:gap-2 w-full flex-1 min-h-0">
+                    <div
+                      className="relative aspect-square border border-[rgba(212,175,110,0.40)] overflow-hidden bg-brand-surface"
+                      style={{ transform: 'translateZ(0)', height: '100%', maxHeight: '100%', maxWidth: '100%' }}
+                    >
+                      <ThemedChessboard
+                        options={{
+                          position: STARTING_FEN,
+                          boardOrientation: 'white',
+                          showNotation: false,
+                          allowDragging: false,
+                          boardStyle: { borderRadius: '0px' },
+                        }}
+                      />
+                    </div>
+                    <div className="h-8 flex items-center justify-center">
+                      <span className="font-mono uppercase tracking-wider text-xs font-semibold text-brand-secondary flex items-center gap-1.5 border border-brand-border/60 bg-brand-surface px-3 py-1 rounded-full">
+                        Pick a level from the map →
+                      </span>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -466,6 +535,13 @@ export default function PuzzlePage() {
                           <ArrowRight className="w-3.5 h-3.5" />
                         </button>
                       </div>
+
+                      <PuzzleCoach
+                        selectedNode={selectedNode}
+                        status={coachStatus}
+                        onBackToMap={handleReturnToPathway}
+                        compact
+                      />
 
                       <div className="flex justify-center w-full">
                         <PuzzleBoard

@@ -7,6 +7,7 @@
  */
 import { Zap, Swords, Shuffle } from "lucide-react";
 import { soundManager } from "@/shared/lib/SoundManager";
+import { featureFlags } from "@/shared/lib/featureFlags";
 
 export type PlayTab = "quick" | "online" | "variants";
 
@@ -25,7 +26,12 @@ const TABS: {
   disabled?: boolean;
 }[] = [
   { id: "quick", label: "Quick Game", Icon: Zap },
-  { id: "online", label: "Play Online", Icon: Swords, disabled: true },
+  {
+    id: "online",
+    label: "Play Online",
+    Icon: Swords,
+    disabled: !featureFlags.enablePlayOnline,
+  },
   { id: "variants", label: "Variants", Icon: Shuffle },
 ];
 
@@ -40,40 +46,22 @@ export function PlayTabBar({
         const isActive = activeTab === id;
         const showPing = id === "online" && isOnlineActive && !isActive;
 
-        if (disabled) {
-          return (
-            <div
-              key={id}
-              className="relative group/tab flex items-center justify-center flex-1 sm:flex-none"
-            >
-              <button
-                type="button"
-                disabled
-                aria-disabled="true"
-                title="Coming Soon"
-                className="relative flex items-center justify-center gap-2 w-full sm:w-auto sm:px-5 px-3 py-2.5 rounded-xl text-xs font-mono font-bold text-brand-secondary/40 cursor-not-allowed opacity-60 transition-all select-none"
-                role="tab"
-                aria-selected={false}
-              >
-                <Icon className="w-3.5 h-3.5 shrink-0" />
-                <span className="hidden sm:inline">{label}</span>
-                <span className="sm:hidden">{label.split(" ")[0]}</span>
-              </button>
-            </div>
-          );
-        }
-
         return (
           <button
             key={id}
             onClick={() => {
+              if (disabled) return;
               soundManager.playButtonClick();
               onTabChange(id);
             }}
-            className={`relative flex items-center justify-center gap-2 flex-1 sm:flex-none sm:px-5 px-3 py-2.5 rounded-xl text-xs font-mono font-bold transition-all duration-200 cursor-pointer ${
-              isActive
-                ? "bg-brand-accent text-black"
-                : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5"
+            disabled={disabled}
+            title={disabled ? "Coming soon" : undefined}
+            className={`relative flex items-center justify-center gap-2 flex-1 sm:flex-none sm:px-5 px-3 py-2.5 rounded-xl text-xs font-mono font-bold transition-all duration-200 ${
+              disabled
+                ? "opacity-40 cursor-not-allowed text-brand-secondary"
+                : isActive
+                  ? "bg-brand-accent text-black cursor-pointer"
+                  : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 cursor-pointer"
             }`}
             aria-selected={isActive}
             role="tab"
