@@ -71,15 +71,13 @@ export default function JoinUsPage() {
 
               <div>
                 <h1 className="text-3xl sm:text-5xl font-display font-bold text-brand-text mb-4 leading-tight">
-                  Build the Future of <br className="hidden sm:inline" />
-                  <span className="text-brand-accent italic">Online Chess</span>
+                  Join XLChess <br className="hidden sm:inline" />
                 </h1>
 
                 <div className="w-16 h-0.5 bg-brand-accent mb-6" />
 
                 <p className="text-brand-secondary max-w-2xl text-base sm:text-lg leading-relaxed font-sans">
-                  Join our team of passionate developers, marketers, designers, and chess enthusiasts.
-                  Help us build the ultimate platform to play, learn, compete, and grow.
+                  Join us on our journey to build the world’s #1 chess site.
                 </p>
               </div>
             </div>
@@ -122,14 +120,10 @@ export default function JoinUsPage() {
               </div>
 
               {/* Desktop Table View */}
-              <DepartmentOpeningsTable
-                onSelectOpening={handleSelectOpening}
-              />
+              <DepartmentOpeningsTable onSelectOpening={handleSelectOpening} />
 
               {/* Mobile Card View */}
-              <DepartmentOpeningsCards
-                onSelectOpening={handleSelectOpening}
-              />
+              <DepartmentOpeningsCards onSelectOpening={handleSelectOpening} />
             </motion.div>
           )}
         </AnimatePresence>
