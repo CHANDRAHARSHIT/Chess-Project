@@ -34,20 +34,35 @@ during the image build** — otherwise the first player waits for a model downlo
 | `MAIA_UCI_COMMAND` | *(empty)* | A Python interpreter to prefer. Empty tries `python3`, then `python`, then the `maia3-uci` script |
 | `MAIA_MODEL` | `maia3-79m` | Must match the model `nixpacks.toml` pre-caches |
 
+### Thread pinning is not optional
+
+`OMP_NUM_THREADS=1` / `MKL_NUM_THREADS=1` are set in the Dockerfile. Torch sizes
+its thread pool from the **host's** core count, not the container's CPU quota,
+then thrashes against that quota. On staging this made every move take ~20s, and
+made 23M and 79M look almost identical — a tell that the model was never the
+bottleneck. Measured on 0.5 CPU: 4.2s per move unpinned versus 0.6s pinned.
+
+Maia is a single forward pass, so extra threads buy nothing regardless.
+
 ### Which model
 
-Measured on the same Italian Game position:
+Measured on 0.5 CPU with thread pinning and all weights baked into the image:
 
-| | `maia3-5m` | `maia3-79m` |
+| Model | Warm-up | Per move |
 |---|---|---|
-| Disk | 21 MB | 302 MB |
-| Boot | ~1.8s | ~1.4s |
-| Avg move | ~40ms | ~236ms |
-| 800 / 1200 / 1600 / 2000 / 2600 | `O-O` `Ng5` `d3` `d3` `d3` | `c3` `Nc3` `O-O` `d3` `O-O` |
+| `maia3-5m` | 2.5s | ~200ms |
+| `maia3-23m` | 4.5s | ~700ms |
+| `maia3-79m` | 12s | ~1.9s |
 
-**79M is the default.** 5M collapses the top three bands onto one move, which
-defeats the strength selector. 236ms is invisible behind the UI's 600–1800ms
-reply delay, so the only real cost is disk and memory.
+All three are cached in the image, so `MAIA_MODEL` can be changed from the
+Railway dashboard with no rebuild and no download. Railway's filesystem is
+ephemeral — a model that is not baked in re-downloads on every restart.
+
+Accuracy ranking is 79M > 23M > 5M, per CSSLab. Do not try to judge it by
+comparing single moves across Elo settings: Maia samples from a distribution of
+plausible human moves rather than returning one best move, so the same position
+legitimately yields different moves on repeat calls. Differentiation shows over
+many games, not one.
 
 ### How the engine is launched
 
