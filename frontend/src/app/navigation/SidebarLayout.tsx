@@ -32,6 +32,7 @@ import { MoreMenu } from "./MoreMenu";
 import { useNavigate, useLocation } from "react-router";
 import { useNavigationStack } from "@/app/navigation/useNavigationStack";
 import rollbar from "@/shared/lib/rollbar";
+import { featureFlags } from "@/shared/lib/featureFlags";
 
 // Hook for clicking outside the custom dropdown
 function useOnClickOutside(
@@ -398,9 +399,13 @@ export default function SidebarLayout({
   const exploreSection = [
     { name: "Play", href: "/play", icon: Swords },
     { name: "Lessons", href: "/lessons", icon: BookOpen },
-    { name: "Build Lessons", href: "/lesson-builder", icon: PenTool },
+    ...(featureFlags.showBuildLessons
+      ? [{ name: "Build Lessons", href: "/lesson-builder", icon: PenTool }]
+      : []),
     { name: "Puzzles", href: "/puzzles", icon: Puzzle },
-    { name: "Odyssey", href: "/odyssey", icon: Sparkles },
+    ...(featureFlags.showOdyssey
+      ? [{ name: "Odyssey", href: "/odyssey", icon: Sparkles }]
+      : []),
     { name: "Upgrade", href: "/pricing", icon: Crown },
   ];
 
