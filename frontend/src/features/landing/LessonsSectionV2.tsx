@@ -107,53 +107,21 @@ export default function LessonsSectionV2() {
   return (
     <section
       ref={sectionRef}
-      className="relative py-16 md:py-22 overflow-hidden"
+      className="v2-lessons-section py-16 md:py-22 relative overflow-hidden"
       id="lessons-v2-section"
       aria-label="Lessons section"
     >
-      {/* Subtle background separator */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{ background: "var(--obsidian)" }}
-        aria-hidden="true"
-      />
-
-      <div className="max-w-[1275px] mx-auto px-2 sm:px-6 lg:px-8 relative z-10">
-        {/*
-          Grid: content left (~0.75fr) | tile grid right (~1.55fr)
-          Mobile: stacked (content first → grid)
-        */}
-        <div className="grid grid-cols-1 lg:grid-cols-[0.75fr_1.55fr] items-center gap-10 lg:gap-16">
-          {/* ── Left: Text content ─────────────────────────────────────── */}
+      <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-12 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(340px,0.75fr)_minmax(600px,1.55fr)] items-center gap-10 lg:gap-16">
+          {/* ── Left: Text content ── */}
           <div
             ref={contentRef}
-            className="max-w-[460px] text-left"
+            className="v2-content max-w-[560px] text-left justify-self-center lg:justify-self-start"
             style={{ opacity: 0 }}
           >
-            <h2
-              className="font-display"
-              style={{
-                fontSize: "clamp(32px, 3vw, 49px)",
-                lineHeight: 1.02,
-                letterSpacing: "-0.035em",
-                fontWeight: 800,
-                color: "var(--text-primary)",
-                marginBottom: "16px",
-              }}
-            >
-              Level Up with Lessons
-            </h2>
+            <h2 className="v2-h1">Level Up with Lessons</h2>
 
-            <p
-              className="font-sans leading-relaxed"
-              style={{
-                fontSize: "clamp(15px, 1.25vw, 20px)",
-                color: "var(--text-secondary)",
-                maxWidth: 408,
-                marginBottom: "30px",
-                lineHeight: 1.45,
-              }}
-            >
+            <p className="v2-subtitle">
               Build your skills with quick lessons for every level.
             </p>
 
@@ -161,48 +129,17 @@ export default function LessonsSectionV2() {
             <Link
               to="/lessons"
               id="lessons-v2-explore-btn"
-              className="inline-flex items-center justify-center font-sans font-bold rounded-[12px] cta-shine"
-              style={{
-                width: "min(100%, 320px)",
-                minHeight: "61px",
-                fontSize: "clamp(18px, 1.5vw, 24px)",
-                border: "1px solid var(--marble-border)",
-                background:
-                  "linear-gradient(135deg, rgba(212,175,110,0.10) 0%, rgba(212,175,110,0.04) 100%)",
-                color: "var(--gold-bright)",
-                transition:
-                  "transform 0.15s ease, background 0.15s ease, border-color 0.15s ease",
-                display: "inline-flex",
-                textDecoration: "none",
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.transform =
-                  "translateY(-2px)";
-                (e.currentTarget as HTMLElement).style.borderColor =
-                  "var(--marble-border-strong)";
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.transform = "";
-                (e.currentTarget as HTMLElement).style.borderColor =
-                  "var(--marble-border)";
-              }}
+              className="v2-lesson-button lesson-button cta-shine"
             >
               Explore
             </Link>
           </div>
 
-          {/* ── Right: 3×2 tile grid ──────────────────────────────────── */}
-          <div className="flex flex-col items-center gap-2.5">
+          {/* ── Right: 3×2 tile grid ── */}
+          <div className="flex flex-col items-center gap-2.5 w-full">
             <div
               ref={gridRef}
-              className="w-full"
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-                gridTemplateRows: "repeat(2, minmax(0, 1fr))",
-                gap: "clamp(12px, 1.4vw, 18px)",
-                aspectRatio: "4/3",
-              }}
+              className="v2-stone-path stone-path"
               aria-label="Lesson tiles"
             >
               {TILES.map((tile) => (
@@ -214,30 +151,13 @@ export default function LessonsSectionV2() {
               ))}
             </div>
 
-            {/* Hover hint — mirrors 2nd.html */}
-            <div
-              ref={hintRef}
-              className="font-sans text-xs font-bold text-center"
-              style={{
-                color: "var(--text-secondary)",
-                marginTop: "4px",
-                transition: "opacity 0.25s ease, transform 0.25s ease",
-                animation: "v2-hint-blink 1.35s ease-in-out infinite",
-              }}
-            >
+            {/* Hover hint */}
+            <div ref={hintRef} className="v2-hint hint">
               Hover over a lesson tile
             </div>
           </div>
         </div>
       </div>
-
-      {/* Inline keyframe for hint blink */}
-      <style>{`
-        @keyframes v2-hint-blink {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.35; }
-        }
-      `}</style>
     </section>
   );
 }
@@ -252,44 +172,18 @@ function LessonTile({
   tile: TileData;
   onFirstHover: () => void;
 }) {
-  const [hovered, setHovered] = useState(false);
-
   return (
     <button
       type="button"
       aria-label={tile.label}
-      className="lesson-tile relative overflow-hidden cursor-pointer border border-transparent focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-4 flex items-center justify-center"
-      style={{
-        width: "100%",
-        height: "100%",
-        borderRadius: "10px",
-        background: hovered ? tile.hoverBg : tile.bg,
-        boxShadow: hovered ? tile.hoverShadow : tile.shadow,
-        transition:
-          "background 0.2s ease, box-shadow 0.24s ease, transform 0.2s ease",
-        transform: hovered ? "translateY(-3px) scale(1.025)" : "none",
-        padding: 0,
-      }}
-      onMouseEnter={() => {
-        setHovered(true);
-        onFirstHover();
-      }}
-      onMouseLeave={() => setHovered(false)}
-      onFocus={() => {
-        setHovered(true);
-        onFirstHover();
-      }}
-      onBlur={() => setHovered(false)}
+      className={`v2-stone v2-stone-${tile.id} stone stone-${tile.id} lesson-tile`}
+      onMouseEnter={onFirstHover}
+      onFocus={onFirstHover}
     >
       <img
         src={tile.img}
         alt={tile.label}
-        className="w-[70%] h-[70%] object-contain pointer-events-none"
-        style={{
-          opacity: hovered ? 1 : 0.9,
-          transition: "opacity 0.2s ease, transform 0.2s ease",
-          transform: hovered ? "scale(1.05)" : "scale(1)",
-        }}
+        className="w-[70%] h-[70%] object-contain pointer-events-none transition-transform duration-200"
         loading="lazy"
       />
     </button>

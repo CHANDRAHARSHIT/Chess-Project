@@ -117,7 +117,11 @@ export default function PuzzleSectionV2() {
 
   // Handle piece drop validation and puzzle rules
   const handlePieceDrop = useCallback(
-    (args: { piece: any; sourceSquare: string; targetSquare: string | null }): boolean => {
+    (args: {
+      piece: any;
+      sourceSquare: string;
+      targetSquare: string | null;
+    }): boolean => {
       const { sourceSquare, targetSquare } = args;
 
       if (!targetSquare) return false;
@@ -255,84 +259,26 @@ export default function PuzzleSectionV2() {
   return (
     <section
       ref={sectionRef}
-      className="relative py-16 md:py-22 overflow-hidden"
+      className="v2-puzzle-section py-16 md:py-22 relative overflow-hidden"
       id="puzzles-v2-section"
       aria-label="Chess Puzzles Section"
     >
-      {/* Subtle section background */}
-      <div
-        className="absolute inset-0 pointer-events-none opacity-40"
-        style={{ background: "var(--obsidian)" }}
-        aria-hidden="true"
-      />
-
-      <div className="max-w-[1275px] mx-auto px-2 sm:px-6 lg:px-8 relative z-10">
-        {/*
-          Banner Grid: content left (~0.75fr) | visual preview right (~1.55fr)
-          Mobile: stacked (content first → board & coach below)
-        */}
-        <div className="grid grid-cols-1 lg:grid-cols-[0.75fr_1.55fr] items-center gap-10 lg:gap-16">
-          {/* ── Left Column: Text & Explore Button ─────────────────────── */}
+      <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-12 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(340px,0.75fr)_minmax(600px,1.55fr)] items-center gap-10 lg:gap-16">
+          {/* ── Left Column: Text & Explore Button ── */}
           <div
             ref={contentRef}
-            className="max-w-[460px] text-left"
+            className="v2-content max-w-[560px] text-left justify-self-center lg:justify-self-start"
             style={{ opacity: 0 }}
           >
-            <h2
-              className="font-display"
-              style={{
-                fontSize: "clamp(32px, 3vw, 49px)",
-                lineHeight: 1.02,
-                letterSpacing: "-0.035em",
-                fontWeight: 800,
-                color: "var(--text-primary)",
-                marginBottom: "16px",
-              }}
-            >
-              Level Up with Puzzles
-            </h2>
+            <h2 className="v2-h1">Level Up with Puzzles</h2>
 
-            <p
-              className="font-sans leading-relaxed"
-              style={{
-                fontSize: "clamp(15px, 1.25vw, 20px)",
-                color: "var(--text-secondary)",
-                maxWidth: 408,
-                marginBottom: "30px",
-                lineHeight: 1.45,
-              }}
-            >
-              Train your tactics or just have fun.
-            </p>
+            <p className="v2-subtitle">Train your tactics or just have fun.</p>
 
             <Link
               to="/puzzles"
               id="puzzles-v2-explore-btn"
-              className="inline-flex items-center justify-center font-sans font-bold rounded-[12px] cta-shine"
-              style={{
-                width: "min(100%, 320px)",
-                minHeight: "61px",
-                fontSize: "clamp(18px, 1.5vw, 24px)",
-                border: "1px solid var(--marble-border)",
-                background:
-                  "linear-gradient(135deg, rgba(212,175,110,0.10) 0%, rgba(212,175,110,0.04) 100%)",
-                color: "var(--gold-bright)",
-                transition:
-                  "transform 0.15s ease, background 0.15s ease, border-color 0.15s ease",
-                display: "inline-flex",
-                textDecoration: "none",
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.transform =
-                  "translateY(-2px)";
-                (e.currentTarget as HTMLElement).style.borderColor =
-                  "var(--marble-border-strong)";
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.transform = "";
-                (e.currentTarget as HTMLElement).style.borderColor =
-                  "var(--marble-border)";
-              }}
+              className="v2-puzzle-button puzzle-button cta-shine"
             >
               Explore
             </Link>
@@ -346,13 +292,7 @@ export default function PuzzleSectionV2() {
             aria-label="Interactive puzzle preview"
           >
             {/* 1. Chessboard Container */}
-            <div
-              className="relative aspect-square w-full rounded-sm overflow-hidden flex flex-col justify-center"
-              style={{
-                border: "1px solid var(--marble-border)",
-                background: "var(--glass-bg)",
-              }}
-            >
+            <div className="puzzle-frame-container relative aspect-square w-full overflow-hidden flex flex-col justify-center">
               <ThemedChessboard
                 options={{
                   position: gameFen,

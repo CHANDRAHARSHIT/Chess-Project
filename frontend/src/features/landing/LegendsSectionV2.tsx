@@ -154,47 +154,25 @@ export default function LegendsSectionV2() {
   return (
     <section
       ref={sectionRef}
-      className="relative py-16 md:py-22 overflow-hidden"
+      className="v2-legends-section py-16 md:py-22 relative overflow-hidden"
       id="legends-v2-section"
       aria-label="Play Chess Legends section"
     >
-      {/* Background */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{ background: "var(--obsidian)" }}
-        aria-hidden="true"
-      />
-
-      <div className="max-w-[1275px] mx-auto px-2 sm:px-6 lg:px-8 relative z-10">
-        {/*
-          Layout: text LEFT (~0.78fr) | grid RIGHT (~1.55fr)
-        */}
-        <div className="grid grid-cols-1 lg:grid-cols-[0.78fr_1.55fr] items-center gap-10 lg:gap-16">
-          {/* ── Left: Text content + rotating quote ─────────────────────── */}
+      <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-12 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(360px,0.78fr)_minmax(600px,1.55fr)] items-center gap-10 lg:gap-16">
+          {/* ── Left: Text content + rotating quote ── */}
           <div
             ref={contentRef}
-            className="max-w-[485px] text-left lg:text-left"
+            className="v2-content max-w-[570px] text-left lg:text-left justify-self-center lg:justify-self-start"
             style={{ opacity: 0 }}
           >
-            <h2
-              className="font-display"
-              style={{
-                fontSize: "clamp(32px, 3vw, 49px)",
-                lineHeight: 1.02,
-                letterSpacing: "-0.035em",
-                fontWeight: 800,
-                color: "var(--text-primary)",
-                marginBottom: "26px",
-              }}
-            >
-              Play Chess Legends
-            </h2>
+            <h2 className="v2-h1">Play Chess Legends</h2>
 
             {/* Dynamic copy — reacts to active legend */}
             <div
               aria-live="polite"
               style={{
-                minHeight: "185px",
+                minHeight: "200px",
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "center",
@@ -203,88 +181,27 @@ export default function LegendsSectionV2() {
                 transition: "opacity 0.14s ease, transform 0.14s ease",
               }}
             >
-              <h3
-                className="font-display font-bold"
-                style={{
-                  fontSize: "clamp(20px, 1.7vw, 26px)",
-                  lineHeight: 1.15,
-                  color: "var(--text-primary)",
-                  marginBottom: "5px",
-                }}
-              >
-                {activePlayer.name}
-              </h3>
-              <div
-                className="font-sans font-bold text-xs tracking-wide"
-                style={{
-                  color: "rgba(155,122,214,0.9)",
-                  marginBottom: "14px",
-                  letterSpacing: "0.01em",
-                }}
-              >
-                {activePlayer.epithet}
-              </div>
-              <p
-                className="font-serif"
-                style={{
-                  fontSize: "clamp(15px, 1.2vw, 19px)",
-                  lineHeight: 1.55,
-                  color: "var(--text-secondary)",
-                  maxWidth: "425px",
-                  fontStyle: "italic",
-                }}
-              >
-                &ldquo;{activePlayer.quote}&rdquo;
-              </p>
+              <h3 className="player-title">{activePlayer.name}</h3>
+              <div className="player-epithet">{activePlayer.epithet}</div>
+              <p className="quote">&ldquo;{activePlayer.quote}&rdquo;</p>
             </div>
 
             {/* CTA */}
             <Link
               id="legends-v2-challenge-btn"
               to="/play"
-              className="inline-flex items-center justify-center font-sans font-bold rounded-[12px] cta-shine"
-              style={{
-                width: "min(100%, 320px)",
-                minHeight: "58px",
-                fontSize: "clamp(17px, 1.35vw, 20px)",
-                border: "1px solid var(--marble-border)",
-                background:
-                  "linear-gradient(135deg, rgba(155,122,214,0.12) 0%, rgba(155,122,214,0.04) 100%)",
-                color: "var(--text-primary)",
-                cursor: "pointer",
-                transition:
-                  "transform 0.16s ease, background 0.16s ease, border-color 0.16s ease",
-                marginTop: "26px",
-              }}
-              onMouseEnter={(e) => {
-                const el = e.currentTarget as HTMLElement;
-                el.style.transform = "translateY(-2px)";
-                el.style.background =
-                  "linear-gradient(135deg, rgba(155,122,214,0.2) 0%, rgba(155,122,214,0.08) 100%)";
-                el.style.borderColor = "rgba(155,122,214,0.5)";
-              }}
-              onMouseLeave={(e) => {
-                const el = e.currentTarget as HTMLElement;
-                el.style.transform = "";
-                el.style.background =
-                  "linear-gradient(135deg, rgba(155,122,214,0.12) 0%, rgba(155,122,214,0.04) 100%)";
-                el.style.borderColor = "var(--marble-border)";
-              }}
+              className="v2-legends-cta legends-cta cta-shine"
             >
               Challenge a Legend
             </Link>
           </div>
 
-          {/* ── Right: 3×3 coach image grid ─────────────────────────────── */}
+          {/* ── Right: 3×3 coach image grid ── */}
           <div className="relative">
             <div
               ref={gridRef}
               id="legends-v2-grid"
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(3, 1fr)",
-                gap: "15px",
-              }}
+              className="v2-bot-grid bot-grid"
               onMouseLeave={() => {
                 pauseDemo();
                 scheduleResume();
@@ -308,33 +225,6 @@ export default function LegendsSectionV2() {
           </div>
         </div>
       </div>
-
-      {/* Scoped styles for demo-active and card hover */}
-      <style>{`
-        .legend-card {
-          aspect-ratio: 1;
-          border-radius: 14px;
-          border: 2.5px solid transparent;
-          position: relative;
-          overflow: hidden;
-          cursor: pointer;
-          padding: 0;
-          background: var(--obsidian-light);
-          transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
-        }
-        .legend-card:hover,
-        .legend-card:focus-visible,
-        .legend-card.demo-active {
-          transform: translateY(-4px) scale(1.025);
-          border-color: rgba(155,122,214,0.85);
-          box-shadow: 0 0 0 2px rgba(155,122,214,0.07), 0 0 24px rgba(155,122,214,0.34);
-          outline: none;
-        }
-        .legend-card:focus-visible {
-          outline: 2.5px solid var(--gold-bright);
-          outline-offset: 2.5px;
-        }
-      `}</style>
     </section>
   );
 }
@@ -356,7 +246,7 @@ function LegendCard({
   return (
     <button
       type="button"
-      className={`legend-card ${isActive ? "demo-active" : ""}`}
+      className={`v2-bot-card bot-card legend-card ${isActive ? "demo-active" : ""}`}
       aria-label={player.name}
       data-index={index}
       onMouseEnter={() => onHover(index)}

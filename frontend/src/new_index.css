@@ -718,7 +718,7 @@
 /* Chessboard Visual Frame */
 .puzzle-frame-container {
   border: 3px solid var(--v2-border);
-  border-radius: 16px;
+  border-radius: 4px;
   background: var(--v2-card-bg);
   overflow: hidden;
 }
