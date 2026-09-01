@@ -1,0 +1,876 @@
+/* ══════════════════════════════════════════════════════════════════════════════
+   XLChess — Home V2 Design System (Black & White Monochromatic Edition)
+   Matches exact layout, colors, and typography from chess_homepage_banner_left_aligned.html,
+   chess_lessons_banner_3x2_no_frame.html, and chess_legends_animated_banner.html.
+   
+   Note: This file is intentionally theme-agnostic (fixed black & white brand palette).
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+/* ─── Typography & Fonts ─────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=DM+Mono:wght@400;500&display=swap');
+
+/* ─── CSS Variables & Design Tokens ──────────────────────────────────────── */
+:root {
+  /* Core Monochromatic Palette */
+  --v2-bg: #ffffff;
+  --v2-text: #111111;
+  --v2-muted: #333333;
+  --v2-muted-secondary: #4a4a4a;
+  --v2-muted-tertiary: #777777;
+
+  /* Button & Control Surfaces */
+  --v2-btn-bg: #f3f3f3;
+  --v2-btn-bg-hover: #ececec;
+  --v2-btn-border: #d8d8d8;
+  --v2-btn-shadow: #d1d1d1;
+  --v2-btn-text: #111111;
+
+  /* Frame & Border Accents */
+  --v2-border: #d1d1d1;
+  --v2-border-light: #e5e5e5;
+  --v2-border-strong: #aaaaaa;
+  --v2-card-bg: #f3f3f3;
+  --v2-card-hover: #f8f5ff;
+
+  /* Purple Accent (Legends Coach Section) */
+  --v2-purple: #9b7ad6;
+  --v2-purple-deep: #7352b0;
+  --v2-purple-glow: rgba(155, 122, 214, 0.34);
+  --v2-purple-subtle: rgba(155, 122, 214, 0.08);
+
+  /* Lesson Stone Tile Gradients & Shadows */
+  --v2-stone-1-bg: linear-gradient(145deg, #e8f8ea, #d7f1db);
+  --v2-stone-1-shadow: 0 7px 0 #bed8c2;
+  --v2-stone-1-hover-bg: linear-gradient(145deg, #baffc1, #7df88a);
+  --v2-stone-1-hover-shadow: 0 7px 0 #2d8d38, 0 0 22px rgba(76, 224, 91, 0.68), 0 0 55px rgba(76, 224, 91, 0.34);
+
+  --v2-stone-2-bg: linear-gradient(145deg, #fdeaea, #f8d9d9);
+  --v2-stone-2-shadow: 0 7px 0 #dfbebe;
+  --v2-stone-2-hover-bg: linear-gradient(145deg, #ffc1c1, #ff8585);
+  --v2-stone-2-hover-shadow: 0 7px 0 #b52e2e, 0 0 22px rgba(255, 75, 75, 0.68), 0 0 55px rgba(255, 75, 75, 0.34);
+
+  --v2-stone-3-bg: linear-gradient(145deg, #e9f3ff, #d8eaff);
+  --v2-stone-3-shadow: 0 7px 0 #bed0e7;
+  --v2-stone-3-hover-bg: linear-gradient(145deg, #c6e0ff, #8fc4ff);
+  --v2-stone-3-hover-shadow: 0 7px 0 #2862b5, 0 0 22px rgba(66, 142, 255, 0.68), 0 0 55px rgba(66, 142, 255, 0.34);
+
+  --v2-stone-4-bg: linear-gradient(145deg, #fff7d8, #f9edbc);
+  --v2-stone-4-shadow: 0 7px 0 #ded3a6;
+  --v2-stone-4-hover-bg: linear-gradient(145deg, #fff2a8, #ffd85a);
+  --v2-stone-4-hover-shadow: 0 7px 0 #bd7b1e, 0 0 22px rgba(255, 196, 54, 0.7), 0 0 55px rgba(255, 196, 54, 0.36);
+
+  --v2-stone-5-bg: linear-gradient(145deg, #f1eafd, #e4d9f8);
+  --v2-stone-5-shadow: 0 7px 0 #cbbde1;
+  --v2-stone-5-hover-bg: linear-gradient(145deg, #dcc3ff, #b991f6);
+  --v2-stone-5-hover-shadow: 0 7px 0 #8060b4, 0 0 22px rgba(161, 111, 232, 0.68), 0 0 55px rgba(161, 111, 232, 0.34);
+
+  --v2-stone-6-bg: linear-gradient(145deg, #fff0e2, #f9dfc8);
+  --v2-stone-6-shadow: 0 7px 0 #dfc3a8;
+  --v2-stone-6-hover-bg: linear-gradient(145deg, #ffd2a8, #ffad68);
+  --v2-stone-6-hover-shadow: 0 7px 0 #c97d3a, 0 0 22px rgba(255, 153, 72, 0.68), 0 0 55px rgba(255, 153, 72, 0.34);
+
+  /* Fonts */
+  --font-banner-sans: Arial, Helvetica, sans-serif;
+  --font-banner-serif: Georgia, "Times New Roman", serif;
+  --font-banner-mono: "DM Mono", monospace;
+}
+
+/* ─── Base Reset for Home V2 ─────────────────────────────────────────────── */
+.home-v2-container,
+.home-v2-page,
+#hero-v2-section,
+#lessons-v2-section,
+#legends-v2-section,
+#puzzles-v2-section {
+  background-color: var(--v2-bg);
+  color: var(--v2-text);
+  font-family: var(--font-banner-sans);
+  box-sizing: border-box;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   SECTION 1: HERO V2 BANNER (Matching chess_homepage_banner_left_aligned.html)
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* Hero Container Layout */
+.hero,
+.v2-hero,
+#hero-v2-section {
+  width: 100%;
+  background: var(--v2-bg);
+  color: var(--v2-text);
+  font-family: var(--font-banner-sans);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-grid,
+.v2-hero-grid {
+  width: min(1500px, 100%);
+  min-height: 620px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(560px, 1.55fr) minmax(320px, 0.75fr);
+  align-items: center;
+  gap: clamp(38px, 4vw, 72px);
+  padding: clamp(24px, 3vw, 48px);
+}
+
+/* Video Frame (Left Column) */
+.video-frame,
+.v2-video-frame {
+  width: min(100%, 760px);
+  aspect-ratio: 4 / 3;
+  justify-self: center;
+  border-radius: 18px;
+  border: 3px solid var(--v2-border);
+  background: var(--v2-card-bg);
+  box-shadow: none;
+  display: grid;
+  place-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Diagonal crossed decorative lines */
+.video-frame::before,
+.video-frame::after,
+.v2-video-frame::before,
+.v2-video-frame::after {
+  content: "";
+  position: absolute;
+  width: 44%;
+  height: 2px;
+  background: #d4d4d4;
+  transform-origin: center;
+  pointer-events: none;
+}
+
+.video-frame::before,
+.v2-video-frame::before {
+  transform: rotate(45deg);
+}
+
+.video-frame::after,
+.v2-video-frame::after {
+  transform: rotate(-45deg);
+}
+
+/* Video Frame Placeholder Overlay */
+.video-placeholder,
+.v2-video-placeholder {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  color: var(--v2-muted-tertiary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.play-circle,
+.v2-play-circle {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 12px;
+  border-radius: 50%;
+  border: 3px solid var(--v2-border-strong);
+  display: grid;
+  place-items: center;
+  font-size: 28px;
+  padding-left: 4px;
+  color: var(--v2-muted-tertiary);
+}
+
+.video-placeholder span,
+.v2-video-placeholder span {
+  font-size: 15px;
+  letter-spacing: 0.03em;
+  font-family: var(--font-banner-sans);
+  color: var(--v2-muted-tertiary);
+}
+
+/* Hero Content (Right Column) */
+.hero-content,
+.v2-content {
+  width: min(100%, 610px);
+  text-align: left;
+  justify-self: center;
+}
+
+/* Main Hero Heading */
+.hero h1,
+.v2-h1,
+#hero-v2-section h1 {
+  margin: 0 0 22px;
+  font-family: var(--font-banner-sans);
+  font-size: clamp(38px, 3.4vw, 56px);
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+  font-weight: 800;
+  color: var(--v2-text);
+}
+
+/* Subtitle */
+.hero-subtitle,
+.v2-subtitle,
+#hero-v2-section .subtitle,
+#hero-v2-section p {
+  margin: 0 0 44px;
+  color: var(--v2-muted);
+  font-family: var(--font-banner-sans);
+  font-size: clamp(18px, 1.45vw, 24px);
+  line-height: 1.35;
+  max-width: 580px;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/* ── Hero Play Button (Exact 3D Tactile Styling + Magnetic Icon Preservation) ── */
+.play-button,
+.hero-v2-play-btn,
+.v2-play-button {
+  width: min(100%, 520px);
+  min-height: 86px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--v2-btn-bg);
+  color: var(--v2-btn-text);
+  font-family: var(--font-banner-sans);
+  font-size: clamp(28px, 2vw, 34px);
+  font-weight: 800;
+  cursor: pointer;
+  margin-left: 0;
+  margin-right: 0;
+  box-shadow: 0 6px 0 var(--v2-btn-shadow), 0 12px 24px rgba(0, 0, 0, 0.2);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease, background-color 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  user-select: none;
+}
+
+.play-button:hover,
+.hero-v2-play-btn:hover,
+.v2-play-button:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.06);
+  background: #f8f8f8;
+  box-shadow: 0 8px 0 var(--v2-btn-shadow), 0 16px 28px rgba(0, 0, 0, 0.24);
+}
+
+.play-button:active,
+.hero-v2-play-btn:active,
+.v2-play-button:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 var(--v2-btn-shadow), 0 7px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Play Icon & Magnetic Wrapper */
+.play-button img,
+.hero-v2-play-btn img,
+.v2-play-button img {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  margin-right: 12px;
+  flex-shrink: 0;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.play-char {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   SECTION 2: LESSONS V2 (Matching chess_lessons_banner_3x2_no_frame.html)
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.lessons-section,
+.v2-lessons-section,
+#lessons-v2-section {
+  width: 100%;
+  background: var(--v2-bg);
+  color: var(--v2-text);
+  font-family: var(--font-banner-sans);
+  position: relative;
+}
+
+.lessons-section h2,
+#lessons-v2-section h2 {
+  margin: 0 0 20px;
+  font-family: var(--font-banner-sans);
+  font-size: clamp(38px, 3.6vw, 58px);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  font-weight: 800;
+  color: var(--v2-text);
+}
+
+.lessons-section p,
+#lessons-v2-section p {
+  margin: 0 0 34px 0;
+  max-width: 520px;
+  color: var(--v2-muted-secondary);
+  font-family: var(--font-banner-sans);
+  font-size: clamp(18px, 1.45vw, 24px);
+  line-height: 1.45;
+}
+
+/* Explore Button */
+.lesson-button,
+.v2-lesson-button,
+#lessons-v2-explore-btn {
+  width: min(100%, 420px);
+  min-height: 72px;
+  margin-left: 0;
+  border: 1px solid var(--v2-btn-border);
+  border-radius: 14px;
+  background: var(--v2-btn-bg);
+  color: var(--v2-text);
+  font-family: var(--font-banner-sans);
+  font-size: clamp(22px, 1.8vw, 28px);
+  font-weight: 800;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+.lesson-button:hover,
+.v2-lesson-button:hover,
+#lessons-v2-explore-btn:hover {
+  transform: translateY(-2px);
+  background: var(--v2-btn-bg-hover);
+  border-color: #cfcfcf;
+}
+
+.lesson-button:active,
+.v2-lesson-button:active,
+#lessons-v2-explore-btn:active {
+  transform: translateY(2px);
+}
+
+/* 3x2 Stone Tiles Grid */
+.stone-path,
+.v2-stone-path {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: clamp(14px, 1.7vw, 22px);
+}
+
+.stone,
+.v2-stone,
+.lesson-tile {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: filter 0.2s ease, box-shadow 0.24s ease, background 0.2s ease, transform 0.2s ease;
+}
+
+.stone:hover,
+.stone:focus-visible,
+.v2-stone:hover,
+.v2-stone:focus-visible,
+.lesson-tile:hover,
+.lesson-tile:focus-visible {
+  filter: saturate(1.12) brightness(1.06);
+  transform: translateY(-3px) scale(1.025);
+  outline: none;
+}
+
+.stone:focus-visible,
+.v2-stone:focus-visible,
+.lesson-tile:focus-visible {
+  outline: 3px solid #222;
+  outline-offset: 4px;
+}
+
+/* Specific Stone Colors & Glowing Hover States */
+.stone-1,
+.v2-stone-1 {
+  background: var(--v2-stone-1-bg);
+  box-shadow: var(--v2-stone-1-shadow);
+}
+.stone-1:hover,
+.stone-1:focus-visible,
+.v2-stone-1:hover,
+.v2-stone-1:focus-visible {
+  background: var(--v2-stone-1-hover-bg);
+  box-shadow: var(--v2-stone-1-hover-shadow);
+}
+
+.stone-2,
+.v2-stone-2 {
+  background: var(--v2-stone-2-bg);
+  box-shadow: var(--v2-stone-2-shadow);
+}
+.stone-2:hover,
+.stone-2:focus-visible,
+.v2-stone-2:hover,
+.v2-stone-2:focus-visible {
+  background: var(--v2-stone-2-hover-bg);
+  box-shadow: var(--v2-stone-2-hover-shadow);
+}
+
+.stone-3,
+.v2-stone-3 {
+  background: var(--v2-stone-3-bg);
+  box-shadow: var(--v2-stone-3-shadow);
+}
+.stone-3:hover,
+.stone-3:focus-visible,
+.v2-stone-3:hover,
+.v2-stone-3:focus-visible {
+  background: var(--v2-stone-3-hover-bg);
+  box-shadow: var(--v2-stone-3-hover-shadow);
+}
+
+.stone-4,
+.v2-stone-4 {
+  background: var(--v2-stone-4-bg);
+  box-shadow: var(--v2-stone-4-shadow);
+}
+.stone-4:hover,
+.stone-4:focus-visible,
+.v2-stone-4:hover,
+.v2-stone-4:focus-visible {
+  background: var(--v2-stone-4-hover-bg);
+  box-shadow: var(--v2-stone-4-hover-shadow);
+}
+
+.stone-5,
+.v2-stone-5 {
+  background: var(--v2-stone-5-bg);
+  box-shadow: var(--v2-stone-5-shadow);
+}
+.stone-5:hover,
+.stone-5:focus-visible,
+.v2-stone-5:hover,
+.v2-stone-5:focus-visible {
+  background: var(--v2-stone-5-hover-bg);
+  box-shadow: var(--v2-stone-5-hover-shadow);
+}
+
+.stone-6,
+.v2-stone-6 {
+  background: var(--v2-stone-6-bg);
+  box-shadow: var(--v2-stone-6-shadow);
+}
+.stone-6:hover,
+.stone-6:focus-visible,
+.v2-stone-6:hover,
+.v2-stone-6:focus-visible {
+  background: var(--v2-stone-6-hover-bg);
+  box-shadow: var(--v2-stone-6-hover-shadow);
+}
+
+/* Hover Hint */
+.v2-hint,
+.hint {
+  margin-top: 12px;
+  color: var(--v2-muted);
+  font-family: var(--font-banner-sans);
+  font-size: 15px;
+  font-weight: 700;
+  text-align: center;
+  opacity: 1;
+  animation: v2HintBlink 1.35s ease-in-out infinite;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+@keyframes v2HintBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.38; }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   SECTION 3: PLAY CHESS LEGENDS (Matching chess_legends_animated_banner.html)
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.legends-section,
+.v2-legends-section,
+#legends-v2-section {
+  width: 100%;
+  background: var(--v2-bg);
+  color: var(--v2-text);
+  font-family: var(--font-banner-sans);
+  position: relative;
+}
+
+.legends-section h2,
+#legends-v2-section h2 {
+  margin: 0 0 26px;
+  font-family: var(--font-banner-sans);
+  font-size: clamp(38px, 3.6vw, 58px);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  font-weight: 800;
+  color: var(--v2-text);
+}
+
+/* Player Profile Copy */
+.player-title,
+#legends-v2-section h3 {
+  margin: 0 0 8px;
+  font-family: var(--font-banner-sans);
+  font-size: clamp(24px, 2vw, 31px);
+  line-height: 1.15;
+  font-weight: 800;
+  color: var(--v2-text);
+}
+
+.player-epithet,
+#legends-v2-section .player-epithet {
+  margin: 0 0 20px;
+  color: var(--v2-purple-deep);
+  font-family: var(--font-banner-sans);
+  font-weight: 800;
+  font-size: 16px;
+  letter-spacing: 0.01em;
+}
+
+.quote,
+#legends-v2-section .quote,
+#legends-v2-section p.font-serif {
+  margin: 0 auto;
+  color: var(--v2-muted-secondary);
+  font-family: var(--font-banner-serif);
+  font-size: clamp(19px, 1.5vw, 24px);
+  line-height: 1.5;
+  max-width: 520px;
+  font-style: italic;
+}
+
+/* Challenge CTA Button */
+.legends-cta,
+.v2-legends-cta,
+#legends-v2-challenge-btn {
+  width: min(100%, 420px);
+  min-height: 72px;
+  margin-top: 34px;
+  border: 1px solid #ddd;
+  border-radius: 14px;
+  background: var(--v2-btn-bg);
+  color: var(--v2-text);
+  font-family: var(--font-banner-sans);
+  font-size: clamp(21px, 1.7vw, 26px);
+  font-weight: 800;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: transform 0.16s ease, background 0.16s ease, border-color 0.16s ease;
+}
+
+.legends-cta:hover,
+.v2-legends-cta:hover,
+#legends-v2-challenge-btn:hover {
+  transform: translateY(-2px);
+  background: #eee9f7;
+  border-color: #d2c4e9;
+}
+
+/* 3x3 Legend Cards Grid */
+.bot-grid,
+.v2-bot-grid,
+#legends-v2-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.bot-card,
+.v2-bot-card,
+.legend-card {
+  aspect-ratio: 1;
+  border-radius: 16px;
+  background: var(--v2-card-bg);
+  border: 3px solid transparent;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  padding: 0;
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+
+.bot-card:hover,
+.bot-card:focus-visible,
+.bot-card.demo-active,
+.v2-bot-card:hover,
+.v2-bot-card:focus-visible,
+.v2-bot-card.demo-active,
+.legend-card:hover,
+.legend-card:focus-visible,
+.legend-card.demo-active {
+  transform: translateY(-5px) scale(1.025);
+  border-color: var(--v2-purple);
+  box-shadow: 0 0 0 2px rgba(155, 122, 214, 0.07), 0 0 28px var(--v2-purple-glow);
+  background: var(--v2-card-hover);
+  outline: none;
+}
+
+.bot-card.locked,
+.v2-bot-card.locked,
+.legend-card.locked {
+  cursor: default;
+  opacity: 0.58;
+}
+
+.bot-card.locked:hover,
+.v2-bot-card.locked:hover,
+.legend-card.locked:hover {
+  transform: none;
+  border-color: transparent;
+  box-shadow: none;
+  background: var(--v2-card-bg);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   SECTION 4: PUZZLES V2 (Consistent Black & White Theme)
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.puzzle-section,
+.v2-puzzle-section,
+#puzzles-v2-section {
+  width: 100%;
+  background: var(--v2-bg);
+  color: var(--v2-text);
+  font-family: var(--font-banner-sans);
+  position: relative;
+}
+
+.puzzle-section h2,
+#puzzles-v2-section h2 {
+  margin: 0 0 16px;
+  font-family: var(--font-banner-sans);
+  font-size: clamp(38px, 3.6vw, 58px);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  font-weight: 800;
+  color: var(--v2-text);
+}
+
+.puzzle-section p,
+#puzzles-v2-section p {
+  margin: 0 0 30px 0;
+  max-width: 420px;
+  color: var(--v2-muted-secondary);
+  font-family: var(--font-banner-sans);
+  font-size: clamp(18px, 1.45vw, 24px);
+  line-height: 1.45;
+}
+
+/* Puzzles Explore Button */
+.puzzle-button,
+.v2-puzzle-button,
+#puzzles-v2-explore-btn {
+  width: min(100%, 420px);
+  min-height: 72px;
+  border: 1px solid var(--v2-btn-border);
+  border-radius: 14px;
+  background: var(--v2-btn-bg);
+  color: var(--v2-text);
+  font-family: var(--font-banner-sans);
+  font-size: clamp(22px, 1.8vw, 28px);
+  font-weight: 800;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+.puzzle-button:hover,
+.v2-puzzle-button:hover,
+#puzzles-v2-explore-btn:hover {
+  transform: translateY(-2px);
+  background: var(--v2-btn-bg-hover);
+  border-color: #cfcfcf;
+}
+
+.puzzle-button:active,
+.v2-puzzle-button:active,
+#puzzles-v2-explore-btn:active {
+  transform: translateY(2px);
+}
+
+/* Chessboard Visual Frame */
+.puzzle-frame-container {
+  border: 3px solid var(--v2-border);
+  border-radius: 16px;
+  background: var(--v2-card-bg);
+  overflow: hidden;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   GLOBAL SHINE & UTILITY CLASSES
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* Clean CTA Shine Sweep */
+.cta-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-shine::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.6) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: skewX(-20deg);
+  pointer-events: none;
+  z-index: 5;
+}
+
+.cta-shine:hover::before {
+  animation: v2ShineSweep 0.9s ease-in-out forwards;
+}
+
+@keyframes v2ShineSweep {
+  0% {
+    left: -150%;
+  }
+  100% {
+    left: 150%;
+  }
+}
+
+/* Typography Utility Helpers */
+.v2-text-primary { color: var(--v2-text); }
+.v2-text-muted { color: var(--v2-muted); }
+.v2-text-secondary { color: var(--v2-muted-secondary); }
+.v2-font-sans { font-family: var(--font-banner-sans); }
+.v2-font-serif { font-family: var(--font-banner-serif); }
+.v2-font-mono { font-family: var(--font-banner-mono); }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   RESPONSIVE MEDIA QUERIES (Matching Banner HTML files)
+   ══════════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 1050px) {
+  .hero-grid,
+  .v2-hero-grid {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 42px;
+    padding: 28px;
+  }
+
+  .video-frame,
+  .v2-video-frame {
+    width: min(420px, 88vw);
+  }
+
+  .hero-content,
+  .v2-content {
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .hero-subtitle,
+  .v2-subtitle {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .play-button,
+  .hero-v2-play-btn,
+  .v2-play-button,
+  .lesson-button,
+  .v2-lesson-button,
+  .legends-cta,
+  .v2-legends-cta,
+  .puzzle-button,
+  .v2-puzzle-button {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+@media (max-width: 600px) {
+  .hero-grid,
+  .v2-hero-grid {
+    min-height: auto;
+    padding: 18px;
+  }
+
+  .hero h1,
+  .v2-h1,
+  #hero-v2-section h1 {
+    font-size: clamp(40px, 11vw, 58px);
+  }
+
+  .hero-subtitle,
+  .v2-subtitle {
+    font-size: 20px;
+    margin-bottom: 30px;
+  }
+
+  .play-button,
+  .hero-v2-play-btn,
+  .v2-play-button {
+    min-height: 70px;
+    font-size: 26px;
+  }
+
+  .bot-grid,
+  .v2-bot-grid,
+  #legends-v2-grid {
+    gap: 10px;
+  }
+
+  .bot-card,
+  .v2-bot-card,
+  .legend-card {
+    border-radius: 11px;
+    border-width: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .play-button,
+  .hero-v2-play-btn,
+  .v2-play-button,
+  .lesson-button,
+  .v2-lesson-button,
+  .stone,
+  .v2-stone,
+  .lesson-tile,
+  .bot-card,
+  .v2-bot-card,
+  .legend-card,
+  .v2-hint,
+  .hint {
+    transition: none !important;
+    animation: none !important;
+  }
+}
