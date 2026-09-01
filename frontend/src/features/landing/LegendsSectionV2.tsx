@@ -19,57 +19,57 @@ const PLAYERS = [
     name: "Bobby Fischer",
     epithet: "The First U.S. World Chess Champion",
     quote: "h4, h5, sac, sac, mate.",
-    img: "/assets/coaches/bots (1).png",
+    img: "/assets/coaches/bots 1.png",
   },
   {
     name: "Paul Morphy",
     epithet: "The Greatest of All Time",
     quote: "We have to make Ben happy.",
-    img: "/assets/coaches/bots (2).png",
+    img: "/assets/coaches/bots 2.png",
   },
   {
     name: "Wilhelm Steinitz",
     epithet: "The First World Chess Champion",
     quote: "A sacrifice is best refuted by accepting it.",
-    img: "/assets/coaches/bots (3).png",
+    img: "/assets/coaches/bots 3.png",
   },
   {
     name: "Emanuel Lasker",
     epithet: "The Longest-Reigning World Chess Champion",
     quote: "The hardest game to win is a won game.",
-    img: "/assets/coaches/bots (4).png",
+    img: "/assets/coaches/bots 4.png",
   },
   {
     name: "José Raúl Capablanca",
     epithet: "The Chess Machine",
     quote: "I see only one move ahead, but it is always the correct one.",
-    img: "/assets/coaches/bots (5).png",
+    img: "/assets/coaches/bots 5.png",
   },
   {
     name: "Alexander Alekhine",
     epithet: "The Master of Complications",
     quote:
       "I think that for the highest achievements one must have the greatest knowledge of theory.",
-    img: "/assets/coaches/bots (6).png",
+    img: "/assets/coaches/bots 6.png",
   },
   {
     name: "Mikhail Botvinnik",
     epithet: "The Patriarch of Soviet Chess",
     quote: "Chess cannot be taught. Chess can only be learned.",
-    img: "/assets/coaches/bots (7).png",
+    img: "/assets/coaches/bots 7.png",
   },
   {
     name: "Mikhail Tal",
     epithet: "The Magician from Riga",
     quote:
       "You must take your opponent into a deep dark forest where two plus two equals five.",
-    img: "/assets/coaches/bots (8).png",
+    img: "/assets/coaches/bots 8.png",
   },
   {
     name: "Anatoly Karpov",
     epithet: "The Iron Tiger",
     quote: "Chess is everything: art, science, and sport.",
-    img: "/assets/coaches/bots (9).png",
+    img: "/assets/coaches/bots 9.png",
   },
 ] as const;
 
@@ -286,10 +286,9 @@ function LegendCard({
         alt={player.name}
         className="absolute object-cover pointer-events-none"
         style={{
-          width: "120%",
+          width: "100%",
           height: "100%",
           top: "0%",
-          left: "-10%",
           maxWidth: "none",
         }}
         loading="lazy"

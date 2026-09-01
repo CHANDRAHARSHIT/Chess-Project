@@ -574,10 +574,9 @@
   margin: 0 auto;
   color: var(--v2-muted-secondary);
   font-family: var(--font-banner-serif);
-  font-size: clamp(19px, 1.5vw, 24px);
+  font-size: clamp(18px, 1.5vw, 20px);
   line-height: 1.55;
   max-width: 520px;
-  font-style: italic;
   padding-bottom: 4px;
   text-align: center;
 }
