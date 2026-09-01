@@ -381,14 +381,14 @@ export default function Hero() {
                 />
                 <span
                   ref={playTextRef}
-                  className="ml-2 font-sans font-semibold text-[16px] flex overflow-hidden"
-                  style={{ lineHeight: 1 }}
+                  className="ml-2 font-sans font-semibold text-[16px] flex overflow-hidden pb-1.5 -mb-1.5 pt-0.5"
+                  style={{ lineHeight: 1.25 }}
                 >
                   {"Play".split("").map((char, i) => (
                     <span
                       key={i}
                       className="play-char inline-block"
-                      style={{ display: "inline-block" }}
+                      style={{ display: "inline-block", paddingBottom: "3px" }}
                     >
                       {char}
                     </span>
