@@ -366,12 +366,14 @@
 /* 3x2 Stone Tiles Grid */
 .stone-path,
 .v2-stone-path {
-  width: 100%;
+  width: min(100%, 90%);
+  max-width: 90%;
+  margin: 0 auto;
   aspect-ratio: 4 / 3;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   grid-template-rows: repeat(2, minmax(0, 1fr));
-  gap: clamp(14px, 1.7vw, 22px);
+  gap: clamp(12px, 1.5vw, 19px);
 }
 
 .stone,
@@ -543,18 +545,19 @@
 /* Player Profile Copy */
 .player-title,
 #legends-v2-section h3 {
-  margin: 0 0 8px;
+  margin: 0 auto 8px;
   font-family: var(--font-banner-sans);
   font-size: clamp(24px, 2vw, 31px);
   line-height: 1.25;
   font-weight: 800;
   color: var(--v2-text);
   padding-bottom: 2px;
+  text-align: center;
 }
 
 .player-epithet,
 #legends-v2-section .player-epithet {
-  margin: 0 0 20px;
+  margin: 0 auto 20px;
   color: var(--v2-purple-deep);
   font-family: var(--font-banner-sans);
   font-weight: 800;
@@ -562,6 +565,7 @@
   letter-spacing: 0.01em;
   line-height: 1.3;
   padding-bottom: 2px;
+  text-align: center;
 }
 
 .quote,
@@ -575,6 +579,7 @@
   max-width: 520px;
   font-style: italic;
   padding-bottom: 4px;
+  text-align: center;
 }
 
 /* Challenge CTA Button */
@@ -613,7 +618,10 @@
 #legends-v2-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
+  gap: 16px;
+  width: min(100%, 85%);
+  max-width: 85%;
+  margin: 0 auto;
 }
 
 .bot-card,
@@ -660,6 +668,37 @@
   border-color: transparent;
   box-shadow: none;
   background: var(--v2-card-bg);
+}
+
+.grid-wrap,
+.v2-grid-wrap {
+  position: relative;
+  width: min(100%, 760px);
+  justify-self: center;
+}
+
+.cursor-demo,
+.v2-cursor-demo {
+  position: absolute;
+  width: 42px;
+  height: 42px;
+  z-index: 9;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-8px, -5px);
+  transition: left 0.48s cubic-bezier(0.2, 0.8, 0.2, 1), top 0.48s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.2s ease;
+}
+
+.cursor-demo svg,
+.v2-cursor-demo svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 3px 2px rgba(0, 0, 0, 0.2));
+}
+
+.cursor-demo.show,
+.v2-cursor-demo.show {
+  opacity: 1;
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -873,9 +912,20 @@
     border-radius: 11px;
     border-width: 2px;
   }
+
+  .cursor-demo,
+  .v2-cursor-demo {
+    width: 34px;
+    height: 34px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .cursor-demo,
+  .v2-cursor-demo {
+    display: none !important;
+  }
+
   .play-button,
   .hero-v2-play-btn,
   .v2-play-button,

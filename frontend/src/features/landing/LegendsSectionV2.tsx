@@ -75,34 +75,53 @@ const PLAYERS = [
 
 export default function LegendsSectionV2() {
   const sectionRef = useRef<HTMLElement>(null);
+  const gridWrapRef = useRef<HTMLDivElement>(null);
+  const cursorRef = useRef<HTMLDivElement>(null);
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [isChanging, setIsChanging] = useState(false);
+  const [isDemoActive, setIsDemoActive] = useState(true);
 
   const activeIndexRef = useRef(0);
   const demoRunningRef = useRef(true);
   const demoTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const resumeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const changeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // ── Smooth copy transition ───────────────────────────────────────────────
+  // ── Smooth copy transition matching HTML 110ms timer ───────────────────────
   const updateCopy = useCallback((index: number) => {
+    if (changeTimerRef.current) clearTimeout(changeTimerRef.current);
     setIsChanging(true);
-    setTimeout(() => {
+    changeTimerRef.current = setTimeout(() => {
       setActiveIndex(index);
       setIsChanging(false);
-    }, 120);
+    }, 110);
   }, []);
 
-  // ── Activate a card ──────────────────────────────────────────────────────
+  // ── Activate a card + move cursor demo ────────────────────────────────────
   const activateCard = useCallback(
     (index: number) => {
       activeIndexRef.current = index;
+      setIsDemoActive(true);
       updateCopy(index);
+
+      if (gridWrapRef.current && cursorRef.current) {
+        const card = gridWrapRef.current.querySelector<HTMLElement>(
+          `[data-index="${index}"]`,
+        );
+        if (card) {
+          const wrap = gridWrapRef.current.getBoundingClientRect();
+          const rect = card.getBoundingClientRect();
+          cursorRef.current.style.left = `${rect.left - wrap.left + rect.width * 0.64}px`;
+          cursorRef.current.style.top = `${rect.top - wrap.top + rect.height * 0.54}px`;
+          cursorRef.current.classList.add("show");
+        }
+      }
     },
     [updateCopy],
   );
 
-  // ── Start / pause demo ────────────────────────────────────────────────────
+  // ── Start / pause demo (1450ms cycle) ─────────────────────────────────────
   const startDemo = useCallback(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     demoRunningRef.current = true;
@@ -111,28 +130,29 @@ export default function LegendsSectionV2() {
     demoTimerRef.current = setInterval(() => {
       const nextIndex = (activeIndexRef.current + 1) % PLAYERS.length;
       activateCard(nextIndex);
-    }, 1600);
+    }, 1450);
   }, [activateCard]);
 
   const pauseDemo = useCallback(() => {
     demoRunningRef.current = false;
     if (demoTimerRef.current) clearInterval(demoTimerRef.current);
+    if (cursorRef.current) cursorRef.current.classList.remove("show");
+    setIsDemoActive(false);
   }, []);
-
-  const scheduleResume = useCallback(() => {
-    if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current);
-    resumeTimerRef.current = setTimeout(() => {
-      startDemo();
-    }, 1000);
-  }, [startDemo]);
 
   useEffect(() => {
     startDemo();
+    const onResize = () => {
+      if (demoRunningRef.current) activateCard(activeIndexRef.current);
+    };
+    window.addEventListener("resize", onResize);
     return () => {
       if (demoTimerRef.current) clearInterval(demoTimerRef.current);
       if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current);
+      if (changeTimerRef.current) clearTimeout(changeTimerRef.current);
+      window.removeEventListener("resize", onResize);
     };
-  }, [startDemo]);
+  }, [startDemo, activateCard]);
 
   const activePlayer = PLAYERS[activeIndex];
 
@@ -147,7 +167,7 @@ export default function LegendsSectionV2() {
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(360px,0.78fr)_minmax(600px,1.55fr)] items-center gap-10 lg:gap-16">
           {/* ── Left: Text content + rotating quote ── */}
           <div className="v2-content max-w-[570px] text-left lg:text-left justify-self-center lg:justify-self-start">
-            <h2 className="v2-h1">Play Chess Legends</h2>
+            <h2 className="v2-h1 text-center">Play Chess Legends</h2>
 
             {/* Dynamic copy — reacts to active legend */}
             <div
@@ -157,6 +177,8 @@ export default function LegendsSectionV2() {
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "center",
+                alignItems: "center",
+                textAlign: "center",
                 opacity: isChanging ? 0 : 1,
                 transform: isChanging ? "translateY(5px)" : "translateY(0)",
                 transition: "opacity 0.14s ease, transform 0.14s ease",
@@ -177,14 +199,18 @@ export default function LegendsSectionV2() {
             </Link>
           </div>
 
-          {/* ── Right: 3×3 coach image grid ── */}
-          <div className="relative">
+          {/* ── Right: 3×3 coach image grid with simulated cursor ── */}
+          <div ref={gridWrapRef} className="grid-wrap v2-grid-wrap relative">
             <div
               id="legends-v2-grid"
               className="v2-bot-grid bot-grid"
               onMouseLeave={() => {
-                pauseDemo();
-                scheduleResume();
+                if (resumeTimerRef.current)
+                  clearTimeout(resumeTimerRef.current);
+                resumeTimerRef.current = setTimeout(() => {
+                  activeIndexRef.current = 0;
+                  startDemo();
+                }, 900);
               }}
             >
               {PLAYERS.map((player, index) => (
@@ -193,14 +219,35 @@ export default function LegendsSectionV2() {
                   player={player}
                   index={index}
                   isActive={activeIndex === index}
+                  isDemoActive={isDemoActive}
                   onHover={(idx) => {
                     pauseDemo();
                     if (resumeTimerRef.current)
                       clearTimeout(resumeTimerRef.current);
-                    activateCard(idx);
+                    activeIndexRef.current = idx;
+                    setActiveIndex(idx);
+                    updateCopy(idx);
                   }}
                 />
               ))}
+            </div>
+
+            {/* Cursor Demo SVG matching chess_legends_animated_banner.html */}
+            <div
+              ref={cursorRef}
+              className="cursor-demo v2-cursor-demo"
+              id="cursorDemo"
+              aria-hidden="true"
+            >
+              <svg viewBox="0 0 48 48">
+                <path
+                  d="M9 4l26 22-12 2 6 12-6 3-6-13-8 9z"
+                  fill="#fff"
+                  stroke="#222"
+                  strokeWidth="2.5"
+                  strokeLinejoin="round"
+                />
+              </svg>
             </div>
           </div>
         </div>
@@ -216,17 +263,19 @@ function LegendCard({
   player,
   index,
   isActive,
+  isDemoActive,
   onHover,
 }: {
   player: PlayerData;
   index: number;
   isActive: boolean;
+  isDemoActive: boolean;
   onHover: (idx: number) => void;
 }) {
   return (
     <button
       type="button"
-      className={`v2-bot-card bot-card legend-card ${isActive ? "demo-active" : ""}`}
+      className={`v2-bot-card bot-card legend-card ${isDemoActive && isActive ? "demo-active" : ""}`}
       aria-label={player.name}
       data-index={index}
       onMouseEnter={() => onHover(index)}
