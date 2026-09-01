@@ -28,7 +28,7 @@ export default function NumberInput({
   onChange,
   prefix = 'It would take me',
   suffix = 'minutes.',
-  placeholder = '0',
+  placeholder = 'Answer',
   min = 1,
   max = 999,
   disabled = false,

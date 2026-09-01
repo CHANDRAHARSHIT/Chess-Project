@@ -88,7 +88,7 @@ export default function RadioWithTextInput({
                 value={textValue}
                 onChange={onTextChange}
                 wordLimit={conditionalWordLimit}
-                placeholder={placeholder || 'Enter details...'}
+                placeholder={placeholder || 'Answer'}
                 disabled={disabled}
               />
             ) : (
@@ -97,7 +97,7 @@ export default function RadioWithTextInput({
                 value={textValue}
                 onChange={onTextChange}
                 wordLimit={conditionalWordLimit}
-                placeholder={placeholder || 'Enter details...'}
+                placeholder={placeholder || 'Answer'}
                 rows={4}
                 disabled={disabled}
               />
