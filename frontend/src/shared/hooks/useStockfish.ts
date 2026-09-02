@@ -33,13 +33,23 @@ export function useStockfish() {
     if (workerRef.current) return workerRef.current;
 
     try {
-      // Use Blob wrapper to bypass CORS for cdnjs Stockfish
-      const blobCode = `
-        importScripts("https://cdnjs.cloudflare.com/ajax/libs/stockfish.js/10.0.2/stockfish.js");
-      `;
-      const blob = new Blob([blobCode], { type: 'application/javascript' });
-      const workerUrl = URL.createObjectURL(blob);
-      const worker = new Worker(workerUrl);
+      // Served locally (frontend/public/stockfish) instead of a third-party CDN so engine
+      // startup doesn't depend on cdnjs being reachable/unblocked (see Rollbar issue #26).
+      const worker = new Worker('/stockfish/stockfish-18-lite-single.js');
+
+      // The Worker constructor above only throws for a malformed URL — a failed script
+      // load (404, blocked request, bad response) instead fires this asynchronously as
+      // an ErrorEvent, which the try/catch here can't see (this was the uncaught
+      // "importScripts failed" report in Rollbar issue #26).
+      worker.onerror = (event: ErrorEvent) => {
+        console.error('Stockfish worker failed to load', event.message);
+        rollbar.error(new Error(`Stockfish worker error: ${event.message}`), { context: 'useStockfish.workerOnError' });
+        worker.terminate();
+        if (workerRef.current === worker) {
+          workerRef.current = null;
+        }
+        setEngineStatus('error');
+      };
 
       worker.postMessage('uci');
       worker.postMessage('isready');
