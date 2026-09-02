@@ -10,9 +10,7 @@
       "pageNumber": 1,
       "pageTitle": "Outreach & Lead Acquisition",
       "purpose": "These questions are designed around the types of situations and decisions you would encounter while working in the Growth & Marketing role.",
-      "questionIds": [
-        "gq1"
-      ],
+      "questionIds": ["gq1"],
       "submitButtonText": "Next",
       "questions": [
         {
@@ -60,9 +58,7 @@
       "pageNumber": 2,
       "pageTitle": "Early-Stage Social Strategy",
       "purpose": "Evaluate strategic prioritization and resource allocation when launching a brand new chess product from zero audience.",
-      "questionIds": [
-        "gq2"
-      ],
+      "questionIds": ["gq2"],
       "submitButtonText": "Next",
       "questions": [
         {
@@ -89,9 +85,7 @@
       "pageNumber": 3,
       "pageTitle": "Channel Optimization & Paid Conversions",
       "purpose": "Assess analytical decision-making and ROI-driven marketing prioritization when scaling an existing high-performing channel.",
-      "questionIds": [
-        "gq3"
-      ],
+      "questionIds": ["gq3"],
       "submitButtonText": "Next",
       "questions": [
         {
@@ -130,9 +124,7 @@
       "pageNumber": 4,
       "pageTitle": "Content Strategy & Practical Judgment",
       "purpose": "Examine practical marketing judgment and willingness to question assumptions in real-world startup scenarios.",
-      "questionIds": [
-        "gq4"
-      ],
+      "questionIds": ["gq4"],
       "submitButtonText": "Next",
       "questions": [
         {
@@ -175,9 +167,7 @@
       "pageNumber": 5,
       "pageTitle": "Concise Promotional Strategy",
       "purpose": "Evaluate clarity, precision, and concise tactical thinking when deploying direct response promotional offers.",
-      "questionIds": [
-        "gq5"
-      ],
+      "questionIds": ["gq5"],
       "submitButtonText": "Next",
       "questions": [
         {
@@ -196,39 +186,16 @@
       "pageNumber": 6,
       "pageTitle": "3-Month Growth Plan & Execution Timeline",
       "purpose": "Assess end-to-end strategic planning, practical resource allocation ($100 budget), cross-functional execution with engineering, and roadmap structuring.",
-      "questionIds": [
-        "gq6"
-      ],
+      "questionIds": ["gq6"],
       "submitButtonText": "Submit and complete assessment",
       "questions": [
         {
           "id": "gq6",
           "questionNumber": 6,
           "type": "long-text",
-          "questionText": "XLChess is a startup developing a chess web application similar to Chess.com. The product will offer free features as well as a paid membership.\n\nThe company's immediate objective is to acquire its first 100 paid subscribers. The company believes that reaching the first 100 is the most difficult stage; once this has been achieved, it expects to have enough information and traction to make further growth significantly easier.\n\nYour Task:\nSpend as much time as you need to identify how you fit into this 3-month plan and write a timeline/task breakdown of what you would do.\nThe goal is for you to show us that you understand what is needed and that you know how to execute it.\nNot much detail is required. A sentence giving an overview of what you intend to do is enough.\nTreat this as a realistic exercise. Write the plan as if you had been hired for the Growth & Marketing role.",
-          "supportingTabs": [
-            {
-              "id": "month1",
-              "label": "Month 1 — Build & Prepare",
-              "content": "Development Team (3 FTE):\n• Complete and launch the beta version.\n• Prioritise core features that give users a reason to become paid members.\n\nGrowth & Marketing (1 FTE):\n• Establish and begin growing company's social media presence across multiple platforms.\n• Start testing different types of content and approaches."
-            },
-            {
-              "id": "month2",
-              "label": "Month 2 — Membership Growth",
-              "content": "Primary Focus: Acquiring paid members.\n\nDev Team Support:\n• Write technical/dev content for social media and product showcase.\n\nTesting ~20 Acquisition Approaches:\n• Advertisement emails to smaller/mid-sized chess YouTube channels.\n• Daily YouTube and social content.\n• Approaching chess clubs.\n• Approaching famous chess GMs.\n• Sponsoring online chess tournaments."
-            },
-            {
-              "id": "month3",
-              "label": "Month 3 — Scale What Works",
-              "content": "• Review results from Month 2.\n• Stop or reduce low-performing activities.\n• Concentrate resources on high-potential approaches.\n• Scale and expand strategies successfully generating paid members."
-            },
-            {
-              "id": "budget",
-              "label": "Budget & Autonomy",
-              "content": "Budget: $100 total for this 3-month plan.\nYou can spend this money without requiring any prior approval."
-            }
-          ],
-          "wordLimit": 1200,
+          "questionText": "XLChess is a startup developing a chess web application similar to Chess.com. The product will offer free features as well as a paid membership.\n\nThe company's immediate objective is to acquire its first 100 paid subscribers. The company believes that reaching the first 100 is the most difficult stage; once this has been achieved, it expects to have enough information and traction to make further growth significantly easier.\n\nYour Task:\nSpend as much time as you need to identify how you fit into this 3-month plan and write a timeline/task breakdown of what you would do.\nThe goal is for you to show us that you understand what is needed and that you know how to execute it.\nNot much detail is required. A sentence giving an overview of what you intend to do is enough.\nTreat this as a realistic exercise. Write the plan as if you had been hired for the Growth & Marketing role.\n\nBudget: $100 total for this 3-month plan.\nYou can spend this money without requiring any prior approval.\n\nWe've given you a starting point below.\nIf you were working in this role, you would of course be given structure around what needs to be achieved, but we would expect you to do more than simply execute a list of tasks.\nWe would expect you to contribute meaningfully to the plan: challenge ideas where appropriate, improve them, identify missing opportunities, change priorities, and propose better approaches.\nUse the plan below as a starting point for your answer. You can build on it, reorganise it, change individual tasks, move dates, add new ideas, or remove the existing plan entirely and replace it with your own. The purpose of this assessment is not to see how well you can follow the plan we have provided; it is to understand how you would approach, plan, prioritise, and execute these three months if you were responsible for Growth & Marketing at XLChess.\n\nNote : Month 3 not required to write in plan below.",
+          "prefillValue": "Fri, Aug 28 - Public Holiday: National\nSat, Aug 29 - Month 1 - Build and Prepare\nSun, Aug 30 -\nMon, Aug 31 - Continue building XLChess and get it ready for beta launch with Odyssey, Puzzles, Studio, Play (+ ACS)\nTue, Sep 1 - Start building our presence across social media.\nWed, Sep 2 - This week, hire for the Growth & Marketing position.\nThu, Sep 3 - Spend the rest of Sep on these two.\nFri, Sep 4 -\nSat, Sep 5 -\nSun, Sep 6 -\nMon, Sep 7 - This week, G&M Employee should start preparing a detailed plan for Month 2. Segregate in 2 categories using the 80-20 rule. Do the 20's first.\nTue, Sep 8 - As soon as plans are ready, don't wait for Month 2. Start with things that can be done. For instance, multiple language support will take the devs 3 days to implement so such tasks must be done in advance. The plan should account for tasks that require work in advance and cannot be done in a day.\nWed, Sep 9 - G&M also needs to validate the contract hiring for the ACS. I'll give them the how to guide for this.\nThu, Sep 10 -\nFri, Sep 11 -\nSat, Sep 12 -\nSun, Sep 13 -\nMon, Sep 14 - Create a hosting plan for when we have 100 users, 1000 users, 10000 users.\nTue, Sep 15 -\nWed, Sep 16 -\nThu, Sep 17 - Move to the required hosting.\nFri, Sep 18 -\nSat, Sep 19 -\nSun, Sep 20 -\nMon, Sep 21 -\nTue, Sep 22 -\nWed, Sep 23 -\nThu, Sep 24 -\nFri, Sep 25 -\nSat, Sep 26 -\nSun, Sep 27 -\nMon, Sep 28 -\nTue, Sep 29 -\nWed, Sep 30 -\nThu, Oct 1 -\nFri, Oct 2 - Daniel can partner.\nSat, Oct 3 - Month 2 - Membership Growth (We will try around 16 things in Oct) (This is a draft; will be revised significantly). Focus on membership growth. Devs will work on tasks like writing dev blogs for social media and engaging with the community on Discord. We are no longer building features at this stage.\nSun, Oct 4 -\nMon, Oct 5 - (1) Send advertisement emails to YT channels\nTue, Oct 6 - (2) Social media: 1 post/video per day.\nWed, Oct 7 - (3) Approach 10 Chess Clubs - free website for a chess club in exchange for promotion.\nThu, Oct 8 - (4) Spend $100 dollars on running ads.\nFri, Oct 9 - Spare day\nSat, Oct 10 -\nSun, Oct 11 -\nMon, Oct 12 - (5) Sponsor $100 dollar cash prizes for online chess tournament.\nTue, Oct 13 - (6) Give 100 chess clubs free premium memberships for their members for 3 months.\nWed, Oct 14 - (7) Create a referral program: invite a friend → receive premium time.\nThu, Oct 15 - (8) Contact 10 game reviewers to try Chess Odyssey and see if they like it.\nFri, Oct 16 - Spare day\nSat, Oct 17 -\nSun, Oct 18 -\nMon, Oct 19 - (9) Post Chess Odyssey in 10 communities that allow indie-game promotion and invite people to play it for free.\nTue, Oct 20 - (10) Email system - automatically send targeted onboarding, engagement, membership promotion, and re-engagement emails to users.\nWed, Oct 21 - (11) SEO management - optimise pages, titles, metadata, internal linking, indexing, sitemap, structured data, etc.\nThu, Oct 22 - (12) Pending\nFri, Oct 23 - Spare day\nSat, Oct 24 -\nSun, Oct 25 -\nMon, Oct 26 - (13) Pending\nTue, Oct 27 - (14) Support other languages - promote product in new regions using free methods.\nWed, Oct 28 - (15) Advertise in US Chess. Costs start at $250.\nThu, Oct 29 - (16) Approach famous chess GMs.\nFri, Oct 30 - Spare day\nSat, Oct 31 - Month 3 - Scale What Works",
+          "wordLimit": 3000,
           "placeholder": "Answer",
           "tips": "Highlight high-leverage activities, budget use, collaboration with developers, and timeline."
         }

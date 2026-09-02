@@ -216,13 +216,25 @@ export default function AssessmentPage() {
     config.pages.forEach((p) => {
       p.questions.forEach((q) => {
         const val = answers[q.id];
-        if (val && val.trim().length > 0) answered.add(q.questionNumber);
+        if (
+          val &&
+          val.trim().length > 0 &&
+          (!q.prefillValue || val.trim() !== q.prefillValue.trim())
+        ) {
+          answered.add(q.questionNumber);
+        }
       });
     });
     if (config.timedCodingConfig) {
       const q = config.timedCodingConfig.question;
       const val = answers[q.id];
-      if (val && val.trim().length > 0) answered.add(q.questionNumber);
+      if (
+        val &&
+        val.trim().length > 0 &&
+        (!q.prefillValue || val.trim() !== q.prefillValue.trim())
+      ) {
+        answered.add(q.questionNumber);
+      }
     }
     return answered;
   })();
@@ -707,7 +719,9 @@ export default function AssessmentPage() {
                 isEstimateQuestion && attempt.timedSectionStartedAt != null;
               const displayAnswer = isEstimateLocked
                 ? String(attempt.estimateMinutes)
-                : answers[q.id] || "";
+                : answers[q.id] !== undefined
+                  ? answers[q.id]
+                  : q.prefillValue || "";
 
               return (
                 <QuestionCard

@@ -25,8 +25,14 @@ import { LeaveGameConfirmModal } from "@/features/play/components/LeaveGameConfi
 import { ProtectedRoute } from "@/features/account/ProtectedRoute";
 import { useGameSession } from "@/features/play/useGameSession";
 import { useMatchmaking } from "@/features/play/useMatchmaking";
+import { featureFlags } from "@/shared/lib/featureFlags";
 
-const VALID_TABS: PlayTab[] = ["quick", "online", "variants", "maia"];
+const VALID_TABS: PlayTab[] = [
+  "quick",
+  "online",
+  "variants",
+  ...(featureFlags.showMaia ? (["maia"] as const) : []),
+];
 
 function isValidTab(value: string | null): value is PlayTab {
   return VALID_TABS.includes(value as PlayTab);
@@ -108,7 +114,7 @@ export default function PlayHubPage() {
 
         {activeTab === "variants" && <VariantsView />}
 
-        {activeTab === "maia" && <TestMaiaBoard />}
+        {activeTab === "maia" && featureFlags.showMaia && <TestMaiaBoard />}
       </div>
 
       {/* ── Active-Game Guard Modal ── */}

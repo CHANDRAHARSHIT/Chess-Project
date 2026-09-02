@@ -31,4 +31,8 @@ export const featureFlags = {
 
   /** Enable the "Play Online" tab in the Play Hub. Disabled in prod. */
   enablePlayOnline: !IS_PROD,
+
+  /** Show "Maia" mode in the Play Hub. Hidden in prod. */
+  showMaia: !IS_PROD,
+  enableMaia: !IS_PROD,
 } as const;
