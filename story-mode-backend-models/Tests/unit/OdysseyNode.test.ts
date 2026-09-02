@@ -21,6 +21,16 @@ describe("OdysseyNode", () => {
     assert.strictEqual(node.isAdjacentTo(4), false);
   });
 
+  test("test_isBoss_returnsTrueForBossTypeNode", () => {
+    const node = new OdysseyNode(1, ENodeType.Boss, "Boss", 0, 0, [], "test");
+    assert.strictEqual(node.isBoss(), true);
+  });
+
+  test("test_isBoss_returnsFalseForNonBossTypeNode", () => {
+    const node = makeNode(1);
+    assert.strictEqual(node.isBoss(), false);
+  });
+
   test("test_statusFor_returnsCompletedWhenNodeIdInCompletedNodes", () => {
     const node = makeNode(5);
     const game = makeGame({ completedNodes: [5] });

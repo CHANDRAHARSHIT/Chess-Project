@@ -3,7 +3,6 @@ import { EBattleEndReason } from "../enums/EBattleEndReason.js";
 import { EBattleResult } from "../enums/EBattleResult.js";
 import { EBotCondition } from "../enums/EBotCondition.js";
 import { EDifficulty } from "../enums/EDifficulty.js";
-import { ENodeType } from "../enums/ENodeType.js";
 import type { OdysseyBattleNode } from "./OdysseyBattleNode.js";
 import type { OdysseyMonster } from "./OdysseyMonster.js";
 import type { OdysseyGame } from "./OdysseyGame.js";
@@ -27,6 +26,17 @@ const ENEMY_CLOCK_SECONDS: Record<EDifficulty, number> = {
 const CONFUSED_RANDOM_MOVE_CHANCE = 0.5;
 const DISTRACTED_ENEMY_TIME_PENALTY = 15;
 const MIN_ENEMY_SECONDS = 1;
+
+const CHECK_CONFUSED_INCREASE = 15;
+const CAPTURE_DISTRACTED_INCREASE = 20;
+const PASSIVE_RELAXED_INCREASE = 10;
+
+const MASTER_VICTORY_COINS = 50;
+const MID_TIER_VICTORY_COINS = 30;
+const LOW_TIER_VICTORY_COINS = 15;
+const NO_COINS_AWARDED = 0;
+
+const INITIAL_EVAL_MOVES_REMAINING = 0;
 
 /**
  * A live battle session opened against one OdysseyBattleNode (or
@@ -58,7 +68,7 @@ export class OdysseyBattle {
     this.enemyInitialSeconds = ENEMY_CLOCK_SECONDS[node.difficulty];
     this.playerSeconds = this.playerInitialSeconds;
     this.enemySeconds = this.enemyInitialSeconds;
-    this.evalMovesRemaining = 0;
+    this.evalMovesRemaining = INITIAL_EVAL_MOVES_REMAINING;
   }
 
   /**
@@ -69,13 +79,13 @@ export class OdysseyBattle {
    */
   registerPlayerMove(move: { isCheck: boolean; isCapture: boolean }): void {
     if (move.isCheck) {
-      this.botConditions.increase(EBotCondition.Confused, 15);
+      this.botConditions.increase(EBotCondition.Confused, CHECK_CONFUSED_INCREASE);
     }
     if (move.isCapture) {
-      this.botConditions.increase(EBotCondition.Distracted, 20);
+      this.botConditions.increase(EBotCondition.Distracted, CAPTURE_DISTRACTED_INCREASE);
     }
     if (!move.isCheck && !move.isCapture) {
-      this.botConditions.increase(EBotCondition.Relaxed, 10);
+      this.botConditions.increase(EBotCondition.Relaxed, PASSIVE_RELAXED_INCREASE);
     }
   }
 
@@ -124,33 +134,42 @@ export class OdysseyBattle {
   }
 
   /**
-   * Resolves the outcome and awards coins directly onto `game`.
-   * Checkmate: winner determined by whose turn it was; any other end
+   * Whether this end reason/outcome amounts to a story-mode victory:
+   * checkmate specifically, with the player as the winner. Any other end
    * reason (stalemate, draw, insufficient material, repetition, or a
-   * timeout where the player ran out) -> ALWAYS EBattleResult.Defeat in
-   * story mode (explicit frontend behavior, not a bug).
+   * timeout where the player ran out) is NEVER a victory in story mode,
+   * even if `playerWon` is somehow true (explicit frontend behavior, not
+   * a bug) — named so this rule has one source of truth instead of being
+   * re-derived inline wherever a battle's result matters.
+   */
+  isVictory(endReason: EBattleEndReason, playerWon: boolean): boolean {
+    return endReason === EBattleEndReason.Checkmate && playerWon;
+  }
+
+  /**
+   * Resolves the outcome and awards coins directly onto `game`.
    * Coin formula on victory only: Master -> 50, Advanced/Intermediate -> 30,
    * Beginner/Easy -> 15. No penalty and no node-completion on defeat (node
-   * remains re-attemptable). Sets game.journeyComplete if this.node.type
-   * is Boss and the result is a victory.
+   * remains re-attemptable). Sets game.journeyComplete if this.node is the
+   * boss and the result is a victory.
    */
   resolveOutcome(endReason: EBattleEndReason, playerWon: boolean, game: OdysseyGame): { result: EBattleResult; coinsAwarded: number } {
-    const result = endReason === EBattleEndReason.Checkmate && playerWon ? EBattleResult.Victory : EBattleResult.Defeat;
+    const result = this.isVictory(endReason, playerWon) ? EBattleResult.Victory : EBattleResult.Defeat;
 
     if (result === EBattleResult.Defeat) {
-      return { result, coinsAwarded: 0 };
+      return { result, coinsAwarded: NO_COINS_AWARDED };
     }
 
     const coinsAwarded =
       this.node.difficulty === EDifficulty.Master
-        ? 50
+        ? MASTER_VICTORY_COINS
         : this.node.difficulty === EDifficulty.Advanced || this.node.difficulty === EDifficulty.Intermediate
-          ? 30
-          : 15;
+          ? MID_TIER_VICTORY_COINS
+          : LOW_TIER_VICTORY_COINS;
 
     game.addCoins(coinsAwarded);
 
-    if (this.node.type === ENodeType.Boss) {
+    if (this.node.isBoss()) {
       game.journeyComplete = true;
     }
 

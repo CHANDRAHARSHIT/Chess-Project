@@ -1,5 +1,5 @@
 import { ERelicType } from "../enums/ERelicType.js";
-import { OdysseyRelic } from "./OdysseyRelic.js";
+import { OdysseyRelic, MIN_RELIC_CHARGES } from "./OdysseyRelic.js";
 import { OdysseyUndoRelic } from "./OdysseyUndoRelic.js";
 import { OdysseyHintRelic } from "./OdysseyHintRelic.js";
 import { OdysseyEvalBarRelic } from "./OdysseyEvalBarRelic.js";
@@ -17,7 +17,7 @@ import { OdysseyRerollRelic } from "./OdysseyRerollRelic.js";
  * through OdysseyBattleRelic / OdysseyShopRelic.
  */
 export class OdysseyRelicFactory {
-  static create(type: ERelicType, charges = 0): OdysseyRelic {
+  static create(type: ERelicType, charges: number = MIN_RELIC_CHARGES): OdysseyRelic {
     switch (type) {
       case ERelicType.Undo:
         return new OdysseyUndoRelic(charges);

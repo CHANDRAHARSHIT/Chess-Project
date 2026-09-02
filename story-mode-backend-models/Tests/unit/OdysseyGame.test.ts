@@ -37,6 +37,40 @@ describe("OdysseyGame", () => {
     assert.strictEqual(game.hasFreeRelicSlot(), false);
   });
 
+  test("test_canAcquireRelic_returnsTrueWhenTypeAlreadyOwnedEvenWithNoFreeSlot", () => {
+    const owned = OdysseyRelicFactory.create(ERelicType.Undo, 1);
+    const game = makeGame({
+      relics: [owned, ...Object.values(ERelicType).filter(type => type !== ERelicType.Undo).map(type => OdysseyRelicFactory.create(type))],
+    });
+    assert.strictEqual(game.hasFreeRelicSlot(), false);
+    assert.strictEqual(game.canAcquireRelic(ERelicType.Undo), true);
+  });
+
+  test("test_canAcquireRelic_returnsTrueForUnownedTypeWhenAFreeSlotExists", () => {
+    const game = makeGame({ relics: [] });
+    assert.strictEqual(game.canAcquireRelic(ERelicType.Undo), true);
+  });
+
+  test("test_canAcquireRelic_returnsFalseForUnownedTypeWhenNoFreeSlotRemains", () => {
+    const game = makeGame({ relics: Object.values(ERelicType).map(type => OdysseyRelicFactory.create(type)) });
+    // every type is already owned in this fixture, so pick a type and remove it to simulate "unowned, slots full"
+    game.relics = game.relics.slice(0, 5);
+    game.removeRelic(ERelicType.Undo);
+    game.relics.push(OdysseyRelicFactory.create(ERelicType.Hint)); // duplicate, artificial: refills the 5th slot without owning Undo
+    assert.strictEqual(game.hasFreeRelicSlot(), false);
+    assert.strictEqual(game.canAcquireRelic(ERelicType.Undo), false);
+  });
+
+  test("test_canAfford_returnsTrueWhenCoinsCoverAmount", () => {
+    const game = makeGame({ coins: 100 });
+    assert.strictEqual(game.canAfford(100), true);
+  });
+
+  test("test_canAfford_returnsFalseWhenCoinsAreInsufficient", () => {
+    const game = makeGame({ coins: 99 });
+    assert.strictEqual(game.canAfford(100), false);
+  });
+
   test("test_addRelic_addsANewRelic", () => {
     const game = makeGame({ relics: [] });
     game.addRelic(OdysseyRelicFactory.create(ERelicType.Hint, 1));

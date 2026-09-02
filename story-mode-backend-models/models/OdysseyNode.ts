@@ -2,6 +2,10 @@ import { ENodeType } from "../enums/ENodeType.js";
 import { ENodeStatus } from "../enums/ENodeStatus.js";
 import type { OdysseyGame } from "./OdysseyGame.js";
 
+/** Sentinel for OdysseyGame.currentNodeId meaning "no node entered yet". */
+export const NO_CURRENT_NODE_ID = -1;
+const START_NODE_ID = 0;
+
 /**
  * A single point on the run map.
  *
@@ -37,6 +41,11 @@ export class OdysseyNode {
     return this.edges.includes(nodeId);
   }
 
+  /** Whether this node is the run's single boss encounter. */
+  isBoss(): boolean {
+    return this.type === ENodeType.Boss;
+  }
+
   /**
    * This node's own status given the run's progress — the entity that
    * owns the rule computes it, not the caller. OdysseyMap.getNodeStatus
@@ -56,7 +65,7 @@ export class OdysseyNode {
     }
 
     if (game.completedNodes.length === 0) {
-      if (this.id === 0) {
+      if (this.id === START_NODE_ID) {
         return this.id === game.currentNodeId ? ENodeStatus.Active : ENodeStatus.Available;
       }
       return ENodeStatus.Locked;
@@ -66,7 +75,7 @@ export class OdysseyNode {
       return ENodeStatus.Active;
     }
 
-    if (game.currentNodeId !== -1 && game.completedNodes.includes(game.currentNodeId)) {
+    if (game.currentNodeId !== NO_CURRENT_NODE_ID && game.completedNodes.includes(game.currentNodeId)) {
       const currentNode = game.map.getNode(game.currentNodeId);
       if (currentNode?.isAdjacentTo(this.id)) {
         return ENodeStatus.Available;

@@ -3,21 +3,31 @@ import type { OdysseyPuzzleNode } from "./OdysseyPuzzleNode.js";
 import type { OdysseyGame } from "./OdysseyGame.js";
 
 const PUZZLES_PER_NODE = 5;
+const COINS_PER_DIFFICULTY_LEVEL = 20;
+const NO_REWARD_COINS = 0;
+
+const BEGINNER_MIN_RATING = 800;
+const RATING_BAND_WIDTH = 400;
+const EASY_MIN_RATING = BEGINNER_MIN_RATING + RATING_BAND_WIDTH; // 1200
+const INTERMEDIATE_MIN_RATING = EASY_MIN_RATING + RATING_BAND_WIDTH; // 1600
+const ADVANCED_MIN_RATING = INTERMEDIATE_MIN_RATING + RATING_BAND_WIDTH; // 2000
+
+const SHUFFLE_COMPARATOR_MIDPOINT = 0.5;
 
 function ratingBandFor(difficulty: EDifficulty): { minRating: number; maxRating: number } {
   const minRating =
     difficulty === EDifficulty.Beginner
-      ? 800
+      ? BEGINNER_MIN_RATING
       : difficulty === EDifficulty.Easy
-        ? 1200
+        ? EASY_MIN_RATING
         : difficulty === EDifficulty.Intermediate
-          ? 1600
-          : 2000;
-  return { minRating, maxRating: minRating + 400 };
+          ? INTERMEDIATE_MIN_RATING
+          : ADVANCED_MIN_RATING;
+  return { minRating, maxRating: minRating + RATING_BAND_WIDTH };
 }
 
 function shuffle<T>(items: T[]): T[] {
-  return [...items].sort(() => 0.5 - Math.random());
+  return [...items].sort(() => SHUFFLE_COMPARATOR_MIDPOINT - Math.random());
 }
 
 /**
@@ -78,9 +88,9 @@ export class OdysseyPuzzleEncounter {
    */
   resolveReward(solvedCount: number, game: OdysseyGame): { coinsAwarded: number } {
     if (solvedCount !== this.puzzles.length) {
-      return { coinsAwarded: 0 };
+      return { coinsAwarded: NO_REWARD_COINS };
     }
-    const coinsAwarded = this.node.difficulty * 20;
+    const coinsAwarded = this.node.difficulty * COINS_PER_DIFFICULTY_LEVEL;
     game.addCoins(coinsAwarded);
     return { coinsAwarded };
   }

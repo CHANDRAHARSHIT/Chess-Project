@@ -1,7 +1,9 @@
 import { OdysseyItem } from "./OdysseyItem.js";
 import { ERelicType } from "../enums/ERelicType.js";
 
+export const MIN_RELIC_CHARGES = 0;
 export const MAX_RELIC_CHARGES = 5; // cap per relic's charge count, and cap on distinct relics a run can carry
+const CHARGES_PER_USE = 1;
 
 /**
  * A relic a run equips and spends charges of. Charge count now lives ON
@@ -18,19 +20,19 @@ export const MAX_RELIC_CHARGES = 5; // cap per relic's charge count, and cap on 
  */
 export abstract class OdysseyRelic extends OdysseyItem {
   readonly type: ERelicType;
-  charges: number; // 0..MAX_RELIC_CHARGES
+  charges: number; // MIN_RELIC_CHARGES..MAX_RELIC_CHARGES
 
-  protected constructor(type: ERelicType, name: string, description: string, charges = 0) {
+  protected constructor(type: ERelicType, name: string, description: string, charges: number = MIN_RELIC_CHARGES) {
     super(`relic-${type}`, name, description);
-    if (charges < 0 || charges > MAX_RELIC_CHARGES) {
-      throw new RangeError(`charges must be between 0 and ${MAX_RELIC_CHARGES}, got ${charges}`);
+    if (charges < MIN_RELIC_CHARGES || charges > MAX_RELIC_CHARGES) {
+      throw new RangeError(`charges must be between ${MIN_RELIC_CHARGES} and ${MAX_RELIC_CHARGES}, got ${charges}`);
     }
     this.type = type;
     this.charges = charges;
   }
 
   hasCharge(): boolean {
-    return this.charges > 0;
+    return this.charges > MIN_RELIC_CHARGES;
   }
 
   /** Spends one charge. Returns false if none remain. */
@@ -38,7 +40,7 @@ export abstract class OdysseyRelic extends OdysseyItem {
     if (!this.hasCharge()) {
       return false;
     }
-    this.charges -= 1;
+    this.charges -= CHARGES_PER_USE;
     return true;
   }
 }

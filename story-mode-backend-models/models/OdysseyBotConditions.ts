@@ -15,9 +15,9 @@ export class OdysseyBotConditions {
 
   constructor() {
     this.values = {
-      [EBotCondition.Confused]: 0,
-      [EBotCondition.Relaxed]: 0,
-      [EBotCondition.Distracted]: 0,
+      [EBotCondition.Confused]: MIN_VALUE,
+      [EBotCondition.Relaxed]: MIN_VALUE,
+      [EBotCondition.Distracted]: MIN_VALUE,
     };
   }
 
@@ -38,6 +38,6 @@ export class OdysseyBotConditions {
 
   /** Resets `condition` to 0 — called once it's been consumed for a bot move, regardless of whether it fired. */
   consume(condition: EBotCondition): void {
-    this.values[condition] = 0;
+    this.values[condition] = MIN_VALUE;
   }
 }

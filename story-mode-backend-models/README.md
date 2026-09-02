@@ -90,7 +90,7 @@ carry real extra fields.
 
 | Class | Role |
 |---|---|
-| `OdysseyNode` | Concrete base — id, type, position, edges, `isAdjacentTo()`, `statusFor(game)`. |
+| `OdysseyNode` | Concrete base — id, type, position, edges, `isAdjacentTo()`, `isBoss()`, `statusFor(game)`. |
 | `OdysseyBattleNode` | Adds `difficulty` and `monster`. Used for enemy/elite/boss nodes. |
 | `OdysseyBossNode` | Extends `OdysseyBattleNode` — the one boss node; victory sets `journeyComplete`. |
 | `OdysseyPuzzleNode` | Adds `difficulty`. |
@@ -102,6 +102,7 @@ classDiagram
         +ENodeType type
         +number[] edges
         +isAdjacentTo(nodeId) bool
+        +isBoss() bool
         +statusFor(game) ENodeStatus
     }
     class OdysseyBattleNode {
@@ -129,10 +130,19 @@ economy, and progress. Every other class that mutates run state
 (`OdysseyBattle`, `OdysseyMerchant`, `OdysseyRestSite`,
 `OdysseyPuzzleEncounter`) takes an `OdysseyGame`, not an `OdysseyPlayer`.
 
+Compound rules that would otherwise be re-derived at each call site are
+named, single-source-of-truth predicates on the class that owns their
+data — the same pattern as `Session.isActive()`/`User.canLogin()`:
+`OdysseyNode.isBoss()` (used by both `OdysseyBattle` and `OdysseyMonster`,
+which used to each check `type === ENodeType.Boss` separately),
+`OdysseyBattle.isVictory()` (checkmate + player-won, not just any win),
+and `OdysseyGame.canAfford()` / `canAcquireRelic()` (used by
+`OdysseyMerchant.purchase()` instead of inline coin/slot checks).
+
 | Class | Role |
 |---|---|
 | `OdysseyPlayer` | A player identity (character) — e.g. the Knight. `getAvailable()`/`select()` handle the roster and unlock rules. |
-| `OdysseyGame` | The run/save-slot state. Owns `player`, `map`, `relics[]`, coins, and progress; guard methods like `canEnterNode()`, `hasCharge()`. |
+| `OdysseyGame` | The run/save-slot state. Owns `player`, `map`, `relics[]`, coins, and progress; guard methods like `canEnterNode()`, `hasCharge()`, `canAfford()`, `canAcquireRelic()`. |
 | `OdysseyMap` | Holds `OdysseyNode[]`; generates and looks up node status. |
 | `OdysseyMonster` | A battle opponent's display profile; `forNode()` picks one deterministically. |
 | `OdysseyBattle` | A live battle session — clocks + `OdysseyBotConditions`. |
@@ -164,6 +174,8 @@ classDiagram
         +getRelic(type) OdysseyRelic
         +hasCharge(type) bool
         +hasFreeRelicSlot() bool
+        +canAcquireRelic(type) bool
+        +canAfford(amount) bool
         +canEnterNode(nodeId) bool
         +completeNode(nodeId, wasBoss)
         +calculateProgressPercent() number
@@ -187,6 +199,7 @@ classDiagram
         +OdysseyBotConditions botConditions
         +registerPlayerMove(move)
         +computeAiMove(fen)
+        +isVictory(endReason, playerWon) bool
         +resolveOutcome(endReason, playerWon, game)
     }
     class OdysseyBotConditions {
@@ -273,4 +286,4 @@ failing test's name alone says what broke. Run them with:
 npx tsx --test story-mode-backend-models/tests/unit/*.test.ts
 ```
 
-156 tests, all passing.
+167 tests, all passing.

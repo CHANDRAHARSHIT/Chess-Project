@@ -127,6 +127,26 @@ describe("OdysseyBattle", () => {
     }
   });
 
+  test("test_isVictory_returnsTrueForCheckmateAndPlayerWon", () => {
+    const battle = new OdysseyBattle(makeBattleNode());
+    assert.strictEqual(battle.isVictory(EBattleEndReason.Checkmate, true), true);
+  });
+
+  test("test_isVictory_returnsFalseForCheckmateWhenPlayerDidNotWin", () => {
+    const battle = new OdysseyBattle(makeBattleNode());
+    assert.strictEqual(battle.isVictory(EBattleEndReason.Checkmate, false), false);
+  });
+
+  test("test_isVictory_returnsFalseForDrawEvenWhenPlayerWon", () => {
+    const battle = new OdysseyBattle(makeBattleNode());
+    assert.strictEqual(battle.isVictory(EBattleEndReason.Draw, true), false);
+  });
+
+  test("test_isVictory_returnsFalseForTimeoutEvenWhenPlayerWon", () => {
+    const battle = new OdysseyBattle(makeBattleNode());
+    assert.strictEqual(battle.isVictory(EBattleEndReason.Timeout, true), false);
+  });
+
   test("test_resolveOutcome_returnsVictoryOnCheckmateWhenPlayerWon", () => {
     const battle = new OdysseyBattle(makeBattleNode(EDifficulty.Beginner));
     const outcome = battle.resolveOutcome(EBattleEndReason.Checkmate, true, makeGame());

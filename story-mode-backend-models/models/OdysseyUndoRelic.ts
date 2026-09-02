@@ -1,11 +1,14 @@
 import { OdysseyBattleRelic } from "./OdysseyBattleRelic.js";
+import { MIN_RELIC_CHARGES } from "./OdysseyRelic.js";
 import { ERelicType } from "../enums/ERelicType.js";
 import { EBotCondition } from "../enums/EBotCondition.js";
 import type { OdysseyBattle } from "./OdysseyBattle.js";
 import type { OdysseyGame } from "./OdysseyGame.js";
 
+const CONFUSED_INCREASE = 25;
+
 export class OdysseyUndoRelic extends OdysseyBattleRelic {
-  constructor(charges = 0) {
+  constructor(charges: number = MIN_RELIC_CHARGES) {
     super(ERelicType.Undo, "Relic of Undo", "+1 to max Undos.", charges);
   }
 
@@ -21,6 +24,6 @@ export class OdysseyUndoRelic extends OdysseyBattleRelic {
     if (!this.consume()) {
       return;
     }
-    battle.botConditions.increase(EBotCondition.Confused, 25);
+    battle.botConditions.increase(EBotCondition.Confused, CONFUSED_INCREASE);
   }
 }

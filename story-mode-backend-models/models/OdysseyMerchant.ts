@@ -1,15 +1,18 @@
 import { OdysseyShopItem } from "./OdysseyShopItem.js";
 import { OdysseyRelicFactory } from "./OdysseyRelicFactory.js";
-import { MAX_RELIC_CHARGES } from "./OdysseyRelic.js";
+import { MAX_RELIC_CHARGES, MIN_RELIC_CHARGES } from "./OdysseyRelic.js";
 import { ERelicType } from "../enums/ERelicType.js";
 import type { OdysseyGame } from "./OdysseyGame.js";
 
 const OFFERING_COUNT = 3;
 const SELL_PRICE = 25;
+const NO_COINS_GAINED = 0;
 const PRICE_BASE = 20;
 const PRICE_JITTER = 11; // rand[0..10]
 const PRICE_JITTER_OFFSET = 5;
 const PRICE_FLOOR = 5;
+const NO_PURCHASABLE_QUANTITY = 0;
+const SHUFFLE_COMPARATOR_MIDPOINT = 0.5;
 
 const RELIC_TYPES: ERelicType[] = Object.values(ERelicType);
 
@@ -18,7 +21,7 @@ function rollPrice(): number {
 }
 
 function shuffle<T>(items: T[]): T[] {
-  return [...items].sort(() => 0.5 - Math.random());
+  return [...items].sort(() => SHUFFLE_COMPARATOR_MIDPOINT - Math.random());
 }
 
 export class OdysseyMerchant {
@@ -46,31 +49,35 @@ export class OdysseyMerchant {
     this.purchasedTypes.clear();
   }
 
+  /** Whether `type` was already bought during this shop visit (resets on rollOfferings). */
+  private hasPurchased(type: ERelicType): boolean {
+    return this.purchasedTypes.has(type);
+  }
+
   /**
    * Buys `quantity` charges of `item.relicType` at
    * item.totalCost(quantity), applied directly to `game`. Quantity is
    * clamped via item.maxPurchasableQuantity(game's current charges for
-   * that type). Blocked if the type isn't already owned AND
-   * !game.hasFreeRelicSlot(). Each item can only be purchased once per
-   * shop visit.
+   * that type). Blocked if !game.canAcquireRelic(item.relicType). Each
+   * item can only be purchased once per shop visit.
    */
   purchase(item: OdysseyShopItem, quantity: number, game: OdysseyGame): void {
-    if (this.purchasedTypes.has(item.relicType)) {
+    if (this.hasPurchased(item.relicType)) {
+      return;
+    }
+
+    if (!game.canAcquireRelic(item.relicType)) {
       return;
     }
 
     const owned = game.getRelic(item.relicType);
-    if (!owned && !game.hasFreeRelicSlot()) {
-      return;
-    }
-
-    const actualQuantity = Math.min(quantity, item.maxPurchasableQuantity(owned?.charges ?? 0));
-    if (actualQuantity <= 0) {
+    const actualQuantity = Math.min(quantity, item.maxPurchasableQuantity(owned?.charges ?? MIN_RELIC_CHARGES));
+    if (actualQuantity <= NO_PURCHASABLE_QUANTITY) {
       return;
     }
 
     const totalCost = item.totalCost(actualQuantity);
-    if (game.coins < totalCost) {
+    if (!game.canAfford(totalCost)) {
       return;
     }
 
@@ -91,7 +98,7 @@ export class OdysseyMerchant {
    */
   sell(relicType: ERelicType, game: OdysseyGame): { coinsGained: number } {
     if (!game.ownsRelic(relicType)) {
-      return { coinsGained: 0 };
+      return { coinsGained: NO_COINS_GAINED };
     }
     game.removeRelic(relicType);
     game.addCoins(SELL_PRICE);

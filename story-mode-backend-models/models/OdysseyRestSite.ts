@@ -1,6 +1,6 @@
 import { ERelicType } from "../enums/ERelicType.js";
 import { OdysseyRelicFactory } from "./OdysseyRelicFactory.js";
-import { MAX_RELIC_CHARGES } from "./OdysseyRelic.js";
+import { MAX_RELIC_CHARGES, MIN_RELIC_CHARGES } from "./OdysseyRelic.js";
 import type { OdysseyGame } from "./OdysseyGame.js";
 
 const ALL_RELIC_TYPES: ERelicType[] = Object.values(ERelicType);
@@ -10,6 +10,7 @@ const RELIC_FIND_CHANCE = 0.1;
 const FORCED_RELIC_CHANCE = 0.5;
 const COIN_MIN = 15;
 const COIN_MAX = 35;
+const POINTS_PER_PICK = 1;
 
 export class OdysseyRestSite {
   restores!: Partial<Record<ERelicType, number>>; // sums to <=5, one point at a time, uniform-random among uncapped types
@@ -33,7 +34,7 @@ export class OdysseyRestSite {
     const restores: Partial<Record<ERelicType, number>> = {};
     let remainingPoints = REST_POINTS;
 
-    const projectedCharges = (type: ERelicType) => (game.getRelic(type)?.charges ?? 0) + (restores[type] ?? 0);
+    const projectedCharges = (type: ERelicType) => (game.getRelic(type)?.charges ?? MIN_RELIC_CHARGES) + (restores[type] ?? MIN_RELIC_CHARGES);
 
     while (remainingPoints > 0) {
       const eligible = ALL_RELIC_TYPES.filter(type => projectedCharges(type) < MAX_RELIC_CHARGES);
@@ -41,8 +42,8 @@ export class OdysseyRestSite {
         break;
       }
       const pick = eligible[Math.floor(Math.random() * eligible.length)];
-      restores[pick] = (restores[pick] ?? 0) + 1;
-      remainingPoints -= 1;
+      restores[pick] = (restores[pick] ?? MIN_RELIC_CHARGES) + POINTS_PER_PICK;
+      remainingPoints -= POINTS_PER_PICK;
     }
 
     const restoredPoints = REST_POINTS - remainingPoints;

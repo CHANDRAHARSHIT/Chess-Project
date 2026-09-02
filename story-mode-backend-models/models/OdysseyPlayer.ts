@@ -46,7 +46,7 @@ export class OdysseyPlayer {
       new OdysseyPlayer(
         EPlayerType.Bishop,
         "The Bishop",
-        "Strikes from afar. Unlocked by reaching Floor 10.",
+        `Strikes from afar. Unlocked by reaching Floor ${BISHOP_UNLOCK_FLOOR}.`,
         game.completedNodes.length >= BISHOP_UNLOCK_FLOOR
       ),
       new OdysseyPlayer(

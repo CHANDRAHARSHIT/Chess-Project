@@ -1,11 +1,14 @@
 import { OdysseyBattleRelic } from "./OdysseyBattleRelic.js";
+import { MIN_RELIC_CHARGES } from "./OdysseyRelic.js";
 import { ERelicType } from "../enums/ERelicType.js";
 import { EBotCondition } from "../enums/EBotCondition.js";
 import type { OdysseyBattle } from "./OdysseyBattle.js";
 import type { OdysseyGame } from "./OdysseyGame.js";
 
+const DISTRACTED_INCREASE = 15;
+
 export class OdysseyHintRelic extends OdysseyBattleRelic {
-  constructor(charges = 0) {
+  constructor(charges: number = MIN_RELIC_CHARGES) {
     super(ERelicType.Hint, "Relic of Oracle", "+1 to max Hints.", charges);
   }
 
@@ -20,6 +23,6 @@ export class OdysseyHintRelic extends OdysseyBattleRelic {
     if (!this.consume()) {
       return;
     }
-    battle.botConditions.increase(EBotCondition.Distracted, 15);
+    battle.botConditions.increase(EBotCondition.Distracted, DISTRACTED_INCREASE);
   }
 }

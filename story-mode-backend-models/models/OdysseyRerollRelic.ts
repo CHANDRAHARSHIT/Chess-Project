@@ -1,10 +1,11 @@
 import { OdysseyShopRelic } from "./OdysseyShopRelic.js";
+import { MIN_RELIC_CHARGES } from "./OdysseyRelic.js";
 import { ERelicType } from "../enums/ERelicType.js";
 import type { OdysseyMerchant } from "./OdysseyMerchant.js";
 import type { OdysseyGame } from "./OdysseyGame.js";
 
 export class OdysseyRerollRelic extends OdysseyShopRelic {
-  constructor(charges = 0) {
+  constructor(charges: number = MIN_RELIC_CHARGES) {
     super(ERelicType.Reroll, "Moirai's Thread", "+1 to max Rerolls.", charges);
   }
 

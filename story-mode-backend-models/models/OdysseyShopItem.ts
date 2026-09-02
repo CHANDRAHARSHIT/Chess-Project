@@ -1,5 +1,5 @@
 import { ERelicType } from "../enums/ERelicType.js";
-import { MAX_RELIC_CHARGES } from "./OdysseyRelic.js";
+import { MAX_RELIC_CHARGES, MIN_RELIC_CHARGES } from "./OdysseyRelic.js";
 
 const MIN_COST_PER_CHARGE = 5; // the floor from OdysseyMerchant's price roll: max(5, 20 + rand[0..10] - 5)
 
@@ -28,8 +28,8 @@ export class OdysseyShopItem {
     return this.costPerCharge * quantity;
   }
 
-  /** MAX_RELIC_CHARGES - currentCharges, floored at 0. */
+  /** MAX_RELIC_CHARGES - currentCharges, floored at MIN_RELIC_CHARGES. */
   maxPurchasableQuantity(currentCharges: number): number {
-    return Math.max(0, MAX_RELIC_CHARGES - currentCharges);
+    return Math.max(MIN_RELIC_CHARGES, MAX_RELIC_CHARGES - currentCharges);
   }
 }

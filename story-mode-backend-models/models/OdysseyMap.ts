@@ -15,6 +15,34 @@ const MAX_NODES_PER_FLOOR = 4;
 const MIN_PREDECESSORS = 1;
 const MAX_PREDECESSORS = 2;
 
+const BEGINNER_MAX_FLOOR = 3;
+const EASY_MAX_FLOOR = 6;
+const INTERMEDIATE_MAX_FLOOR = 10;
+
+const START_NODE_ID = 0;
+const START_NODE_LABEL = "Pawn Sentinel";
+const START_NODE_DESCRIPTION = "The journey begins.";
+const START_X = 50;
+const START_Y = 0;
+
+const BOSS_NODE_LABEL = "The Dark King";
+const BOSS_NODE_DESCRIPTION = "The final battle.";
+const BOSS_X = 50;
+const BOSS_Y = 100;
+const BOSS_FLOOR_OFFSET = 1; // the boss sits one "floor" past the last generated floor
+const NO_EDGES: number[] = [];
+
+const CENTER_COLUMN = 3; // placeholder column for the single-node start/boss floors
+
+const ENEMY_NODE_DESCRIPTION = "A foe blocks the path.";
+const PUZZLE_NODE_DESCRIPTION = "A trial of tactics.";
+const REST_NODE_DESCRIPTION = "A quiet place to recover.";
+const MERCHANT_NODE_DESCRIPTION = "A wandering trader.";
+
+const POSITION_SCALE = 100; // x/y are expressed as 0-100 (percent of the map canvas)
+const COLUMN_SPACING_OFFSET = 1;
+const FLOOR_SPACING_OFFSET = 1;
+
 /** No two of these in a row along any single edge — mirrors mapGenerator.ts's adjacency constraint. */
 const RESTRICTED_TYPES = new Set<ENodeType>([ENodeType.Rest, ENodeType.Elite, ENodeType.Merchant]);
 
@@ -68,9 +96,9 @@ function pickWeightedType(rng: () => number, excludeRestricted: boolean): ENodeT
 }
 
 function difficultyForFloor(floor: number): EDifficulty {
-  if (floor <= 3) return EDifficulty.Beginner;
-  if (floor <= 6) return EDifficulty.Easy;
-  if (floor <= 10) return EDifficulty.Intermediate;
+  if (floor <= BEGINNER_MAX_FLOOR) return EDifficulty.Beginner;
+  if (floor <= EASY_MAX_FLOOR) return EDifficulty.Easy;
+  if (floor <= INTERMEDIATE_MAX_FLOOR) return EDifficulty.Intermediate;
   return EDifficulty.Advanced;
 }
 
@@ -98,7 +126,7 @@ export class OdysseyMap {
   static generate(seed?: string): OdysseyMap {
     const rng = createRng(seed);
 
-    const startPlan: NodePlan = { id: 0, floor: 0, column: 3, predecessors: [], type: ENodeType.Start };
+    const startPlan: NodePlan = { id: START_NODE_ID, floor: 0, column: CENTER_COLUMN, predecessors: [], type: ENodeType.Start };
     const floors: NodePlan[][] = [];
     let nextId = 1;
     let previousFloor: NodePlan[] = [startPlan];
@@ -133,8 +161,8 @@ export class OdysseyMap {
 
     const bossPlan: NodePlan = {
       id: nextId,
-      floor: FLOOR_COUNT + 1,
-      column: 3,
+      floor: FLOOR_COUNT + BOSS_FLOOR_OFFSET,
+      column: CENTER_COLUMN,
       predecessors: previousFloor.map(node => node.id),
       type: ENodeType.Boss,
     };
@@ -160,31 +188,39 @@ export class OdysseyMap {
 
     const nodes: OdysseyNode[] = [];
     nodes.push(
-      new OdysseyNode(startPlan.id, ENodeType.Start, "Pawn Sentinel", 50, 0, edgesById.get(startPlan.id) ?? [], "The journey begins.")
+      new OdysseyNode(
+        startPlan.id,
+        ENodeType.Start,
+        START_NODE_LABEL,
+        START_X,
+        START_Y,
+        edgesById.get(startPlan.id) ?? NO_EDGES,
+        START_NODE_DESCRIPTION
+      )
     );
 
     for (const floor of floors) {
       const columnCount = floor.length;
       for (const plan of floor) {
-        const x = ((plan.column + 1) / (columnCount + 1)) * 100;
-        const y = (plan.floor / (FLOOR_COUNT + 1)) * 100;
-        const edges = edgesById.get(plan.id) ?? [];
+        const x = ((plan.column + COLUMN_SPACING_OFFSET) / (columnCount + COLUMN_SPACING_OFFSET)) * POSITION_SCALE;
+        const y = (plan.floor / (FLOOR_COUNT + FLOOR_SPACING_OFFSET)) * POSITION_SCALE;
+        const edges = edgesById.get(plan.id) ?? NO_EDGES;
         const difficulty = difficultyForFloor(plan.floor);
         const label = `Floor ${plan.floor}`;
 
         switch (plan.type) {
           case ENodeType.Enemy:
           case ENodeType.Elite:
-            nodes.push(new OdysseyBattleNode(plan.id, plan.type, label, x, y, edges, "A foe blocks the path.", difficulty));
+            nodes.push(new OdysseyBattleNode(plan.id, plan.type, label, x, y, edges, ENEMY_NODE_DESCRIPTION, difficulty));
             break;
           case ENodeType.Puzzle:
-            nodes.push(new OdysseyPuzzleNode(plan.id, label, x, y, edges, "A trial of tactics.", difficulty));
+            nodes.push(new OdysseyPuzzleNode(plan.id, label, x, y, edges, PUZZLE_NODE_DESCRIPTION, difficulty));
             break;
           case ENodeType.Rest:
-            nodes.push(new OdysseyNode(plan.id, ENodeType.Rest, label, x, y, edges, "A quiet place to recover."));
+            nodes.push(new OdysseyNode(plan.id, ENodeType.Rest, label, x, y, edges, REST_NODE_DESCRIPTION));
             break;
           case ENodeType.Merchant:
-            nodes.push(new OdysseyNode(plan.id, ENodeType.Merchant, label, x, y, edges, "A wandering trader."));
+            nodes.push(new OdysseyNode(plan.id, ENodeType.Merchant, label, x, y, edges, MERCHANT_NODE_DESCRIPTION));
             break;
           default:
             throw new Error(`Unexpected node type during construction: ${plan.type}`);
@@ -192,7 +228,7 @@ export class OdysseyMap {
       }
     }
 
-    nodes.push(new OdysseyBossNode(bossPlan.id, "The Dark King", 50, 100, [], "The final battle."));
+    nodes.push(new OdysseyBossNode(bossPlan.id, BOSS_NODE_LABEL, BOSS_X, BOSS_Y, NO_EDGES, BOSS_NODE_DESCRIPTION));
 
     return new OdysseyMap(nodes);
   }
