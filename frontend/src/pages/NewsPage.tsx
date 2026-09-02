@@ -1,5 +1,4 @@
-import { useState, useEffect, useRef } from "react";
-import { Link } from "react-router";
+import { useState, useEffect } from "react";
 import "@/new_index.css";
 
 type TabType = "classical" | "rapid" | "blitz";
@@ -53,11 +52,12 @@ const NEWS_ITEMS = [
   "Carlsen, Caruana Lead 18 Confirmed Players For Total Chess Pilot In Budapest",
 ];
 
+import NewsSettingsWidget from "@/features/news/NewsSettingsWidget";
+
 export default function NewsPage() {
   const [activeTab, setActiveTab] = useState<TabType>("classical");
   const [widgets, setWidgets] = useState<WidgetId[]>(["news", "ratings"]);
   const [openMenu, setOpenMenu] = useState<WidgetId | null>(null);
-  const rightColumnRef = useRef<HTMLElement>(null);
 
   // Close menus on click outside
   useEffect(() => {
@@ -142,7 +142,6 @@ export default function NewsPage() {
 
         {/* Right Column (Widgets) */}
         <aside
-          ref={rightColumnRef}
           id="rightColumn"
           className="flex flex-col gap-[26px] max-[650px]:gap-[14px]"
         >
@@ -158,69 +157,18 @@ export default function NewsPage() {
                   data-widget="news"
                   className="bg-[#f3f3f3] rounded-[8px] max-[650px]:rounded-none overflow-hidden relative p-[18px_18px_16px] max-[650px]:p-[16px] transition-all duration-200"
                 >
-                  <header className="flex items-start justify-between gap-[14px] pb-[14px] border-b border-[#d4d4d4]">
-                    <div>
-                      <h2 className="m-0 text-[22px] font-bold leading-[1.1] text-[#111111]">
-                        News
-                      </h2>
-                      <Link
-                        to="/news#news-page"
-                        className="inline-block mt-[7px] text-[#666666] hover:text-[#111111] text-[13px] font-[650] no-underline transition-colors"
-                      >
-                        View Page &gt;
-                      </Link>
-                    </div>
-
-                    <div className="settings-wrap relative shrink-0">
-                      <button
-                        type="button"
-                        aria-label="News settings"
-                        aria-expanded={isMenuOpen}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setOpenMenu(isMenuOpen ? null : "news");
-                        }}
-                        className={`w-[36px] h-[36px] border-0 rounded-[8px] grid place-items-center text-[22px] cursor-pointer transition-all duration-150 active:scale-[0.96] ${
-                          isMenuOpen
-                            ? "bg-white text-[#111111]"
-                            : "bg-transparent text-[#666666] hover:bg-white hover:text-[#111111]"
-                        }`}
-                      >
-                        ⚙
-                      </button>
-
-                      {isMenuOpen && (
-                        <div className="settings-menu absolute top-[42px] right-0 w-[180px] p-[7px] bg-white border border-[#cfcfcf] rounded-[9px] shadow-[0_12px_28px_rgba(0,0,0,0.14)] z-20">
-                          <button
-                            type="button"
-                            disabled={isFirst}
-                            onClick={() => moveWidget("news", "up")}
-                            style={{ opacity: isFirst ? 0.38 : 1 }}
-                            className={`menu-button move-up w-full border-0 rounded-[6px] bg-transparent text-[#222222] p-[10px_11px] text-left text-[14px] transition-colors duration-150 ${
-                              isFirst
-                                ? "cursor-not-allowed"
-                                : "cursor-pointer hover:bg-[#4a4945] hover:text-white"
-                            }`}
-                          >
-                            ↑ Move Up
-                          </button>
-                          <button
-                            type="button"
-                            disabled={isLast}
-                            onClick={() => moveWidget("news", "down")}
-                            style={{ opacity: isLast ? 0.38 : 1 }}
-                            className={`menu-button move-down w-full border-0 rounded-[6px] bg-transparent text-[#222222] p-[10px_11px] text-left text-[14px] transition-colors duration-150 ${
-                              isLast
-                                ? "cursor-not-allowed"
-                                : "cursor-pointer hover:bg-[#4a4945] hover:text-white"
-                            }`}
-                          >
-                            ↓ Move Down
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </header>
+                  <NewsSettingsWidget
+                    title="News"
+                    linkHref="/news#news-page"
+                    isFirst={isFirst}
+                    isLast={isLast}
+                    isMenuOpen={isMenuOpen}
+                    onToggleMenu={() =>
+                      setOpenMenu(isMenuOpen ? null : "news")
+                    }
+                    onMoveUp={() => moveWidget("news", "up")}
+                    onMoveDown={() => moveWidget("news", "down")}
+                  />
 
                   <div className="news-list pt-[4px]">
                     {NEWS_ITEMS.map((item, i) => (
@@ -245,69 +193,18 @@ export default function NewsPage() {
                   data-widget="ratings"
                   className="bg-[#f3f3f3] rounded-[8px] max-[650px]:rounded-none overflow-hidden relative p-[18px_18px_16px] max-[650px]:p-[16px] transition-all duration-200"
                 >
-                  <header className="flex items-start justify-between gap-[14px] pb-[14px] border-b border-[#d4d4d4]">
-                    <div>
-                      <h2 className="m-0 text-[22px] font-bold leading-[1.1] text-[#111111]">
-                        Live Ratings
-                      </h2>
-                      <Link
-                        to="/news#ratings-page"
-                        className="inline-block mt-[7px] text-[#666666] hover:text-[#111111] text-[13px] font-[650] no-underline transition-colors"
-                      >
-                        View Page &gt;
-                      </Link>
-                    </div>
-
-                    <div className="settings-wrap relative shrink-0">
-                      <button
-                        type="button"
-                        aria-label="Live Ratings settings"
-                        aria-expanded={isMenuOpen}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setOpenMenu(isMenuOpen ? null : "ratings");
-                        }}
-                        className={`w-[36px] h-[36px] border-0 rounded-[8px] grid place-items-center text-[22px] cursor-pointer transition-all duration-150 active:scale-[0.96] ${
-                          isMenuOpen
-                            ? "bg-white text-[#111111]"
-                            : "bg-transparent text-[#666666] hover:bg-white hover:text-[#111111]"
-                        }`}
-                      >
-                        ⚙
-                      </button>
-
-                      {isMenuOpen && (
-                        <div className="settings-menu absolute top-[42px] right-0 w-[180px] p-[7px] bg-white border border-[#cfcfcf] rounded-[9px] shadow-[0_12px_28px_rgba(0,0,0,0.14)] z-20">
-                          <button
-                            type="button"
-                            disabled={isFirst}
-                            onClick={() => moveWidget("ratings", "up")}
-                            style={{ opacity: isFirst ? 0.38 : 1 }}
-                            className={`menu-button move-up w-full border-0 rounded-[6px] bg-transparent text-[#222222] p-[10px_11px] text-left text-[14px] transition-colors duration-150 ${
-                              isFirst
-                                ? "cursor-not-allowed"
-                                : "cursor-pointer hover:bg-[#4a4945] hover:text-white"
-                            }`}
-                          >
-                            ↑ Move Up
-                          </button>
-                          <button
-                            type="button"
-                            disabled={isLast}
-                            onClick={() => moveWidget("ratings", "down")}
-                            style={{ opacity: isLast ? 0.38 : 1 }}
-                            className={`menu-button move-down w-full border-0 rounded-[6px] bg-transparent text-[#222222] p-[10px_11px] text-left text-[14px] transition-colors duration-150 ${
-                              isLast
-                                ? "cursor-not-allowed"
-                                : "cursor-pointer hover:bg-[#4a4945] hover:text-white"
-                            }`}
-                          >
-                            ↓ Move Down
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </header>
+                  <NewsSettingsWidget
+                    title="Live Ratings"
+                    linkHref="/news#ratings-page"
+                    isFirst={isFirst}
+                    isLast={isLast}
+                    isMenuOpen={isMenuOpen}
+                    onToggleMenu={() =>
+                      setOpenMenu(isMenuOpen ? null : "ratings")
+                    }
+                    onMoveUp={() => moveWidget("ratings", "up")}
+                    onMoveDown={() => moveWidget("ratings", "down")}
+                  />
 
                   {/* Rating Controls */}
                   <div className="rating-controls mt-[12px]">
