@@ -8,7 +8,6 @@
 import { prisma } from "../config/prisma.js";
 import { env } from "../config/env.js";
 import { generateStartingFen } from "../variant/chess960/chess960Rules.js";
-import { reportError } from "../observability/index.js";
 import { StockfishEngine } from "./detection/engine/StockfishEngine.js";
 import { PolicyRegistry } from "./feedback/PolicyRegistry.js";
 import {
@@ -108,32 +107,29 @@ async function resolveRecordId(gameSessionId: string): Promise<string | null> {
 }
 
 /**
- * Fire-and-forget hook for game completion, keyed by session rather than record
- * id — Results persists the record without returning its id.
+ * Post-game blunder review for a finished game, keyed by session rather than
+ * record id — Results persists the record without returning its id.
  *
- * Mirrors the Session → Results decoupling: analysis failure must never affect
- * the game that just ended, so every error is swallowed after reporting.
+ * Registered as the `blunder_analysis` action, so the event manager owns
+ * isolation and error reporting: a failure here can never reach the game that
+ * just ended.
  */
-export function analyseOnGameCompleted(gameSessionId: string): void {
+export async function runBlunderAnalysis(gameSessionId: string): Promise<void> {
   if (!env.ANTICHEAT_ENABLED) return;
 
-  resolveRecordId(gameSessionId)
-    .then(async (gameRecordId) => {
-      if (!gameRecordId) return;
-      console.log(`\n${await analyseGameAsText(gameRecordId)}\n`);
-    })
-    .catch((err) => {
-      if (err instanceof GameNotAnalysableError) {
-        console.warn(`[anticheat] Skipped analysis for session ${gameSessionId}: ${err.message}`);
-        return;
-      }
-      reportError({
-        domain: "anticheat",
-        error: err as Error,
-        fatal: false,
-        context: { gameSessionId, reason: "post_game_analysis_failed" },
-      });
-    });
+  const gameRecordId = await resolveRecordId(gameSessionId);
+  if (!gameRecordId) return;
+
+  try {
+    console.log(`\n${await analyseGameAsText(gameRecordId)}\n`);
+  } catch (error) {
+    // A game that cannot be replayed is an expected skip, not a failure.
+    if (error instanceof GameNotAnalysableError) {
+      console.warn(`[anticheat] Skipped analysis for session ${gameSessionId}: ${error.message}`);
+      return;
+    }
+    throw error;
+  }
 }
 
 export { GameNotAnalysableError };

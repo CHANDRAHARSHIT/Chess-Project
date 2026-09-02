@@ -1,6 +1,13 @@
 /**
- * Dispatches platform events to actions via the trigger/action table.
- * Outside `anticheat/` because other domains will consume these events too.
+ * Dispatches platform events to the actions registered against them.
+ *
+ * EventManager (this class)
+ *   reads  TriggerActionRow[]  — the trigger/action table (triggerActions.ts)
+ *   holds  ActionHandler       — one per action, registered by the owning domain
+ *   emits  EventPayload        — supplied by whichever domain raised the event
+ *
+ * Lives outside `anticheat/` because other domains will consume these events
+ * too. See ./README.md.
  */
 
 import { reportError } from "../observability/index.js";
@@ -12,28 +19,36 @@ import type {
   TriggerActionRow,
 } from "./types.js";
 
+/**
+ * Actions do engine work, and the process holds a single serialised Stockfish,
+ * so running two at once only interleaves them.
+ */
+const DEFAULT_MAX_CONCURRENT_ACTIONS = 1;
+
+/** One action waiting to run, paired with the event that queued it. */
 interface QueuedAction {
-  readonly action: ActionId;
+  readonly actionId: ActionId;
   readonly handler: ActionHandler;
   readonly event: EventPayload;
 }
 
 export class EventManager {
-  private readonly handlers = new Map<ActionId, ActionHandler>();
-  private readonly queue: QueuedAction[] = [];
-  private running = 0;
+  /** Registered handler per action id. An action with no handler never runs. */
+  private readonly actionHandlers = new Map<ActionId, ActionHandler>();
 
-  /**
-   * Concurrency defaults to 1: actions do engine work and the process holds a
-   * single serialised Stockfish, so running two at once only interleaves them.
-   */
+  /** Actions queued but not yet started. */
+  private readonly actionQueue: QueuedAction[] = [];
+
+  /** Actions currently in flight, capped by maxConcurrentActions. */
+  private runningActionCount = 0;
+
   constructor(
-    private readonly rows: readonly TriggerActionRow[],
-    private readonly concurrency = 1
+    private readonly triggerActions: readonly TriggerActionRow[],
+    private readonly maxConcurrentActions = DEFAULT_MAX_CONCURRENT_ACTIONS
   ) {}
 
-  register(action: ActionId, handler: ActionHandler): void {
-    this.handlers.set(action, handler);
+  registerAction(actionId: ActionId, handler: ActionHandler): void {
+    this.actionHandlers.set(actionId, handler);
   }
 
   /**
@@ -41,47 +56,64 @@ export class EventManager {
    * here may delay a move, hold a clock, or change a result.
    */
   emit(event: EventPayload): void {
-    for (const row of this.rows) {
+    this.queueActionsFor(event);
+    this.runQueuedActions();
+  }
+
+  hasAction(actionId: ActionId): boolean {
+    return this.actionHandlers.has(actionId);
+  }
+
+  /** Actions queued or in flight. For tests and diagnostics. */
+  getPendingActionCount(): number {
+    return this.actionQueue.length + this.runningActionCount;
+  }
+
+  /** Queues every enabled action the table maps to this event's trigger. */
+  private queueActionsFor(event: EventPayload): void {
+    for (const row of this.triggerActions) {
       if (!row.enabled || row.trigger !== event.trigger) continue;
 
-      const handler = this.handlers.get(row.action);
+      const handler = this.actionHandlers.get(row.action);
       if (!handler) {
         // A row may legitimately name an action nobody has registered yet.
         console.warn(`[events] No handler registered for action '${row.action}'.`);
         continue;
       }
-      this.queue.push({ action: row.action, handler, event });
+      this.actionQueue.push({ actionId: row.action, handler, event });
     }
-    this.drain();
   }
 
-  /** Queue depth, for tests and diagnostics. */
-  get pending(): number {
-    return this.queue.length + this.running;
+  private runQueuedActions(): void {
+    while (
+      this.runningActionCount < this.maxConcurrentActions &&
+      this.actionQueue.length > 0
+    ) {
+      this.startAction(this.actionQueue.shift()!);
+    }
   }
 
-  private drain(): void {
-    while (this.running < this.concurrency && this.queue.length > 0) {
-      const job = this.queue.shift()!;
-      this.running++;
+  private startAction(queued: QueuedAction): void {
+    this.runningActionCount++;
 
-      // Promise.resolve().then() so a handler that throws synchronously is
-      // isolated exactly like one that rejects.
-      void Promise.resolve()
-        .then(() => job.handler(job.event))
-        .catch((err: unknown) => {
-          reportError({
-            domain: "events",
-            error: err as Error,
-            fatal: false,
-            context: { action: job.action, trigger: job.event.trigger },
-          });
-        })
-        .finally(() => {
-          this.running--;
-          this.drain();
-        });
-    }
+    // Promise.resolve().then() so a handler that throws synchronously is
+    // isolated exactly like one that rejects.
+    void Promise.resolve()
+      .then(() => queued.handler(queued.event))
+      .catch((error: unknown) => this.reportActionFailure(queued, error))
+      .finally(() => {
+        this.runningActionCount--;
+        this.runQueuedActions();
+      });
+  }
+
+  private reportActionFailure(queued: QueuedAction, error: unknown): void {
+    reportError({
+      domain: "events",
+      error: error as Error,
+      fatal: false,
+      context: { actionId: queued.actionId, trigger: queued.event.trigger },
+    });
   }
 }
 

@@ -36,11 +36,12 @@ export type {
 export {
   analyseGame,
   analyseGameAsText,
-  analyseOnGameCompleted,
+  runBlunderAnalysis,
   loadAnalysableGame,
   shutdownAnalysis,
   GameNotAnalysableError,
 } from "./AnalysisService.js";
+export { registerAntiCheatActions } from "./actions.js";
 export { StockfishEngine } from "./detection/engine/StockfishEngine.js";
 export type { PositionEval } from "./detection/engine/StockfishEngine.js";
 export { GameReplay, parseStoredMoves } from "./detection/GameReplay.js";

@@ -12,10 +12,15 @@ import {
 import { matchmakingQueue, ExpiryTicker } from "./matchmaking/index.js";
 import { handleGameResult } from "./results/index.js";
 import { attachBot, acquireBot, releaseBot } from "./bot/botPlayer.js";
+import { eventManager } from "./events/index.js";
+import { registerAntiCheatActions } from "./anticheat/index.js";
 import type { GameResult, ParticipantAssignment } from "./contracts/index.js";
 
 // Initialise observability first so the very first server error is captured.
 initRollbar();
+
+// Actions must be registered before any trigger can fire.
+registerAntiCheatActions(eventManager);
 
 /**
  * Capture the http.Server instance returned by app.listen().

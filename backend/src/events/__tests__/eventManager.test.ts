@@ -4,103 +4,107 @@ import assert from "node:assert/strict";
 import { EventManager } from "../EventManager.js";
 import type { EventPayload, TriggerActionRow } from "../types.js";
 
-const EVENT: EventPayload = { trigger: "post_game", gameSessionId: "session-1" };
+const POST_GAME_EVENT: EventPayload = { trigger: "post_game", gameSessionId: "session-1" };
 
-function rows(...specs: [string, boolean][]): TriggerActionRow[] {
-  return specs.map(([action, enabled]) => ({ trigger: "post_game", action, enabled }));
+function buildPostGameRows(...actions: [actionId: string, enabled: boolean][]): TriggerActionRow[] {
+  return actions.map(([action, enabled]) => ({ trigger: "post_game", action, enabled }));
 }
 
-/** Resolves once the manager's queue has drained. */
-async function settled(manager: EventManager): Promise<void> {
-  while (manager.pending > 0) await new Promise((r) => setImmediate(r));
+async function waitForQueueToDrain(manager: EventManager): Promise<void> {
+  while (manager.getPendingActionCount() > 0) {
+    await new Promise((resolve) => setImmediate(resolve));
+  }
 }
 
 describe("EventManager", () => {
   it("runs every enabled action registered for the trigger", async () => {
-    const manager = new EventManager(rows(["a", true], ["b", true]));
-    const ran: string[] = [];
-    manager.register("a", () => void ran.push("a"));
-    manager.register("b", () => void ran.push("b"));
+    const manager = new EventManager(buildPostGameRows(["a", true], ["b", true]));
+    const actionsRun: string[] = [];
+    manager.registerAction("a", () => void actionsRun.push("a"));
+    manager.registerAction("b", () => void actionsRun.push("b"));
 
-    manager.emit(EVENT);
-    await settled(manager);
+    manager.emit(POST_GAME_EVENT);
+    await waitForQueueToDrain(manager);
 
-    assert.deepEqual(ran.sort(), ["a", "b"]);
+    assert.deepEqual(actionsRun.sort(), ["a", "b"]);
   });
 
   it("passes the event through to the handler", async () => {
-    const manager = new EventManager(rows(["a", true]));
-    let seen: EventPayload | undefined;
-    manager.register("a", (event) => void (seen = event));
+    const manager = new EventManager(buildPostGameRows(["a", true]));
+    let receivedEvent: EventPayload | undefined;
+    manager.registerAction("a", (event) => void (receivedEvent = event));
 
-    manager.emit(EVENT);
-    await settled(manager);
+    manager.emit(POST_GAME_EVENT);
+    await waitForQueueToDrain(manager);
 
-    assert.deepEqual(seen, EVENT);
+    assert.deepEqual(receivedEvent, POST_GAME_EVENT);
   });
 
   it("skips disabled rows", async () => {
-    const manager = new EventManager(rows(["a", false]));
-    let ran = false;
-    manager.register("a", () => void (ran = true));
+    const manager = new EventManager(buildPostGameRows(["a", false]));
+    let actionRan = false;
+    manager.registerAction("a", () => void (actionRan = true));
 
-    manager.emit(EVENT);
-    await settled(manager);
+    manager.emit(POST_GAME_EVENT);
+    await waitForQueueToDrain(manager);
 
-    assert.equal(ran, false);
+    assert.equal(actionRan, false);
   });
 
-  it("skips rows for a different trigger", async () => {
+  it("skips rows belonging to a different trigger", async () => {
     const manager = new EventManager([
       { trigger: "post_tournament", action: "a", enabled: true },
     ]);
-    let ran = false;
-    manager.register("a", () => void (ran = true));
+    let actionRan = false;
+    manager.registerAction("a", () => void (actionRan = true));
 
-    manager.emit(EVENT);
-    await settled(manager);
+    manager.emit(POST_GAME_EVENT);
+    await waitForQueueToDrain(manager);
 
-    assert.equal(ran, false);
+    assert.equal(actionRan, false);
   });
 
   it("does not throw when a row names an unregistered action", () => {
-    const manager = new EventManager(rows(["nobody_registered", true]));
-    assert.doesNotThrow(() => manager.emit(EVENT));
+    const manager = new EventManager(buildPostGameRows(["nobody_registered", true]));
+
+    assert.doesNotThrow(() => manager.emit(POST_GAME_EVENT));
   });
 
   it("isolates a throwing action from the emitter and from other actions", async () => {
-    const manager = new EventManager(rows(["sync_throw", true], ["async_throw", true], ["ok", true]));
-    let okRan = false;
-    manager.register("sync_throw", () => {
-      throw new Error("sync");
+    const manager = new EventManager(
+      buildPostGameRows(["sync_throw", true], ["async_throw", true], ["healthy", true])
+    );
+    let healthyActionRan = false;
+    manager.registerAction("sync_throw", () => {
+      throw new Error("thrown synchronously");
     });
-    manager.register("async_throw", async () => {
-      throw new Error("async");
+    manager.registerAction("async_throw", async () => {
+      throw new Error("rejected");
     });
-    manager.register("ok", () => void (okRan = true));
+    manager.registerAction("healthy", () => void (healthyActionRan = true));
 
-    assert.doesNotThrow(() => manager.emit(EVENT));
-    await settled(manager);
+    assert.doesNotThrow(() => manager.emit(POST_GAME_EVENT));
+    await waitForQueueToDrain(manager);
 
-    assert.equal(okRan, true);
+    assert.equal(healthyActionRan, true);
   });
 
-  it("honours the concurrency limit", async () => {
-    const manager = new EventManager(rows(["a", true], ["b", true]), 1);
-    let concurrent = 0;
-    let peak = 0;
-    const slow = async () => {
-      concurrent++;
-      peak = Math.max(peak, concurrent);
-      await new Promise((r) => setTimeout(r, 5));
-      concurrent--;
+  it("never runs more actions at once than the concurrency limit allows", async () => {
+    const manager = new EventManager(buildPostGameRows(["a", true], ["b", true]), 1);
+    let concurrentActionCount = 0;
+    let peakConcurrentActionCount = 0;
+    const slowAction = async () => {
+      concurrentActionCount++;
+      peakConcurrentActionCount = Math.max(peakConcurrentActionCount, concurrentActionCount);
+      await new Promise((resolve) => setTimeout(resolve, 5));
+      concurrentActionCount--;
     };
-    manager.register("a", slow);
-    manager.register("b", slow);
+    manager.registerAction("a", slowAction);
+    manager.registerAction("b", slowAction);
 
-    manager.emit(EVENT);
-    await settled(manager);
+    manager.emit(POST_GAME_EVENT);
+    await waitForQueueToDrain(manager);
 
-    assert.equal(peak, 1);
+    assert.equal(peakConcurrentActionCount, 1);
   });
 });

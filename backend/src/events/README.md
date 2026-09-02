@@ -43,7 +43,7 @@ games… So for now, link everything to post game trigger by default."*
 
 | Trigger | Action | Status |
 |---|---|---|
-| `post_game` | `blunder_analysis` | Implemented — currently called directly by `resultsListener` |
+| `post_game` | `blunder_analysis` | Live — registered by `anticheat/actions.ts` |
 | `post_game` | `whole_history_review` | Specified in `anticheat/MULTI_GAME_REVIEW_REQUIREMENTS.md`, not built |
 | `post_game` | `missed_move_analysis` | Not built |
 | `post_game` | `opening_analysis` | Not built, and near-void under Chess960 |
@@ -102,13 +102,13 @@ they are not negotiable given what the actions do.
 
 | Trigger | Emitted from | Exists today |
 |---|---|---|
-| `post_game` | `results/resultsListener` | Yes — currently calls `analyseOnGameCompleted` directly |
+| `post_game` | `results/resultsListener` | Yes |
 | `after_move_unrated` / `after_move_rated` | `session/SessionManager` | The seam exists; nothing emits |
 | `post_tournament` | Tournament domain | No tournament domain exists |
 
-The first migration is small and contained: `resultsListener` stops calling the
-ACS directly and emits `post_game` instead, and the ACS registers
-`blunder_analysis`. Behaviour is unchanged; the wiring moves.
+Actions are registered at boot in `src/index.ts`, before anything can emit.
+`registerAntiCheatActions` is the ACS's single registration point, so no other
+domain imports ACS internals to wire it.
 
 ## 6. Two collisions with the ACS to resolve
 
