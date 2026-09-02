@@ -11,7 +11,7 @@ queries or writes to a database.
 ```
 enums/    9 enum files
 models/   24 classes
-tests/
+Tests/
   unit/       one test file per model class
   support/    shared test factories
 ```
@@ -141,7 +141,7 @@ and `OdysseyGame.canAfford()` / `canAcquireRelic()` (used by
 
 | Class | Role |
 |---|---|
-| `OdysseyPlayer` | A player identity (character) — e.g. the Knight. `getAvailable()`/`select()` handle the roster and unlock rules. |
+| `OdysseyPlayer` | A player identity (character) — Strategist, Knight, Bishop, or Rook. `getAvailable()`/`select()` handle the roster and unlock rules. The frontend still has two separate, never-reconciled character screens (a mandatory pre-run Strategist intro, and a later in-map Knight/Bishop/Rook select); per the owner the in-map roster is planned for removal, so Knight/Bishop/Rook are kept here only until that happens — see the class's own doc comment. |
 | `OdysseyGame` | The run/save-slot state. Owns `player`, `map`, `relics[]`, coins, and progress; guard methods like `canEnterNode()`, `hasCharge()`, `canAfford()`, `canAcquireRelic()`. |
 | `OdysseyMap` | Holds `OdysseyNode[]`; generates and looks up node status. |
 | `OdysseyMonster` | A battle opponent's display profile; `forNode()` picks one deterministically. |
@@ -159,6 +159,9 @@ classDiagram
         +string name
         +string description
         +bool unlocked
+        +number maxHealth?
+        +number gold?
+        +OdysseyPlayerAbility ability?
         +canBeSelected() bool
         +getAvailable(game)$ OdysseyPlayer[]
         +select(type, game)$
@@ -267,15 +270,15 @@ factor. Real `enum` was used for two reasons:
 | `EBattleResult` | Victory, Defeat |
 | `EBotCondition` | Confused, Relaxed, Distracted |
 | `ETimeDirection` | IncreasePlayerClock, DecreaseEnemyClock |
-| `EPlayerType` | Knight, Bishop, Rook, Strategist |
+| `EPlayerType` | Strategist, Knight, Bishop, Rook |
 
 ## Unit tests
 
-`tests/unit/` mirrors `models/` one file per class (`OdysseyGame.ts` →
+`Tests/unit/` mirrors `models/` one file per class (`OdysseyGame.ts` →
 `OdysseyGame.test.ts`), covering every meaningful method — happy path,
 edge cases (empty inventory, zero charges, locked nodes, insufficient
 coins), and the boundary conditions each method's own logic creates
-(clock floors, charge caps, all-or-nothing rewards). `tests/support/`
+(clock floors, charge caps, all-or-nothing rewards). `Tests/support/`
 holds shared test factories (`makeGame`, `makeBattle`) used across files.
 
 Tests use Node's built-in test runner (`node:test` / `node:assert`) with
@@ -283,7 +286,7 @@ one `describe` block per class and `test_methodName_scenario` names, so a
 failing test's name alone says what broke. Run them with:
 
 ```
-npx tsx --test story-mode-backend-models/tests/unit/*.test.ts
+npx tsx --test story-mode-backend-models/Tests/unit/*.test.ts
 ```
 
-167 tests, all passing.
+171 tests, all passing.

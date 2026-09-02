@@ -15,9 +15,30 @@ describe("OdysseyPlayer", () => {
     assert.strictEqual(player.canBeSelected(), false);
   });
 
+  test("test_getAvailable_returnsStrategistAlwaysUnlocked", () => {
+    const roster = OdysseyPlayer.getAvailable(makeGame());
+    assert.strictEqual(roster.find(p => p.type === EPlayerType.Strategist)!.unlocked, true);
+  });
+
+  test("test_getAvailable_returnsStrategistWithHealthGoldAndAbility", () => {
+    const roster = OdysseyPlayer.getAvailable(makeGame());
+    const strategist = roster.find(p => p.type === EPlayerType.Strategist)!;
+    assert.strictEqual(strategist.maxHealth, 80);
+    assert.strictEqual(strategist.gold, 99);
+    assert.strictEqual(strategist.ability?.name, "Calculated Mind");
+  });
+
   test("test_getAvailable_returnsKnightAlwaysUnlocked", () => {
     const roster = OdysseyPlayer.getAvailable(makeGame());
     assert.strictEqual(roster.find(p => p.type === EPlayerType.Knight)!.unlocked, true);
+  });
+
+  test("test_getAvailable_returnsKnightWithNoStatsDefined", () => {
+    const roster = OdysseyPlayer.getAvailable(makeGame());
+    const knight = roster.find(p => p.type === EPlayerType.Knight)!;
+    assert.strictEqual(knight.maxHealth, undefined);
+    assert.strictEqual(knight.gold, undefined);
+    assert.strictEqual(knight.ability, undefined);
   });
 
   test("test_getAvailable_returnsBishopLockedBeforeTenCompletedNodes", () => {
@@ -44,11 +65,12 @@ describe("OdysseyPlayer", () => {
     assert.strictEqual(roster.find(p => p.type === EPlayerType.Rook)!.unlocked, true);
   });
 
-  test("test_getAvailable_excludesStrategistFromTheRoster", () => {
+  test("test_getAvailable_returnsAllFourPlayerTypes", () => {
     const roster = OdysseyPlayer.getAvailable(makeGame());
-    assert.strictEqual(
-      roster.some(p => p.type === EPlayerType.Strategist),
-      false
+    assert.strictEqual(roster.length, 4);
+    assert.deepStrictEqual(
+      roster.map(p => p.type).sort(),
+      [EPlayerType.Bishop, EPlayerType.Knight, EPlayerType.Rook, EPlayerType.Strategist].sort()
     );
   });
 
@@ -56,6 +78,12 @@ describe("OdysseyPlayer", () => {
     const game = makeGame({ player: null });
     OdysseyPlayer.select(EPlayerType.Knight, game);
     assert.strictEqual(game.player?.type, EPlayerType.Knight);
+  });
+
+  test("test_select_setsGamePlayerForStrategistByDefault", () => {
+    const game = makeGame({ player: null });
+    OdysseyPlayer.select(EPlayerType.Strategist, game);
+    assert.strictEqual(game.player?.type, EPlayerType.Strategist);
   });
 
   test("test_select_doesNotSetGamePlayerWhenTypeIsLocked", () => {
@@ -66,7 +94,7 @@ describe("OdysseyPlayer", () => {
 
   test("test_select_doesNotSetGamePlayerForAnUnknownType", () => {
     const game = makeGame({ player: null });
-    OdysseyPlayer.select(EPlayerType.Strategist, game);
+    OdysseyPlayer.select("nonexistent" as EPlayerType, game);
     assert.strictEqual(game.player, null);
   });
 });
