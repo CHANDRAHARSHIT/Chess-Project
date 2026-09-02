@@ -194,6 +194,10 @@ Intended consumers once the rest is implemented:
 
 ## 8. Suggested Next Step
 
+The next slice — reviewing a suspect's whole game history rather than one game —
+is specified in `MULTI_GAME_REVIEW_REQUIREMENTS.md`. That document is a proposal
+awaiting sign-off; nothing in it is implemented.
+
 Blocker #5 (reports → database) and #1 (per-ply timing) are independent of every
 open design question and unblock the most downstream work. Neither requires the
 spec's remaining 50% to be written first.
