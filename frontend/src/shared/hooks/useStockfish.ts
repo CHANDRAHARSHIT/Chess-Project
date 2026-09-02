@@ -28,6 +28,19 @@ export function useStockfish() {
     setIsThinking(value);
   }, []);
 
+  // Cancels whatever search is currently in flight. Any onmessage handler
+  // still bound from that search will see searchIdRef has moved past its
+  // captured id and drop late 'info'/'bestmove' messages instead of acting
+  // on them against a board that has since moved on (reset/undo/etc).
+  const invalidateSearch = useCallback(() => {
+    searchIdRef.current += 1;
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+      searchTimeoutRef.current = null;
+    }
+    return searchIdRef.current;
+  }, []);
+
   // Initialize the worker lazily
   const initWorker = useCallback(() => {
     if (workerRef.current) return workerRef.current;
@@ -42,12 +55,19 @@ export function useStockfish() {
       // an ErrorEvent, which the try/catch here can't see (this was the uncaught
       // "importScripts failed" report in Rollbar issue #26).
       worker.onerror = (event: ErrorEvent) => {
-        console.error('Stockfish worker failed to load', event.message);
-        rollbar.error(new Error(`Stockfish worker error: ${event.message}`), { context: 'useStockfish.workerOnError' });
+        // event.error carries the real Error (with stack) for a same-origin worker script;
+        // event.message alone loses that, so only fall back to it if .error is absent.
+        const err = event.error instanceof Error ? event.error : new Error(`Stockfish worker error: ${event.message}`);
+        console.error('Stockfish worker failed to load', err);
+        rollbar.error(err, { context: 'useStockfish.workerOnError' });
         worker.terminate();
         if (workerRef.current === worker) {
           workerRef.current = null;
         }
+        // A search may have been in flight when the worker died — without this, isThinking
+        // stays true forever since nothing else will call setThinking(false) for it.
+        invalidateSearch();
+        setThinking(false);
         setEngineStatus('error');
       };
 
@@ -65,20 +85,7 @@ export function useStockfish() {
       setEngineStatus('error');
       return null;
     }
-  }, []);
-
-  // Cancels whatever search is currently in flight. Any onmessage handler
-  // still bound from that search will see searchIdRef has moved past its
-  // captured id and drop late 'info'/'bestmove' messages instead of acting
-  // on them against a board that has since moved on (reset/undo/etc).
-  const invalidateSearch = useCallback(() => {
-    searchIdRef.current += 1;
-    if (searchTimeoutRef.current) {
-      clearTimeout(searchTimeoutRef.current);
-      searchTimeoutRef.current = null;
-    }
-    return searchIdRef.current;
-  }, []);
+  }, [invalidateSearch, setThinking]);
 
   // Terminate worker
   const terminateWorker = useCallback(() => {
