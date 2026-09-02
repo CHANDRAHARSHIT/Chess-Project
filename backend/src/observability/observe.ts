@@ -34,7 +34,8 @@ export type ObservabilityDomain =
   | "variant"
   | "results"
   | "http"
-  | "bot";
+  | "bot"
+  | "maia";
 
 /**
  * A state-machine transition event.

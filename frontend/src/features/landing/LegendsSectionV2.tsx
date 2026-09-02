@@ -11,7 +11,6 @@
  */
 
 import { useRef, useEffect, useState, useCallback } from "react";
-import { useScrollReveal } from "@/shared/hooks/useScrollReveal";
 import { Link } from "react-router";
 
 // ── Player data ──────────────────────────────────────────────────────────────
@@ -20,104 +19,109 @@ const PLAYERS = [
     name: "Bobby Fischer",
     epithet: "The First U.S. World Chess Champion",
     quote: "h4, h5, sac, sac, mate.",
-    img: "/assets/coaches/bots (1).png",
+    img: "/assets/coaches/bots 1.png",
   },
   {
     name: "Paul Morphy",
     epithet: "The Greatest of All Time",
     quote: "We have to make Ben happy.",
-    img: "/assets/coaches/bots (2).png",
+    img: "/assets/coaches/bots 2.png",
   },
   {
     name: "Wilhelm Steinitz",
     epithet: "The First World Chess Champion",
     quote: "A sacrifice is best refuted by accepting it.",
-    img: "/assets/coaches/bots (3).png",
+    img: "/assets/coaches/bots 3.png",
   },
   {
     name: "Emanuel Lasker",
     epithet: "The Longest-Reigning World Chess Champion",
     quote: "The hardest game to win is a won game.",
-    img: "/assets/coaches/bots (4).png",
+    img: "/assets/coaches/bots 4.png",
   },
   {
     name: "José Raúl Capablanca",
     epithet: "The Chess Machine",
     quote: "I see only one move ahead, but it is always the correct one.",
-    img: "/assets/coaches/bots (5).png",
+    img: "/assets/coaches/bots 5.png",
   },
   {
     name: "Alexander Alekhine",
     epithet: "The Master of Complications",
     quote:
       "I think that for the highest achievements one must have the greatest knowledge of theory.",
-    img: "/assets/coaches/bots (6).png",
+    img: "/assets/coaches/bots 6.png",
   },
   {
     name: "Mikhail Botvinnik",
     epithet: "The Patriarch of Soviet Chess",
     quote: "Chess cannot be taught. Chess can only be learned.",
-    img: "/assets/coaches/bots (7).png",
+    img: "/assets/coaches/bots 7.png",
   },
   {
     name: "Mikhail Tal",
     epithet: "The Magician from Riga",
     quote:
       "You must take your opponent into a deep dark forest where two plus two equals five.",
-    img: "/assets/coaches/bots (8).png",
+    img: "/assets/coaches/bots 8.png",
   },
   {
     name: "Anatoly Karpov",
     epithet: "The Iron Tiger",
     quote: "Chess is everything: art, science, and sport.",
-    img: "/assets/coaches/bots (9).png",
+    img: "/assets/coaches/bots 9.png",
   },
 ] as const;
 
 export default function LegendsSectionV2() {
   const sectionRef = useRef<HTMLElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-  const gridRef = useRef<HTMLDivElement>(null);
+  const gridWrapRef = useRef<HTMLDivElement>(null);
+  const cursorRef = useRef<HTMLDivElement>(null);
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [isChanging, setIsChanging] = useState(false);
+  const [isDemoActive, setIsDemoActive] = useState(true);
 
   const activeIndexRef = useRef(0);
   const demoRunningRef = useRef(true);
   const demoTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const resumeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const changeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useScrollReveal(contentRef as React.RefObject<Element>, {
-    y: 50,
-    duration: 0.9,
-  });
-  useScrollReveal(gridRef as React.RefObject<Element>, {
-    selector: ".legend-card",
-    y: 40,
-    stagger: 0.06,
-    duration: 0.75,
-    start: "top 85%",
-  });
-
-  // ── Smooth copy transition ───────────────────────────────────────────────
+  // ── Smooth copy transition matching HTML 110ms timer ───────────────────────
   const updateCopy = useCallback((index: number) => {
+    if (changeTimerRef.current) clearTimeout(changeTimerRef.current);
     setIsChanging(true);
-    setTimeout(() => {
+    changeTimerRef.current = setTimeout(() => {
       setActiveIndex(index);
       setIsChanging(false);
-    }, 120);
+    }, 110);
   }, []);
 
-  // ── Activate a card ──────────────────────────────────────────────────────
+  // ── Activate a card + move cursor demo ────────────────────────────────────
   const activateCard = useCallback(
     (index: number) => {
       activeIndexRef.current = index;
+      setIsDemoActive(true);
       updateCopy(index);
+
+      if (gridWrapRef.current && cursorRef.current) {
+        const card = gridWrapRef.current.querySelector<HTMLElement>(
+          `[data-index="${index}"]`,
+        );
+        if (card) {
+          const wrap = gridWrapRef.current.getBoundingClientRect();
+          const rect = card.getBoundingClientRect();
+          cursorRef.current.style.left = `${rect.left - wrap.left + rect.width * 0.64}px`;
+          cursorRef.current.style.top = `${rect.top - wrap.top + rect.height * 0.54}px`;
+          cursorRef.current.classList.add("show");
+        }
+      }
     },
     [updateCopy],
   );
 
-  // ── Start / pause demo ────────────────────────────────────────────────────
+  // ── Start / pause demo (1450ms cycle) ─────────────────────────────────────
   const startDemo = useCallback(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     demoRunningRef.current = true;
@@ -126,168 +130,87 @@ export default function LegendsSectionV2() {
     demoTimerRef.current = setInterval(() => {
       const nextIndex = (activeIndexRef.current + 1) % PLAYERS.length;
       activateCard(nextIndex);
-    }, 1600);
+    }, 1450);
   }, [activateCard]);
 
   const pauseDemo = useCallback(() => {
     demoRunningRef.current = false;
     if (demoTimerRef.current) clearInterval(demoTimerRef.current);
+    if (cursorRef.current) cursorRef.current.classList.remove("show");
+    setIsDemoActive(false);
   }, []);
-
-  const scheduleResume = useCallback(() => {
-    if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current);
-    resumeTimerRef.current = setTimeout(() => {
-      startDemo();
-    }, 1000);
-  }, [startDemo]);
 
   useEffect(() => {
     startDemo();
+    const onResize = () => {
+      if (demoRunningRef.current) activateCard(activeIndexRef.current);
+    };
+    window.addEventListener("resize", onResize);
     return () => {
       if (demoTimerRef.current) clearInterval(demoTimerRef.current);
       if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current);
+      if (changeTimerRef.current) clearTimeout(changeTimerRef.current);
+      window.removeEventListener("resize", onResize);
     };
-  }, [startDemo]);
+  }, [startDemo, activateCard]);
 
   const activePlayer = PLAYERS[activeIndex];
 
   return (
     <section
       ref={sectionRef}
-      className="relative py-16 md:py-22 overflow-hidden"
+      className="v2-legends-section py-16 md:py-22 relative overflow-hidden"
       id="legends-v2-section"
       aria-label="Play Chess Legends section"
     >
-      {/* Background */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{ background: "var(--obsidian)" }}
-        aria-hidden="true"
-      />
-
-      <div className="max-w-[1275px] mx-auto px-2 sm:px-6 lg:px-8 relative z-10">
-        {/*
-          Layout: text LEFT (~0.78fr) | grid RIGHT (~1.55fr)
-        */}
-        <div className="grid grid-cols-1 lg:grid-cols-[0.78fr_1.55fr] items-center gap-10 lg:gap-16">
-          {/* ── Left: Text content + rotating quote ─────────────────────── */}
-          <div
-            ref={contentRef}
-            className="max-w-[485px] text-left lg:text-left"
-            style={{ opacity: 0 }}
-          >
-            <h2
-              className="font-display"
-              style={{
-                fontSize: "clamp(32px, 3vw, 49px)",
-                lineHeight: 1.02,
-                letterSpacing: "-0.035em",
-                fontWeight: 800,
-                color: "var(--text-primary)",
-                marginBottom: "26px",
-              }}
-            >
-              Play Chess Legends
-            </h2>
+      <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-12 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(360px,0.78fr)_minmax(600px,1.55fr)] items-center gap-10 lg:gap-16">
+          {/* ── Left: Text content + rotating quote ── */}
+          <div className="v2-content max-w-[570px] text-left lg:text-left justify-self-center lg:justify-self-start">
+            <h2 className="v2-h1 text-center">Play Chess Legends</h2>
 
             {/* Dynamic copy — reacts to active legend */}
             <div
               aria-live="polite"
               style={{
-                minHeight: "185px",
+                minHeight: "200px",
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "center",
+                alignItems: "center",
+                textAlign: "center",
                 opacity: isChanging ? 0 : 1,
                 transform: isChanging ? "translateY(5px)" : "translateY(0)",
                 transition: "opacity 0.14s ease, transform 0.14s ease",
               }}
             >
-              <h3
-                className="font-display font-bold"
-                style={{
-                  fontSize: "clamp(20px, 1.7vw, 26px)",
-                  lineHeight: 1.15,
-                  color: "var(--text-primary)",
-                  marginBottom: "5px",
-                }}
-              >
-                {activePlayer.name}
-              </h3>
-              <div
-                className="font-sans font-bold text-xs tracking-wide"
-                style={{
-                  color: "rgba(155,122,214,0.9)",
-                  marginBottom: "14px",
-                  letterSpacing: "0.01em",
-                }}
-              >
-                {activePlayer.epithet}
-              </div>
-              <p
-                className="font-serif"
-                style={{
-                  fontSize: "clamp(15px, 1.2vw, 19px)",
-                  lineHeight: 1.55,
-                  color: "var(--text-secondary)",
-                  maxWidth: "425px",
-                  fontStyle: "italic",
-                }}
-              >
-                &ldquo;{activePlayer.quote}&rdquo;
-              </p>
+              <h3 className="player-title">{activePlayer.name}</h3>
+              <div className="player-epithet">{activePlayer.epithet}</div>
+              <p className="quote">&ldquo;{activePlayer.quote}&rdquo;</p>
             </div>
 
             {/* CTA */}
             <Link
               id="legends-v2-challenge-btn"
               to="/play"
-              className="inline-flex items-center justify-center font-sans font-bold rounded-[12px] cta-shine"
-              style={{
-                width: "min(100%, 320px)",
-                minHeight: "58px",
-                fontSize: "clamp(17px, 1.35vw, 20px)",
-                border: "1px solid var(--marble-border)",
-                background:
-                  "linear-gradient(135deg, rgba(155,122,214,0.12) 0%, rgba(155,122,214,0.04) 100%)",
-                color: "var(--text-primary)",
-                cursor: "pointer",
-                transition:
-                  "transform 0.16s ease, background 0.16s ease, border-color 0.16s ease",
-                marginTop: "26px",
-              }}
-              onMouseEnter={(e) => {
-                const el = e.currentTarget as HTMLElement;
-                el.style.transform = "translateY(-2px)";
-                el.style.background =
-                  "linear-gradient(135deg, rgba(155,122,214,0.2) 0%, rgba(155,122,214,0.08) 100%)";
-                el.style.borderColor = "rgba(155,122,214,0.5)";
-              }}
-              onMouseLeave={(e) => {
-                const el = e.currentTarget as HTMLElement;
-                el.style.transform = "";
-                el.style.background =
-                  "linear-gradient(135deg, rgba(155,122,214,0.12) 0%, rgba(155,122,214,0.04) 100%)";
-                el.style.borderColor = "var(--marble-border)";
-              }}
+              className="v2-legends-cta legends-cta cta-shine"
             >
               Challenge a Legend
             </Link>
           </div>
 
-          {/* ── Right: 3×3 coach image grid ─────────────────────────────── */}
-          <div className="relative">
+          {/* ── Right: 3×3 coach image grid with simulated cursor ── */}
+          <div ref={gridWrapRef} className="grid-wrap v2-grid-wrap relative">
             <div
-              ref={gridRef}
               id="legends-v2-grid"
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(3, 1fr)",
-                gap: "15px",
-              }}
+              className="v2-bot-grid bot-grid"
               onMouseLeave={() => {
-                pauseDemo();
-                scheduleResume();
+                if (resumeTimerRef.current)
+                  clearTimeout(resumeTimerRef.current);
+                resumeTimerRef.current = setTimeout(() => {
+                  activeIndexRef.current = 0;
+                  startDemo();
+                }, 900);
               }}
             >
               {PLAYERS.map((player, index) => (
@@ -296,45 +219,39 @@ export default function LegendsSectionV2() {
                   player={player}
                   index={index}
                   isActive={activeIndex === index}
+                  isDemoActive={isDemoActive}
                   onHover={(idx) => {
                     pauseDemo();
                     if (resumeTimerRef.current)
                       clearTimeout(resumeTimerRef.current);
-                    activateCard(idx);
+                    activeIndexRef.current = idx;
+                    setActiveIndex(idx);
+                    updateCopy(idx);
                   }}
                 />
               ))}
             </div>
+
+            {/* Cursor Demo SVG matching chess_legends_animated_banner.html */}
+            <div
+              ref={cursorRef}
+              className="cursor-demo v2-cursor-demo"
+              id="cursorDemo"
+              aria-hidden="true"
+            >
+              <svg viewBox="0 0 48 48">
+                <path
+                  d="M9 4l26 22-12 2 6 12-6 3-6-13-8 9z"
+                  fill="#fff"
+                  stroke="#222"
+                  strokeWidth="2.5"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
           </div>
         </div>
       </div>
-
-      {/* Scoped styles for demo-active and card hover */}
-      <style>{`
-        .legend-card {
-          aspect-ratio: 1;
-          border-radius: 14px;
-          border: 2.5px solid transparent;
-          position: relative;
-          overflow: hidden;
-          cursor: pointer;
-          padding: 0;
-          background: var(--obsidian-light);
-          transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
-        }
-        .legend-card:hover,
-        .legend-card:focus-visible,
-        .legend-card.demo-active {
-          transform: translateY(-4px) scale(1.025);
-          border-color: rgba(155,122,214,0.85);
-          box-shadow: 0 0 0 2px rgba(155,122,214,0.07), 0 0 24px rgba(155,122,214,0.34);
-          outline: none;
-        }
-        .legend-card:focus-visible {
-          outline: 2.5px solid var(--gold-bright);
-          outline-offset: 2.5px;
-        }
-      `}</style>
     </section>
   );
 }
@@ -346,17 +263,19 @@ function LegendCard({
   player,
   index,
   isActive,
+  isDemoActive,
   onHover,
 }: {
   player: PlayerData;
   index: number;
   isActive: boolean;
+  isDemoActive: boolean;
   onHover: (idx: number) => void;
 }) {
   return (
     <button
       type="button"
-      className={`legend-card ${isActive ? "demo-active" : ""}`}
+      className={`v2-bot-card bot-card legend-card ${isDemoActive && isActive ? "demo-active" : ""}`}
       aria-label={player.name}
       data-index={index}
       onMouseEnter={() => onHover(index)}
@@ -367,10 +286,9 @@ function LegendCard({
         alt={player.name}
         className="absolute object-cover pointer-events-none"
         style={{
-          width: "120%",
+          width: "100%",
           height: "100%",
           top: "0%",
-          left: "-10%",
           maxWidth: "none",
         }}
         loading="lazy"

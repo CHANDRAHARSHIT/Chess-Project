@@ -125,7 +125,10 @@ export default function QuestionCard({
       {/* Trace Snippet — its own code block, separate from the Functions Definition below */}
       {question.traceCode && (
         <div className="rounded-2xl border border-brand-text/20 overflow-hidden shadow-inner">
-          <CodeBlock code={question.traceCode} language={question.codeLanguage} />
+          <CodeBlock
+            code={question.traceCode}
+            language={question.codeLanguage}
+          />
         </div>
       )}
 
@@ -181,39 +184,36 @@ export default function QuestionCard({
             <span>Function / Code Information</span>
           </div>
           <div className="rounded-2xl border border-brand-text/20 overflow-hidden shadow-inner">
-            <CodeBlock code={question.codeBlock} language={question.codeLanguage} />
+            <CodeBlock
+              code={question.codeBlock}
+              language={question.codeLanguage}
+            />
           </div>
         </div>
       )}
 
       {/* Answer Area */}
       <div className="space-y-3 pt-2">
-        <div className="flex items-center justify-between">
-          <h3 className="text-xs font-mono uppercase tracking-wider text-brand-accent font-semibold">
-            Your Answer
-          </h3>
-        </div>
-
         {/* Input Switch based on question.type */}
         <div>
           {question.type === "short-text" && (
             <ShortTextInput
               id={`question-${question.id}-input`}
-              value={answer}
+              value={answer || question.prefillValue || ""}
               onChange={onAnswerChange}
               wordLimit={question.wordLimit}
-              placeholder={question.placeholder}
+              placeholder={question.placeholder || "Answer"}
             />
           )}
 
           {question.type === "long-text" && (
             <LongTextInput
               id={`question-${question.id}-input`}
-              value={answer}
+              value={answer || question.prefillValue || ""}
               onChange={onAnswerChange}
               wordLimit={question.wordLimit}
-              placeholder={question.placeholder}
-              rows={5}
+              placeholder={question.placeholder || "Answer"}
+              rows={question.prefillValue ? 15 : 5}
             />
           )}
 
@@ -250,7 +250,7 @@ export default function QuestionCard({
               conditionalTextOnValue={question.conditionalTextOnValue}
               conditionalTextFieldLabel={question.conditionalTextFieldLabel}
               conditionalWordLimit={question.conditionalWordLimit}
-              placeholder={question.placeholder}
+              placeholder={question.placeholder || "Answer"}
             />
           )}
 
@@ -262,11 +262,13 @@ export default function QuestionCard({
                 onChange={onAnswerChange}
                 prefix={question.numberPrefix}
                 suffix={question.numberSuffix}
-                placeholder={question.placeholder}
+                placeholder={question.placeholder || "Answer"}
                 disabled={disabled}
               />
               {disabled && disabledNote && (
-                <p className="text-xs text-brand-accent/80 font-medium">{disabledNote}</p>
+                <p className="text-xs text-brand-accent/80 font-medium">
+                  {disabledNote}
+                </p>
               )}
             </div>
           )}

@@ -16,7 +16,7 @@ export default function LongTextInput({
   value,
   onChange,
   wordLimit,
-  placeholder = 'Write your response here...',
+  placeholder = 'Answer',
   rows = 5,
   disabled = false,
 }: LongTextInputProps) {

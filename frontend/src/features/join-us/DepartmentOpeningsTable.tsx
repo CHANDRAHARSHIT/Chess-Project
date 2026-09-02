@@ -35,7 +35,7 @@ export default function DepartmentOpeningsTable({
                   key={level}
                   className="p-4 sm:p-5 font-semibold text-center whitespace-nowrap"
                 >
-                  Level: {level}
+                  {level}
                 </th>
               ))}
             </tr>
@@ -82,8 +82,8 @@ export default function DepartmentOpeningsTable({
       <div className="p-4 sm:p-5 border-t border-brand-text/15 bg-brand-surface/30 flex items-center gap-3 text-brand-secondary text-xs sm:text-sm">
         <Clock className="w-4 h-4 text-brand-accent shrink-0" />
         <p>
-          We are flexible with the hours and can make it work around your availability,
-          even if you are not able to work full-time.
+          We are flexible with the hours and can make it work around your
+          availability, even if you are not able to work full-time.
         </p>
       </div>
     </div>
