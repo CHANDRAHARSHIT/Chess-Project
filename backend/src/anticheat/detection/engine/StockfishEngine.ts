@@ -18,6 +18,9 @@ const require = createRequire(import.meta.url);
 /** Engine build. "lite-single" avoids threads, which Node's WASM host doesn't provide. */
 const ENGINE_BIN = "stockfish-18-lite-single.js";
 
+/** Recorded alongside cached analysis, so evaluations from different builds are never compared. */
+export const ENGINE_NAME = "stockfish-18-lite-single";
+
 /** Evaluation of one position, always from the moving side's point of view. */
 export interface PositionEval {
   /** Centipawns. Positive favours the side to move. */

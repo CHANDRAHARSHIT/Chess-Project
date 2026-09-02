@@ -71,6 +71,7 @@ export const ModelName = {
   LessonProgress: 'LessonProgress',
   CustomLink: 'CustomLink',
   GameRecord: 'GameRecord',
+  GameAnalysis: 'GameAnalysis',
   GameParticipant: 'GameParticipant',
   PlayerRating: 'PlayerRating',
   PathwayProgress: 'PathwayProgress',
@@ -413,6 +414,22 @@ export const GameRecordScalarFieldEnum = {
 } as const
 
 export type GameRecordScalarFieldEnum = (typeof GameRecordScalarFieldEnum)[keyof typeof GameRecordScalarFieldEnum]
+
+
+export const GameAnalysisScalarFieldEnum = {
+  id: 'id',
+  gameRecordId: 'gameRecordId',
+  engineName: 'engineName',
+  engineDepth: 'engineDepth',
+  multiPvLines: 'multiPvLines',
+  startingFen: 'startingFen',
+  plyCount: 'plyCount',
+  plies: 'plies',
+  payloadVersion: 'payloadVersion',
+  analysedAt: 'analysedAt'
+} as const
+
+export type GameAnalysisScalarFieldEnum = (typeof GameAnalysisScalarFieldEnum)[keyof typeof GameAnalysisScalarFieldEnum]
 
 
 export const GameParticipantScalarFieldEnum = {

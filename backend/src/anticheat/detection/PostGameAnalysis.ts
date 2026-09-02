@@ -9,7 +9,7 @@
  */
 
 import { Chess } from "chess.js";
-import type { Situation } from "../types.js";
+import type { AnalyzedMove, Situation } from "../types.js";
 import {
   BlunderAnalyzer,
   type BlunderSummary,
@@ -40,6 +40,11 @@ export interface GameAnalysisReport {
   readonly analysedAt: Date;
   readonly depth: number;
   readonly moves: readonly ClassifiedMove[];
+  /**
+   * Raw engine output the classification was derived from. Carried so callers
+   * can persist it — only this survives a policy change, `moves` does not.
+   */
+  readonly analysedMoves: readonly AnalyzedMove[];
   readonly summaries: readonly BlunderSummary[];
   /** Absent when the game stayed competitive to the end. */
   readonly turningPoint?: TurningPoint;
@@ -104,6 +109,7 @@ export class PostGameAnalysis {
       analysedAt: new Date(),
       depth: this.depth,
       moves: classified,
+      analysedMoves: analysed,
       summaries: sides.map((side) => this.analyzer.summarise(classified, side)),
       ...(turningPoint ? { turningPoint } : {}),
       participants: game.participants,

@@ -311,9 +311,11 @@ describe("startingFenFromMetadata", () => {
 
 describe("renderTextReport", () => {
   const analyzer = new BlunderAnalyzer(new PolicyRegistry());
-  const classified = analyzer.classify([move(0, 500), move(1, 20)], SITUATION);
+  const analysedMoves = [move(0, 500), move(1, 20)];
+  const classified = analyzer.classify(analysedMoves, SITUATION);
 
   const report = {
+    analysedMoves,
     gameRecordId: "game-1",
     variantId: "chess960",
     startingFen: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",

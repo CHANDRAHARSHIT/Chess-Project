@@ -61,6 +61,8 @@ export interface AnalyzedMove {
   readonly evalBeforeCp?: number;
   readonly evalAfterCp?: number;
   readonly engineBestMoves?: readonly string[];
+  /** Legal moves available before this ply. A forced move carries no signal. */
+  readonly legalMoveCount?: number;
 }
 
 /** The material a set of Checks runs against. Scope is decided by the Trigger. */

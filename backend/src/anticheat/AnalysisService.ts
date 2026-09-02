@@ -8,7 +8,8 @@
 import { prisma } from "../config/prisma.js";
 import { env } from "../config/env.js";
 import { generateStartingFen } from "../variant/chess960/chess960Rules.js";
-import { StockfishEngine } from "./detection/engine/StockfishEngine.js";
+import { ENGINE_NAME, StockfishEngine } from "./detection/engine/StockfishEngine.js";
+import { buildPersistedPlies, saveGameAnalysis } from "./analysisRepository.js";
 import { PolicyRegistry } from "./feedback/PolicyRegistry.js";
 import {
   GameNotAnalysableError,
@@ -121,7 +122,9 @@ export async function runBlunderAnalysis(gameSessionId: string): Promise<void> {
   if (!gameRecordId) return;
 
   try {
-    console.log(`\n${await analyseGameAsText(gameRecordId)}\n`);
+    const report = await analyseGame(gameRecordId);
+    await cacheAnalysisReport(report);
+    console.log(`\n${renderTextReport(report)}\n`);
   } catch (error) {
     // A game that cannot be replayed is an expected skip, not a failure.
     if (error instanceof GameNotAnalysableError) {
@@ -130,6 +133,20 @@ export async function runBlunderAnalysis(gameSessionId: string): Promise<void> {
     }
     throw error;
   }
+}
+
+/**
+ * Stores the engine output so multi-game review can aggregate this game later
+ * without running the engine again.
+ */
+async function cacheAnalysisReport(report: GameAnalysisReport): Promise<void> {
+  await saveGameAnalysis({
+    gameRecordId: report.gameRecordId,
+    engineName: ENGINE_NAME,
+    engineDepth: report.depth,
+    startingFen: report.startingFen,
+    plies: buildPersistedPlies(report.analysedMoves),
+  });
 }
 
 export { GameNotAnalysableError };

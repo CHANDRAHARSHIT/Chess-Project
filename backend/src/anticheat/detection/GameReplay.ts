@@ -70,6 +70,10 @@ export class GameReplay {
       const fenBefore = chess.fen();
       const sideToMove = chess.turn() === "w" ? 0 : 1;
       const bestMoves = evalBefore.bestMove ? [evalBefore.bestMove] : [];
+      // Counted before the move is applied, and free next to the engine call.
+      // Capturing it now is what lets a cached analysis answer "was this move
+      // forced?" without replaying the game again.
+      const legalMoveCount = chess.moves().length;
 
       let san: string;
       try {
@@ -104,6 +108,7 @@ export class GameReplay {
           // numbers describe the player who just moved.
           evalAfterCp: -evalAfter.scoreCp,
           engineBestMoves: bestMoves,
+          legalMoveCount,
         });
       }
 
