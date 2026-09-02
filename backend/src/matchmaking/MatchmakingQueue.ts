@@ -174,6 +174,10 @@ export class MatchmakingQueue {
           cardinality: { sides: 2, perSide: 1 },
           variantId,
           variantParams: { positionId },
+      // Duplicated into metadata because variantParams is not persisted, and
+      // post-game analysis cannot replay a Chess960 game without its starting
+      // position. metadata is the only field that reaches GameRecord intact.
+      metadata: { positionId },
           timeControl: { initialSeconds: 300, incrementSeconds: 3, label: "5+3 Blitz" },
           rated: false,
           provenance: "queue",
@@ -255,6 +259,10 @@ export class MatchmakingQueue {
       cardinality: { sides: 2, perSide: 1 },
       variantId: oldest.variantId,
       variantParams: { positionId },
+      // Duplicated into metadata because variantParams is not persisted, and
+      // post-game analysis cannot replay a Chess960 game without its starting
+      // position. metadata is the only field that reaches GameRecord intact.
+      metadata: { positionId },
       timeControl: { initialSeconds: 300, incrementSeconds: 3, label: "5+3 Blitz" },
       rated: false,
       provenance: "bot",

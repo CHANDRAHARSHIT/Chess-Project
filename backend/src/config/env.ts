@@ -62,6 +62,11 @@ export const env = {
   // Must match the model nixpacks.toml pre-caches, or the first request downloads it.
   MAIA_MODEL: process.env.MAIA_MODEL ?? "maia3-23m",
 
+  // Anti-cheat (optional — ANTICHEAT_ENABLED=false disables all ACS behaviour).
+  // Gates the post-game analysis hook and the /analysis endpoint. Analysis runs
+  // a WASM engine per finished game, so it stays off until deliberately enabled.
+  ANTICHEAT_ENABLED: process.env.ANTICHEAT_ENABLED === "true",
+
   // Rollbar error monitoring
   ROLLBAR_ACCESS_TOKEN: process.env.ROLLBAR_ACCESS_TOKEN!,
 };

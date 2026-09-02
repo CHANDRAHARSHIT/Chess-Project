@@ -18,6 +18,15 @@ import type { GameResult } from "../contracts/index.js";
 import type { ResultEmitter } from "../session/index.js";
 import { reportError } from "../observability/index.js";
 import { persistGameResult } from "./resultsRepository.js";
+import { eventManager } from "../events/index.js";
+
+/**
+ * Default post-persistence hook: raises `post_game` and lets the trigger/action
+ * table decide what runs. Results does not know which actions exist.
+ */
+function emitPostGameEvent(gameSessionId: string): void {
+  eventManager.emit({ trigger: "post_game", gameSessionId });
+}
 
 /**
  * Builds a fire-and-forget ResultEmitter around a persistence function.
@@ -25,10 +34,27 @@ import { persistGameResult } from "./resultsRepository.js";
  * own constructor-injection pattern for onResult/variantResolver/transport.
  */
 export function createResultsListener(
-  persist: (result: GameResult) => Promise<void> = persistGameResult
+  persist: (result: GameResult) => Promise<void> = persistGameResult,
+  onPersisted: (gameSessionId: string) => void = emitPostGameEvent
 ): ResultEmitter {
   return (result: GameResult): void => {
-    persist(result).catch((err) => {
+    persist(result)
+      .then(() => {
+        // Raising the event must never affect persistence or the finished game.
+        // The event manager isolates the actions themselves; this guards only a
+        // synchronous throw from the hook.
+        try {
+          onPersisted(result.gameSessionId);
+        } catch (err) {
+          reportError({
+            domain: "events",
+            error: err as Error,
+            fatal: false,
+            context: { gameSessionId: result.gameSessionId, reason: "post_game_emit_threw" },
+          });
+        }
+      })
+      .catch((err) => {
       // persistGameResult already reports its own failures internally; this catch
       // exists purely as a last-resort backstop so a truly unexpected throw can
       // never become an unhandled rejection.
