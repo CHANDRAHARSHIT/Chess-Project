@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import type { Session } from "@auth/core/types";
 import { useNavigate } from "react-router";
-import rollbar from "@/shared/lib/rollbar";
+import rollbar, { isNetworkFetchError } from "@/shared/lib/rollbar";
 import { SessionContext } from "./sessionContext.instance";
 
 /**
@@ -30,8 +30,10 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
     } catch (error) {
       console.error("Failed to fetch session:", error);
       // Falls back to unauthenticated below, so this never reaches the
-      // ErrorBoundary — report it manually.
-      rollbar.error(error as Error, { context: "SessionContext.fetchSession" });
+      // ErrorBoundary — report it manually. A network-layer failure (offline,
+      // dropped connection) isn't an app defect, so it's downgraded to a warning.
+      const report = isNetworkFetchError(error) ? rollbar.warning.bind(rollbar) : rollbar.error.bind(rollbar);
+      report(error as Error, { context: "SessionContext.fetchSession" });
       return null;
     }
   };
@@ -89,7 +91,8 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
       document.body.removeChild(form);
     } catch (error) {
       console.error("Error during sign in:", error);
-      rollbar.error(error as Error, { context: "SessionContext.signIn", provider });
+      const report = isNetworkFetchError(error) ? rollbar.warning.bind(rollbar) : rollbar.error.bind(rollbar);
+      report(error as Error, { context: "SessionContext.signIn", provider });
       setStatus("unauthenticated");
     }
   };
@@ -125,7 +128,8 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
       navigate("/", { replace: true });
     } catch (error) {
       console.error("Error during sign out:", error);
-      rollbar.error(error as Error, { context: "SessionContext.signOut" });
+      const report = isNetworkFetchError(error) ? rollbar.warning.bind(rollbar) : rollbar.error.bind(rollbar);
+      report(error as Error, { context: "SessionContext.signOut" });
       setSession(null);
       setStatus("unauthenticated");
       navigate("/", { replace: true });
