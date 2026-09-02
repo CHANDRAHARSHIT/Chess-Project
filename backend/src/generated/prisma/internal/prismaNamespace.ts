@@ -404,6 +404,7 @@ export const ModelName = {
   LessonProgress: 'LessonProgress',
   CustomLink: 'CustomLink',
   GameRecord: 'GameRecord',
+  GameAnalysis: 'GameAnalysis',
   GameParticipant: 'GameParticipant',
   PlayerRating: 'PlayerRating',
   PathwayProgress: 'PathwayProgress',
@@ -424,7 +425,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "account" | "session" | "verificationToken" | "subscription" | "payment" | "billingProfile" | "product" | "productFeature" | "webhookEvent" | "curatedPuzzle" | "opening" | "builderLesson" | "builderSegment" | "builderSlide" | "course" | "lesson" | "lessonProgress" | "customLink" | "gameRecord" | "gameParticipant" | "playerRating" | "pathwayProgress" | "assessmentTemplate" | "assessmentAttempt"
+    modelProps: "user" | "account" | "session" | "verificationToken" | "subscription" | "payment" | "billingProfile" | "product" | "productFeature" | "webhookEvent" | "curatedPuzzle" | "opening" | "builderLesson" | "builderSegment" | "builderSlide" | "course" | "lesson" | "lessonProgress" | "customLink" | "gameRecord" | "gameAnalysis" | "gameParticipant" | "playerRating" | "pathwayProgress" | "assessmentTemplate" | "assessmentAttempt"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1908,6 +1909,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    GameAnalysis: {
+      payload: Prisma.$GameAnalysisPayload<ExtArgs>
+      fields: Prisma.GameAnalysisFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.GameAnalysisFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GameAnalysisPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.GameAnalysisFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GameAnalysisPayload>
+        }
+        findFirst: {
+          args: Prisma.GameAnalysisFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GameAnalysisPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.GameAnalysisFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GameAnalysisPayload>
+        }
+        findMany: {
+          args: Prisma.GameAnalysisFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GameAnalysisPayload>[]
+        }
+        create: {
+          args: Prisma.GameAnalysisCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GameAnalysisPayload>
+        }
+        createMany: {
+          args: Prisma.GameAnalysisCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.GameAnalysisCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GameAnalysisPayload>[]
+        }
+        delete: {
+          args: Prisma.GameAnalysisDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GameAnalysisPayload>
+        }
+        update: {
+          args: Prisma.GameAnalysisUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GameAnalysisPayload>
+        }
+        deleteMany: {
+          args: Prisma.GameAnalysisDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.GameAnalysisUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.GameAnalysisUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GameAnalysisPayload>[]
+        }
+        upsert: {
+          args: Prisma.GameAnalysisUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GameAnalysisPayload>
+        }
+        aggregate: {
+          args: Prisma.GameAnalysisAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateGameAnalysis>
+        }
+        groupBy: {
+          args: Prisma.GameAnalysisGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.GameAnalysisGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.GameAnalysisCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.GameAnalysisCountAggregateOutputType> | number
+        }
+      }
+    }
     GameParticipant: {
       payload: Prisma.$GameParticipantPayload<ExtArgs>
       fields: Prisma.GameParticipantFieldRefs
@@ -2638,6 +2713,22 @@ export const GameRecordScalarFieldEnum = {
 export type GameRecordScalarFieldEnum = (typeof GameRecordScalarFieldEnum)[keyof typeof GameRecordScalarFieldEnum]
 
 
+export const GameAnalysisScalarFieldEnum = {
+  id: 'id',
+  gameRecordId: 'gameRecordId',
+  engineName: 'engineName',
+  engineDepth: 'engineDepth',
+  multiPvLines: 'multiPvLines',
+  startingFen: 'startingFen',
+  plyCount: 'plyCount',
+  plies: 'plies',
+  payloadVersion: 'payloadVersion',
+  analysedAt: 'analysedAt'
+} as const
+
+export type GameAnalysisScalarFieldEnum = (typeof GameAnalysisScalarFieldEnum)[keyof typeof GameAnalysisScalarFieldEnum]
+
+
 export const GameParticipantScalarFieldEnum = {
   id: 'id',
   gameRecordId: 'gameRecordId',
@@ -3102,6 +3193,7 @@ export type GlobalOmitConfig = {
   lessonProgress?: Prisma.LessonProgressOmit
   customLink?: Prisma.CustomLinkOmit
   gameRecord?: Prisma.GameRecordOmit
+  gameAnalysis?: Prisma.GameAnalysisOmit
   gameParticipant?: Prisma.GameParticipantOmit
   playerRating?: Prisma.PlayerRatingOmit
   pathwayProgress?: Prisma.PathwayProgressOmit

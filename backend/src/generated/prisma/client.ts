@@ -142,6 +142,19 @@ export type CustomLink = Prisma.CustomLinkModel
  */
 export type GameRecord = Prisma.GameRecordModel
 /**
+ * Model GameAnalysis
+ * Cached engine analysis of one finished game.
+ * 
+ * Stores raw engine output only — evaluations and best moves, never derived
+ * classifications. Classification depends on PolicyRegistry values the Feedback
+ * module is expected to change; storing it would mean re-running Stockfish over
+ * the whole history on every policy edit, instead of a re-aggregation.
+ * 
+ * Written post-game; read by multi-game suspect review, which never runs the
+ * engine itself. See backend/src/anticheat/MULTI_GAME_REVIEW_REQUIREMENTS.md §11.2.
+ */
+export type GameAnalysis = Prisma.GameAnalysisModel
+/**
  * Model GameParticipant
  * 
  */

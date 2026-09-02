@@ -17,4 +17,5 @@ gamesRouter.use((_req, res, next) => {
 // Specific routes before the "/:id" catch-all.
 gamesRouter.get("/history/me", requireAuth, GamesController.getHistory);
 gamesRouter.get("/leaderboard/:variantId", GamesController.getLeaderboard);
+gamesRouter.get("/:id/analysis", requireAuth, GamesController.getAnalysis);
 gamesRouter.get("/:id", GamesController.getById);

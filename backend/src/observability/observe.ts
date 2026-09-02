@@ -35,6 +35,8 @@ export type ObservabilityDomain =
   | "results"
   | "http"
   | "bot"
+  | "anticheat"
+  | "events"
   | "maia";
 
 /**

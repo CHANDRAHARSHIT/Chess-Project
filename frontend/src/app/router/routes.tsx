@@ -38,6 +38,7 @@ import StoryModePage from "@/pages/StoryModePage";
 import PlayHubPage from "@/pages/PlayHubPage";
 import StatsPage from "@/pages/StatsPage";
 import AssessmentPage from "@/pages/AssessmentPage";
+import NewsPage from "@/pages/NewsPage";
 
 export interface RouteConfig {
   path: string;
@@ -49,6 +50,7 @@ export interface RouteConfig {
 export const mainRoutes: RouteConfig[] = [
   { path: "/", element: <HomePage />, title: "XLChess - Play Chess Online" },
   { path: "/home-v2", element: <HomeV2Page />, title: "XLChess - Home V2" },
+  { path: "/news", element: <NewsPage />, title: "News & Ratings | XLChess" },
   { path: "/contact-us", element: <ContactPage />, title: "Contact Us | XLChess" },
   {
     path: "/puzzles",
