@@ -110,13 +110,7 @@ export interface DetectionOutcome {
   readonly totalScore: number;
   readonly threshold: number;
   readonly detected: boolean;
-  /**
-   * Games where at least one signal flagged.
-   *
-   * Carried on the outcome because Compensation defines Affected Users as the
-   * opponents in these games only. Re-deriving them later would re-score against
-   * policy values that may have changed since the review ran.
-   */
+  /** Compensation defines Affected Users as the opponents in these games only. */
   readonly flaggedGameRecordIds: readonly string[];
   /** Calibrated probability of a violation, 0–1. */
   readonly certainty: number;
@@ -192,10 +186,7 @@ export interface ReviewCase {
   readonly suspect: Suspect;
   readonly situation: Situation;
   readonly status: CaseStatus;
-  /**
-   * Every outcome that contributed, oldest first. A later detection on a still-open
-   * case appends here rather than opening a second case or being discarded.
-   */
+  /** Every outcome that contributed, oldest first. A later detection appends. */
   readonly outcomes: readonly DetectionOutcome[];
   readonly evidence: readonly string[];
   readonly flaggedGameRecordIds: readonly string[];

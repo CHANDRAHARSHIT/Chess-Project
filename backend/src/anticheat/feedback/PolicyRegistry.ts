@@ -69,6 +69,8 @@ const PROVISIONAL_QUALITY_BANDS: MoveQualityBands = {
 /** Roughly a clear extra piece — provisional, like the bands above. */
 const DECISIVE_ADVANTAGE_CP = 300;
 
+const DAY_MS = 24 * 60 * 60 * 1000;
+
 /** Which games a multi-game review runs over. */
 export interface ReviewWindowPolicy {
   readonly gameCount: number;
@@ -195,6 +197,51 @@ const PROVISIONAL_CERTAINTY_POLICY: CertaintyPolicy = {
 
 const AUTOMATIC_CASE_OPENING_ENABLED = true;
 
+/**
+ * Certainty each action requires on the automatic path. Provisional, but every
+ * value must stay above `uncalibratedCeiling` — that is what stops a
+ * placeholder-driven review reaching any consequence.
+ */
+const PROVISIONAL_CERTAINTY_THRESHOLDS: Readonly<Record<PenaltyAction, number>> = {
+  increase_monitoring: 0.3,
+  warning: 0.4,
+  strike: 0.55,
+  restrict_from_prize_events: 0.65,
+  restrict_from_rated_events: 0.7,
+  suspend_from_current_event: 0.75,
+  temporary_ban: 0.85,
+  permanent_ban: 0.95,
+};
+
+/** The spec's ladder as data — new actions are entries here, never branches. */
+const PROVISIONAL_LEVEL_ACTIONS: Readonly<Record<EscalationLevel, readonly PenaltyAction[]>> = {
+  0: ["increase_monitoring"],
+  1: ["increase_monitoring", "warning"],
+  2: [
+    "strike",
+    "restrict_from_rated_events",
+    "restrict_from_prize_events",
+    "suspend_from_current_event",
+    "temporary_ban",
+  ],
+  3: ["permanent_ban"],
+};
+
+/** Upheld cases at which each level begins, indexed level 1, 2, 3. */
+const PROVISIONAL_UPHELD_CASES_PER_LEVEL: readonly number[] = [1, 2, 3];
+
+/** How long a time-limited action lasts. Null never expires. */
+const PROVISIONAL_PENALTY_DURATIONS_MS: Readonly<Record<PenaltyAction, number | null>> = {
+  increase_monitoring: 30 * DAY_MS,
+  warning: null,
+  strike: null,
+  restrict_from_prize_events: 90 * DAY_MS,
+  restrict_from_rated_events: 90 * DAY_MS,
+  suspend_from_current_event: null,
+  temporary_ban: 30 * DAY_MS,
+  permanent_ban: null,
+};
+
 export class PolicyRegistry {
   /**
    * Centipawn-loss bands for move classification.
@@ -236,11 +283,8 @@ export class PolicyRegistry {
   }
 
   /**
-   * Whether a detection opens a case without a human asking it to.
-   *
-   * Safe to leave on: opening a case is not a consequence, and the certainty
-   * ceiling keeps every penalty out of reach. The cost is queue noise until real
-   * baselines land, which is a staffing problem rather than a user-facing one.
+   * Safe to leave on: opening a case is not a consequence. The cost is queue
+   * noise until real baselines land.
    */
   isAutomaticCaseOpeningEnabled(situation: Situation): boolean {
     return AUTOMATIC_CASE_OPENING_ENABLED;
@@ -260,9 +304,27 @@ export class PolicyRegistry {
     throw new Error("Not implemented");
   }
 
-  /** Bar rises with the harm a wrong call causes: monitoring is cheap, a ban is not. */
+  /**
+   * Situation-scoped by signature but uniform in value: raising a bar for a
+   * high-risk Situation would be legitimate, softening one never is.
+   */
   getCertaintyThreshold(action: PenaltyAction, situation: Situation): number {
-    throw new Error("Not implemented");
+    return PROVISIONAL_CERTAINTY_THRESHOLDS[action];
+  }
+
+  /** The ladder as data — new actions are entries, not code. */
+  getActionsForLevel(level: EscalationLevel, situation: Situation): readonly PenaltyAction[] {
+    return PROVISIONAL_LEVEL_ACTIONS[level];
+  }
+
+  /** Upheld-case counts at which levels 1, 2 and 3 begin. */
+  getUpheldCasesPerLevel(situation: Situation): readonly number[] {
+    return PROVISIONAL_UPHELD_CASES_PER_LEVEL;
+  }
+
+  /** How long an action lasts, or null when it never expires. */
+  getPenaltyDurationMs(action: PenaltyAction, situation: Situation): number | null {
+    return PROVISIONAL_PENALTY_DURATIONS_MS[action];
   }
 
   /** Flags constituting a pattern rather than an anomaly. Spec's provisional figure is 3. */

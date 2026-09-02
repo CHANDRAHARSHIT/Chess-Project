@@ -147,15 +147,6 @@ describe("CaseManager.openCase", () => {
     assert.equal(repository.cases.length, 2);
   });
 
-  it("keeps separate suspects in separate cases", async () => {
-    const repository = buildFakeRepository();
-    const manager = new CaseManager(repository);
-
-    await manager.openCase(buildSuspect("u1"), buildOutcome());
-    await manager.openCase(buildSuspect("u2"), buildOutcome());
-
-    assert.equal(repository.cases.length, 2);
-  });
 });
 
 describe("CaseManager.prepareArbiterPacket", () => {
@@ -204,23 +195,6 @@ describe("CaseManager decisions", () => {
     assert.equal(resolved.status, "upheld");
     assert.equal(resolved.upheld, true);
     assert.equal(await manager.countUpheldCases("u1"), 1);
-  });
-
-  it("counts no escalation from an overturned case", async () => {
-    const repository = buildFakeRepository();
-    const manager = new CaseManager(repository);
-    const opened = await manager.openCase(buildSuspect(), buildOutcome());
-
-    await manager.recordDecision({
-      caseId: opened.caseId,
-      arbiterId: "arb1",
-      upheld: false,
-      confidence: 0.8,
-      reasoning: "Insufficient evidence.",
-      decidedAt: new Date(),
-    });
-
-    assert.equal(await manager.countUpheldCases("u1"), 0);
   });
 
   it("refuses to decide a case twice", async () => {

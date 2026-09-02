@@ -128,9 +128,14 @@ export { EngineCorrelationCheck } from "./detection/checks/EngineCorrelationChec
 export { PlayingPersonalityCheck } from "./detection/checks/PlayingPersonalityCheck.js";
 
 // ── Penalty ──────────────────────────────────────────────────────────────────
-export { PenaltyManager } from "./penalty/PenaltyManager.js";
+export {
+  PenaltyManager,
+  PenaltyNotFoundError,
+  UnappealablePenaltyError,
+} from "./penalty/PenaltyManager.js";
 export { EscalationLadder } from "./penalty/EscalationLadder.js";
-export type { EscalationState } from "./penalty/EscalationLadder.js";
+export { prismaPenaltyRepository } from "./penalty/penaltyRepository.js";
+export type { NewPenaltyInput, PenaltyRepository } from "./penalty/penaltyRepository.js";
 
 // ── Compensation ─────────────────────────────────────────────────────────────
 export { CompensationManager } from "./compensation/CompensationManager.js";

@@ -6,8 +6,6 @@
  * Arbiters are external FIDE-qualified contractors paid per case, so a case must
  * be self-contained: an arbiter who has to ask for context costs more and decides
  * slower. They see evidence, never thresholds or weights.
- *
- * Opening a case concludes nothing. Only recordDecision, driven by a human, does.
  */
 
 import {
@@ -45,11 +43,8 @@ export class CaseManager {
   constructor(private readonly repository: CaseRepository = prismaCaseRepository) {}
 
   /**
-   * Opens a case, or appends to the one already open for this suspect.
-   *
-   * Appending rather than opening a second case keeps the queue survivable once
-   * auto-opening is on; appending rather than discarding keeps the evidence an
-   * arbiter most needs — a second, stronger detection — from being thrown away.
+   * Opens a case, or appends to the one already open for this suspect — a second
+   * detection must neither duplicate the case nor be discarded.
    */
   async openCase(suspect: Suspect, outcome: DetectionOutcome): Promise<ReviewCase> {
     const existing = await this.repository.findUnresolvedCaseForUser(suspect.userId);
@@ -80,11 +75,7 @@ export class CaseManager {
     return this.repository.findCases(status);
   }
 
-  /**
-   * Every case needs a human today: certainty is capped below every penalty bar
-   * while baselines are placeholders, so nothing can be decided automatically.
-   * Where the line eventually sits is a policy value, not a constant here.
-   */
+  /** Every case needs a human while certainty is capped below every penalty bar. */
   async requiresHumanReview(_reviewCase: ReviewCase): Promise<boolean> {
     return true;
   }
@@ -110,10 +101,7 @@ export class CaseManager {
     };
   }
 
-  /**
-   * The arbiter's authority. This is the only path that concludes someone cheated,
-   * and it does not consult the certainty bars — those gate the automatic path.
-   */
+  /** The only path that concludes someone cheated. Does not consult certainty bars. */
   async recordDecision(decision: ArbiterDecision): Promise<ReviewCase> {
     await this.loadUnresolvedCase(decision.caseId);
 
@@ -150,10 +138,6 @@ export class CaseManager {
     });
   }
 
-  /**
-   * Escalation level, derived by counting upheld cases rather than stored.
-   * Nothing to migrate, nothing to drift, and it cannot disagree with the cases.
-   */
   async countUpheldCases(userId: string): Promise<number> {
     return this.repository.countUpheldCases(userId);
   }
@@ -179,10 +163,7 @@ export class CaseNotFoundError extends Error {}
 export class CaseAlreadyResolvedError extends Error {}
 export class CaseAccessError extends Error {}
 
-/**
- * Derived from the case id, never the user id: an arbiter who can recognise a
- * suspect across cases is no longer judging the moves in front of them.
- */
+/** From the case id, never the user id — an arbiter must not recognise a suspect across cases. */
 function buildAnonymisedRef(caseId: string): string {
   return `Suspect-${caseId.slice(-6).toUpperCase()}`;
 }

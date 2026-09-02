@@ -1,8 +1,6 @@
 /**
- * DB↔domain boundary for review cases (mirrors analysisRepository.ts).
- *
- * CaseManager holds the decisions; every Prisma call lives here, so the manager
- * can be exercised against an in-memory repository without a database.
+ * DB↔domain boundary for review cases. Every Prisma call lives here, so
+ * CaseManager can run against an in-memory repository in tests.
  */
 
 import type { Prisma, ReviewCase as ReviewCaseRow } from "../../generated/prisma/client.js";
@@ -112,10 +110,7 @@ export function collectEvidence(outcomes: readonly DetectionOutcome[]): string[]
   return [...evidence];
 }
 
-/**
- * JSON columns come back as `unknown`, so the cast is unavoidable. Rows are
- * written only by this module, which is what makes the shape safe to assume.
- */
+/** Casts are safe because only this module writes these JSON columns. */
 function buildReviewCase(row: ReviewCaseRow): ReviewCase {
   const outcomes = (row.outcomes ?? []) as unknown as DetectionOutcome[];
 

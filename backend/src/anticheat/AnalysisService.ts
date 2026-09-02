@@ -195,12 +195,7 @@ export async function runWholeHistoryReview(gameSessionId: string): Promise<void
   }
 }
 
-/**
- * Opens a review case when a detection crosses the threshold.
- *
- * Opening a case is not a consequence and concludes nothing — a human arbiter
- * decides. No penalty follows from this call.
- */
+/** Opening a case concludes nothing and applies no penalty — a human arbiter decides. */
 async function openCaseForOutcome(outcome: DetectionOutcome): Promise<void> {
   if (!outcome.detected) return;
   if (!new PolicyRegistry().isAutomaticCaseOpeningEnabled(outcome.situation)) return;
