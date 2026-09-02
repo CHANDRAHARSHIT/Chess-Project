@@ -29,8 +29,10 @@ export type {
   PenaltyAction,
   AppliedPenalty,
   CaseStatus,
+  CaseAppeal,
   ReviewCase,
 } from "./types.js";
+export { UNRESOLVED_CASE_STATUSES } from "./types.js";
 
 // ── Post-game analysis (implemented) ─────────────────────────────────────────
 export {
@@ -135,10 +137,18 @@ export { CompensationManager } from "./compensation/CompensationManager.js";
 export type { CompensationRecord } from "./compensation/CompensationManager.js";
 
 // ── Review (offender review & appeals) ───────────────────────────────────────
-export { CaseManager } from "./review/CaseManager.js";
+export {
+  CaseManager,
+  CaseAccessError,
+  CaseAlreadyResolvedError,
+  CaseNotFoundError,
+} from "./review/CaseManager.js";
 export type { ArbiterDecision, ArbiterPacket } from "./review/CaseManager.js";
+export { collectEvidence, prismaCaseRepository } from "./review/caseRepository.js";
+export type { CaseChanges, CaseRepository, NewCaseInput } from "./review/caseRepository.js";
 export { AppealService } from "./review/AppealService.js";
-export type { Appeal, AppealStatus } from "./review/AppealService.js";
+export type { Appeal } from "./review/AppealService.js";
+export type { AppealStatus } from "./types.js";
 
 // ── Simulation ───────────────────────────────────────────────────────────────
 export { CheatInjector } from "./simulation/CheatInjector.js";

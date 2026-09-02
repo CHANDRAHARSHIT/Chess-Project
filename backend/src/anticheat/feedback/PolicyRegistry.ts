@@ -193,6 +193,8 @@ const PROVISIONAL_CERTAINTY_POLICY: CertaintyPolicy = {
   placeholderMode: true,
 };
 
+const AUTOMATIC_CASE_OPENING_ENABLED = true;
+
 export class PolicyRegistry {
   /**
    * Centipawn-loss bands for move classification.
@@ -231,6 +233,17 @@ export class PolicyRegistry {
 
   getCertaintyPolicy(situation: Situation): CertaintyPolicy {
     return PROVISIONAL_CERTAINTY_POLICY;
+  }
+
+  /**
+   * Whether a detection opens a case without a human asking it to.
+   *
+   * Safe to leave on: opening a case is not a consequence, and the certainty
+   * ceiling keeps every penalty out of reach. The cost is queue noise until real
+   * baselines land, which is a staffing problem rather than a user-facing one.
+   */
+  isAutomaticCaseOpeningEnabled(situation: Situation): boolean {
+    return AUTOMATIC_CASE_OPENING_ENABLED;
   }
 
   /** Summed-DCS value above which detection is reported. Spec's `> 100` is a placeholder. */

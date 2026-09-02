@@ -27,6 +27,7 @@ import {
   type GameAnalysisReport,
 } from "./detection/PostGameAnalysis.js";
 import { renderReviewSummary, renderTextReport } from "./detection/AnalysisReport.js";
+import { CaseManager } from "./review/CaseManager.js";
 import type { DetectionOutcome, Situation } from "./types.js";
 
 /**
@@ -190,7 +191,25 @@ export async function runWholeHistoryReview(gameSessionId: string): Promise<void
     const outcome = await reviewUserHistory(userId, REPORT_SITUATION, null);
     if (!outcome) continue;
     console.log(`\n${renderReviewSummary(outcome)}\n`);
+    await openCaseForOutcome(outcome);
   }
+}
+
+/**
+ * Opens a review case when a detection crosses the threshold.
+ *
+ * Opening a case is not a consequence and concludes nothing — a human arbiter
+ * decides. No penalty follows from this call.
+ */
+async function openCaseForOutcome(outcome: DetectionOutcome): Promise<void> {
+  if (!outcome.detected) return;
+  if (!new PolicyRegistry().isAutomaticCaseOpeningEnabled(outcome.situation)) return;
+
+  const reviewCase = await new CaseManager().openCase(outcome.suspect, outcome);
+  console.log(
+    `[anticheat] Case ${reviewCase.caseId} open for review ` +
+      `(${reviewCase.outcomes.length} outcome(s), ${reviewCase.flaggedGameRecordIds.length} flagged game(s)).`
+  );
 }
 
 /**

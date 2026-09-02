@@ -110,6 +110,14 @@ export interface DetectionOutcome {
   readonly totalScore: number;
   readonly threshold: number;
   readonly detected: boolean;
+  /**
+   * Games where at least one signal flagged.
+   *
+   * Carried on the outcome because Compensation defines Affected Users as the
+   * opponents in these games only. Re-deriving them later would re-score against
+   * policy values that may have changed since the review ran.
+   */
+  readonly flaggedGameRecordIds: readonly string[];
   /** Calibrated probability of a violation, 0–1. */
   readonly certainty: number;
   readonly evaluatedAt: Date;
@@ -159,17 +167,47 @@ export type CaseStatus =
   | "appealed"
   | "closed";
 
+/** Statuses where the case is still live. Anything else has been decided. */
+export const UNRESOLVED_CASE_STATUSES: readonly CaseStatus[] = [
+  "open",
+  "awaiting_arbiter",
+  "under_review",
+  "appealed",
+];
+
+export type AppealStatus = "submitted" | "under_review" | "upheld" | "rejected" | "withdrawn";
+
+/** One appeal against a decided case. Lives on the case — there is only ever one. */
+export interface CaseAppeal {
+  readonly status: AppealStatus;
+  readonly grounds: string;
+  readonly submittedAt: Date;
+  readonly decidedAt?: Date;
+  readonly decisionReasoning?: string;
+}
+
 /** Must be self-contained: arbiters are external contractors with no platform access. */
 export interface ReviewCase {
   readonly caseId: string;
   readonly suspect: Suspect;
   readonly situation: Situation;
   readonly status: CaseStatus;
+  /**
+   * Every outcome that contributed, oldest first. A later detection on a still-open
+   * case appends here rather than opening a second case or being discarded.
+   */
   readonly outcomes: readonly DetectionOutcome[];
-  readonly flags: readonly RedFlag[];
+  readonly evidence: readonly string[];
+  readonly flaggedGameRecordIds: readonly string[];
+  /** Computed by Compensation once the case is upheld; empty until then. */
   readonly affectedUsers: readonly AffectedUser[];
   readonly openedAt: Date;
   readonly assignedArbiterId?: string;
   readonly resolvedAt?: Date;
   readonly resolutionNotes?: string;
+  /** Set only once an arbiter has decided. Undefined is "not yet decided". */
+  readonly upheld?: boolean;
+  readonly arbiterConfidence?: number;
+  readonly suspectStatement?: string;
+  readonly appeal?: CaseAppeal;
 }

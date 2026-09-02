@@ -53,6 +53,7 @@ export function scoreReviewWindow(
 
   const weightedTotal = calculateWeightedTotal(signalScores, situation, policy);
   const coOccurrenceGames = countCoOccurrenceGames(signalScores);
+  const flaggedGameRecordIds = collectFlaggedGameRecordIds(signalScores);
   const totalScore =
     coOccurrenceGames >= pattern.coOccurrenceGameCount
       ? Math.round(weightedTotal * pattern.coOccurrenceMultiplier)
@@ -65,7 +66,14 @@ export function scoreReviewWindow(
     results: signalScores.map((score) => buildCheckResult(score, window, coOccurrenceGames)),
     totalScore,
     threshold,
-    detected: isDetected(window, signalScores, totalScore, threshold, pattern.flaggedGameCount),
+    detected: isDetected(
+      window,
+      flaggedGameRecordIds.length,
+      totalScore,
+      threshold,
+      pattern.flaggedGameCount
+    ),
+    flaggedGameRecordIds,
     certainty: calculateCertainty(totalScore, threshold, situation, policy),
     evaluatedAt: new Date(),
   };
@@ -245,24 +253,25 @@ function countCoOccurrenceGames(scores: readonly SignalWindowScore[]): number {
  */
 function isDetected(
   window: ReviewWindow,
-  scores: readonly SignalWindowScore[],
+  flaggedGameCount: number,
   totalScore: number,
   threshold: number,
   requiredFlaggedGames: number
 ): boolean {
   if (!window.isSufficient) return false;
-  if (countDistinctFlaggedGames(scores) < requiredFlaggedGames) return false;
+  if (flaggedGameCount < requiredFlaggedGames) return false;
   return totalScore > threshold;
 }
 
-function countDistinctFlaggedGames(scores: readonly SignalWindowScore[]): number {
+/** Distinct games flagged by any signal. Ordered, so an outcome is reproducible. */
+function collectFlaggedGameRecordIds(scores: readonly SignalWindowScore[]): string[] {
   const flagged = new Set<string>();
   for (const score of scores) {
     for (const game of score.games) {
       if (game.isFlagged) flagged.add(game.gameRecordId);
     }
   }
-  return flagged.size;
+  return [...flagged].sort();
 }
 
 /**

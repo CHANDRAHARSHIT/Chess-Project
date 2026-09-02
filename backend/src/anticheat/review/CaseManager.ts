@@ -6,9 +6,22 @@
  * Arbiters are external FIDE-qualified contractors paid per case, so a case must
  * be self-contained: an arbiter who has to ask for context costs more and decides
  * slower. They see evidence, never thresholds or weights.
+ *
+ * Opening a case concludes nothing. Only recordDecision, driven by a human, does.
  */
 
-import type { CaseStatus, DetectionOutcome, RedFlag, ReviewCase, Suspect } from "../types.js";
+import {
+  UNRESOLVED_CASE_STATUSES,
+  type CaseStatus,
+  type DetectionOutcome,
+  type ReviewCase,
+  type Suspect,
+} from "../types.js";
+import {
+  collectEvidence,
+  prismaCaseRepository,
+  type CaseRepository,
+} from "./caseRepository.js";
 
 export interface ArbiterDecision {
   readonly caseId: string;
@@ -29,46 +42,154 @@ export interface ArbiterPacket {
 }
 
 export class CaseManager {
-  openCase(
-    suspect: Suspect,
-    outcomes: readonly DetectionOutcome[],
-    flags: readonly RedFlag[]
-  ): Promise<ReviewCase> {
-    throw new Error("Not implemented");
+  constructor(private readonly repository: CaseRepository = prismaCaseRepository) {}
+
+  /**
+   * Opens a case, or appends to the one already open for this suspect.
+   *
+   * Appending rather than opening a second case keeps the queue survivable once
+   * auto-opening is on; appending rather than discarding keeps the evidence an
+   * arbiter most needs — a second, stronger detection — from being thrown away.
+   */
+  async openCase(suspect: Suspect, outcome: DetectionOutcome): Promise<ReviewCase> {
+    const existing = await this.repository.findUnresolvedCaseForUser(suspect.userId);
+    if (!existing) {
+      return this.repository.saveCase({
+        userId: suspect.userId,
+        situation: outcome.situation,
+        outcome,
+      });
+    }
+
+    const outcomes = [...existing.outcomes, outcome];
+    return this.repository.updateCase(existing.caseId, {
+      outcomes,
+      evidence: collectEvidence(outcomes),
+      flaggedGameRecordIds: mergeGameRecordIds(
+        existing.flaggedGameRecordIds,
+        outcome.flaggedGameRecordIds
+      ),
+    });
   }
 
-  getCase(caseId: string): Promise<ReviewCase | null> {
-    throw new Error("Not implemented");
+  async getCase(caseId: string): Promise<ReviewCase | null> {
+    return this.repository.findCaseById(caseId);
   }
 
-  listCases(status?: CaseStatus): Promise<readonly ReviewCase[]> {
-    throw new Error("Not implemented");
+  async listCases(status?: CaseStatus): Promise<readonly ReviewCase[]> {
+    return this.repository.findCases(status);
   }
 
-  /** Not every case needs a paid arbiter. Where the line sits is a policy value. */
-  requiresHumanReview(reviewCase: ReviewCase): Promise<boolean> {
-    throw new Error("Not implemented");
+  /**
+   * Every case needs a human today: certainty is capped below every penalty bar
+   * while baselines are placeholders, so nothing can be decided automatically.
+   * Where the line eventually sits is a policy value, not a constant here.
+   */
+  async requiresHumanReview(_reviewCase: ReviewCase): Promise<boolean> {
+    return true;
   }
 
-  assignArbiter(caseId: string, arbiterId: string): Promise<ReviewCase> {
-    throw new Error("Not implemented");
+  async assignArbiter(caseId: string, arbiterId: string): Promise<ReviewCase> {
+    await this.loadUnresolvedCase(caseId);
+    return this.repository.updateCase(caseId, {
+      assignedArbiterId: arbiterId,
+      status: "under_review",
+    });
   }
 
   /** Anonymises the suspect and strips internal methodology. */
-  prepareArbiterPacket(caseId: string): Promise<ArbiterPacket> {
-    throw new Error("Not implemented");
+  async prepareArbiterPacket(caseId: string): Promise<ArbiterPacket> {
+    const reviewCase = await this.loadCase(caseId);
+
+    return {
+      caseId: reviewCase.caseId,
+      anonymisedSuspectRef: buildAnonymisedRef(reviewCase.caseId),
+      games: reviewCase.flaggedGameRecordIds,
+      evidence: reviewCase.evidence,
+      ...(reviewCase.suspectStatement ? { suspectStatement: reviewCase.suspectStatement } : {}),
+    };
   }
 
-  recordDecision(decision: ArbiterDecision): Promise<ReviewCase> {
-    throw new Error("Not implemented");
+  /**
+   * The arbiter's authority. This is the only path that concludes someone cheated,
+   * and it does not consult the certainty bars — those gate the automatic path.
+   */
+  async recordDecision(decision: ArbiterDecision): Promise<ReviewCase> {
+    await this.loadUnresolvedCase(decision.caseId);
+
+    return this.repository.updateCase(decision.caseId, {
+      status: decision.upheld ? "upheld" : "overturned",
+      upheld: decision.upheld,
+      arbiterConfidence: decision.confidence,
+      assignedArbiterId: decision.arbiterId,
+      resolvedAt: decision.decidedAt,
+      resolutionNotes: decision.reasoning,
+    });
   }
 
   /** Cheap and high-value: "I was streaming, here's the VOD" resolves cases statistics get wrong. */
-  submitSuspectStatement(caseId: string, userId: string, statement: string): Promise<ReviewCase> {
-    throw new Error("Not implemented");
+  async submitSuspectStatement(
+    caseId: string,
+    userId: string,
+    statement: string
+  ): Promise<ReviewCase> {
+    const reviewCase = await this.loadUnresolvedCase(caseId);
+    if (reviewCase.suspect.userId !== userId) {
+      throw new CaseAccessError("Only the suspect may add a statement to their own case.");
+    }
+
+    return this.repository.updateCase(caseId, { suspectStatement: statement });
   }
 
-  closeCase(caseId: string, notes: string): Promise<ReviewCase> {
-    throw new Error("Not implemented");
+  async closeCase(caseId: string, notes: string): Promise<ReviewCase> {
+    await this.loadCase(caseId);
+    return this.repository.updateCase(caseId, {
+      status: "closed",
+      resolvedAt: new Date(),
+      resolutionNotes: notes,
+    });
   }
+
+  /**
+   * Escalation level, derived by counting upheld cases rather than stored.
+   * Nothing to migrate, nothing to drift, and it cannot disagree with the cases.
+   */
+  async countUpheldCases(userId: string): Promise<number> {
+    return this.repository.countUpheldCases(userId);
+  }
+
+  private async loadCase(caseId: string): Promise<ReviewCase> {
+    const reviewCase = await this.repository.findCaseById(caseId);
+    if (!reviewCase) throw new CaseNotFoundError(`Case '${caseId}' not found.`);
+    return reviewCase;
+  }
+
+  private async loadUnresolvedCase(caseId: string): Promise<ReviewCase> {
+    const reviewCase = await this.loadCase(caseId);
+    if (!UNRESOLVED_CASE_STATUSES.includes(reviewCase.status)) {
+      throw new CaseAlreadyResolvedError(
+        `Case '${caseId}' is '${reviewCase.status}' and can no longer be changed.`
+      );
+    }
+    return reviewCase;
+  }
+}
+
+export class CaseNotFoundError extends Error {}
+export class CaseAlreadyResolvedError extends Error {}
+export class CaseAccessError extends Error {}
+
+/**
+ * Derived from the case id, never the user id: an arbiter who can recognise a
+ * suspect across cases is no longer judging the moves in front of them.
+ */
+function buildAnonymisedRef(caseId: string): string {
+  return `Suspect-${caseId.slice(-6).toUpperCase()}`;
+}
+
+function mergeGameRecordIds(
+  existing: readonly string[],
+  added: readonly string[]
+): readonly string[] {
+  return [...new Set([...existing, ...added])].sort();
 }
