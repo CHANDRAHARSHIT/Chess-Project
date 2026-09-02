@@ -199,7 +199,7 @@ export default function QuestionCard({
           {question.type === "short-text" && (
             <ShortTextInput
               id={`question-${question.id}-input`}
-              value={answer}
+              value={answer || question.prefillValue || ""}
               onChange={onAnswerChange}
               wordLimit={question.wordLimit}
               placeholder={question.placeholder || "Answer"}
@@ -209,11 +209,11 @@ export default function QuestionCard({
           {question.type === "long-text" && (
             <LongTextInput
               id={`question-${question.id}-input`}
-              value={answer}
+              value={answer || question.prefillValue || ""}
               onChange={onAnswerChange}
               wordLimit={question.wordLimit}
               placeholder={question.placeholder || "Answer"}
-              rows={5}
+              rows={question.prefillValue ? 15 : 5}
             />
           )}
 
