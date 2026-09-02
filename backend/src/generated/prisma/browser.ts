@@ -155,3 +155,28 @@ export type AssessmentTemplate = Prisma.AssessmentTemplateModel
  * 
  */
 export type AssessmentAttempt = Prisma.AssessmentAttemptModel
+/**
+ * Model ReviewCase
+ * One suspect under review. Must be self-contained: arbiters are external
+ * contractors with no platform access, so a case carries everything needed to
+ * decide it.
+ */
+export type ReviewCase = Prisma.ReviewCaseModel
+/**
+ * Model AppliedPenalty
+ * One consequence applied to one user.
+ * 
+ * `caseId` is mandatory: a penalty with no reviewable case behind it cannot be
+ * appealed, which the spec forbids.
+ */
+export type AppliedPenalty = Prisma.AppliedPenaltyModel
+/**
+ * Model CompensationRecord
+ * One restoration or payout owed to an Affected User.
+ * 
+ * Uniqueness is enforced by two PARTIAL unique indexes that exist only in
+ * supabase/migrations — Prisma cannot express them, so they are absent from this
+ * model and from the generated client. Callers catch P2002 rather than upsert.
+ * Do not add an @@unique here: it would generate a different, non-partial index.
+ */
+export type CompensationRecord = Prisma.CompensationRecordModel

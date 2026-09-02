@@ -76,7 +76,10 @@ export const ModelName = {
   PlayerRating: 'PlayerRating',
   PathwayProgress: 'PathwayProgress',
   AssessmentTemplate: 'AssessmentTemplate',
-  AssessmentAttempt: 'AssessmentAttempt'
+  AssessmentAttempt: 'AssessmentAttempt',
+  ReviewCase: 'ReviewCase',
+  AppliedPenalty: 'AppliedPenalty',
+  CompensationRecord: 'CompensationRecord'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -508,6 +511,66 @@ export const AssessmentAttemptScalarFieldEnum = {
 } as const
 
 export type AssessmentAttemptScalarFieldEnum = (typeof AssessmentAttemptScalarFieldEnum)[keyof typeof AssessmentAttemptScalarFieldEnum]
+
+
+export const ReviewCaseScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  proficiency: 'proficiency',
+  eventType: 'eventType',
+  status: 'status',
+  outcomes: 'outcomes',
+  evidence: 'evidence',
+  flaggedGameRecordIds: 'flaggedGameRecordIds',
+  openedAt: 'openedAt',
+  assignedArbiterId: 'assignedArbiterId',
+  resolvedAt: 'resolvedAt',
+  resolutionNotes: 'resolutionNotes',
+  upheld: 'upheld',
+  arbiterConfidence: 'arbiterConfidence',
+  suspectStatement: 'suspectStatement',
+  appealStatus: 'appealStatus',
+  appealGrounds: 'appealGrounds',
+  appealedAt: 'appealedAt',
+  appealDecidedAt: 'appealDecidedAt',
+  appealDecisionReasoning: 'appealDecisionReasoning'
+} as const
+
+export type ReviewCaseScalarFieldEnum = (typeof ReviewCaseScalarFieldEnum)[keyof typeof ReviewCaseScalarFieldEnum]
+
+
+export const AppliedPenaltyScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  caseId: 'caseId',
+  action: 'action',
+  level: 'level',
+  proficiency: 'proficiency',
+  eventType: 'eventType',
+  appliedAt: 'appliedAt',
+  expiresAt: 'expiresAt',
+  reversed: 'reversed',
+  reversedAt: 'reversedAt',
+  reversalReason: 'reversalReason'
+} as const
+
+export type AppliedPenaltyScalarFieldEnum = (typeof AppliedPenaltyScalarFieldEnum)[keyof typeof AppliedPenaltyScalarFieldEnum]
+
+
+export const CompensationRecordScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  caseId: 'caseId',
+  kind: 'kind',
+  gameRecordId: 'gameRecordId',
+  ratingPointsRestored: 'ratingPointsRestored',
+  amountMinorUnits: 'amountMinorUnits',
+  currency: 'currency',
+  issuedAt: 'issuedAt',
+  notes: 'notes'
+} as const
+
+export type CompensationRecordScalarFieldEnum = (typeof CompensationRecordScalarFieldEnum)[keyof typeof CompensationRecordScalarFieldEnum]
 
 
 export const SortOrder = {

@@ -409,7 +409,10 @@ export const ModelName = {
   PlayerRating: 'PlayerRating',
   PathwayProgress: 'PathwayProgress',
   AssessmentTemplate: 'AssessmentTemplate',
-  AssessmentAttempt: 'AssessmentAttempt'
+  AssessmentAttempt: 'AssessmentAttempt',
+  ReviewCase: 'ReviewCase',
+  AppliedPenalty: 'AppliedPenalty',
+  CompensationRecord: 'CompensationRecord'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -425,7 +428,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "account" | "session" | "verificationToken" | "subscription" | "payment" | "billingProfile" | "product" | "productFeature" | "webhookEvent" | "curatedPuzzle" | "opening" | "builderLesson" | "builderSegment" | "builderSlide" | "course" | "lesson" | "lessonProgress" | "customLink" | "gameRecord" | "gameAnalysis" | "gameParticipant" | "playerRating" | "pathwayProgress" | "assessmentTemplate" | "assessmentAttempt"
+    modelProps: "user" | "account" | "session" | "verificationToken" | "subscription" | "payment" | "billingProfile" | "product" | "productFeature" | "webhookEvent" | "curatedPuzzle" | "opening" | "builderLesson" | "builderSegment" | "builderSlide" | "course" | "lesson" | "lessonProgress" | "customLink" | "gameRecord" | "gameAnalysis" | "gameParticipant" | "playerRating" | "pathwayProgress" | "assessmentTemplate" | "assessmentAttempt" | "reviewCase" | "appliedPenalty" | "compensationRecord"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2353,6 +2356,228 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ReviewCase: {
+      payload: Prisma.$ReviewCasePayload<ExtArgs>
+      fields: Prisma.ReviewCaseFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ReviewCaseFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewCasePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ReviewCaseFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewCasePayload>
+        }
+        findFirst: {
+          args: Prisma.ReviewCaseFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewCasePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ReviewCaseFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewCasePayload>
+        }
+        findMany: {
+          args: Prisma.ReviewCaseFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewCasePayload>[]
+        }
+        create: {
+          args: Prisma.ReviewCaseCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewCasePayload>
+        }
+        createMany: {
+          args: Prisma.ReviewCaseCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ReviewCaseCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewCasePayload>[]
+        }
+        delete: {
+          args: Prisma.ReviewCaseDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewCasePayload>
+        }
+        update: {
+          args: Prisma.ReviewCaseUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewCasePayload>
+        }
+        deleteMany: {
+          args: Prisma.ReviewCaseDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ReviewCaseUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ReviewCaseUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewCasePayload>[]
+        }
+        upsert: {
+          args: Prisma.ReviewCaseUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewCasePayload>
+        }
+        aggregate: {
+          args: Prisma.ReviewCaseAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateReviewCase>
+        }
+        groupBy: {
+          args: Prisma.ReviewCaseGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ReviewCaseGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ReviewCaseCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ReviewCaseCountAggregateOutputType> | number
+        }
+      }
+    }
+    AppliedPenalty: {
+      payload: Prisma.$AppliedPenaltyPayload<ExtArgs>
+      fields: Prisma.AppliedPenaltyFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.AppliedPenaltyFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AppliedPenaltyPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.AppliedPenaltyFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AppliedPenaltyPayload>
+        }
+        findFirst: {
+          args: Prisma.AppliedPenaltyFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AppliedPenaltyPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.AppliedPenaltyFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AppliedPenaltyPayload>
+        }
+        findMany: {
+          args: Prisma.AppliedPenaltyFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AppliedPenaltyPayload>[]
+        }
+        create: {
+          args: Prisma.AppliedPenaltyCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AppliedPenaltyPayload>
+        }
+        createMany: {
+          args: Prisma.AppliedPenaltyCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.AppliedPenaltyCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AppliedPenaltyPayload>[]
+        }
+        delete: {
+          args: Prisma.AppliedPenaltyDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AppliedPenaltyPayload>
+        }
+        update: {
+          args: Prisma.AppliedPenaltyUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AppliedPenaltyPayload>
+        }
+        deleteMany: {
+          args: Prisma.AppliedPenaltyDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.AppliedPenaltyUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.AppliedPenaltyUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AppliedPenaltyPayload>[]
+        }
+        upsert: {
+          args: Prisma.AppliedPenaltyUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AppliedPenaltyPayload>
+        }
+        aggregate: {
+          args: Prisma.AppliedPenaltyAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateAppliedPenalty>
+        }
+        groupBy: {
+          args: Prisma.AppliedPenaltyGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AppliedPenaltyGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.AppliedPenaltyCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AppliedPenaltyCountAggregateOutputType> | number
+        }
+      }
+    }
+    CompensationRecord: {
+      payload: Prisma.$CompensationRecordPayload<ExtArgs>
+      fields: Prisma.CompensationRecordFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CompensationRecordFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CompensationRecordPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CompensationRecordFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CompensationRecordPayload>
+        }
+        findFirst: {
+          args: Prisma.CompensationRecordFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CompensationRecordPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CompensationRecordFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CompensationRecordPayload>
+        }
+        findMany: {
+          args: Prisma.CompensationRecordFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CompensationRecordPayload>[]
+        }
+        create: {
+          args: Prisma.CompensationRecordCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CompensationRecordPayload>
+        }
+        createMany: {
+          args: Prisma.CompensationRecordCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CompensationRecordCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CompensationRecordPayload>[]
+        }
+        delete: {
+          args: Prisma.CompensationRecordDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CompensationRecordPayload>
+        }
+        update: {
+          args: Prisma.CompensationRecordUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CompensationRecordPayload>
+        }
+        deleteMany: {
+          args: Prisma.CompensationRecordDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CompensationRecordUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CompensationRecordUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CompensationRecordPayload>[]
+        }
+        upsert: {
+          args: Prisma.CompensationRecordUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CompensationRecordPayload>
+        }
+        aggregate: {
+          args: Prisma.CompensationRecordAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCompensationRecord>
+        }
+        groupBy: {
+          args: Prisma.CompensationRecordGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CompensationRecordGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CompensationRecordCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CompensationRecordCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -2807,6 +3032,66 @@ export const AssessmentAttemptScalarFieldEnum = {
 export type AssessmentAttemptScalarFieldEnum = (typeof AssessmentAttemptScalarFieldEnum)[keyof typeof AssessmentAttemptScalarFieldEnum]
 
 
+export const ReviewCaseScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  proficiency: 'proficiency',
+  eventType: 'eventType',
+  status: 'status',
+  outcomes: 'outcomes',
+  evidence: 'evidence',
+  flaggedGameRecordIds: 'flaggedGameRecordIds',
+  openedAt: 'openedAt',
+  assignedArbiterId: 'assignedArbiterId',
+  resolvedAt: 'resolvedAt',
+  resolutionNotes: 'resolutionNotes',
+  upheld: 'upheld',
+  arbiterConfidence: 'arbiterConfidence',
+  suspectStatement: 'suspectStatement',
+  appealStatus: 'appealStatus',
+  appealGrounds: 'appealGrounds',
+  appealedAt: 'appealedAt',
+  appealDecidedAt: 'appealDecidedAt',
+  appealDecisionReasoning: 'appealDecisionReasoning'
+} as const
+
+export type ReviewCaseScalarFieldEnum = (typeof ReviewCaseScalarFieldEnum)[keyof typeof ReviewCaseScalarFieldEnum]
+
+
+export const AppliedPenaltyScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  caseId: 'caseId',
+  action: 'action',
+  level: 'level',
+  proficiency: 'proficiency',
+  eventType: 'eventType',
+  appliedAt: 'appliedAt',
+  expiresAt: 'expiresAt',
+  reversed: 'reversed',
+  reversedAt: 'reversedAt',
+  reversalReason: 'reversalReason'
+} as const
+
+export type AppliedPenaltyScalarFieldEnum = (typeof AppliedPenaltyScalarFieldEnum)[keyof typeof AppliedPenaltyScalarFieldEnum]
+
+
+export const CompensationRecordScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  caseId: 'caseId',
+  kind: 'kind',
+  gameRecordId: 'gameRecordId',
+  ratingPointsRestored: 'ratingPointsRestored',
+  amountMinorUnits: 'amountMinorUnits',
+  currency: 'currency',
+  issuedAt: 'issuedAt',
+  notes: 'notes'
+} as const
+
+export type CompensationRecordScalarFieldEnum = (typeof CompensationRecordScalarFieldEnum)[keyof typeof CompensationRecordScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -3199,6 +3484,9 @@ export type GlobalOmitConfig = {
   pathwayProgress?: Prisma.PathwayProgressOmit
   assessmentTemplate?: Prisma.AssessmentTemplateOmit
   assessmentAttempt?: Prisma.AssessmentAttemptOmit
+  reviewCase?: Prisma.ReviewCaseOmit
+  appliedPenalty?: Prisma.AppliedPenaltyOmit
+  compensationRecord?: Prisma.CompensationRecordOmit
 }
 
 /* Types for Logging */
