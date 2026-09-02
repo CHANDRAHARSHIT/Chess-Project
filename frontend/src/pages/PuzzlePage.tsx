@@ -5,16 +5,15 @@ import { ROYAL_GOLD_NODES } from '@/features/puzzles/pathways/royalGoldNodes';
 import { PATHWAY_NODES } from '@/features/puzzles/pathways';
 import type { PathNode, PlayerProgress } from '@/features/puzzles/pathway.types';
 import { PuzzleBoard } from '@/features/puzzles/components/PuzzleBoard';
-import { PuzzleCoach, type CoachStatus } from '@/features/puzzles/components/PuzzleCoach';
+import { PuzzleCoach, CustomPuzzleCoach, type CoachStatus } from '@/features/puzzles/components/PuzzleCoach';
 import { ThemedChessboard } from '@/shared/ui/ThemedChessboard';
 import { CustomPuzzlePanel } from '@/features/puzzles/components/CustomPuzzlePanel';
 import { CustomPuzzleSession } from '@/features/puzzles/components/CustomPuzzleSession';
-import type { PuzzleFilters } from '@/features/puzzles/puzzle.types';
+import type { PuzzleFilters, CuratedPuzzle } from '@/features/puzzles/puzzle.types';
 import {
-  HelpCircle,
-  SlidersHorizontal,
   ArrowLeft,
   ArrowRight,
+  SlidersHorizontal,
 } from 'lucide-react';
 import type { ChessPuzzle } from '@/features/puzzles/puzzleLoader';
 import { Chess } from 'chess.js';
@@ -92,6 +91,14 @@ export default function PuzzlePage() {
 
   // Active custom session filters (null = no session running)
   const [customFilters, setCustomFilters] = useState<PuzzleFilters | null>(null);
+
+  // Custom puzzle coach state
+  const [customCoachStatus, setCustomCoachStatus] = useState<CoachStatus>('idle');
+  const [currentCustomPuzzle, setCurrentCustomPuzzle] = useState<CuratedPuzzle | null>(null);
+
+  const handleCustomStatusChange = useCallback((status: 'idle' | 'correct' | 'wrong') => {
+    setCustomCoachStatus(status);
+  }, []);
 
   // Mobile view state
   const [mobileView, setMobileView] = useState<'pathway' | 'board'>('pathway');
@@ -257,6 +264,8 @@ export default function PuzzlePage() {
 
   const handleExitCustomSession = useCallback(() => {
     setCustomFilters(null);
+    setCustomCoachStatus('idle');
+    setCurrentCustomPuzzle(null);
   }, []);
 
   // ── Right panel content selector ─────────────────────────────────────────
@@ -341,7 +350,7 @@ export default function PuzzlePage() {
 
       <div className="absolute top-[15%] left-1/2 -translate-x-1/2 w-[80vw] max-w-[1200px] h-[400px] rounded-full blur-[160px] bg-brand-accent/5 pointer-events-none z-0" />
 
-      <main className="relative z-10 flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex flex-col justify-center">
+      <main className="relative z-10 flex-1 max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 w-full flex flex-col justify-center">
 
         <div className="mb-4 flex items-center justify-between w-full">
           <button
@@ -374,75 +383,22 @@ export default function PuzzlePage() {
         </div>
 
         {customFilters ? (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch w-full">
             <div className="lg:col-span-7 flex justify-center w-full">
               <CustomPuzzleSession
                 filters={customFilters}
                 onExit={handleExitCustomSession}
+                onStatusChange={handleCustomStatusChange}
+                onPuzzleChange={setCurrentCustomPuzzle}
               />
             </div>
 
-            <div className="lg:col-span-5 flex flex-col space-y-6">
-              <div
-                className="rounded-2xl p-6 text-left relative overflow-hidden bg-brand-surface/80 backdrop-blur-xl border border-brand-border/40"
-              >
-                <div
-                  className="absolute top-0 right-0 w-[150px] h-[150px] pointer-events-none"
-                  style={{
-                    background: "radial-gradient(ellipse at top right, rgba(212,175,110,0.05) 0%, transparent 70%)",
-                  }}
-                />
-                <div className="flex items-center gap-3 mb-4 pb-4 border-b border-brand-border/40">
-                  <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 bg-brand-accent/10 border border-brand-accent/20">
-                    <SlidersHorizontal className="w-4 h-4 text-brand-accent" />
-                  </div>
-                  <div>
-                    <h2 className="text-xl font-semibold text-brand-text font-display">
-                      Custom Session
-                    </h2>
-                    <p className="text-xs mt-0.5 text-brand-secondary">
-                      Rated {customFilters.minRating ?? 0} – {customFilters.maxRating ?? 3000}
-                    </p>
-                  </div>
-                </div>
-                {customFilters.themes && customFilters.themes.length > 0 && (
-                  <div>
-                    <p className="text-[10px] font-mono uppercase tracking-widest mb-2 text-brand-secondary">
-                      Active Themes
-                    </p>
-                    <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto pr-1">
-                      {customFilters.themes.map((t) => (
-                        <span
-                          key={t}
-                          className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-brand-accent/10 border border-brand-accent/20 text-brand-accent"
-                        >
-                          {t}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                {(!customFilters.themes || customFilters.themes.length === 0) && (
-                  <p className="text-xs text-brand-secondary">
-                    All themes included in this session.
-                  </p>
-                )}
-              </div>
-
-
-              <div className="bg-brand-surface/30 backdrop-blur-sm border border-brand-border/60 rounded-2xl p-5 text-left flex items-start gap-3.5">
-                <div className="w-8 h-8 rounded-lg bg-brand-accent/10 border border-brand-accent/20 text-brand-accent flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <HelpCircle className="w-4 h-4" />
-                </div>
-                <div>
-                  <h4 className="text-xs font-mono text-brand-text uppercase tracking-wider font-semibold mb-1">
-                    Tactics Training Advice
-                  </h4>
-                  <p className="text-xs text-brand-secondary font-sans leading-relaxed">
-                    Puzzles are sorted by rating — easiest first. After solving, click "Next Puzzle" to advance. Incorrect moves auto-reset so you can try again.
-                  </p>
-                </div>
-              </div>
+            <div className="lg:col-span-5 flex flex-col h-full">
+              <CustomPuzzleCoach
+                puzzle={currentCustomPuzzle}
+                status={customCoachStatus}
+                onExit={handleExitCustomSession}
+              />
             </div>
           </div>
         ) : isDesktop ? (

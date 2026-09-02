@@ -78,7 +78,7 @@ export function VariantsView() {
   }, [searchQuery, activeTab]);
 
   return (
-    <div className="relative min-h-[calc(100vh-4rem)] p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto space-y-8 select-none">
+    <div className="relative min-h-[calc(100vh-4rem)] px-2.5 py-4 sm:p-6 lg:p-8 max-w-6xl mx-auto space-y-8 select-none">
       {/* Top Ambient Lighting Aura */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-72 bg-gradient-radial from-brand-accent/15 via-brand-accent/5 to-transparent blur-3xl pointer-events-none -z-10" />
 

@@ -19,7 +19,7 @@
           "type": "long-text",
           "scenario": "A well-established company that had been operating for more than 10 years. If you asked employees to rate their satisfaction from 1 to 10, you would consistently receive 9s and 10s.\n\nA common comment was, \"This is by far the best company I've ever worked for.\"\n\nAnother employee described the company as, \"It's a place that makes colleges feel like family and office feel like home.\"\n\nThese were not hypothetical comments. They were made, and the culture described above was real.\n\nOne of the team-building traditions was a shoutout system.\n\nThroughout the week, employees could write shoutouts for other people in the company. Recognising something they had done, thanking them for their help, or simply acknowledging something they appreciated about them.\n\nThere were around 30 full-time employees, working together in an open office.\n\nOn Friday, all of the shoutouts were printed onto pieces of paper. Each person received one. Everyone then gathered around the dining table on Friday evening. They would stand around the table and take turns reading their shoutouts aloud.\n\nWhat made it powerful was not simply the fact that people were giving each other compliments.\n\nThe gathering became a symbol, like children around a campfire. Not employees following a process, but children listening to stories.",
           "questionText": "Your Task\nUsing this as inspiration, design a team-building activity for our company.\n\nWe are a remote startup with six employees, so your activity should be designed specifically around the realities of our team.\n\nWe want your best answer, so take your time thinking about it.\n\nDo not focus only on what the activity is. We are particularly interested in why you have designed it the way you have.\n\nFor example:\n• Why will people want to participate?\n• What behaviour or feeling is the activity intended to create?\n• How will it help six people who work remotely feel more connected?\n• What makes the activity meaningful rather than simply \"fun\"?\n• What rituals or recurring elements would you introduce?\n• Is there an equivalent to everyone physically gathering around the dining table?\n• How would you make sure everyone participates rather than allowing the more outgoing people to dominate?\n• How would you make the activity feel authentic rather than like a forced corporate team-building exercise?\n• How would you make it something people eventually look forward to?\n• What small details would make the experience memorable?\n\nWe are less interested in an impressive-sounding activity than in seeing whether you understand the psychology and reasoning behind good team building.\n\nThe best answers will recognise that strong teams are not created simply by putting people into a Zoom call and asking them to play a game. They are created through repeated experiences that give people a sense of belonging, recognition, shared history and connection.\n\nThink carefully about the difference between an activity people participate in and a ritual that becomes part of the identity of a team.\n\nFinal Thought\nWhen thinking about your answer, consider what was really happening when those 30 employees stood around the dining table on a Friday evening.\n\nGood team building is not really about games, activities or even entertainment. It is about creating those small rituals through which a group of individuals slowly becomes a tribe — a group with shared stories, shared memories and a feeling that they belong to one another.\n\nDesign something that can create that feeling for our team.",
-          "placeholder": "Design your team-building activity and explain your reasoning...",
+          "placeholder": "Answer",
           "tips": "Focus on the psychology and reasoning behind your design, not just describing the activity itself."
         }
       ]
@@ -45,7 +45,7 @@
               "content": "Company policy gives managers discretion to make decisions based on their own judgement and the circumstances of each situation. There is no specific policy governing this scenario. This assumption is included so that your answer focuses on what you believe the right managerial decision is, rather than simply stating that the manager should follow company policy."
             }
           ],
-          "placeholder": "Explain your reasoning...",
+          "placeholder": "Answer",
           "tips": "Address both M and SM's positions, and explain how you'd manage each of them going forward."
         }
       ]
@@ -63,7 +63,7 @@
           "type": "long-text",
           "scenario": "We receive this email from the candidate:\n\n\"I sincerely apologize for missing the meeting scheduled at 6 PM today.\n\nJust before the meeting, my laptop unexpectedly stopped working, and I also lost internet connectivity. By the time I was able to resolve both issues, it was around 7 PM. When I tried to access Slack afterward, I found that my account had been deactivated, so I was unable to contact you or the team there.\n\nI'm really sorry for the inconvenience and for not being able to inform you beforehand. The situation was completely unexpected, and I wanted to explain what happened as soon as I could.\n\nPlease let me know if there is anything I need to do regarding my Slack access or the missed meeting.\"",
           "questionText": "If you were their manager from the previous situation, what reply would you write? Explain your reasoning.",
-          "placeholder": "Write your reply and explain your reasoning...",
+          "placeholder": "Answer",
           "tips": "Consider what you'd actually say to the candidate, not just how you'd feel about the situation."
         }
       ]
@@ -81,7 +81,7 @@
           "type": "long-text",
           "scenario": "At some point after sending that initial email, the candidate writes this:\n\n\"After the internet came back and my laptop started working again, I tried logging into Slack, but I couldn't understand why it wasn't letting me log in. I spent some time trying to figure out what was wrong, and eventually I realized that the account had been deactivated. That's when I understood that I needed to inform you about what had happened.\n\nAround the same time, the laundry people came to the hostel, and I had to go there urgently. There was a very long queue, and it ended up taking half an hour.\n\nAfter I came back, I had to work on some assignments as my exams are coming up and I had some pending work to finish. While I was working on my assignments, I suddenly realized that I had completely forgotten to send you an email explaining what had happened.\n\nThat's why there was such a long gap between the internet issue and the email. I understand that I should have informed you much earlier, but this is honestly how the delay happened.\"",
           "questionText": "What reply would you write? Explain your reasoning.",
-          "placeholder": "Write your reply and explain your reasoning...",
+          "placeholder": "Answer",
           "tips": "Consider how this new explanation should (or shouldn't) change your response."
         }
       ]
@@ -105,7 +105,7 @@
               "content": "Star Chart — an ongoing, visible way we track and recognise contributions.\n\nBirthday Cakes — celebrated yearly, for each team member's birthday.\n\nTeam Meeting — held yearly.\n\nEnd-of-Week (EOW) Team Call — where the team shows what they've built that week."
             }
           ],
-          "placeholder": "Describe your addition to the EOW team call and how it connects to our existing processes...",
+          "placeholder": "Answer",
           "tips": "Link your idea to the existing systems (Star Chart, Birthday Cakes, Team Meeting) rather than proposing something disconnected from them."
         }
       ]

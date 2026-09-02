@@ -189,7 +189,7 @@ export default function SettingsPage() {
 
   return (
     <div className="min-h-screen text-brand-text flex flex-col bg-transparent selection:bg-brand-accent selection:text-brand-text">
-      <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-5 pb-16 relative z-10 flex flex-col gap-6">
+      <main className="flex-1 max-w-6xl w-full mx-auto px-2.5 sm:px-6 lg:px-8 pt-5 pb-16 relative z-10 flex flex-col gap-6">
         {/* Back link */}
         <div className="mt-4">
           <button

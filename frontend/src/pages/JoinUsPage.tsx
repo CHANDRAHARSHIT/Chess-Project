@@ -53,7 +53,7 @@ export default function JoinUsPage() {
             transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
             className="overflow-hidden relative z-10"
           >
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-8 sm:pb-12">
+            <div className="max-w-6xl mx-auto px-2.5 sm:px-6 lg:px-8 pt-6 pb-8 sm:pb-12">
               <div className="mb-6">
                 <button
                   type="button"
@@ -71,15 +71,13 @@ export default function JoinUsPage() {
 
               <div>
                 <h1 className="text-3xl sm:text-5xl font-display font-bold text-brand-text mb-4 leading-tight">
-                  Build the Future of <br className="hidden sm:inline" />
-                  <span className="text-brand-accent italic">Online Chess</span>
+                  Join XLChess <br className="hidden sm:inline" />
                 </h1>
 
                 <div className="w-16 h-0.5 bg-brand-accent mb-6" />
 
                 <p className="text-brand-secondary max-w-2xl text-base sm:text-lg leading-relaxed font-sans">
-                  Join our team of passionate developers, marketers, designers, and chess enthusiasts.
-                  Help us build the ultimate platform to play, learn, compete, and grow.
+                  Join us on our journey to build the world’s #1 chess site.
                 </p>
               </div>
             </div>
@@ -88,7 +86,7 @@ export default function JoinUsPage() {
       </AnimatePresence>
 
       {/* Main Content Area */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-4 sm:pt-6 relative z-10">
+      <div className="max-w-6xl mx-auto px-2.5 sm:px-6 lg:px-8 w-full pt-4 sm:pt-6 relative z-10">
         <AnimatePresence mode="wait">
           {selectedOpening ? (
             <motion.div
@@ -122,14 +120,10 @@ export default function JoinUsPage() {
               </div>
 
               {/* Desktop Table View */}
-              <DepartmentOpeningsTable
-                onSelectOpening={handleSelectOpening}
-              />
+              <DepartmentOpeningsTable onSelectOpening={handleSelectOpening} />
 
               {/* Mobile Card View */}
-              <DepartmentOpeningsCards
-                onSelectOpening={handleSelectOpening}
-              />
+              <DepartmentOpeningsCards onSelectOpening={handleSelectOpening} />
             </motion.div>
           )}
         </AnimatePresence>

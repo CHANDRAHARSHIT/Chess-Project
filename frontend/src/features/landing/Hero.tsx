@@ -294,7 +294,7 @@ export default function Hero() {
         aria-hidden="true"
       />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 relative z-10">
         <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
           {/* ── Text Column ────────────────────────────────────────────────── */}
           <div className="w-full lg:w-[55%] space-y-8 md:space-y-10 text-left">
@@ -381,14 +381,14 @@ export default function Hero() {
                 />
                 <span
                   ref={playTextRef}
-                  className="ml-2 font-sans font-semibold text-[16px] flex overflow-hidden"
-                  style={{ lineHeight: 1 }}
+                  className="ml-2 font-sans font-semibold text-[16px] flex overflow-hidden pb-1.5 -mb-1.5 pt-0.5"
+                  style={{ lineHeight: 1.25 }}
                 >
                   {"Play".split("").map((char, i) => (
                     <span
                       key={i}
                       className="play-char inline-block"
-                      style={{ display: "inline-block" }}
+                      style={{ display: "inline-block", paddingBottom: "3px" }}
                     >
                       {char}
                     </span>

@@ -1,4 +1,5 @@
 import HomePage from "@/pages/HomePage";
+import HomeV2Page from "@/pages/HomeV2Page";
 import ContactPage from "@/pages/ContactPage";
 import JoinUsPage from "@/pages/JoinUsPage";
 import PuzzlePage from "@/pages/PuzzlePage";
@@ -11,6 +12,7 @@ import FailedPage from "@/pages/FailedPage";
 import PremiumPage from "@/pages/PremiumPage";
 import OpeningsPage from "@/pages/OpeningsPage";
 import Chess960Page from "@/pages/Chess960Page";
+import TestMaiaPage from "@/pages/TestMaiaPage";
 import LessonDashboardPage from "@/pages/LessonDashboardPage";
 import LessonBuilderPage from "@/pages/LessonBuilderPage";
 import AboutPage from "@/pages/AboutPage";
@@ -36,6 +38,7 @@ import StoryModePage from "@/pages/StoryModePage";
 import PlayHubPage from "@/pages/PlayHubPage";
 import StatsPage from "@/pages/StatsPage";
 import AssessmentPage from "@/pages/AssessmentPage";
+import NewsPage from "@/pages/NewsPage";
 
 export interface RouteConfig {
   path: string;
@@ -46,6 +49,8 @@ export interface RouteConfig {
 // Routes that run inside the MainLayout (Navbar + Sidebar + Footer)
 export const mainRoutes: RouteConfig[] = [
   { path: "/", element: <HomePage />, title: "XLChess - Play Chess Online" },
+  { path: "/home-v2", element: <HomeV2Page />, title: "XLChess - Home V2" },
+  { path: "/news", element: <NewsPage />, title: "News & Ratings | XLChess" },
   { path: "/contact-us", element: <ContactPage />, title: "Contact Us | XLChess" },
   {
     path: "/puzzles",
@@ -92,6 +97,12 @@ export const mainRoutes: RouteConfig[] = [
     path: "/play/chess960",
     element: <Chess960Page />,
     title: "Chess 960 | XLChess",
+  },
+  {
+    // Scratch page for evaluating Maia-3. Not in navigation — reached by URL.
+    path: "/test-maia",
+    element: <TestMaiaPage />,
+    title: "Test Maia | XLChess",
   },
   {
     path: "/lesson-builder",
@@ -233,15 +244,15 @@ export const mainRoutes: RouteConfig[] = [
     element: <HowXLChessWorksPage />,
     title: "How XLChess Works | XLChess",
   },
+];
+
+// Routes that run inside the MinimalLayout (Navbar only, no Sidebar/Footer)
+export const minimalRoutes: RouteConfig[] = [
   {
     path: "/join-us",
     element: <JoinUsPage />,
     title: "Join Us | XLChess",
   },
-];
-
-// Routes that run inside the MinimalLayout (Navbar only, no Sidebar/Footer)
-export const minimalRoutes: RouteConfig[] = [
   {
     path: "/join-us/assessment",
     element: (
