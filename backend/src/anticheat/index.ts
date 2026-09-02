@@ -42,6 +42,36 @@ export {
   GameNotAnalysableError,
 } from "./AnalysisService.js";
 export { registerAntiCheatActions } from "./actions.js";
+export { loadReviewWindow } from "./AnalysisService.js";
+export { buildReviewWindow } from "./detection/ReviewWindow.js";
+export type {
+  ReviewWindow,
+  ReviewGame,
+  ReviewWindowInput,
+  ExcludedGame,
+  GameExclusionReason,
+} from "./detection/ReviewWindow.js";
+export {
+  selectScoredPlies,
+  countExclusions,
+  findExclusionReason,
+} from "./detection/ScoredMoves.js";
+export type { PlyExclusionReason } from "./detection/ScoredMoves.js";
+export {
+  buildPersistedPlies,
+  findGameAnalysis,
+  findReviewCandidates,
+  saveGameAnalysis,
+} from "./analysisRepository.js";
+export type {
+  PersistedPly,
+  ReviewCandidate,
+  StoredGameAnalysis,
+} from "./analysisRepository.js";
+export type {
+  ReviewWindowPolicy,
+  ScoredMovePolicy,
+} from "./feedback/PolicyRegistry.js";
 export { StockfishEngine } from "./detection/engine/StockfishEngine.js";
 export type { PositionEval } from "./detection/engine/StockfishEngine.js";
 export { GameReplay, parseStoredMoves } from "./detection/GameReplay.js";

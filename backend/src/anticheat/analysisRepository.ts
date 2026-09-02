@@ -12,12 +12,15 @@
 
 import { prisma } from "../config/prisma.js";
 import type { AnalyzedMove } from "./types.js";
+import type { ReviewWindowPolicy } from "./feedback/PolicyRegistry.js";
 
 /**
  * Bumped whenever the stored ply shape changes, so rows written by an older
  * build are re-analysed rather than silently misread.
  */
 export const PERSISTED_PAYLOAD_VERSION = 1;
+
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
 /** One ply as stored. Raw engine output only — nothing policy-dependent. */
 export interface PersistedPly {
@@ -74,6 +77,69 @@ export async function saveGameAnalysis(analysis: StoredGameAnalysis): Promise<vo
     where: { gameRecordId: analysis.gameRecordId },
     create: { gameRecordId: analysis.gameRecordId, ...row },
     update: row,
+  });
+}
+
+/** One of the suspect's games, already analysed, as the review window needs it. */
+export interface ReviewCandidate {
+  readonly gameRecordId: string;
+  /** The suspect's side in this game, so only their plies are scored. */
+  readonly side: number;
+  readonly endedAt: Date;
+  readonly engineName: string;
+  readonly engineDepth: number;
+  readonly plies: readonly PersistedPly[];
+}
+
+/**
+ * The suspect's most recent games eligible for review, newest first.
+ *
+ * Bot games are excluded by provenance, which also means a bot account can
+ * never be reviewed: bots only ever play bot-provenance games, so they qualify
+ * for nothing and fail the sufficiency check on their own.
+ *
+ * Games with no cached analysis are skipped rather than analysed here — a
+ * review must never trigger engine work.
+ */
+export async function findReviewCandidates(
+  userId: string,
+  policy: ReviewWindowPolicy
+): Promise<ReviewCandidate[]> {
+  const oldestAllowed = new Date(Date.now() - policy.maxAgeDays * MS_PER_DAY);
+
+  const participations = await prisma.gameParticipant.findMany({
+    where: {
+      userId,
+      gameRecord: {
+        endedAt: { gte: oldestAllowed },
+        variantId: { in: [...policy.variantIds] },
+        moveCount: { gte: policy.minMovesPerGame },
+        initialSeconds: policy.initialSeconds,
+        incrementSeconds: policy.incrementSeconds,
+        analysis: { isNot: null },
+        ...(policy.includeBotGames ? {} : { provenance: { not: "bot" } }),
+      },
+    },
+    include: { gameRecord: { include: { analysis: true } } },
+    orderBy: { gameRecord: { endedAt: "desc" } },
+    take: policy.gameCount,
+  });
+
+  return participations.flatMap((participation) => {
+    const { analysis, endedAt } = participation.gameRecord;
+    // Narrowing only: the query already required a non-null analysis.
+    if (!analysis || analysis.payloadVersion !== PERSISTED_PAYLOAD_VERSION) return [];
+
+    return [
+      {
+        gameRecordId: participation.gameRecordId,
+        side: participation.side,
+        endedAt,
+        engineName: analysis.engineName,
+        engineDepth: analysis.engineDepth,
+        plies: analysis.plies as unknown as PersistedPly[],
+      },
+    ];
   });
 }
 

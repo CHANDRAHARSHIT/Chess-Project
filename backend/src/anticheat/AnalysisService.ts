@@ -9,7 +9,12 @@ import { prisma } from "../config/prisma.js";
 import { env } from "../config/env.js";
 import { generateStartingFen } from "../variant/chess960/chess960Rules.js";
 import { ENGINE_NAME, StockfishEngine } from "./detection/engine/StockfishEngine.js";
-import { buildPersistedPlies, saveGameAnalysis } from "./analysisRepository.js";
+import {
+  buildPersistedPlies,
+  findReviewCandidates,
+  saveGameAnalysis,
+} from "./analysisRepository.js";
+import { buildReviewWindow, type ReviewWindow } from "./detection/ReviewWindow.js";
 import { PolicyRegistry } from "./feedback/PolicyRegistry.js";
 import {
   GameNotAnalysableError,
@@ -133,6 +138,33 @@ export async function runBlunderAnalysis(gameSessionId: string): Promise<void> {
     }
     throw error;
   }
+}
+
+/**
+ * Assembles a suspect's review window from cached analysis.
+ *
+ * Runs no engine work by design: it reads only games already analysed, so a
+ * review can never queue Stockfish behind a live game.
+ *
+ * `rating` is a caller-supplied input — no player has one yet, and the games in
+ * the window are unrated.
+ */
+export async function loadReviewWindow(
+  userId: string,
+  situation: Situation,
+  rating: number | null
+): Promise<ReviewWindow> {
+  const policy = new PolicyRegistry();
+  const windowPolicy = policy.getReviewWindowPolicy(situation);
+
+  return buildReviewWindow({
+    userId,
+    situation,
+    rating,
+    candidates: await findReviewCandidates(userId, windowPolicy),
+    windowPolicy,
+    scoredMovePolicy: policy.getScoredMovePolicy(situation),
+  });
 }
 
 /**
