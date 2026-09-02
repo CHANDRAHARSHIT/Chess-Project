@@ -95,7 +95,12 @@ export default function NewsPage() {
   );
 
   return (
-    <div className="min-h-screen bg-white text-[#111111] p-[18px] max-[650px]:p-0 font-sans">
+    <div
+      className="min-h-screen bg-white text-[#111111] p-[18px] max-[650px]:p-0"
+      style={{
+        fontFamily: "Inter, Arial, Helvetica, sans-serif",
+      }}
+    >
       <main className="w-[min(1500px,100%)] mx-auto grid grid-cols-[minmax(0,2.25fr)_minmax(320px,0.9fr)] max-[950px]:grid-cols-1 gap-[26px] max-[650px]:gap-[14px] items-start">
         {/* Left Column */}
         <section className="flex flex-col gap-[26px] max-[650px]:gap-[14px]">
@@ -108,7 +113,7 @@ export default function NewsPage() {
               <h2 className="m-0 text-[25px] font-bold text-[#111111]">
                 Featured chess event
               </h2>
-              <p className="mt-[12px] mb-0 text-[#666666] text-[16px]">
+              <p className="mt-[12px] mb-0 text-[#666666] text-[16px] leading-normal font-normal">
                 Event information, status and timing can go here.
               </p>
             </div>
@@ -126,7 +131,7 @@ export default function NewsPage() {
                   <h3 className="mt-[14px] mb-[8px] text-[20px] font-bold leading-[1.25] text-[#111111]">
                     News story title
                   </h3>
-                  <p className="m-0 text-[#666666] leading-[1.45] text-[14px]">
+                  <p className="m-0 text-[#666666] leading-[1.45] text-[14px] font-normal">
                     Short description placeholder for the article.
                   </p>
                 </div>
@@ -175,7 +180,7 @@ export default function NewsPage() {
                           e.stopPropagation();
                           setOpenMenu(isMenuOpen ? null : "news");
                         }}
-                        className={`w-[36px] h-[36px] border-0 rounded-[8px] grid place-items-center text-[22px] cursor-pointer transition-all duration-150 active:scale-95 ${
+                        className={`w-[36px] h-[36px] border-0 rounded-[8px] grid place-items-center text-[22px] cursor-pointer transition-all duration-150 active:scale-[0.96] ${
                           isMenuOpen
                             ? "bg-white text-[#111111]"
                             : "bg-transparent text-[#666666] hover:bg-white hover:text-[#111111]"
@@ -185,12 +190,17 @@ export default function NewsPage() {
                       </button>
 
                       {isMenuOpen && (
-                        <div className="absolute top-[42px] right-0 w-[180px] p-[7px] bg-white border border-[#cfcfcf] rounded-[9px] shadow-[0_12px_28px_rgba(0,0,0,0.14)] z-20">
+                        <div className="settings-menu absolute top-[42px] right-0 w-[180px] p-[7px] bg-white border border-[#cfcfcf] rounded-[9px] shadow-[0_12px_28px_rgba(0,0,0,0.14)] z-20">
                           <button
                             type="button"
                             disabled={isFirst}
                             onClick={() => moveWidget("news", "up")}
-                            className="w-full border-0 rounded-[6px] bg-transparent text-[#222222] p-[10px_11px] text-left text-[14px] transition-colors disabled:opacity-35 disabled:cursor-not-allowed cursor-pointer hover:not-disabled:bg-[#f3f3f3]"
+                            style={{ opacity: isFirst ? 0.38 : 1 }}
+                            className={`menu-button move-up w-full border-0 rounded-[6px] bg-transparent text-[#222222] p-[10px_11px] text-left text-[14px] transition-colors duration-150 ${
+                              isFirst
+                                ? "cursor-not-allowed"
+                                : "cursor-pointer hover:bg-[#4a4945] hover:text-white"
+                            }`}
                           >
                             ↑ Move Up
                           </button>
@@ -198,7 +208,12 @@ export default function NewsPage() {
                             type="button"
                             disabled={isLast}
                             onClick={() => moveWidget("news", "down")}
-                            className="w-full border-0 rounded-[6px] bg-transparent text-[#222222] p-[10px_11px] text-left text-[14px] transition-colors disabled:opacity-35 disabled:cursor-not-allowed cursor-pointer hover:not-disabled:bg-[#f3f3f3]"
+                            style={{ opacity: isLast ? 0.38 : 1 }}
+                            className={`menu-button move-down w-full border-0 rounded-[6px] bg-transparent text-[#222222] p-[10px_11px] text-left text-[14px] transition-colors duration-150 ${
+                              isLast
+                                ? "cursor-not-allowed"
+                                : "cursor-pointer hover:bg-[#4a4945] hover:text-white"
+                            }`}
                           >
                             ↓ Move Down
                           </button>
@@ -207,12 +222,12 @@ export default function NewsPage() {
                     </div>
                   </header>
 
-                  <div className="pt-[4px]">
+                  <div className="news-list pt-[4px]">
                     {NEWS_ITEMS.map((item, i) => (
                       <div
                         key={i}
-                        className={`py-[13px] px-[5px] text-[#222222] text-[16px] leading-[1.36] ${
-                          i > 0 ? "border-t border-[rgba(0,0,0,0.06)]" : ""
+                        className={`news-item py-[13px] px-[5px] text-[#222222] text-[16px] leading-[1.36] font-normal ${
+                          i > 0 ? "border-t border-[rgba(255,255,255,0.035)]" : ""
                         }`}
                       >
                         {item}
@@ -252,7 +267,7 @@ export default function NewsPage() {
                           e.stopPropagation();
                           setOpenMenu(isMenuOpen ? null : "ratings");
                         }}
-                        className={`w-[36px] h-[36px] border-0 rounded-[8px] grid place-items-center text-[22px] cursor-pointer transition-all duration-150 active:scale-95 ${
+                        className={`w-[36px] h-[36px] border-0 rounded-[8px] grid place-items-center text-[22px] cursor-pointer transition-all duration-150 active:scale-[0.96] ${
                           isMenuOpen
                             ? "bg-white text-[#111111]"
                             : "bg-transparent text-[#666666] hover:bg-white hover:text-[#111111]"
@@ -262,12 +277,17 @@ export default function NewsPage() {
                       </button>
 
                       {isMenuOpen && (
-                        <div className="absolute top-[42px] right-0 w-[180px] p-[7px] bg-white border border-[#cfcfcf] rounded-[9px] shadow-[0_12px_28px_rgba(0,0,0,0.14)] z-20">
+                        <div className="settings-menu absolute top-[42px] right-0 w-[180px] p-[7px] bg-white border border-[#cfcfcf] rounded-[9px] shadow-[0_12px_28px_rgba(0,0,0,0.14)] z-20">
                           <button
                             type="button"
                             disabled={isFirst}
                             onClick={() => moveWidget("ratings", "up")}
-                            className="w-full border-0 rounded-[6px] bg-transparent text-[#222222] p-[10px_11px] text-left text-[14px] transition-colors disabled:opacity-35 disabled:cursor-not-allowed cursor-pointer hover:not-disabled:bg-[#f3f3f3]"
+                            style={{ opacity: isFirst ? 0.38 : 1 }}
+                            className={`menu-button move-up w-full border-0 rounded-[6px] bg-transparent text-[#222222] p-[10px_11px] text-left text-[14px] transition-colors duration-150 ${
+                              isFirst
+                                ? "cursor-not-allowed"
+                                : "cursor-pointer hover:bg-[#4a4945] hover:text-white"
+                            }`}
                           >
                             ↑ Move Up
                           </button>
@@ -275,7 +295,12 @@ export default function NewsPage() {
                             type="button"
                             disabled={isLast}
                             onClick={() => moveWidget("ratings", "down")}
-                            className="w-full border-0 rounded-[6px] bg-transparent text-[#222222] p-[10px_11px] text-left text-[14px] transition-colors disabled:opacity-35 disabled:cursor-not-allowed cursor-pointer hover:not-disabled:bg-[#f3f3f3]"
+                            style={{ opacity: isLast ? 0.38 : 1 }}
+                            className={`menu-button move-down w-full border-0 rounded-[6px] bg-transparent text-[#222222] p-[10px_11px] text-left text-[14px] transition-colors duration-150 ${
+                              isLast
+                                ? "cursor-not-allowed"
+                                : "cursor-pointer hover:bg-[#4a4945] hover:text-white"
+                            }`}
                           >
                             ↓ Move Down
                           </button>
@@ -285,11 +310,11 @@ export default function NewsPage() {
                   </header>
 
                   {/* Rating Controls */}
-                  <div className="mt-[12px]">
+                  <div className="rating-controls mt-[12px]">
                     <select
                       aria-label="Player group"
                       defaultValue="All Players"
-                      className="w-full min-h-[42px] border border-[#cccccc] rounded-[7px] bg-white text-[#222222] px-[11px] text-[16px] outline-none cursor-pointer"
+                      className="rating-select w-full min-h-[42px] border border-[#cccccc] rounded-[7px] bg-white text-[#222222] px-[11px] text-[16px] outline-none cursor-pointer"
                     >
                       <option value="All Players">All Players</option>
                       <option value="Women">Women</option>
@@ -299,7 +324,7 @@ export default function NewsPage() {
 
                   {/* Rating Tabs */}
                   <div
-                    className="grid grid-cols-3 mt-[14px] border-b border-[#d0d0d0]"
+                    className="rating-tabs grid grid-cols-3 mt-[14px] border-b border-[#d0d0d0]"
                     role="tablist"
                     aria-label="Rating type"
                   >
@@ -312,11 +337,11 @@ export default function NewsPage() {
                           role="tab"
                           aria-selected={isActive}
                           onClick={() => setActiveTab(tab)}
-                          className={`relative p-[11px_12px_13px] text-left font-bold cursor-pointer border-t border-l border-r border-[#d8d8d8] rounded-t-[8px] mr-[6px] text-[15px] capitalize transition-colors
+                          className={`rating-tab relative p-[11px_12px_13px] text-left font-bold cursor-pointer border-t border-l border-r border-[#d8d8d8] rounded-t-[8px] mr-[6px] text-[15px] capitalize transition-colors
                             before:content-[''] before:absolute before:left-[12px] before:right-[12px] before:-top-[1px] before:h-[1px] before:bg-[#f3f3f3]
                             ${
                               isActive
-                                ? "text-[#111111] bg-[#fafafa] after:content-[''] after:absolute after:h-[3px] after:left-[10px] after:right-[10px] after:-bottom-[2px] after:bg-[#D4AF6E] after:rounded-[3px]"
+                                ? "active text-[#111111] bg-[#fafafa] after:content-[''] after:absolute after:h-[3px] after:left-[10px] after:right-[10px] after:-bottom-[2px] after:bg-[#D4AF6E] after:rounded-[3px]"
                                 : "text-[#666666] bg-transparent hover:text-[#111111]"
                             }`}
                         >
@@ -327,7 +352,7 @@ export default function NewsPage() {
                   </div>
 
                   {/* Rating List */}
-                  <ol className="list-none p-0 mt-[7px] m-0">
+                  <ol className="rating-list list-none p-0 mt-[7px] m-0">
                     {ratingsList.map((row) => {
                       const isNegative = row.change.startsWith("-");
                       const hasChange = row.change && row.change !== "0";
@@ -335,23 +360,23 @@ export default function NewsPage() {
                       return (
                         <li
                           key={row.rank}
-                          className="grid grid-cols-[28px_minmax(0,1fr)_70px_52px] max-[650px]:grid-cols-[24px_minmax(0,1fr)_62px_45px] gap-[8px] items-center min-h-[46px] text-[15px]"
+                          className="rating-row grid grid-cols-[28px_minmax(0,1fr)_70px_52px] max-[650px]:grid-cols-[24px_minmax(0,1fr)_62px_45px] gap-[8px] items-center min-h-[46px] text-[15px]"
                         >
-                          <span className="text-[#aaaaaa] text-center">
+                          <span className="rank text-[#aaaaaa] text-center font-normal">
                             {row.rank}
                           </span>
-                          <span className="font-[650] truncate text-[#111111]">
+                          <span className="player font-[650] truncate text-[#111111]">
                             {row.player}
                           </span>
-                          <span className="text-right text-[#111111] font-medium">
+                          <span className="elo text-right text-[#111111] font-normal">
                             {row.elo}
                           </span>
                           <span
-                            className={`text-right font-medium ${
+                            className={`change text-right font-normal ${
                               !hasChange
-                                ? "text-transparent select-none"
+                                ? "empty-change text-transparent select-none"
                                 : isNegative
-                                ? "text-[#d74a4a]"
+                                ? "negative text-[#d74a4a]"
                                 : "text-[#16a34a]"
                             }`}
                           >
