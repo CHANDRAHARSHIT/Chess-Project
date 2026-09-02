@@ -57,6 +57,26 @@ export {
   findExclusionReason,
 } from "./detection/ScoredMoves.js";
 export type { PlyExclusionReason } from "./detection/ScoredMoves.js";
+export { scoreReviewWindow } from "./detection/ReviewScoring.js";
+export {
+  calculateAccuracy,
+  calculateAccuracySpread,
+  calculateEngineMatchRate,
+  calculateLongestEngineStreak,
+} from "./detection/Signals.js";
+export {
+  buildSignalWindowScore,
+  calculateMedian,
+  calculateScoreFromZ,
+  calculateZScore,
+} from "./detection/SignalScoring.js";
+export type { GameSignalValue, SignalWindowScore } from "./detection/SignalScoring.js";
+export type { BaselineContext } from "./detection/StatisticalBaselines.js";
+export type {
+  CertaintyPolicy,
+  PatternPolicy,
+  SignalThresholds,
+} from "./feedback/PolicyRegistry.js";
 export {
   buildPersistedPlies,
   findGameAnalysis,

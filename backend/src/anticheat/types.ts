@@ -22,7 +22,8 @@ export interface Situation {
 /** User under examination. Never asserts guilt — only a resolved ReviewCase does. */
 export interface Suspect {
   readonly userId: string;
-  readonly ratingAtEvent: number;
+  /** Null until rated play exists — a substituted rating would fake every z-score. */
+  readonly ratingAtEvent: number | null;
   readonly proficiency: ProficiencyLevel;
   readonly priorStrikeCount: number;
   readonly underHeightenedScrutiny: boolean;

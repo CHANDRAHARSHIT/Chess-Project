@@ -28,6 +28,15 @@ export interface BaselineMetrics {
   readonly expectedMistakeRate: number;
   readonly expectedEngineCorrelation: number;
   readonly engineCorrelationStdDev: number;
+  /** Runs of engine-best moves are normal in strong play; a raw length is not evidence. */
+  readonly expectedEngineStreak: number;
+  readonly engineStreakStdDev: number;
+  /**
+   * Expected spread of accuracy across a player's games. The anomaly is an
+   * abnormally low spread, so this is compared in the opposite direction.
+   */
+  readonly expectedAccuracySpread: number;
+  readonly accuracySpreadStdDev: number;
   readonly expectedCriticalPositionAccuracy: number;
   readonly expectedOpeningAccuracy: number;
   readonly expectedEndgameAccuracy: number;
@@ -39,8 +48,24 @@ export interface BaselineMetrics {
   readonly corpusId: string;
 }
 
+/**
+ * What a baseline must be scoped to.
+ *
+ * Rating alone is not enough. Accuracy at 5+3 blitz sits far below accuracy at
+ * classical for the same player, and Chess960 removes the opening theory that
+ * lifts it further — so a figure borrowed from classical standard chess sets the
+ * expected mean far too high and destroys the signal. See
+ * ../MULTI_GAME_REVIEW_REQUIREMENTS.md §2.1, §2.2, §9.1.
+ */
+export interface BaselineContext {
+  readonly rating: number;
+  readonly variantId: string;
+  readonly initialSeconds: number;
+  readonly incrementSeconds: number;
+}
+
 export class StatisticalBaselines {
-  getForRating(rating: number): BaselineMetrics {
+  getFor(context: BaselineContext): BaselineMetrics {
     throw new Error("Not implemented");
   }
 
@@ -52,7 +77,7 @@ export class StatisticalBaselines {
    * Checks must call this before scoring. Thin bands manufacture false positives
    * at the rating extremes, where sample counts are always lowest.
    */
-  hasSufficientSample(rating: number): boolean {
+  hasSufficientSample(context: BaselineContext): boolean {
     throw new Error("Not implemented");
   }
 

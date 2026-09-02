@@ -193,7 +193,7 @@ function longestStreak(moves: readonly ClassifiedMove[]): number {
  * position matters far more than dropping it from +900, and win percentage
  * captures that where raw centipawns do not.
  */
-function accuracyFor(evalBeforeCp: number, evalAfterCp: number): number {
+export function accuracyFor(evalBeforeCp: number, evalAfterCp: number): number {
   const winPercentLost = winPercent(evalBeforeCp) - winPercent(evalAfterCp);
   if (winPercentLost <= 0) return 100;
   const accuracy = 103.1668 * Math.exp(-0.04354 * winPercentLost) - 3.1669;

@@ -125,6 +125,74 @@ const PROVISIONAL_SCORED_MOVES: ScoredMovePolicy = {
   forcedGapCp: null,
 };
 
+/** Where one signal's per-game deviation turns into a score. */
+export interface SignalThresholds {
+  /** Standard deviations above the band mean at which a game flags. */
+  readonly zFlag: number;
+  /** Standard deviations at which the score saturates at 100. */
+  readonly zCeiling: number;
+  /** Below this the signal is unmeasured for that game — never scored as zero. */
+  readonly minScoredMoves: number;
+  readonly enabled: boolean;
+  readonly weight: number;
+}
+
+/** What separates a pattern from one exceptional game. */
+export interface PatternPolicy {
+  /** Below this many flagged games, detection is false whatever the score. */
+  readonly flaggedGameCount: number;
+  readonly flaggedGameFraction: number;
+  /** Games carrying two or more simultaneous flags before the multiplier applies. */
+  readonly coOccurrenceGameCount: number;
+  readonly coOccurrenceMultiplier: number;
+  /** Ceiling on any single signal's contribution, so none alone crosses the threshold. */
+  readonly singleSignalCap: number;
+}
+
+export interface CertaintyPolicy {
+  /**
+   * Ceiling applied while baselines are placeholders. Set below the lowest
+   * certainty any penalty requires, so a review computed from guessed numbers
+   * cannot trigger one — by construction, not by discipline.
+   */
+  readonly uncalibratedCeiling: number;
+  /** False once real baselines replace the placeholders. */
+  readonly placeholderMode: boolean;
+}
+
+/**
+ * Placeholders. Engine correlation is deliberately the least sensitive of the
+ * three: without a second engine line we cannot exclude forced positions, so its
+ * measured rate is an upper bound and a low flag threshold would make it the
+ * dominant false-positive source.
+ */
+const PROVISIONAL_SIGNAL_THRESHOLDS: Readonly<Record<string, SignalThresholds>> = {
+  accuracy: { zFlag: 2, zCeiling: 4, minScoredMoves: 15, enabled: true, weight: 1 },
+  engine_correlation: { zFlag: 3, zCeiling: 5, minScoredMoves: 15, enabled: true, weight: 1 },
+  engine_streak: { zFlag: 2.5, zCeiling: 5, minScoredMoves: 15, enabled: true, weight: 1 },
+  consistency: { zFlag: 2, zCeiling: 4, minScoredMoves: 0, enabled: true, weight: 1 },
+};
+
+/** `flaggedGameCount` is the spec's provisional three-red-flags figure. */
+const PROVISIONAL_PATTERN_POLICY: PatternPolicy = {
+  flaggedGameCount: 3,
+  flaggedGameFraction: 0.3,
+  coOccurrenceGameCount: 2,
+  coOccurrenceMultiplier: 1.5,
+  singleSignalCap: 90,
+};
+
+const PROVISIONAL_DETECTION_THRESHOLD = 100;
+
+/**
+ * The ceiling sits below `increase_monitoring`, the cheapest action in the
+ * ladder, so no placeholder-driven review reaches any consequence at all.
+ */
+const PROVISIONAL_CERTAINTY_POLICY: CertaintyPolicy = {
+  uncalibratedCeiling: 0.2,
+  placeholderMode: true,
+};
+
 export class PolicyRegistry {
   /**
    * Centipawn-loss bands for move classification.
@@ -152,9 +220,22 @@ export class PolicyRegistry {
     return PROVISIONAL_SCORED_MOVES;
   }
 
+  /** Undefined for an unknown signal id, so a typo cannot silently score zero. */
+  getSignalThresholds(signalId: CheckId, situation: Situation): SignalThresholds | undefined {
+    return PROVISIONAL_SIGNAL_THRESHOLDS[signalId];
+  }
+
+  getPatternPolicy(situation: Situation): PatternPolicy {
+    return PROVISIONAL_PATTERN_POLICY;
+  }
+
+  getCertaintyPolicy(situation: Situation): CertaintyPolicy {
+    return PROVISIONAL_CERTAINTY_POLICY;
+  }
+
   /** Summed-DCS value above which detection is reported. Spec's `> 100` is a placeholder. */
   getDetectionThreshold(situation: Situation): number {
-    throw new Error("Not implemented");
+    return PROVISIONAL_DETECTION_THRESHOLD;
   }
 
   getCheckWeightings(situation: Situation): readonly CheckWeighting[] {
