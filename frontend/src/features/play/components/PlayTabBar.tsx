@@ -2,13 +2,14 @@
  * PlayTabBar.tsx
  *
  * Purely presentational tab navigation bar for the Play Hub.
- * Renders three tabs: Quick Game, Play Online, Variants.
+ * Renders four tabs: Quick Game, Play Online, Variants, Maia.
  * All state and event handling lives in the parent (PlayHubPage).
  */
-import { Zap, Swords, Shuffle } from "lucide-react";
+import { Zap, Swords, Shuffle, Brain } from "lucide-react";
 import { soundManager } from "@/shared/lib/SoundManager";
+import { featureFlags } from "@/shared/lib/featureFlags";
 
-export type PlayTab = "quick" | "online" | "variants";
+export type PlayTab = "quick" | "online" | "variants" | "maia";
 
 interface PlayTabBarProps {
   activeTab: PlayTab;
@@ -18,16 +19,33 @@ interface PlayTabBarProps {
   isOnlineActive?: boolean;
 }
 
-const TABS: { id: PlayTab; label: string; Icon: React.ElementType }[] = [
+const TABS: {
+  id: PlayTab;
+  label: string;
+  Icon: React.ElementType;
+  disabled?: boolean;
+}[] = [
   { id: "quick", label: "Quick Game", Icon: Zap },
-  { id: "online", label: "Play Online", Icon: Swords },
+  {
+    id: "online",
+    label: "Play Online",
+    Icon: Swords,
+    disabled: !featureFlags.enablePlayOnline,
+  },
   { id: "variants", label: "Variants", Icon: Shuffle },
+  ...(featureFlags.showMaia
+    ? [{ id: "maia" as const, label: "Maia", Icon: Brain }]
+    : []),
 ];
 
-export function PlayTabBar({ activeTab, onTabChange, isOnlineActive = false }: PlayTabBarProps) {
+export function PlayTabBar({
+  activeTab,
+  onTabChange,
+  isOnlineActive = false,
+}: PlayTabBarProps) {
   return (
     <div className="flex items-center gap-1 p-1 rounded-2xl bg-brand-surface/60 border border-white/5 backdrop-blur-md w-full sm:w-auto">
-      {TABS.map(({ id, label, Icon }) => {
+      {TABS.map(({ id, label, Icon, disabled }) => {
         const isActive = activeTab === id;
         const showPing = id === "online" && isOnlineActive && !isActive;
 
@@ -35,13 +53,19 @@ export function PlayTabBar({ activeTab, onTabChange, isOnlineActive = false }: P
           <button
             key={id}
             onClick={() => {
+              if (disabled) return;
               soundManager.playButtonClick();
               onTabChange(id);
             }}
-            className={`relative flex items-center justify-center gap-2 flex-1 sm:flex-none sm:px-5 px-3 py-2.5 rounded-xl text-xs font-mono font-bold transition-all duration-200 cursor-pointer ${isActive
-              ? "bg-brand-accent text-black"
-              : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5"
-              }`}
+            disabled={disabled}
+            title={disabled ? "Coming soon" : undefined}
+            className={`relative flex items-center justify-center gap-2 flex-1 sm:flex-none sm:px-5 px-3 py-2.5 rounded-xl text-xs font-mono font-bold transition-all duration-200 ${
+              disabled
+                ? "opacity-40 cursor-not-allowed text-brand-secondary"
+                : isActive
+                  ? "bg-brand-accent text-black cursor-pointer"
+                  : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 cursor-pointer"
+            }`}
             aria-selected={isActive}
             role="tab"
           >

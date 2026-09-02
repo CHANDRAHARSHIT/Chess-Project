@@ -1,17 +1,7 @@
 import { useNavigate } from "react-router";
 import { getAssessmentTrackSlug, type JobOpening } from "./joinUsData";
 import { soundManager } from "@/shared/lib/SoundManager";
-import {
-  ArrowLeft,
-  Briefcase,
-  CheckCircle2,
-  AlertCircle,
-  Clock,
-  ArrowRight,
-  TrendingUp,
-  Server,
-  Lock,
-} from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 
 interface OpeningDetailsProps {
   opening: JobOpening;
@@ -27,18 +17,9 @@ export default function OpeningDetails({
   const handleBeginAssessment = () => {
     soundManager.playButtonClick();
     const trackSlug = getAssessmentTrackSlug(opening.department);
-    navigate(`/join-us/assessment?role=${trackSlug ?? opening.department.toLowerCase()}`);
-  };
-
-  const getDepartmentIcon = () => {
-    switch (opening.department) {
-      case "Growth & Marketing":
-        return <TrendingUp className="text-brand-accent w-7 h-7" />;
-      case "Backend":
-        return <Server className="text-brand-accent w-7 h-7" />;
-      default:
-        return <Briefcase className="text-brand-accent w-7 h-7" />;
-    }
+    navigate(
+      `/join-us/assessment?role=${trackSlug ?? opening.department.toLowerCase()}`,
+    );
   };
 
   return (
@@ -64,20 +45,13 @@ export default function OpeningDetails({
 
         <div className="relative z-10">
           {/* Header Title Block */}
-          <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-8 pb-8 border-b border-brand-text/15">
-            <div className="p-3.5 bg-brand-accent/10 border border-brand-accent/30 rounded-2xl shrink-0 w-fit">
-              {getDepartmentIcon()}
-            </div>
-            <div>
-              <h1 className="text-2xl sm:text-4xl font-display font-bold text-brand-text tracking-tight">
-                {opening.title}
-              </h1>
-              {opening.roleSubtitle && (
-                <p className="text-brand-accent font-medium text-sm sm:text-base mt-0.5">
-                  {opening.roleSubtitle}
-                </p>
-              )}
-            </div>
+          <div className="mb-8 pb-8 border-b border-brand-text/15">
+            <h1 className="text-2xl sm:text-4xl font-display font-bold text-brand-text tracking-tight">
+              {opening.title}
+            </h1>
+            <p className="text-brand-accent font-medium text-sm sm:text-base mt-1 font-mono uppercase tracking-wider">
+              {opening.department}
+            </p>
           </div>
 
           {/* Overview Content */}
@@ -85,96 +59,103 @@ export default function OpeningDetails({
             {opening.overview.split("\n\n").map((paragraph, idx) => (
               <p key={idx}>{paragraph}</p>
             ))}
-
-            {opening.evaluationDetails && (
-              <div className="bg-brand-surface/60 p-5 sm:p-6 rounded-2xl border border-brand-text/15 flex gap-4 mt-6">
-                <CheckCircle2 className="text-emerald-400 shrink-0 mt-1 w-6 h-6" />
-                <div>
-                  <h3 className="text-brand-text font-semibold text-base mb-1">
-                    {opening.evaluationTitle || "What We Evaluate"}
-                  </h3>
-                  <p className="text-brand-secondary text-sm leading-relaxed">
-                    {opening.evaluationDetails}
-                  </p>
-                </div>
-              </div>
-            )}
           </div>
 
-          {opening.rules && opening.rules.length > 0 && (
-            <>
-              <div className="my-10 w-full h-px bg-brand-text/10" />
+          <div className="my-8 w-full h-px bg-brand-text/10" />
 
-              <div className="space-y-6">
-                <h2 className="text-xl sm:text-2xl font-display font-bold text-brand-text flex items-center gap-3">
-                  <AlertCircle className="text-amber-500 dark:text-amber-400 w-6 h-6 shrink-0" />
-                  <span>{opening.rulesHeading || "Before You Begin"}</span>
-                </h2>
-
-                {opening.rulesSubheading && (
-                  <p className="text-brand-secondary text-base sm:text-lg leading-relaxed">
-                    {opening.rulesSubheading}
-                  </p>
-                )}
-
-                <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-5 sm:p-6">
-                  <p className="mb-4 font-semibold text-amber-950 dark:text-amber-400 text-sm sm:text-base">
-                    During this section:
-                  </p>
-                  <ul className="space-y-3">
-                    {opening.rules.map((rule, idx) => (
-                      <li key={idx} className="flex items-start gap-3">
-                        <div className="w-1.5 h-1.5 rounded-full bg-amber-500 dark:bg-amber-400 mt-2.5 shrink-0" />
-                        <span className="text-brand-text text-sm sm:text-base">
-                          {rule}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
+          {/* Role details Section */}
+          <div className="space-y-4">
+            <h2 className="text-xl sm:text-2xl font-display font-bold text-brand-text">
+              Role details
+            </h2>
+            <div className="bg-brand-surface/60 rounded-2xl border border-brand-text/15 p-5 sm:p-6 space-y-3">
+              {opening.roleDetails?.location && (
+                <div className="flex items-center gap-3 text-sm sm:text-base text-brand-text">
+                  <div className="w-2 h-2 rounded-full bg-brand-accent shrink-0" />
+                  <span>{opening.roleDetails.location}</span>
                 </div>
-
-                {opening.rulesFootnote && (
-                  <p className="text-brand-secondary/70 italic text-xs sm:text-sm">
-                    {opening.rulesFootnote}
-                  </p>
-                )}
-              </div>
-            </>
-          )}
-
-          {opening.timeRequirement && (
-            <>
-              <div className="my-10 w-full h-px border-t border-brand-text/10" />
-
-              <div className="flex items-start gap-4 mb-10">
-                <div className="p-3 bg-brand-accent/10 rounded-2xl border border-brand-accent/30 shrink-0">
-                  <Clock className="text-brand-accent w-6 h-6" />
+              )}
+              {opening.roleDetails?.hours && (
+                <div className="flex items-center gap-3 text-sm sm:text-base text-brand-text">
+                  <div className="w-2 h-2 rounded-full bg-brand-accent shrink-0" />
+                  <span>{opening.roleDetails.hours}</span>
                 </div>
-                <div>
-                  <h2 className="text-xl sm:text-2xl font-display font-bold text-brand-text mb-2">
-                    Time Requirement
-                  </h2>
-                  <p className="text-brand-secondary text-base sm:text-lg leading-relaxed">
-                    {opening.timeRequirement}
-                  </p>
+              )}
+              {opening.roleDetails?.employmentType && (
+                <div className="flex items-center gap-3 text-sm sm:text-base text-brand-text">
+                  <div className="w-2 h-2 rounded-full bg-brand-accent shrink-0" />
+                  <span>
+                    <strong className="font-semibold">Employment type:</strong> {opening.roleDetails.employmentType}
+                  </span>
                 </div>
-              </div>
-            </>
-          )}
-
-          {opening.timedSectionNotice && (
-            <div className="bg-brand-surface/60 p-5 sm:p-6 rounded-2xl border border-brand-text/15 flex gap-4 mb-10">
-              <Lock className="text-brand-accent shrink-0 mt-1 w-6 h-6" />
-              <div>
-                <h3 className="text-brand-text font-semibold text-base mb-1">
-                  Final Question Is Time-Based
-                </h3>
-                <p className="text-brand-secondary text-sm leading-relaxed">
-                  {opening.timedSectionNotice}
-                </p>
-              </div>
+              )}
+              {opening.roleDetails?.salaryNotice && (
+                <div className="flex items-center gap-3 text-sm sm:text-base text-brand-text">
+                  <div className="w-2 h-2 rounded-full bg-brand-accent shrink-0" />
+                  <span>{opening.roleDetails.salaryNotice}</span>
+                </div>
+              )}
             </div>
-          )}
+          </div>
+
+          <div className="my-8 w-full h-px bg-brand-text/10" />
+
+          {/* Assessment details Section */}
+          <div className="space-y-4 mb-10">
+            <h2 className="text-xl sm:text-2xl font-display font-bold text-brand-text">
+              Assessment details
+            </h2>
+            <div className="bg-brand-surface/60 rounded-2xl border border-brand-text/15 p-5 sm:p-6 space-y-3 font-sans">
+              {opening.assessmentDetails?.estimatedTime && (
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between py-2 border-b border-brand-text/10 gap-1">
+                  <span className="text-sm text-brand-secondary">Estimated time to complete</span>
+                  <span className="text-sm sm:text-base font-semibold text-brand-text">
+                    {opening.assessmentDetails.estimatedTime}
+                  </span>
+                </div>
+              )}
+              {opening.assessmentDetails?.numberOfQuestions != null && (
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between py-2 border-b border-brand-text/10 gap-1">
+                  <span className="text-sm text-brand-secondary">Number of questions</span>
+                  <span className="text-sm sm:text-base font-semibold text-brand-text">
+                    {opening.assessmentDetails.numberOfQuestions}
+                  </span>
+                </div>
+              )}
+              {opening.assessmentDetails?.aiAssistance && (
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between py-2 border-b border-brand-text/10 gap-1">
+                  <span className="text-sm text-brand-secondary">AI assistance</span>
+                  <span className="text-sm sm:text-base font-semibold text-red-400">
+                    {opening.assessmentDetails.aiAssistance}
+                  </span>
+                </div>
+              )}
+              {opening.assessmentDetails?.timeLimit && (
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between py-2 border-b border-brand-text/10 gap-1">
+                  <span className="text-sm text-brand-secondary">Time limit</span>
+                  <span className="text-sm sm:text-base font-semibold text-brand-text">
+                    {opening.assessmentDetails.timeLimit}
+                  </span>
+                </div>
+              )}
+              {opening.assessmentDetails?.maximumAttempts != null && (
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between py-2 border-b border-brand-text/10 gap-1">
+                  <span className="text-sm text-brand-secondary">Maximum attempts</span>
+                  <span className="text-sm sm:text-base font-semibold text-brand-text">
+                    {opening.assessmentDetails.maximumAttempts}
+                  </span>
+                </div>
+              )}
+              {opening.assessmentDetails?.nextStep && (
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between pt-2 gap-1">
+                  <span className="text-sm text-brand-secondary">Next step</span>
+                  <span className="text-sm sm:text-base font-semibold text-brand-accent">
+                    {opening.assessmentDetails.nextStep}
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
 
           {/* CTA Action Area */}
           <div className="pt-4 flex justify-center sm:justify-start">

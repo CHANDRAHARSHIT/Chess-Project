@@ -24,7 +24,6 @@ import {
   Sparkles,
   Loader2,
 } from "lucide-react";
-import { useLogoAnimation } from "@/app/navigation/useLogoAnimation";
 import { soundManager } from "@/shared/lib/SoundManager";
 import { useSession } from "@/features/account/useSession";
 import { AvatarDropdown } from "./AvatarDropdown";
@@ -33,6 +32,7 @@ import { MoreMenu } from "./MoreMenu";
 import { useNavigate, useLocation } from "react-router";
 import { useNavigationStack } from "@/app/navigation/useNavigationStack";
 import rollbar from "@/shared/lib/rollbar";
+import { featureFlags } from "@/shared/lib/featureFlags";
 
 // Hook for clicking outside the custom dropdown
 function useOnClickOutside(
@@ -119,8 +119,6 @@ export default function SidebarLayout({
     setIsMobileOpen(false);
   };
 
-  const { containerRef, logoRef } = useLogoAnimation();
-
   // Custom Links (active, shown in Explore)
   type CustomLink = {
     id: string;
@@ -178,8 +176,8 @@ export default function SidebarLayout({
     if (newLinkName && newLinkUrl) {
       setIsSubmittingLink(true);
       // Artificial delay so you can see the spinner
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       try {
         if (editLinkIndex !== null) {
           const isMore = editLinkSection === "more";
@@ -336,6 +334,7 @@ export default function SidebarLayout({
     }
   };
 
+  /* Subscriptions mock data - commented out for later implementation
   const knightAvatar = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><circle cx='32' cy='32' r='32' fill='%236366f1'/><path d='M20 48h24v-4c0-2.2-1.8-4-4-4H24c-2.2 0-4 1.8-4 4v4zm5-10h14c3-4 5-8.5 4-13 0-3.5-1.8-6.8-4.5-9-2.2-1.8-4.5-2-6.5-1-2 1-3 3-4 3.5-1.5-1-3-1.5-4.5-.5-2 1.3-2.5 3.5-1.5 5.5 1.5 3 4 5 5 8.5 1 3.5.5 6.5-2 9.5z' fill='%23ffffff'/></svg>`;
   const crownAvatar = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><circle cx='32' cy='32' r='32' fill='%23d97706'/><path d='M20 48h24v-4H20v4zm0-6h24l2-16-7 5-5-10-4 6-4-6-5 10-7-5 2 16z' fill='%23ffffff'/></svg>`;
   const rookAvatar = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><circle cx='32' cy='32' r='32' fill='%230d9488'/><path d='M20 48h24v-4H20v4zm2-6h20l-2-14h2v-6h-5v3h-3v-3h-4v3h-3v-3h-5v6h2l-2 14z' fill='%23ffffff'/></svg>`;
@@ -357,6 +356,7 @@ export default function SidebarLayout({
       href: "/subscriptions?c=endgame-masters",
     },
   ];
+  */
 
   const handleLinkClick = (href: string | undefined, e: React.MouseEvent) => {
     e.preventDefault();
@@ -401,9 +401,13 @@ export default function SidebarLayout({
   const exploreSection = [
     { name: "Play", href: "/play", icon: Swords },
     { name: "Lessons", href: "/lessons", icon: BookOpen },
-    { name: "Build Lessons", href: "/lesson-builder", icon: PenTool },
+    ...(featureFlags.showBuildLessons
+      ? [{ name: "Build Lessons", href: "/lesson-builder", icon: PenTool }]
+      : []),
     { name: "Puzzles", href: "/puzzles", icon: Puzzle },
-    { name: "Odyssey", href: "/odyssey", icon: Sparkles },
+    ...(featureFlags.showOdyssey
+      ? [{ name: "Odyssey", href: "/odyssey", icon: Sparkles }]
+      : []),
     { name: "Upgrade", href: "/pricing", icon: Crown },
   ];
 
@@ -477,7 +481,8 @@ export default function SidebarLayout({
     // and for /variants during the redirect-migration period.
     const isPlayHubItem = item.href === "/play";
     const isActive = isPlayHubItem
-      ? location.pathname.startsWith("/play") || location.pathname === "/variants"
+      ? location.pathname.startsWith("/play") ||
+        location.pathname === "/variants"
       : currentPathWithSearch === item.href ||
         (Boolean(item.href) &&
           !item.href?.includes("?") &&
@@ -539,16 +544,19 @@ export default function SidebarLayout({
               }
             }}
             title={isComingSoon ? "Coming soon" : undefined}
-            className={`relative w-full flex transition-all duration-200 cursor-pointer ${isExpanded || isMobileOpen
-              ? `items-center py-2.5 mx-2 px-3 rounded-xl ${isActive
-                ? "text-brand-accent bg-brand-text/10 font-medium"
-                : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 group-hover/navitem:bg-brand-text/5 group-hover/navitem:text-brand-text"
-              }`
-              : `flex-col items-center justify-center py-[14px] mx-2 rounded-lg text-center ${isActive
-                ? "text-brand-accent bg-brand-text/10 font-medium"
-                : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 group-hover/navitem:bg-brand-text/5 group-hover/navitem:text-brand-text"
-              }`
-              }`}
+            className={`relative w-full flex transition-all duration-200 cursor-pointer ${
+              isExpanded || isMobileOpen
+                ? `items-center py-2.5 mx-2 px-3 rounded-xl ${
+                    isActive
+                      ? "text-brand-accent bg-brand-text/10 font-medium"
+                      : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 group-hover/navitem:bg-brand-text/5 group-hover/navitem:text-brand-text"
+                  }`
+                : `flex-col items-center justify-center py-[14px] mx-2 rounded-lg text-center ${
+                    isActive
+                      ? "text-brand-accent bg-brand-text/10 font-medium"
+                      : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 group-hover/navitem:bg-brand-text/5 group-hover/navitem:text-brand-text"
+                  }`
+            }`}
           >
             <div
               className={`flex items-center justify-center shrink-0 ${isExpanded || isMobileOpen ? "w-10" : "w-full"}`}
@@ -567,10 +575,11 @@ export default function SidebarLayout({
             </div>
 
             <span
-              className={`font-sans transition-all ${isExpanded || isMobileOpen
-                ? "flex-1 text-left text-[14px] ml-2 tracking-wide truncate"
-                : "w-full text-center text-[10px] mt-1.5 leading-[1.15] whitespace-normal tracking-normal line-clamp-2 break-words"
-                } ${!(isExpanded || isMobileOpen) && isAvatar ? "hidden" : ""}`}
+              className={`font-sans transition-all ${
+                isExpanded || isMobileOpen
+                  ? "flex-1 text-left text-[14px] ml-2 tracking-wide truncate"
+                  : "w-full text-center text-[10px] mt-1.5 leading-[1.15] whitespace-normal tracking-normal line-clamp-2 break-words"
+              } ${!(isExpanded || isMobileOpen) && isAvatar ? "hidden" : ""}`}
             >
               {item.name}
             </span>
@@ -585,10 +594,11 @@ export default function SidebarLayout({
           {/* Custom Link Actions */}
           {isCustomLink && (isExpanded || isMobileOpen) && (
             <div
-              className={`absolute right-4 flex items-center z-10 bg-brand-bg/80 backdrop-blur-sm rounded-full transition-all ${isMobileOpen
-                ? "opacity-100"
-                : "opacity-0 group-hover/navitem:opacity-100"
-                }`}
+              className={`absolute right-4 flex items-center z-10 bg-brand-bg/80 backdrop-blur-sm rounded-full transition-all ${
+                isMobileOpen
+                  ? "opacity-100"
+                  : "opacity-0 group-hover/navitem:opacity-100"
+              }`}
             >
               {/* Move to More / Move to Active */}
               {section === "active" ? (
@@ -666,12 +676,13 @@ export default function SidebarLayout({
                   onClick={(e) => {
                     handleLinkClick(subItem.href, e);
                   }}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-sans transition-colors duration-150 cursor-pointer ${subIsComingSoon
-                    ? "opacity-60 hover:opacity-100 text-brand-secondary hover:text-brand-text hover:bg-brand-text/5"
-                    : isSubActive
-                      ? "text-brand-accent bg-brand-text/10 font-medium"
-                      : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5"
-                    }`}
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-sans transition-colors duration-150 cursor-pointer ${
+                    subIsComingSoon
+                      ? "opacity-60 hover:opacity-100 text-brand-secondary hover:text-brand-text hover:bg-brand-text/5"
+                      : isSubActive
+                        ? "text-brand-accent bg-brand-text/10 font-medium"
+                        : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5"
+                  }`}
                 >
                   {SubIcon && (
                     <SubIcon
@@ -693,10 +704,10 @@ export default function SidebarLayout({
   return (
     <div className="min-h-screen text-brand-text bg-brand-bg flex flex-col relative select-none">
       {/* ── TOP HEADER ──────────────────────────────────────────────────────── */}
-      <header className="fixed top-0 left-0 right-0 h-16 z-40 bg-brand-bg/95 backdrop-blur-md flex items-center justify-between pr-4 md:pr-6 border-b border-transparent">
+      <header className="fixed top-0 left-0 right-0 h-16 z-40 bg-brand-bg/95 backdrop-blur-md flex items-center justify-between pr-2.5 sm:pr-4 md:pr-6 border-b border-transparent">
         {/* Left: Hamburger & Logo */}
         <div className="flex items-center h-full">
-          <div className="w-20 flex justify-center items-center shrink-0">
+          <div className="w-14 sm:w-20 flex justify-center items-center shrink-0">
             <button
               onClick={handleToggle}
               className="p-2 text-brand-secondary hover:text-brand-text rounded-full hover:bg-brand-text/10 transition-colors cursor-pointer"
@@ -707,12 +718,10 @@ export default function SidebarLayout({
           </div>
 
           <div
-            ref={containerRef}
             className="flex items-center gap-2 cursor-pointer select-none"
             onClick={(e) => handleLinkClick("/", e)}
           >
             <img
-              ref={logoRef}
               src="/logo-without-text.png"
               alt="XLChess logo"
               className="h-10 w-auto object-contain"
@@ -748,8 +757,9 @@ export default function SidebarLayout({
       <div className="flex flex-1 pt-16">
         {/* Desktop Sidebar (Fixed) */}
         <aside
-          className={`fixed top-16 left-0 bottom-0 z-30 bg-brand-bg/95 backdrop-blur-md flex flex-col py-2 transition-all duration-300 ${isTheaterMode ? "hidden" : "hidden md:flex"} overflow-y-auto overscroll-contain pb-6 sidebar-scrollbar ${isExpanded ? "w-64" : "w-20"
-            }`}
+          className={`fixed top-16 left-0 bottom-0 z-30 bg-brand-bg/95 backdrop-blur-md flex flex-col py-2 transition-all duration-300 ${isTheaterMode ? "hidden" : "hidden md:flex"} overflow-y-auto overscroll-contain pb-6 sidebar-scrollbar ${
+            isExpanded ? "w-64" : "w-20"
+          }`}
         >
           <nav className="flex-1 flex flex-col space-y-1">
             {/* BASE SECTION */}
@@ -799,10 +809,11 @@ export default function SidebarLayout({
                 )}
                 <div className="flex flex-col w-full">
                   <div
-                    className={`flex items-center mx-2 rounded-xl ${isExpanded
-                      ? "py-2.5 px-3"
-                      : "flex-col justify-center py-[14px]"
-                      }`}
+                    className={`flex items-center mx-2 rounded-xl ${
+                      isExpanded
+                        ? "py-2.5 px-3"
+                        : "flex-col justify-center py-[14px]"
+                    }`}
                   >
                     <div
                       className={`flex items-center justify-center shrink-0 ${isExpanded ? "w-10" : "w-full"}`}
@@ -837,6 +848,7 @@ export default function SidebarLayout({
               )
             ) : (
               <>
+                {/* Subscriptions panel - commented out for later implementation
                 {isExpanded && (
                   <div className="flex items-center px-6 py-2">
                     <span className="text-[15px] font-semibold text-brand-text">
@@ -846,14 +858,15 @@ export default function SidebarLayout({
                 )}
                 {MOCK_SUBSCRIPTIONS.length > 0
                   ? MOCK_SUBSCRIPTIONS.map((sub) =>
-                    renderNavItem({ ...sub, href: sub.href }),
-                  )
+                      renderNavItem({ ...sub, href: sub.href }),
+                    )
                   : isExpanded && (
-                    <div className="px-6 py-2 text-[13px] text-brand-secondary">
-                      No subscriptions yet.
-                    </div>
-                  )}
+                      <div className="px-6 py-2 text-[13px] text-brand-secondary">
+                        No subscriptions yet.
+                      </div>
+                    )}
                 <Divider />
+                */}
 
                 {/* YOU SECTION */}
                 {isExpanded && (
@@ -875,7 +888,6 @@ export default function SidebarLayout({
                   {youSection.map((item) => renderNavItem(item))}
                 </div>
                 <Divider />
-
               </>
             )}
 
@@ -1018,12 +1030,13 @@ export default function SidebarLayout({
                     setHoveredSubMenu(null);
                     handleLinkClick(subItem.href, e);
                   }}
-                  className={`w-full flex items-center gap-4 px-5 py-3 text-[14px] font-sans text-left transition-colors duration-150 cursor-pointer ${hoverSubIsComingSoon
-                    ? "opacity-60 hover:opacity-100 text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06]"
-                    : isSubActive
-                      ? "text-brand-accent bg-brand-text/[0.06] font-medium"
-                      : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06]"
-                    }`}
+                  className={`w-full flex items-center gap-4 px-5 py-3 text-[14px] font-sans text-left transition-colors duration-150 cursor-pointer ${
+                    hoverSubIsComingSoon
+                      ? "opacity-60 hover:opacity-100 text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06]"
+                      : isSubActive
+                        ? "text-brand-accent bg-brand-text/[0.06] font-medium"
+                        : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06]"
+                  }`}
                 >
                   {SubIcon && (
                     <SubIcon
@@ -1039,13 +1052,15 @@ export default function SidebarLayout({
 
         {/* Mobile Sidebar (Slide-out) */}
         <div
-          className={`fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${!isTheaterMode ? "md:hidden" : ""} ${isMobileOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-            }`}
+          className={`fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${!isTheaterMode ? "md:hidden" : ""} ${
+            isMobileOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+          }`}
           onClick={() => setIsMobileOpen(false)}
         />
         <aside
-          className={`fixed top-0 left-0 bottom-0 w-64 z-50 bg-brand-bg flex flex-col py-2 transition-transform duration-300 ease-in-out ${!isTheaterMode ? "md:hidden" : ""} overflow-y-auto overscroll-contain sidebar-scrollbar ${isMobileOpen ? "translate-x-0" : "-translate-x-full"
-            }`}
+          className={`fixed top-0 left-0 bottom-0 w-64 z-50 bg-brand-bg flex flex-col py-2 transition-transform duration-300 ease-in-out ${!isTheaterMode ? "md:hidden" : ""} overflow-y-auto overscroll-contain sidebar-scrollbar ${
+            isMobileOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
         >
           <div className="flex items-center mb-2 h-14">
             <div className="w-20 flex justify-center items-center shrink-0">
@@ -1134,6 +1149,7 @@ export default function SidebarLayout({
               </div>
             ) : (
               <>
+                {/* Subscriptions panel - commented out for later implementation
                 <div className="mx-2 px-3 py-2">
                   <span className="text-[15px] font-semibold text-brand-text">
                     Subscriptions
@@ -1150,6 +1166,7 @@ export default function SidebarLayout({
                 )}
 
                 <Divider />
+                */}
 
                 <div
                   className="flex items-center justify-between mx-2 px-3 py-2 cursor-pointer group rounded-xl hover:bg-brand-text/5 transition-colors"
@@ -1325,10 +1342,11 @@ export default function SidebarLayout({
                             setNewLinkUrl(option.value);
                             setIsUrlDropdownOpen(false);
                           }}
-                          className={`w-full text-left px-4 py-2.5 text-[14px] transition-colors cursor-pointer ${newLinkUrl === option.value
-                            ? "bg-[#2563EB] text-brand-text font-medium"
-                            : "text-brand-secondary hover:bg-brand-text/5 hover:text-brand-text"
-                            }`}
+                          className={`w-full text-left px-4 py-2.5 text-[14px] transition-colors cursor-pointer ${
+                            newLinkUrl === option.value
+                              ? "bg-[#2563EB] text-brand-text font-medium"
+                              : "text-brand-secondary hover:bg-brand-text/5 hover:text-brand-text"
+                          }`}
                         >
                           {option.label}
                         </button>
@@ -1355,11 +1373,16 @@ export default function SidebarLayout({
                     disabled={isSubmittingLink}
                     className="btn-gold-solid flex items-center justify-center gap-2 bg-brand-accent text-brand-bg font-semibold px-5 py-2.5 rounded-xl hover:bg-brand-accent/90 hover:scale-[1.02] transition-all cursor-pointer text-[14px] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                   >
-                    {isSubmittingLink && <Loader2 className="w-4 h-4 animate-spin" />}
-                    {editLinkIndex !== null 
-                      ? (isSubmittingLink ? "Saving..." : "Save Changes") 
-                      : (isSubmittingLink ? "Saving..." : "Save Link")
-                    }
+                    {isSubmittingLink && (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    )}
+                    {editLinkIndex !== null
+                      ? isSubmittingLink
+                        ? "Saving..."
+                        : "Save Changes"
+                      : isSubmittingLink
+                        ? "Saving..."
+                        : "Save Link"}
                   </button>
                 </div>
               </form>

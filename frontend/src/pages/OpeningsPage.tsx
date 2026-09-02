@@ -324,7 +324,7 @@ export default function OpeningsPage() {
   const totalUserSteps = Math.ceil(totalSteps / 2);
 
   return (
-    <div className="min-h-screen flex flex-col px-4 sm:px-6 lg:px-8 py-6 gap-6 max-w-[1400px] mx-auto w-full">
+    <div className="min-h-screen flex flex-col px-2.5 sm:px-6 lg:px-8 py-6 gap-6 max-w-[1400px] mx-auto w-full">
       {/* ── Top bar ──────────────────────────────────────────────────────── */}
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <button

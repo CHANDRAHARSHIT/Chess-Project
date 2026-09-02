@@ -36,7 +36,8 @@ export type ObservabilityDomain =
   | "http"
   | "bot"
   | "anticheat"
-  | "events";
+  | "events"
+  | "maia";
 
 /**
  * A state-machine transition event.

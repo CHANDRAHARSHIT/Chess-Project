@@ -1,0 +1,39 @@
+# Railway build config.
+#
+# Exists because the backend needs Python alongside Node: Maia-3 is a PyTorch
+# model and runs as a child process. Railway's auto-detection sees a Node repo
+# and installs Node only, so without this the Maia routes 503.
+#
+# Everything lands in an explicit virtualenv rather than a system/user site-dir.
+# The first deploy failed with `spawn maia3-uci ENOENT` because pip put the
+# console script in a bin directory that was not on the runtime PATH; pointing
+# MAIA_UCI_COMMAND at a known interpreter removes the guesswork.
+#
+# With MAIA_ENABLED unset, none of this is reached at runtime.
+
+[phases.setup]
+nixPkgs = ["nodejs_22", "python313", "gcc"]
+
+[phases.install]
+cmds = [
+  "npm ci",
+  "python3 -m venv /opt/maia-venv",
+  # CPU-only torch — the default wheel pulls ~2.5GB of CUDA that Railway cannot use.
+  "/opt/maia-venv/bin/pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu",
+  "/opt/maia-venv/bin/pip install --no-cache-dir 'git+https://github.com/CSSLab/maia3.git'",
+  # Fail the build here rather than at the first move if the install is broken.
+  "/opt/maia-venv/bin/python -c 'import maia3; print(\"maia3 import OK\")'",
+  # Bake the weights in; otherwise the first player waits on a 302MB download.
+  "/opt/maia-venv/bin/python -m maia3.cache --model maia3-79m",
+]
+
+[phases.build]
+cmds = ["npm run build:backend"]
+
+[start]
+cmd = "npm run start -w backend"
+
+[variables]
+# The engine probes this interpreter first. Without it, it falls back to
+# `python3`/`python` on PATH, which may not be the venv.
+MAIA_UCI_COMMAND = "/opt/maia-venv/bin/python"

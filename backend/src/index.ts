@@ -14,6 +14,7 @@ import { handleGameResult } from "./results/index.js";
 import { attachBot, acquireBot, releaseBot } from "./bot/botPlayer.js";
 import { eventManager } from "./events/index.js";
 import { registerAntiCheatActions } from "./anticheat/index.js";
+import { warmMaiaEngine } from "./maia/maia.route.js";
 import type { GameResult, ParticipantAssignment } from "./contracts/index.js";
 
 // Initialise observability first so the very first server error is captured.
@@ -32,6 +33,9 @@ export const server = app.listen(env.PORT, () => {
   console.log(
     `[Server]: Node.js Express server is listening in ${env.NODE_ENV} mode at http://localhost:${env.PORT}`,
   );
+  // Loads the Maia model now rather than making the first player wait for it.
+  // Self-gating on MAIA_ENABLED and fire-and-forget.
+  warmMaiaEngine();
 });
 
 server.on("error", (err: any) => {
