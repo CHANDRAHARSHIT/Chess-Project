@@ -99,7 +99,7 @@ export interface ScoredMovePolicy {
 
 /**
  * Placeholders. Only `gameCount` and `includeBotGames` are decisions rather
- * than guesses: ten games is the founder's figure, and bot games are excluded
+ * than guesses: ten games is a product decision, and bot games are excluded
  * because our bot plays random legal moves, which inflates every human's
  * accuracy to near-perfect. Everything else needs the Simulation module.
  */

@@ -202,7 +202,7 @@ Blocker #5 (reports → database) and #1 (per-ply timing) are independent of eve
 open design question and unblock the most downstream work. Neither requires the
 spec's remaining 50% to be written first.
 
-Everything else should wait on direction from the founder, particularly:
+Everything else should wait on product direction, particularly:
 
 - The offender review section the spec marks `[TODO]`.
 - Whether tournaments are in scope before or after ACS detection.

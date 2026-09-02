@@ -7,6 +7,7 @@
 
 import type { ClassifiedMove, MoveQuality } from "./BlunderAnalyzer.js";
 import type { GameAnalysisReport } from "./PostGameAnalysis.js";
+import type { DetectionOutcome } from "../types.js";
 
 const SIDE_NAMES = ["White", "Black"];
 
@@ -15,6 +16,30 @@ const NOTABLE: readonly MoveQuality[] = ["blunder", "mistake", "inaccuracy"];
 
 /** Above this, an eval came from a forced mate rather than a material count. */
 const MATE_EVAL_FLOOR_CP = 9000;
+
+/**
+ * Human-readable view of a multi-game review, for the arbiter packet and for
+ * server logs. Secondary to the structured DetectionOutcome — same data, no
+ * extra inference, and it never says anyone cheated.
+ */
+export function renderReviewSummary(outcome: DetectionOutcome): string {
+  const lines = [
+    `Multi-game review — user ${outcome.suspect.userId}`,
+    `Rating supplied: ${outcome.suspect.ratingAtEvent ?? "none"}`,
+    `Score ${outcome.totalScore} against a threshold of ${outcome.threshold}` +
+      ` — threshold ${outcome.detected ? "crossed" : "not crossed"}.`,
+    `Certainty ${(outcome.certainty * 100).toFixed(0)}% (capped while baselines are placeholders).`,
+    "This is not a finding of cheating. Only a reviewed case decides that.",
+    "",
+  ];
+
+  for (const result of outcome.results) {
+    lines.push(`[${result.checkId}] score ${result.score}, confidence ${result.confidence.toFixed(2)}`);
+    for (const evidence of result.evidence) lines.push(`    ${evidence}`);
+  }
+
+  return lines.join("\n");
+}
 
 export function renderTextReport(report: GameAnalysisReport): string {
   const lines: string[] = [];

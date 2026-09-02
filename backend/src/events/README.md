@@ -2,7 +2,7 @@
 
 > **Status: design. No code yet.**
 >
-> Founder's instruction: *"You'll need to setup an event manager throughout
+> Product direction: *"You'll need to setup an event manager throughout
 > xlchess that will trigger events… Keep the event manager outside the ACS since
 > other parts of xlchess will use it as well."*
 
@@ -19,7 +19,7 @@ columns:
 | `post_game` | `whole_history_review` |
 | … | … |
 
-**A row means: when trigger Y happens, run action X.** The founder expects
+**A row means: when trigger Y happens, run action X.** We expect
 roughly twenty to fifty triggers eventually, and a growing action list —
 blunder analysis, missed-move analysis, opening analysis, and whatever comes
 next.
@@ -38,18 +38,18 @@ So: `backend/src/events/` is its own domain, depending on nothing but
 
 ## 3. Current table
 
-Per the founder: *"For now, use this: Y is post game, X is run analysis on all
+Current direction: *"For now, use this: Y is post game, X is run analysis on all
 games… So for now, link everything to post game trigger by default."*
 
 | Trigger | Action | Status |
 |---|---|---|
 | `post_game` | `blunder_analysis` | Live — registered by `anticheat/actions.ts` |
-| `post_game` | `whole_history_review` | Specified in `anticheat/MULTI_GAME_REVIEW_REQUIREMENTS.md`, not built |
+| `post_game` | `whole_history_review` | Live — registered by `anticheat/actions.ts` |
 | `post_game` | `missed_move_analysis` | Not built |
 | `post_game` | `opening_analysis` | Not built, and near-void under Chess960 |
 
-Every action defaults to the `post_game` trigger until the founder defines
-others.
+Every action defaults to the `post_game` trigger until other triggers are
+defined.
 
 `blunder_analysis` analyses **only the game that just finished** and persists the
 result; `whole_history_review` then aggregates the persisted rows rather than
@@ -118,7 +118,7 @@ deciding *when* things run and becomes the ACS-side adapter: it registers the
 ACS's actions and builds the `AnalysisWindow` each one runs against. That is a
 reduction in its scope, and it is unimplemented, so nothing breaks.
 
-**6.2 Two places would encode "what runs when".** The founder's table separates
+**6.2 Two places would encode "what runs when".** The trigger table separates
 `after_move_rated` from `after_move_unrated`, which puts detection intensity —
 risk-scaled monitoring — into the trigger table. `PolicyRegistry.getActiveTriggers(situation)`
 was designed to hold exactly that.
@@ -131,8 +131,8 @@ database in §7.
 
 ## 7. Storage
 
-In-code for now (`triggerActions.ts`), matching the founder's "this table would
-be manually defined".
+In-code for now (`triggerActions.ts`), matching the "this table would be
+manually defined" direction.
 
 A database table is the obvious end state so the Feedback module can change rows
 without a deploy — the same path `PolicyRegistry` is on. **That is a schema

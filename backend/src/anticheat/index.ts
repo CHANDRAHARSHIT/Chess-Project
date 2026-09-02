@@ -42,7 +42,12 @@ export {
   GameNotAnalysableError,
 } from "./AnalysisService.js";
 export { registerAntiCheatActions } from "./actions.js";
-export { loadReviewWindow } from "./AnalysisService.js";
+export {
+  loadReviewWindow,
+  reviewUserHistory,
+  runWholeHistoryReview,
+} from "./AnalysisService.js";
+export { renderReviewSummary } from "./detection/AnalysisReport.js";
 export { buildReviewWindow } from "./detection/ReviewWindow.js";
 export type {
   ReviewWindow,

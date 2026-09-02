@@ -15,6 +15,8 @@ import {
   saveGameAnalysis,
 } from "./analysisRepository.js";
 import { buildReviewWindow, type ReviewWindow } from "./detection/ReviewWindow.js";
+import { scoreReviewWindow } from "./detection/ReviewScoring.js";
+import { StatisticalBaselines } from "./detection/StatisticalBaselines.js";
 import { PolicyRegistry } from "./feedback/PolicyRegistry.js";
 import {
   GameNotAnalysableError,
@@ -24,8 +26,8 @@ import {
   type AnalysableGame,
   type GameAnalysisReport,
 } from "./detection/PostGameAnalysis.js";
-import { renderTextReport } from "./detection/AnalysisReport.js";
-import type { Situation } from "./types.js";
+import { renderReviewSummary, renderTextReport } from "./detection/AnalysisReport.js";
+import type { DetectionOutcome, Situation } from "./types.js";
 
 /**
  * Situation for a post-game report.
@@ -137,6 +139,57 @@ export async function runBlunderAnalysis(gameSessionId: string): Promise<void> {
       return;
     }
     throw error;
+  }
+}
+
+/**
+ * Scores a suspect's recent history and returns the outcome.
+ *
+ * Rating is a caller-supplied input; null omits the accuracy-versus-rating
+ * signal rather than substituting a rating.
+ */
+export async function reviewUserHistory(
+  userId: string,
+  situation: Situation,
+  rating: number | null
+): Promise<DetectionOutcome | null> {
+  const window = await loadReviewWindow(userId, situation, rating);
+  if (!window.isSufficient) return null;
+
+  const windowPolicy = new PolicyRegistry().getReviewWindowPolicy(situation);
+  const baselines = new StatisticalBaselines().getFor({
+    rating,
+    variantId: windowPolicy.variantIds[0],
+    initialSeconds: windowPolicy.initialSeconds,
+    incrementSeconds: windowPolicy.incrementSeconds,
+  });
+
+  return scoreReviewWindow(window, baselines, new PolicyRegistry());
+}
+
+/**
+ * Reviews every participant of a finished game.
+ *
+ * Registered as the `whole_history_review` action. Runs no engine work — it
+ * aggregates analysis cached when each game completed, so attaching it to
+ * `post_game` costs milliseconds rather than the ~25s a recompute would.
+ */
+export async function runWholeHistoryReview(gameSessionId: string): Promise<void> {
+  if (!env.ANTICHEAT_ENABLED) return;
+
+  const gameRecordId = await resolveRecordId(gameSessionId);
+  if (!gameRecordId) return;
+
+  const participants = await prisma.gameParticipant.findMany({
+    where: { gameRecordId },
+    select: { userId: true },
+  });
+
+  for (const { userId } of participants) {
+    // No player has a rating, so the accuracy signal stays absent for now.
+    const outcome = await reviewUserHistory(userId, REPORT_SITUATION, null);
+    if (!outcome) continue;
+    console.log(`\n${renderReviewSummary(outcome)}\n`);
   }
 }
 

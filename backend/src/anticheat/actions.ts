@@ -7,10 +7,13 @@
  */
 
 import type { EventManager } from "../events/index.js";
-import { runBlunderAnalysis } from "./AnalysisService.js";
+import { runBlunderAnalysis, runWholeHistoryReview } from "./AnalysisService.js";
 
 export function registerAntiCheatActions(eventManager: EventManager): void {
   eventManager.registerAction("blunder_analysis", (event) =>
     runBlunderAnalysis(event.gameSessionId)
+  );
+  eventManager.registerAction("whole_history_review", (event) =>
+    runWholeHistoryReview(event.gameSessionId)
   );
 }
