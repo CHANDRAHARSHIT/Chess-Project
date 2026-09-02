@@ -33,7 +33,9 @@ const TABS: {
     disabled: !featureFlags.enablePlayOnline,
   },
   { id: "variants", label: "Variants", Icon: Shuffle },
-  { id: "maia", label: "Maia", Icon: Brain },
+  ...(featureFlags.showMaia
+    ? [{ id: "maia" as const, label: "Maia", Icon: Brain }]
+    : []),
 ];
 
 export function PlayTabBar({
