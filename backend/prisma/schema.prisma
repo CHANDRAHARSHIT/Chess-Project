@@ -363,9 +363,41 @@ model GameRecord {
   endedAt           DateTime
   createdAt         DateTime              @default(now())
   participants      GameParticipant[]
+  analysis          GameAnalysis?
 
   @@index([endedAt])
   @@index([variantId])
+}
+
+/// Cached engine analysis of one finished game.
+///
+/// Stores raw engine output only — evaluations and best moves, never derived
+/// classifications. Classification depends on PolicyRegistry values the Feedback
+/// module is expected to change; storing it would mean re-running Stockfish over
+/// the whole history on every policy edit, instead of a re-aggregation.
+///
+/// Written post-game; read by multi-game suspect review, which never runs the
+/// engine itself. See backend/src/anticheat/MULTI_GAME_REVIEW_REQUIREMENTS.md §11.2.
+model GameAnalysis {
+  id             String   @id @default(cuid())
+  gameRecordId   String   @unique
+  /// Engine build and search settings, so a review never mixes evaluations
+  /// produced under different conditions into one comparison.
+  engineName     String
+  engineDepth    Int
+  multiPvLines   Int      @default(1)
+  startingFen    String
+  plyCount       Int
+  /// Per ply: ply, side, san, uci, evalBeforeCp, evalAfterCp, bestMove, legalMoveCount.
+  plies          Json
+  /// Bumped when the plies payload shape changes, so stale rows are re-analysed
+  /// rather than silently misread.
+  payloadVersion Int      @default(1)
+  analysedAt     DateTime @default(now())
+
+  gameRecord     GameRecord @relation(fields: [gameRecordId], references: [id], onDelete: Cascade)
+
+  @@index([analysedAt])
 }
 
 model GameParticipant {

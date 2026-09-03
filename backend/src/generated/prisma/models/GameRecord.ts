@@ -341,6 +341,7 @@ export type GameRecordWhereInput = {
   endedAt?: Prisma.DateTimeFilter<"GameRecord"> | Date | string
   createdAt?: Prisma.DateTimeFilter<"GameRecord"> | Date | string
   participants?: Prisma.GameParticipantListRelationFilter
+  analysis?: Prisma.XOR<Prisma.GameAnalysisNullableScalarRelationFilter, Prisma.GameAnalysisWhereInput> | null
 }
 
 export type GameRecordOrderByWithRelationInput = {
@@ -365,6 +366,7 @@ export type GameRecordOrderByWithRelationInput = {
   endedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   participants?: Prisma.GameParticipantOrderByRelationAggregateInput
+  analysis?: Prisma.GameAnalysisOrderByWithRelationInput
 }
 
 export type GameRecordWhereUniqueInput = Prisma.AtLeast<{
@@ -392,6 +394,7 @@ export type GameRecordWhereUniqueInput = Prisma.AtLeast<{
   endedAt?: Prisma.DateTimeFilter<"GameRecord"> | Date | string
   createdAt?: Prisma.DateTimeFilter<"GameRecord"> | Date | string
   participants?: Prisma.GameParticipantListRelationFilter
+  analysis?: Prisma.XOR<Prisma.GameAnalysisNullableScalarRelationFilter, Prisma.GameAnalysisWhereInput> | null
 }, "id" | "gameSessionId" | "matchId">
 
 export type GameRecordOrderByWithAggregationInput = {
@@ -470,6 +473,7 @@ export type GameRecordCreateInput = {
   endedAt: Date | string
   createdAt?: Date | string
   participants?: Prisma.GameParticipantCreateNestedManyWithoutGameRecordInput
+  analysis?: Prisma.GameAnalysisCreateNestedOneWithoutGameRecordInput
 }
 
 export type GameRecordUncheckedCreateInput = {
@@ -494,6 +498,7 @@ export type GameRecordUncheckedCreateInput = {
   endedAt: Date | string
   createdAt?: Date | string
   participants?: Prisma.GameParticipantUncheckedCreateNestedManyWithoutGameRecordInput
+  analysis?: Prisma.GameAnalysisUncheckedCreateNestedOneWithoutGameRecordInput
 }
 
 export type GameRecordUpdateInput = {
@@ -518,6 +523,7 @@ export type GameRecordUpdateInput = {
   endedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   participants?: Prisma.GameParticipantUpdateManyWithoutGameRecordNestedInput
+  analysis?: Prisma.GameAnalysisUpdateOneWithoutGameRecordNestedInput
 }
 
 export type GameRecordUncheckedUpdateInput = {
@@ -542,6 +548,7 @@ export type GameRecordUncheckedUpdateInput = {
   endedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   participants?: Prisma.GameParticipantUncheckedUpdateManyWithoutGameRecordNestedInput
+  analysis?: Prisma.GameAnalysisUncheckedUpdateOneWithoutGameRecordNestedInput
 }
 
 export type GameRecordCreateManyInput = {
@@ -709,6 +716,20 @@ export type EnumGameTerminationReasonFieldUpdateOperationsInput = {
   set?: $Enums.GameTerminationReason
 }
 
+export type GameRecordCreateNestedOneWithoutAnalysisInput = {
+  create?: Prisma.XOR<Prisma.GameRecordCreateWithoutAnalysisInput, Prisma.GameRecordUncheckedCreateWithoutAnalysisInput>
+  connectOrCreate?: Prisma.GameRecordCreateOrConnectWithoutAnalysisInput
+  connect?: Prisma.GameRecordWhereUniqueInput
+}
+
+export type GameRecordUpdateOneRequiredWithoutAnalysisNestedInput = {
+  create?: Prisma.XOR<Prisma.GameRecordCreateWithoutAnalysisInput, Prisma.GameRecordUncheckedCreateWithoutAnalysisInput>
+  connectOrCreate?: Prisma.GameRecordCreateOrConnectWithoutAnalysisInput
+  upsert?: Prisma.GameRecordUpsertWithoutAnalysisInput
+  connect?: Prisma.GameRecordWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.GameRecordUpdateToOneWithWhereWithoutAnalysisInput, Prisma.GameRecordUpdateWithoutAnalysisInput>, Prisma.GameRecordUncheckedUpdateWithoutAnalysisInput>
+}
+
 export type GameRecordCreateNestedOneWithoutParticipantsInput = {
   create?: Prisma.XOR<Prisma.GameRecordCreateWithoutParticipantsInput, Prisma.GameRecordUncheckedCreateWithoutParticipantsInput>
   connectOrCreate?: Prisma.GameRecordCreateOrConnectWithoutParticipantsInput
@@ -721,6 +742,118 @@ export type GameRecordUpdateOneRequiredWithoutParticipantsNestedInput = {
   upsert?: Prisma.GameRecordUpsertWithoutParticipantsInput
   connect?: Prisma.GameRecordWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.GameRecordUpdateToOneWithWhereWithoutParticipantsInput, Prisma.GameRecordUpdateWithoutParticipantsInput>, Prisma.GameRecordUncheckedUpdateWithoutParticipantsInput>
+}
+
+export type GameRecordCreateWithoutAnalysisInput = {
+  id?: string
+  gameSessionId: string
+  matchId: string
+  variantId: string
+  rated: boolean
+  provenance: $Enums.MatchProvenance
+  outcomeKind: $Enums.GameOutcomeKind
+  winningSide?: number | null
+  terminationReason: $Enums.GameTerminationReason
+  moveCount: number
+  moveHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  initialSeconds?: number | null
+  incrementSeconds?: number | null
+  timeControlLabel?: string | null
+  ratingPoolId?: string | null
+  tournamentContext?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  durationSeconds?: number | null
+  endedAt: Date | string
+  createdAt?: Date | string
+  participants?: Prisma.GameParticipantCreateNestedManyWithoutGameRecordInput
+}
+
+export type GameRecordUncheckedCreateWithoutAnalysisInput = {
+  id?: string
+  gameSessionId: string
+  matchId: string
+  variantId: string
+  rated: boolean
+  provenance: $Enums.MatchProvenance
+  outcomeKind: $Enums.GameOutcomeKind
+  winningSide?: number | null
+  terminationReason: $Enums.GameTerminationReason
+  moveCount: number
+  moveHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  initialSeconds?: number | null
+  incrementSeconds?: number | null
+  timeControlLabel?: string | null
+  ratingPoolId?: string | null
+  tournamentContext?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  durationSeconds?: number | null
+  endedAt: Date | string
+  createdAt?: Date | string
+  participants?: Prisma.GameParticipantUncheckedCreateNestedManyWithoutGameRecordInput
+}
+
+export type GameRecordCreateOrConnectWithoutAnalysisInput = {
+  where: Prisma.GameRecordWhereUniqueInput
+  create: Prisma.XOR<Prisma.GameRecordCreateWithoutAnalysisInput, Prisma.GameRecordUncheckedCreateWithoutAnalysisInput>
+}
+
+export type GameRecordUpsertWithoutAnalysisInput = {
+  update: Prisma.XOR<Prisma.GameRecordUpdateWithoutAnalysisInput, Prisma.GameRecordUncheckedUpdateWithoutAnalysisInput>
+  create: Prisma.XOR<Prisma.GameRecordCreateWithoutAnalysisInput, Prisma.GameRecordUncheckedCreateWithoutAnalysisInput>
+  where?: Prisma.GameRecordWhereInput
+}
+
+export type GameRecordUpdateToOneWithWhereWithoutAnalysisInput = {
+  where?: Prisma.GameRecordWhereInput
+  data: Prisma.XOR<Prisma.GameRecordUpdateWithoutAnalysisInput, Prisma.GameRecordUncheckedUpdateWithoutAnalysisInput>
+}
+
+export type GameRecordUpdateWithoutAnalysisInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  gameSessionId?: Prisma.StringFieldUpdateOperationsInput | string
+  matchId?: Prisma.StringFieldUpdateOperationsInput | string
+  variantId?: Prisma.StringFieldUpdateOperationsInput | string
+  rated?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  provenance?: Prisma.EnumMatchProvenanceFieldUpdateOperationsInput | $Enums.MatchProvenance
+  outcomeKind?: Prisma.EnumGameOutcomeKindFieldUpdateOperationsInput | $Enums.GameOutcomeKind
+  winningSide?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  terminationReason?: Prisma.EnumGameTerminationReasonFieldUpdateOperationsInput | $Enums.GameTerminationReason
+  moveCount?: Prisma.IntFieldUpdateOperationsInput | number
+  moveHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  initialSeconds?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  incrementSeconds?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  timeControlLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ratingPoolId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tournamentContext?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  durationSeconds?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  endedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  participants?: Prisma.GameParticipantUpdateManyWithoutGameRecordNestedInput
+}
+
+export type GameRecordUncheckedUpdateWithoutAnalysisInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  gameSessionId?: Prisma.StringFieldUpdateOperationsInput | string
+  matchId?: Prisma.StringFieldUpdateOperationsInput | string
+  variantId?: Prisma.StringFieldUpdateOperationsInput | string
+  rated?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  provenance?: Prisma.EnumMatchProvenanceFieldUpdateOperationsInput | $Enums.MatchProvenance
+  outcomeKind?: Prisma.EnumGameOutcomeKindFieldUpdateOperationsInput | $Enums.GameOutcomeKind
+  winningSide?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  terminationReason?: Prisma.EnumGameTerminationReasonFieldUpdateOperationsInput | $Enums.GameTerminationReason
+  moveCount?: Prisma.IntFieldUpdateOperationsInput | number
+  moveHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  initialSeconds?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  incrementSeconds?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  timeControlLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ratingPoolId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tournamentContext?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  durationSeconds?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  endedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  participants?: Prisma.GameParticipantUncheckedUpdateManyWithoutGameRecordNestedInput
 }
 
 export type GameRecordCreateWithoutParticipantsInput = {
@@ -744,6 +877,7 @@ export type GameRecordCreateWithoutParticipantsInput = {
   durationSeconds?: number | null
   endedAt: Date | string
   createdAt?: Date | string
+  analysis?: Prisma.GameAnalysisCreateNestedOneWithoutGameRecordInput
 }
 
 export type GameRecordUncheckedCreateWithoutParticipantsInput = {
@@ -767,6 +901,7 @@ export type GameRecordUncheckedCreateWithoutParticipantsInput = {
   durationSeconds?: number | null
   endedAt: Date | string
   createdAt?: Date | string
+  analysis?: Prisma.GameAnalysisUncheckedCreateNestedOneWithoutGameRecordInput
 }
 
 export type GameRecordCreateOrConnectWithoutParticipantsInput = {
@@ -806,6 +941,7 @@ export type GameRecordUpdateWithoutParticipantsInput = {
   durationSeconds?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   endedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  analysis?: Prisma.GameAnalysisUpdateOneWithoutGameRecordNestedInput
 }
 
 export type GameRecordUncheckedUpdateWithoutParticipantsInput = {
@@ -829,6 +965,7 @@ export type GameRecordUncheckedUpdateWithoutParticipantsInput = {
   durationSeconds?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   endedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  analysis?: Prisma.GameAnalysisUncheckedUpdateOneWithoutGameRecordNestedInput
 }
 
 
@@ -884,6 +1021,7 @@ export type GameRecordSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   endedAt?: boolean
   createdAt?: boolean
   participants?: boolean | Prisma.GameRecord$participantsArgs<ExtArgs>
+  analysis?: boolean | Prisma.GameRecord$analysisArgs<ExtArgs>
   _count?: boolean | Prisma.GameRecordCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["gameRecord"]>
 
@@ -959,6 +1097,7 @@ export type GameRecordSelectScalar = {
 export type GameRecordOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "gameSessionId" | "matchId" | "variantId" | "rated" | "provenance" | "outcomeKind" | "winningSide" | "terminationReason" | "moveCount" | "moveHistory" | "initialSeconds" | "incrementSeconds" | "timeControlLabel" | "ratingPoolId" | "tournamentContext" | "metadata" | "durationSeconds" | "endedAt" | "createdAt", ExtArgs["result"]["gameRecord"]>
 export type GameRecordInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   participants?: boolean | Prisma.GameRecord$participantsArgs<ExtArgs>
+  analysis?: boolean | Prisma.GameRecord$analysisArgs<ExtArgs>
   _count?: boolean | Prisma.GameRecordCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type GameRecordIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -968,6 +1107,7 @@ export type $GameRecordPayload<ExtArgs extends runtime.Types.Extensions.Internal
   name: "GameRecord"
   objects: {
     participants: Prisma.$GameParticipantPayload<ExtArgs>[]
+    analysis: Prisma.$GameAnalysisPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1385,6 +1525,7 @@ readonly fields: GameRecordFieldRefs;
 export interface Prisma__GameRecordClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   participants<T extends Prisma.GameRecord$participantsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.GameRecord$participantsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GameParticipantPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  analysis<T extends Prisma.GameRecord$analysisArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.GameRecord$analysisArgs<ExtArgs>>): Prisma.Prisma__GameAnalysisClient<runtime.Types.Result.GetResult<Prisma.$GameAnalysisPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1848,6 +1989,25 @@ export type GameRecord$participantsArgs<ExtArgs extends runtime.Types.Extensions
   take?: number
   skip?: number
   distinct?: Prisma.GameParticipantScalarFieldEnum | Prisma.GameParticipantScalarFieldEnum[]
+}
+
+/**
+ * GameRecord.analysis
+ */
+export type GameRecord$analysisArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the GameAnalysis
+   */
+  select?: Prisma.GameAnalysisSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the GameAnalysis
+   */
+  omit?: Prisma.GameAnalysisOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GameAnalysisInclude<ExtArgs> | null
+  where?: Prisma.GameAnalysisWhereInput
 }
 
 /**

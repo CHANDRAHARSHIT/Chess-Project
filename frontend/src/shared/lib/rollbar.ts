@@ -17,4 +17,15 @@ const rollbar = new Rollbar({
   captureUnhandledRejections: true,
 });
 
+/**
+ * True for a `fetch()` call that never reached the server (offline, connection drop,
+ * blocked request, CORS preflight failure) rather than an application defect — the browser
+ * surfaces all of these as `TypeError: Failed to fetch` (Firefox/Safari phrase it differently
+ * but are also TypeErrors). Callers that already recover gracefully from this should report
+ * it at `.warning` instead of `.error` so transient connectivity issues don't page as bugs.
+ */
+export function isNetworkFetchError(error: unknown): boolean {
+  return error instanceof TypeError && /failed to fetch|networkerror|load failed/i.test(error.message);
+}
+
 export default rollbar;

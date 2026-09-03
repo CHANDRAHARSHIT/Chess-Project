@@ -21,7 +21,6 @@ import {
   MoveUp,
   Archive,
   Swords,
-  Sparkles,
   Loader2,
 } from "lucide-react";
 import { soundManager } from "@/shared/lib/SoundManager";
@@ -405,9 +404,6 @@ export default function SidebarLayout({
       ? [{ name: "Build Lessons", href: "/lesson-builder", icon: PenTool }]
       : []),
     { name: "Puzzles", href: "/puzzles", icon: Puzzle },
-    ...(featureFlags.showOdyssey
-      ? [{ name: "Odyssey", href: "/odyssey", icon: Sparkles }]
-      : []),
     { name: "Upgrade", href: "/pricing", icon: Crown },
   ];
 
