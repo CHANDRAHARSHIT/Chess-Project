@@ -7,22 +7,21 @@
  */
 
 import { env } from "../../config/env.js";
-import { PolicyRegistry } from "../feedback/PolicyRegistry.js";
+import { prismaActionRepository, type ActionRepository } from "./actionRepository.js";
 import { prismaPenaltyRepository, type PenaltyRepository } from "./penaltyRepository.js";
-import type { AppliedPenalty, Situation } from "../types.js";
-
-/** Matchmaking produces unrated queue games only — `rated: false` is hardcoded there. */
-const QUEUE_SITUATION: Situation = { proficiency: "unknown", eventType: "unrated_game" };
+import type { AppliedPenalty } from "../types.js";
 
 /** Null when the user may play. Returns the penalty itself so callers can cite it. */
 export async function findBlockingPenalty(
   userId: string,
-  repository: PenaltyRepository = prismaPenaltyRepository
+  repository: PenaltyRepository = prismaPenaltyRepository,
+  actions: ActionRepository = prismaActionRepository
 ): Promise<AppliedPenalty | null> {
   if (!env.ANTICHEAT_ENABLED) return null;
 
-  const blocking = new PolicyRegistry().getBlockingActions(QUEUE_SITUATION);
   const active = await repository.findActivePenalties(userId);
+  if (active.length === 0) return null;
 
+  const blocking = await actions.findBlockingCodes();
   return active.find((penalty) => blocking.includes(penalty.action)) ?? null;
 }

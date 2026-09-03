@@ -79,6 +79,7 @@ export const ModelName = {
   AssessmentAttempt: 'AssessmentAttempt',
   ReviewCase: 'ReviewCase',
   AppliedPenalty: 'AppliedPenalty',
+  PenaltyAction: 'PenaltyAction',
   CompensationRecord: 'CompensationRecord'
 } as const
 
@@ -555,6 +556,22 @@ export const AppliedPenaltyScalarFieldEnum = {
 } as const
 
 export type AppliedPenaltyScalarFieldEnum = (typeof AppliedPenaltyScalarFieldEnum)[keyof typeof AppliedPenaltyScalarFieldEnum]
+
+
+export const PenaltyActionScalarFieldEnum = {
+  id: 'id',
+  code: 'code',
+  label: 'label',
+  description: 'description',
+  blocksPlay: 'blocksPlay',
+  defaultDurationMs: 'defaultDurationMs',
+  isImplemented: 'isImplemented',
+  isActive: 'isActive',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt'
+} as const
+
+export type PenaltyActionScalarFieldEnum = (typeof PenaltyActionScalarFieldEnum)[keyof typeof PenaltyActionScalarFieldEnum]
 
 
 export const CompensationRecordScalarFieldEnum = {

@@ -277,6 +277,7 @@ export type AppliedPenaltyWhereInput = {
   reversalReason?: Prisma.StringNullableFilter<"AppliedPenalty"> | string | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   reviewCase?: Prisma.XOR<Prisma.ReviewCaseScalarRelationFilter, Prisma.ReviewCaseWhereInput>
+  actionType?: Prisma.XOR<Prisma.PenaltyActionScalarRelationFilter, Prisma.PenaltyActionWhereInput>
 }
 
 export type AppliedPenaltyOrderByWithRelationInput = {
@@ -294,6 +295,7 @@ export type AppliedPenaltyOrderByWithRelationInput = {
   reversalReason?: Prisma.SortOrderInput | Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
   reviewCase?: Prisma.ReviewCaseOrderByWithRelationInput
+  actionType?: Prisma.PenaltyActionOrderByWithRelationInput
 }
 
 export type AppliedPenaltyWhereUniqueInput = Prisma.AtLeast<{
@@ -314,6 +316,7 @@ export type AppliedPenaltyWhereUniqueInput = Prisma.AtLeast<{
   reversalReason?: Prisma.StringNullableFilter<"AppliedPenalty"> | string | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   reviewCase?: Prisma.XOR<Prisma.ReviewCaseScalarRelationFilter, Prisma.ReviewCaseWhereInput>
+  actionType?: Prisma.XOR<Prisma.PenaltyActionScalarRelationFilter, Prisma.PenaltyActionWhereInput>
 }, "id">
 
 export type AppliedPenaltyOrderByWithAggregationInput = {
@@ -356,7 +359,6 @@ export type AppliedPenaltyScalarWhereWithAggregatesInput = {
 
 export type AppliedPenaltyCreateInput = {
   id?: string
-  action: string
   level: number
   proficiency: string
   eventType: string
@@ -367,6 +369,7 @@ export type AppliedPenaltyCreateInput = {
   reversalReason?: string | null
   user: Prisma.UserCreateNestedOneWithoutAppliedPenaltiesInput
   reviewCase: Prisma.ReviewCaseCreateNestedOneWithoutPenaltiesInput
+  actionType: Prisma.PenaltyActionCreateNestedOneWithoutPenaltiesInput
 }
 
 export type AppliedPenaltyUncheckedCreateInput = {
@@ -386,7 +389,6 @@ export type AppliedPenaltyUncheckedCreateInput = {
 
 export type AppliedPenaltyUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  action?: Prisma.StringFieldUpdateOperationsInput | string
   level?: Prisma.IntFieldUpdateOperationsInput | number
   proficiency?: Prisma.StringFieldUpdateOperationsInput | string
   eventType?: Prisma.StringFieldUpdateOperationsInput | string
@@ -397,6 +399,7 @@ export type AppliedPenaltyUpdateInput = {
   reversalReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutAppliedPenaltiesNestedInput
   reviewCase?: Prisma.ReviewCaseUpdateOneRequiredWithoutPenaltiesNestedInput
+  actionType?: Prisma.PenaltyActionUpdateOneRequiredWithoutPenaltiesNestedInput
 }
 
 export type AppliedPenaltyUncheckedUpdateInput = {
@@ -431,7 +434,6 @@ export type AppliedPenaltyCreateManyInput = {
 
 export type AppliedPenaltyUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  action?: Prisma.StringFieldUpdateOperationsInput | string
   level?: Prisma.IntFieldUpdateOperationsInput | number
   proficiency?: Prisma.StringFieldUpdateOperationsInput | string
   eventType?: Prisma.StringFieldUpdateOperationsInput | string
@@ -604,9 +606,50 @@ export type AppliedPenaltyUncheckedUpdateManyWithoutReviewCaseNestedInput = {
   deleteMany?: Prisma.AppliedPenaltyScalarWhereInput | Prisma.AppliedPenaltyScalarWhereInput[]
 }
 
+export type AppliedPenaltyCreateNestedManyWithoutActionTypeInput = {
+  create?: Prisma.XOR<Prisma.AppliedPenaltyCreateWithoutActionTypeInput, Prisma.AppliedPenaltyUncheckedCreateWithoutActionTypeInput> | Prisma.AppliedPenaltyCreateWithoutActionTypeInput[] | Prisma.AppliedPenaltyUncheckedCreateWithoutActionTypeInput[]
+  connectOrCreate?: Prisma.AppliedPenaltyCreateOrConnectWithoutActionTypeInput | Prisma.AppliedPenaltyCreateOrConnectWithoutActionTypeInput[]
+  createMany?: Prisma.AppliedPenaltyCreateManyActionTypeInputEnvelope
+  connect?: Prisma.AppliedPenaltyWhereUniqueInput | Prisma.AppliedPenaltyWhereUniqueInput[]
+}
+
+export type AppliedPenaltyUncheckedCreateNestedManyWithoutActionTypeInput = {
+  create?: Prisma.XOR<Prisma.AppliedPenaltyCreateWithoutActionTypeInput, Prisma.AppliedPenaltyUncheckedCreateWithoutActionTypeInput> | Prisma.AppliedPenaltyCreateWithoutActionTypeInput[] | Prisma.AppliedPenaltyUncheckedCreateWithoutActionTypeInput[]
+  connectOrCreate?: Prisma.AppliedPenaltyCreateOrConnectWithoutActionTypeInput | Prisma.AppliedPenaltyCreateOrConnectWithoutActionTypeInput[]
+  createMany?: Prisma.AppliedPenaltyCreateManyActionTypeInputEnvelope
+  connect?: Prisma.AppliedPenaltyWhereUniqueInput | Prisma.AppliedPenaltyWhereUniqueInput[]
+}
+
+export type AppliedPenaltyUpdateManyWithoutActionTypeNestedInput = {
+  create?: Prisma.XOR<Prisma.AppliedPenaltyCreateWithoutActionTypeInput, Prisma.AppliedPenaltyUncheckedCreateWithoutActionTypeInput> | Prisma.AppliedPenaltyCreateWithoutActionTypeInput[] | Prisma.AppliedPenaltyUncheckedCreateWithoutActionTypeInput[]
+  connectOrCreate?: Prisma.AppliedPenaltyCreateOrConnectWithoutActionTypeInput | Prisma.AppliedPenaltyCreateOrConnectWithoutActionTypeInput[]
+  upsert?: Prisma.AppliedPenaltyUpsertWithWhereUniqueWithoutActionTypeInput | Prisma.AppliedPenaltyUpsertWithWhereUniqueWithoutActionTypeInput[]
+  createMany?: Prisma.AppliedPenaltyCreateManyActionTypeInputEnvelope
+  set?: Prisma.AppliedPenaltyWhereUniqueInput | Prisma.AppliedPenaltyWhereUniqueInput[]
+  disconnect?: Prisma.AppliedPenaltyWhereUniqueInput | Prisma.AppliedPenaltyWhereUniqueInput[]
+  delete?: Prisma.AppliedPenaltyWhereUniqueInput | Prisma.AppliedPenaltyWhereUniqueInput[]
+  connect?: Prisma.AppliedPenaltyWhereUniqueInput | Prisma.AppliedPenaltyWhereUniqueInput[]
+  update?: Prisma.AppliedPenaltyUpdateWithWhereUniqueWithoutActionTypeInput | Prisma.AppliedPenaltyUpdateWithWhereUniqueWithoutActionTypeInput[]
+  updateMany?: Prisma.AppliedPenaltyUpdateManyWithWhereWithoutActionTypeInput | Prisma.AppliedPenaltyUpdateManyWithWhereWithoutActionTypeInput[]
+  deleteMany?: Prisma.AppliedPenaltyScalarWhereInput | Prisma.AppliedPenaltyScalarWhereInput[]
+}
+
+export type AppliedPenaltyUncheckedUpdateManyWithoutActionTypeNestedInput = {
+  create?: Prisma.XOR<Prisma.AppliedPenaltyCreateWithoutActionTypeInput, Prisma.AppliedPenaltyUncheckedCreateWithoutActionTypeInput> | Prisma.AppliedPenaltyCreateWithoutActionTypeInput[] | Prisma.AppliedPenaltyUncheckedCreateWithoutActionTypeInput[]
+  connectOrCreate?: Prisma.AppliedPenaltyCreateOrConnectWithoutActionTypeInput | Prisma.AppliedPenaltyCreateOrConnectWithoutActionTypeInput[]
+  upsert?: Prisma.AppliedPenaltyUpsertWithWhereUniqueWithoutActionTypeInput | Prisma.AppliedPenaltyUpsertWithWhereUniqueWithoutActionTypeInput[]
+  createMany?: Prisma.AppliedPenaltyCreateManyActionTypeInputEnvelope
+  set?: Prisma.AppliedPenaltyWhereUniqueInput | Prisma.AppliedPenaltyWhereUniqueInput[]
+  disconnect?: Prisma.AppliedPenaltyWhereUniqueInput | Prisma.AppliedPenaltyWhereUniqueInput[]
+  delete?: Prisma.AppliedPenaltyWhereUniqueInput | Prisma.AppliedPenaltyWhereUniqueInput[]
+  connect?: Prisma.AppliedPenaltyWhereUniqueInput | Prisma.AppliedPenaltyWhereUniqueInput[]
+  update?: Prisma.AppliedPenaltyUpdateWithWhereUniqueWithoutActionTypeInput | Prisma.AppliedPenaltyUpdateWithWhereUniqueWithoutActionTypeInput[]
+  updateMany?: Prisma.AppliedPenaltyUpdateManyWithWhereWithoutActionTypeInput | Prisma.AppliedPenaltyUpdateManyWithWhereWithoutActionTypeInput[]
+  deleteMany?: Prisma.AppliedPenaltyScalarWhereInput | Prisma.AppliedPenaltyScalarWhereInput[]
+}
+
 export type AppliedPenaltyCreateWithoutUserInput = {
   id?: string
-  action: string
   level: number
   proficiency: string
   eventType: string
@@ -616,6 +659,7 @@ export type AppliedPenaltyCreateWithoutUserInput = {
   reversedAt?: Date | string | null
   reversalReason?: string | null
   reviewCase: Prisma.ReviewCaseCreateNestedOneWithoutPenaltiesInput
+  actionType: Prisma.PenaltyActionCreateNestedOneWithoutPenaltiesInput
 }
 
 export type AppliedPenaltyUncheckedCreateWithoutUserInput = {
@@ -678,7 +722,6 @@ export type AppliedPenaltyScalarWhereInput = {
 
 export type AppliedPenaltyCreateWithoutReviewCaseInput = {
   id?: string
-  action: string
   level: number
   proficiency: string
   eventType: string
@@ -688,6 +731,7 @@ export type AppliedPenaltyCreateWithoutReviewCaseInput = {
   reversedAt?: Date | string | null
   reversalReason?: string | null
   user: Prisma.UserCreateNestedOneWithoutAppliedPenaltiesInput
+  actionType: Prisma.PenaltyActionCreateNestedOneWithoutPenaltiesInput
 }
 
 export type AppliedPenaltyUncheckedCreateWithoutReviewCaseInput = {
@@ -730,6 +774,60 @@ export type AppliedPenaltyUpdateManyWithWhereWithoutReviewCaseInput = {
   data: Prisma.XOR<Prisma.AppliedPenaltyUpdateManyMutationInput, Prisma.AppliedPenaltyUncheckedUpdateManyWithoutReviewCaseInput>
 }
 
+export type AppliedPenaltyCreateWithoutActionTypeInput = {
+  id?: string
+  level: number
+  proficiency: string
+  eventType: string
+  appliedAt?: Date | string
+  expiresAt?: Date | string | null
+  reversed?: boolean
+  reversedAt?: Date | string | null
+  reversalReason?: string | null
+  user: Prisma.UserCreateNestedOneWithoutAppliedPenaltiesInput
+  reviewCase: Prisma.ReviewCaseCreateNestedOneWithoutPenaltiesInput
+}
+
+export type AppliedPenaltyUncheckedCreateWithoutActionTypeInput = {
+  id?: string
+  userId: string
+  caseId: string
+  level: number
+  proficiency: string
+  eventType: string
+  appliedAt?: Date | string
+  expiresAt?: Date | string | null
+  reversed?: boolean
+  reversedAt?: Date | string | null
+  reversalReason?: string | null
+}
+
+export type AppliedPenaltyCreateOrConnectWithoutActionTypeInput = {
+  where: Prisma.AppliedPenaltyWhereUniqueInput
+  create: Prisma.XOR<Prisma.AppliedPenaltyCreateWithoutActionTypeInput, Prisma.AppliedPenaltyUncheckedCreateWithoutActionTypeInput>
+}
+
+export type AppliedPenaltyCreateManyActionTypeInputEnvelope = {
+  data: Prisma.AppliedPenaltyCreateManyActionTypeInput | Prisma.AppliedPenaltyCreateManyActionTypeInput[]
+  skipDuplicates?: boolean
+}
+
+export type AppliedPenaltyUpsertWithWhereUniqueWithoutActionTypeInput = {
+  where: Prisma.AppliedPenaltyWhereUniqueInput
+  update: Prisma.XOR<Prisma.AppliedPenaltyUpdateWithoutActionTypeInput, Prisma.AppliedPenaltyUncheckedUpdateWithoutActionTypeInput>
+  create: Prisma.XOR<Prisma.AppliedPenaltyCreateWithoutActionTypeInput, Prisma.AppliedPenaltyUncheckedCreateWithoutActionTypeInput>
+}
+
+export type AppliedPenaltyUpdateWithWhereUniqueWithoutActionTypeInput = {
+  where: Prisma.AppliedPenaltyWhereUniqueInput
+  data: Prisma.XOR<Prisma.AppliedPenaltyUpdateWithoutActionTypeInput, Prisma.AppliedPenaltyUncheckedUpdateWithoutActionTypeInput>
+}
+
+export type AppliedPenaltyUpdateManyWithWhereWithoutActionTypeInput = {
+  where: Prisma.AppliedPenaltyScalarWhereInput
+  data: Prisma.XOR<Prisma.AppliedPenaltyUpdateManyMutationInput, Prisma.AppliedPenaltyUncheckedUpdateManyWithoutActionTypeInput>
+}
+
 export type AppliedPenaltyCreateManyUserInput = {
   id?: string
   caseId: string
@@ -746,7 +844,6 @@ export type AppliedPenaltyCreateManyUserInput = {
 
 export type AppliedPenaltyUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  action?: Prisma.StringFieldUpdateOperationsInput | string
   level?: Prisma.IntFieldUpdateOperationsInput | number
   proficiency?: Prisma.StringFieldUpdateOperationsInput | string
   eventType?: Prisma.StringFieldUpdateOperationsInput | string
@@ -756,6 +853,7 @@ export type AppliedPenaltyUpdateWithoutUserInput = {
   reversedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reversalReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviewCase?: Prisma.ReviewCaseUpdateOneRequiredWithoutPenaltiesNestedInput
+  actionType?: Prisma.PenaltyActionUpdateOneRequiredWithoutPenaltiesNestedInput
 }
 
 export type AppliedPenaltyUncheckedUpdateWithoutUserInput = {
@@ -802,7 +900,6 @@ export type AppliedPenaltyCreateManyReviewCaseInput = {
 
 export type AppliedPenaltyUpdateWithoutReviewCaseInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  action?: Prisma.StringFieldUpdateOperationsInput | string
   level?: Prisma.IntFieldUpdateOperationsInput | number
   proficiency?: Prisma.StringFieldUpdateOperationsInput | string
   eventType?: Prisma.StringFieldUpdateOperationsInput | string
@@ -812,6 +909,7 @@ export type AppliedPenaltyUpdateWithoutReviewCaseInput = {
   reversedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reversalReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutAppliedPenaltiesNestedInput
+  actionType?: Prisma.PenaltyActionUpdateOneRequiredWithoutPenaltiesNestedInput
 }
 
 export type AppliedPenaltyUncheckedUpdateWithoutReviewCaseInput = {
@@ -842,6 +940,62 @@ export type AppliedPenaltyUncheckedUpdateManyWithoutReviewCaseInput = {
   reversalReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
+export type AppliedPenaltyCreateManyActionTypeInput = {
+  id?: string
+  userId: string
+  caseId: string
+  level: number
+  proficiency: string
+  eventType: string
+  appliedAt?: Date | string
+  expiresAt?: Date | string | null
+  reversed?: boolean
+  reversedAt?: Date | string | null
+  reversalReason?: string | null
+}
+
+export type AppliedPenaltyUpdateWithoutActionTypeInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  level?: Prisma.IntFieldUpdateOperationsInput | number
+  proficiency?: Prisma.StringFieldUpdateOperationsInput | string
+  eventType?: Prisma.StringFieldUpdateOperationsInput | string
+  appliedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reversed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  reversedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reversalReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  user?: Prisma.UserUpdateOneRequiredWithoutAppliedPenaltiesNestedInput
+  reviewCase?: Prisma.ReviewCaseUpdateOneRequiredWithoutPenaltiesNestedInput
+}
+
+export type AppliedPenaltyUncheckedUpdateWithoutActionTypeInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  caseId?: Prisma.StringFieldUpdateOperationsInput | string
+  level?: Prisma.IntFieldUpdateOperationsInput | number
+  proficiency?: Prisma.StringFieldUpdateOperationsInput | string
+  eventType?: Prisma.StringFieldUpdateOperationsInput | string
+  appliedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reversed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  reversedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reversalReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type AppliedPenaltyUncheckedUpdateManyWithoutActionTypeInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  caseId?: Prisma.StringFieldUpdateOperationsInput | string
+  level?: Prisma.IntFieldUpdateOperationsInput | number
+  proficiency?: Prisma.StringFieldUpdateOperationsInput | string
+  eventType?: Prisma.StringFieldUpdateOperationsInput | string
+  appliedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reversed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  reversedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reversalReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
 
 
 export type AppliedPenaltySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -859,6 +1013,7 @@ export type AppliedPenaltySelect<ExtArgs extends runtime.Types.Extensions.Intern
   reversalReason?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   reviewCase?: boolean | Prisma.ReviewCaseDefaultArgs<ExtArgs>
+  actionType?: boolean | Prisma.PenaltyActionDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["appliedPenalty"]>
 
 export type AppliedPenaltySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -876,6 +1031,7 @@ export type AppliedPenaltySelectCreateManyAndReturn<ExtArgs extends runtime.Type
   reversalReason?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   reviewCase?: boolean | Prisma.ReviewCaseDefaultArgs<ExtArgs>
+  actionType?: boolean | Prisma.PenaltyActionDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["appliedPenalty"]>
 
 export type AppliedPenaltySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -893,6 +1049,7 @@ export type AppliedPenaltySelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   reversalReason?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   reviewCase?: boolean | Prisma.ReviewCaseDefaultArgs<ExtArgs>
+  actionType?: boolean | Prisma.PenaltyActionDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["appliedPenalty"]>
 
 export type AppliedPenaltySelectScalar = {
@@ -914,14 +1071,17 @@ export type AppliedPenaltyOmit<ExtArgs extends runtime.Types.Extensions.Internal
 export type AppliedPenaltyInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   reviewCase?: boolean | Prisma.ReviewCaseDefaultArgs<ExtArgs>
+  actionType?: boolean | Prisma.PenaltyActionDefaultArgs<ExtArgs>
 }
 export type AppliedPenaltyIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   reviewCase?: boolean | Prisma.ReviewCaseDefaultArgs<ExtArgs>
+  actionType?: boolean | Prisma.PenaltyActionDefaultArgs<ExtArgs>
 }
 export type AppliedPenaltyIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   reviewCase?: boolean | Prisma.ReviewCaseDefaultArgs<ExtArgs>
+  actionType?: boolean | Prisma.PenaltyActionDefaultArgs<ExtArgs>
 }
 
 export type $AppliedPenaltyPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -929,6 +1089,7 @@ export type $AppliedPenaltyPayload<ExtArgs extends runtime.Types.Extensions.Inte
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
     reviewCase: Prisma.$ReviewCasePayload<ExtArgs>
+    actionType: Prisma.$PenaltyActionPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1343,6 +1504,7 @@ export interface Prisma__AppliedPenaltyClient<T, Null = never, ExtArgs extends r
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   reviewCase<T extends Prisma.ReviewCaseDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ReviewCaseDefaultArgs<ExtArgs>>): Prisma.Prisma__ReviewCaseClient<runtime.Types.Result.GetResult<Prisma.$ReviewCasePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  actionType<T extends Prisma.PenaltyActionDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PenaltyActionDefaultArgs<ExtArgs>>): Prisma.Prisma__PenaltyActionClient<runtime.Types.Result.GetResult<Prisma.$PenaltyActionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.

@@ -195,6 +195,14 @@ export type ReviewCase = Prisma.ReviewCaseModel
  */
 export type AppliedPenalty = Prisma.AppliedPenaltyModel
 /**
+ * Model PenaltyAction
+ * The catalogue of consequences. New actions are rows here, not code.
+ * 
+ * isImplemented records whether anything is actually wired to carry the action
+ * out — the list is expected to outgrow what the code can do.
+ */
+export type PenaltyAction = Prisma.PenaltyActionModel
+/**
  * Model CompensationRecord
  * One restoration or payout owed to an Affected User.
  * 

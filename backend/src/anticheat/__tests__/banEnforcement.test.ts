@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 
 import { findBlockingPenalty } from "../penalty/BanEnforcement.js";
 import type { PenaltyRepository } from "../penalty/penaltyRepository.js";
+import type { ActionRepository, PenaltyActionType } from "../penalty/actionRepository.js";
 import { env } from "../../config/env.js";
 import type { AppliedPenalty, PenaltyAction, Situation } from "../types.js";
 
@@ -33,6 +34,15 @@ function buildRepositoryHolding(...actions: PenaltyAction[]): PenaltyRepository 
   };
 }
 
+/** Mirrors the seeded catalogue: only the two bans block play. */
+const BLOCKING: readonly PenaltyAction[] = ["temporary_ban", "permanent_ban"];
+
+const actionRepository: ActionRepository = {
+  findActiveActions: async () => [],
+  findActionByCode: async () => null as PenaltyActionType | null,
+  findBlockingCodes: async () => BLOCKING,
+};
+
 /** env is read at call time, so tests flip it and restore it. */
 async function withAntiCheatEnabled<T>(enabled: boolean, run: () => Promise<T>): Promise<T> {
   const previous = env.ANTICHEAT_ENABLED;
@@ -47,7 +57,7 @@ async function withAntiCheatEnabled<T>(enabled: boolean, run: () => Promise<T>):
 describe("findBlockingPenalty", () => {
   it("blocks on a ban", async () => {
     const blocking = await withAntiCheatEnabled(true, () =>
-      findBlockingPenalty("u1", buildRepositoryHolding("temporary_ban"))
+      findBlockingPenalty("u1", buildRepositoryHolding("temporary_ban"), actionRepository)
     );
 
     assert.equal(blocking?.action, "temporary_ban");
@@ -57,7 +67,8 @@ describe("findBlockingPenalty", () => {
     const blocking = await withAntiCheatEnabled(true, () =>
       findBlockingPenalty(
         "u1",
-        buildRepositoryHolding("warning", "strike", "restrict_from_rated_events")
+        buildRepositoryHolding("warning", "strike", "restrict_from_rated_events"),
+        actionRepository
       )
     );
 
@@ -66,7 +77,7 @@ describe("findBlockingPenalty", () => {
 
   it("blocks nothing while the anti-cheat system is disabled", async () => {
     const blocking = await withAntiCheatEnabled(false, () =>
-      findBlockingPenalty("u1", buildRepositoryHolding("permanent_ban"))
+      findBlockingPenalty("u1", buildRepositoryHolding("permanent_ban"), actionRepository)
     );
 
     assert.equal(blocking, null);

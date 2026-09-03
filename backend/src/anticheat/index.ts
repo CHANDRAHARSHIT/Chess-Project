@@ -45,6 +45,7 @@ export {
 } from "./AnalysisService.js";
 export { registerAntiCheatActions } from "./actions.js";
 export {
+  enforceDetection,
   loadReviewWindow,
   reviewUserHistory,
   runWholeHistoryReview,

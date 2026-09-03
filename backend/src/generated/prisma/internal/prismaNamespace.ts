@@ -412,6 +412,7 @@ export const ModelName = {
   AssessmentAttempt: 'AssessmentAttempt',
   ReviewCase: 'ReviewCase',
   AppliedPenalty: 'AppliedPenalty',
+  PenaltyAction: 'PenaltyAction',
   CompensationRecord: 'CompensationRecord'
 } as const
 
@@ -428,7 +429,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "account" | "session" | "verificationToken" | "subscription" | "payment" | "billingProfile" | "product" | "productFeature" | "webhookEvent" | "curatedPuzzle" | "opening" | "builderLesson" | "builderSegment" | "builderSlide" | "course" | "lesson" | "lessonProgress" | "customLink" | "gameRecord" | "gameAnalysis" | "gameParticipant" | "playerRating" | "pathwayProgress" | "assessmentTemplate" | "assessmentAttempt" | "reviewCase" | "appliedPenalty" | "compensationRecord"
+    modelProps: "user" | "account" | "session" | "verificationToken" | "subscription" | "payment" | "billingProfile" | "product" | "productFeature" | "webhookEvent" | "curatedPuzzle" | "opening" | "builderLesson" | "builderSegment" | "builderSlide" | "course" | "lesson" | "lessonProgress" | "customLink" | "gameRecord" | "gameAnalysis" | "gameParticipant" | "playerRating" | "pathwayProgress" | "assessmentTemplate" | "assessmentAttempt" | "reviewCase" | "appliedPenalty" | "penaltyAction" | "compensationRecord"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2504,6 +2505,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    PenaltyAction: {
+      payload: Prisma.$PenaltyActionPayload<ExtArgs>
+      fields: Prisma.PenaltyActionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PenaltyActionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PenaltyActionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PenaltyActionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PenaltyActionPayload>
+        }
+        findFirst: {
+          args: Prisma.PenaltyActionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PenaltyActionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PenaltyActionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PenaltyActionPayload>
+        }
+        findMany: {
+          args: Prisma.PenaltyActionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PenaltyActionPayload>[]
+        }
+        create: {
+          args: Prisma.PenaltyActionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PenaltyActionPayload>
+        }
+        createMany: {
+          args: Prisma.PenaltyActionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.PenaltyActionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PenaltyActionPayload>[]
+        }
+        delete: {
+          args: Prisma.PenaltyActionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PenaltyActionPayload>
+        }
+        update: {
+          args: Prisma.PenaltyActionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PenaltyActionPayload>
+        }
+        deleteMany: {
+          args: Prisma.PenaltyActionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PenaltyActionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.PenaltyActionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PenaltyActionPayload>[]
+        }
+        upsert: {
+          args: Prisma.PenaltyActionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PenaltyActionPayload>
+        }
+        aggregate: {
+          args: Prisma.PenaltyActionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePenaltyAction>
+        }
+        groupBy: {
+          args: Prisma.PenaltyActionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PenaltyActionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PenaltyActionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PenaltyActionCountAggregateOutputType> | number
+        }
+      }
+    }
     CompensationRecord: {
       payload: Prisma.$CompensationRecordPayload<ExtArgs>
       fields: Prisma.CompensationRecordFieldRefs
@@ -3076,6 +3151,22 @@ export const AppliedPenaltyScalarFieldEnum = {
 export type AppliedPenaltyScalarFieldEnum = (typeof AppliedPenaltyScalarFieldEnum)[keyof typeof AppliedPenaltyScalarFieldEnum]
 
 
+export const PenaltyActionScalarFieldEnum = {
+  id: 'id',
+  code: 'code',
+  label: 'label',
+  description: 'description',
+  blocksPlay: 'blocksPlay',
+  defaultDurationMs: 'defaultDurationMs',
+  isImplemented: 'isImplemented',
+  isActive: 'isActive',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt'
+} as const
+
+export type PenaltyActionScalarFieldEnum = (typeof PenaltyActionScalarFieldEnum)[keyof typeof PenaltyActionScalarFieldEnum]
+
+
 export const CompensationRecordScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -3348,6 +3439,20 @@ export type EnumAssessmentResultFieldRefInput<$PrismaModel> = FieldRefInputType<
 export type ListEnumAssessmentResultFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AssessmentResult[]'>
     
 
+
+/**
+ * Reference to a field of type 'BigInt'
+ */
+export type BigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt'>
+    
+
+
+/**
+ * Reference to a field of type 'BigInt[]'
+ */
+export type ListBigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt[]'>
+    
+
 /**
  * Batch Payload for updateMany & deleteMany & createMany
  */
@@ -3486,6 +3591,7 @@ export type GlobalOmitConfig = {
   assessmentAttempt?: Prisma.AssessmentAttemptOmit
   reviewCase?: Prisma.ReviewCaseOmit
   appliedPenalty?: Prisma.AppliedPenaltyOmit
+  penaltyAction?: Prisma.PenaltyActionOmit
   compensationRecord?: Prisma.CompensationRecordOmit
 }
 
