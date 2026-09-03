@@ -3,6 +3,7 @@ import { useSession } from "@/features/account/useSession";
 import { generateStoryMap } from "@/shared/chess/mapGenerator";
 import type { StoryNode } from "./storyModeMapData";
 import { OdysseyApiService } from "./api/odysseyApi";
+import { toStoryNodes } from "./api/odysseyMapConverter";
 
 export type RelicType = 'undo' | 'hint' | 'evalBar' | 'time' | 'reroll';
 
@@ -59,7 +60,7 @@ interface StoryModeContextType {
   setActiveSlot: (slot: number) => void;
   getAllProfiles: () => ProfileState[];
   deleteProfile: (slotId: number) => void;
-  beginNewRun: () => void;
+  beginNewRun: () => Promise<void>;
 }
 
 const StoryModeContext = createContext<StoryModeContextType | undefined>(undefined);
@@ -135,9 +136,17 @@ export function StoryModeProvider({ children }: { children: React.ReactNode }) {
       }
     }
 
-    // Best-effort backend sync — local state above is already authoritative either way.
+    // Best-effort backend sync. The local map generated above renders immediately;
+    // once the backend's own regenerated map comes back, adopt it instead — the
+    // player is always several screens away (title -> singleplayer -> map) by the
+    // time this resolves, so swapping mapNodes here doesn't disrupt anything on screen.
     if (status === 'authenticated' && session?.user?.id) {
-      OdysseyApiService.resetRun(activeSlot, keepProgress);
+      const slotId = activeSlot;
+      OdysseyApiService.resetRun(slotId, keepProgress).then((game) => {
+        if (game?.map?.nodes?.length) {
+          updateRunState({ mapNodes: toStoryNodes(game.map.nodes) });
+        }
+      });
     }
   };
 
@@ -153,23 +162,27 @@ export function StoryModeProvider({ children }: { children: React.ReactNode }) {
   };
 
   /**
-   * Best-effort backend sync for the moment a new run actually begins
-   * (Strategist screen confirmed). Creates the backend run only if this
-   * slot doesn't already have one there — a New Game+ reset already
-   * updated the existing backend row via resetRun() above, and calling
-   * startNewRun again here would wipe the coins/relics it just preserved.
+   * Syncs the moment a new run actually begins (Strategist screen
+   * confirmed): creates the backend run only if this slot doesn't already
+   * have one there — a New Game+ reset already updated the existing
+   * backend row via resetRun() above, and calling startNewRun again here
+   * would wipe the coins/relics it just preserved. Awaited by the caller
+   * before it navigates to the map, so the backend's authoritative map
+   * (adopted into mapNodes below) is in place before the player can click
+   * anything on it — see the "frontend adopts backend's map" decision.
    */
-  const beginNewRun = () => {
+  const beginNewRun = async () => {
     if (status !== 'authenticated' || !session?.user?.id) return;
     const slotId = activeSlot;
-    (async () => {
-      const existing = await OdysseyApiService.slotExists(slotId);
-      if (!existing) {
-        const started = await OdysseyApiService.startNewRun(slotId);
-        if (!started) return;
+    const existing = await OdysseyApiService.slotExists(slotId);
+    if (!existing) {
+      const game = await OdysseyApiService.startNewRun(slotId);
+      if (!game) return;
+      if (game.map?.nodes?.length) {
+        updateRunState({ mapNodes: toStoryNodes(game.map.nodes) });
       }
-      OdysseyApiService.selectCharacter(slotId, 'strategist');
-    })();
+    }
+    OdysseyApiService.selectCharacter(slotId, 'strategist');
   };
 
   const addCoins = (amount: number) => {

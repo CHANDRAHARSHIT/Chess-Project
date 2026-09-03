@@ -3,6 +3,33 @@ import rollbar from "@/shared/lib/rollbar";
 const BASE_URL = "/api/odyssey";
 
 export type OdysseyPlayerType = "strategist" | "knight" | "bishop" | "rook";
+export type OdysseyBattleEndReason = "checkmate" | "timeout" | "draw";
+
+export interface OdysseyBackendMapNode {
+  id: number;
+  type: string; // ENodeType value, e.g. "start" | "enemy" | "elite" | "boss" | "puzzle" | "rest" | "merchant"
+  label: string;
+  x: number;
+  y: number;
+  edges: number[];
+  description: string;
+  difficulty?: number; // only present on battle/puzzle nodes
+}
+
+export interface OdysseyBackendGame {
+  id: string;
+  coins: number;
+  map: { nodes: OdysseyBackendMapNode[] };
+}
+
+export interface OdysseyBattleSnapshotPayload {
+  playerInitialSeconds: number;
+  enemyInitialSeconds: number;
+  playerSeconds: number;
+  enemySeconds: number;
+  evalMovesRemaining: number;
+  botConditions: { confused: number; relaxed: number; distracted: number };
+}
 
 function reportFailure(context: string, error: unknown) {
   console.error(`[OdysseyApiService] ${context}:`, error);
@@ -10,13 +37,12 @@ function reportFailure(context: string, error: unknown) {
 }
 
 /**
- * Client-side sync with the real Odyssey backend, covering the run's
- * lifecycle only (create/select-character/reset/delete a save slot).
- * Local React state + localStorage (see StoryModeContext) remains the
- * authoritative source for gameplay today — completedNodes/coins/relics
- * aren't synced yet, since the gameplay screens (Battle/Merchant/Rest/
- * Puzzle) that grant them haven't been wired to the backend. Every call
- * silently no-ops on failure, matching PathwayProgressApiService's
+ * Client-side sync with the real Odyssey backend. Local React state +
+ * localStorage (see StoryModeContext) remains the authoritative source for
+ * gameplay today — these calls keep the backend's copy of run facts
+ * (slot existence, chosen character, map, battle outcomes) approximately
+ * in sync, one node type at a time as each gameplay screen gets wired.
+ * Every call silently no-ops on failure, matching PathwayProgressApiService's
  * established best-effort pattern in this codebase.
  */
 export class OdysseyApiService {
@@ -31,16 +57,16 @@ export class OdysseyApiService {
     }
   }
 
-  static async startNewRun(slotId: number): Promise<boolean> {
-    return post(`/slots/${slotId}/start`, "startNewRun");
+  static async startNewRun(slotId: number): Promise<OdysseyBackendGame | null> {
+    return postForGame(`/slots/${slotId}/start`, "startNewRun");
   }
 
   static async selectCharacter(slotId: number, type: OdysseyPlayerType): Promise<boolean> {
     return post(`/slots/${slotId}/character`, "selectCharacter", { type });
   }
 
-  static async resetRun(slotId: number, keepProgress: boolean): Promise<boolean> {
-    return post(`/slots/${slotId}/reset`, "resetRun", { keepProgress });
+  static async resetRun(slotId: number, keepProgress: boolean): Promise<OdysseyBackendGame | null> {
+    return postForGame(`/slots/${slotId}/reset`, "resetRun", { keepProgress });
   }
 
   static async deleteSlot(slotId: number): Promise<boolean> {
@@ -51,6 +77,17 @@ export class OdysseyApiService {
       reportFailure("deleteSlot", error);
       return false;
     }
+  }
+
+  /** Records a battle's outcome (coins/node-completion) once it's decided locally. */
+  static async resolveBattleOutcome(
+    slotId: number,
+    nodeId: number,
+    snapshot: OdysseyBattleSnapshotPayload,
+    endReason: OdysseyBattleEndReason,
+    playerWon: boolean
+  ): Promise<boolean> {
+    return post(`/slots/${slotId}/nodes/${nodeId}/battle/resolve`, "resolveBattleOutcome", { snapshot, endReason, playerWon });
   }
 }
 
@@ -71,5 +108,26 @@ async function post(path: string, context: string, body?: unknown): Promise<bool
   } catch (error: unknown) {
     reportFailure(context, error);
     return false;
+  }
+}
+
+async function postForGame(path: string, context: string, body?: unknown): Promise<OdysseyBackendGame | null> {
+  try {
+    const res = await fetch(`${BASE_URL}${path}`, {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: body !== undefined ? JSON.stringify(body) : undefined,
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      console.warn(`[OdysseyApiService] ${context} failed:`, err);
+      return null;
+    }
+    const json = await res.json();
+    return (json.data?.game as OdysseyBackendGame) ?? null;
+  } catch (error: unknown) {
+    reportFailure(context, error);
+    return null;
   }
 }

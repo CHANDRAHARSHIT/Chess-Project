@@ -46,6 +46,8 @@ import {
 import { useScrollReveal } from "@/shared/hooks/useScrollReveal";
 import { BoardCoordinates } from "@/shared/ui/BoardCoordinates";
 import { useStoryModeRun } from "./StoryModeContext";
+import { useSession } from "@/features/account/useSession";
+import { OdysseyApiService, type OdysseyBattleEndReason } from "./api/odysseyApi";
 
 interface StoryModeBattleProps {
   nodeId: number;
@@ -63,8 +65,9 @@ export default function StoryModeBattle({
   onRetreat,
 }: StoryModeBattleProps) {
   // ── Game state ────────────────────────────────────────────────────────────
-  const { runState, useCharge, addCoins } = useStoryModeRun();
-  
+  const { runState, useCharge, addCoins, activeSlot } = useStoryModeRun();
+  const { status } = useSession();
+
   const gameRef = useRef(new Chess());
   const [gameFen, setGameFen] = useState(() => gameRef.current.fen());
   const [playerColor, setPlayerColor] = useState<"w" | "b">("w");
@@ -517,8 +520,46 @@ export default function StoryModeBattle({
   const handleVictory = useCallback(() => {
     const baseCoins = difficulty === 5 ? 50 : difficulty >= 3 ? 30 : 15;
     addCoins(baseCoins);
+
+    // Best-effort backend sync — coins above are already the authoritative local reward.
+    // nodeId 0 is skipped: the frontend always renders it as an immediate battle (matching
+    // mapGenerator.ts's own convention), but the backend's node 0 is genuinely its Start
+    // node (not an OdysseyBattleNode) — resolveBattleOutcome would 400 for it.
+    if (status === 'authenticated' && nodeId !== 0) {
+      const endReason: OdysseyBattleEndReason =
+        gameOverReason === 'timeout' ? 'timeout' : gameRef.current.isCheckmate() ? 'checkmate' : 'draw';
+      OdysseyApiService.resolveBattleOutcome(
+        activeSlot,
+        nodeId,
+        {
+          playerInitialSeconds: playerInitialTime,
+          enemyInitialSeconds: enemyInitialTime,
+          playerSeconds: playerTime,
+          enemySeconds: enemyTime,
+          evalMovesRemaining,
+          botConditions: botStatus,
+        },
+        endReason,
+        true
+      );
+    }
+
     onVictory();
-  }, [addCoins, difficulty, onVictory]);
+  }, [
+    addCoins,
+    difficulty,
+    onVictory,
+    status,
+    activeSlot,
+    nodeId,
+    gameOverReason,
+    playerInitialTime,
+    enemyInitialTime,
+    playerTime,
+    enemyTime,
+    evalMovesRemaining,
+    botStatus,
+  ]);
 
   const loadFreshGame = useCallback(
     (fen?: string) => {

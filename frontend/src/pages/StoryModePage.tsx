@@ -113,8 +113,8 @@ function StoryModeContent() {
             >
               <StrategistPage
                 onBack={() => setViewState("title")}
-                onConfirm={() => {
-                  beginNewRun();
+                onConfirm={async () => {
+                  await beginNewRun();
                   setViewState("map");
                 }}
               />
