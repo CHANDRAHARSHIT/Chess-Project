@@ -122,4 +122,26 @@ describe("OdysseyMerchantController", () => {
 
     assert.strictEqual(mock.statusCode, 400);
   });
+
+  test("test_leaveShop_returns404WhenTheSlotDoesNotExist", async () => {
+    const req = makeMockReq({ userId, params: { slotId: "998", nodeId: "5" } });
+    const mock = makeMockRes();
+    const { next } = makeCapturingNext();
+
+    await OdysseyMerchantController.leaveShop(req, mock.res, next);
+
+    assert.strictEqual(mock.statusCode, 404);
+  });
+
+  test("test_leaveShop_completesTheMerchantNode", async () => {
+    const { node } = await makeGameWithEnterableNode(userId, 8, ENodeType.Merchant);
+    const req = makeMockReq({ userId, params: { slotId: "8", nodeId: String(node.id) } });
+    const mock = makeMockRes();
+    const { next } = makeCapturingNext();
+
+    await OdysseyMerchantController.leaveShop(req, mock.res, next);
+
+    assert.strictEqual(mock.statusCode, 200);
+    assert.ok((mock.body as any).data.game.completedNodes.includes(node.id));
+  });
 });

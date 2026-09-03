@@ -76,4 +76,11 @@ export class OdysseyMerchantService {
     const savedGame = await OdysseyGameRepository.upsert(game);
     return { game: savedGame, offerings: merchant.offerings };
   }
+
+  /** Marks the merchant node completed once the caller leaves the shop — mirrors StoryModeMap's onComplete callback. */
+  static async leaveShop(userId: string, slotId: number, nodeId: number): Promise<OdysseyGame> {
+    const game = await OdysseyGameService.requireSlot(userId, slotId);
+    game.completeNode(nodeId, false); // a merchant node is never the boss
+    return OdysseyGameRepository.upsert(game);
+  }
 }

@@ -31,6 +31,14 @@ export interface OdysseyBattleSnapshotPayload {
   botConditions: { confused: number; relaxed: number; distracted: number };
 }
 
+// Matches ERelicType's string values exactly — no conversion needed against RelicType.
+export type OdysseyRelicType = "undo" | "hint" | "evalBar" | "time" | "reroll";
+
+export interface OdysseyShopItemPayload {
+  relicType: OdysseyRelicType;
+  costPerCharge: number;
+}
+
 function reportFailure(context: string, error: unknown) {
   console.error(`[OdysseyApiService] ${context}:`, error);
   rollbar.error(error instanceof Error ? error : new Error(String(error)), { context: `OdysseyApiService.${context}` });
@@ -88,6 +96,23 @@ export class OdysseyApiService {
     playerWon: boolean
   ): Promise<boolean> {
     return post(`/slots/${slotId}/nodes/${nodeId}/battle/resolve`, "resolveBattleOutcome", { snapshot, endReason, playerWon });
+  }
+
+  static async merchantPurchase(slotId: number, item: OdysseyShopItemPayload, quantity: number): Promise<boolean> {
+    return post(`/slots/${slotId}/merchant/purchase`, "merchantPurchase", { item, quantity });
+  }
+
+  static async merchantSell(slotId: number, relicType: OdysseyRelicType): Promise<boolean> {
+    return post(`/slots/${slotId}/merchant/sell`, "merchantSell", { relicType });
+  }
+
+  static async merchantReroll(slotId: number, catalog: OdysseyShopItemPayload[]): Promise<boolean> {
+    return post(`/slots/${slotId}/merchant/reroll`, "merchantReroll", { catalog });
+  }
+
+  /** Marks the merchant node completed — call once the caller leaves the shop. */
+  static async merchantLeaveShop(slotId: number, nodeId: number): Promise<boolean> {
+    return post(`/slots/${slotId}/nodes/${nodeId}/merchant/leave`, "merchantLeaveShop");
   }
 }
 

@@ -513,6 +513,7 @@ export default function StoryModeMap({ onResetToTitle }: StoryModeMapProps = {})
             className="flex-1 min-h-0 overflow-hidden flex flex-col"
           >
             <StoryModeMerchant
+              nodeId={activeView.nodeId}
               onComplete={handleMerchantComplete}
             />
           </motion.div>

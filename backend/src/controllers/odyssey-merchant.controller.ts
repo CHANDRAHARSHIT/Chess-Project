@@ -108,4 +108,26 @@ export class OdysseyMerchantController {
       next(error);
     }
   }
+
+  /**
+   * POST /api/odyssey/slots/:slotId/nodes/:nodeId/merchant/leave
+   * Marks the merchant node completed.
+   */
+  static async leaveShop(req: Request, res: Response, next: NextFunction) {
+    try {
+      const guard = requireUserAndSlotId(req, res);
+      if (!guard.ok) return;
+
+      const nodeId = requireNodeId(req, res);
+      if (nodeId === undefined) return;
+
+      const existing = await requireExistingSlot(guard.userId, guard.slotId, res);
+      if (!existing) return;
+
+      const game = await OdysseyMerchantService.leaveShop(guard.userId, guard.slotId, nodeId);
+      res.status(200).json({ status: "success", data: { game } });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

@@ -48,6 +48,8 @@ odysseyRouter.post("/slots/:slotId/merchant/purchase", OdysseyMerchantController
 odysseyRouter.post("/slots/:slotId/merchant/sell", OdysseyMerchantController.sell);
 // POST /api/odyssey/slots/:slotId/merchant/reroll          — spends a Reroll charge for fresh offerings
 odysseyRouter.post("/slots/:slotId/merchant/reroll", OdysseyMerchantController.reroll);
+// POST /api/odyssey/slots/:slotId/nodes/:nodeId/merchant/leave — marks the merchant node completed
+odysseyRouter.post("/slots/:slotId/nodes/:nodeId/merchant/leave", OdysseyMerchantController.leaveShop);
 
 // ── Rest site ───────────────────────────────────────────────────────────
 // POST /api/odyssey/slots/:slotId/nodes/:nodeId/rest        — enters a rest node, rolls an outcome

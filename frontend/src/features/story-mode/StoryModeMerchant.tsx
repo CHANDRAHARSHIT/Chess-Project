@@ -3,8 +3,11 @@ import { motion } from "framer-motion";
 import { Coins, ArrowRight, RotateCcw, Package, ShoppingBag, Sparkles } from "lucide-react";
 import { useStoryModeRun, MAX_RELIC_CHARGES } from "./StoryModeContext";
 import type { RelicType } from "./StoryModeContext";
+import { useSession } from "@/features/account/useSession";
+import { OdysseyApiService, type OdysseyShopItemPayload } from "./api/odysseyApi";
 
 interface StoryModeMerchantProps {
+  nodeId: number;
   onComplete: () => void;
 
 }
@@ -18,9 +21,11 @@ type ShopItem = {
 };
 
 export default function StoryModeMerchant({
+  nodeId,
   onComplete,
 }: StoryModeMerchantProps) {
-  const { runState, updateRunState, useCharge } = useStoryModeRun();
+  const { runState, updateRunState, useCharge, activeSlot } = useStoryModeRun();
+  const { status } = useSession();
   const [purchasedIds, setPurchasedIds] = useState<Set<string>>(new Set());
   const [activeTab, setActiveTab] = useState<'buy' | 'sell'>('buy');
   const [quantities, setQuantities] = useState<Record<string, number>>({});
@@ -67,10 +72,17 @@ export default function StoryModeMerchant({
     return shuffled.slice(0, count);
   }
 
+  const isSynced = status === 'authenticated';
+
+  const toShopItemPayload = (poolItem: ShopItem): OdysseyShopItemPayload => ({
+    relicType: poolItem.type,
+    costPerCharge: poolItem.cost,
+  });
+
   const handleReroll = () => {
     if (runState.rerollCharges > 0 && !isRerolling) {
       setIsRerolling(true);
-      
+
       // Delay to let items fade out
       setTimeout(() => {
         const used = useCharge('reroll');
@@ -78,8 +90,13 @@ export default function StoryModeMerchant({
           setOfferings(getRandomOfferings(availablePool, 3));
           setPurchasedIds(new Set());
           setQuantities({});
+
+          // Best-effort backend sync — local offerings above are already the authoritative result.
+          if (isSynced) {
+            OdysseyApiService.merchantReroll(activeSlot, availablePool.map(toShopItemPayload));
+          }
         }
-        
+
         // Wait a tiny bit before fading new items in
         setTimeout(() => setIsRerolling(false), 50);
       }, 400);
@@ -89,28 +106,33 @@ export default function StoryModeMerchant({
   const handlePurchase = (item: ShopItem) => {
     const qty = quantities[item.id] || 1;
     const currentCharges = (runState[`${item.type}Charges`] as number) || 0;
-    
+
     // Prevent exceeding max charges (5)
     const actualQty = Math.min(qty, MAX_RELIC_CHARGES - currentCharges);
     if (actualQty <= 0) return;
 
     const totalCost = item.cost * actualQty;
-    
+
     if (runState.coins >= totalCost) {
       if (!runState.relics.includes(item.type) && runState.relics.length >= MAX_SLOTS) {
         return; // No slots available for a new relic
       }
-      
-      const newRelics = runState.relics.includes(item.type) 
-        ? runState.relics 
+
+      const newRelics = runState.relics.includes(item.type)
+        ? runState.relics
         : [...runState.relics, item.type];
-      
-      updateRunState({ 
+
+      updateRunState({
         coins: runState.coins - totalCost,
         relics: newRelics,
         [`${item.type}Charges`]: currentCharges + actualQty
       });
       setPurchasedIds(prev => new Set([...prev, item.id]));
+
+      // Best-effort backend sync — the local grant above is already the authoritative reward.
+      if (isSynced) {
+        OdysseyApiService.merchantPurchase(activeSlot, toShopItemPayload(item), actualQty);
+      }
     }
   };
 
@@ -121,14 +143,26 @@ export default function StoryModeMerchant({
     if (idx > -1) {
       newRelics.splice(idx, 1);
     }
-    
+
     const currentCharges = (runState[`${type}Charges`] as number) || 0;
 
-    updateRunState({ 
-      relics: newRelics, 
+    updateRunState({
+      relics: newRelics,
       coins: runState.coins + sellPrice,
       [`${type}Charges`]: Math.max(0, currentCharges - 1)
     });
+
+    // Best-effort backend sync — the local +25 coins above is already the authoritative reward.
+    if (isSynced) {
+      OdysseyApiService.merchantSell(activeSlot, type);
+    }
+  };
+
+  const handleLeave = () => {
+    if (isSynced) {
+      OdysseyApiService.merchantLeaveShop(activeSlot, nodeId);
+    }
+    onComplete();
   };
 
   const ownedRelics = runState.relics.map(type => relicData.find(r => r.type === type)).filter(Boolean) as typeof relicData;
@@ -334,7 +368,7 @@ export default function StoryModeMerchant({
         </div>
 
         <button
-          onClick={onComplete}
+          onClick={handleLeave}
           className="mt-4 flex items-center gap-2 px-6 py-2.5 rounded-xl border border-brand-border text-brand-text hover:border-brand-accent hover:text-brand-accent transition-all cursor-pointer"
         >
           Leave Shop <ArrowRight className="w-4 h-4" />

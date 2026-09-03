@@ -96,4 +96,13 @@ describe("OdysseyMerchantService", () => {
 
     await assert.rejects(OdysseyMerchantService.reroll(userId, 6, payload));
   });
+
+  test("test_leaveShop_completesTheMerchantNode", async () => {
+    const { node } = await makeGameWithEnterableNode(userId, 7, ENodeType.Merchant);
+
+    const game = await OdysseyMerchantService.leaveShop(userId, 7, node.id);
+
+    assert.ok(game.completedNodes.includes(node.id));
+    assert.strictEqual(game.journeyComplete, false);
+  });
 });
