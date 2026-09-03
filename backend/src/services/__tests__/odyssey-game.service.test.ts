@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { OdysseyGameService } from "../odyssey-game.service.js";
 import { OdysseyGameRepository } from "../../repositories/OdysseyGameRepository.js";
 import { EPlayerType } from "../../models/odyssey/enums/EPlayerType.js";
-import { createTestUser, deleteTestUser } from "./odysseyServiceTestSupport.js";
+import { createTestUser, deleteTestUser } from "../../testSupport/odysseyTestSupport.js";
 
 describe("OdysseyGameService", () => {
   let userId: string;

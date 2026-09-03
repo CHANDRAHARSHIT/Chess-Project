@@ -2,7 +2,7 @@ import { describe, test, before, after } from "node:test";
 import assert from "node:assert/strict";
 import { OdysseyPuzzleService } from "../odyssey-puzzle.service.js";
 import { ENodeType } from "../../models/odyssey/enums/ENodeType.js";
-import { createTestUser, deleteTestUser, makeGameWithEnterableNode } from "./odysseyServiceTestSupport.js";
+import { createTestUser, deleteTestUser, makeGameWithEnterableNode } from "../../testSupport/odysseyTestSupport.js";
 
 describe("OdysseyPuzzleService", () => {
   let userId: string;

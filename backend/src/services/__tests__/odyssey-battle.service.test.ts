@@ -7,7 +7,7 @@ import { ERelicType } from "../../models/odyssey/enums/ERelicType.js";
 import { ENodeType } from "../../models/odyssey/enums/ENodeType.js";
 import { EBattleEndReason } from "../../models/odyssey/enums/EBattleEndReason.js";
 import { EBattleResult } from "../../models/odyssey/enums/EBattleResult.js";
-import { createTestUser, deleteTestUser, makeGameWithEnterableNode, makeGameWithEnterableBoss } from "./odysseyServiceTestSupport.js";
+import { createTestUser, deleteTestUser, makeGameWithEnterableNode, makeGameWithEnterableBoss } from "../../testSupport/odysseyTestSupport.js";
 
 const STARTING_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 

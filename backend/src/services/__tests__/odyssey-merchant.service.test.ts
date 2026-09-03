@@ -5,7 +5,7 @@ import { OdysseyGameRepository } from "../../repositories/OdysseyGameRepository.
 import { OdysseyRelicFactory } from "../../models/odyssey/models/OdysseyRelicFactory.js";
 import { ERelicType } from "../../models/odyssey/enums/ERelicType.js";
 import { ENodeType } from "../../models/odyssey/enums/ENodeType.js";
-import { createTestUser, deleteTestUser, makeGameWithEnterableNode } from "./odysseyServiceTestSupport.js";
+import { createTestUser, deleteTestUser, makeGameWithEnterableNode } from "../../testSupport/odysseyTestSupport.js";
 
 describe("OdysseyMerchantService", () => {
   let userId: string;
