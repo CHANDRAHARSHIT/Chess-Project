@@ -125,6 +125,11 @@ export class OdysseyApiService {
   static async applyRest(slotId: number, nodeId: number, outcome: OdysseyRestOutcomePayload): Promise<boolean> {
     return post(`/slots/${slotId}/nodes/${nodeId}/rest/apply`, "applyRest", { outcome });
   }
+
+  /** Awards the all-or-nothing puzzle reward and completes the node on a full clear. */
+  static async resolvePuzzle(slotId: number, nodeId: number, solvedCount: number, totalCount: number): Promise<boolean> {
+    return post(`/slots/${slotId}/nodes/${nodeId}/puzzle/resolve`, "resolvePuzzle", { solvedCount, totalCount });
+  }
 }
 
 async function post(path: string, context: string, body?: unknown): Promise<boolean> {
