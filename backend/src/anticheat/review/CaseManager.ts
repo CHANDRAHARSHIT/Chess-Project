@@ -129,6 +129,30 @@ export class CaseManager {
     return this.repository.updateCase(caseId, { suspectStatement: statement });
   }
 
+  /**
+   * Only the suspect may appeal, and only a decided case — an open case has
+   * nothing to appeal against yet.
+   */
+  async submitAppeal(caseId: string, userId: string, grounds: string): Promise<ReviewCase> {
+    const reviewCase = await this.loadCase(caseId);
+    if (reviewCase.suspect.userId !== userId) {
+      throw new CaseAccessError("Only the suspect may appeal their own case.");
+    }
+    if (reviewCase.upheld === undefined) {
+      throw new CaseNotDecidedError(`Case '${caseId}' has not been decided yet.`);
+    }
+    if (reviewCase.appeal) {
+      throw new CaseAlreadyAppealedError(`Case '${caseId}' has already been appealed.`);
+    }
+
+    return this.repository.updateCase(caseId, {
+      status: "appealed",
+      appealStatus: "submitted",
+      appealGrounds: grounds,
+      appealedAt: new Date(),
+    });
+  }
+
   async closeCase(caseId: string, notes: string): Promise<ReviewCase> {
     await this.loadCase(caseId);
     return this.repository.updateCase(caseId, {
@@ -162,6 +186,8 @@ export class CaseManager {
 export class CaseNotFoundError extends Error {}
 export class CaseAlreadyResolvedError extends Error {}
 export class CaseAccessError extends Error {}
+export class CaseNotDecidedError extends Error {}
+export class CaseAlreadyAppealedError extends Error {}
 
 /** From the case id, never the user id — an arbiter must not recognise a suspect across cases. */
 function buildAnonymisedRef(caseId: string): string {

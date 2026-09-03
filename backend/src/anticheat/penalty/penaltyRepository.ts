@@ -3,7 +3,7 @@
  * never a stored flag — nothing sweeps this table.
  */
 
-import type { AppliedPenalty as AppliedPenaltyRow } from "../../generated/prisma/client.js";
+import type { AppliedPenalty as AppliedPenaltyRow, Prisma } from "../../generated/prisma/client.js";
 import { prisma } from "../../config/prisma.js";
 import type { AppliedPenalty, EscalationLevel, PenaltyAction, Situation } from "../types.js";
 
@@ -25,55 +25,68 @@ export interface PenaltyRepository {
   reversePenalty(penaltyId: string, reason: string): Promise<AppliedPenalty>;
 }
 
-export const prismaPenaltyRepository: PenaltyRepository = {
-  async savePenalty(input: NewPenaltyInput): Promise<AppliedPenalty> {
-    const row = await prisma.appliedPenalty.create({
-      data: {
-        userId: input.userId,
-        caseId: input.caseId,
-        action: input.action,
-        level: input.level,
-        proficiency: input.situation.proficiency,
-        eventType: input.situation.eventType,
-        expiresAt: input.expiresAt,
-      },
-    });
-    return buildAppliedPenalty(row);
-  },
+/** Takes a client so callers can run inside a `$transaction`. */
+export function createPrismaPenaltyRepository(
+  client: Prisma.TransactionClient = prisma
+): PenaltyRepository {
+  return {
+    async savePenalty(input: NewPenaltyInput): Promise<AppliedPenalty> {
+      const row = await client.appliedPenalty.create({
+        data: {
+          userId: input.userId,
+          caseId: input.caseId,
+          action: input.action,
+          level: input.level,
+          proficiency: input.situation.proficiency,
+          eventType: input.situation.eventType,
+          expiresAt: input.expiresAt,
+        },
+      });
+      return buildAppliedPenalty(row);
+    },
 
-  async findPenaltyById(penaltyId: string): Promise<AppliedPenalty | null> {
-    const row = await prisma.appliedPenalty.findUnique({ where: { id: penaltyId } });
-    return row ? buildAppliedPenalty(row) : null;
-  },
+    async findPenaltyById(penaltyId: string): Promise<AppliedPenalty | null> {
+      const row = await client.appliedPenalty.findUnique({
+        where: { id: penaltyId },
+      });
+      return row ? buildAppliedPenalty(row) : null;
+    },
 
-  async findActivePenalties(userId: string): Promise<readonly AppliedPenalty[]> {
-    const rows = await prisma.appliedPenalty.findMany({
-      where: {
-        userId,
-        reversed: false,
-        OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
-      },
-      orderBy: { appliedAt: "desc" },
-    });
-    return rows.map(buildAppliedPenalty);
-  },
+    async findActivePenalties(userId: string): Promise<readonly AppliedPenalty[]> {
+      const rows = await client.appliedPenalty.findMany({
+        where: {
+          userId,
+          reversed: false,
+          OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
+        },
+        orderBy: { appliedAt: "desc" },
+      });
+      return rows.map(buildAppliedPenalty);
+    },
 
-  async findPenaltyHistory(userId: string): Promise<readonly AppliedPenalty[]> {
-    const rows = await prisma.appliedPenalty.findMany({
-      where: { userId },
-      orderBy: { appliedAt: "desc" },
-    });
-    return rows.map(buildAppliedPenalty);
-  },
+    async findPenaltyHistory(userId: string): Promise<readonly AppliedPenalty[]> {
+      const rows = await client.appliedPenalty.findMany({
+        where: { userId },
+        orderBy: { appliedAt: "desc" },
+      });
+      return rows.map(buildAppliedPenalty);
+    },
 
-  async reversePenalty(penaltyId: string, reason: string): Promise<AppliedPenalty> {
-    const row = await prisma.appliedPenalty.update({
-      where: { id: penaltyId },
-      data: { reversed: true, reversedAt: new Date(), reversalReason: reason },
-    });
-    return buildAppliedPenalty(row);
-  },
-};
+    async reversePenalty(penaltyId: string, reason: string): Promise<AppliedPenalty> {
+      const row = await client.appliedPenalty.update({
+        where: { id: penaltyId },
+        data: {
+          reversed: true,
+          reversedAt: new Date(),
+          reversalReason: reason,
+        },
+      });
+      return buildAppliedPenalty(row);
+    },
+  };
+}
+
+export const prismaPenaltyRepository: PenaltyRepository = createPrismaPenaltyRepository();
 
 function buildAppliedPenalty(row: AppliedPenaltyRow): AppliedPenalty {
   return {

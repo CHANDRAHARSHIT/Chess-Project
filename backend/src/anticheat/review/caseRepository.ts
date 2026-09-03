@@ -50,54 +50,61 @@ export interface CaseRepository {
   countUpheldCases(userId: string): Promise<number>;
 }
 
-export const prismaCaseRepository: CaseRepository = {
-  async saveCase(input: NewCaseInput): Promise<ReviewCase> {
-    const row = await prisma.reviewCase.create({
-      data: {
-        userId: input.userId,
-        proficiency: input.situation.proficiency,
-        eventType: input.situation.eventType,
-        outcomes: [input.outcome] as unknown as Prisma.InputJsonValue,
-        evidence: collectEvidence([input.outcome]) as unknown as Prisma.InputJsonValue,
-        flaggedGameRecordIds: [...input.outcome.flaggedGameRecordIds],
-      },
-    });
-    return buildReviewCase(row);
-  },
+/** Takes a client so callers can run inside a `$transaction`. */
+export function createPrismaCaseRepository(
+  client: Prisma.TransactionClient = prisma
+): CaseRepository {
+  return {
+    async saveCase(input: NewCaseInput): Promise<ReviewCase> {
+      const row = await client.reviewCase.create({
+        data: {
+          userId: input.userId,
+          proficiency: input.situation.proficiency,
+          eventType: input.situation.eventType,
+          outcomes: [input.outcome] as unknown as Prisma.InputJsonValue,
+          evidence: collectEvidence([input.outcome]) as unknown as Prisma.InputJsonValue,
+          flaggedGameRecordIds: [...input.outcome.flaggedGameRecordIds],
+        },
+      });
+      return buildReviewCase(row);
+    },
 
-  async findCaseById(caseId: string): Promise<ReviewCase | null> {
-    const row = await prisma.reviewCase.findUnique({ where: { id: caseId } });
-    return row ? buildReviewCase(row) : null;
-  },
+    async findCaseById(caseId: string): Promise<ReviewCase | null> {
+      const row = await client.reviewCase.findUnique({ where: { id: caseId } });
+      return row ? buildReviewCase(row) : null;
+    },
 
-  async findCases(status?: CaseStatus): Promise<readonly ReviewCase[]> {
-    const rows = await prisma.reviewCase.findMany({
-      where: status ? { status } : undefined,
-      orderBy: { openedAt: "desc" },
-    });
-    return rows.map(buildReviewCase);
-  },
+    async findCases(status?: CaseStatus): Promise<readonly ReviewCase[]> {
+      const rows = await client.reviewCase.findMany({
+        where: status ? { status } : undefined,
+        orderBy: { openedAt: "desc" },
+      });
+      return rows.map(buildReviewCase);
+    },
 
-  async findUnresolvedCaseForUser(userId: string): Promise<ReviewCase | null> {
-    const row = await prisma.reviewCase.findFirst({
-      where: { userId, status: { in: [...UNRESOLVED_CASE_STATUSES] } },
-      orderBy: { openedAt: "desc" },
-    });
-    return row ? buildReviewCase(row) : null;
-  },
+    async findUnresolvedCaseForUser(userId: string): Promise<ReviewCase | null> {
+      const row = await client.reviewCase.findFirst({
+        where: { userId, status: { in: [...UNRESOLVED_CASE_STATUSES] } },
+        orderBy: { openedAt: "desc" },
+      });
+      return row ? buildReviewCase(row) : null;
+    },
 
-  async updateCase(caseId: string, changes: CaseChanges): Promise<ReviewCase> {
-    const row = await prisma.reviewCase.update({
-      where: { id: caseId },
-      data: buildUpdateData(changes),
-    });
-    return buildReviewCase(row);
-  },
+    async updateCase(caseId: string, changes: CaseChanges): Promise<ReviewCase> {
+      const row = await client.reviewCase.update({
+        where: { id: caseId },
+        data: buildUpdateData(changes),
+      });
+      return buildReviewCase(row);
+    },
 
-  async countUpheldCases(userId: string): Promise<number> {
-    return prisma.reviewCase.count({ where: { userId, upheld: true } });
-  },
-};
+    async countUpheldCases(userId: string): Promise<number> {
+      return client.reviewCase.count({ where: { userId, upheld: true } });
+    },
+  };
+}
+
+export const prismaCaseRepository: CaseRepository = createPrismaCaseRepository();
 
 /** Every check's evidence across every outcome, de-duplicated but order-preserving. */
 export function collectEvidence(outcomes: readonly DetectionOutcome[]): string[] {
@@ -164,7 +171,10 @@ function buildAppeal(row: ReviewCaseRow): { appeal?: ReviewCase["appeal"] } {
 }
 
 /** Keeps nulls out of optional fields, which the domain types declare as absent. */
-function optional<K extends string, V>(key: K, value: V | null): Record<K, V> | Record<string, never> {
+function optional<K extends string, V>(
+  key: K,
+  value: V | null
+): Record<K, V> | Record<string, never> {
   return value === null || value === undefined ? {} : ({ [key]: value } as Record<K, V>);
 }
 
