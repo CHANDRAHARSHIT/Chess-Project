@@ -139,11 +139,9 @@ export function PlayHubOverview({
   return (
     <div className="max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 select-none animate-fade-in space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
-        
         {/* ── Left Column: Chess Board with Players Identity (Hidden on Mobile) ── */}
         <div className="hidden lg:flex lg:col-span-7 flex-col items-center justify-center w-full">
           <div className="w-full max-w-[560px] space-y-2.5">
-            
             {/* Opponent Profile Bar */}
             <div className="flex items-center justify-between px-3.5 sm:px-4 py-2.5 rounded-2xl bg-brand-surface border border-brand-text/15">
               <div className="flex items-center gap-3 min-w-0">
@@ -200,7 +198,7 @@ export function PlayHubOverview({
                   )}
                 </div>
                 <div className="min-w-0">
-                  <div className="font-sans font-semibold text-sm sm:text-base text-brand-text truncate">
+                  <div className="font-sans font-semibold text-sm sm:text-base text-brand-text">
                     {userName}
                   </div>
                   <div className="font-mono text-[11px] text-brand-secondary">
@@ -215,14 +213,12 @@ export function PlayHubOverview({
                 </span>
               </div>
             </div>
-
           </div>
         </div>
 
         {/* ── Right Column: "Play Chess" Panel (Full Width on Mobile) ── */}
         <div className="w-full lg:col-span-5">
           <div className="rounded-3xl border border-brand-text/15 bg-brand-surface p-4 sm:p-6 flex flex-col justify-between space-y-4">
-            
             {/* Panel Header */}
             <div className="flex items-center gap-3 border-b border-brand-text/10 pb-3">
               <img
@@ -284,7 +280,7 @@ export function PlayHubOverview({
                           </span>
                         )}
                       </div>
-                      <p className="font-sans text-xs text-brand-secondary leading-snug truncate sm:whitespace-normal mt-0.5">
+                      <p className="font-sans text-xs text-brand-secondary leading-snug mt-0.5">
                         {card.subtitle}
                       </p>
                     </div>
@@ -325,16 +321,13 @@ export function PlayHubOverview({
                 );
               })}
             </div>
-
           </div>
         </div>
-
       </div>
 
       {/* ── Bottom Section: Game History | Leaderboard | Stats ── */}
       <div className="rounded-3xl border border-brand-text/15 bg-brand-surface overflow-hidden">
         <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-brand-text/10">
-          
           {/* 1. Game History */}
           <button
             onClick={() => {
@@ -348,7 +341,11 @@ export function PlayHubOverview({
                 ? "group hover:bg-brand-text/5 cursor-pointer"
                 : "opacity-50 cursor-not-allowed"
             }`}
-            title={!featureFlags.enablePlayOnline ? "Online features coming soon" : undefined}
+            title={
+              !featureFlags.enablePlayOnline
+                ? "Online features coming soon"
+                : undefined
+            }
           >
             <div className="flex items-center gap-3.5 min-w-0">
               <div className="w-12 h-12 rounded-full bg-indigo-500/10 dark:bg-indigo-500/15 border border-indigo-500/20 flex items-center justify-center shrink-0">
@@ -358,7 +355,7 @@ export function PlayHubOverview({
                 <div className="font-sans font-bold text-sm sm:text-base text-brand-text truncate group-hover:text-brand-accent transition-colors">
                   Game History
                 </div>
-                <p className="font-sans text-xs text-brand-secondary truncate mt-0.5">
+                <p className="font-sans text-xs text-brand-secondary mt-0.5">
                   Review your past games
                 </p>
               </div>
@@ -379,7 +376,11 @@ export function PlayHubOverview({
                 ? "group hover:bg-brand-text/5 cursor-pointer"
                 : "opacity-50 cursor-not-allowed"
             }`}
-            title={!featureFlags.enablePlayOnline ? "Online features coming soon" : undefined}
+            title={
+              !featureFlags.enablePlayOnline
+                ? "Online features coming soon"
+                : undefined
+            }
           >
             <div className="flex items-center gap-3.5 min-w-0">
               <div className="w-12 h-12 rounded-full bg-purple-500/10 dark:bg-purple-500/15 border border-purple-500/20 flex items-center justify-center shrink-0">
@@ -389,7 +390,7 @@ export function PlayHubOverview({
                 <div className="font-sans font-bold text-sm sm:text-base text-brand-text truncate group-hover:text-brand-accent transition-colors">
                   Leaderboard
                 </div>
-                <p className="font-sans text-xs text-brand-secondary truncate mt-0.5">
+                <p className="font-sans text-xs text-brand-secondary mt-0.5">
                   See how you rank and compare
                 </p>
               </div>
@@ -411,17 +412,15 @@ export function PlayHubOverview({
                 <div className="font-sans font-bold text-sm sm:text-base text-brand-text truncate group-hover:text-brand-accent transition-colors">
                   Stats
                 </div>
-                <p className="font-sans text-xs text-brand-secondary truncate mt-0.5">
+                <p className="font-sans text-xs text-brand-secondary mt-0.5">
                   Track your progress
                 </p>
               </div>
             </div>
             <ChevronRight className="w-5 h-5 text-brand-secondary shrink-0 group-hover:text-brand-accent group-hover:translate-x-0.5 transition-all" />
           </Link>
-
         </div>
       </div>
-
     </div>
   );
 }
