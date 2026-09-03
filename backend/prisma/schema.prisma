@@ -29,6 +29,7 @@ model User {
   playerRatings        PlayerRating[]
   pathwayProgress      PathwayProgress?
   assessmentAttempts   AssessmentAttempt[]
+  odysseyGames         OdysseyGame[]
 }
 
 model Account {
@@ -472,6 +473,32 @@ model PathwayProgress {
   totalSolved  Int      @default(0)
   updatedAt    DateTime @updatedAt
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Odyssey (Story Mode) — one row per save slot (up to 3 per user).
+// relics/mapNodes are stored as JSON since their shape is owned by the
+// OdysseyRelic/OdysseyNode class hierarchies, not fixed relational
+// columns. Reconstructing rows into domain model instances (OdysseyGame,
+// OdysseyPlayer, OdysseyMap/OdysseyNode subclasses) is OdysseyGameRepository's
+// job, not this schema's.
+// ─────────────────────────────────────────────────────────────────────────
+model OdysseyGame {
+  id              String   @id @default(cuid())
+  userId          String
+  slotId          Int
+  playerType      String? // EPlayerType value, or null before a character is chosen
+  coins           Int      @default(50)
+  relics          Json     @default("[]") // { type: ERelicType; charges: number }[]
+  completedNodes  Int[]    @default([])
+  currentNodeId   Int      @default(-1)
+  journeyComplete Boolean  @default(false)
+  mapNodes        Json // serialized OdysseyNode[] (each tagged with its subclass kind)
+  playtimeSeconds Int      @default(0)
+  updatedAt       DateTime @updatedAt
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, slotId])
 }
 
 // ─────────────────────────────────────────────────────────────────────────

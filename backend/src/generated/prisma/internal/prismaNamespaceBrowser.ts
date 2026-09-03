@@ -75,6 +75,7 @@ export const ModelName = {
   GameParticipant: 'GameParticipant',
   PlayerRating: 'PlayerRating',
   PathwayProgress: 'PathwayProgress',
+  OdysseyGame: 'OdysseyGame',
   AssessmentTemplate: 'AssessmentTemplate',
   AssessmentAttempt: 'AssessmentAttempt'
 } as const
@@ -470,6 +471,24 @@ export const PathwayProgressScalarFieldEnum = {
 } as const
 
 export type PathwayProgressScalarFieldEnum = (typeof PathwayProgressScalarFieldEnum)[keyof typeof PathwayProgressScalarFieldEnum]
+
+
+export const OdysseyGameScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  slotId: 'slotId',
+  playerType: 'playerType',
+  coins: 'coins',
+  relics: 'relics',
+  completedNodes: 'completedNodes',
+  currentNodeId: 'currentNodeId',
+  journeyComplete: 'journeyComplete',
+  mapNodes: 'mapNodes',
+  playtimeSeconds: 'playtimeSeconds',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OdysseyGameScalarFieldEnum = (typeof OdysseyGameScalarFieldEnum)[keyof typeof OdysseyGameScalarFieldEnum]
 
 
 export const AssessmentTemplateScalarFieldEnum = {

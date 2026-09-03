@@ -408,6 +408,7 @@ export const ModelName = {
   GameParticipant: 'GameParticipant',
   PlayerRating: 'PlayerRating',
   PathwayProgress: 'PathwayProgress',
+  OdysseyGame: 'OdysseyGame',
   AssessmentTemplate: 'AssessmentTemplate',
   AssessmentAttempt: 'AssessmentAttempt'
 } as const
@@ -425,7 +426,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "account" | "session" | "verificationToken" | "subscription" | "payment" | "billingProfile" | "product" | "productFeature" | "webhookEvent" | "curatedPuzzle" | "opening" | "builderLesson" | "builderSegment" | "builderSlide" | "course" | "lesson" | "lessonProgress" | "customLink" | "gameRecord" | "gameAnalysis" | "gameParticipant" | "playerRating" | "pathwayProgress" | "assessmentTemplate" | "assessmentAttempt"
+    modelProps: "user" | "account" | "session" | "verificationToken" | "subscription" | "payment" | "billingProfile" | "product" | "productFeature" | "webhookEvent" | "curatedPuzzle" | "opening" | "builderLesson" | "builderSegment" | "builderSlide" | "course" | "lesson" | "lessonProgress" | "customLink" | "gameRecord" | "gameAnalysis" | "gameParticipant" | "playerRating" | "pathwayProgress" | "odysseyGame" | "assessmentTemplate" | "assessmentAttempt"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2205,6 +2206,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    OdysseyGame: {
+      payload: Prisma.$OdysseyGamePayload<ExtArgs>
+      fields: Prisma.OdysseyGameFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.OdysseyGameFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OdysseyGamePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.OdysseyGameFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OdysseyGamePayload>
+        }
+        findFirst: {
+          args: Prisma.OdysseyGameFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OdysseyGamePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.OdysseyGameFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OdysseyGamePayload>
+        }
+        findMany: {
+          args: Prisma.OdysseyGameFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OdysseyGamePayload>[]
+        }
+        create: {
+          args: Prisma.OdysseyGameCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OdysseyGamePayload>
+        }
+        createMany: {
+          args: Prisma.OdysseyGameCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.OdysseyGameCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OdysseyGamePayload>[]
+        }
+        delete: {
+          args: Prisma.OdysseyGameDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OdysseyGamePayload>
+        }
+        update: {
+          args: Prisma.OdysseyGameUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OdysseyGamePayload>
+        }
+        deleteMany: {
+          args: Prisma.OdysseyGameDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.OdysseyGameUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.OdysseyGameUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OdysseyGamePayload>[]
+        }
+        upsert: {
+          args: Prisma.OdysseyGameUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OdysseyGamePayload>
+        }
+        aggregate: {
+          args: Prisma.OdysseyGameAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateOdysseyGame>
+        }
+        groupBy: {
+          args: Prisma.OdysseyGameGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OdysseyGameGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.OdysseyGameCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OdysseyGameCountAggregateOutputType> | number
+        }
+      }
+    }
     AssessmentTemplate: {
       payload: Prisma.$AssessmentTemplatePayload<ExtArgs>
       fields: Prisma.AssessmentTemplateFieldRefs
@@ -2769,6 +2844,24 @@ export const PathwayProgressScalarFieldEnum = {
 export type PathwayProgressScalarFieldEnum = (typeof PathwayProgressScalarFieldEnum)[keyof typeof PathwayProgressScalarFieldEnum]
 
 
+export const OdysseyGameScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  slotId: 'slotId',
+  playerType: 'playerType',
+  coins: 'coins',
+  relics: 'relics',
+  completedNodes: 'completedNodes',
+  currentNodeId: 'currentNodeId',
+  journeyComplete: 'journeyComplete',
+  mapNodes: 'mapNodes',
+  playtimeSeconds: 'playtimeSeconds',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OdysseyGameScalarFieldEnum = (typeof OdysseyGameScalarFieldEnum)[keyof typeof OdysseyGameScalarFieldEnum]
+
+
 export const AssessmentTemplateScalarFieldEnum = {
   id: 'id',
   trackSlug: 'trackSlug',
@@ -3197,6 +3290,7 @@ export type GlobalOmitConfig = {
   gameParticipant?: Prisma.GameParticipantOmit
   playerRating?: Prisma.PlayerRatingOmit
   pathwayProgress?: Prisma.PathwayProgressOmit
+  odysseyGame?: Prisma.OdysseyGameOmit
   assessmentTemplate?: Prisma.AssessmentTemplateOmit
   assessmentAttempt?: Prisma.AssessmentAttemptOmit
 }

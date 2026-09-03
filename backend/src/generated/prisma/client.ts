@@ -170,6 +170,11 @@ export type PlayerRating = Prisma.PlayerRatingModel
  */
 export type PathwayProgress = Prisma.PathwayProgressModel
 /**
+ * Model OdysseyGame
+ * 
+ */
+export type OdysseyGame = Prisma.OdysseyGameModel
+/**
  * Model AssessmentTemplate
  * 
  */
