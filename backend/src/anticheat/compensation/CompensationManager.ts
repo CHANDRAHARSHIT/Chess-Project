@@ -5,59 +5,74 @@
  * Every method moves rating points or money, so all must be idempotent: a
  * duplicated payout is unrecoverable.
  *
- * Prize methods are blocked on a tournament domain, which doesn't exist yet
+ * Prize redistribution is blocked on a tournament domain, which doesn't exist yet
  * (GameRecord.tournamentContext is opaque passthrough JSON).
  */
 
-import type { AffectedUser, ReviewCase, Situation } from "../types.js";
+import {
+  prismaCompensationRepository,
+  type CompensationRepository,
+} from "./compensationRepository.js";
+import type { AffectedUser, CompensationRecord, ReviewCase } from "../types.js";
 
-export interface CompensationRecord {
-  readonly compensationId: string;
-  readonly userId: string;
-  readonly caseId: string;
-  readonly kind: "rating_restoration" | "prize_redistribution" | "event_credit" | "acknowledgement";
-  readonly ratingPointsRestored?: number;
-  readonly amountMinorUnits?: number;
-  readonly currency?: string;
-  readonly issuedAt: Date;
-  readonly notes?: string;
-}
+/** Written when a restoration is owed but no rating exists to restore. See blocker 1. */
+const NO_RATING_NOTE =
+  "No rating was at stake: this game was unrated and no PlayerRating row exists. " +
+  "Recorded so the debt is visible once rated play ships.";
 
 export class CompensationManager {
+  constructor(
+    private readonly repository: CompensationRepository = prismaCompensationRepository
+  ) {}
+
   /**
-   * Broader than direct opponents: a cheater altering standings affects players
-   * they never faced, through pairings, tiebreaks, and prize placement.
+   * The opponents in the flagged games only. Un-flagged games in the review
+   * window are ordinary play by our own analysis, so their opponents are owed
+   * nothing.
    */
-  identifyAffectedUsers(caseId: string): Promise<readonly AffectedUser[]> {
-    throw new Error("Not implemented");
+  async identifyAffectedUsers(reviewCase: ReviewCase): Promise<readonly AffectedUser[]> {
+    return this.repository.findOpponentsInGames(
+      reviewCase.flaggedGameRecordIds,
+      reviewCase.suspect.userId
+    );
   }
 
-  determineCompensation(
-    affected: AffectedUser,
-    situation: Situation
-  ): Promise<readonly CompensationRecord[]> {
-    throw new Error("Not implemented");
-  }
+  /**
+   * Safe to call twice: a repeat write hits the database's unique index and the
+   * existing record is returned instead.
+   *
+   * An overturned or still-open case owes nobody, so it produces no records.
+   */
+  async compensate(resolvedCase: ReviewCase): Promise<readonly CompensationRecord[]> {
+    if (resolvedCase.status !== "upheld") return [];
 
-  /** Not a transfer from the cheater — the two amounts need not match once a whole event is recomputed. */
-  restoreRating(userId: string, gameRecordId: string, points: number): Promise<CompensationRecord> {
-    throw new Error("Not implemented");
-  }
+    const affectedUsers = await this.identifyAffectedUsers(resolvedCase);
+    const records: CompensationRecord[] = [];
 
-  /** Blocked on a tournament domain. Money must move through the existing payment layer. */
-  redistributePrize(caseId: string, tournamentId: string): Promise<readonly CompensationRecord[]> {
-    throw new Error("Not implemented");
-  }
+    for (const affected of affectedUsers) {
+      records.push(await this.saveRatingRestoration(resolvedCase.caseId, affected));
+    }
 
-  revokeIllegitimateGains(userId: string, caseId: string): Promise<void> {
-    throw new Error("Not implemented");
-  }
-
-  compensate(resolvedCase: ReviewCase): Promise<readonly CompensationRecord[]> {
-    throw new Error("Not implemented");
+    return records;
   }
 
   getCompensationHistory(userId: string): Promise<readonly CompensationRecord[]> {
-    throw new Error("Not implemented");
+    return Promise.resolve(this.repository.findCompensationHistory(userId));
+  }
+
+  private async saveRatingRestoration(
+    caseId: string,
+    affected: AffectedUser
+  ): Promise<CompensationRecord> {
+    const points = affected.ratingPointsLost ?? 0;
+
+    return this.repository.saveCompensation({
+      userId: affected.userId,
+      caseId,
+      kind: "rating_restoration",
+      gameRecordId: affected.gameRecordId,
+      ratingPointsRestored: points,
+      ...(points === 0 ? { notes: NO_RATING_NOTE } : {}),
+    });
   }
 }

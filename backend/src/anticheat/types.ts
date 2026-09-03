@@ -29,6 +29,26 @@ export interface Suspect {
   readonly underHeightenedScrutiny: boolean;
 }
 
+export type CompensationKind =
+  | "rating_restoration"
+  | "prize_redistribution"
+  | "event_credit"
+  | "acknowledgement";
+
+/** One restoration owed to one Affected User. Game-scoped kinds carry a gameRecordId. */
+export interface CompensationRecord {
+  readonly compensationId: string;
+  readonly userId: string;
+  readonly caseId: string;
+  readonly kind: CompensationKind;
+  readonly gameRecordId?: string;
+  readonly ratingPointsRestored?: number;
+  readonly amountMinorUnits?: number;
+  readonly currency?: string;
+  readonly issuedAt: Date;
+  readonly notes?: string;
+}
+
 /** A user harmed by a violation. Compensation makes these whole. */
 export interface AffectedUser {
   readonly userId: string;
