@@ -615,11 +615,35 @@ model AppliedPenalty {
   reversedAt     DateTime?
   reversalReason String?
 
-  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  reviewCase ReviewCase @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reviewCase  ReviewCase    @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  actionType  PenaltyAction @relation(fields: [action], references: [code], onDelete: Restrict)
 
   @@index([userId, reversed, expiresAt])
   @@index([caseId])
+}
+
+/// The catalogue of consequences. New actions are rows here, not code.
+///
+/// isImplemented records whether anything is actually wired to carry the action
+/// out — the list is expected to outgrow what the code can do.
+model PenaltyAction {
+  id                String   @id @default(cuid())
+  /// Matches the PenaltyAction union in anticheat/types.ts.
+  code              String   @unique
+  label             String
+  description       String
+  /// Drives the matchmaking ban gate.
+  blocksPlay        Boolean  @default(false)
+  /// Null never expires.
+  defaultDurationMs BigInt?
+  isImplemented     Boolean  @default(false)
+  isActive          Boolean  @default(true)
+  /// Ascending severity.
+  sortOrder         Int
+  createdAt         DateTime @default(now())
+
+  penalties AppliedPenalty[]
 }
 
 /// One restoration or payout owed to an Affected User.
