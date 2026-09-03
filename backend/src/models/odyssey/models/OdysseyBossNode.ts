@@ -10,10 +10,8 @@ import { EDifficulty } from "../enums/EDifficulty.js";
  */
 export class OdysseyBossNode extends OdysseyBattleNode {
   constructor(id: number, label: string, x: number, y: number, edges: number[], description: string) {
-    super(id, ENodeType.Boss, label, x, y, edges, description, EDifficulty.Intermediate);
-    // NOTE: frontend's monster-selection rule (StoryModeBattle's `monster` useMemo)
-    // treats difficulty 5 OR type "boss" as Dark King — the boss node's actual
-    // in-game difficulty tier is 3 (Intermediate) per mapGenerator.ts, monster
-    // selection is keyed off `type === "boss"` here, not off this difficulty value.
+    // Master (5) — the boss is always the single hardest encounter in the run,
+    // strictly above every Elite (capped at Advanced/4, see OdysseyMap.difficultyFor).
+    super(id, ENodeType.Boss, label, x, y, edges, description, EDifficulty.Master);
   }
 }

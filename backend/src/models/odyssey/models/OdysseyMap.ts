@@ -23,16 +23,27 @@ const START_NODE_ID = 0;
 const START_NODE_LABEL = "Pawn Sentinel";
 const START_NODE_DESCRIPTION = "The journey begins.";
 const START_X = 50;
-const START_Y = 0;
+const START_Y = 95; // bottom of the map — the run climbs upward toward the boss
 
 const BOSS_NODE_LABEL = "The Dark King";
 const BOSS_NODE_DESCRIPTION = "The final battle.";
 const BOSS_X = 50;
-const BOSS_Y = 100;
+const BOSS_Y = 5; // top of the map
 const BOSS_FLOOR_OFFSET = 1; // the boss sits one "floor" past the last generated floor
 const NO_EDGES: number[] = [];
 
+// Floor nodes are inset from the true 0/100 edges (matching the frontend's original
+// generator) so a node centered on its {x,y}% isn't half-clipped by the scroll container.
+const FLOOR_Y_BOTTOM = 85; // first floor, nearest the Start node
+const FLOOR_Y_TOP = 10; // last floor, nearest the Boss node
+
 const CENTER_COLUMN = 3; // placeholder column for the single-node start/boss floors
+
+const ENEMY_NODE_LABEL = "Enemy Encounter";
+const ELITE_NODE_LABEL = "Elite Enemy";
+const PUZZLE_NODE_LABEL = "Tactics Puzzle";
+const REST_NODE_LABEL = "Rest Site";
+const MERCHANT_NODE_LABEL = "Wandering Merchant";
 
 const ENEMY_NODE_DESCRIPTION = "A foe blocks the path.";
 const PUZZLE_NODE_DESCRIPTION = "A trial of tactics.";
@@ -41,18 +52,21 @@ const MERCHANT_NODE_DESCRIPTION = "A wandering trader.";
 
 const POSITION_SCALE = 100; // x/y are expressed as 0-100 (percent of the map canvas)
 const COLUMN_SPACING_OFFSET = 1;
-const FLOOR_SPACING_OFFSET = 1;
 
 /** No two of these in a row along any single edge — mirrors mapGenerator.ts's adjacency constraint. */
 const RESTRICTED_TYPES = new Set<ENodeType>([ENodeType.Rest, ENodeType.Elite, ENodeType.Merchant]);
 
+/** Matches the frontend's original room-type balance (mapGenerator.ts's pickValidRoomType pool). */
 const WEIGHTED_TYPES: { type: ENodeType; weight: number }[] = [
-  { type: ENodeType.Enemy, weight: 45 },
-  { type: ENodeType.Elite, weight: 15 },
-  { type: ENodeType.Puzzle, weight: 15 },
+  { type: ENodeType.Enemy, weight: 36 },
+  { type: ENodeType.Elite, weight: 25 },
+  { type: ENodeType.Puzzle, weight: 22 },
   { type: ENodeType.Rest, weight: 12 },
-  { type: ENodeType.Merchant, weight: 13 },
+  { type: ENodeType.Merchant, weight: 5 },
 ];
+
+/** Elite fights are a tier harder than an Enemy on the same floor, capped below Boss (Master) so the boss stays the single hardest encounter. */
+const ELITE_DIFFICULTY_BONUS = 1;
 
 interface NodePlan {
   id: number;
@@ -102,6 +116,42 @@ function difficultyForFloor(floor: number): EDifficulty {
   return EDifficulty.Advanced;
 }
 
+/**
+ * Enemy/Elite/Boss difficulty by floor and type: Enemy climbs with the floor
+ * but is capped at Intermediate — never Advanced — so Elite (always Enemy's
+ * tier + 1) has headroom to reach Advanced without ever tying Enemy on the
+ * same floor, and Boss (fixed at Master, see OdysseyBossNode) stays strictly
+ * above every Elite. Puzzle keeps the full four-tier climb since only the
+ * Enemy/Elite/Boss ordering was called out.
+ */
+function difficultyFor(type: ENodeType, floor: number): EDifficulty {
+  if (type === ENodeType.Puzzle) {
+    return difficultyForFloor(floor);
+  }
+  const enemyTier = Math.min(difficultyForFloor(floor), EDifficulty.Intermediate) as EDifficulty;
+  if (type === ENodeType.Elite) {
+    return Math.min(enemyTier + ELITE_DIFFICULTY_BONUS, EDifficulty.Advanced) as EDifficulty;
+  }
+  return enemyTier;
+}
+
+function labelForType(type: ENodeType): string {
+  switch (type) {
+    case ENodeType.Enemy:
+      return ENEMY_NODE_LABEL;
+    case ENodeType.Elite:
+      return ELITE_NODE_LABEL;
+    case ENodeType.Puzzle:
+      return PUZZLE_NODE_LABEL;
+    case ENodeType.Rest:
+      return REST_NODE_LABEL;
+    case ENodeType.Merchant:
+      return MERCHANT_NODE_LABEL;
+    default:
+      return "Unknown";
+  }
+}
+
 export class OdysseyMap {
   readonly nodes: OdysseyNode[];
 
@@ -117,11 +167,16 @@ export class OdysseyMap {
    * two Rest/Elite/Merchant in a row along an edge), a fixed start node
    * (id 0) and a single boss node that every floor-15 leaf converges on.
    *
-   * Implements the constraints documented for the frontend's generator
-   * (15 floors, weighted types, adjacency rule); the exact column-count
-   * and path-count constants weren't verified byte-for-byte against
-   * frontend/src/shared/chess/mapGenerator.ts, so a side-by-side diff is
-   * worth doing before this ships if exact parity matters.
+   * Room-type weights, the y-axis direction (Start at the bottom, Boss at
+   * the top), and the floor-position insets are matched to the frontend's
+   * original mapGenerator.ts after a real-run bug report showed the map
+   * inverted and clipping at the canvas edges when this map replaced it as
+   * the frontend's source of truth. The branching/column-count algorithm
+   * itself (each node connects to 1-2 nodes in the next floor via a
+   * per-floor node count, rather than a fixed 7-column grid) is this
+   * backend's own design, not a port — it satisfies the same constraints
+   * (15 floors, weighted types, adjacency rule) without needing to be
+   * byte-for-byte identical.
    */
   static generate(seed?: string): OdysseyMap {
     const rng = createRng(seed);
@@ -203,10 +258,11 @@ export class OdysseyMap {
       const columnCount = floor.length;
       for (const plan of floor) {
         const x = ((plan.column + COLUMN_SPACING_OFFSET) / (columnCount + COLUMN_SPACING_OFFSET)) * POSITION_SCALE;
-        const y = (plan.floor / (FLOOR_COUNT + FLOOR_SPACING_OFFSET)) * POSITION_SCALE;
+        // floor 1 (nearest Start) -> FLOOR_Y_BOTTOM; floor FLOOR_COUNT (nearest Boss) -> FLOOR_Y_TOP.
+        const y = FLOOR_Y_BOTTOM - ((plan.floor - 1) / (FLOOR_COUNT - 1)) * (FLOOR_Y_BOTTOM - FLOOR_Y_TOP);
         const edges = edgesById.get(plan.id) ?? NO_EDGES;
-        const difficulty = difficultyForFloor(plan.floor);
-        const label = `Floor ${plan.floor}`;
+        const difficulty = difficultyFor(plan.type, plan.floor);
+        const label = labelForType(plan.type);
 
         switch (plan.type) {
           case ENodeType.Enemy:

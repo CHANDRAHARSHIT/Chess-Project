@@ -54,6 +54,13 @@ export interface OdysseyRestOutcomePayload {
   foundRelic: OdysseyRelicType | null;
 }
 
+export interface OdysseySlotSummary {
+  slotId: number;
+  progressPercent: number;
+  playtimeSeconds: number;
+  updatedAt: string;
+}
+
 function reportFailure(context: string, error: unknown) {
   console.error(`[OdysseyApiService] ${context}:`, error);
   rollbar.error(error instanceof Error ? error : new Error(String(error)), { context: `OdysseyApiService.${context}` });
@@ -77,6 +84,19 @@ export class OdysseyApiService {
     } catch (error: unknown) {
       reportFailure("slotExists", error);
       return false;
+    }
+  }
+
+  /** Fetches a progress summary for every save slot (used by the slot picker), or null on failure. */
+  static async getAllSlots(): Promise<OdysseySlotSummary[] | null> {
+    try {
+      const res = await fetch(`${BASE_URL}/slots`, { credentials: "include" });
+      if (!res.ok) return null;
+      const json = await res.json();
+      return (json.data?.slots as OdysseySlotSummary[]) ?? null;
+    } catch (error: unknown) {
+      reportFailure("getAllSlots", error);
+      return null;
     }
   }
 

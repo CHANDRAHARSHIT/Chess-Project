@@ -167,7 +167,7 @@ export default function StoryModeRestSite({
     const newTotal = currentCharge + restored;
 
     return (
-      <div className="flex items-center justify-between w-full py-3 border-b border-brand-border/30 last:border-0">
+      <div className="flex items-center justify-between w-full py-1.5 border-b border-brand-border/30 last:border-0">
         <span className="text-base font-mono text-brand-secondary">
           {label}
         </span>
@@ -228,7 +228,7 @@ export default function StoryModeRestSite({
       />
 
       <motion.div
-        className="relative z-10 max-w-lg w-full max-h-full overflow-y-auto flex flex-col items-center gap-4 py-6 px-4 sm:px-6 rounded-2xl border border-orange-500/20 bg-orange-500/5 backdrop-blur-sm mx-auto"
+        className="relative z-10 max-w-lg w-full max-h-full overflow-y-auto flex flex-col items-center gap-2 py-4 px-4 sm:px-6 rounded-2xl border border-orange-500/20 bg-orange-500/5 backdrop-blur-sm mx-auto"
         initial={{ scale: 0.9, y: 20 }}
         animate={{ scale: 1, y: 0 }}
         transition={{ duration: 0.5, type: "spring" }}
@@ -241,7 +241,7 @@ export default function StoryModeRestSite({
         {/* Campfire icon with flicker animation */}
         <div className="relative">
           <motion.div
-            className="w-20 h-20 rounded-full bg-orange-500/10 border border-orange-500/30 flex items-center justify-center"
+            className="w-14 h-14 rounded-full bg-orange-500/10 border border-orange-500/30 flex items-center justify-center"
             animate={{
               boxShadow: [
                 "0 0 20px rgba(251,146,60,0.2)",
@@ -263,7 +263,7 @@ export default function StoryModeRestSite({
                 ease: "easeInOut",
               }}
             >
-              <Flame className="w-9 h-9 text-orange-400" />
+              <Flame className="w-6 h-6 text-orange-400" />
             </motion.div>
           </motion.div>
 
@@ -298,23 +298,23 @@ export default function StoryModeRestSite({
           {!hasRested ? (
             <motion.div
               key="resting-state"
-              className="flex flex-col items-center gap-4 w-full"
+              className="flex flex-col items-center gap-2 w-full"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
             >
-              <h2 className="text-2xl font-display font-bold text-brand-text">
+              <h2 className="text-xl font-display font-bold text-brand-text">
                 Rest Site
               </h2>
-              <p className="text-sm text-brand-secondary text-center leading-relaxed max-w-sm px-2">
+              <p className="text-xs text-brand-secondary text-center leading-snug max-w-sm px-2">
                 {isResting
                   ? "You rest by the fire, allocating your points to restore your mind…"
                   : nodeDescription}
               </p>
 
               {/* Random Restore UI */}
-              <div className="w-full bg-brand-surface/30 border border-brand-border/40 rounded-xl p-4 mt-2">
-                <div className="flex justify-between items-center mb-4">
+              <div className="w-full bg-brand-surface/30 border border-brand-border/40 rounded-xl p-3">
+                <div className="flex justify-between items-center mb-1.5">
                   <span className="text-sm font-semibold text-brand-text">
                     Charges Restored
                   </span>
@@ -326,7 +326,7 @@ export default function StoryModeRestSite({
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col">
                   {renderRestoreRow("Undo", "undo")}
                   {renderRestoreRow("Best Move", "hint")}
                   {renderRestoreRow("Eval Bar", "evalBar")}
@@ -334,27 +334,27 @@ export default function StoryModeRestSite({
                   {renderRestoreRow("Rerolls", "reroll")}
 
                   {foundCoins && (
-                    <div className="flex items-center justify-between w-full py-3 border-b border-brand-border/30 last:border-0">
-                      <span className="text-base font-mono text-brand-secondary">
+                    <div className="flex items-center justify-between w-full py-1.5 border-b border-brand-border/30 last:border-0">
+                      <span className="text-sm font-mono text-brand-secondary">
                         Found Stash
                       </span>
-                      <span className="text-base font-mono font-semibold text-yellow-400">
+                      <span className="text-sm font-mono font-semibold text-yellow-400">
                         +{foundCoins} Coins
                       </span>
                     </div>
                   )}
                   {foundRelic && (
-                    <div className="flex items-center justify-between w-full py-3 border-b border-brand-border/30 last:border-0">
-                      <span className="text-base font-mono text-brand-secondary">
+                    <div className="flex items-center justify-between w-full py-1.5 border-b border-brand-border/30 last:border-0">
+                      <span className="text-sm font-mono text-brand-secondary">
                         Found Item
                       </span>
-                      <span className="text-base font-mono font-semibold text-purple-400 uppercase tracking-widest">
+                      <span className="text-sm font-mono font-semibold text-purple-400 uppercase tracking-widest">
                         {foundRelic} Relic
                       </span>
                     </div>
                   )}
                   {totalRestored === 0 && !foundCoins && !foundRelic && (
-                    <div className="text-center py-4 text-sm font-mono text-brand-secondary/60">
+                    <div className="text-center py-2 text-sm font-mono text-brand-secondary/60">
                       Nothing to find or restore here.
                     </div>
                   )}
@@ -362,7 +362,7 @@ export default function StoryModeRestSite({
               </div>
 
               {/* Actions */}
-              <div className="flex gap-3 flex-wrap justify-center w-full mt-4">
+              <div className="flex gap-3 flex-wrap justify-center w-full mt-1">
                 <button
                   onClick={onRetreat}
                   disabled={isResting}
@@ -387,7 +387,7 @@ export default function StoryModeRestSite({
               {/* DEV Only: Skip Button */}
               {import.meta.env.DEV &&
                 import.meta.env.VITE_ENABLE_STORY_DEV_TOOLS !== "false" && (
-                  <div className="mt-4 p-2 rounded border border-dashed border-yellow-500/50 bg-yellow-500/10 flex justify-center opacity-80 hover:opacity-100 transition-opacity w-full">
+                  <div className="mt-1 p-2 rounded border border-dashed border-yellow-500/50 bg-yellow-500/10 flex justify-center opacity-80 hover:opacity-100 transition-opacity w-full">
                     <span className="text-[10px] text-yellow-500 font-mono self-center mr-2">
                       DEV:
                     </span>

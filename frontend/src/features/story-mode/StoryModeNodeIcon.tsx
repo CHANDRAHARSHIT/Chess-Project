@@ -177,6 +177,7 @@ export default function StoryModeNodeIcon({
   const colors = getNodeColors(type, status);
   const isClickable = status === "available" || status === "active";
   const isAvailable = status === "available";
+  const isCompleted = status === "completed";
   const nodeSize = type === "boss" ? 56 : type === "start" ? 52 : 44;
 
   return (
@@ -212,8 +213,8 @@ export default function StoryModeNodeIcon({
               : {}
           }
         >
-          {/* Outer glow ring for available nodes */}
-          {isAvailable && (
+          {/* Outer glow ring for available and completed nodes */}
+          {(isAvailable || isCompleted) && (
             <motion.div
               className="absolute rounded-full"
               style={{
