@@ -6,7 +6,7 @@
  */
 import { useNavigate } from "react-router";
 import { Swords, TrendingUp, Target, Trophy, ChevronRight, ArrowLeft } from "lucide-react";
-import { soundManager } from "@/shared/lib/SoundManager";
+import { soundManager } from "@/lib/SoundManager";
 
 // ─── Dummy Data ───────────────────────────────────────────────────────────────
 

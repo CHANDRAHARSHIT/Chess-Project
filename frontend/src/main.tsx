@@ -3,17 +3,17 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router";
 import "./index.css";
 import App from "./App.tsx";
-import { soundManager } from "@/shared/lib/SoundManager";
-import { SessionProvider } from "@/features/account/SessionContext";
-import { BoardSettingsProvider } from "@/shared/appearance/BoardSettingsContext";
-import { NavigationStackProvider } from "@/app/navigation/NavigationStackContext";
-import { MatchmakingProvider } from "@/features/play/MatchmakingContext";
-import { GameSessionProvider } from "@/features/play/GameSessionContext";
-import ScrollToTop from "@/app/navigation/ScrollToTop";
-import RollbarFallback from "@/shared/ui/RollbarFallback";
+import { soundManager } from "@/lib/SoundManager";
+import { SessionProvider } from "@/contexts/account-SessionContext";
+import { BoardSettingsProvider } from "@/contexts/appearance-BoardSettingsContext";
+import { NavigationStackProvider } from "@/contexts/nav-NavigationStackContext";
+import { MatchmakingProvider } from "@/contexts/play-MatchmakingContext";
+import { GameSessionProvider } from "@/contexts/play-GameSessionContext";
+import ScrollToTop from "@/components/nav-ScrollToTop";
+import RollbarFallback from "@/components/ui-RollbarFallback";
 import { Provider as RollbarProvider, ErrorBoundary } from "@rollbar/react";
-import { ThemeProvider } from "@/shared/appearance/ThemeContext";
-import rollbar from "@/shared/lib/rollbar";
+import { ThemeProvider } from "@/contexts/appearance-ThemeContext";
+import rollbar from "@/lib/rollbar";
 
 // Restore the user's saved sound preference before the first render.
 // This ensures no sounds fire in the wrong mute state during startup.

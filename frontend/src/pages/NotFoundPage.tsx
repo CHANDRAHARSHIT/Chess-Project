@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from "react-router";
 import { motion } from "framer-motion";
 import { Home, Compass, HelpCircle, ArrowRight } from "lucide-react";
-import { suggestRoute } from "@/app/router/routeMatcher";
+import { suggestRoute } from "@/utils/router-routeMatcher";
 
 export default function NotFoundPage() {
   const location = useLocation();

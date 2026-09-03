@@ -17,17 +17,17 @@
  */
 import { useState, useCallback } from "react";
 import { useSearchParams, useNavigate } from "react-router";
-import { PlayHubOverview } from "@/features/play/components/PlayHubOverview";
-import { QuickGameView } from "@/features/play/components/QuickGameView";
-import { PlayOnlineView } from "@/features/play/components/PlayOnlineView";
-import { VariantsView } from "@/features/play/components/VariantsView";
-import TestMaiaBoard from "@/features/test-maia/TestMaiaBoard";
-import { LeaveGameConfirmModal } from "@/features/play/components/LeaveGameConfirmModal";
-import { ProtectedRoute } from "@/features/account/ProtectedRoute";
-import { useGameSession } from "@/features/play/useGameSession";
-import { useMatchmaking } from "@/features/play/useMatchmaking";
-import { soundManager } from "@/shared/lib/SoundManager";
-import { featureFlags } from "@/shared/lib/featureFlags";
+import { PlayHubOverview } from "@/components/play-PlayHubOverview";
+import { QuickGameView } from "@/components/play-QuickGameView";
+import { PlayOnlineView } from "@/components/play-PlayOnlineView";
+import { VariantsView } from "@/components/play-VariantsView";
+import TestMaiaBoard from "@/components/testmaia-TestMaiaBoard";
+import { LeaveGameConfirmModal } from "@/components/play-LeaveGameConfirmModal";
+import { ProtectedRoute } from "@/components/account-ProtectedRoute";
+import { useGameSession } from "@/hooks/play-useGameSession";
+import { useMatchmaking } from "@/hooks/play-useMatchmaking";
+import { soundManager } from "@/lib/SoundManager";
+import { featureFlags } from "@/lib/featureFlags";
 import { ArrowLeft } from "lucide-react";
 
 export type PlayTab = "online" | "bots" | "variants" | "maia" | "quick";

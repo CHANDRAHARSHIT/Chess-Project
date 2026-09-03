@@ -1,6 +1,6 @@
 import React from "react";
 import { Badge } from "../atoms/Badge";
-import { soundManager } from "@/shared/lib/SoundManager";
+import { soundManager } from "@/lib/SoundManager";
 
 export interface ContentCardProps {
   title: string;

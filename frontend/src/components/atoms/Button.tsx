@@ -1,5 +1,5 @@
 import React from "react";
-import { soundManager } from "@/shared/lib/SoundManager";
+import { soundManager } from "@/lib/SoundManager";
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "gold-solid" | "gold-outline" | "ghost" | "danger" | "cta" | "secondary";

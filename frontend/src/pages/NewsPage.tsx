@@ -52,7 +52,7 @@ const NEWS_ITEMS = [
   "Carlsen, Caruana Lead 18 Confirmed Players For Total Chess Pilot In Budapest",
 ];
 
-import NewsSettingsWidget from "@/features/news/NewsSettingsWidget";
+import NewsSettingsWidget from "@/components/news-NewsSettingsWidget";
 
 export default function NewsPage() {
   const [activeTab, setActiveTab] = useState<TabType>("classical");

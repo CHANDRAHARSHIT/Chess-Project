@@ -8,7 +8,7 @@ import {
   Globe,
   ArrowLeft,
 } from "lucide-react";
-import { soundManager } from "@/shared/lib/SoundManager";
+import { soundManager } from "@/lib/SoundManager";
 
 interface ValueCardProps {
   icon: React.ComponentType<{ className?: string }>;

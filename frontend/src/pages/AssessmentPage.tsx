@@ -5,17 +5,17 @@ import {
   AssessmentService,
   AssessmentApiError,
   type AssessmentAttempt,
-} from "@/features/join-us/assessment/assessment.service";
-import type { AssessmentConfig } from "@/features/join-us/assessment/assessmentTypes";
-import AssessmentComingSoon from "@/features/join-us/assessment/components/AssessmentComingSoon";
-import AssessmentSkeleton from "@/features/join-us/assessment/components/AssessmentSkeleton";
-import AssessmentResultScreen from "@/features/join-us/assessment/components/AssessmentResultScreen";
-import AssessmentAlreadyCompleteScreen from "@/features/join-us/assessment/components/AssessmentAlreadyCompleteScreen";
-import AssessmentShell from "@/features/join-us/assessment/components/AssessmentShell";
-import AssessmentSubmitConfirmModal from "@/features/join-us/assessment/components/AssessmentSubmitConfirmModal";
-import TimedSectionWarningModal from "@/features/join-us/assessment/components/TimedSectionWarningModal";
-import QuestionCard from "@/features/join-us/assessment/components/QuestionCard";
-import TimedCodingScreen from "@/features/join-us/assessment/components/TimedCodingScreen";
+} from "@/services/joinus-assessment.service";
+import type { AssessmentConfig } from "@/types/joinus-assessmentTypes";
+import AssessmentComingSoon from "@/components/joinus-AssessmentComingSoon";
+import AssessmentSkeleton from "@/components/joinus-AssessmentSkeleton";
+import AssessmentResultScreen from "@/components/joinus-AssessmentResultScreen";
+import AssessmentAlreadyCompleteScreen from "@/components/joinus-AssessmentAlreadyCompleteScreen";
+import AssessmentShell from "@/components/joinus-AssessmentShell";
+import AssessmentSubmitConfirmModal from "@/components/joinus-AssessmentSubmitConfirmModal";
+import TimedSectionWarningModal from "@/components/joinus-TimedSectionWarningModal";
+import QuestionCard from "@/components/joinus-QuestionCard";
+import TimedCodingScreen from "@/components/joinus-TimedCodingScreen";
 import { motion, AnimatePresence } from "framer-motion";
 
 const KNOWN_TRACK_SLUGS = new Set(["backend", "growth-marketing", "manager"]);

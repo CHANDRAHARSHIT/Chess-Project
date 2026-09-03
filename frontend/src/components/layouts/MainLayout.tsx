@@ -1,5 +1,5 @@
-import SidebarLayout from "@/app/navigation/SidebarLayout";
-import { Outlet } from "react-router";
+import SidebarLayout from '@/components/nav-SidebarLayout';
+import { Outlet } from 'react-router';
 
 export default function MainLayout() {
   return (

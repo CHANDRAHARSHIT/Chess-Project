@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
 import { ArrowLeft } from "lucide-react";
-import ReportForm from "@/features/report/ReportForm";
-import { soundManager } from "@/shared/lib/SoundManager";
+import ReportForm from "@/components/report-ReportForm";
+import { soundManager } from "@/lib/SoundManager";
 
 export default function ReportPage() {
   const navigate = useNavigate();

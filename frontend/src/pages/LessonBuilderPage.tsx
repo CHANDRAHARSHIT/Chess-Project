@@ -1,22 +1,22 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router";
 import { Loader2, CheckCircle2, AlertCircle } from "lucide-react";
-import { LessonCanvas } from "@/features/lessons/components/LessonCanvas";
-import { LessonBuilderSidebar } from "@/features/lessons/components/LessonBuilderSidebar";
-import { LessonBuilderHeader } from "@/features/lessons/components/LessonBuilderHeader";
-import { LessonTextToolbar } from "@/features/lessons/components/LessonTextToolbar";
-import { LessonFooter } from "@/features/lessons/components/LessonFooter";
-import { PublishConfirmationModal } from "@/features/lessons/components/PublishConfirmationModal";
-import { ContextMenu } from "@/features/lessons/components/ContextMenu";
-import { AuthModal } from "@/features/account/AuthModal";
-import type { SlideData, SegmentData } from "@/features/lessons/components/types";
+import { LessonCanvas } from "@/components/lessons-LessonCanvas";
+import { LessonBuilderSidebar } from "@/components/lessons-LessonBuilderSidebar";
+import { LessonBuilderHeader } from "@/components/lessons-LessonBuilderHeader";
+import { LessonTextToolbar } from "@/components/lessons-LessonTextToolbar";
+import { LessonFooter } from "@/components/lessons-LessonFooter";
+import { PublishConfirmationModal } from "@/components/lessons-PublishConfirmationModal";
+import { ContextMenu } from "@/components/lessons-ContextMenu";
+import { AuthModal } from "@/components/account-AuthModal";
+import type { SlideData, SegmentData } from "@/types/lessons-types";
 import {
   builderLessonService,
   type BuilderLessonData,
-} from "@/features/lessons/builderLesson.service";
-import { lessonCacheService } from "@/features/lessons/lessonCache.service";
-import { lessonSyncService, type SyncState } from "@/features/lessons/lessonSync.service";
-import { computeLessonSnapshotHash } from "@/features/lessons/utils/lessonHasher";
+} from "@/services/lessons-builderLesson.service";
+import { lessonCacheService } from "@/services/lessons-lessonCache.service";
+import { lessonSyncService, type SyncState } from "@/services/lessons-lessonSync.service";
+import { computeLessonSnapshotHash } from "@/utils/lessons-lessonHasher";
 
 export default function LessonBuilderPage() {
   const { id: lessonId } = useParams<{ id: string }>();

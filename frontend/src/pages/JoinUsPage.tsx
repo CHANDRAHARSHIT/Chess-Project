@@ -2,17 +2,17 @@ import { useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import { ArrowLeft, Briefcase } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { soundManager } from "@/shared/lib/SoundManager";
-import DepartmentOpeningsTable from "@/features/join-us/DepartmentOpeningsTable";
-import DepartmentOpeningsCards from "@/features/join-us/DepartmentOpeningsCards";
-import OpeningDetails from "@/features/join-us/OpeningDetails";
+import { soundManager } from "@/lib/SoundManager";
+import DepartmentOpeningsTable from "@/components/joinus-DepartmentOpeningsTable";
+import DepartmentOpeningsCards from "@/components/joinus-DepartmentOpeningsCards";
+import OpeningDetails from "@/components/joinus-OpeningDetails";
 import {
   getAssessmentTrackSlug,
   getOpeningByTrackSlug,
   type JobOpening,
-} from "@/features/join-us/joinUsData";
+} from "@/data/joinus-joinUsData";
 
-import { ROUTES } from "@/app/router/routes.config";
+import { ROUTES } from "@/utils/router-routes.config";
 
 export default function JoinUsPage() {
   const navigate = useNavigate();

@@ -1,5 +1,4 @@
-import React from "react";
-import { soundManager } from "@/shared/lib/SoundManager";
+import { soundManager } from "@/lib/SoundManager";
 
 export interface FilterTabOption<T extends string = string> {
   id: T;

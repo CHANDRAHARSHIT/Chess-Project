@@ -1,25 +1,25 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router';
-import { RoyalGoldPathway } from '@/features/puzzles/pathways/RoyalGoldPathway';
-import { ROYAL_GOLD_NODES } from '@/features/puzzles/pathways/royalGoldNodes';
-import { PATHWAY_NODES } from '@/features/puzzles/pathways';
-import type { PathNode, PlayerProgress } from '@/features/puzzles/pathway.types';
-import { PuzzleBoard } from '@/features/puzzles/components/PuzzleBoard';
-import { PuzzleCoach, CustomPuzzleCoach, type CoachStatus } from '@/features/puzzles/components/PuzzleCoach';
-import { ThemedChessboard } from '@/shared/ui/ThemedChessboard';
-import { CustomPuzzlePanel } from '@/features/puzzles/components/CustomPuzzlePanel';
-import { CustomPuzzleSession } from '@/features/puzzles/components/CustomPuzzleSession';
-import type { PuzzleFilters, CuratedPuzzle } from '@/features/puzzles/puzzle.types';
+import { RoyalGoldPathway } from '@/components/puzzles-RoyalGoldPathway';
+import { ROYAL_GOLD_NODES } from '@/data/puzzles-royalGoldNodes';
+import { PATHWAY_NODES } from '@/components/puzzles-pathways.index';
+import type { PathNode, PlayerProgress } from '@/types/puzzles-pathway.types';
+import { PuzzleBoard } from '@/components/puzzles-PuzzleBoard';
+import { PuzzleCoach, CustomPuzzleCoach, type CoachStatus } from '@/components/puzzles-PuzzleCoach';
+import { ThemedChessboard } from '@/components/ui-ThemedChessboard';
+import { CustomPuzzlePanel } from '@/components/puzzles-CustomPuzzlePanel';
+import { CustomPuzzleSession } from '@/components/puzzles-CustomPuzzleSession';
+import type { PuzzleFilters, CuratedPuzzle } from '@/types/puzzles-puzzle.types';
 import {
   ArrowLeft,
   ArrowRight,
   SlidersHorizontal,
 } from 'lucide-react';
-import type { ChessPuzzle } from '@/features/puzzles/puzzleLoader';
+import type { ChessPuzzle } from '@/utils/puzzles-puzzleLoader';
 import { Chess } from 'chess.js';
-import { Confetti } from '@/shared/ui/Confetti';
-import rollbar from '@/shared/lib/rollbar';
-import { usePuzzleProgress } from '@/features/puzzles/usePuzzleProgress';
+import { Confetti } from '@/components/ui-Confetti';
+import rollbar from '@/lib/rollbar';
+import { usePuzzleProgress } from '@/hooks/puzzles-usePuzzleProgress';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Tailwind's `lg` breakpoint. Keep in sync with tailwind config if changed.

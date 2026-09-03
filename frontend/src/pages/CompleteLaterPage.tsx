@@ -12,7 +12,7 @@ import {
   Clock,
   ArrowLeft
 } from "lucide-react";
-import { soundManager } from "@/shared/lib/SoundManager";
+import { soundManager } from "@/lib/SoundManager";
 
 type QueueItemType = "Lesson" | "Puzzle" | "Game";
 

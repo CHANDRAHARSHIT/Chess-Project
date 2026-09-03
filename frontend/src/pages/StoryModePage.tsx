@@ -7,13 +7,13 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { Swords, ArrowLeft } from "lucide-react";
-import StoryModeMap from "@/features/story-mode/StoryModeMap";
+import StoryModeMap from "@/components/storymode-StoryModeMap";
 import {
   StoryModeProvider,
   useStoryModeRun,
-} from "@/features/story-mode/StoryModeContext";
-import { OdysseyTitleScreen } from "@/features/story-mode/TitleScreen/OdysseyTitleScreen";
-import { StrategistPage } from "@/features/story-mode/TitleScreen/StrategistPage";
+} from "@/contexts/storymode-StoryModeContext";
+import { OdysseyTitleScreen } from "@/components/storymode-OdysseyTitleScreen";
+import { StrategistPage } from "@/components/storymode-StrategistPage";
 import { useState, useEffect, useRef } from "react";
 
 function StoryModeContent() {

@@ -12,9 +12,9 @@ import {
   ArrowLeft,
   Loader2,
 } from 'lucide-react';
-import { soundManager } from '@/shared/lib/SoundManager';
-import { publicLessonService } from '@/features/lessons/publicLesson.service';
-import type { BuilderLessonData } from '@/features/lessons/builderLesson.service';
+import { soundManager } from '@/lib/SoundManager';
+import { publicLessonService } from '@/services/lessons-publicLesson.service';
+import type { BuilderLessonData } from '@/services/lessons-builderLesson.service';
 
 interface StaticLesson {
   id: string;

@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router";
 import { motion } from "framer-motion";
 import { Crown, Sparkles, Loader2, ArrowRight } from "lucide-react";
-import { useSubscription } from "@/features/billing/useSubscription";
+import { useSubscription } from "@/hooks/billing-useSubscription";
 
 export default function PremiumPage() {
   const { isPro, loading, error } = useSubscription();

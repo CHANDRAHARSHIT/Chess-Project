@@ -3,7 +3,7 @@
  * feels human. Not linked from navigation; reached by URL.
  */
 
-import TestMaiaBoard from "@/features/test-maia/TestMaiaBoard";
+import TestMaiaBoard from "@/components/testmaia-TestMaiaBoard";
 
 export default function TestMaiaPage() {
   return (
