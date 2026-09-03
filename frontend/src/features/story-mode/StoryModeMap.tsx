@@ -549,6 +549,7 @@ export default function StoryModeMap({ onResetToTitle }: StoryModeMapProps = {})
             className="flex-1 min-h-0 overflow-hidden flex flex-col"
           >
             <StoryModeRestSite
+              nodeId={activeView.nodeId}
               nodeLabel={
                 (runState.mapNodes || []).find((n) => n.id === activeView.nodeId)
                   ?.label ?? "Rest Site"

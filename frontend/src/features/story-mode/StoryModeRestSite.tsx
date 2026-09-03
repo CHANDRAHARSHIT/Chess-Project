@@ -3,8 +3,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Flame, ArrowRight, RotateCcw, Heart, Sparkles } from "lucide-react";
 import { useStoryModeRun, MAX_RELIC_CHARGES } from "./StoryModeContext";
 import type { RelicType } from "./StoryModeContext";
+import { useSession } from "@/features/account/useSession";
+import { OdysseyApiService } from "./api/odysseyApi";
 
 interface StoryModeRestSiteProps {
+  nodeId: number;
   nodeLabel: string;
   nodeDescription: string;
   onComplete: () => void;
@@ -12,12 +15,14 @@ interface StoryModeRestSiteProps {
 }
 
 export default function StoryModeRestSite({
+  nodeId,
   nodeLabel,
   nodeDescription,
   onComplete,
   onRetreat,
 }: StoryModeRestSiteProps) {
-  const { runState, updateRunState } = useStoryModeRun();
+  const { runState, updateRunState, activeSlot } = useStoryModeRun();
+  const { status } = useSession();
 
   const [isResting, setIsResting] = useState(false);
   const [hasRested, setHasRested] = useState(false);
@@ -130,6 +135,21 @@ export default function StoryModeRestSite({
     updates.relics = newRelics;
 
     updateRunState(updates);
+
+    // Best-effort backend sync — the local grants above are already the authoritative reward.
+    // Only nonzero restores are sent: the backend grants a (possibly 0-charge) relic for every
+    // key present in `restores` regardless of its amount, matching how its own roll() only ever
+    // includes keys it actually restored points into.
+    if (status === 'authenticated') {
+      const nonzeroRestores = Object.fromEntries(
+        Object.entries(restores).filter(([, amount]) => amount > 0)
+      );
+      OdysseyApiService.applyRest(activeSlot, nodeId, {
+        restores: nonzeroRestores,
+        foundCoins,
+        foundRelic,
+      });
+    }
 
     // Simulate rest sequence duration
     setTimeout(() => {

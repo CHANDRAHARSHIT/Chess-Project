@@ -39,6 +39,12 @@ export interface OdysseyShopItemPayload {
   costPerCharge: number;
 }
 
+export interface OdysseyRestOutcomePayload {
+  restores: Partial<Record<OdysseyRelicType, number>>;
+  foundCoins: number | null;
+  foundRelic: OdysseyRelicType | null;
+}
+
 function reportFailure(context: string, error: unknown) {
   console.error(`[OdysseyApiService] ${context}:`, error);
   rollbar.error(error instanceof Error ? error : new Error(String(error)), { context: `OdysseyApiService.${context}` });
@@ -113,6 +119,11 @@ export class OdysseyApiService {
   /** Marks the merchant node completed — call once the caller leaves the shop. */
   static async merchantLeaveShop(slotId: number, nodeId: number): Promise<boolean> {
     return post(`/slots/${slotId}/nodes/${nodeId}/merchant/leave`, "merchantLeaveShop");
+  }
+
+  /** Applies a rest site's outcome (already rolled locally) and marks the node completed. */
+  static async applyRest(slotId: number, nodeId: number, outcome: OdysseyRestOutcomePayload): Promise<boolean> {
+    return post(`/slots/${slotId}/nodes/${nodeId}/rest/apply`, "applyRest", { outcome });
   }
 }
 
