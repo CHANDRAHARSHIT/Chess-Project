@@ -166,16 +166,20 @@ async function applyArbiterPenalties(
   actions: PenaltyAction[]
 ): Promise<AppliedPenalty[]> {
   const policy = new PolicyRegistry();
-  const penalties = new PenaltyManager(
-    policy,
-    new EscalationLadder(policy, cases),
-    createPrismaPenaltyRepository(tx)
-  );
+  const ladder = new EscalationLadder(policy, cases);
+  const penalties = new PenaltyManager(policy, ladder, createPrismaPenaltyRepository(tx));
+  const level = await ladder.getLevel(resolved.suspect.userId, resolved.situation);
 
   const applied: AppliedPenalty[] = [];
   for (const action of actions) {
     applied.push(
-      await penalties.apply(resolved.suspect.userId, action, resolved.caseId, resolved.situation)
+      await penalties.apply(
+        resolved.suspect.userId,
+        action,
+        resolved.caseId,
+        resolved.situation,
+        level
+      )
     );
   }
   return applied;

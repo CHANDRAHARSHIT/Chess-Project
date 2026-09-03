@@ -8,6 +8,7 @@ import {
   UnappealablePenaltyError,
 } from "../penalty/PenaltyManager.js";
 import type { NewPenaltyInput, PenaltyRepository } from "../penalty/penaltyRepository.js";
+import type { ActionRepository, PenaltyActionType } from "../penalty/actionRepository.js";
 import { PolicyRegistry } from "../feedback/PolicyRegistry.js";
 import { CaseManager } from "../review/CaseManager.js";
 import type { CaseRepository } from "../review/caseRepository.js";
@@ -16,20 +17,8 @@ import type {
   DetectionOutcome,
   EscalationLevel,
   EventType,
-  PenaltyAction,
   Situation,
 } from "../types.js";
-
-const ALL_ACTIONS: readonly PenaltyAction[] = [
-  "increase_monitoring",
-  "warning",
-  "strike",
-  "restrict_from_prize_events",
-  "restrict_from_rated_events",
-  "suspend_from_current_event",
-  "temporary_ban",
-  "permanent_ban",
-];
 
 const ALL_EVENT_TYPES: readonly EventType[] = [
   "unrated_game",
@@ -129,79 +118,55 @@ function buildFakeCaseRepository(upheldCount: number): CaseRepository {
   };
 }
 
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+/** Mirrors the seeded catalogue for the two implemented actions. */
+function buildFakeActionRepository(): ActionRepository {
+  const catalogue: Record<string, PenaltyActionType> = {
+    temporary_ban: {
+      code: "temporary_ban",
+      label: "Temporary Ban",
+      description: "",
+      blocksPlay: true,
+      defaultDurationMs: 30 * DAY_MS,
+      isImplemented: true,
+      isActive: true,
+      sortOrder: 7,
+    },
+    permanent_ban: {
+      code: "permanent_ban",
+      label: "Permanent Ban",
+      description: "",
+      blocksPlay: true,
+      defaultDurationMs: null,
+      isImplemented: true,
+      isActive: true,
+      sortOrder: 8,
+    },
+  };
+
+  return {
+    findActiveActions: async () => Object.values(catalogue),
+    findActionByCode: async (code) => catalogue[code] ?? null,
+    findBlockingCodes: async () => ["temporary_ban", "permanent_ban"],
+  };
+}
+
 function buildManager(upheldCount = 0) {
   const policy = new PolicyRegistry();
   const ladder = new EscalationLadder(policy, new CaseManager(buildFakeCaseRepository(upheldCount)));
   const repository = buildFakePenaltyRepository();
-  return { manager: new PenaltyManager(policy, ladder, repository), repository, ladder, policy };
+  const manager = new PenaltyManager(policy, ladder, repository, buildFakeActionRepository());
+  return { manager, repository, ladder, policy };
 }
 
-describe("the placeholder interlock", () => {
-  it("puts every action's certainty bar above the uncalibrated ceiling", () => {
-    const policy = new PolicyRegistry();
-    const ceiling = policy.getCertaintyPolicy(SITUATION).uncalibratedCeiling;
-
-    for (const action of ALL_ACTIONS) {
-      const threshold = policy.getCertaintyThreshold(action, SITUATION);
-      assert.ok(
-        threshold > ceiling,
-        `${action} bar ${threshold} must exceed the ${ceiling} ceiling`
-      );
-    }
-  });
-
-  it("cannot apply any action automatically at the capped certainty", () => {
-    const { manager, policy } = buildManager();
-    const ceiling = policy.getCertaintyPolicy(SITUATION).uncalibratedCeiling;
-
-    for (const action of ALL_ACTIONS) {
-      assert.equal(manager.canApply(action, ceiling, SITUATION), false, action);
-    }
-  });
-
-  it("selects no actions from a placeholder-driven detection at any level", async () => {
-    const { manager } = buildManager();
-
-    for (const level of [0, 1, 2, 3] as EscalationLevel[]) {
-      assert.deepEqual(await manager.determineActions(buildOutcome(), level), []);
-    }
-  });
-});
-
 describe("severity does not vary by Situation", () => {
-  it("uses the same certainty bar for every event type", () => {
-    const policy = new PolicyRegistry();
-
-    for (const action of ALL_ACTIONS) {
-      const thresholds = ALL_EVENT_TYPES.map((eventType) =>
-        policy.getCertaintyThreshold(action, { proficiency: "unknown", eventType })
-      );
-      assert.equal(
-        new Set(thresholds).size,
-        1,
-        `${action} must not have a softer bar in any Situation: ${thresholds.join(", ")}`
-      );
-    }
-  });
-
-  it("offers the same actions at a level for every event type", () => {
-    const { ladder } = buildManager();
-
-    for (const level of [0, 1, 2, 3] as EscalationLevel[]) {
-      const actionSets = ALL_EVENT_TYPES.map((eventType) =>
-        ladder.actionsForLevel(level, { proficiency: "unknown", eventType }).join(",")
-      );
-      assert.equal(new Set(actionSets).size, 1, `level ${level} must not vary by event type`);
-    }
-  });
-
-  it("selects identical actions across event types once certainty is calibrated", async () => {
+  it("selects identical actions for every event type", async () => {
     const { manager } = buildManager();
     const selections = await Promise.all(
       ALL_EVENT_TYPES.map(async (eventType) => {
         const situation: Situation = { proficiency: "unknown", eventType };
-        const outcome = buildOutcome({ certainty: 0.9, situation });
-        return (await manager.determineActions(outcome, 2)).join(",");
+        return (await manager.determineActions(buildOutcome({ situation }), 2)).join(",");
       })
     );
 
@@ -210,27 +175,21 @@ describe("severity does not vary by Situation", () => {
 });
 
 describe("PenaltyManager.determineActions", () => {
-  it("selects only the actions the certainty clears", async () => {
-    const { manager } = buildManager();
-    const actions = await manager.determineActions(buildOutcome({ certainty: 0.6 }), 2);
-
-    assert.deepEqual(actions, ["strike"]);
-  });
-
   it("selects nothing when detection did not fire", async () => {
     const { manager } = buildManager();
-    const outcome = buildOutcome({ detected: false, certainty: 1 });
 
-    assert.deepEqual(await manager.determineActions(outcome, 3), []);
+    assert.deepEqual(await manager.determineActions(buildOutcome({ detected: false }), 3), []);
   });
 
-  it("reaches a permanent ban only at the top level and near-total certainty", async () => {
+  it("escalates from a temporary to a permanent ban with repeat offences", async () => {
     const { manager } = buildManager();
+    const forLevel = async (level: EscalationLevel) =>
+      (await manager.determineActions(buildOutcome(), level)).join(",");
 
-    assert.deepEqual(await manager.determineActions(buildOutcome({ certainty: 1 }), 3), [
-      "permanent_ban",
-    ]);
-    assert.deepEqual(await manager.determineActions(buildOutcome({ certainty: 0.9 }), 3), []);
+    assert.equal(await forLevel(0), "temporary_ban", "first offence");
+    assert.equal(await forLevel(1), "temporary_ban", "second offence");
+    assert.equal(await forLevel(2), "permanent_ban", "third offence");
+    assert.equal(await forLevel(3), "permanent_ban");
   });
 });
 
@@ -239,15 +198,15 @@ describe("PenaltyManager.apply", () => {
     const { manager } = buildManager();
 
     await assert.rejects(
-      () => manager.apply("u1", "warning", "   ", SITUATION),
+      () => manager.apply("u1", "temporary_ban", "   ", SITUATION, 0),
       UnappealablePenaltyError
     );
   });
 
-  it("applies on arbiter authority regardless of the certainty bars", async () => {
+  it("applies the action it is given", async () => {
     const { manager, repository } = buildManager();
 
-    const penalty = await manager.apply("u1", "permanent_ban", "case-1", SITUATION);
+    const penalty = await manager.apply("u1", "permanent_ban", "case-1", SITUATION, 2);
 
     assert.equal(penalty.action, "permanent_ban");
     assert.equal(penalty.caseId, "case-1");
@@ -257,8 +216,8 @@ describe("PenaltyManager.apply", () => {
   it("gives a temporary ban an expiry and a permanent ban none", async () => {
     const { manager } = buildManager();
 
-    const temporary = await manager.apply("u1", "temporary_ban", "case-1", SITUATION);
-    const permanent = await manager.apply("u1", "permanent_ban", "case-1", SITUATION);
+    const temporary = await manager.apply("u1", "temporary_ban", "case-1", SITUATION, 0);
+    const permanent = await manager.apply("u1", "permanent_ban", "case-1", SITUATION, 2);
 
     assert.ok(temporary.expiresAt instanceof Date);
     assert.ok(temporary.expiresAt!.getTime() > Date.now());
@@ -268,7 +227,7 @@ describe("PenaltyManager.apply", () => {
   it("stamps the penalty with the level derived from upheld cases", async () => {
     const { manager } = buildManager(2);
 
-    const penalty = await manager.apply("u1", "strike", "case-1", SITUATION);
+    const penalty = await manager.apply("u1", "permanent_ban", "case-1", SITUATION, 2);
 
     assert.equal(penalty.level, 2);
   });
@@ -293,13 +252,12 @@ describe("EscalationLadder derives the level from upheld cases", () => {
       assert.equal(await ladder.getLevel("u1", SITUATION), expected, `${upheld} upheld`);
     }
   });
-
 });
 
 describe("PenaltyManager.reverse", () => {
   it("reverses an applied penalty and drops it from the active set", async () => {
     const { manager } = buildManager();
-    const penalty = await manager.apply("u1", "temporary_ban", "case-1", SITUATION);
+    const penalty = await manager.apply("u1", "temporary_ban", "case-1", SITUATION, 0);
 
     const reversed = await manager.reverse(penalty.penaltyId, "Appeal upheld.");
 
@@ -310,7 +268,7 @@ describe("PenaltyManager.reverse", () => {
 
   it("is safe to call twice", async () => {
     const { manager } = buildManager();
-    const penalty = await manager.apply("u1", "warning", "case-1", SITUATION);
+    const penalty = await manager.apply("u1", "temporary_ban", "case-1", SITUATION, 0);
 
     await manager.reverse(penalty.penaltyId, "Appeal upheld.");
     const again = await manager.reverse(penalty.penaltyId, "Appeal upheld.");

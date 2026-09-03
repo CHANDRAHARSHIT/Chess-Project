@@ -4,16 +4,11 @@
  * PENALTIES DO NOT VARY BY SITUATION. If low-stakes cheating carried weaker
  * consequences, those games would become a safe place to learn evasion before
  * moving to games that matter. Detection *intensity* scales with risk; severity
- * does not. Situation appears here only because certainty bars are
- * situation-scoped — it must never soften an outcome.
+ * does not.
  *
- * Certainty is an expected-harm decision, not a single bar: letting a suspected
- * cheater finish a tournament while confidence climbs 60%→90% costs every honest
- * opponent they meet. Acting early costs an innocent player. Each action has its
- * own threshold.
- *
- * `determineActions` is the automatic path and is gated by those bars. `apply` is
- * the arbiter's path and is not — a human who has read the case outranks them.
+ * A detection is the only gate: if the checks crossed the threshold, the actions
+ * for the user's escalation level apply. Severity comes from how many times they
+ * have been caught, never from what kind of game it was.
  */
 
 import type {
@@ -25,32 +20,25 @@ import type {
 } from "../types.js";
 import type { EscalationLadder } from "./EscalationLadder.js";
 import type { PolicyRegistry } from "../feedback/PolicyRegistry.js";
-import {
-  prismaPenaltyRepository,
-  type PenaltyRepository,
-} from "./penaltyRepository.js";
+import { prismaPenaltyRepository, type PenaltyRepository } from "./penaltyRepository.js";
+import { prismaActionRepository, type ActionRepository } from "./actionRepository.js";
 
 export class PenaltyManager {
   constructor(
     private readonly policy: PolicyRegistry,
     private readonly ladder: EscalationLadder,
-    private readonly repository: PenaltyRepository = prismaPenaltyRepository
+    private readonly repository: PenaltyRepository = prismaPenaltyRepository,
+    private readonly actions: ActionRepository = prismaActionRepository
   ) {}
 
-  canApply(action: PenaltyAction, certainty: number, situation: Situation): boolean {
-    return certainty >= this.policy.getCertaintyThreshold(action, situation);
-  }
-
-  /** Empty is the correct and common result for a single flag. */
+  /** Empty unless detection fired — nothing else may produce a penalty. */
   async determineActions(
     outcome: DetectionOutcome,
     level: EscalationLevel
   ): Promise<readonly PenaltyAction[]> {
     if (!outcome.detected) return [];
 
-    return this.ladder
-      .actionsForLevel(level, outcome.situation)
-      .filter((action) => this.canApply(action, outcome.certainty, outcome.situation));
+    return this.ladder.actionsForLevel(level, outcome.situation);
   }
 
   /** caseId is mandatory — a penalty with no reviewable case behind it can't be appealed. */
@@ -58,7 +46,8 @@ export class PenaltyManager {
     userId: string,
     action: PenaltyAction,
     caseId: string,
-    situation: Situation
+    situation: Situation,
+    level: EscalationLevel
   ): Promise<AppliedPenalty> {
     if (!caseId.trim()) {
       throw new UnappealablePenaltyError(
@@ -70,9 +59,9 @@ export class PenaltyManager {
       userId,
       caseId,
       action,
-      level: await this.ladder.getLevel(userId, situation),
+      level,
       situation,
-      expiresAt: this.calculateExpiry(action, situation),
+      expiresAt: await this.calculateExpiry(action),
     });
   }
 
@@ -93,11 +82,17 @@ export class PenaltyManager {
     return Promise.resolve(this.repository.findPenaltyHistory(userId));
   }
 
-  private calculateExpiry(action: PenaltyAction, situation: Situation): Date | null {
-    const durationMs = this.policy.getPenaltyDurationMs(action, situation);
-    return durationMs === null ? null : new Date(Date.now() + durationMs);
+  /** Duration comes from the action catalogue, so a new action needs no code change. */
+  private async calculateExpiry(action: PenaltyAction): Promise<Date | null> {
+    const actionType = await this.actions.findActionByCode(action);
+    if (!actionType) throw new UnknownPenaltyActionError(`Unknown penalty action '${action}'.`);
+
+    return actionType.defaultDurationMs === null
+      ? null
+      : new Date(Date.now() + actionType.defaultDurationMs);
   }
 }
 
 export class UnappealablePenaltyError extends Error {}
+export class UnknownPenaltyActionError extends Error {}
 export class PenaltyNotFoundError extends Error {}

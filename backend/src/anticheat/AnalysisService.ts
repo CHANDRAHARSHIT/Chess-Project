@@ -28,6 +28,12 @@ import {
 } from "./detection/PostGameAnalysis.js";
 import { renderReviewSummary, renderTextReport } from "./detection/AnalysisReport.js";
 import { CaseManager } from "./review/CaseManager.js";
+import { createPrismaCaseRepository } from "./review/caseRepository.js";
+import { PenaltyManager } from "./penalty/PenaltyManager.js";
+import { createPrismaPenaltyRepository } from "./penalty/penaltyRepository.js";
+import { EscalationLadder } from "./penalty/EscalationLadder.js";
+import { CompensationManager } from "./compensation/CompensationManager.js";
+import { createPrismaCompensationRepository } from "./compensation/compensationRepository.js";
 import type { DetectionOutcome, Situation } from "./types.js";
 
 /**
@@ -42,6 +48,9 @@ const REPORT_SITUATION: Situation = {
   proficiency: "unknown",
   eventType: "unrated_game",
 };
+
+/** Recorded as the decider on automatically enforced cases. */
+const AUTOMATIC_DECIDER = "system:detection";
 
 let engine: StockfishEngine | null = null;
 let analyser: PostGameAnalysis | null = null;
@@ -191,20 +200,66 @@ export async function runWholeHistoryReview(gameSessionId: string): Promise<void
     const outcome = await reviewUserHistory(userId, REPORT_SITUATION, null);
     if (!outcome) continue;
     console.log(`\n${renderReviewSummary(outcome)}\n`);
-    await openCaseForOutcome(outcome);
+    await enforceDetection(outcome);
   }
 }
 
-/** Opening a case concludes nothing and applies no penalty — a human arbiter decides. */
-async function openCaseForOutcome(outcome: DetectionOutcome): Promise<void> {
+/**
+ * Detection came back true: penalise the offender and compensate the opponents
+ * from the flagged games.
+ *
+ * One transaction, so a user is never banned without the record of who was owed
+ * what. The case row is written as the audit trail every penalty must cite — no
+ * human is involved and nothing waits on review.
+ */
+export async function enforceDetection(outcome: DetectionOutcome): Promise<void> {
   if (!outcome.detected) return;
-  if (!new PolicyRegistry().isAutomaticCaseOpeningEnabled(outcome.situation)) return;
 
-  const reviewCase = await new CaseManager().openCase(outcome.suspect, outcome);
+  const policy = new PolicyRegistry();
+  if (!policy.isAutomaticEnforcementEnabled(outcome.situation)) return;
+
+  const userId = outcome.suspect.userId;
+
+  const applied = await prisma.$transaction(async (tx) => {
+    const cases = new CaseManager(createPrismaCaseRepository(tx));
+    const ladder = new EscalationLadder(policy, cases);
+
+    // Read before this detection is recorded, so level 0 means a first offence.
+    const level = await ladder.getLevel(userId, outcome.situation);
+
+    const recorded = await recordDetection(cases, outcome);
+    const penalties = new PenaltyManager(policy, ladder, createPrismaPenaltyRepository(tx));
+    const actions = await penalties.determineActions(outcome, level);
+
+    for (const action of actions) {
+      await penalties.apply(userId, action, recorded.caseId, outcome.situation, level);
+    }
+
+    const compensations = await new CompensationManager(
+      createPrismaCompensationRepository(tx)
+    ).compensate(recorded);
+
+    return { actions, compensated: compensations.length, caseId: recorded.caseId };
+  });
+
   console.log(
-    `[anticheat] Case ${reviewCase.caseId} open for review ` +
-      `(${reviewCase.outcomes.length} outcome(s), ${reviewCase.flaggedGameRecordIds.length} flagged game(s)).`
+    `[anticheat] ${userId} penalised (${applied.actions.join(", ") || "no action"}); ` +
+      `${applied.compensated} opponent(s) compensated; case ${applied.caseId}.`
   );
+}
+
+/** The audit row: opened and upheld together, because no human decides it. */
+async function recordDetection(cases: CaseManager, outcome: DetectionOutcome) {
+  const opened = await cases.openCase(outcome.suspect, outcome);
+
+  return cases.recordDecision({
+    caseId: opened.caseId,
+    arbiterId: AUTOMATIC_DECIDER,
+    upheld: true,
+    confidence: outcome.certainty,
+    reasoning: `Automatic: detection score ${outcome.totalScore} crossed threshold ${outcome.threshold}.`,
+    decidedAt: new Date(),
+  });
 }
 
 /**

@@ -152,11 +152,7 @@ export interface PatternPolicy {
 }
 
 export interface CertaintyPolicy {
-  /**
-   * Ceiling applied while baselines are placeholders. Set below the lowest
-   * certainty any penalty requires, so a review computed from guessed numbers
-   * cannot trigger one — by construction, not by discipline.
-   */
+  /** Ceiling on reported certainty while baselines are placeholders. */
   readonly uncalibratedCeiling: number;
   /** False once real baselines replace the placeholders. */
   readonly placeholderMode: boolean;
@@ -186,64 +182,28 @@ const PROVISIONAL_PATTERN_POLICY: PatternPolicy = {
 
 const PROVISIONAL_DETECTION_THRESHOLD = 100;
 
-/**
- * The ceiling sits below `increase_monitoring`, the cheapest action in the
- * ladder, so no placeholder-driven review reaches any consequence at all.
- */
+/** Caps the certainty a review reports while baselines are placeholders. */
 const PROVISIONAL_CERTAINTY_POLICY: CertaintyPolicy = {
   uncalibratedCeiling: 0.2,
   placeholderMode: true,
 };
 
-const AUTOMATIC_CASE_OPENING_ENABLED = true;
+const AUTOMATIC_ENFORCEMENT_ENABLED = true;
 
 /**
- * Certainty each action requires on the automatic path. Provisional, but every
- * value must stay above `uncalibratedCeiling` — that is what stops a
- * placeholder-driven review reaching any consequence.
+ * What a detection costs, by how many times the user has already been caught.
+ * Level is read before the current detection is recorded, so 0 is a first offence.
+ * New actions are entries here, never branches in PenaltyManager.
  */
-const PROVISIONAL_CERTAINTY_THRESHOLDS: Readonly<Record<PenaltyAction, number>> = {
-  increase_monitoring: 0.3,
-  warning: 0.4,
-  strike: 0.55,
-  restrict_from_prize_events: 0.65,
-  restrict_from_rated_events: 0.7,
-  suspend_from_current_event: 0.75,
-  temporary_ban: 0.85,
-  permanent_ban: 0.95,
-};
-
-/** The spec's ladder as data — new actions are entries here, never branches. */
 const PROVISIONAL_LEVEL_ACTIONS: Readonly<Record<EscalationLevel, readonly PenaltyAction[]>> = {
-  0: ["increase_monitoring"],
-  1: ["increase_monitoring", "warning"],
-  2: [
-    "strike",
-    "restrict_from_rated_events",
-    "restrict_from_prize_events",
-    "suspend_from_current_event",
-    "temporary_ban",
-  ],
+  0: ["temporary_ban"],
+  1: ["temporary_ban"],
+  2: ["permanent_ban"],
   3: ["permanent_ban"],
 };
 
 /** Upheld cases at which each level begins, indexed level 1, 2, 3. */
 const PROVISIONAL_UPHELD_CASES_PER_LEVEL: readonly number[] = [1, 2, 3];
-
-/** Actions that block a user from entering a game. */
-const PROVISIONAL_BLOCKING_ACTIONS: readonly PenaltyAction[] = ["temporary_ban", "permanent_ban"];
-
-/** How long a time-limited action lasts. Null never expires. */
-const PROVISIONAL_PENALTY_DURATIONS_MS: Readonly<Record<PenaltyAction, number | null>> = {
-  increase_monitoring: 30 * DAY_MS,
-  warning: null,
-  strike: null,
-  restrict_from_prize_events: 90 * DAY_MS,
-  restrict_from_rated_events: 90 * DAY_MS,
-  suspend_from_current_event: null,
-  temporary_ban: 30 * DAY_MS,
-  permanent_ban: null,
-};
 
 export class PolicyRegistry {
   /**
@@ -285,12 +245,9 @@ export class PolicyRegistry {
     return PROVISIONAL_CERTAINTY_POLICY;
   }
 
-  /**
-   * Safe to leave on: opening a case is not a consequence. The cost is queue
-   * noise until real baselines land.
-   */
-  isAutomaticCaseOpeningEnabled(situation: Situation): boolean {
-    return AUTOMATIC_CASE_OPENING_ENABLED;
+  /** Master switch for penalising and compensating on a detection. */
+  isAutomaticEnforcementEnabled(situation: Situation): boolean {
+    return AUTOMATIC_ENFORCEMENT_ENABLED;
   }
 
   /** Summed-DCS value above which detection is reported. Spec's `> 100` is a placeholder. */
@@ -307,14 +264,6 @@ export class PolicyRegistry {
     throw new Error("Not implemented");
   }
 
-  /**
-   * Situation-scoped by signature but uniform in value: raising a bar for a
-   * high-risk Situation would be legitimate, softening one never is.
-   */
-  getCertaintyThreshold(action: PenaltyAction, situation: Situation): number {
-    return PROVISIONAL_CERTAINTY_THRESHOLDS[action];
-  }
-
   /** The ladder as data — new actions are entries, not code. */
   getActionsForLevel(level: EscalationLevel, situation: Situation): readonly PenaltyAction[] {
     return PROVISIONAL_LEVEL_ACTIONS[level];
@@ -323,15 +272,6 @@ export class PolicyRegistry {
   /** Upheld-case counts at which levels 1, 2 and 3 begin. */
   getUpheldCasesPerLevel(situation: Situation): readonly number[] {
     return PROVISIONAL_UPHELD_CASES_PER_LEVEL;
-  }
-
-  getBlockingActions(situation: Situation): readonly PenaltyAction[] {
-    return PROVISIONAL_BLOCKING_ACTIONS;
-  }
-
-  /** How long an action lasts, or null when it never expires. */
-  getPenaltyDurationMs(action: PenaltyAction, situation: Situation): number | null {
-    return PROVISIONAL_PENALTY_DURATIONS_MS[action];
   }
 
   /** Flags constituting a pattern rather than an anomaly. Spec's provisional figure is 3. */
