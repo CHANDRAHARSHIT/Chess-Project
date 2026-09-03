@@ -572,11 +572,11 @@ model ReviewCase {
   /// Captured at open time. Affected Users are the opponents in these games only.
   flaggedGameRecordIds    String[]  @default([])
   openedAt                DateTime  @default(now())
-  assignedArbiterId       String?
+  decidedById             String?
   resolvedAt              DateTime?
   resolutionNotes         String?
   upheld                  Boolean?
-  arbiterConfidence       Float?
+  decisionConfidence      Float?
   suspectStatement        String?
   /// The appeal lives here rather than in its own table: one appeal per case,
   /// and no independent-reviewer workflow exists yet to justify more.

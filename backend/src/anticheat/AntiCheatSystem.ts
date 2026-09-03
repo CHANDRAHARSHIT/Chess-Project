@@ -82,7 +82,7 @@ export class AntiCheatSystem {
 
   // ── Module access for internal surfaces ────────────────────────────────────
 
-  /** Admin/arbiter case queue. Internal callers only. */
+  /** Admin case queue. Internal callers only. */
   get cases(): CaseManager {
     throw new Error("Not implemented");
   }

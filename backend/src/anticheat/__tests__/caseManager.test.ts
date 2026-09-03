@@ -136,7 +136,7 @@ describe("CaseManager.openCase", () => {
     const first = await manager.openCase(buildSuspect(), buildOutcome());
     await manager.recordDecision({
       caseId: first.caseId,
-      arbiterId: "arb1",
+      decidedBy: "admin@x.test",
       upheld: false,
       confidence: 0.9,
       reasoning: "Explained by opening preparation.",
@@ -149,34 +149,6 @@ describe("CaseManager.openCase", () => {
 
 });
 
-describe("CaseManager.prepareArbiterPacket", () => {
-  it("carries evidence and games but never scores, thresholds or certainty", async () => {
-    const repository = buildFakeRepository();
-    const manager = new CaseManager(repository);
-    const opened = await manager.openCase(buildSuspect(), buildOutcome());
-
-    const packet = await manager.prepareArbiterPacket(opened.caseId);
-    const serialised = JSON.stringify(packet);
-
-    assert.deepEqual(packet.games, ["g1", "g2"]);
-    assert.ok(packet.evidence.length > 0);
-    for (const leaked of ["totalScore", "threshold", "certainty", "score", "weight"]) {
-      assert.ok(!serialised.includes(leaked), `packet must not expose ${leaked}`);
-    }
-  });
-
-  it("does not identify the suspect", async () => {
-    const repository = buildFakeRepository();
-    const manager = new CaseManager(repository);
-    const opened = await manager.openCase(buildSuspect("real-user-id"), buildOutcome());
-
-    const packet = await manager.prepareArbiterPacket(opened.caseId);
-
-    assert.ok(!JSON.stringify(packet).includes("real-user-id"));
-    assert.match(packet.anonymisedSuspectRef, /^Suspect-/);
-  });
-});
-
 describe("CaseManager decisions", () => {
   it("records an upheld decision and counts it towards escalation", async () => {
     const repository = buildFakeRepository();
@@ -185,7 +157,7 @@ describe("CaseManager decisions", () => {
 
     const resolved = await manager.recordDecision({
       caseId: opened.caseId,
-      arbiterId: "arb1",
+      decidedBy: "admin@x.test",
       upheld: true,
       confidence: 0.95,
       reasoning: "Engine correlation across three games.",
@@ -203,7 +175,7 @@ describe("CaseManager decisions", () => {
     const opened = await manager.openCase(buildSuspect(), buildOutcome());
     const decision = {
       caseId: opened.caseId,
-      arbiterId: "arb1",
+      decidedBy: "admin@x.test",
       upheld: true,
       confidence: 0.9,
       reasoning: "Upheld.",
@@ -218,7 +190,7 @@ describe("CaseManager decisions", () => {
   it("rejects an unknown case id", async () => {
     const manager = new CaseManager(buildFakeRepository());
 
-    await assert.rejects(() => manager.prepareArbiterPacket("nope"), CaseNotFoundError);
+    await assert.rejects(() => manager.closeCase("nope", "n/a"), CaseNotFoundError);
   });
 });
 
@@ -231,8 +203,6 @@ describe("CaseManager.submitSuspectStatement", () => {
     const updated = await manager.submitSuspectStatement(opened.caseId, "u1", "I was streaming.");
 
     assert.equal(updated.suspectStatement, "I was streaming.");
-    const packet = await manager.prepareArbiterPacket(opened.caseId);
-    assert.equal(packet.suspectStatement, "I was streaming.");
   });
 
   it("refuses a statement from anyone else", async () => {

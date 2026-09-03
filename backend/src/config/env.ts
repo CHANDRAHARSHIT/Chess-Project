@@ -66,9 +66,9 @@ export const env = {
   // Gates the post-game analysis hook and the /analysis endpoint. Analysis runs
   // a WASM engine per finished game, so it stays off until deliberately enabled.
   ANTICHEAT_ENABLED: process.env.ANTICHEAT_ENABLED === "true",
-  // Comma-separated emails allowed to act as arbiters. Stands in for a role
-  // column: replaceable in one file once real roles exist.
-  ACS_ARBITER_EMAILS: process.env.ACS_ARBITER_EMAILS ?? "",
+  // Comma-separated emails allowed to review and reverse enforcement actions.
+  // Stands in for a role column; replaceable in one file once real roles exist.
+  ACS_ADMIN_EMAILS: process.env.ACS_ADMIN_EMAILS ?? "",
 
   // Rollbar error monitoring
   ROLLBAR_ACCESS_TOKEN: process.env.ROLLBAR_ACCESS_TOKEN!,

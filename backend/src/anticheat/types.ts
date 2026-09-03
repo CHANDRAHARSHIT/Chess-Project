@@ -106,7 +106,7 @@ export interface CheckResult {
   readonly score: number;
   /** 0–1. Distinct from score: high confidence in a low score is meaningful. */
   readonly confidence: number;
-  /** For the arbiter. Never surfaced to the suspect. */
+  /** Internal. Never surfaced to the suspect. */
   readonly evidence: readonly string[];
 }
 
@@ -174,7 +174,7 @@ export interface AppliedPenalty {
 
 export type CaseStatus =
   | "open"
-  | "awaiting_arbiter"
+  | "awaiting_review"
   | "under_review"
   | "upheld"
   | "overturned"
@@ -184,7 +184,7 @@ export type CaseStatus =
 /** Statuses where the case is still live. Anything else has been decided. */
 export const UNRESOLVED_CASE_STATUSES: readonly CaseStatus[] = [
   "open",
-  "awaiting_arbiter",
+  "awaiting_review",
   "under_review",
   "appealed",
 ];
@@ -200,7 +200,7 @@ export interface CaseAppeal {
   readonly decisionReasoning?: string;
 }
 
-/** Must be self-contained: arbiters are external contractors with no platform access. */
+/** The record every penalty cites, and what an appeal points at. */
 export interface ReviewCase {
   readonly caseId: string;
   readonly suspect: Suspect;
@@ -213,12 +213,12 @@ export interface ReviewCase {
   /** Computed by Compensation once the case is upheld; empty until then. */
   readonly affectedUsers: readonly AffectedUser[];
   readonly openedAt: Date;
-  readonly assignedArbiterId?: string;
+  readonly decidedById?: string;
   readonly resolvedAt?: Date;
   readonly resolutionNotes?: string;
-  /** Set only once an arbiter has decided. Undefined is "not yet decided". */
+  /** Set once decided. Undefined is "not yet decided". */
   readonly upheld?: boolean;
-  readonly arbiterConfidence?: number;
+  readonly decisionConfidence?: number;
   readonly suspectStatement?: string;
   readonly appeal?: CaseAppeal;
 }

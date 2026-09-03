@@ -29,11 +29,11 @@ export type AggregateReviewCase = {
 }
 
 export type ReviewCaseAvgAggregateOutputType = {
-  arbiterConfidence: number | null
+  decisionConfidence: number | null
 }
 
 export type ReviewCaseSumAggregateOutputType = {
-  arbiterConfidence: number | null
+  decisionConfidence: number | null
 }
 
 export type ReviewCaseMinAggregateOutputType = {
@@ -43,11 +43,11 @@ export type ReviewCaseMinAggregateOutputType = {
   eventType: string | null
   status: string | null
   openedAt: Date | null
-  assignedArbiterId: string | null
+  decidedById: string | null
   resolvedAt: Date | null
   resolutionNotes: string | null
   upheld: boolean | null
-  arbiterConfidence: number | null
+  decisionConfidence: number | null
   suspectStatement: string | null
   appealStatus: string | null
   appealGrounds: string | null
@@ -63,11 +63,11 @@ export type ReviewCaseMaxAggregateOutputType = {
   eventType: string | null
   status: string | null
   openedAt: Date | null
-  assignedArbiterId: string | null
+  decidedById: string | null
   resolvedAt: Date | null
   resolutionNotes: string | null
   upheld: boolean | null
-  arbiterConfidence: number | null
+  decisionConfidence: number | null
   suspectStatement: string | null
   appealStatus: string | null
   appealGrounds: string | null
@@ -86,11 +86,11 @@ export type ReviewCaseCountAggregateOutputType = {
   evidence: number
   flaggedGameRecordIds: number
   openedAt: number
-  assignedArbiterId: number
+  decidedById: number
   resolvedAt: number
   resolutionNotes: number
   upheld: number
-  arbiterConfidence: number
+  decisionConfidence: number
   suspectStatement: number
   appealStatus: number
   appealGrounds: number
@@ -102,11 +102,11 @@ export type ReviewCaseCountAggregateOutputType = {
 
 
 export type ReviewCaseAvgAggregateInputType = {
-  arbiterConfidence?: true
+  decisionConfidence?: true
 }
 
 export type ReviewCaseSumAggregateInputType = {
-  arbiterConfidence?: true
+  decisionConfidence?: true
 }
 
 export type ReviewCaseMinAggregateInputType = {
@@ -116,11 +116,11 @@ export type ReviewCaseMinAggregateInputType = {
   eventType?: true
   status?: true
   openedAt?: true
-  assignedArbiterId?: true
+  decidedById?: true
   resolvedAt?: true
   resolutionNotes?: true
   upheld?: true
-  arbiterConfidence?: true
+  decisionConfidence?: true
   suspectStatement?: true
   appealStatus?: true
   appealGrounds?: true
@@ -136,11 +136,11 @@ export type ReviewCaseMaxAggregateInputType = {
   eventType?: true
   status?: true
   openedAt?: true
-  assignedArbiterId?: true
+  decidedById?: true
   resolvedAt?: true
   resolutionNotes?: true
   upheld?: true
-  arbiterConfidence?: true
+  decisionConfidence?: true
   suspectStatement?: true
   appealStatus?: true
   appealGrounds?: true
@@ -159,11 +159,11 @@ export type ReviewCaseCountAggregateInputType = {
   evidence?: true
   flaggedGameRecordIds?: true
   openedAt?: true
-  assignedArbiterId?: true
+  decidedById?: true
   resolvedAt?: true
   resolutionNotes?: true
   upheld?: true
-  arbiterConfidence?: true
+  decisionConfidence?: true
   suspectStatement?: true
   appealStatus?: true
   appealGrounds?: true
@@ -269,11 +269,11 @@ export type ReviewCaseGroupByOutputType = {
   evidence: runtime.JsonValue
   flaggedGameRecordIds: string[]
   openedAt: Date
-  assignedArbiterId: string | null
+  decidedById: string | null
   resolvedAt: Date | null
   resolutionNotes: string | null
   upheld: boolean | null
-  arbiterConfidence: number | null
+  decisionConfidence: number | null
   suspectStatement: string | null
   appealStatus: string | null
   appealGrounds: string | null
@@ -315,11 +315,11 @@ export type ReviewCaseWhereInput = {
   evidence?: Prisma.JsonFilter<"ReviewCase">
   flaggedGameRecordIds?: Prisma.StringNullableListFilter<"ReviewCase">
   openedAt?: Prisma.DateTimeFilter<"ReviewCase"> | Date | string
-  assignedArbiterId?: Prisma.StringNullableFilter<"ReviewCase"> | string | null
+  decidedById?: Prisma.StringNullableFilter<"ReviewCase"> | string | null
   resolvedAt?: Prisma.DateTimeNullableFilter<"ReviewCase"> | Date | string | null
   resolutionNotes?: Prisma.StringNullableFilter<"ReviewCase"> | string | null
   upheld?: Prisma.BoolNullableFilter<"ReviewCase"> | boolean | null
-  arbiterConfidence?: Prisma.FloatNullableFilter<"ReviewCase"> | number | null
+  decisionConfidence?: Prisma.FloatNullableFilter<"ReviewCase"> | number | null
   suspectStatement?: Prisma.StringNullableFilter<"ReviewCase"> | string | null
   appealStatus?: Prisma.StringNullableFilter<"ReviewCase"> | string | null
   appealGrounds?: Prisma.StringNullableFilter<"ReviewCase"> | string | null
@@ -341,11 +341,11 @@ export type ReviewCaseOrderByWithRelationInput = {
   evidence?: Prisma.SortOrder
   flaggedGameRecordIds?: Prisma.SortOrder
   openedAt?: Prisma.SortOrder
-  assignedArbiterId?: Prisma.SortOrderInput | Prisma.SortOrder
+  decidedById?: Prisma.SortOrderInput | Prisma.SortOrder
   resolvedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   resolutionNotes?: Prisma.SortOrderInput | Prisma.SortOrder
   upheld?: Prisma.SortOrderInput | Prisma.SortOrder
-  arbiterConfidence?: Prisma.SortOrderInput | Prisma.SortOrder
+  decisionConfidence?: Prisma.SortOrderInput | Prisma.SortOrder
   suspectStatement?: Prisma.SortOrderInput | Prisma.SortOrder
   appealStatus?: Prisma.SortOrderInput | Prisma.SortOrder
   appealGrounds?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -370,11 +370,11 @@ export type ReviewCaseWhereUniqueInput = Prisma.AtLeast<{
   evidence?: Prisma.JsonFilter<"ReviewCase">
   flaggedGameRecordIds?: Prisma.StringNullableListFilter<"ReviewCase">
   openedAt?: Prisma.DateTimeFilter<"ReviewCase"> | Date | string
-  assignedArbiterId?: Prisma.StringNullableFilter<"ReviewCase"> | string | null
+  decidedById?: Prisma.StringNullableFilter<"ReviewCase"> | string | null
   resolvedAt?: Prisma.DateTimeNullableFilter<"ReviewCase"> | Date | string | null
   resolutionNotes?: Prisma.StringNullableFilter<"ReviewCase"> | string | null
   upheld?: Prisma.BoolNullableFilter<"ReviewCase"> | boolean | null
-  arbiterConfidence?: Prisma.FloatNullableFilter<"ReviewCase"> | number | null
+  decisionConfidence?: Prisma.FloatNullableFilter<"ReviewCase"> | number | null
   suspectStatement?: Prisma.StringNullableFilter<"ReviewCase"> | string | null
   appealStatus?: Prisma.StringNullableFilter<"ReviewCase"> | string | null
   appealGrounds?: Prisma.StringNullableFilter<"ReviewCase"> | string | null
@@ -396,11 +396,11 @@ export type ReviewCaseOrderByWithAggregationInput = {
   evidence?: Prisma.SortOrder
   flaggedGameRecordIds?: Prisma.SortOrder
   openedAt?: Prisma.SortOrder
-  assignedArbiterId?: Prisma.SortOrderInput | Prisma.SortOrder
+  decidedById?: Prisma.SortOrderInput | Prisma.SortOrder
   resolvedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   resolutionNotes?: Prisma.SortOrderInput | Prisma.SortOrder
   upheld?: Prisma.SortOrderInput | Prisma.SortOrder
-  arbiterConfidence?: Prisma.SortOrderInput | Prisma.SortOrder
+  decisionConfidence?: Prisma.SortOrderInput | Prisma.SortOrder
   suspectStatement?: Prisma.SortOrderInput | Prisma.SortOrder
   appealStatus?: Prisma.SortOrderInput | Prisma.SortOrder
   appealGrounds?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -427,11 +427,11 @@ export type ReviewCaseScalarWhereWithAggregatesInput = {
   evidence?: Prisma.JsonWithAggregatesFilter<"ReviewCase">
   flaggedGameRecordIds?: Prisma.StringNullableListFilter<"ReviewCase">
   openedAt?: Prisma.DateTimeWithAggregatesFilter<"ReviewCase"> | Date | string
-  assignedArbiterId?: Prisma.StringNullableWithAggregatesFilter<"ReviewCase"> | string | null
+  decidedById?: Prisma.StringNullableWithAggregatesFilter<"ReviewCase"> | string | null
   resolvedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"ReviewCase"> | Date | string | null
   resolutionNotes?: Prisma.StringNullableWithAggregatesFilter<"ReviewCase"> | string | null
   upheld?: Prisma.BoolNullableWithAggregatesFilter<"ReviewCase"> | boolean | null
-  arbiterConfidence?: Prisma.FloatNullableWithAggregatesFilter<"ReviewCase"> | number | null
+  decisionConfidence?: Prisma.FloatNullableWithAggregatesFilter<"ReviewCase"> | number | null
   suspectStatement?: Prisma.StringNullableWithAggregatesFilter<"ReviewCase"> | string | null
   appealStatus?: Prisma.StringNullableWithAggregatesFilter<"ReviewCase"> | string | null
   appealGrounds?: Prisma.StringNullableWithAggregatesFilter<"ReviewCase"> | string | null
@@ -449,11 +449,11 @@ export type ReviewCaseCreateInput = {
   evidence: Prisma.JsonNullValueInput | runtime.InputJsonValue
   flaggedGameRecordIds?: Prisma.ReviewCaseCreateflaggedGameRecordIdsInput | string[]
   openedAt?: Date | string
-  assignedArbiterId?: string | null
+  decidedById?: string | null
   resolvedAt?: Date | string | null
   resolutionNotes?: string | null
   upheld?: boolean | null
-  arbiterConfidence?: number | null
+  decisionConfidence?: number | null
   suspectStatement?: string | null
   appealStatus?: string | null
   appealGrounds?: string | null
@@ -475,11 +475,11 @@ export type ReviewCaseUncheckedCreateInput = {
   evidence: Prisma.JsonNullValueInput | runtime.InputJsonValue
   flaggedGameRecordIds?: Prisma.ReviewCaseCreateflaggedGameRecordIdsInput | string[]
   openedAt?: Date | string
-  assignedArbiterId?: string | null
+  decidedById?: string | null
   resolvedAt?: Date | string | null
   resolutionNotes?: string | null
   upheld?: boolean | null
-  arbiterConfidence?: number | null
+  decisionConfidence?: number | null
   suspectStatement?: string | null
   appealStatus?: string | null
   appealGrounds?: string | null
@@ -499,11 +499,11 @@ export type ReviewCaseUpdateInput = {
   evidence?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   flaggedGameRecordIds?: Prisma.ReviewCaseUpdateflaggedGameRecordIdsInput | string[]
   openedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  assignedArbiterId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  decidedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resolvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resolutionNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   upheld?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
-  arbiterConfidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  decisionConfidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   suspectStatement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   appealStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   appealGrounds?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -525,11 +525,11 @@ export type ReviewCaseUncheckedUpdateInput = {
   evidence?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   flaggedGameRecordIds?: Prisma.ReviewCaseUpdateflaggedGameRecordIdsInput | string[]
   openedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  assignedArbiterId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  decidedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resolvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resolutionNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   upheld?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
-  arbiterConfidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  decisionConfidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   suspectStatement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   appealStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   appealGrounds?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -550,11 +550,11 @@ export type ReviewCaseCreateManyInput = {
   evidence: Prisma.JsonNullValueInput | runtime.InputJsonValue
   flaggedGameRecordIds?: Prisma.ReviewCaseCreateflaggedGameRecordIdsInput | string[]
   openedAt?: Date | string
-  assignedArbiterId?: string | null
+  decidedById?: string | null
   resolvedAt?: Date | string | null
   resolutionNotes?: string | null
   upheld?: boolean | null
-  arbiterConfidence?: number | null
+  decisionConfidence?: number | null
   suspectStatement?: string | null
   appealStatus?: string | null
   appealGrounds?: string | null
@@ -572,11 +572,11 @@ export type ReviewCaseUpdateManyMutationInput = {
   evidence?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   flaggedGameRecordIds?: Prisma.ReviewCaseUpdateflaggedGameRecordIdsInput | string[]
   openedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  assignedArbiterId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  decidedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resolvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resolutionNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   upheld?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
-  arbiterConfidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  decisionConfidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   suspectStatement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   appealStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   appealGrounds?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -595,11 +595,11 @@ export type ReviewCaseUncheckedUpdateManyInput = {
   evidence?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   flaggedGameRecordIds?: Prisma.ReviewCaseUpdateflaggedGameRecordIdsInput | string[]
   openedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  assignedArbiterId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  decidedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resolvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resolutionNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   upheld?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
-  arbiterConfidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  decisionConfidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   suspectStatement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   appealStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   appealGrounds?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -628,11 +628,11 @@ export type ReviewCaseCountOrderByAggregateInput = {
   evidence?: Prisma.SortOrder
   flaggedGameRecordIds?: Prisma.SortOrder
   openedAt?: Prisma.SortOrder
-  assignedArbiterId?: Prisma.SortOrder
+  decidedById?: Prisma.SortOrder
   resolvedAt?: Prisma.SortOrder
   resolutionNotes?: Prisma.SortOrder
   upheld?: Prisma.SortOrder
-  arbiterConfidence?: Prisma.SortOrder
+  decisionConfidence?: Prisma.SortOrder
   suspectStatement?: Prisma.SortOrder
   appealStatus?: Prisma.SortOrder
   appealGrounds?: Prisma.SortOrder
@@ -642,7 +642,7 @@ export type ReviewCaseCountOrderByAggregateInput = {
 }
 
 export type ReviewCaseAvgOrderByAggregateInput = {
-  arbiterConfidence?: Prisma.SortOrder
+  decisionConfidence?: Prisma.SortOrder
 }
 
 export type ReviewCaseMaxOrderByAggregateInput = {
@@ -652,11 +652,11 @@ export type ReviewCaseMaxOrderByAggregateInput = {
   eventType?: Prisma.SortOrder
   status?: Prisma.SortOrder
   openedAt?: Prisma.SortOrder
-  assignedArbiterId?: Prisma.SortOrder
+  decidedById?: Prisma.SortOrder
   resolvedAt?: Prisma.SortOrder
   resolutionNotes?: Prisma.SortOrder
   upheld?: Prisma.SortOrder
-  arbiterConfidence?: Prisma.SortOrder
+  decisionConfidence?: Prisma.SortOrder
   suspectStatement?: Prisma.SortOrder
   appealStatus?: Prisma.SortOrder
   appealGrounds?: Prisma.SortOrder
@@ -672,11 +672,11 @@ export type ReviewCaseMinOrderByAggregateInput = {
   eventType?: Prisma.SortOrder
   status?: Prisma.SortOrder
   openedAt?: Prisma.SortOrder
-  assignedArbiterId?: Prisma.SortOrder
+  decidedById?: Prisma.SortOrder
   resolvedAt?: Prisma.SortOrder
   resolutionNotes?: Prisma.SortOrder
   upheld?: Prisma.SortOrder
-  arbiterConfidence?: Prisma.SortOrder
+  decisionConfidence?: Prisma.SortOrder
   suspectStatement?: Prisma.SortOrder
   appealStatus?: Prisma.SortOrder
   appealGrounds?: Prisma.SortOrder
@@ -686,7 +686,7 @@ export type ReviewCaseMinOrderByAggregateInput = {
 }
 
 export type ReviewCaseSumOrderByAggregateInput = {
-  arbiterConfidence?: Prisma.SortOrder
+  decisionConfidence?: Prisma.SortOrder
 }
 
 export type ReviewCaseScalarRelationFilter = {
@@ -786,11 +786,11 @@ export type ReviewCaseCreateWithoutUserInput = {
   evidence: Prisma.JsonNullValueInput | runtime.InputJsonValue
   flaggedGameRecordIds?: Prisma.ReviewCaseCreateflaggedGameRecordIdsInput | string[]
   openedAt?: Date | string
-  assignedArbiterId?: string | null
+  decidedById?: string | null
   resolvedAt?: Date | string | null
   resolutionNotes?: string | null
   upheld?: boolean | null
-  arbiterConfidence?: number | null
+  decisionConfidence?: number | null
   suspectStatement?: string | null
   appealStatus?: string | null
   appealGrounds?: string | null
@@ -810,11 +810,11 @@ export type ReviewCaseUncheckedCreateWithoutUserInput = {
   evidence: Prisma.JsonNullValueInput | runtime.InputJsonValue
   flaggedGameRecordIds?: Prisma.ReviewCaseCreateflaggedGameRecordIdsInput | string[]
   openedAt?: Date | string
-  assignedArbiterId?: string | null
+  decidedById?: string | null
   resolvedAt?: Date | string | null
   resolutionNotes?: string | null
   upheld?: boolean | null
-  arbiterConfidence?: number | null
+  decisionConfidence?: number | null
   suspectStatement?: string | null
   appealStatus?: string | null
   appealGrounds?: string | null
@@ -864,11 +864,11 @@ export type ReviewCaseScalarWhereInput = {
   evidence?: Prisma.JsonFilter<"ReviewCase">
   flaggedGameRecordIds?: Prisma.StringNullableListFilter<"ReviewCase">
   openedAt?: Prisma.DateTimeFilter<"ReviewCase"> | Date | string
-  assignedArbiterId?: Prisma.StringNullableFilter<"ReviewCase"> | string | null
+  decidedById?: Prisma.StringNullableFilter<"ReviewCase"> | string | null
   resolvedAt?: Prisma.DateTimeNullableFilter<"ReviewCase"> | Date | string | null
   resolutionNotes?: Prisma.StringNullableFilter<"ReviewCase"> | string | null
   upheld?: Prisma.BoolNullableFilter<"ReviewCase"> | boolean | null
-  arbiterConfidence?: Prisma.FloatNullableFilter<"ReviewCase"> | number | null
+  decisionConfidence?: Prisma.FloatNullableFilter<"ReviewCase"> | number | null
   suspectStatement?: Prisma.StringNullableFilter<"ReviewCase"> | string | null
   appealStatus?: Prisma.StringNullableFilter<"ReviewCase"> | string | null
   appealGrounds?: Prisma.StringNullableFilter<"ReviewCase"> | string | null
@@ -886,11 +886,11 @@ export type ReviewCaseCreateWithoutPenaltiesInput = {
   evidence: Prisma.JsonNullValueInput | runtime.InputJsonValue
   flaggedGameRecordIds?: Prisma.ReviewCaseCreateflaggedGameRecordIdsInput | string[]
   openedAt?: Date | string
-  assignedArbiterId?: string | null
+  decidedById?: string | null
   resolvedAt?: Date | string | null
   resolutionNotes?: string | null
   upheld?: boolean | null
-  arbiterConfidence?: number | null
+  decisionConfidence?: number | null
   suspectStatement?: string | null
   appealStatus?: string | null
   appealGrounds?: string | null
@@ -911,11 +911,11 @@ export type ReviewCaseUncheckedCreateWithoutPenaltiesInput = {
   evidence: Prisma.JsonNullValueInput | runtime.InputJsonValue
   flaggedGameRecordIds?: Prisma.ReviewCaseCreateflaggedGameRecordIdsInput | string[]
   openedAt?: Date | string
-  assignedArbiterId?: string | null
+  decidedById?: string | null
   resolvedAt?: Date | string | null
   resolutionNotes?: string | null
   upheld?: boolean | null
-  arbiterConfidence?: number | null
+  decisionConfidence?: number | null
   suspectStatement?: string | null
   appealStatus?: string | null
   appealGrounds?: string | null
@@ -950,11 +950,11 @@ export type ReviewCaseUpdateWithoutPenaltiesInput = {
   evidence?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   flaggedGameRecordIds?: Prisma.ReviewCaseUpdateflaggedGameRecordIdsInput | string[]
   openedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  assignedArbiterId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  decidedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resolvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resolutionNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   upheld?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
-  arbiterConfidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  decisionConfidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   suspectStatement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   appealStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   appealGrounds?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -975,11 +975,11 @@ export type ReviewCaseUncheckedUpdateWithoutPenaltiesInput = {
   evidence?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   flaggedGameRecordIds?: Prisma.ReviewCaseUpdateflaggedGameRecordIdsInput | string[]
   openedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  assignedArbiterId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  decidedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resolvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resolutionNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   upheld?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
-  arbiterConfidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  decisionConfidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   suspectStatement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   appealStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   appealGrounds?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -998,11 +998,11 @@ export type ReviewCaseCreateWithoutCompensationsInput = {
   evidence: Prisma.JsonNullValueInput | runtime.InputJsonValue
   flaggedGameRecordIds?: Prisma.ReviewCaseCreateflaggedGameRecordIdsInput | string[]
   openedAt?: Date | string
-  assignedArbiterId?: string | null
+  decidedById?: string | null
   resolvedAt?: Date | string | null
   resolutionNotes?: string | null
   upheld?: boolean | null
-  arbiterConfidence?: number | null
+  decisionConfidence?: number | null
   suspectStatement?: string | null
   appealStatus?: string | null
   appealGrounds?: string | null
@@ -1023,11 +1023,11 @@ export type ReviewCaseUncheckedCreateWithoutCompensationsInput = {
   evidence: Prisma.JsonNullValueInput | runtime.InputJsonValue
   flaggedGameRecordIds?: Prisma.ReviewCaseCreateflaggedGameRecordIdsInput | string[]
   openedAt?: Date | string
-  assignedArbiterId?: string | null
+  decidedById?: string | null
   resolvedAt?: Date | string | null
   resolutionNotes?: string | null
   upheld?: boolean | null
-  arbiterConfidence?: number | null
+  decisionConfidence?: number | null
   suspectStatement?: string | null
   appealStatus?: string | null
   appealGrounds?: string | null
@@ -1062,11 +1062,11 @@ export type ReviewCaseUpdateWithoutCompensationsInput = {
   evidence?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   flaggedGameRecordIds?: Prisma.ReviewCaseUpdateflaggedGameRecordIdsInput | string[]
   openedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  assignedArbiterId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  decidedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resolvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resolutionNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   upheld?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
-  arbiterConfidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  decisionConfidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   suspectStatement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   appealStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   appealGrounds?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1087,11 +1087,11 @@ export type ReviewCaseUncheckedUpdateWithoutCompensationsInput = {
   evidence?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   flaggedGameRecordIds?: Prisma.ReviewCaseUpdateflaggedGameRecordIdsInput | string[]
   openedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  assignedArbiterId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  decidedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resolvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resolutionNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   upheld?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
-  arbiterConfidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  decisionConfidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   suspectStatement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   appealStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   appealGrounds?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1110,11 +1110,11 @@ export type ReviewCaseCreateManyUserInput = {
   evidence: Prisma.JsonNullValueInput | runtime.InputJsonValue
   flaggedGameRecordIds?: Prisma.ReviewCaseCreateflaggedGameRecordIdsInput | string[]
   openedAt?: Date | string
-  assignedArbiterId?: string | null
+  decidedById?: string | null
   resolvedAt?: Date | string | null
   resolutionNotes?: string | null
   upheld?: boolean | null
-  arbiterConfidence?: number | null
+  decisionConfidence?: number | null
   suspectStatement?: string | null
   appealStatus?: string | null
   appealGrounds?: string | null
@@ -1132,11 +1132,11 @@ export type ReviewCaseUpdateWithoutUserInput = {
   evidence?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   flaggedGameRecordIds?: Prisma.ReviewCaseUpdateflaggedGameRecordIdsInput | string[]
   openedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  assignedArbiterId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  decidedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resolvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resolutionNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   upheld?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
-  arbiterConfidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  decisionConfidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   suspectStatement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   appealStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   appealGrounds?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1156,11 +1156,11 @@ export type ReviewCaseUncheckedUpdateWithoutUserInput = {
   evidence?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   flaggedGameRecordIds?: Prisma.ReviewCaseUpdateflaggedGameRecordIdsInput | string[]
   openedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  assignedArbiterId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  decidedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resolvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resolutionNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   upheld?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
-  arbiterConfidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  decisionConfidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   suspectStatement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   appealStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   appealGrounds?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1180,11 +1180,11 @@ export type ReviewCaseUncheckedUpdateManyWithoutUserInput = {
   evidence?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   flaggedGameRecordIds?: Prisma.ReviewCaseUpdateflaggedGameRecordIdsInput | string[]
   openedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  assignedArbiterId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  decidedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resolvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resolutionNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   upheld?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
-  arbiterConfidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  decisionConfidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   suspectStatement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   appealStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   appealGrounds?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1243,11 +1243,11 @@ export type ReviewCaseSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   evidence?: boolean
   flaggedGameRecordIds?: boolean
   openedAt?: boolean
-  assignedArbiterId?: boolean
+  decidedById?: boolean
   resolvedAt?: boolean
   resolutionNotes?: boolean
   upheld?: boolean
-  arbiterConfidence?: boolean
+  decisionConfidence?: boolean
   suspectStatement?: boolean
   appealStatus?: boolean
   appealGrounds?: boolean
@@ -1270,11 +1270,11 @@ export type ReviewCaseSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
   evidence?: boolean
   flaggedGameRecordIds?: boolean
   openedAt?: boolean
-  assignedArbiterId?: boolean
+  decidedById?: boolean
   resolvedAt?: boolean
   resolutionNotes?: boolean
   upheld?: boolean
-  arbiterConfidence?: boolean
+  decisionConfidence?: boolean
   suspectStatement?: boolean
   appealStatus?: boolean
   appealGrounds?: boolean
@@ -1294,11 +1294,11 @@ export type ReviewCaseSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
   evidence?: boolean
   flaggedGameRecordIds?: boolean
   openedAt?: boolean
-  assignedArbiterId?: boolean
+  decidedById?: boolean
   resolvedAt?: boolean
   resolutionNotes?: boolean
   upheld?: boolean
-  arbiterConfidence?: boolean
+  decisionConfidence?: boolean
   suspectStatement?: boolean
   appealStatus?: boolean
   appealGrounds?: boolean
@@ -1318,11 +1318,11 @@ export type ReviewCaseSelectScalar = {
   evidence?: boolean
   flaggedGameRecordIds?: boolean
   openedAt?: boolean
-  assignedArbiterId?: boolean
+  decidedById?: boolean
   resolvedAt?: boolean
   resolutionNotes?: boolean
   upheld?: boolean
-  arbiterConfidence?: boolean
+  decisionConfidence?: boolean
   suspectStatement?: boolean
   appealStatus?: boolean
   appealGrounds?: boolean
@@ -1331,7 +1331,7 @@ export type ReviewCaseSelectScalar = {
   appealDecisionReasoning?: boolean
 }
 
-export type ReviewCaseOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "proficiency" | "eventType" | "status" | "outcomes" | "evidence" | "flaggedGameRecordIds" | "openedAt" | "assignedArbiterId" | "resolvedAt" | "resolutionNotes" | "upheld" | "arbiterConfidence" | "suspectStatement" | "appealStatus" | "appealGrounds" | "appealedAt" | "appealDecidedAt" | "appealDecisionReasoning", ExtArgs["result"]["reviewCase"]>
+export type ReviewCaseOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "proficiency" | "eventType" | "status" | "outcomes" | "evidence" | "flaggedGameRecordIds" | "openedAt" | "decidedById" | "resolvedAt" | "resolutionNotes" | "upheld" | "decisionConfidence" | "suspectStatement" | "appealStatus" | "appealGrounds" | "appealedAt" | "appealDecidedAt" | "appealDecisionReasoning", ExtArgs["result"]["reviewCase"]>
 export type ReviewCaseInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   penalties?: boolean | Prisma.ReviewCase$penaltiesArgs<ExtArgs>
@@ -1376,11 +1376,11 @@ export type $ReviewCasePayload<ExtArgs extends runtime.Types.Extensions.Internal
      */
     flaggedGameRecordIds: string[]
     openedAt: Date
-    assignedArbiterId: string | null
+    decidedById: string | null
     resolvedAt: Date | null
     resolutionNotes: string | null
     upheld: boolean | null
-    arbiterConfidence: number | null
+    decisionConfidence: number | null
     suspectStatement: string | null
     /**
      * The appeal lives here rather than in its own table: one appeal per case,
@@ -1826,11 +1826,11 @@ export interface ReviewCaseFieldRefs {
   readonly evidence: Prisma.FieldRef<"ReviewCase", 'Json'>
   readonly flaggedGameRecordIds: Prisma.FieldRef<"ReviewCase", 'String[]'>
   readonly openedAt: Prisma.FieldRef<"ReviewCase", 'DateTime'>
-  readonly assignedArbiterId: Prisma.FieldRef<"ReviewCase", 'String'>
+  readonly decidedById: Prisma.FieldRef<"ReviewCase", 'String'>
   readonly resolvedAt: Prisma.FieldRef<"ReviewCase", 'DateTime'>
   readonly resolutionNotes: Prisma.FieldRef<"ReviewCase", 'String'>
   readonly upheld: Prisma.FieldRef<"ReviewCase", 'Boolean'>
-  readonly arbiterConfidence: Prisma.FieldRef<"ReviewCase", 'Float'>
+  readonly decisionConfidence: Prisma.FieldRef<"ReviewCase", 'Float'>
   readonly suspectStatement: Prisma.FieldRef<"ReviewCase", 'String'>
   readonly appealStatus: Prisma.FieldRef<"ReviewCase", 'String'>
   readonly appealGrounds: Prisma.FieldRef<"ReviewCase", 'String'>

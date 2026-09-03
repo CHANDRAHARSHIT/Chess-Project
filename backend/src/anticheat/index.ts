@@ -163,7 +163,7 @@ export {
   CaseNotDecidedError,
   CaseNotFoundError,
 } from "./review/CaseManager.js";
-export type { ArbiterDecision, ArbiterPacket } from "./review/CaseManager.js";
+export type { CaseDecision } from "./review/CaseManager.js";
 export {
   collectEvidence,
   createPrismaCaseRepository,

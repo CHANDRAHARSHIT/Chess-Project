@@ -35,7 +35,7 @@ export function selectScoredPlies(
   return plies.filter((ply) => findExclusionReason(ply, policy) === undefined);
 }
 
-/** Exclusion counts by reason, for the arbiter-facing evidence. */
+/** Exclusion counts by reason, for the case evidence. */
 export function countExclusions(
   plies: readonly PersistedPly[],
   policy: ScoredMovePolicy

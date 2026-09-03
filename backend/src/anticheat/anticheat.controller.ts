@@ -1,8 +1,9 @@
 /**
- * Arbiter and appellant HTTP surface for the ACS.
+ * Admin and appellant HTTP surface for the ACS.
  *
- * Responses carry evidence, never scores, thresholds or weights — a published
- * threshold becomes a target.
+ * Enforcement is automatic; these routes exist to see what the system did and to
+ * reverse it. Responses carry evidence, never scores, thresholds or weights — a
+ * published threshold becomes a target.
  */
 
 import type { Request, Response } from "express";
@@ -38,7 +39,7 @@ const PENALTY_ACTIONS: readonly PenaltyAction[] = [
 
 const CASE_STATUSES: readonly CaseStatus[] = [
   "open",
-  "awaiting_arbiter",
+  "awaiting_review",
   "under_review",
   "upheld",
   "overturned",
@@ -46,7 +47,7 @@ const CASE_STATUSES: readonly CaseStatus[] = [
   "closed",
 ];
 
-/** Case queue for arbiters. Summaries only — the packet is a separate call. */
+/** Case list for admins. Summaries only; detail is a separate call. */
 export async function listCases(req: Request, res: Response): Promise<void> {
   if (isDisabled(res)) return;
 
@@ -60,8 +61,8 @@ export async function listCases(req: Request, res: Response): Promise<void> {
   res.status(200).json({ status: "success", data: cases.map(buildCaseSummary) });
 }
 
-/** The self-contained packet an external arbiter decides from. */
-export async function getCasePacket(req: Request, res: Response): Promise<void> {
+/** Full detail for one case, for an admin deciding whether to reverse it. */
+export async function getCase(req: Request, res: Response): Promise<void> {
   if (isDisabled(res)) return;
 
   const caseId = req.params.caseId;
@@ -71,26 +72,30 @@ export async function getCasePacket(req: Request, res: Response): Promise<void> 
   }
 
   try {
-    const packet = await new CaseManager().prepareArbiterPacket(caseId);
-    res.status(200).json({ status: "success", data: packet });
+    const reviewCase = await new CaseManager().getCase(caseId);
+    if (!reviewCase) {
+      res.status(404).json({ status: "fail", message: `Case '${caseId}' not found.` });
+      return;
+    }
+    res.status(200).json({ status: "success", data: buildCaseDetail(reviewCase) });
   } catch (error) {
     respondToCaseError(error, res);
   }
 }
 
 /**
- * Records the arbiter's decision and, when upheld, applies the penalties they
- * chose and compensates the affected users.
+ * Records an admin's decision on a case. Upholding applies the penalties they
+ * chose and compensates the affected users; overturning records the reversal.
  *
- * All three writes share one transaction: a compensation failure must not leave
- * the user penalised with no record of who was owed what.
+ * All writes share one transaction: a compensation failure must not leave the
+ * user penalised with no record of who was owed what.
  */
 export async function resolveCase(req: Request, res: Response): Promise<void> {
   if (isDisabled(res)) return;
 
   const caseId = req.params.caseId;
   const { upheld, confidence, reasoning, actions } = req.body ?? {};
-  const arbiterId = req.user?.email ?? "unknown-arbiter";
+  const decidedBy = req.user?.email ?? "unknown-admin";
 
   const invalid = findResolveRequestError(caseId, upheld, confidence, reasoning, actions);
   if (invalid) {
@@ -103,7 +108,7 @@ export async function resolveCase(req: Request, res: Response): Promise<void> {
       const cases = new CaseManager(createPrismaCaseRepository(tx));
       const resolved = await cases.recordDecision({
         caseId: caseId!,
-        arbiterId,
+        decidedBy,
         upheld,
         confidence,
         reasoning,
@@ -114,7 +119,7 @@ export async function resolveCase(req: Request, res: Response): Promise<void> {
 
       return {
         case: resolved,
-        penalties: await applyArbiterPenalties(tx, cases, resolved, actions ?? []),
+        penalties: await applyPenalties(tx, cases, resolved, actions ?? []),
         compensations: await new CompensationManager(
           createPrismaCompensationRepository(tx)
         ).compensate(resolved),
@@ -159,7 +164,7 @@ export async function appealCase(req: Request, res: Response): Promise<void> {
   }
 }
 
-async function applyArbiterPenalties(
+async function applyPenalties(
   tx: Parameters<Parameters<typeof prisma.$transaction>[0]>[0],
   cases: CaseManager,
   resolved: ReviewCase,
@@ -216,9 +221,21 @@ function buildCaseSummary(reviewCase: ReviewCase) {
     openedAt: reviewCase.openedAt,
     flaggedGameCount: reviewCase.flaggedGameRecordIds.length,
     detectionCount: reviewCase.outcomes.length,
-    ...(reviewCase.assignedArbiterId ? { assignedArbiterId: reviewCase.assignedArbiterId } : {}),
+    ...(reviewCase.decidedById ? { decidedById: reviewCase.decidedById } : {}),
     ...(reviewCase.resolvedAt ? { resolvedAt: reviewCase.resolvedAt } : {}),
     ...(reviewCase.upheld !== undefined ? { upheld: reviewCase.upheld } : {}),
+  };
+}
+
+/** Evidence and flagged games, without scores, thresholds or weights. */
+function buildCaseDetail(reviewCase: ReviewCase) {
+  return {
+    ...buildCaseSummary(reviewCase),
+    userId: reviewCase.suspect.userId,
+    flaggedGameRecordIds: reviewCase.flaggedGameRecordIds,
+    evidence: reviewCase.evidence,
+    ...(reviewCase.suspectStatement ? { suspectStatement: reviewCase.suspectStatement } : {}),
+    ...(reviewCase.appeal ? { appeal: reviewCase.appeal } : {}),
   };
 }
 

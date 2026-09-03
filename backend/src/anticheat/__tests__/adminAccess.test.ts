@@ -2,15 +2,15 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 
 import type { Request, Response } from "express";
-import { requireArbiter } from "../../middleware/arbiter.middleware.js";
+import { requireAdmin } from "../../middleware/admin.middleware.js";
 import { env } from "../../config/env.js";
 import { CaseAccessError, CaseManager, CaseNotDecidedError } from "../review/CaseManager.js";
 import type { CaseRepository } from "../review/caseRepository.js";
 import type { ReviewCase } from "../types.js";
 
-function runArbiterCheck(allowlist: string, email?: string) {
-  const previous = env.ACS_ARBITER_EMAILS;
-  (env as { ACS_ARBITER_EMAILS: string }).ACS_ARBITER_EMAILS = allowlist;
+function runAdminCheck(allowlist: string, email?: string) {
+  const previous = env.ACS_ADMIN_EMAILS;
+  (env as { ACS_ADMIN_EMAILS: string }).ACS_ADMIN_EMAILS = allowlist;
 
   const captured: { status?: number } = {};
   let passed = false;
@@ -25,7 +25,7 @@ function runArbiterCheck(allowlist: string, email?: string) {
   };
 
   try {
-    requireArbiter(
+    requireAdmin(
       { user: email ? { email } : undefined } as Request,
       res as unknown as Response,
       () => {
@@ -33,26 +33,26 @@ function runArbiterCheck(allowlist: string, email?: string) {
       }
     );
   } finally {
-    (env as { ACS_ARBITER_EMAILS: string }).ACS_ARBITER_EMAILS = previous;
+    (env as { ACS_ADMIN_EMAILS: string }).ACS_ADMIN_EMAILS = previous;
   }
 
   return { passed, status: captured.status };
 }
 
-describe("requireArbiter", () => {
+describe("requireAdmin", () => {
   it("denies everyone when the allowlist is unset", () => {
-    const result = runArbiterCheck("", "anyone@x.test");
+    const result = runAdminCheck("", "anyone@x.test");
 
     assert.equal(result.passed, false);
     assert.equal(result.status, 403);
   });
 
   it("admits listed emails only, ignoring case", () => {
-    const allowlist = "Arbiter@x.test, second@x.test";
+    const allowlist = "Admin@x.test, second@x.test";
 
-    assert.equal(runArbiterCheck(allowlist, "arbiter@X.test").passed, true);
-    assert.equal(runArbiterCheck(allowlist, "outsider@x.test").passed, false);
-    assert.equal(runArbiterCheck(allowlist, undefined).passed, false);
+    assert.equal(runAdminCheck(allowlist, "admin@X.test").passed, true);
+    assert.equal(runAdminCheck(allowlist, "outsider@x.test").passed, false);
+    assert.equal(runAdminCheck(allowlist, undefined).passed, false);
   });
 });
 

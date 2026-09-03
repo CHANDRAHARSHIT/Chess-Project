@@ -26,11 +26,11 @@ export interface CaseChanges {
   readonly outcomes?: readonly DetectionOutcome[];
   readonly evidence?: readonly string[];
   readonly flaggedGameRecordIds?: readonly string[];
-  readonly assignedArbiterId?: string;
+  readonly decidedById?: string;
   readonly resolvedAt?: Date;
   readonly resolutionNotes?: string;
   readonly upheld?: boolean;
-  readonly arbiterConfidence?: number;
+  readonly decisionConfidence?: number;
   readonly suspectStatement?: string;
   readonly appealStatus?: string;
   readonly appealGrounds?: string;
@@ -141,11 +141,11 @@ function buildReviewCase(row: ReviewCaseRow): ReviewCase {
     // Compensation computes these when the case is upheld; never stored.
     affectedUsers: [],
     openedAt: row.openedAt,
-    ...optional("assignedArbiterId", row.assignedArbiterId),
+    ...optional("decidedById", row.decidedById),
     ...optional("resolvedAt", row.resolvedAt),
     ...optional("resolutionNotes", row.resolutionNotes),
     ...optional("upheld", row.upheld),
-    ...optional("arbiterConfidence", row.arbiterConfidence),
+    ...optional("decisionConfidence", row.decisionConfidence),
     ...optional("suspectStatement", row.suspectStatement),
     ...buildAppeal(row),
   };

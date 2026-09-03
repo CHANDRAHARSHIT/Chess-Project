@@ -1,11 +1,9 @@
 /**
- * Offender review. The spec marks this component `[TODO]` and hasn't written it
- * up, so this is derived from stated goals and the staffing model — expect it to
- * change once that section lands.
+ * Case records for enforcement.
  *
- * Arbiters are external FIDE-qualified contractors paid per case, so a case must
- * be self-contained: an arbiter who has to ask for context costs more and decides
- * slower. They see evidence, never thresholds or weights.
+ * Detection writes and decides a case in one step — nothing queues for review.
+ * The record exists because every penalty must cite one, and because an admin
+ * needs somewhere to reverse a wrong ban from.
  */
 
 import {
@@ -21,22 +19,14 @@ import {
   type CaseRepository,
 } from "./caseRepository.js";
 
-export interface ArbiterDecision {
+export interface CaseDecision {
   readonly caseId: string;
-  readonly arbiterId: string;
+  /** "system:detection" for automatic enforcement, otherwise the admin's email. */
+  readonly decidedBy: string;
   readonly upheld: boolean;
   readonly confidence: number;
   readonly reasoning: string;
   readonly decidedAt: Date;
-}
-
-export interface ArbiterPacket {
-  readonly caseId: string;
-  /** Anonymised — an arbiter judges moves, not people. */
-  readonly anonymisedSuspectRef: string;
-  readonly games: readonly string[];
-  readonly evidence: readonly string[];
-  readonly suspectStatement?: string;
 }
 
 export class CaseManager {
@@ -75,41 +65,15 @@ export class CaseManager {
     return this.repository.findCases(status);
   }
 
-  /** Every case needs a human while certainty is capped below every penalty bar. */
-  async requiresHumanReview(_reviewCase: ReviewCase): Promise<boolean> {
-    return true;
-  }
-
-  async assignArbiter(caseId: string, arbiterId: string): Promise<ReviewCase> {
-    await this.loadUnresolvedCase(caseId);
-    return this.repository.updateCase(caseId, {
-      assignedArbiterId: arbiterId,
-      status: "under_review",
-    });
-  }
-
-  /** Anonymises the suspect and strips internal methodology. */
-  async prepareArbiterPacket(caseId: string): Promise<ArbiterPacket> {
-    const reviewCase = await this.loadCase(caseId);
-
-    return {
-      caseId: reviewCase.caseId,
-      anonymisedSuspectRef: buildAnonymisedRef(reviewCase.caseId),
-      games: reviewCase.flaggedGameRecordIds,
-      evidence: reviewCase.evidence,
-      ...(reviewCase.suspectStatement ? { suspectStatement: reviewCase.suspectStatement } : {}),
-    };
-  }
-
-  /** The only path that concludes someone cheated. Does not consult certainty bars. */
-  async recordDecision(decision: ArbiterDecision): Promise<ReviewCase> {
+  /** The only call that concludes someone cheated. */
+  async recordDecision(decision: CaseDecision): Promise<ReviewCase> {
     await this.loadUnresolvedCase(decision.caseId);
 
     return this.repository.updateCase(decision.caseId, {
       status: decision.upheld ? "upheld" : "overturned",
       upheld: decision.upheld,
-      arbiterConfidence: decision.confidence,
-      assignedArbiterId: decision.arbiterId,
+      decisionConfidence: decision.confidence,
+      decidedById: decision.decidedBy,
       resolvedAt: decision.decidedAt,
       resolutionNotes: decision.reasoning,
     });
@@ -188,11 +152,6 @@ export class CaseAlreadyResolvedError extends Error {}
 export class CaseAccessError extends Error {}
 export class CaseNotDecidedError extends Error {}
 export class CaseAlreadyAppealedError extends Error {}
-
-/** From the case id, never the user id — an arbiter must not recognise a suspect across cases. */
-function buildAnonymisedRef(caseId: string): string {
-  return `Suspect-${caseId.slice(-6).toUpperCase()}`;
-}
 
 function mergeGameRecordIds(
   existing: readonly string[],

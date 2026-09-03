@@ -254,7 +254,7 @@ async function recordDetection(cases: CaseManager, outcome: DetectionOutcome) {
 
   return cases.recordDecision({
     caseId: opened.caseId,
-    arbiterId: AUTOMATIC_DECIDER,
+    decidedBy: AUTOMATIC_DECIDER,
     upheld: true,
     confidence: outcome.certainty,
     reasoning: `Automatic: detection score ${outcome.totalScore} crossed threshold ${outcome.threshold}.`,

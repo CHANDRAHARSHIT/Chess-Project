@@ -2,7 +2,7 @@
  * Scores an assembled ReviewWindow into a DetectionOutcome.
  *
  * `detected` means a threshold was crossed. It does not mean the user cheated —
- * only a resolved ReviewCase with a human arbiter concludes that. Nothing here
+ * only a resolved ReviewCase concludes that. Nothing here
  * penalises, notifies, or persists.
  */
 
@@ -311,7 +311,7 @@ function buildCheckResult(
   };
 }
 
-/** For the arbiter. Never surfaced to the suspect — published thresholds become targets. */
+/** Internal. Never surfaced to the suspect — published thresholds become targets. */
 function buildEvidence(
   score: SignalWindowScore,
   window: ReviewWindow,
