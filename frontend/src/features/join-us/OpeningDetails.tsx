@@ -2,6 +2,7 @@ import { useNavigate } from "react-router";
 import { getAssessmentTrackSlug, type JobOpening } from "./joinUsData";
 import { soundManager } from "@/shared/lib/SoundManager";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ROUTES } from "@/app/router/routes.config";
 
 interface OpeningDetailsProps {
   opening: JobOpening;
@@ -18,7 +19,7 @@ export default function OpeningDetails({
     soundManager.playButtonClick();
     const trackSlug = getAssessmentTrackSlug(opening.department);
     navigate(
-      `/join-us/assessment?role=${trackSlug ?? opening.department.toLowerCase()}`,
+      ROUTES.JOIN_ASSESSMENT_ROLE(trackSlug ?? opening.department.toLowerCase()),
     );
   };
 

@@ -32,6 +32,7 @@ import { useNavigate, useLocation } from "react-router";
 import { useNavigationStack } from "@/app/navigation/useNavigationStack";
 import rollbar from "@/shared/lib/rollbar";
 import { featureFlags } from "@/shared/lib/featureFlags";
+import { ROUTES } from "@/app/router/routes.config";
 
 // Hook for clicking outside the custom dropdown
 function useOnClickOutside(
@@ -395,55 +396,55 @@ export default function SidebarLayout({
   };
 
   // Nav Items Data
-  const baseSection = [{ name: "Home", href: "/", icon: Home }];
+  const baseSection = [{ name: "Home", href: ROUTES.HOME, icon: Home }];
 
   const exploreSection = [
-    { name: "Play", href: "/play", icon: Swords },
-    { name: "Lessons", href: "/lessons", icon: BookOpen },
+    { name: "Play", href: ROUTES.PLAY, icon: Swords },
+    { name: "Lessons", href: ROUTES.LESSONS, icon: BookOpen },
     ...(featureFlags.showBuildLessons
-      ? [{ name: "Build Lessons", href: "/lesson-builder", icon: PenTool }]
+      ? [{ name: "Build Lessons", href: ROUTES.LESSON_BUILDER, icon: PenTool }]
       : []),
-    { name: "Puzzles", href: "/puzzles", icon: Puzzle },
-    { name: "Upgrade", href: "/pricing", icon: Crown },
+    { name: "Puzzles", href: ROUTES.PUZZLES, icon: Puzzle },
+    { name: "Upgrade", href: ROUTES.PRICING, icon: Crown },
   ];
 
   const footerLinks = [
-    { name: "About", href: "/about" },
-    { name: "Copyright", href: "/copyright" },
-    { name: "Contact Us", href: "/contact-us" },
-    { name: "Join Us", href: "/join-us" },
-    { name: "Creator", href: "/creator" },
-    { name: "Advertise", href: "/advertise" },
-    { name: "Developers", href: "/developers" },
-    { name: "Terms", href: "/terms" },
-    { name: "Privacy Policy & Safety", href: "/privacy" },
-    { name: "How XLChess works", href: "/how-xlchess-works" },
+    { name: "About", href: ROUTES.ABOUT },
+    { name: "Copyright", href: ROUTES.COPYRIGHT },
+    { name: "Contact Us", href: ROUTES.CONTACT },
+    { name: "Join Us", href: ROUTES.JOIN },
+    { name: "Creator", href: ROUTES.CREATOR },
+    { name: "Advertise", href: ROUTES.ADVERTISE },
+    { name: "Developers", href: ROUTES.DEVELOPERS },
+    { name: "Terms", href: ROUTES.TERMS },
+    { name: "Privacy Policy & Safety", href: ROUTES.PRIVACY },
+    { name: "How XLChess works", href: ROUTES.HOW_IT_WORKS },
   ];
 
   const youSection = [
-    { name: "Stats", href: "/stats", icon: BarChart2, comingSoon: true },
+    { name: "Stats", href: ROUTES.STATS, icon: BarChart2, comingSoon: true },
     {
       name: "Complete Later",
-      href: "/complete-later",
+      href: ROUTES.SAVED,
       icon: Clock,
     },
     {
       name: "Your Content",
-      href: "/your-content",
+      href: ROUTES.CONTENT,
       icon: Video,
     },
     {
       name: "Your Channel",
-      href: "/channel",
+      href: ROUTES.CHANNEL,
       icon: UserCircle2,
     },
   ];
 
   const moreStaticSection = [
-    { name: "Game Database", href: "/database", icon: Database },
+    { name: "Game Database", href: ROUTES.DATABASE, icon: Database },
   ];
 
-  const miscSection = [{ name: "Report", href: "/report", icon: Flag }];
+  const miscSection = [{ name: "Report", href: ROUTES.REPORT, icon: Flag }];
 
   const urlOptions = [
     { label: "Analysis Board", value: "/analysis" },

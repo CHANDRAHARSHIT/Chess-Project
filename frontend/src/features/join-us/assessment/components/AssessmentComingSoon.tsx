@@ -46,7 +46,7 @@ export default function AssessmentComingSoon({
             type="button"
             onClick={() => {
               soundManager.playButtonClick();
-              navigate('/join-us');
+              navigate('/join');
             }}
             className="inline-flex items-center gap-2 px-8 py-3.5 rounded-2xl bg-brand-accent text-brand-bg font-bold hover:bg-brand-accent/90 transition-transform active:scale-95 cursor-pointer shadow-[0_0_20px_rgba(212,175,110,0.2)] text-sm"
           >
