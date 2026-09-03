@@ -134,22 +134,40 @@ export {
   UnappealablePenaltyError,
 } from "./penalty/PenaltyManager.js";
 export { EscalationLadder } from "./penalty/EscalationLadder.js";
-export { prismaPenaltyRepository } from "./penalty/penaltyRepository.js";
+export { findBlockingPenalty } from "./penalty/BanEnforcement.js";
+export {
+  createPrismaPenaltyRepository,
+  prismaPenaltyRepository,
+} from "./penalty/penaltyRepository.js";
 export type { NewPenaltyInput, PenaltyRepository } from "./penalty/penaltyRepository.js";
 
 // ── Compensation ─────────────────────────────────────────────────────────────
 export { CompensationManager } from "./compensation/CompensationManager.js";
-export type { CompensationRecord } from "./compensation/CompensationManager.js";
+export {
+  createPrismaCompensationRepository,
+  prismaCompensationRepository,
+} from "./compensation/compensationRepository.js";
+export type {
+  CompensationRepository,
+  NewCompensationInput,
+} from "./compensation/compensationRepository.js";
+export type { CompensationKind, CompensationRecord } from "./types.js";
 
 // ── Review (offender review & appeals) ───────────────────────────────────────
 export {
   CaseManager,
   CaseAccessError,
+  CaseAlreadyAppealedError,
   CaseAlreadyResolvedError,
+  CaseNotDecidedError,
   CaseNotFoundError,
 } from "./review/CaseManager.js";
 export type { ArbiterDecision, ArbiterPacket } from "./review/CaseManager.js";
-export { collectEvidence, prismaCaseRepository } from "./review/caseRepository.js";
+export {
+  collectEvidence,
+  createPrismaCaseRepository,
+  prismaCaseRepository,
+} from "./review/caseRepository.js";
 export type { CaseChanges, CaseRepository, NewCaseInput } from "./review/caseRepository.js";
 export { AppealService } from "./review/AppealService.js";
 export type { Appeal } from "./review/AppealService.js";

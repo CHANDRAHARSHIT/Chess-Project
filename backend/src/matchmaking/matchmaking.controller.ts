@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import { matchmakingQueue } from "./MatchmakingQueue.js";
+import { findBlockingPenalty } from "../anticheat/index.js";
 
 /**
  * Thin Express HTTP controller adapter.
@@ -21,6 +22,17 @@ export function getUserIdFromRequest(req: Request): string {
 export const enqueueTicket = async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = getUserIdFromRequest(req);
+
+    const ban = await findBlockingPenalty(userId);
+    if (ban) {
+      res.status(403).json({
+        error: "You are currently blocked from playing.",
+        expiresAt: ban.expiresAt ?? null,
+        caseId: ban.caseId,
+      });
+      return;
+    }
+
     const variantId = typeof req.body?.variantId === "string" ? req.body.variantId : "chess960";
     const name = req.user?.name ?? undefined;
     const image = req.user?.image ?? undefined;

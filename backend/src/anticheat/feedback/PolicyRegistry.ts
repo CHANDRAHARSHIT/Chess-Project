@@ -230,6 +230,9 @@ const PROVISIONAL_LEVEL_ACTIONS: Readonly<Record<EscalationLevel, readonly Penal
 /** Upheld cases at which each level begins, indexed level 1, 2, 3. */
 const PROVISIONAL_UPHELD_CASES_PER_LEVEL: readonly number[] = [1, 2, 3];
 
+/** Actions that block a user from entering a game. */
+const PROVISIONAL_BLOCKING_ACTIONS: readonly PenaltyAction[] = ["temporary_ban", "permanent_ban"];
+
 /** How long a time-limited action lasts. Null never expires. */
 const PROVISIONAL_PENALTY_DURATIONS_MS: Readonly<Record<PenaltyAction, number | null>> = {
   increase_monitoring: 30 * DAY_MS,
@@ -320,6 +323,10 @@ export class PolicyRegistry {
   /** Upheld-case counts at which levels 1, 2 and 3 begin. */
   getUpheldCasesPerLevel(situation: Situation): readonly number[] {
     return PROVISIONAL_UPHELD_CASES_PER_LEVEL;
+  }
+
+  getBlockingActions(situation: Situation): readonly PenaltyAction[] {
+    return PROVISIONAL_BLOCKING_ACTIONS;
   }
 
   /** How long an action lasts, or null when it never expires. */
