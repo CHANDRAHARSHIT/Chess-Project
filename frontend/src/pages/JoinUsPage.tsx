@@ -12,6 +12,8 @@ import {
   type JobOpening,
 } from "@/features/join-us/joinUsData";
 
+import { ROUTES } from "@/app/router/routes.config";
+
 export default function JoinUsPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -30,11 +32,11 @@ export default function JoinUsPage() {
 
   const handleSelectOpening = (opening: JobOpening) => {
     const trackSlug = getAssessmentTrackSlug(opening.department);
-    navigate(`/join-us?role=${trackSlug ?? opening.department.toLowerCase()}`);
+    navigate(ROUTES.JOIN_ROLE(trackSlug ?? opening.department.toLowerCase()));
   };
 
   const handleBackToOpenings = () => {
-    navigate("/join-us");
+    navigate(ROUTES.JOIN);
   };
 
   return (

@@ -7,7 +7,7 @@
 
 import { prisma } from "../config/prisma.js";
 import { env } from "../config/env.js";
-import { generateStartingFen } from "../variant/chess960/chess960Rules.js";
+import { generateStartingFen } from "../realtime/variant/chess960/chess960-rules.js";
 import { ENGINE_NAME, StockfishEngine } from "./detection/engine/StockfishEngine.js";
 import {
   buildPersistedPlies,

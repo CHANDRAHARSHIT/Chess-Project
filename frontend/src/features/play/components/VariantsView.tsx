@@ -78,12 +78,12 @@ export function VariantsView() {
   }, [searchQuery, activeTab]);
 
   return (
-    <div className="relative min-h-[calc(100vh-4rem)] px-2.5 py-4 sm:p-6 lg:p-8 max-w-6xl mx-auto space-y-8 select-none">
+    <div className="relative min-h-[calc(100vh-4rem)] px-2 py-3 sm:p-6 lg:p-8 max-w-6xl mx-auto space-y-4 sm:space-y-8 select-none">
       {/* Top Ambient Lighting Aura */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-72 bg-gradient-radial from-brand-accent/15 via-brand-accent/5 to-transparent blur-3xl pointer-events-none -z-10" />
 
       {/* Hero Header Section */}
-      <div className="relative rounded-3xl bg-brand-surface border border-brand-text/15 p-6 sm:p-10 backdrop-blur-2xl space-y-6 overflow-hidden">
+      <div className="relative rounded-2xl sm:rounded-3xl bg-brand-surface border border-brand-text/15 p-4 sm:p-10 backdrop-blur-2xl space-y-4 sm:space-y-6 overflow-hidden">
         {/* Subtle Decorative Pattern */}
         <div className="absolute -right-10 -bottom-10 opacity-5 pointer-events-none text-brand-accent">
           <Dices className="w-80 h-80 stroke-[1]" />

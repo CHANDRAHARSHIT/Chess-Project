@@ -10,7 +10,7 @@
  * too. See ./README.md.
  */
 
-import { reportError } from "../observability/index.js";
+import { reportError } from "../realtime/observability/index.js";
 import { TRIGGER_ACTIONS } from "./triggerActions.js";
 import type {
   ActionHandler,

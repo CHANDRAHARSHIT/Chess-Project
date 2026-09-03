@@ -101,7 +101,7 @@ export default function AssessmentResultScreen({
               <p className="text-xs sm:text-sm text-brand-secondary leading-relaxed">
                 If you have any questions, please use our{" "}
                 <a
-                  href="/contact-us"
+                  href="/contact"
                   className="text-brand-accent underline hover:text-brand-accent/80 transition-colors"
                 >
                   contact form
@@ -126,7 +126,7 @@ export default function AssessmentResultScreen({
             If you would like to reattempt this assessment, please reach out via
             our{" "}
             <a
-              href="/contact-us"
+              href="/contact"
               className="text-brand-accent underline hover:text-brand-accent/80 transition-colors"
             >
               contact form
@@ -141,7 +141,7 @@ export default function AssessmentResultScreen({
             type="button"
             onClick={() => {
               soundManager.playButtonClick();
-              navigate("/join-us");
+              navigate("/join");
             }}
             className="inline-flex items-center gap-2 px-8 py-3.5 rounded-2xl border border-brand-text/25 text-brand-text hover:bg-brand-surface/80 hover:border-brand-accent transition-all cursor-pointer font-semibold text-sm"
           >

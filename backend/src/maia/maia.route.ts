@@ -8,7 +8,7 @@
 import { Router, type Request, type Response } from "express";
 import { Chess } from "chess.js";
 import { env } from "../config/env.js";
-import { reportError } from "../observability/index.js";
+import { reportError } from "../realtime/observability/index.js";
 import { MaiaEngine } from "./MaiaEngine.js";
 
 export const maiaRouter = Router();

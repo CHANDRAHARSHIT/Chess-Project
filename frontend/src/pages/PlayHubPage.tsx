@@ -1,22 +1,23 @@
 /**
  * PlayHubPage.tsx
  *
- * Unified Play Hub. Hosts Quick Game, Play Online, and Variants as tabs within
- * a single page. The active tab is the sole source of truth via useSearchParams().
+ * Unified Play Hub. Hosts the main Play Hub overview as well as sub-modes:
+ * - Quick Game (/play?tab=online)
+ * - Bots (/play?tab=bots, alias: /play?tab=quick)
+ * - Variants (/play?tab=variants)
+ * - Maia (/play?tab=maia)
  *
+ * When on /play (no tab param), renders the 2-column Play Hub Overview.
  * Key invariants enforced here:
- * 1. Tab param is validated on every render — invalid/missing values fall back to "quick".
+ * 1. Default route /play renders the Play Hub Overview.
  * 2. PlayOnlineView is gated behind ProtectedRoute and never mounts for unauthenticated users.
  * 3. Tab switching while a multiplayer session is active is intercepted: the target tab is
  *    stored in pendingTab, a confirmation modal opens, and navigation only completes if the
  *    user explicitly confirms via "Leave multiplayer session".
  */
-import { useState } from "react";
-import { useSearchParams } from "react-router";
-import {
-  PlayTabBar,
-  type PlayTab,
-} from "@/features/play/components/PlayTabBar";
+import { useState, useCallback } from "react";
+import { useSearchParams, useNavigate } from "react-router";
+import { PlayHubOverview } from "@/features/play/components/PlayHubOverview";
 import { QuickGameView } from "@/features/play/components/QuickGameView";
 import { PlayOnlineView } from "@/features/play/components/PlayOnlineView";
 import { VariantsView } from "@/features/play/components/VariantsView";
@@ -25,92 +26,124 @@ import { LeaveGameConfirmModal } from "@/features/play/components/LeaveGameConfi
 import { ProtectedRoute } from "@/features/account/ProtectedRoute";
 import { useGameSession } from "@/features/play/useGameSession";
 import { useMatchmaking } from "@/features/play/useMatchmaking";
+import { soundManager } from "@/shared/lib/SoundManager";
 import { featureFlags } from "@/shared/lib/featureFlags";
+import { ArrowLeft } from "lucide-react";
+
+export type PlayTab = "online" | "bots" | "variants" | "maia" | "quick";
 
 const VALID_TABS: PlayTab[] = [
-  "quick",
   "online",
+  "bots",
   "variants",
+  "quick",
   ...(featureFlags.showMaia ? (["maia"] as const) : []),
 ];
 
-function isValidTab(value: string | null): value is PlayTab {
-  return VALID_TABS.includes(value as PlayTab);
+function resolveTab(raw: string | null): PlayTab | null {
+  if (!raw) return null;
+  return VALID_TABS.includes(raw as PlayTab) ? (raw as PlayTab) : null;
 }
 
 export default function PlayHubPage() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [pendingTab, setPendingTab] = useState<PlayTab | null>(null);
+  const [pendingHash, setPendingHash] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { descriptor: sessionDescriptor, leaveGame } = useGameSession();
   const { phase, resetToIdle } = useMatchmaking();
 
-  // Single source of truth: URL param, validated and defaulted.
   const rawTab = searchParams.get("tab");
-  const activeTab: PlayTab = isValidTab(rawTab) ? rawTab : "quick";
+  const activeTab: PlayTab | null = resolveTab(rawTab);
 
-  // sessionDescriptor is checked first — a live game remains protected even if
-  // matchmaking phase has already reset to idle after consumeMatch().
   const isMultiplayerActive =
     sessionDescriptor !== null || phase === "searching" || phase === "found";
 
-  const switchTab = (tab: PlayTab) => {
-    setSearchParams({ tab }, { replace: false });
-  };
+  const switchTab = useCallback((tab: PlayTab | null, hash?: string) => {
+    if (!tab) {
+      // Return to clean /play
+      navigate("/play", { replace: false });
+    } else {
+      if (hash) {
+        navigate(`/play?tab=${tab}#${hash}`, { replace: false });
+      } else {
+        setSearchParams({ tab }, { replace: false });
+      }
+    }
+  }, [navigate, setSearchParams]);
 
-  const handleTabChange = (requested: PlayTab) => {
+  const handleTabChange = useCallback((requested: PlayTab | null, hash?: string) => {
     // Allow free switching when not on the online tab, or no session is active.
     if (activeTab !== "online" || !isMultiplayerActive) {
-      switchTab(requested);
+      switchTab(requested, hash);
       return;
     }
     // Block: record intent, open modal.
     setPendingTab(requested);
+    setPendingHash(hash ?? null);
     setIsModalOpen(true);
-  };
+  }, [activeTab, isMultiplayerActive, switchTab]);
+
+  const handleNavigateOnlineSection = useCallback((sectionId: "recent-games" | "leaderboard") => {
+    handleTabChange("online", sectionId);
+  }, [handleTabChange]);
 
   const handleStay = () => {
     setPendingTab(null);
+    setPendingHash(null);
     setIsModalOpen(false);
   };
 
   const handleLeave = () => {
-    // Cleanup sequencing per plan §3 domain analysis:
-    // - leaveGame() closes the WebSocket and clears GameSessionContext state.
-    //   Safe to call in all cases — no-op when no WebSocket is open.
-    // - resetToIdle() clears the matchmaking poll timer, ticket, and phase.
-    //   Required for the searching/found cases where no session exists yet.
-    // The two calls target separate context domains and are never redundant.
     leaveGame();
     resetToIdle();
 
-    const target = pendingTab ?? "quick";
+    const target = pendingTab;
+    const hash = pendingHash;
     setPendingTab(null);
+    setPendingHash(null);
     setIsModalOpen(false);
-    switchTab(target);
+    switchTab(target, hash ?? undefined);
   };
 
   return (
     <div className="min-h-[calc(100dvh-4rem)] flex flex-col bg-gradient-to-b from-brand-bg via-brand-bg to-brand-surface/20">
-      {/* ── Tab Bar Chrome ── */}
-      <div className="sticky top-0 z-10 px-2.5 sm:px-6 lg:px-8 pt-4 pb-3 border-b border-white/5 bg-brand-bg/80 backdrop-blur-xl">
-        <PlayTabBar
-          activeTab={activeTab}
-          onTabChange={handleTabChange}
-          isOnlineActive={isMultiplayerActive}
-        />
-      </div>
+      {/* ── Sub-Mode Back Navigation ── */}
+      {activeTab !== null && (
+        <div className="px-2 sm:px-6 lg:px-8 pt-4 pb-2">
+          <button
+            type="button"
+            onClick={() => {
+              soundManager.playButtonClick();
+              handleTabChange(null);
+            }}
+            className="inline-flex items-center gap-2 text-brand-secondary hover:text-brand-text transition-colors duration-200 font-sans text-sm font-semibold cursor-pointer group"
+            aria-label="Back to Play Hub"
+          >
+            <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+            <span>Back to Play Hub</span>
+          </button>
+        </div>
+      )}
 
-      {/* ── Tab Content ── */}
+      {/* ── Page Content ── */}
       <div className="flex-1">
-        {activeTab === "quick" && <QuickGameView />}
+        {activeTab === null && (
+          <PlayHubOverview
+            onSelectTab={(tab) => handleTabChange(tab)}
+            onNavigateOnlineSection={handleNavigateOnlineSection}
+          />
+        )}
 
         {activeTab === "online" && (
           <ProtectedRoute>
             <PlayOnlineView />
           </ProtectedRoute>
         )}
+
+        {(activeTab === "bots" || activeTab === "quick") && <QuickGameView />}
 
         {activeTab === "variants" && <VariantsView />}
 
