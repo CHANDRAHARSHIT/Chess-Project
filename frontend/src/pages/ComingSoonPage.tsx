@@ -1,6 +1,6 @@
-import { useNavigate } from "react-router";
 import { motion } from "framer-motion";
-import { ArrowLeft, FileText } from "lucide-react";
+import { FileText } from "lucide-react";
+import { BackButton } from "@/components/molecules/BackButton";
 
 interface ComingSoonPageProps {
   featureName: string;
@@ -13,7 +13,6 @@ export default function ComingSoonPage({
   description,
   icon: Icon = FileText,
 }: ComingSoonPageProps) {
-  const navigate = useNavigate();
 
   return (
     <div className="min-h-[55vh] flex flex-col items-center justify-center p-4 sm:p-6 text-center select-none relative overflow-hidden">
@@ -46,13 +45,7 @@ export default function ComingSoonPage({
         <div className="w-24 h-px bg-gradient-to-r from-transparent via-brand-accent/30 to-transparent" />
 
         {/* Go Back button */}
-        <button
-          onClick={() => navigate(-1)}
-          className="flex items-center gap-2 px-6 py-3 rounded-xl border border-brand-border/60 text-brand-secondary hover:text-brand-text hover:border-brand-accent/40 hover:bg-brand-text/5 transition-all duration-200 text-sm font-sans font-medium cursor-pointer"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Go Back
-        </button>
+        <BackButton label="Go Back" className="px-6 py-3 rounded-xl border border-brand-border/60 hover:border-brand-accent/40 hover:bg-brand-text/5" />
       </div>
     </div>
   );

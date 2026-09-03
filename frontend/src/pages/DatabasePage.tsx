@@ -1,6 +1,7 @@
-import { ArrowLeft, Search } from "lucide-react";
 import { useNavigate } from "react-router";
-import { soundManager } from "@/lib/SoundManager";
+import { Search } from "lucide-react";
+import { BackButton } from "@/components/molecules/BackButton";
+import { PageShell } from "@/components/layouts/PageShell";
 
 const PLAYERS = [
   {
@@ -57,21 +58,11 @@ export default function DatabasePage() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-brand-bg text-brand-text font-sans px-2.5 py-6 sm:p-6 md:p-10 lg:p-12 overflow-y-auto w-full">
-      <div className="max-w-[1200px] mx-auto flex flex-col lg:flex-row gap-10">
+    <PageShell>
+      <div className="flex flex-col lg:flex-row gap-10">
         {/* Left Content Area */}
         <div className="flex-1">
-          {/* Back Navigation */}
-          <button
-            onClick={() => {
-              soundManager.playButtonClick();
-              navigate("/");
-            }}
-            className="inline-flex items-center gap-2 text-brand-secondary hover:text-brand-text transition-colors duration-200 font-sans text-sm font-semibold cursor-pointer group mb-6"
-          >
-            <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
-            <span>Back to Home</span>
-          </button>
+          <BackButton to="/" label="Back to Home" className="mb-6" />
 
           <div className="flex items-center gap-3 mb-6">
             <div className="w-8 h-8 rounded bg-brand-accent/10 flex items-center justify-center border border-brand-accent/20">
@@ -231,7 +222,7 @@ export default function DatabasePage() {
           </div>
         </div>
       </div>
-    </div>
+    </PageShell>
   );
 }
 

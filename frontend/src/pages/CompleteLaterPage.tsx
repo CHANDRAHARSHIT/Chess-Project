@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router";
 import { 
   Play, 
   Shuffle, 
@@ -9,10 +8,10 @@ import {
   Puzzle, 
   Swords,
   MoreVertical,
-  Clock,
-  ArrowLeft
+  Clock
 } from "lucide-react";
 import { soundManager } from "@/lib/SoundManager";
+import { BackButton } from "@/components/molecules/BackButton";
 
 type QueueItemType = "Lesson" | "Puzzle" | "Game";
 
@@ -67,7 +66,6 @@ const initialMockData: QueueItem[] = [
 ];
 
 export default function CompleteLaterPage() {
-  const navigate = useNavigate();
   const [items, setItems] = useState<QueueItem[]>(initialMockData);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
 
@@ -141,18 +139,7 @@ export default function CompleteLaterPage() {
     <div className="min-h-[calc(100vh-4rem)] bg-brand-bg flex justify-center px-2.5 py-4 md:p-6 lg:p-8">
       <div className="max-w-[1400px] w-full flex flex-col">
         
-        <button
-          type="button"
-          onClick={() => {
-            soundManager.playButtonClick();
-            navigate("/");
-          }}
-          className="inline-flex items-center gap-2 text-brand-secondary hover:text-brand-text transition-colors duration-200 font-sans text-sm font-semibold cursor-pointer group mb-4 lg:mb-6 w-fit"
-          aria-label="Back to Home"
-        >
-          <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
-          <span>Back to Home</span>
-        </button>
+        <BackButton to="/" label="Back to Home" className="mb-4 lg:mb-6 w-fit" />
 
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-10">
           {/* Left Sidebar / Header Container */}

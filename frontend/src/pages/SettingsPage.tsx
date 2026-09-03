@@ -8,7 +8,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams, useParams } from "react-router";
 import {
-  ArrowLeft,
   Settings as SettingsIcon,
   Search,
   Grid3x3,
@@ -19,6 +18,7 @@ import {
   CreditCard,
   Check,
 } from "lucide-react";
+import { BackButton } from "@/components/molecules/BackButton";
 import { useBoardSettings } from "@/hooks/appearance-useBoardSettings";
 import { BOARD_THEMES } from "@/data/appearance-boardThemes";
 import { PIECE_SETS } from "@/data/appearance-pieceSets";
@@ -192,13 +192,7 @@ export default function SettingsPage() {
       <main className="flex-1 max-w-6xl w-full mx-auto px-2.5 sm:px-6 lg:px-8 pt-5 pb-16 relative z-10 flex flex-col gap-6">
         {/* Back link */}
         <div className="mt-4">
-          <button
-            onClick={() => navigate("/")}
-            className="inline-flex items-center gap-2 text-brand-secondary hover:text-brand-text transition-colors duration-200 font-sans text-sm font-semibold cursor-pointer group"
-          >
-            <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
-            Back to Home
-          </button>
+          <BackButton to="/" label="Back to Home" />
         </div>
 
         {/* Page heading */}
