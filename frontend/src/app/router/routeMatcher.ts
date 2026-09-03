@@ -3,15 +3,25 @@
  * Manages route spelling suggestions using Levenshtein Distance for public routes.
  */
 
+import { ROUTES } from "./routes.config";
+
 // Explicitly whitelist only public, directly accessible pages.
 // Sensitive, dashboard, api, or payment success paths must NEVER be added here.
 export const PUBLIC_ROUTES_WHITELIST = [
-  '/',
-  '/puzzles',
-  '/pricing',
-  '/leaderboard',
-  '/about',
-  '/contact'
+  ROUTES.HOME,
+  ROUTES.PLAY,
+  ROUTES.PUZZLES,
+  ROUTES.LESSONS,
+  ROUTES.PRICING,
+  ROUTES.ABOUT,
+  ROUTES.CONTACT,
+  ROUTES.JOIN,
+  ROUTES.NEWS,
+  ROUTES.OPENINGS,
+  ROUTES.DATABASE,
+  ROUTES.HOW_IT_WORKS,
+  ROUTES.TERMS,
+  ROUTES.PRIVACY,
 ];
 
 /**
