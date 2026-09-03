@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useSession } from "@/features/account/useSession";
 import { generateStoryMap } from "@/shared/chess/mapGenerator";
 import type { StoryNode } from "./storyModeMapData";
+import { OdysseyApiService } from "./api/odysseyApi";
 
 export type RelicType = 'undo' | 'hint' | 'evalBar' | 'time' | 'reroll';
 
@@ -58,6 +59,7 @@ interface StoryModeContextType {
   setActiveSlot: (slot: number) => void;
   getAllProfiles: () => ProfileState[];
   deleteProfile: (slotId: number) => void;
+  beginNewRun: () => void;
 }
 
 const StoryModeContext = createContext<StoryModeContextType | undefined>(undefined);
@@ -132,6 +134,11 @@ export function StoryModeProvider({ children }: { children: React.ReactNode }) {
         localStorage.removeItem(getSlotKey(session.user.id, activeSlot));
       }
     }
+
+    // Best-effort backend sync — local state above is already authoritative either way.
+    if (status === 'authenticated' && session?.user?.id) {
+      OdysseyApiService.resetRun(activeSlot, keepProgress);
+    }
   };
 
   const deleteProfile = (slotId: number) => {
@@ -141,7 +148,28 @@ export function StoryModeProvider({ children }: { children: React.ReactNode }) {
       if (slotId === activeSlot) {
         setRunState({ ...defaultState, mapNodes: generateStoryMap(), lastUpdated: new Date().toISOString() });
       }
+      OdysseyApiService.deleteSlot(slotId);
     }
+  };
+
+  /**
+   * Best-effort backend sync for the moment a new run actually begins
+   * (Strategist screen confirmed). Creates the backend run only if this
+   * slot doesn't already have one there — a New Game+ reset already
+   * updated the existing backend row via resetRun() above, and calling
+   * startNewRun again here would wipe the coins/relics it just preserved.
+   */
+  const beginNewRun = () => {
+    if (status !== 'authenticated' || !session?.user?.id) return;
+    const slotId = activeSlot;
+    (async () => {
+      const existing = await OdysseyApiService.slotExists(slotId);
+      if (!existing) {
+        const started = await OdysseyApiService.startNewRun(slotId);
+        if (!started) return;
+      }
+      OdysseyApiService.selectCharacter(slotId, 'strategist');
+    })();
   };
 
   const addCoins = (amount: number) => {
@@ -237,7 +265,7 @@ export function StoryModeProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <StoryModeContext.Provider value={{ runState, updateRunState, resetRun, addCoins, useCharge, activeSlot, setActiveSlot, getAllProfiles, deleteProfile }}>
+    <StoryModeContext.Provider value={{ runState, updateRunState, resetRun, addCoins, useCharge, activeSlot, setActiveSlot, getAllProfiles, deleteProfile, beginNewRun }}>
       {children}
     </StoryModeContext.Provider>
   );

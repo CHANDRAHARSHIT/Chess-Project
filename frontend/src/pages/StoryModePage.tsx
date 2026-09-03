@@ -20,7 +20,7 @@ function StoryModeContent() {
   const [viewState, setViewState] = useState<"title" | "strategist" | "map">(
     "title",
   );
-  const { runState, updateRunState } = useStoryModeRun();
+  const { runState, updateRunState, beginNewRun } = useStoryModeRun();
   const pageContainerRef = useRef<HTMLDivElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
@@ -113,7 +113,10 @@ function StoryModeContent() {
             >
               <StrategistPage
                 onBack={() => setViewState("title")}
-                onConfirm={() => setViewState("map")}
+                onConfirm={() => {
+                  beginNewRun();
+                  setViewState("map");
+                }}
               />
             </motion.div>
           )}
