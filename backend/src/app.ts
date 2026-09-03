@@ -17,6 +17,7 @@ import { maiaRouter } from "./maia/maia.route.js";
 import { pathwayProgressRouter } from "./routes/pathway-progress.route.js";
 import { gamesRouter } from "./routes/games.route.js";
 import { assessmentRouter } from "./routes/assessment.route.js";
+import { odysseyRouter } from "./routes/odyssey.route.js";
 import { errorHandler } from "./middleware/error.middleware.js";
 
 const app = express();
@@ -101,6 +102,7 @@ app.use("/api/maia", maiaRouter);
 app.use("/api/pathway-progress", pathwayProgressRouter);
 app.use("/api/games", gamesRouter);
 app.use("/api/assessments", assessmentRouter);
+app.use("/api/odyssey", odysseyRouter);
 
 // Catch-all centralized error handler
 app.use(errorHandler);
