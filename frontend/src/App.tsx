@@ -4,9 +4,6 @@
  * GSAP plugins are registered here via gsapConfig (runs once at module level).
  * The smooth-wrapper / smooth-content divs prepare for ScrollSmoother (Club)
  * and currently drive native CSS smooth scroll.
- *
- * Premium additions:
- *   - PremiumLoader: cinematic rook loader that dissolves into the page
  */
 
 // ── GSAP: register plugins immediately (before any component renders) ──────
