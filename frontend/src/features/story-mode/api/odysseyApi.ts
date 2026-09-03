@@ -16,9 +16,18 @@ export interface OdysseyBackendMapNode {
   difficulty?: number; // only present on battle/puzzle nodes
 }
 
+export interface OdysseyBackendRelic {
+  type: string; // ERelicType value
+  charges: number;
+}
+
 export interface OdysseyBackendGame {
   id: string;
   coins: number;
+  relics: OdysseyBackendRelic[];
+  completedNodes: number[];
+  currentNodeId: number;
+  journeyComplete: boolean;
   map: { nodes: OdysseyBackendMapNode[] };
 }
 
@@ -68,6 +77,19 @@ export class OdysseyApiService {
     } catch (error: unknown) {
       reportFailure("slotExists", error);
       return false;
+    }
+  }
+
+  /** Fetches the full run for a slot, or null if none exists (or the request fails). */
+  static async getSlot(slotId: number): Promise<OdysseyBackendGame | null> {
+    try {
+      const res = await fetch(`${BASE_URL}/slots/${slotId}`, { credentials: "include" });
+      if (!res.ok) return null;
+      const json = await res.json();
+      return (json.data?.game as OdysseyBackendGame) ?? null;
+    } catch (error: unknown) {
+      reportFailure("getSlot", error);
+      return null;
     }
   }
 

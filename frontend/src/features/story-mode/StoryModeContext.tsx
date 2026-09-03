@@ -3,7 +3,7 @@ import { useSession } from "@/features/account/useSession";
 import { generateStoryMap } from "@/shared/chess/mapGenerator";
 import type { StoryNode } from "./storyModeMapData";
 import { OdysseyApiService } from "./api/odysseyApi";
-import { toStoryNodes } from "./api/odysseyMapConverter";
+import { toRunStateFields } from "./api/odysseyMapConverter";
 
 export type RelicType = 'undo' | 'hint' | 'evalBar' | 'time' | 'reroll';
 
@@ -73,28 +73,58 @@ export function StoryModeProvider({ children }: { children: React.ReactNode }) {
   const [runState, setRunState] = useState<RunState>(defaultState);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // Load state when slot or user changes
+  // Load state when slot or user changes. Local parsing/generation is defined
+  // once here (readLocal) so both the backend-first authenticated path and
+  // its fallback can share the exact same "parse localStorage, or generate a
+  // fresh map" logic that used to be the only path.
   useEffect(() => {
     if (status === 'loading') return;
-    
-    if (status === 'authenticated' && session?.user?.id) {
-      const stored = localStorage.getItem(getSlotKey(session.user.id, activeSlot));
+
+    const readLocal = (userId: string): RunState => {
+      const stored = localStorage.getItem(getSlotKey(userId, activeSlot));
       if (stored) {
         try {
           const parsed = JSON.parse(stored);
           const loadedNodes = parsed.mapNodes && parsed.mapNodes.length > 0 ? parsed.mapNodes : generateStoryMap();
-          setRunState({ ...defaultState, ...parsed, relics: parsed.relics || [], mapNodes: loadedNodes });
+          return { ...defaultState, ...parsed, relics: parsed.relics || [], mapNodes: loadedNodes };
         } catch (e) {
           console.error("Failed to parse run state", e);
-          setRunState({ ...defaultState, mapNodes: generateStoryMap(), lastUpdated: new Date().toISOString() });
         }
-      } else {
-        setRunState({ ...defaultState, mapNodes: generateStoryMap(), lastUpdated: new Date().toISOString() });
       }
+      return { ...defaultState, mapNodes: generateStoryMap(), lastUpdated: new Date().toISOString() };
+    };
+
+    if (status === 'authenticated' && session?.user?.id) {
+      const userId = session.user.id;
+      let cancelled = false;
+
+      (async () => {
+        // The backend is the source of truth for gameplay state once a run exists there.
+        // playtimeSeconds/lastUpdated are never synced to it (see toRunStateFields), so
+        // those two always come from the local copy regardless of which branch wins below.
+        const backendGame = await OdysseyApiService.getSlot(activeSlot);
+        if (cancelled) return;
+
+        const local = readLocal(userId);
+
+        if (backendGame) {
+          setRunState({
+            ...defaultState,
+            ...toRunStateFields(backendGame),
+            playtimeSeconds: local.playtimeSeconds,
+            lastUpdated: local.lastUpdated,
+          });
+        } else {
+          setRunState(local);
+        }
+        setIsLoaded(true);
+      })();
+
+      return () => { cancelled = true; };
     } else {
       setRunState({ ...defaultState, mapNodes: generateStoryMap() });
+      setIsLoaded(true);
     }
-    setIsLoaded(true);
   }, [status, session?.user?.id, activeSlot]);
 
   // Save state when runState changes
@@ -136,15 +166,15 @@ export function StoryModeProvider({ children }: { children: React.ReactNode }) {
       }
     }
 
-    // Best-effort backend sync. The local map generated above renders immediately;
-    // once the backend's own regenerated map comes back, adopt it instead — the
+    // Best-effort backend sync. The local state set above renders immediately;
+    // once the backend's own post-reset state comes back, adopt it instead — the
     // player is always several screens away (title -> singleplayer -> map) by the
-    // time this resolves, so swapping mapNodes here doesn't disrupt anything on screen.
+    // time this resolves, so swapping it in here doesn't disrupt anything on screen.
     if (status === 'authenticated' && session?.user?.id) {
       const slotId = activeSlot;
       OdysseyApiService.resetRun(slotId, keepProgress).then((game) => {
-        if (game?.map?.nodes?.length) {
-          updateRunState({ mapNodes: toStoryNodes(game.map.nodes) });
+        if (game) {
+          updateRunState(toRunStateFields(game));
         }
       });
     }
@@ -178,9 +208,7 @@ export function StoryModeProvider({ children }: { children: React.ReactNode }) {
     if (!existing) {
       const game = await OdysseyApiService.startNewRun(slotId);
       if (!game) return;
-      if (game.map?.nodes?.length) {
-        updateRunState({ mapNodes: toStoryNodes(game.map.nodes) });
-      }
+      updateRunState(toRunStateFields(game));
     }
     OdysseyApiService.selectCharacter(slotId, 'strategist');
   };

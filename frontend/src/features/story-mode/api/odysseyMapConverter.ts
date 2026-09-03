@@ -1,6 +1,7 @@
 import type { StoryNode, StoryNodeType } from "@/features/story-mode/storyModeMapData";
 import type { DifficultyLevel } from "@/shared/chess/chess.types";
-import type { OdysseyBackendMapNode } from "./odysseyApi";
+import type { OdysseyBackendGame, OdysseyBackendMapNode } from "./odysseyApi";
+import type { RunState, RelicType } from "@/features/story-mode/StoryModeContext";
 
 /**
  * The backend's Start node carries no difficulty (OdysseyNode base class has
@@ -30,4 +31,34 @@ export function toStoryNodes(nodes: OdysseyBackendMapNode[]): StoryNode[] {
       description: node.description,
     };
   });
+}
+
+const RELIC_TYPES: RelicType[] = ["undo", "hint", "evalBar", "time", "reroll"];
+
+/**
+ * Converts a backend game into the gameplay-state slice of RunState:
+ * coins/relics/completedNodes/currentNodeId/journeyComplete/mapNodes.
+ * Deliberately excludes playtimeSeconds/lastUpdated — the backend never
+ * receives playtime updates (syncing every second would be too chatty), so
+ * it would always read back as 0 and silently erase the player's actual
+ * accumulated playtime. Those two fields stay locally tracked always;
+ * callers should merge this into local state rather than replace it wholesale.
+ */
+export function toRunStateFields(game: OdysseyBackendGame): Partial<RunState> {
+  const chargesFor = (type: RelicType) => game.relics.find((r) => r.type === type)?.charges ?? 0;
+
+  const fields: Partial<RunState> = {
+    coins: game.coins,
+    relics: RELIC_TYPES.filter((type) => game.relics.some((r) => r.type === type)),
+    completedNodes: game.completedNodes,
+    currentNodeId: game.currentNodeId,
+    journeyComplete: game.journeyComplete,
+    mapNodes: toStoryNodes(game.map.nodes),
+  };
+
+  for (const type of RELIC_TYPES) {
+    (fields as Record<string, number>)[`${type}Charges`] = chargesFor(type);
+  }
+
+  return fields;
 }
