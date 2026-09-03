@@ -1,17 +1,17 @@
 import { env } from "./config/env.js";
 import { app } from "./app.js";
-import { initRollbar, reportError } from "./observability/index.js";
-import { bootstrapTransport } from "./transport/index.js";
+import { initRollbar, reportError } from "./realtime/observability/index.js";
+import { bootstrapTransport } from "./realtime/transport/index.js";
 import {
   SessionManager,
   ClockTicker,
   sessionTransportImpl,
   wireSessionTransportBridge,
   wireMatchmakingSessionBridge,
-} from "./session/index.js";
-import { matchmakingQueue, ExpiryTicker } from "./matchmaking/index.js";
-import { handleGameResult } from "./results/index.js";
-import { attachBot, acquireBot, releaseBot } from "./bot/botPlayer.js";
+} from "./realtime/session/index.js";
+import { matchmakingQueue, ExpiryTicker } from "./realtime/matchmaking/index.js";
+import { handleGameResult } from "./realtime/results/index.js";
+import { attachBot, acquireBot, releaseBot } from "./realtime/bot/bot-player.js";
 import { eventManager } from "./events/index.js";
 import { registerAntiCheatActions } from "./anticheat/index.js";
 import { warmMaiaEngine } from "./maia/maia.route.js";
