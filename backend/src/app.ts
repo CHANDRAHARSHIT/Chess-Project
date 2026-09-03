@@ -17,6 +17,7 @@ import { matchmakingRouter } from "./routes/matchmaking.routes.js";
 import { maiaRouter } from "./maia/maia.route.js";
 import { pathwayProgressRouter } from "./routes/pathway-progress.routes.js";
 import { gamesRouter } from "./routes/games.routes.js";
+import { anticheatRouter } from "./routes/anticheat.route.js";
 import { assessmentRouter } from "./routes/assessment.route.js";
 import { errorHandler } from "./middleware/error.middleware.js";
 
@@ -100,6 +101,7 @@ app.use("/api/matchmaking", matchmakingRouter);
 app.use("/api/maia", maiaRouter);
 app.use("/api/pathway-progress", pathwayProgressRouter);
 app.use("/api/games", gamesRouter);
+app.use("/api/anticheat", anticheatRouter);
 app.use("/api/assessments", assessmentRouter);
 
 // Catch-all centralized error handler

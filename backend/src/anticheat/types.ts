@@ -29,6 +29,26 @@ export interface Suspect {
   readonly underHeightenedScrutiny: boolean;
 }
 
+export type CompensationKind =
+  | "rating_restoration"
+  | "prize_redistribution"
+  | "event_credit"
+  | "acknowledgement";
+
+/** One restoration owed to one Affected User. Game-scoped kinds carry a gameRecordId. */
+export interface CompensationRecord {
+  readonly compensationId: string;
+  readonly userId: string;
+  readonly caseId: string;
+  readonly kind: CompensationKind;
+  readonly gameRecordId?: string;
+  readonly ratingPointsRestored?: number;
+  readonly amountMinorUnits?: number;
+  readonly currency?: string;
+  readonly issuedAt: Date;
+  readonly notes?: string;
+}
+
 /** A user harmed by a violation. Compensation makes these whole. */
 export interface AffectedUser {
   readonly userId: string;
@@ -86,7 +106,7 @@ export interface CheckResult {
   readonly score: number;
   /** 0–1. Distinct from score: high confidence in a low score is meaningful. */
   readonly confidence: number;
-  /** For the arbiter. Never surfaced to the suspect. */
+  /** Internal. Never surfaced to the suspect. */
   readonly evidence: readonly string[];
 }
 
@@ -110,6 +130,8 @@ export interface DetectionOutcome {
   readonly totalScore: number;
   readonly threshold: number;
   readonly detected: boolean;
+  /** Compensation defines Affected Users as the opponents in these games only. */
+  readonly flaggedGameRecordIds: readonly string[];
   /** Calibrated probability of a violation, 0–1. */
   readonly certainty: number;
   readonly evaluatedAt: Date;
@@ -152,24 +174,51 @@ export interface AppliedPenalty {
 
 export type CaseStatus =
   | "open"
-  | "awaiting_arbiter"
+  | "awaiting_review"
   | "under_review"
   | "upheld"
   | "overturned"
   | "appealed"
   | "closed";
 
-/** Must be self-contained: arbiters are external contractors with no platform access. */
+/** Statuses where the case is still live. Anything else has been decided. */
+export const UNRESOLVED_CASE_STATUSES: readonly CaseStatus[] = [
+  "open",
+  "awaiting_review",
+  "under_review",
+  "appealed",
+];
+
+export type AppealStatus = "submitted" | "under_review" | "upheld" | "rejected" | "withdrawn";
+
+/** One appeal against a decided case. Lives on the case — there is only ever one. */
+export interface CaseAppeal {
+  readonly status: AppealStatus;
+  readonly grounds: string;
+  readonly submittedAt: Date;
+  readonly decidedAt?: Date;
+  readonly decisionReasoning?: string;
+}
+
+/** The record every penalty cites, and what an appeal points at. */
 export interface ReviewCase {
   readonly caseId: string;
   readonly suspect: Suspect;
   readonly situation: Situation;
   readonly status: CaseStatus;
+  /** Every outcome that contributed, oldest first. A later detection appends. */
   readonly outcomes: readonly DetectionOutcome[];
-  readonly flags: readonly RedFlag[];
+  readonly evidence: readonly string[];
+  readonly flaggedGameRecordIds: readonly string[];
+  /** Computed by Compensation once the case is upheld; empty until then. */
   readonly affectedUsers: readonly AffectedUser[];
   readonly openedAt: Date;
-  readonly assignedArbiterId?: string;
+  readonly decidedById?: string;
   readonly resolvedAt?: Date;
   readonly resolutionNotes?: string;
+  /** Set once decided. Undefined is "not yet decided". */
+  readonly upheld?: boolean;
+  readonly decisionConfidence?: number;
+  readonly suspectStatement?: string;
+  readonly appeal?: CaseAppeal;
 }

@@ -29,8 +29,10 @@ export type {
   PenaltyAction,
   AppliedPenalty,
   CaseStatus,
+  CaseAppeal,
   ReviewCase,
 } from "./types.js";
+export { UNRESOLVED_CASE_STATUSES } from "./types.js";
 
 // ── Post-game analysis (implemented) ─────────────────────────────────────────
 export {
@@ -43,6 +45,7 @@ export {
 } from "./AnalysisService.js";
 export { registerAntiCheatActions } from "./actions.js";
 export {
+  enforceDetection,
   loadReviewWindow,
   reviewUserHistory,
   runWholeHistoryReview,
@@ -126,19 +129,50 @@ export { EngineCorrelationCheck } from "./detection/checks/EngineCorrelationChec
 export { PlayingPersonalityCheck } from "./detection/checks/PlayingPersonalityCheck.js";
 
 // ── Penalty ──────────────────────────────────────────────────────────────────
-export { PenaltyManager } from "./penalty/PenaltyManager.js";
+export {
+  PenaltyManager,
+  PenaltyNotFoundError,
+  UnappealablePenaltyError,
+} from "./penalty/PenaltyManager.js";
 export { EscalationLadder } from "./penalty/EscalationLadder.js";
-export type { EscalationState } from "./penalty/EscalationLadder.js";
+export { findBlockingPenalty } from "./penalty/BanEnforcement.js";
+export {
+  createPrismaPenaltyRepository,
+  prismaPenaltyRepository,
+} from "./penalty/penaltyRepository.js";
+export type { NewPenaltyInput, PenaltyRepository } from "./penalty/penaltyRepository.js";
 
 // ── Compensation ─────────────────────────────────────────────────────────────
 export { CompensationManager } from "./compensation/CompensationManager.js";
-export type { CompensationRecord } from "./compensation/CompensationManager.js";
+export {
+  createPrismaCompensationRepository,
+  prismaCompensationRepository,
+} from "./compensation/compensationRepository.js";
+export type {
+  CompensationRepository,
+  NewCompensationInput,
+} from "./compensation/compensationRepository.js";
+export type { CompensationKind, CompensationRecord } from "./types.js";
 
 // ── Review (offender review & appeals) ───────────────────────────────────────
-export { CaseManager } from "./review/CaseManager.js";
-export type { ArbiterDecision, ArbiterPacket } from "./review/CaseManager.js";
+export {
+  CaseManager,
+  CaseAccessError,
+  CaseAlreadyAppealedError,
+  CaseAlreadyResolvedError,
+  CaseNotDecidedError,
+  CaseNotFoundError,
+} from "./review/CaseManager.js";
+export type { CaseDecision } from "./review/CaseManager.js";
+export {
+  collectEvidence,
+  createPrismaCaseRepository,
+  prismaCaseRepository,
+} from "./review/caseRepository.js";
+export type { CaseChanges, CaseRepository, NewCaseInput } from "./review/caseRepository.js";
 export { AppealService } from "./review/AppealService.js";
-export type { Appeal, AppealStatus } from "./review/AppealService.js";
+export type { Appeal } from "./review/AppealService.js";
+export type { AppealStatus } from "./types.js";
 
 // ── Simulation ───────────────────────────────────────────────────────────────
 export { CheatInjector } from "./simulation/CheatInjector.js";

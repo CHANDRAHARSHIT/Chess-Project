@@ -11,9 +11,7 @@
  * determined cheater has for probing the detector.
  */
 
-import type { AppliedPenalty, ReviewCase } from "../types.js";
-
-export type AppealStatus = "submitted" | "under_review" | "upheld" | "rejected" | "withdrawn";
+import type { AppealStatus, AppliedPenalty, ReviewCase } from "../types.js";
 
 export interface Appeal {
   readonly appealId: string;

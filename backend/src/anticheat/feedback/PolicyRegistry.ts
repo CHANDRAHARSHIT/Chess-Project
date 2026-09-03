@@ -69,6 +69,8 @@ const PROVISIONAL_QUALITY_BANDS: MoveQualityBands = {
 /** Roughly a clear extra piece — provisional, like the bands above. */
 const DECISIVE_ADVANTAGE_CP = 300;
 
+const DAY_MS = 24 * 60 * 60 * 1000;
+
 /** Which games a multi-game review runs over. */
 export interface ReviewWindowPolicy {
   readonly gameCount: number;
@@ -150,11 +152,7 @@ export interface PatternPolicy {
 }
 
 export interface CertaintyPolicy {
-  /**
-   * Ceiling applied while baselines are placeholders. Set below the lowest
-   * certainty any penalty requires, so a review computed from guessed numbers
-   * cannot trigger one — by construction, not by discipline.
-   */
+  /** Ceiling on reported certainty while baselines are placeholders. */
   readonly uncalibratedCeiling: number;
   /** False once real baselines replace the placeholders. */
   readonly placeholderMode: boolean;
@@ -184,14 +182,28 @@ const PROVISIONAL_PATTERN_POLICY: PatternPolicy = {
 
 const PROVISIONAL_DETECTION_THRESHOLD = 100;
 
-/**
- * The ceiling sits below `increase_monitoring`, the cheapest action in the
- * ladder, so no placeholder-driven review reaches any consequence at all.
- */
+/** Caps the certainty a review reports while baselines are placeholders. */
 const PROVISIONAL_CERTAINTY_POLICY: CertaintyPolicy = {
   uncalibratedCeiling: 0.2,
   placeholderMode: true,
 };
+
+const AUTOMATIC_ENFORCEMENT_ENABLED = true;
+
+/**
+ * What a detection costs, by how many times the user has already been caught.
+ * Level is read before the current detection is recorded, so 0 is a first offence.
+ * New actions are entries here, never branches in PenaltyManager.
+ */
+const PROVISIONAL_LEVEL_ACTIONS: Readonly<Record<EscalationLevel, readonly PenaltyAction[]>> = {
+  0: ["temporary_ban"],
+  1: ["temporary_ban"],
+  2: ["permanent_ban"],
+  3: ["permanent_ban"],
+};
+
+/** Upheld cases at which each level begins, indexed level 1, 2, 3. */
+const PROVISIONAL_UPHELD_CASES_PER_LEVEL: readonly number[] = [1, 2, 3];
 
 export class PolicyRegistry {
   /**
@@ -233,6 +245,11 @@ export class PolicyRegistry {
     return PROVISIONAL_CERTAINTY_POLICY;
   }
 
+  /** Master switch for penalising and compensating on a detection. */
+  isAutomaticEnforcementEnabled(situation: Situation): boolean {
+    return AUTOMATIC_ENFORCEMENT_ENABLED;
+  }
+
   /** Summed-DCS value above which detection is reported. Spec's `> 100` is a placeholder. */
   getDetectionThreshold(situation: Situation): number {
     return PROVISIONAL_DETECTION_THRESHOLD;
@@ -247,9 +264,14 @@ export class PolicyRegistry {
     throw new Error("Not implemented");
   }
 
-  /** Bar rises with the harm a wrong call causes: monitoring is cheap, a ban is not. */
-  getCertaintyThreshold(action: PenaltyAction, situation: Situation): number {
-    throw new Error("Not implemented");
+  /** The ladder as data — new actions are entries, not code. */
+  getActionsForLevel(level: EscalationLevel, situation: Situation): readonly PenaltyAction[] {
+    return PROVISIONAL_LEVEL_ACTIONS[level];
+  }
+
+  /** Upheld-case counts at which levels 1, 2 and 3 begin. */
+  getUpheldCasesPerLevel(situation: Situation): readonly number[] {
+    return PROVISIONAL_UPHELD_CASES_PER_LEVEL;
   }
 
   /** Flags constituting a pattern rather than an anomaly. Spec's provisional figure is 3. */

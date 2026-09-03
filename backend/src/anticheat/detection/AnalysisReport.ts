@@ -18,7 +18,7 @@ const NOTABLE: readonly MoveQuality[] = ["blunder", "mistake", "inaccuracy"];
 const MATE_EVAL_FLOOR_CP = 9000;
 
 /**
- * Human-readable view of a multi-game review, for the arbiter packet and for
+ * Human-readable view of a multi-game review, for case evidence and for
  * server logs. Secondary to the structured DetectionOutcome — same data, no
  * extra inference, and it never says anyone cheated.
  */
