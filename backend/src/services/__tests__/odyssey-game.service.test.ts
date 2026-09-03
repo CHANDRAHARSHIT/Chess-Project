@@ -109,4 +109,22 @@ describe("OdysseyGameService", () => {
     const result = await OdysseyGameService.getSlot(userId, 10);
     assert.strictEqual(result, null);
   });
+
+  test("test_completeNode_addsTheNodeToCompletedNodes", async () => {
+    await OdysseyGameService.startNewRun(userId, 11);
+
+    const game = await OdysseyGameService.completeNode(userId, 11, 0);
+
+    assert.ok(game.completedNodes.includes(0));
+    assert.strictEqual(game.journeyComplete, false);
+  });
+
+  test("test_completeNode_isIdempotentForAnAlreadyCompletedNode", async () => {
+    await OdysseyGameService.startNewRun(userId, 12);
+    await OdysseyGameService.completeNode(userId, 12, 0);
+
+    const game = await OdysseyGameService.completeNode(userId, 12, 0);
+
+    assert.deepStrictEqual(game.completedNodes, [0]);
+  });
 });

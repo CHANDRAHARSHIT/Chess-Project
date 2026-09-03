@@ -131,6 +131,29 @@ export class OdysseyGameController {
   }
 
   /**
+   * POST /api/odyssey/slots/:slotId/nodes/:nodeId/complete
+   * Marks a node completed. Covers the Start node (id 0) only — every other
+   * node type completes itself through its own domain service.
+   */
+  static async completeNode(req: Request, res: Response, next: NextFunction) {
+    try {
+      const guard = requireUserAndSlotId(req, res);
+      if (!guard.ok) return;
+
+      const nodeId = requireNodeId(req, res);
+      if (nodeId === undefined) return;
+
+      const existing = await requireExistingSlot(guard.userId, guard.slotId, res);
+      if (!existing) return;
+
+      const game = await OdysseyGameService.completeNode(guard.userId, guard.slotId, nodeId);
+      res.status(200).json({ status: "success", data: { game } });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
    * DELETE /api/odyssey/slots/:slotId
    */
   static async deleteSlot(req: Request, res: Response, next: NextFunction) {

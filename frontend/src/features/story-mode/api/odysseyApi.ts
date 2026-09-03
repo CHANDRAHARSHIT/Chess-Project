@@ -130,6 +130,21 @@ export class OdysseyApiService {
   static async resolvePuzzle(slotId: number, nodeId: number, solvedCount: number, totalCount: number): Promise<boolean> {
     return post(`/slots/${slotId}/nodes/${nodeId}/puzzle/resolve`, "resolvePuzzle", { solvedCount, totalCount });
   }
+
+  /** Marks a node as the run's current position. Requires the node to already be reachable per the backend's own completedNodes graph. */
+  static async enterNode(slotId: number, nodeId: number): Promise<boolean> {
+    return post(`/slots/${slotId}/nodes/${nodeId}/enter`, "enterNode");
+  }
+
+  /**
+   * Marks a node completed directly, with no domain-specific reward — used
+   * only for the Start node (id 0), which the frontend always renders as an
+   * immediate battle but which isn't a real OdysseyBattleNode on the backend
+   * (see odysseyMapConverter.ts), so resolveBattleOutcome can't cover it.
+   */
+  static async completeNode(slotId: number, nodeId: number): Promise<boolean> {
+    return post(`/slots/${slotId}/nodes/${nodeId}/complete`, "completeNode");
+  }
 }
 
 async function post(path: string, context: string, body?: unknown): Promise<boolean> {

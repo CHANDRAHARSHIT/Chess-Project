@@ -26,6 +26,8 @@ odysseyRouter.post("/slots/:slotId/reset", OdysseyGameController.resetRun);
 odysseyRouter.delete("/slots/:slotId", OdysseyGameController.deleteSlot);
 // POST /api/odyssey/slots/:slotId/nodes/:nodeId/enter — marks a node as entered
 odysseyRouter.post("/slots/:slotId/nodes/:nodeId/enter", OdysseyGameController.enterNode);
+// POST /api/odyssey/slots/:slotId/nodes/:nodeId/complete — marks a node completed (Start node only; other types complete via their own domain routes)
+odysseyRouter.post("/slots/:slotId/nodes/:nodeId/complete", OdysseyGameController.completeNode);
 
 // ── Battle ──────────────────────────────────────────────────────────────
 // POST /api/odyssey/slots/:slotId/nodes/:nodeId/battle          — enters a battle node

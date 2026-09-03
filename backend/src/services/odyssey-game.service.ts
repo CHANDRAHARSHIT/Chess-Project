@@ -76,6 +76,22 @@ export class OdysseyGameService {
     return OdysseyGameRepository.upsert(game);
   }
 
+  /**
+   * Marks an arbitrary node completed, for the one node type with no
+   * domain-specific completion flow of its own: the Start node (id 0),
+   * which the frontend always renders as an immediate battle but which
+   * carries no monster/difficulty data here and so isn't an OdysseyBattleNode
+   * — OdysseyBattleService.resolveOutcome can't be used for it. Every other
+   * node type (battle/merchant/rest/puzzle) completes itself through its own
+   * service; this exists only to cover that gap and keep completedNodes
+   * accurate for canEnterNode's reachability gating past floor 1.
+   */
+  static async completeNode(userId: string, slotId: number, nodeId: number): Promise<OdysseyGame> {
+    const game = await OdysseyGameService.requireSlot(userId, slotId);
+    game.completeNode(nodeId, false);
+    return OdysseyGameRepository.upsert(game);
+  }
+
   static async deleteSlot(userId: string, slotId: number): Promise<void> {
     await OdysseyGameRepository.delete(userId, slotId);
   }

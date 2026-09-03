@@ -186,4 +186,26 @@ describe("OdysseyGameController", () => {
     const slots = (mock.body as any).data.slots;
     assert.ok(slots.some((s: any) => s.slotId === 10));
   });
+
+  test("test_completeNode_returns404WhenTheSlotDoesNotExist", async () => {
+    const req = makeMockReq({ userId, params: { slotId: "995", nodeId: "0" } });
+    const mock = makeMockRes();
+    const { next } = makeCapturingNext();
+
+    await OdysseyGameController.completeNode(req, mock.res, next);
+
+    assert.strictEqual(mock.statusCode, 404);
+  });
+
+  test("test_completeNode_addsTheNodeToCompletedNodes", async () => {
+    await OdysseyGameService.startNewRun(userId, 11);
+    const req = makeMockReq({ userId, params: { slotId: "11", nodeId: "0" } });
+    const mock = makeMockRes();
+    const { next } = makeCapturingNext();
+
+    await OdysseyGameController.completeNode(req, mock.res, next);
+
+    assert.strictEqual(mock.statusCode, 200);
+    assert.ok((mock.body as any).data.game.completedNodes.includes(0));
+  });
 });

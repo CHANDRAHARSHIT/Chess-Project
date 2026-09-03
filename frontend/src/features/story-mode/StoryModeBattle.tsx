@@ -522,26 +522,31 @@ export default function StoryModeBattle({
     addCoins(baseCoins);
 
     // Best-effort backend sync — coins above are already the authoritative local reward.
-    // nodeId 0 is skipped: the frontend always renders it as an immediate battle (matching
-    // mapGenerator.ts's own convention), but the backend's node 0 is genuinely its Start
-    // node (not an OdysseyBattleNode) — resolveBattleOutcome would 400 for it.
-    if (status === 'authenticated' && nodeId !== 0) {
-      const endReason: OdysseyBattleEndReason =
-        gameOverReason === 'timeout' ? 'timeout' : gameRef.current.isCheckmate() ? 'checkmate' : 'draw';
-      OdysseyApiService.resolveBattleOutcome(
-        activeSlot,
-        nodeId,
-        {
-          playerInitialSeconds: playerInitialTime,
-          enemyInitialSeconds: enemyInitialTime,
-          playerSeconds: playerTime,
-          enemySeconds: enemyTime,
-          evalMovesRemaining,
-          botConditions: botStatus,
-        },
-        endReason,
-        true
-      );
+    // nodeId 0 is special-cased: the frontend always renders it as an immediate battle
+    // (matching mapGenerator.ts's own convention), but the backend's node 0 is genuinely
+    // its Start node (not an OdysseyBattleNode) — resolveBattleOutcome would 400 for it, so
+    // completeNode (a generic, reward-less completion) is used there instead.
+    if (status === 'authenticated') {
+      if (nodeId === 0) {
+        OdysseyApiService.completeNode(activeSlot, nodeId);
+      } else {
+        const endReason: OdysseyBattleEndReason =
+          gameOverReason === 'timeout' ? 'timeout' : gameRef.current.isCheckmate() ? 'checkmate' : 'draw';
+        OdysseyApiService.resolveBattleOutcome(
+          activeSlot,
+          nodeId,
+          {
+            playerInitialSeconds: playerInitialTime,
+            enemyInitialSeconds: enemyInitialTime,
+            playerSeconds: playerTime,
+            enemySeconds: enemyTime,
+            evalMovesRemaining,
+            botConditions: botStatus,
+          },
+          endReason,
+          true
+        );
+      }
     }
 
     onVictory();
