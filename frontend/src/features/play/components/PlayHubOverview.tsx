@@ -61,7 +61,7 @@ export function PlayHubOverview({
       title: "Quick Game",
       subtitle: "Jump straight into a game with a matched opponent.",
       iconType: "image",
-      iconSrc: "/assets/PlayIcons/quick-game-icon.png",
+      iconSrc: "/assets/PlayIcons/quick-game-icon.svg",
       disabled: !featureFlags.enablePlayOnline,
       comingSoon: !featureFlags.enablePlayOnline,
       onClick: () => {
@@ -85,7 +85,7 @@ export function PlayHubOverview({
       title: "Bots",
       subtitle: "Challenge bots from beginner to master.",
       iconType: "image",
-      iconSrc: "/assets/PlayIcons/bot-icon.png",
+      iconSrc: "/assets/PlayIcons/bot-icon.svg",
       onClick: () => {
         soundManager.playButtonClick();
         onSelectTab("bots");
@@ -96,7 +96,7 @@ export function PlayHubOverview({
       title: "Coach",
       subtitle: "Learn and improve while you play.",
       iconType: "image",
-      iconSrc: "/assets/PlayIcons/coach-icon.png",
+      iconSrc: "/assets/PlayIcons/coach-icon.svg",
       disabled: true,
       comingSoon: true,
     },
@@ -105,7 +105,7 @@ export function PlayHubOverview({
       title: "Play a Friend",
       subtitle: "Invite a friend and play together.",
       iconType: "image",
-      iconSrc: "/assets/PlayIcons/friend-icon.png",
+      iconSrc: "/assets/PlayIcons/friend-icon.svg",
       disabled: true,
       comingSoon: true,
     },
@@ -114,7 +114,7 @@ export function PlayHubOverview({
       title: "Tournaments",
       subtitle: "Compete against players and climb the standings.",
       iconType: "image",
-      iconSrc: "/assets/PlayIcons/tournament-icon.png",
+      iconSrc: "/assets/PlayIcons/tournament-icon.svg",
       disabled: true,
       comingSoon: true,
     },
@@ -123,7 +123,7 @@ export function PlayHubOverview({
       title: "Variants",
       subtitle: "Discover fun new ways to play chess.",
       iconType: "image",
-      iconSrc: "/assets/PlayIcons/variants-icon.png",
+      iconSrc: "/assets/PlayIcons/variants-icon.svg",
       onClick: () => {
         soundManager.playButtonClick();
         onSelectTab("variants");
@@ -137,7 +137,7 @@ export function PlayHubOverview({
   const userImage = session?.user?.image;
 
   return (
-    <div className="max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 select-none animate-fade-in space-y-6">
+    <div className="max-w-6xl mx-auto px-0 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 select-none animate-fade-in space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
         {/* ── Left Column: Chess Board with Players Identity (Hidden on Mobile) ── */}
         <div className="hidden lg:flex lg:col-span-7 flex-col items-center justify-center w-full">
@@ -218,9 +218,9 @@ export function PlayHubOverview({
 
         {/* ── Right Column: "Play Chess" Panel (Full Width on Mobile) ── */}
         <div className="w-full lg:col-span-5">
-          <div className="rounded-3xl border border-brand-text/15 bg-brand-surface p-4 sm:p-6 flex flex-col justify-between space-y-4">
+          <div className="rounded-2xl sm:rounded-3xl border border-brand-text/15 bg-brand-surface px-2.5 py-4 sm:p-6 flex flex-col justify-between space-y-4">
             {/* Panel Header */}
-            <div className="flex items-center gap-3 border-b border-brand-text/10 pb-3">
+            <div className="flex items-center gap-2.5 sm:gap-3 border-b border-brand-text/10 pb-3">
               <img
                 src="/play icon.png"
                 alt="Play Chess"
@@ -240,14 +240,14 @@ export function PlayHubOverview({
                 const isCardDisabled = Boolean(card.disabled);
 
                 const content = (
-                  <div className="flex items-center gap-3.5 w-full">
+                  <div className="flex items-center gap-2.5 sm:gap-3.5 w-full">
                     {/* Large Direct Icon */}
-                    <div className="shrink-0 flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14">
+                    <div className="shrink-0 flex items-center justify-center w-11 h-11 sm:w-14 sm:h-14">
                       {card.iconType === "image" && card.iconSrc ? (
                         <img
                           src={card.iconSrc}
                           alt={card.title}
-                          className={`w-12 h-12 sm:w-14 sm:h-14 object-contain ${
+                          className={`w-11 h-11 sm:w-14 sm:h-14 object-contain ${
                             !isCardDisabled
                               ? "transition-transform duration-200 group-hover:scale-105"
                               : ""
@@ -255,7 +255,7 @@ export function PlayHubOverview({
                         />
                       ) : card.IconComponent ? (
                         <card.IconComponent
-                          className={`w-9 h-9 sm:w-11 sm:h-11 text-brand-accent ${
+                          className={`w-8 h-8 sm:w-11 sm:h-11 text-brand-accent ${
                             !isCardDisabled
                               ? "transition-transform duration-200 group-hover:scale-105"
                               : ""
@@ -267,7 +267,7 @@ export function PlayHubOverview({
                     {/* Mode Texts */}
                     <div className="flex-1 min-w-0 text-left">
                       <div
-                        className={`font-sans font-bold text-sm sm:text-base text-brand-text tracking-tight flex items-center gap-2 ${
+                        className={`font-sans font-bold text-sm sm:text-base text-brand-text tracking-tight flex items-center gap-1.5 sm:gap-2 ${
                           !isCardDisabled
                             ? "group-hover:text-brand-accent transition-colors"
                             : ""
@@ -275,7 +275,7 @@ export function PlayHubOverview({
                       >
                         <span>{card.title}</span>
                         {card.comingSoon && (
-                          <span className="px-2 py-0.5 rounded-full font-mono text-[10px] font-bold bg-brand-text/10 text-brand-secondary border border-brand-text/10 shrink-0">
+                          <span className="px-1.5 sm:px-2 py-0.5 rounded-full font-mono text-[9px] sm:text-[10px] font-bold bg-brand-text/10 text-brand-secondary border border-brand-text/10 shrink-0">
                             Coming Soon
                           </span>
                         )}
@@ -293,8 +293,8 @@ export function PlayHubOverview({
                 );
 
                 const cardClass = isCardDisabled
-                  ? "w-full p-2.5 sm:p-3 rounded-2xl border bg-brand-surface border-brand-text/10 opacity-50 cursor-not-allowed flex items-center text-left select-none"
-                  : "group w-full p-2.5 sm:p-3 rounded-2xl border bg-brand-surface border-brand-text/15 hover:border-brand-accent/50 cursor-pointer active:scale-[0.99] transition-all duration-300 flex items-center text-left";
+                  ? "w-full px-2 py-2.5 sm:p-3 rounded-xl sm:rounded-2xl border bg-brand-surface border-brand-text/10 opacity-50 cursor-not-allowed flex items-center text-left select-none"
+                  : "group w-full px-2 py-2.5 sm:p-3 rounded-xl sm:rounded-2xl border bg-brand-surface border-brand-text/15 hover:border-brand-accent/50 cursor-pointer active:scale-[0.99] transition-all duration-300 flex items-center text-left";
 
                 if (card.href && !isCardDisabled) {
                   return (
@@ -326,7 +326,7 @@ export function PlayHubOverview({
       </div>
 
       {/* ── Bottom Section: Game History | Leaderboard | Stats ── */}
-      <div className="rounded-3xl border border-brand-text/15 bg-brand-surface overflow-hidden">
+      <div className="rounded-2xl sm:rounded-3xl border border-brand-text/15 bg-brand-surface overflow-hidden">
         <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-brand-text/10">
           {/* 1. Game History */}
           <button
@@ -336,7 +336,7 @@ export function PlayHubOverview({
               onNavigateOnlineSection("recent-games");
             }}
             disabled={!featureFlags.enablePlayOnline}
-            className={`p-4 sm:p-5 flex items-center justify-between gap-4 text-left transition-colors ${
+            className={`px-3 py-4 sm:p-5 flex items-center justify-between gap-3 sm:gap-4 text-left transition-colors ${
               featureFlags.enablePlayOnline
                 ? "group hover:bg-brand-text/5 cursor-pointer"
                 : "opacity-50 cursor-not-allowed"
@@ -347,9 +347,9 @@ export function PlayHubOverview({
                 : undefined
             }
           >
-            <div className="flex items-center gap-3.5 min-w-0">
-              <div className="w-12 h-12 rounded-full bg-indigo-500/10 dark:bg-indigo-500/15 border border-indigo-500/20 flex items-center justify-center shrink-0">
-                <History className="w-6 h-6 text-indigo-500 dark:text-indigo-400" />
+            <div className="flex items-center gap-3 sm:gap-3.5 min-w-0">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-indigo-500/10 dark:bg-indigo-500/15 border border-indigo-500/20 flex items-center justify-center shrink-0">
+                <History className="w-5 h-5 sm:w-6 sm:h-6 text-indigo-500 dark:text-indigo-400" />
               </div>
               <div className="min-w-0">
                 <div className="font-sans font-bold text-sm sm:text-base text-brand-text truncate group-hover:text-brand-accent transition-colors">
@@ -360,7 +360,7 @@ export function PlayHubOverview({
                 </p>
               </div>
             </div>
-            <ChevronRight className="w-5 h-5 text-brand-secondary shrink-0 group-hover:text-brand-accent group-hover:translate-x-0.5 transition-all" />
+            <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-brand-secondary shrink-0 group-hover:text-brand-accent group-hover:translate-x-0.5 transition-all" />
           </button>
 
           {/* 2. Leaderboard */}
@@ -371,7 +371,7 @@ export function PlayHubOverview({
               onNavigateOnlineSection("leaderboard");
             }}
             disabled={!featureFlags.enablePlayOnline}
-            className={`p-4 sm:p-5 flex items-center justify-between gap-4 text-left transition-colors ${
+            className={`px-3 py-4 sm:p-5 flex items-center justify-between gap-3 sm:gap-4 text-left transition-colors ${
               featureFlags.enablePlayOnline
                 ? "group hover:bg-brand-text/5 cursor-pointer"
                 : "opacity-50 cursor-not-allowed"
@@ -382,9 +382,9 @@ export function PlayHubOverview({
                 : undefined
             }
           >
-            <div className="flex items-center gap-3.5 min-w-0">
-              <div className="w-12 h-12 rounded-full bg-purple-500/10 dark:bg-purple-500/15 border border-purple-500/20 flex items-center justify-center shrink-0">
-                <Trophy className="w-6 h-6 text-purple-500 dark:text-purple-400" />
+            <div className="flex items-center gap-3 sm:gap-3.5 min-w-0">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-purple-500/10 dark:bg-purple-500/15 border border-purple-500/20 flex items-center justify-center shrink-0">
+                <Trophy className="w-5 h-5 sm:w-6 sm:h-6 text-purple-500 dark:text-purple-400" />
               </div>
               <div className="min-w-0">
                 <div className="font-sans font-bold text-sm sm:text-base text-brand-text truncate group-hover:text-brand-accent transition-colors">
@@ -395,18 +395,18 @@ export function PlayHubOverview({
                 </p>
               </div>
             </div>
-            <ChevronRight className="w-5 h-5 text-brand-secondary shrink-0 group-hover:text-brand-accent group-hover:translate-x-0.5 transition-all" />
+            <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-brand-secondary shrink-0 group-hover:text-brand-accent group-hover:translate-x-0.5 transition-all" />
           </button>
 
           {/* 3. Stats */}
           <Link
             to="/stats"
             onClick={() => soundManager.playButtonClick()}
-            className="p-4 sm:p-5 flex items-center justify-between gap-4 text-left group hover:bg-brand-text/5 cursor-pointer transition-colors"
+            className="px-3 py-4 sm:p-5 flex items-center justify-between gap-3 sm:gap-4 text-left group hover:bg-brand-text/5 cursor-pointer transition-colors"
           >
-            <div className="flex items-center gap-3.5 min-w-0">
-              <div className="w-12 h-12 rounded-full bg-blue-500/10 dark:bg-blue-500/15 border border-blue-500/20 flex items-center justify-center shrink-0">
-                <BarChart3 className="w-6 h-6 text-blue-500 dark:text-blue-400" />
+            <div className="flex items-center gap-3 sm:gap-3.5 min-w-0">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-blue-500/10 dark:bg-blue-500/15 border border-blue-500/20 flex items-center justify-center shrink-0">
+                <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500 dark:text-blue-400" />
               </div>
               <div className="min-w-0">
                 <div className="font-sans font-bold text-sm sm:text-base text-brand-text truncate group-hover:text-brand-accent transition-colors">
@@ -417,7 +417,7 @@ export function PlayHubOverview({
                 </p>
               </div>
             </div>
-            <ChevronRight className="w-5 h-5 text-brand-secondary shrink-0 group-hover:text-brand-accent group-hover:translate-x-0.5 transition-all" />
+            <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-brand-secondary shrink-0 group-hover:text-brand-accent group-hover:translate-x-0.5 transition-all" />
           </Link>
         </div>
       </div>

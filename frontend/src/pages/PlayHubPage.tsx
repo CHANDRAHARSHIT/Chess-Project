@@ -112,7 +112,7 @@ export default function PlayHubPage() {
     <div className="min-h-[calc(100dvh-4rem)] flex flex-col bg-gradient-to-b from-brand-bg via-brand-bg to-brand-surface/20">
       {/* ── Sub-Mode Back Navigation ── */}
       {activeTab !== null && (
-        <div className="px-3 sm:px-6 lg:px-8 pt-4 pb-2">
+        <div className="px-2 sm:px-6 lg:px-8 pt-4 pb-2">
           <button
             type="button"
             onClick={() => {
