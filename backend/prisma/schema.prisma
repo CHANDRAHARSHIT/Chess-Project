@@ -537,3 +537,142 @@ model AssessmentAttempt {
   @@unique([userId, trackSlug])
   @@index([trackSlug])
 }
+
+// ─────────────────────────────────────────────────────────────────────────
+// ADMIN DOMAIN
+// ─────────────────────────────────────────────────────────────────────────
+// Deliberately isolated from the user-facing User/Account/Session tables: no
+// relation here crosses into a UFS model, and no UFS model gains a back-relation.
+// An admin is never a player row. Do not add a foreign key between the two sides.
+// ─────────────────────────────────────────────────────────────────────────
+
+enum AdminRole {
+  SUPER_ADMIN
+  ADMIN
+  VIEWER
+}
+
+enum DocumentStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model AdminUser {
+  id          String    @id @default(cuid())
+  email       String    @unique
+  name        String?
+  avatarUrl   String?
+  role        AdminRole @default(ADMIN)
+  isActive    Boolean   @default(true)
+  lastLoginAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  accounts  AdminAccount[]
+  sessions  AdminSession[]
+  navItems  AdminUserNavItem[]
+  documents AdminDocument[]    @relation("AdminDocumentAuthor")
+}
+
+model AdminAccount {
+  id                String  @id @default(cuid())
+  adminUserId       String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  adminUser AdminUser @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([adminUserId])
+}
+
+model AdminSession {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  adminUserId  String
+  expires      DateTime
+
+  adminUser AdminUser @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
+
+  @@index([adminUserId])
+}
+
+// Required by the Auth.js Adapter interface. Unused by the Google-only flow,
+// but its absence leaves the adapter type-incomplete.
+model AdminVerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// Self-referencing tree. A row with a null `path` is a heading (e.g. "ACS");
+// a row with a path is a link. `key` is the stable seed identity — never the label.
+model AdminNavItem {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  label       String
+  path        String?
+  icon        String?
+  parentId    String?
+  sortOrder   Int      @default(0)
+  isDisabled  Boolean  @default(false)
+  isUniversal Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  parent   AdminNavItem?      @relation("AdminNavItemTree", fields: [parentId], references: [id], onDelete: Cascade)
+  children AdminNavItem[]     @relation("AdminNavItemTree")
+  grants   AdminUserNavItem[]
+
+  @@index([parentId, sortOrder])
+}
+
+model AdminUserNavItem {
+  id          String   @id @default(cuid())
+  adminUserId String
+  navItemId   String
+  createdAt   DateTime @default(now())
+
+  adminUser AdminUser    @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
+  navItem   AdminNavItem @relation(fields: [navItemId], references: [id], onDelete: Cascade)
+
+  @@unique([adminUserId, navItemId])
+  @@index([navItemId])
+}
+
+model AdminDocument {
+  id          String         @id @default(cuid())
+  title       String
+  // No @unique: uniqueness must apply to live rows only, or a soft delete would
+  // permanently burn the slug. Enforced by the partial unique index
+  // "AdminDocument_slug_active_key" (WHERE "deletedAt" IS NULL), which Prisma
+  // cannot express — see 20260904120000_add_admin_domain.sql. Do not add @unique.
+  slug        String
+  description String?
+  content     String?
+  status      DocumentStatus @default(DRAFT)
+  authorId    String?
+  // Soft delete. Every read path must filter `deletedAt: null`; the repository
+  // is the only layer permitted to touch this column.
+  deletedAt   DateTime?
+  deletedById String?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  author AdminUser? @relation("AdminDocumentAuthor", fields: [authorId], references: [id], onDelete: SetNull)
+
+  @@index([deletedAt, createdAt])
+  @@index([status])
+  @@index([authorId])
+}
