@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { requireAdminAuth } from "./middleware/requireAdminAuth.js";
 import { NavController } from "./nav/nav.controller.js";
+import { DocumentController } from "./documents/document.controller.js";
 
 export const adminRouter = Router();
 
@@ -17,3 +18,9 @@ adminRouter.get("/session", (req, res) => {
 });
 
 adminRouter.get("/nav", NavController.getNav);
+
+adminRouter.get("/documents", DocumentController.list);
+adminRouter.post("/documents", DocumentController.create);
+adminRouter.get("/documents/:id", DocumentController.getById);
+adminRouter.patch("/documents/:id", DocumentController.update);
+adminRouter.delete("/documents/:id", DocumentController.remove);
