@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { LogOut, Settings, Palette, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router";
 import { ThemeSubmenu } from "./ThemeSubmenu";
+import { useAdminSession } from "@/features/admin/useAdminSession";
+import { adminSignOut } from "@/features/admin/adminAuth";
 
 export const AdminAvatarDropdown: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -9,6 +11,10 @@ export const AdminAvatarDropdown: React.FC = () => {
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const { admin } = useAdminSession();
+
+  const displayName = admin?.name ?? admin?.email ?? "";
+  const initial = (displayName.trim()[0] ?? "").toUpperCase();
 
   // Toggle dropdown visibility
   const toggleDropdown = () => setIsOpen((prev) => !prev);
@@ -41,9 +47,10 @@ export const AdminAvatarDropdown: React.FC = () => {
     };
   }, [isOpen]);
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
     setIsOpen(false);
-    navigate("/admin");
+    await adminSignOut();
+    navigate("/admin", { replace: true });
   };
 
   const handleSettingsClick = () => {
@@ -62,7 +69,7 @@ export const AdminAvatarDropdown: React.FC = () => {
         aria-expanded={isOpen}
       >
         <span className="text-white font-sans font-bold text-lg select-none">
-          J
+          {initial}
         </span>
       </button>
 
@@ -78,10 +85,10 @@ export const AdminAvatarDropdown: React.FC = () => {
               {/* User Meta header matching img2 */}
               <div className="px-4 py-2.5 border-b border-[rgba(212,175,110,0.30)] mb-1">
                 <p className="text-sm font-semibold text-brand-text truncate">
-                  Jimmy Saha
+                  {admin?.name ?? "Admin"}
                 </p>
                 <p className="text-xs text-brand-secondary truncate mt-0.5">
-                  orandsw@gmail.com
+                  {admin?.email ?? ""}
                 </p>
               </div>
 

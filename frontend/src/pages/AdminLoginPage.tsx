@@ -1,13 +1,20 @@
-import React from "react";
-import { useNavigate } from "react-router";
+import React, { useState } from "react";
+import { useNavigate, useSearchParams } from "react-router";
 import { X } from "lucide-react";
+import { adminSignIn } from "@/features/admin/adminAuth";
 
 export const AdminLoginPage: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const [isSigningIn, setIsSigningIn] = useState(false);
+
+  // Auth.js redirects here with ?error=AccessDenied when the Google account is
+  // not a registered admin.
+  const error = searchParams.get("error");
 
   const handleGoogleSignIn = () => {
-    // Minimal FE transition to admin home page
-    navigate("/admin/home");
+    setIsSigningIn(true);
+    adminSignIn("/admin/home").catch(() => setIsSigningIn(false));
   };
 
   const handleClose = () => {
@@ -40,11 +47,23 @@ export const AdminLoginPage: React.FC = () => {
           </p>
         </div>
 
+        {error && (
+          <div
+            role="alert"
+            className="mb-5 rounded-2xl border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-300"
+          >
+            {error === "AccessDenied"
+              ? "That Google account is not an XLChess admin."
+              : "Sign-in failed. Please try again."}
+          </div>
+        )}
+
         {/* Continue with Google button matching img1 */}
         <button
           type="button"
           onClick={handleGoogleSignIn}
-          className="w-full flex items-center justify-center gap-3.5 bg-white text-gray-900 hover:bg-gray-100 font-sans font-semibold text-base py-4 px-6 rounded-2xl transition-all duration-200 active:scale-[0.98] shadow-sm cursor-pointer mb-2"
+          disabled={isSigningIn}
+          className="w-full flex items-center justify-center gap-3.5 bg-white text-gray-900 hover:bg-gray-100 disabled:opacity-60 disabled:cursor-not-allowed font-sans font-semibold text-base py-4 px-6 rounded-2xl transition-all duration-200 active:scale-[0.98] shadow-sm cursor-pointer mb-2"
         >
           {/* Official Google G Logo SVG */}
           <svg className="w-6 h-6 shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -65,7 +84,7 @@ export const AdminLoginPage: React.FC = () => {
               fill="#EA4335"
             />
           </svg>
-          <span>Continue with Google</span>
+          <span>{isSigningIn ? "Redirecting…" : "Continue with Google"}</span>
         </button>
       </div>
     </div>

@@ -41,6 +41,7 @@ import AssessmentPage from "@/pages/AssessmentPage";
 import NewsPage from "@/pages/NewsPage";
 import AdminLoginPage from "@/pages/AdminLoginPage";
 import AdminHomePage from "@/pages/AdminHomePage";
+import AdminProtectedRoute from "@/features/admin/AdminProtectedRoute";
 
 export interface RouteConfig {
   path: string;
@@ -248,12 +249,20 @@ export const mainRoutes: RouteConfig[] = [
   },
   {
     path: "/admin/home",
-    element: <AdminHomePage />,
+    element: (
+      <AdminProtectedRoute>
+        <AdminHomePage />
+      </AdminProtectedRoute>
+    ),
     title: "Admin Home | XLChess",
   },
   {
     path: "/admin/settings",
-    element: <SettingsPage allSoon={true} />,
+    element: (
+      <AdminProtectedRoute>
+        <SettingsPage allSoon={true} />
+      </AdminProtectedRoute>
+    ),
     title: "Admin Settings | XLChess",
   },
 ];

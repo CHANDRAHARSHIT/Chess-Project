@@ -23,7 +23,11 @@ import {
   Swords,
   Sparkles,
   Loader2,
+  FileText,
+  Circle,
+  Settings as SettingsIcon,
 } from "lucide-react";
+import { useAdminNav, type AdminNavItem } from "@/features/admin/useAdminNav";
 import { soundManager } from "@/shared/lib/SoundManager";
 import { useSession } from "@/features/account/useSession";
 import { AvatarDropdown } from "./AvatarDropdown";
@@ -61,6 +65,14 @@ function useOnClickOutside(
     };
   }, [ref]);
 }
+
+// The nav API sends icon names as strings. Resolved through an explicit map,
+// not dynamic lookup, so an unknown name falls back instead of crashing the shell.
+const ADMIN_NAV_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
+  Home,
+  FileText,
+  Settings: SettingsIcon,
+};
 
 /** Thin horizontal rule dividing sidebar sections */
 const Divider = () => (
@@ -114,6 +126,7 @@ export default function SidebarLayout({
 
   const isTheaterMode = location.pathname === "/odyssey";
   const isAdmin = location.pathname.startsWith("/admin");
+  const { items: adminNavItems, isLoading: isAdminNavLoading } = useAdminNav(isAdmin);
 
   const openModal = (mode: "login" | "register") => {
     setModalMode(mode);
@@ -703,6 +716,60 @@ export default function SidebarLayout({
 
   // Divider is defined above SidebarLayout (hoisted to avoid re-declaration on each render)
 
+  /**
+   * Admin navigation, driven by GET /api/admin/nav rather than a static list.
+   * A null `path` is a section heading; `isDisabled` items render greyed and
+   * inert, so a link that exists but isn't built yet cannot be followed.
+   */
+  const renderAdminNav = () => {
+    if (isAdminNavLoading) {
+      return (
+        <div className="flex flex-col gap-2 px-4 py-2">
+          {[0, 1, 2].map((row) => (
+            <div key={row} className="h-8 rounded-xl bg-brand-text/10 animate-pulse" />
+          ))}
+        </div>
+      );
+    }
+
+    const renderLeaf = (item: AdminNavItem) => {
+      const Icon = ADMIN_NAV_ICONS[item.icon ?? ""] ?? Circle;
+
+      if (item.isDisabled) {
+        return (
+          <div
+            key={item.id}
+            aria-disabled="true"
+            title="Coming soon"
+            className="flex items-center py-2.5 mx-2 px-3 rounded-xl text-brand-secondary/40 cursor-not-allowed"
+          >
+            <div className="flex items-center justify-center shrink-0 w-10">
+              <Icon className="w-5 h-5 shrink-0" />
+            </div>
+            <span className="flex-1 text-left text-[14px] ml-2 tracking-wide truncate">
+              {item.label}
+            </span>
+          </div>
+        );
+      }
+
+      return renderNavItem({ name: item.label, href: item.path ?? "#", icon: Icon });
+    };
+
+    return adminNavItems.map((item) =>
+      item.path === null ? (
+        <div key={item.id}>
+          <div className="px-6 py-2">
+            <span className="text-[15px] font-semibold text-brand-text">{item.label}</span>
+          </div>
+          {item.children.map(renderLeaf)}
+        </div>
+      ) : (
+        renderLeaf(item)
+      ),
+    );
+  };
+
   return (
     <div className="min-h-screen text-brand-text bg-brand-bg flex flex-col relative select-none">
       {/* ── TOP HEADER ──────────────────────────────────────────────────────── */}
@@ -778,11 +845,7 @@ export default function SidebarLayout({
           <nav className="flex-1 flex flex-col space-y-1">
             {isAdmin ? (
               <>
-                {renderNavItem({
-                  name: "Home",
-                  href: "/admin/home",
-                  icon: Home,
-                })}
+                {renderAdminNav()}
                 <Divider />
               </>
             ) : (
