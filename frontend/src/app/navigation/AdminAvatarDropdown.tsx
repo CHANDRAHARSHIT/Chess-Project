@@ -63,27 +63,36 @@ export const AdminAvatarDropdown: React.FC = () => {
       {/* Avatar Button matching img2 */}
       <button
         onClick={toggleDropdown}
-        className="flex items-center justify-center w-11 h-11 rounded-full bg-[#3d4b58] border-2 border-[#bfa15f] hover:border-gold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-brand-accent/50 cursor-pointer shadow-md"
+        className="flex items-center justify-center w-11 h-11 overflow-hidden rounded-full bg-brand-surface border-2 border-brand-accent/70 hover:border-brand-accent transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-brand-accent/50 cursor-pointer"
         aria-label="Admin user menu"
         aria-haspopup="true"
         aria-expanded={isOpen}
       >
-        <span className="text-white font-sans font-bold text-lg select-none">
-          {initial}
-        </span>
+        {admin?.avatarUrl ? (
+          <img
+            src={admin.avatarUrl}
+            alt=""
+            referrerPolicy="no-referrer"
+            className="w-full h-full rounded-full object-cover"
+          />
+        ) : (
+          <span className="text-brand-accent font-sans font-bold text-lg select-none">
+            {initial}
+          </span>
+        )}
       </button>
 
       {/* Dropdown Menu matching img2 */}
       {isOpen && (
         <div
-          className="absolute right-0 mt-2 w-56 bg-brand-surface border border-brand-border rounded-2xl py-2 shadow-2xl backdrop-blur-md animate-in fade-in slide-in-from-top-2 duration-150 font-sans"
+          className="absolute right-0 mt-2 w-56 bg-brand-surface border border-brand-border rounded-2xl py-2 backdrop-blur-md animate-in fade-in slide-in-from-top-2 duration-150 font-sans"
           role="menu"
           aria-label="Admin user options"
         >
           {activeMenu === "main" && (
             <>
               {/* User Meta header matching img2 */}
-              <div className="px-4 py-2.5 border-b border-[rgba(212,175,110,0.30)] mb-1">
+              <div className="px-4 py-2.5 border-b border-brand-border mb-1">
                 <p className="text-sm font-semibold text-brand-text truncate">
                   {admin?.name ?? "Admin"}
                 </p>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { Settings, SlidersHorizontal } from "lucide-react";
 import "./GenericListPage.css";
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -229,6 +230,7 @@ export function GenericListPage<T extends GenericListRow = GenericListRow>({
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
   const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
   const [activeMenuRowId, setActiveMenuRowId] = useState<string | number | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   // User overrides for QuickAction2 switches
   const [switchOverrides, setSwitchOverrides] = useState<Record<string | number, boolean>>({});
@@ -367,7 +369,7 @@ export function GenericListPage<T extends GenericListRow = GenericListRow>({
             {enableSearch && (
               <div className="generic-list-search-box" aria-label="Search">
                 <svg
-                  className="generic-list-search-icon"
+                  className="generic-list-search-icon shrink-0"
                   viewBox="0 0 24 24"
                   aria-hidden="true"
                 >
@@ -381,13 +383,35 @@ export function GenericListPage<T extends GenericListRow = GenericListRow>({
                   />
                 </svg>
                 {onSearchChange ? (
-                  <input
-                    type="text"
-                    placeholder={headerControls?.searchText || "Search..."}
-                    onChange={(e) => onSearchChange(e.target.value)}
-                    className="w-full bg-transparent border-none outline-none text-sm text-[#111] placeholder:text-[#777]"
-                    aria-label="Search"
-                  />
+                  <>
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      placeholder={headerControls?.searchText || "Search..."}
+                      onChange={(e) => {
+                        setSearchQuery(e.target.value);
+                        onSearchChange(e.target.value);
+                      }}
+                      className="w-full bg-transparent border-none outline-none text-sm text-[var(--gl-text)] placeholder:text-[var(--gl-muted)]"
+                      aria-label="Search"
+                    />
+                    {searchQuery && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSearchQuery("");
+                          onSearchChange("");
+                        }}
+                        className="p-1 text-[var(--gl-muted)] hover:text-[var(--gl-text)] rounded-md transition-colors cursor-pointer shrink-0"
+                        aria-label="Clear search"
+                      >
+                        <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <line x1="18" y1="6" x2="6" y2="18" />
+                          <line x1="6" y1="6" x2="18" y2="18" />
+                        </svg>
+                      </button>
+                    )}
+                  </>
                 ) : (
                   <span>{headerControls?.searchText || "Coming soon"}</span>
                 )}
@@ -420,15 +444,7 @@ export function GenericListPage<T extends GenericListRow = GenericListRow>({
                     onFilterClick?.();
                   }}
                 >
-                  <svg viewBox="0 0 24 24" aria-hidden="true" width="18" height="18">
-                    <path
-                      d="M4 6h16M7 12h10M10 18h4"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                    />
-                  </svg>
+                  <SlidersHorizontal className="w-4 h-4" />
                 </button>
                 <div className={`generic-list-filter-popup ${isFilterOpen ? "open" : ""}`}>
                   {filterContent || headerControls?.filterPopupText || "Coming soon"}
@@ -448,15 +464,7 @@ export function GenericListPage<T extends GenericListRow = GenericListRow>({
                     setIsSettingsOpen((prev) => !prev);
                   }}
                 >
-                  <svg viewBox="0 0 24 24" aria-hidden="true" width="20" height="20">
-                    <path
-                      d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Zm8.2 4.8-1.7-.9c.03-.3.03-.5 0-.8l1.7-.9a1 1 0 0 0 .4-1.3l-1.2-2.1a1 1 0 0 0-1.3-.4l-1.7 1a8 8 0 0 0-.7-.4l-.1-1.9a1 1 0 0 0-1-1h-2.4a1 1 0 0 0-1 1l-.1 1.9c-.3.1-.5.3-.7.4l-1.7-1a1 1 0 0 0-1.3.4L3.4 9.4a1 1 0 0 0 .4 1.3l1.7.9a4 4 0 0 0 0 .8l-1.7.9a1 1 0 0 0-.4 1.3l1.2 2.1a1 1 0 0 0 1.3.4l1.7-1c.2.2.5.3.7.4l.1 1.9a1 1 0 0 0 1 1h2.4a1 1 0 0 0 1-1l.1-1.9c.3-.1.5-.3.7-.4l1.7 1a1 1 0 0 0 1.3-.4l1.2-2.1a1 1 0 0 0-.4-1.3Z"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.6"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
+                  <Settings className="w-4 h-4" />
                 </button>
                 <div className={`generic-list-settings-menu ${isSettingsOpen ? "open" : ""}`}>
                   <button type="button" onClick={handleToggleTitle}>
@@ -498,7 +506,32 @@ export function GenericListPage<T extends GenericListRow = GenericListRow>({
         {/* Table Body */}
         <div className="generic-list-table-body">
           {rows.length === 0 ? (
-            <div className="generic-list-empty">{emptyMessage}</div>
+            <div className="generic-list-empty">
+              {emptyMessage?.toLowerCase().includes("loading") ? (
+                <div className="flex flex-col items-center justify-center py-16 gap-3">
+                  <div className="w-8 h-8 rounded-full border-2 border-[var(--gl-accent)]/30 border-t-[var(--gl-accent)] animate-spin" />
+                  <span className="text-sm font-medium text-[var(--gl-muted)]">Loading records…</span>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-16 px-4 gap-2 text-center select-none">
+                  <div className="w-14 h-14 rounded-2xl bg-brand-surface/80 border border-brand-border flex items-center justify-center text-[var(--gl-accent)] mb-3">
+                    <svg className="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                      <polyline points="14 2 14 8 20 8" />
+                      <line x1="16" y1="13" x2="8" y2="13" />
+                      <line x1="16" y1="17" x2="8" y2="17" />
+                      <polyline points="10 9 9 9 8 9" />
+                    </svg>
+                  </div>
+                  <h3 className="text-base font-bold text-[var(--gl-text)] tracking-tight">
+                    {emptyMessage || "No records found"}
+                  </h3>
+                  <p className="text-xs text-[var(--gl-muted)] max-w-sm leading-relaxed">
+                    There are no documents or entries currently available in this repository.
+                  </p>
+                </div>
+              )}
+            </div>
           ) : (
             rows.map((row, rowIndex) => {
               const isMenuOpen = activeMenuRowId === row.id;

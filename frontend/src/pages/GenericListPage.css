@@ -1,19 +1,30 @@
 /* ══════════════════════════════════════════════════════════════════════════════
    GenericListPage.css — Reusable Admin Generic List Page Styles
-   Adapted from Jimmy's reference prototype (generic_list.css) for XLChess
+   Theme-aware styles with XLChess luxury design tokens (Dark & Light modes)
    ══════════════════════════════════════════════════════════════════════════════ */
 
 .generic-list-root {
-  --gl-bg: #ffffff;
-  --gl-surface: #f7f7f8;
-  --gl-surface-2: #f1f1f3;
-  --gl-text: #111111;
-  --gl-muted: #6b6b70;
-  --gl-border: #dddddf;
-  --gl-border-strong: #c8c8cc;
-  --gl-accent: #8b6fc7;
-  --gl-accent-soft: #f2edf9;
-  
+  /* Default: Dark Obsidian & Gold Theme */
+  --gl-bg: var(--obsidian, #080B14);
+  --gl-surface: var(--obsidian-mid, #0C1020);
+  --gl-surface-2: rgba(255, 255, 255, 0.05);
+  --gl-text: var(--text-primary, #F5F0E8);
+  --gl-muted: var(--text-secondary, #8E8B82);
+  --gl-border: var(--marble-border, rgba(212, 175, 110, 0.18));
+  --gl-border-strong: var(--marble-border-strong, rgba(212, 175, 110, 0.30));
+  --gl-accent: var(--gold-bright, #D4AF6E);
+  --gl-accent-soft: rgba(212, 175, 110, 0.12);
+  --gl-card-bg: var(--obsidian-mid, #0C1020);
+  --gl-row-bg: var(--obsidian-mid, #0C1020);
+  --gl-row-hover: rgba(255, 255, 255, 0.03);
+  --gl-popup-bg: var(--obsidian-mid, #0C1020);
+  --gl-btn-bg: rgba(255, 255, 255, 0.05);
+  --gl-btn-hover: rgba(255, 255, 255, 0.10);
+  --gl-add-bg: rgba(34, 197, 94, 0.12);
+  --gl-add-border: rgba(34, 197, 94, 0.30);
+  --gl-add-color: #4ade80;
+  --gl-add-hover: rgba(34, 197, 94, 0.20);
+
   width: min(1500px, 100%);
   margin: 0 auto;
   padding: 28px 16px;
@@ -22,16 +33,41 @@
   box-sizing: border-box;
 }
 
+:root[data-theme="light"] .generic-list-root {
+  /* Light: Warm Luxury Cream & Bronze Theme */
+  --gl-bg: var(--obsidian, #FAF6F0);
+  --gl-surface: var(--obsidian-mid, #F5F0E6);
+  --gl-surface-2: var(--obsidian-light, #EFE9DC);
+  --gl-text: var(--text-primary, #1C1917);
+  --gl-muted: var(--text-secondary, #57534E);
+  --gl-border: var(--glass-border-gold, rgba(148, 92, 16, 0.35));
+  --gl-border-strong: var(--marble-border-strong, rgba(148, 92, 16, 0.55));
+  --gl-accent: var(--gold-bright, #945C10);
+  --gl-accent-soft: rgba(148, 92, 16, 0.10);
+  --gl-card-bg: var(--obsidian-mid, #F5F0E6);
+  --gl-row-bg: var(--obsidian-mid, #F5F0E6);
+  --gl-row-hover: rgba(148, 92, 16, 0.06);
+  --gl-popup-bg: var(--obsidian-mid, #F5F0E6);
+  --gl-btn-bg: rgba(255, 255, 255, 0.85);
+  --gl-btn-hover: #ffffff;
+  --gl-add-bg: #eaf8ed;
+  --gl-add-border: #cfe7d3;
+  --gl-add-color: #1f6f38;
+  --gl-add-hover: #def3e3;
+}
+
 .generic-list-root * {
   box-sizing: border-box;
 }
 
 /* ─── Header Section ──────────────────────────────────────────────────────── */
 .generic-list-header {
-  background: #f4f4f5;
-  border: 1px solid #dddddf;
-  border-radius: 14px;
-  padding: 18px;
+  background: var(--gl-surface);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--gl-border);
+  border-radius: 16px;
+  padding: 18px 20px;
   margin-bottom: 18px;
   position: relative;
 }
@@ -70,95 +106,126 @@
   flex-wrap: wrap;
 }
 
-/* ─── Header Buttons ──────────────────────────────────────────────────────── */
+/* ─── Header Buttons (SwiftUI Liquid Glass Styled) ────────────────────────── */
 .generic-list-add-btn {
   width: 42px;
   min-width: 42px;
   height: 42px;
   min-height: 42px;
-  border: 1px solid #cfe7d3;
-  border-radius: 10px;
-  background: #eaf8ed;
-  color: #1f6f38;
-  font-size: 26px;
+  border: 1px solid var(--gl-add-border);
+  border-radius: 12px;
+  background: var(--gl-add-bg);
+  color: var(--gl-add-color);
+  font-size: 24px;
   font-weight: 700;
   cursor: pointer;
   display: grid;
   place-items: center;
   line-height: 1;
-  transition: background 0.15s ease, border-color 0.15s ease;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .generic-list-add-btn:hover:not(:disabled) {
-  background: #def3e3;
-  border-color: #bcdcc3;
+  background: var(--gl-add-hover);
+  transform: translateY(-1.5px);
 }
 
-/* Pairs with the :not(:disabled) hover guard above — without this the button
-   still reads as clickable when `enableAdd` is false. */
+.generic-list-add-btn:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+/* Pairs with the :not(:disabled) hover guard above */
 .generic-list-add-btn:disabled {
-  background: #f6f6f7;
-  border-color: #dddddf;
-  color: #b4b4b8;
+  background: var(--gl-surface-2);
+  border-color: var(--gl-border);
+  color: var(--gl-muted);
+  opacity: 0.45;
   cursor: not-allowed;
 }
 
 .generic-list-search-box {
   min-width: 220px;
   min-height: 42px;
-  border: 1px solid #dddddf;
-  border-radius: 10px;
+  border: 1px solid var(--gl-border);
+  border-radius: 12px;
   padding: 0 14px;
-  background: #fff;
-  color: #777;
+  background: var(--gl-btn-bg);
+  color: var(--gl-muted);
   display: flex;
   align-items: center;
   gap: 9px;
   font-size: 14px;
   font-weight: 600;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.generic-list-search-box:focus-within {
+  border-color: var(--gl-accent);
 }
 
 .generic-list-search-icon {
   width: 16px;
   height: 16px;
   display: inline-block;
-  color: #888;
+  color: var(--gl-muted);
 }
 
 .generic-list-generic-btn {
   min-height: 42px;
-  border: 1px solid #dddddf;
-  border-radius: 10px;
-  background: #fff;
-  color: #111;
-  padding: 0 14px;
+  border: 1px solid var(--gl-border);
+  border-radius: 12px;
+  background: var(--gl-btn-bg);
+  color: var(--gl-text);
+  padding: 0 16px;
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.15s ease;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .generic-list-generic-btn:hover:not(:disabled) {
-  background: #fafafa;
+  background: var(--gl-btn-hover);
+  border-color: var(--gl-accent);
+  color: var(--gl-accent);
+  transform: translateY(-1.5px);
+}
+
+.generic-list-generic-btn:active:not(:disabled) {
+  transform: scale(0.96);
 }
 
 .generic-list-icon-btn {
   width: 42px;
   min-width: 42px;
   height: 42px;
-  border: 1px solid #dddddf;
-  border-radius: 10px;
-  background: #fff;
-  color: #333;
+  min-height: 42px;
+  border: 1px solid var(--gl-border);
+  border-radius: 12px;
+  background: var(--gl-btn-bg);
+  color: var(--gl-text);
   display: grid;
   place-items: center;
   cursor: pointer;
-  transition: background 0.15s ease, border-color 0.15s ease;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .generic-list-icon-btn:hover:not(:disabled) {
-  background: #fafafa;
-  border-color: #c8c8cc;
+  background: var(--gl-btn-hover);
+  border-color: var(--gl-accent);
+  color: var(--gl-accent);
+  transform: translateY(-1.5px);
+}
+
+.generic-list-icon-btn:active:not(:disabled) {
+  transform: scale(0.96);
 }
 
 .generic-list-add-btn:disabled,
@@ -180,11 +247,10 @@
   top: 48px;
   min-width: 130px;
   padding: 10px 14px;
-  border: 1px solid #dddddf;
+  border: 1px solid var(--gl-border);
   border-radius: 10px;
-  background: #fff;
-  color: #555;
-  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.12);
+  background: var(--gl-popup-bg);
+  color: var(--gl-muted);
   font-size: 13px;
   font-weight: 700;
   white-space: nowrap;
@@ -202,10 +268,9 @@
   top: 48px;
   width: 150px;
   padding: 6px;
-  border: 1px solid #dddddf;
+  border: 1px solid var(--gl-border);
   border-radius: 10px;
-  background: #fff;
-  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.12);
+  background: var(--gl-popup-bg);
   z-index: 30;
   display: none;
 }
@@ -224,13 +289,13 @@
   padding: 0 10px;
   font-size: 13px;
   font-weight: 600;
-  color: #222;
+  color: var(--gl-text);
   cursor: pointer;
   transition: background 0.12s ease;
 }
 
 .generic-list-settings-menu button:hover {
-  background: #f7f7f8;
+  background: var(--gl-surface-2);
 }
 
 /* ─── Panel & Table ───────────────────────────────────────────────────────── */
@@ -238,7 +303,7 @@
   border: 1px solid var(--gl-border);
   border-radius: 14px;
   overflow: hidden;
-  background: #fff;
+  background: var(--gl-card-bg);
 }
 
 .generic-list-table-head,
@@ -264,7 +329,7 @@
   min-height: 72px;
   padding: 12px 14px;
   border-bottom: 1px solid var(--gl-border);
-  background: #fff;
+  background: var(--gl-row-bg);
   position: relative;
   transition: background-color 0.15s ease;
 }
@@ -273,14 +338,19 @@
   border-bottom: 0;
 }
 
+.generic-list-table-row:hover {
+  background: var(--gl-row-hover);
+  cursor: pointer;
+}
+
 /* Hover overlay ("View") matching prototype */
 .generic-list-table-row::before {
   content: "";
   position: absolute;
   inset: 7px 328px 7px 8px;
   border-radius: 10px;
-  background: rgba(139, 111, 199, 0.05);
-  border: 1px solid rgba(139, 111, 199, 0.09);
+  background: var(--gl-accent-soft);
+  border: 1px solid var(--gl-border);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.16s ease;
@@ -293,7 +363,7 @@
   left: calc((100% - 320px) / 2);
   top: 50%;
   transform: translate(-50%, -50%);
-  color: #111111;
+  color: var(--gl-text);
   font-size: 24px;
   font-weight: 800;
   letter-spacing: 0.01em;
@@ -314,19 +384,11 @@
   transition: opacity 0.12s ease;
 }
 
-.generic-list-table-row:hover {
-  cursor: pointer;
-}
-
-.generic-list-table-row:hover .generic-list-cell {
-  color: #d2d2d5;
-}
-
 /* Cells */
 .generic-list-cell {
   min-width: 0;
   font-size: 14px;
-  color: #222;
+  color: var(--gl-muted);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -335,15 +397,19 @@
 
 .generic-list-cell.primary {
   font-weight: 750;
-  color: #111;
+  color: var(--gl-text);
+}
+
+.generic-list-table-row:hover .generic-list-cell {
+  color: var(--gl-text);
 }
 
 /* ─── Quick Actions ───────────────────────────────────────────────────────── */
 .generic-list-quick-action {
   min-height: 34px;
   border: 1px solid var(--gl-border);
-  background: #fff;
-  color: #222;
+  background: var(--gl-btn-bg);
+  color: var(--gl-text);
   border-radius: 8px;
   padding: 0 10px;
   font-size: 13px;
@@ -354,7 +420,7 @@
 
 .generic-list-quick-action:hover:not(:disabled) {
   background: var(--gl-accent-soft);
-  border-color: #d6c8ee;
+  border-color: var(--gl-accent);
 }
 
 /* ─── Pill Toggle Switch ─────────────────────────────────────────────────── */
@@ -363,7 +429,7 @@
   height: 26px;
   border: 1px solid var(--gl-border);
   border-radius: 999px;
-  background: #fff;
+  background: var(--gl-btn-bg);
   position: relative;
   cursor: pointer;
   transition: border-color 0.18s ease;
@@ -378,7 +444,7 @@
   border-radius: 50%;
   top: 2px;
   left: 3px;
-  background: #f8dede;
+  background: rgba(239, 68, 68, 0.35);
   border: 0;
   box-shadow: none;
   transition: left 0.18s ease, background 0.18s ease;
@@ -386,7 +452,7 @@
 
 .generic-list-switch.on::after {
   left: 21px;
-  background: #dff3e4;
+  background: rgba(34, 197, 94, 0.7);
 }
 
 .generic-list-switch:disabled {
@@ -412,11 +478,12 @@
   line-height: 1;
   display: grid;
   place-items: center;
-  color: #333;
-  transition: background 0.12s ease, border-color 0.12s ease;
+  color: var(--gl-muted);
+  transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
 }
 
 .generic-list-more-btn:hover {
+  color: var(--gl-text);
   background: var(--gl-surface);
   border-color: var(--gl-border);
 }
@@ -429,8 +496,7 @@
   padding: 6px;
   border: 1px solid var(--gl-border);
   border-radius: 10px;
-  background: #fff;
-  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.12);
+  background: var(--gl-popup-bg);
   z-index: 25;
   display: none;
 }
@@ -449,7 +515,7 @@
   padding: 0 10px;
   font-size: 13px;
   font-weight: 600;
-  color: #222;
+  color: var(--gl-text);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -458,16 +524,16 @@
 }
 
 .generic-list-row-menu button:hover {
-  background: var(--gl-surface);
+  background: var(--gl-surface-2);
 }
 
 .generic-list-row-menu button.delete {
-  color: #c83b3b;
+  color: #ef4444;
 }
 
 .generic-list-row-menu button.delete:hover {
-  color: #a92727;
-  background: #fff0f0;
+  color: #f87171;
+  background: rgba(239, 68, 68, 0.12);
 }
 
 .generic-list-menu-icon {
@@ -505,8 +571,8 @@
   padding: 0 10px;
   border: 1px solid var(--gl-border);
   border-radius: 9px;
-  background: #fff;
-  color: #222;
+  background: var(--gl-btn-bg);
+  color: var(--gl-text);
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
@@ -514,14 +580,14 @@
 }
 
 .generic-list-page-btn:hover:not(:disabled) {
-  background: var(--gl-surface);
+  background: var(--gl-btn-hover);
   border-color: var(--gl-border-strong);
 }
 
 .generic-list-page-btn.active {
-  background: #111;
-  color: #fff;
-  border-color: #111;
+  background: var(--gl-accent);
+  color: var(--gl-bg);
+  border-color: var(--gl-accent);
 }
 
 .generic-list-page-btn:disabled {
