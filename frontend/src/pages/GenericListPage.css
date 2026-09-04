@@ -94,6 +94,15 @@
   border-color: #bcdcc3;
 }
 
+/* Pairs with the :not(:disabled) hover guard above — without this the button
+   still reads as clickable when `enableAdd` is false. */
+.generic-list-add-btn:disabled {
+  background: #f6f6f7;
+  border-color: #dddddf;
+  color: #b4b4b8;
+  cursor: not-allowed;
+}
+
 .generic-list-search-box {
   min-width: 220px;
   min-height: 42px;
