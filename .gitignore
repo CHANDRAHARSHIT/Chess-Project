@@ -19,6 +19,9 @@ package-lock.json
 
 backend/supabase
 
+# Downloaded PGN game archives used by one-off data-population scripts (large, re-fetchable)
+backend/data
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

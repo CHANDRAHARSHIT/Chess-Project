@@ -9,6 +9,14 @@
 * 🟢 You can import this file directly.
 */
 
+export const OdysseyPuzzleType = {
+  FIND_MATE: 'FIND_MATE',
+  BEST_MOVE: 'BEST_MOVE'
+} as const
+
+export type OdysseyPuzzleType = (typeof OdysseyPuzzleType)[keyof typeof OdysseyPuzzleType]
+
+
 export const BuilderLessonStatus = {
   DRAFT: 'DRAFT',
   PUBLISHED: 'PUBLISHED'
