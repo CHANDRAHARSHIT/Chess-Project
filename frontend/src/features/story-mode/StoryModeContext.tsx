@@ -11,10 +11,10 @@ export const MAX_RELIC_CHARGES = 5;
 
 export interface RunState {
   coins: number;
-  
+
   // Inventory of equipped relics (max 5 slots)
   relics: RelicType[];
-  
+
   undoCharges: number;
   hintCharges: number;
   evalBarCharges: number;
@@ -25,9 +25,12 @@ export interface RunState {
   currentNodeId: number;
   journeyComplete: boolean;
   mapNodes: StoryNode[];
-  
+
   playtimeSeconds: number;
   lastUpdated: string | null;
+
+  /** The backend OdysseyGame row's id, once synced — null for guests or before the first sync lands. Merchant pricing derives its seed from this + a nodeId, so it must match what the backend actually charges. */
+  gameId: string | null;
 }
 
 const defaultState: RunState = {
@@ -43,9 +46,10 @@ const defaultState: RunState = {
   currentNodeId: -1,
   journeyComplete: false,
   mapNodes: [],
-  
+
   playtimeSeconds: 0,
   lastUpdated: null,
+  gameId: null,
 };
 
 import type { ProfileState } from './TitleScreen/SaveProfileScreen';

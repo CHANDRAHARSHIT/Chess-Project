@@ -42,14 +42,14 @@ odysseyRouter.post("/slots/:slotId/nodes/:nodeId/battle/relic", OdysseyBattleCon
 odysseyRouter.post("/slots/:slotId/nodes/:nodeId/battle/resolve", OdysseyBattleController.resolveOutcome);
 
 // ── Merchant ────────────────────────────────────────────────────────────
-// POST /api/odyssey/slots/:slotId/nodes/:nodeId/merchant   — enters a merchant node, rolls a catalog
+// POST /api/odyssey/slots/:slotId/nodes/:nodeId/merchant           — enters a merchant node, rolls a catalog
 odysseyRouter.post("/slots/:slotId/nodes/:nodeId/merchant", OdysseyMerchantController.openShop);
-// POST /api/odyssey/slots/:slotId/merchant/purchase        — buys charges of a listing
-odysseyRouter.post("/slots/:slotId/merchant/purchase", OdysseyMerchantController.purchase);
-// POST /api/odyssey/slots/:slotId/merchant/sell            — sells an owned relic
+// POST /api/odyssey/slots/:slotId/nodes/:nodeId/merchant/purchase  — buys charges of a listing at its true (server-derived) price
+odysseyRouter.post("/slots/:slotId/nodes/:nodeId/merchant/purchase", OdysseyMerchantController.purchase);
+// POST /api/odyssey/slots/:slotId/merchant/sell                    — sells an owned relic
 odysseyRouter.post("/slots/:slotId/merchant/sell", OdysseyMerchantController.sell);
-// POST /api/odyssey/slots/:slotId/merchant/reroll          — spends a Reroll charge for fresh offerings
-odysseyRouter.post("/slots/:slotId/merchant/reroll", OdysseyMerchantController.reroll);
+// POST /api/odyssey/slots/:slotId/nodes/:nodeId/merchant/reroll    — spends a Reroll charge for fresh offerings
+odysseyRouter.post("/slots/:slotId/nodes/:nodeId/merchant/reroll", OdysseyMerchantController.reroll);
 // POST /api/odyssey/slots/:slotId/nodes/:nodeId/merchant/leave — marks the merchant node completed
 odysseyRouter.post("/slots/:slotId/nodes/:nodeId/merchant/leave", OdysseyMerchantController.leaveShop);
 

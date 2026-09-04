@@ -17,19 +17,15 @@ export interface OdysseyPlayerAbility {
  * not the run itself: a run's persisted state (coins, map, progress,
  * which OdysseyPlayer was chosen) lives on OdysseyGame.
  *
- * The frontend currently has TWO separate character-presenting screens
- * that have never been reconciled with each other, and neither persists
- * a choice into run state today:
- *   1. A mandatory pre-run intro (Title -> Strategist -> Map) showing
- *      only the Strategist, unlocked, with real stats/an ability.
- *   2. A later, in-map "champion select" overlay (opened from the map's
- *      start node) offering Knight/Bishop/Rook instead.
- * Per the owner, #2 (the in-map Knight/Bishop/Rook roster) is planned
- * for removal — Strategist is the character going forward. Knight/
- * Bishop/Rook are kept here only because they're still live in the
- * frontend today; once that screen is actually removed, this class
- * (and EPlayerType) should shrink to Strategist alone and
- * getAvailable()/select() simplify accordingly.
+ * Knight/Bishop/Rook are real future roster slots, not legacy code kept
+ * around for removal: per the owner, they'll eventually appear as locked
+ * cards on the same Strategist-style character screen (see the pre-run
+ * Strategist intro's 4-card layout) rather than through the separate
+ * in-map "champion select" overlay. Their actual designs (stats,
+ * abilities, unlock conditions) haven't been decided yet — the unlock
+ * rules below (floor 10, journey-complete) are placeholders carried over
+ * from the frontend's own in-map roster copy, not a confirmed design.
+ * Revisit this class once real character designs exist.
  */
 export class OdysseyPlayer {
   readonly type: EPlayerType;

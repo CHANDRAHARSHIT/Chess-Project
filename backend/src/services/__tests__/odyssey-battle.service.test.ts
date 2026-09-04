@@ -7,6 +7,8 @@ import { ERelicType } from "../../models/odyssey/enums/ERelicType.js";
 import { ENodeType } from "../../models/odyssey/enums/ENodeType.js";
 import { EBattleEndReason } from "../../models/odyssey/enums/EBattleEndReason.js";
 import { EBattleResult } from "../../models/odyssey/enums/EBattleResult.js";
+import { OdysseyGameService } from "../odyssey-game.service.js";
+import { OdysseyBattleNode } from "../../models/odyssey/models/OdysseyBattleNode.js";
 import { createTestUser, deleteTestUser, makeGameWithEnterableNode, makeGameWithEnterableBoss } from "../../testSupport/odysseyTestSupport.js";
 
 const STARTING_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -130,5 +132,34 @@ describe("OdysseyBattleService", () => {
     const { game } = await OdysseyBattleService.resolveOutcome(userId, 9, node.id, snapshot, EBattleEndReason.Checkmate, true);
 
     assert.strictEqual(game.journeyComplete, true);
+  });
+
+  test("test_resolveOutcome_throwsForANodeThatWasNeverMadeReachable", async () => {
+    // Regression test for a real corruption found in production data: a node
+    // two hops past the current position got marked completed despite its
+    // real predecessor never being completed. resolveOutcome must refuse to
+    // complete a node it hasn't independently verified is reachable.
+    const game = await OdysseyGameService.startNewRun(userId, 10);
+    const startNode = game.map.getNode(0)!;
+    const unreachable = game.map.nodes.find(
+      n => n instanceof OdysseyBattleNode && n.id !== 0 && !startNode.isAdjacentTo(n.id)
+    ) as OdysseyBattleNode | undefined;
+    assert.ok(unreachable, "expected a battle node beyond floor 1 in a freshly generated map");
+
+    const snapshot = {
+      playerInitialSeconds: 600,
+      enemyInitialSeconds: 60,
+      playerSeconds: 500,
+      enemySeconds: 50,
+      evalMovesRemaining: 0,
+      botConditions: { confused: 0, relaxed: 0, distracted: 0 },
+    };
+
+    await assert.rejects(
+      OdysseyBattleService.resolveOutcome(userId, 10, unreachable!.id, snapshot, EBattleEndReason.Checkmate, true)
+    );
+
+    const reloaded = await OdysseyGameRepository.findBySlot(userId, 10);
+    assert.strictEqual(reloaded!.completedNodes.includes(unreachable!.id), false);
   });
 });

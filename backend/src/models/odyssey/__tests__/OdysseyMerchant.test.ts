@@ -98,4 +98,22 @@ describe("OdysseyMerchant", () => {
     assert.strictEqual(result.coinsGained, 0);
     assert.strictEqual(game.coins, 0);
   });
+
+  test("test_open_withASeed_producesTheSameCatalogEveryTime", () => {
+    const first = OdysseyMerchant.open("game-1:5");
+    const second = OdysseyMerchant.open("game-1:5");
+
+    assert.deepStrictEqual(
+      first.catalog.map(item => ({ relicType: item.relicType, costPerCharge: item.costPerCharge })),
+      second.catalog.map(item => ({ relicType: item.relicType, costPerCharge: item.costPerCharge }))
+    );
+  });
+
+  test("test_open_withDifferentSeeds_producesDifferentPricesForAtLeastOneItem", () => {
+    const a = OdysseyMerchant.open("game-1:5");
+    const b = OdysseyMerchant.open("game-1:6");
+
+    const anyDifferent = a.catalog.some((item, i) => item.costPerCharge !== b.catalog[i].costPerCharge);
+    assert.ok(anyDifferent);
+  });
 });

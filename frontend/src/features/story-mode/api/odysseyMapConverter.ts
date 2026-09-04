@@ -8,11 +8,11 @@ import type { RunState, RelicType } from "@/features/story-mode/StoryModeContext
  * none) and its type is "start" — but the frontend has never rendered a
  * "start" node as its own screen (the map's node 0 has always been an
  * immediate Pawn Sentinel battle; the in-map character-select overlay the
- * "start" case in StoryModeMap's switch would otherwise open is the
- * Knight/Bishop/Rook roster the owner has said is being removed, and
- * character selection already happens on the mandatory Strategist screen
- * before the map ever loads). Converting "start" -> "enemy" here preserves
- * that existing behavior instead of resurrecting the deprecated screen.
+ * "start" case in StoryModeMap's switch would otherwise open offers the
+ * Knight/Bishop/Rook roster — still undecided/not live, see OdysseyPlayer.ts
+ * on the backend — and character selection already happens on the mandatory
+ * Strategist screen before the map ever loads). Converting "start" -> "enemy"
+ * here preserves that existing behavior instead of opening that overlay.
  */
 const START_NODE_DIFFICULTY: DifficultyLevel = 1;
 
@@ -48,6 +48,7 @@ export function toRunStateFields(game: OdysseyBackendGame): Partial<RunState> {
   const chargesFor = (type: RelicType) => game.relics.find((r) => r.type === type)?.charges ?? 0;
 
   const fields: Partial<RunState> = {
+    gameId: game.id,
     coins: game.coins,
     relics: RELIC_TYPES.filter((type) => game.relics.some((r) => r.type === type)),
     completedNodes: game.completedNodes,

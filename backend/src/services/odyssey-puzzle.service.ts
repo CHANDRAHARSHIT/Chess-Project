@@ -48,6 +48,9 @@ export class OdysseyPuzzleService {
     totalCount: number
   ): Promise<{ game: OdysseyGame; coinsAwarded: number }> {
     const game = await OdysseyGameService.requireSlot(userId, slotId);
+    if (!game.canEnterNode(nodeId)) {
+      throw new Error(`Node ${nodeId} is not currently reachable for this run — refusing to resolve it.`);
+    }
     const node = getPuzzleNode(game, nodeId);
     const encounter = await OdysseyPuzzleEncounter.open(
       node,

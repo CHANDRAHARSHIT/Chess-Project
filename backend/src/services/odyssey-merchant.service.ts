@@ -7,47 +7,41 @@ import type { OdysseyGame } from "../models/odyssey/models/OdysseyGame.js";
 import { ERelicType } from "../models/odyssey/enums/ERelicType.js";
 
 /**
- * A shop listing as seen by the caller. Matches OdysseyShopItem's fields —
- * the catalog/offerings a shop visit generates aren't persisted (they're
- * per-visit, ephemeral, exactly like the frontend's `availablePool` React
- * state), so the caller resends the listing it's acting on with each
- * purchase/sell/reroll call instead of the server remembering a "visit".
+ * The seed a shop visit's prices are derived from — deterministic per
+ * (run, node), so the server can independently recompute a listing's true
+ * price on purchase/reroll instead of trusting whatever the client sends,
+ * with no shop-catalog persistence needed. See OdysseyMerchant.open.
  */
-export interface OdysseyShopItemPayload {
-  relicType: ERelicType;
-  costPerCharge: number;
-}
-
-function toModel(item: OdysseyShopItemPayload): OdysseyShopItem {
-  return new OdysseyShopItem(item.relicType, item.costPerCharge); // validates the price band itself
+function merchantSeed(gameId: string, nodeId: number): string {
+  return `${gameId}:${nodeId}`;
 }
 
 export class OdysseyMerchantService {
-  /** Enters a merchant node and rolls a fresh priced catalog + 3 offerings. */
+  /** Enters a merchant node and rolls its (deterministic, per-node) priced catalog + 3 offerings. */
   static async openShop(
     userId: string,
     slotId: number,
     nodeId: number
   ): Promise<{ game: OdysseyGame; catalog: OdysseyShopItem[]; offerings: OdysseyShopItem[] }> {
     const game = await OdysseyGameService.enterNode(userId, slotId, nodeId);
-    const merchant = OdysseyMerchant.open();
+    const merchant = OdysseyMerchant.open(merchantSeed(game.id, nodeId));
     return { game, catalog: merchant.catalog, offerings: merchant.offerings };
   }
 
   /**
-   * Buys `quantity` charges of the given listing. Server-authoritative on
-   * every economic rule (affordability, slot capacity, per-charge cap) via
-   * OdysseyMerchant.purchase()/OdysseyGame — NOT on whether this exact
-   * listing/price was actually the one most recently offered, since the
-   * catalog isn't persisted. This mirrors the frontend's own trust model
-   * (everything client-supplied is trusted) rather than adding a session
-   * store this pass; flagged as a known gap if server-authoritative
-   * pricing is wanted later.
+   * Buys `quantity` charges of `relicType` at that node's true (server-derived)
+   * price — the client names what it wants, not what it costs. Server-
+   * authoritative on every economic rule (price, affordability, slot
+   * capacity, per-charge cap) via OdysseyMerchant.purchase()/OdysseyGame.
    */
-  static async purchase(userId: string, slotId: number, item: OdysseyShopItemPayload, quantity: number): Promise<OdysseyGame> {
+  static async purchase(userId: string, slotId: number, nodeId: number, relicType: ERelicType, quantity: number): Promise<OdysseyGame> {
     const game = await OdysseyGameService.requireSlot(userId, slotId);
-    const merchant = new OdysseyMerchant();
-    merchant.purchase(toModel(item), quantity, game);
+    const merchant = OdysseyMerchant.open(merchantSeed(game.id, nodeId));
+    const listing = merchant.catalog.find(item => item.relicType === relicType);
+    if (!listing) {
+      throw new Error(`No shop listing for relic type ${relicType} at node ${nodeId}.`);
+    }
+    merchant.purchase(listing, quantity, game);
     return OdysseyGameRepository.upsert(game);
   }
 
@@ -59,19 +53,14 @@ export class OdysseyMerchantService {
     return { game: savedGame, coinsGained };
   }
 
-  /** Spends a Reroll charge to re-select 3 offerings from the given (unchanged) catalog. */
-  static async reroll(
-    userId: string,
-    slotId: number,
-    catalog: OdysseyShopItemPayload[]
-  ): Promise<{ game: OdysseyGame; offerings: OdysseyShopItem[] }> {
+  /** Spends a Reroll charge to re-select 3 offerings from that node's (unchanged, deterministic) catalog. */
+  static async reroll(userId: string, slotId: number, nodeId: number): Promise<{ game: OdysseyGame; offerings: OdysseyShopItem[] }> {
     const game = await OdysseyGameService.requireSlot(userId, slotId);
     const relic = game.getRelic(ERelicType.Reroll);
     if (!relic || !(relic instanceof OdysseyShopRelic)) {
       throw new Error("No Reroll relic charge available for this run.");
     }
-    const merchant = new OdysseyMerchant();
-    merchant.catalog = catalog.map(toModel);
+    const merchant = OdysseyMerchant.open(merchantSeed(game.id, nodeId));
     relic.applyInShop(merchant, game); // consumes the charge and rolls fresh offerings from merchant.catalog
     const savedGame = await OdysseyGameRepository.upsert(game);
     return { game: savedGame, offerings: merchant.offerings };
@@ -80,6 +69,9 @@ export class OdysseyMerchantService {
   /** Marks the merchant node completed once the caller leaves the shop — mirrors StoryModeMap's onComplete callback. */
   static async leaveShop(userId: string, slotId: number, nodeId: number): Promise<OdysseyGame> {
     const game = await OdysseyGameService.requireSlot(userId, slotId);
+    if (!game.canEnterNode(nodeId)) {
+      throw new Error(`Node ${nodeId} is not currently reachable for this run — refusing to complete it.`);
+    }
     game.completeNode(nodeId, false); // a merchant node is never the boss
     return OdysseyGameRepository.upsert(game);
   }

@@ -1,6 +1,8 @@
 import { describe, test, before, after } from "node:test";
 import assert from "node:assert/strict";
 import { OdysseyRestService } from "../odyssey-rest.service.js";
+import { OdysseyGameService } from "../odyssey-game.service.js";
+import { OdysseyGameRepository } from "../../repositories/OdysseyGameRepository.js";
 import { ENodeType } from "../../models/odyssey/enums/ENodeType.js";
 import { createTestUser, deleteTestUser, makeGameWithEnterableNode } from "../../testSupport/odysseyTestSupport.js";
 
@@ -37,5 +39,20 @@ describe("OdysseyRestService", () => {
 
     assert.strictEqual(game.coins, startingCoins + 20);
     assert.ok(game.completedNodes.includes(node.id));
+  });
+
+  test("test_applyRest_throwsForANodeThatWasNeverMadeReachable", async () => {
+    const game = await OdysseyGameService.startNewRun(userId, 3);
+    const startNode = game.map.getNode(0)!;
+    const unreachable = game.map.nodes.find(n => n.id !== 0 && !startNode.isAdjacentTo(n.id));
+    assert.ok(unreachable, "expected a node beyond floor 1 in a freshly generated map");
+
+    await assert.rejects(
+      OdysseyRestService.applyRest(userId, 3, unreachable!.id, { restores: {}, foundCoins: 20, foundRelic: null })
+    );
+
+    const reloaded = await OdysseyGameRepository.findBySlot(userId, 3);
+    assert.strictEqual(reloaded!.completedNodes.includes(unreachable!.id), false);
+    assert.strictEqual(reloaded!.coins, 50); // no reward applied either
   });
 });

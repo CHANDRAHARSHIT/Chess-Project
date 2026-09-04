@@ -151,6 +151,9 @@ export class OdysseyBattleService {
     playerWon: boolean
   ): Promise<{ game: OdysseyGame; result: EBattleResult; coinsAwarded: number }> {
     const game = await OdysseyGameService.requireSlot(userId, slotId);
+    if (!game.canEnterNode(nodeId)) {
+      throw new Error(`Node ${nodeId} is not currently reachable for this run — refusing to resolve it.`);
+    }
     const node = getBattleNode(game, nodeId);
     const battle = hydrate(node, snapshot);
     const { result, coinsAwarded } = battle.resolveOutcome(endReason, playerWon, game);

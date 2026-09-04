@@ -1,6 +1,7 @@
 import { OdysseyShopItem } from "./OdysseyShopItem.js";
 import { OdysseyRelicFactory } from "./OdysseyRelicFactory.js";
 import { MAX_RELIC_CHARGES, MIN_RELIC_CHARGES } from "./OdysseyRelic.js";
+import { createSeededRng } from "./seededRng.js";
 import { ERelicType } from "../enums/ERelicType.js";
 import type { OdysseyGame } from "./OdysseyGame.js";
 
@@ -16,8 +17,8 @@ const SHUFFLE_COMPARATOR_MIDPOINT = 0.5;
 
 const RELIC_TYPES: ERelicType[] = Object.values(ERelicType);
 
-function rollPrice(): number {
-  return Math.max(PRICE_FLOOR, PRICE_BASE + Math.floor(Math.random() * PRICE_JITTER) - PRICE_JITTER_OFFSET);
+function rollPrice(rng: () => number): number {
+  return Math.max(PRICE_FLOOR, PRICE_BASE + Math.floor(rng() * PRICE_JITTER) - PRICE_JITTER_OFFSET);
 }
 
 function shuffle<T>(items: T[]): T[] {
@@ -30,15 +31,24 @@ export class OdysseyMerchant {
   private purchasedTypes: Set<ERelicType> = new Set();
 
   /**
-   * Builds the full 5-type relic catalog, each with a randomized
-   * per-charge price: max(5, 20 + rand[0..10] - 5), i.e. uniformly 15-25
-   * coins per charge (the floor of 5 is unreachable given base 20).
-   * Generated once per shop visit — OdysseyRerollRelic.applyInShop does
-   * NOT re-roll these prices, only which 3 are shown.
+   * Builds the full 5-type relic catalog, each with a per-charge price:
+   * max(5, 20 + rand[0..10] - 5), i.e. uniformly 15-25 coins per charge
+   * (the floor of 5 is unreachable given base 20). Generated once per shop
+   * visit — OdysseyRerollRelic.applyInShop does NOT re-roll these prices,
+   * only which 3 are shown.
+   *
+   * `seed` makes the catalog deterministic for a given (run, node) pair —
+   * OdysseyMerchantService derives it from `${game.id}:${nodeId}` so the
+   * server can independently recompute (and verify) a listing's true price
+   * on purchase/reroll instead of trusting whatever the client sends,
+   * without persisting a shop catalog. Since each merchant node is visited
+   * exactly once per run, this is indistinguishable from true randomness
+   * to the player. Omit `seed` for genuinely random prices (used by tests).
    */
-  static open(): OdysseyMerchant {
+  static open(seed?: string): OdysseyMerchant {
+    const rng = seed ? createSeededRng(seed) : Math.random;
     const merchant = new OdysseyMerchant();
-    merchant.catalog = RELIC_TYPES.map(type => new OdysseyShopItem(type, rollPrice()));
+    merchant.catalog = RELIC_TYPES.map(type => new OdysseyShopItem(type, rollPrice(rng)));
     merchant.rollOfferings();
     return merchant;
   }

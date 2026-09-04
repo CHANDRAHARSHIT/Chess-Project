@@ -5,6 +5,7 @@ import { OdysseyPuzzleNode } from "./OdysseyPuzzleNode.js";
 import { ENodeType } from "../enums/ENodeType.js";
 import { ENodeStatus } from "../enums/ENodeStatus.js";
 import { EDifficulty } from "../enums/EDifficulty.js";
+import { createSeededRng } from "./seededRng.js";
 import type { OdysseyGame } from "./OdysseyGame.js";
 
 export const MAX_PATH_LENGTH = 16; // Start + 15 Floors + Boss = 17 nodes, 16 completions to 100%
@@ -76,24 +77,9 @@ interface NodePlan {
   type: ENodeType;
 }
 
-/** Unseeded by default (matches the frontend's Math.random()-based generator); seeded via a small mulberry32 PRNG when `seed` is given, so a run can be reproduced/audited. */
+/** Unseeded by default (matches the frontend's Math.random()-based generator); seeded via createSeededRng when `seed` is given, so a run can be reproduced/audited. */
 function createRng(seed?: string): () => number {
-  if (!seed) {
-    return Math.random;
-  }
-  let h = 1779033703 ^ seed.length;
-  for (let i = 0; i < seed.length; i++) {
-    h = Math.imul(h ^ seed.charCodeAt(i), 3432918353);
-    h = (h << 13) | (h >>> 19);
-  }
-  let state = h >>> 0;
-  return () => {
-    state |= 0;
-    state = (state + 0x6d2b79f5) | 0;
-    let t = Math.imul(state ^ (state >>> 15), 1 | state);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
+  return seed ? createSeededRng(seed) : Math.random;
 }
 
 function pickWeightedType(rng: () => number, excludeRestricted: boolean): ENodeType {

@@ -43,11 +43,6 @@ export interface OdysseyBattleSnapshotPayload {
 // Matches ERelicType's string values exactly — no conversion needed against RelicType.
 export type OdysseyRelicType = "undo" | "hint" | "evalBar" | "time" | "reroll";
 
-export interface OdysseyShopItemPayload {
-  relicType: OdysseyRelicType;
-  costPerCharge: number;
-}
-
 export interface OdysseyRestOutcomePayload {
   restores: Partial<Record<OdysseyRelicType, number>>;
   foundCoins: number | null;
@@ -76,15 +71,28 @@ function reportFailure(context: string, error: unknown) {
  * established best-effort pattern in this codebase.
  */
 export class OdysseyApiService {
-  /** Whether a run already exists for this slot on the backend. */
+  /**
+   * Whether a run already exists for this slot on the backend. Retries on a
+   * network-level failure before giving up — beginNewRun() treats a `false`
+   * here as "safe to create a fresh run", so a transient failure wrongly
+   * reported as `false` for a slot that actually has real progress would
+   * wipe it via startNewRun. See getSlot's doc comment for the same pattern.
+   */
   static async slotExists(slotId: number): Promise<boolean> {
-    try {
-      const res = await fetch(`${BASE_URL}/slots/${slotId}`, { credentials: "include" });
-      return res.ok;
-    } catch (error: unknown) {
-      reportFailure("slotExists", error);
-      return false;
+    const attempts = 3;
+    for (let attempt = 1; attempt <= attempts; attempt++) {
+      try {
+        const res = await fetch(`${BASE_URL}/slots/${slotId}`, { credentials: "include" });
+        return res.ok;
+      } catch (error: unknown) {
+        if (attempt === attempts) {
+          reportFailure("slotExists", error);
+          return false;
+        }
+        await new Promise(resolve => setTimeout(resolve, 300 * attempt));
+      }
     }
+    return false;
   }
 
   /** Fetches a progress summary for every save slot (used by the slot picker), or null on failure. */
@@ -100,17 +108,33 @@ export class OdysseyApiService {
     }
   }
 
-  /** Fetches the full run for a slot, or null if none exists (or the request fails). */
+  /**
+   * Fetches the full run for a slot, or null if none exists on the backend.
+   * Retries a couple of times on a network-level failure before giving up —
+   * this is the one read StoryModeContext's load effect falls back to
+   * localStorage without, and a transient failure here previously meant
+   * silently showing a possibly-stale local map instead of the backend's
+   * real one (see the map-mismatch bug this was built to prevent). A 4xx/5xx
+   * response (slot genuinely doesn't exist, or a real server error) is NOT
+   * retried — only a network-level failure (offline, dropped connection) is.
+   */
   static async getSlot(slotId: number): Promise<OdysseyBackendGame | null> {
-    try {
-      const res = await fetch(`${BASE_URL}/slots/${slotId}`, { credentials: "include" });
-      if (!res.ok) return null;
-      const json = await res.json();
-      return (json.data?.game as OdysseyBackendGame) ?? null;
-    } catch (error: unknown) {
-      reportFailure("getSlot", error);
-      return null;
+    const attempts = 3;
+    for (let attempt = 1; attempt <= attempts; attempt++) {
+      try {
+        const res = await fetch(`${BASE_URL}/slots/${slotId}`, { credentials: "include" });
+        if (!res.ok) return null;
+        const json = await res.json();
+        return (json.data?.game as OdysseyBackendGame) ?? null;
+      } catch (error: unknown) {
+        if (attempt === attempts) {
+          reportFailure("getSlot", error);
+          return null;
+        }
+        await new Promise(resolve => setTimeout(resolve, 300 * attempt));
+      }
     }
+    return null;
   }
 
   static async startNewRun(slotId: number): Promise<OdysseyBackendGame | null> {
@@ -146,16 +170,23 @@ export class OdysseyApiService {
     return post(`/slots/${slotId}/nodes/${nodeId}/battle/resolve`, "resolveBattleOutcome", { snapshot, endReason, playerWon });
   }
 
-  static async merchantPurchase(slotId: number, item: OdysseyShopItemPayload, quantity: number): Promise<boolean> {
-    return post(`/slots/${slotId}/merchant/purchase`, "merchantPurchase", { item, quantity });
+  /**
+   * Buys `quantity` charges of `relicType` at that node's true price. The
+   * server derives the real price itself from (run, node, relicType) — this
+   * call never sends a price at all, so there's nothing for a client to
+   * spoof; whatever it charges is authoritative.
+   */
+  static async merchantPurchase(slotId: number, nodeId: number, relicType: OdysseyRelicType, quantity: number): Promise<boolean> {
+    return post(`/slots/${slotId}/nodes/${nodeId}/merchant/purchase`, "merchantPurchase", { relicType, quantity });
   }
 
   static async merchantSell(slotId: number, relicType: OdysseyRelicType): Promise<boolean> {
     return post(`/slots/${slotId}/merchant/sell`, "merchantSell", { relicType });
   }
 
-  static async merchantReroll(slotId: number, catalog: OdysseyShopItemPayload[]): Promise<boolean> {
-    return post(`/slots/${slotId}/merchant/reroll`, "merchantReroll", { catalog });
+  /** Spends a Reroll charge for fresh offerings from that node's (server-known) catalog — no payload needed. */
+  static async merchantReroll(slotId: number, nodeId: number): Promise<boolean> {
+    return post(`/slots/${slotId}/nodes/${nodeId}/merchant/reroll`, "merchantReroll");
   }
 
   /** Marks the merchant node completed — call once the caller leaves the shop. */

@@ -4,7 +4,8 @@ import { Coins, ArrowRight, RotateCcw, Package, ShoppingBag, Sparkles } from "lu
 import { useStoryModeRun, MAX_RELIC_CHARGES } from "./StoryModeContext";
 import type { RelicType } from "./StoryModeContext";
 import { useSession } from "@/features/account/useSession";
-import { OdysseyApiService, type OdysseyShopItemPayload } from "./api/odysseyApi";
+import { OdysseyApiService } from "./api/odysseyApi";
+import { computeServerPrices } from "./api/odysseyMerchantPricing";
 
 interface StoryModeMerchantProps {
   nodeId: number;
@@ -46,23 +47,23 @@ export default function StoryModeMerchant({
     { type: 'reroll' as RelicType, name: 'Moirai\'s Thread', description: '+1 to max Rerolls.' },
   ];
 
-  // Generate available pool based on current state
+  // Generate available pool based on current state. When synced (a real backend run
+  // exists), prices are derived the SAME way the server will independently derive
+  // them for a purchase — see computeServerPrices — so what's shown here is exactly
+  // what a purchase will charge. Guests (no gameId) get genuinely random prices,
+  // matching the old behavior, since there's no backend to reconcile with.
   const availablePool = useMemo(() => {
-    const pool: ShopItem[] = [];
+    const serverPrices = runState.gameId ? computeServerPrices(`${runState.gameId}:${nodeId}`) : null;
     const v = (base: number) => Math.max(5, base + Math.floor(Math.random() * 11) - 5);
 
-    relicData.forEach(r => {
-      pool.push({
-        id: `${r.type}_${Math.random()}`,
-        name: r.name,
-        description: r.description,
-        cost: v(20), // 20 base cost per charge
-        type: r.type,
-      });
-    });
-
-    return pool;
-  }, []);
+    return relicData.map(r => ({
+      id: `${r.type}_${Math.random()}`,
+      name: r.name,
+      description: r.description,
+      cost: serverPrices ? serverPrices[r.type] : v(20), // 20 base cost per charge
+      type: r.type,
+    }));
+  }, [runState.gameId, nodeId]);
 
   // State to hold current random offerings
   const [offerings, setOfferings] = useState<ShopItem[]>(() => getRandomOfferings(availablePool, 3));
@@ -73,11 +74,6 @@ export default function StoryModeMerchant({
   }
 
   const isSynced = status === 'authenticated';
-
-  const toShopItemPayload = (poolItem: ShopItem): OdysseyShopItemPayload => ({
-    relicType: poolItem.type,
-    costPerCharge: poolItem.cost,
-  });
 
   const handleReroll = () => {
     if (runState.rerollCharges > 0 && !isRerolling) {
@@ -92,8 +88,9 @@ export default function StoryModeMerchant({
           setQuantities({});
 
           // Best-effort backend sync — local offerings above are already the authoritative result.
+          // No catalog payload needed: the server derives the same catalog itself from (run, node).
           if (isSynced) {
-            OdysseyApiService.merchantReroll(activeSlot, availablePool.map(toShopItemPayload));
+            OdysseyApiService.merchantReroll(activeSlot, nodeId);
           }
         }
 
@@ -130,8 +127,9 @@ export default function StoryModeMerchant({
       setPurchasedIds(prev => new Set([...prev, item.id]));
 
       // Best-effort backend sync — the local grant above is already the authoritative reward.
+      // No price sent: the server derives item.cost's real value itself from (run, node, type).
       if (isSynced) {
-        OdysseyApiService.merchantPurchase(activeSlot, toShopItemPayload(item), actualQty);
+        OdysseyApiService.merchantPurchase(activeSlot, nodeId, item.type, actualQty);
       }
     }
   };

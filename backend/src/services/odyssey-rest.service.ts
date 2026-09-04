@@ -27,6 +27,9 @@ export class OdysseyRestService {
    */
   static async applyRest(userId: string, slotId: number, nodeId: number, outcome: OdysseyRestOutcomePayload): Promise<OdysseyGame> {
     const game = await OdysseyGameService.requireSlot(userId, slotId);
+    if (!game.canEnterNode(nodeId)) {
+      throw new Error(`Node ${nodeId} is not currently reachable for this run — refusing to resolve it.`);
+    }
     const site = new OdysseyRestSite();
     site.restores = outcome.restores;
     site.foundCoins = outcome.foundCoins;

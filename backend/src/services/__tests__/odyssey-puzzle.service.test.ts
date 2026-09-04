@@ -1,6 +1,9 @@
 import { describe, test, before, after } from "node:test";
 import assert from "node:assert/strict";
 import { OdysseyPuzzleService } from "../odyssey-puzzle.service.js";
+import { OdysseyGameService } from "../odyssey-game.service.js";
+import { OdysseyGameRepository } from "../../repositories/OdysseyGameRepository.js";
+import { OdysseyPuzzleNode } from "../../models/odyssey/models/OdysseyPuzzleNode.js";
 import { ENodeType } from "../../models/odyssey/enums/ENodeType.js";
 import { createTestUser, deleteTestUser, makeGameWithEnterableNode } from "../../testSupport/odysseyTestSupport.js";
 
@@ -45,5 +48,19 @@ describe("OdysseyPuzzleService", () => {
 
     assert.strictEqual(coinsAwarded, 0);
     assert.strictEqual(game.completedNodes.includes(node.id), false);
+  });
+
+  test("test_resolvePuzzle_throwsForANodeThatWasNeverMadeReachable", async () => {
+    const game = await OdysseyGameService.startNewRun(userId, 4);
+    const startNode = game.map.getNode(0)!;
+    const unreachable = game.map.nodes.find(
+      n => n instanceof OdysseyPuzzleNode && !startNode.isAdjacentTo(n.id)
+    ) as OdysseyPuzzleNode | undefined;
+    assert.ok(unreachable, "expected a puzzle node beyond floor 1 in a freshly generated map");
+
+    await assert.rejects(OdysseyPuzzleService.resolvePuzzle(userId, 4, unreachable!.id, 3, 3));
+
+    const reloaded = await OdysseyGameRepository.findBySlot(userId, 4);
+    assert.strictEqual(reloaded!.completedNodes.includes(unreachable!.id), false);
   });
 });
