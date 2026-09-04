@@ -63,6 +63,7 @@ export const ModelName = {
   WebhookEvent: 'WebhookEvent',
   CuratedPuzzle: 'CuratedPuzzle',
   OdysseyPuzzle: 'OdysseyPuzzle',
+  OdysseyPuzzleTheme: 'OdysseyPuzzleTheme',
   Opening: 'Opening',
   BuilderLesson: 'BuilderLesson',
   BuilderSegment: 'BuilderSegment',
@@ -282,6 +283,14 @@ export const OdysseyPuzzleScalarFieldEnum = {
 } as const
 
 export type OdysseyPuzzleScalarFieldEnum = (typeof OdysseyPuzzleScalarFieldEnum)[keyof typeof OdysseyPuzzleScalarFieldEnum]
+
+
+export const OdysseyPuzzleThemeScalarFieldEnum = {
+  puzzleId: 'puzzleId',
+  theme: 'theme'
+} as const
+
+export type OdysseyPuzzleThemeScalarFieldEnum = (typeof OdysseyPuzzleThemeScalarFieldEnum)[keyof typeof OdysseyPuzzleThemeScalarFieldEnum]
 
 
 export const OpeningScalarFieldEnum = {

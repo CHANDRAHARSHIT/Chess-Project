@@ -102,6 +102,11 @@ export type CuratedPuzzle = Prisma.CuratedPuzzleModel
  */
 export type OdysseyPuzzle = Prisma.OdysseyPuzzleModel
 /**
+ * Model OdysseyPuzzleTheme
+ * 
+ */
+export type OdysseyPuzzleTheme = Prisma.OdysseyPuzzleThemeModel
+/**
  * Model Opening
  * 
  */

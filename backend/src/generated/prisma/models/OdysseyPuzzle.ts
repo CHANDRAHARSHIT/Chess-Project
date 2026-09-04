@@ -248,6 +248,7 @@ export type OdysseyPuzzleWhereInput = {
   source?: Prisma.StringNullableFilter<"OdysseyPuzzle"> | string | null
   createdAt?: Prisma.DateTimeFilter<"OdysseyPuzzle"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"OdysseyPuzzle"> | Date | string
+  themes?: Prisma.OdysseyPuzzleThemeListRelationFilter
 }
 
 export type OdysseyPuzzleOrderByWithRelationInput = {
@@ -260,6 +261,7 @@ export type OdysseyPuzzleOrderByWithRelationInput = {
   source?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  themes?: Prisma.OdysseyPuzzleThemeOrderByRelationAggregateInput
 }
 
 export type OdysseyPuzzleWhereUniqueInput = Prisma.AtLeast<{
@@ -275,6 +277,7 @@ export type OdysseyPuzzleWhereUniqueInput = Prisma.AtLeast<{
   source?: Prisma.StringNullableFilter<"OdysseyPuzzle"> | string | null
   createdAt?: Prisma.DateTimeFilter<"OdysseyPuzzle"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"OdysseyPuzzle"> | Date | string
+  themes?: Prisma.OdysseyPuzzleThemeListRelationFilter
 }, "id" | "fen">
 
 export type OdysseyPuzzleOrderByWithAggregationInput = {
@@ -319,6 +322,7 @@ export type OdysseyPuzzleCreateInput = {
   source?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  themes?: Prisma.OdysseyPuzzleThemeCreateNestedManyWithoutPuzzleInput
 }
 
 export type OdysseyPuzzleUncheckedCreateInput = {
@@ -331,6 +335,7 @@ export type OdysseyPuzzleUncheckedCreateInput = {
   source?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  themes?: Prisma.OdysseyPuzzleThemeUncheckedCreateNestedManyWithoutPuzzleInput
 }
 
 export type OdysseyPuzzleUpdateInput = {
@@ -343,6 +348,7 @@ export type OdysseyPuzzleUpdateInput = {
   source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  themes?: Prisma.OdysseyPuzzleThemeUpdateManyWithoutPuzzleNestedInput
 }
 
 export type OdysseyPuzzleUncheckedUpdateInput = {
@@ -355,6 +361,7 @@ export type OdysseyPuzzleUncheckedUpdateInput = {
   source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  themes?: Prisma.OdysseyPuzzleThemeUncheckedUpdateManyWithoutPuzzleNestedInput
 }
 
 export type OdysseyPuzzleCreateManyInput = {
@@ -437,10 +444,122 @@ export type OdysseyPuzzleSumOrderByAggregateInput = {
   mateIn?: Prisma.SortOrder
 }
 
+export type OdysseyPuzzleScalarRelationFilter = {
+  is?: Prisma.OdysseyPuzzleWhereInput
+  isNot?: Prisma.OdysseyPuzzleWhereInput
+}
+
 export type EnumOdysseyPuzzleTypeFieldUpdateOperationsInput = {
   set?: $Enums.OdysseyPuzzleType
 }
 
+export type OdysseyPuzzleCreateNestedOneWithoutThemesInput = {
+  create?: Prisma.XOR<Prisma.OdysseyPuzzleCreateWithoutThemesInput, Prisma.OdysseyPuzzleUncheckedCreateWithoutThemesInput>
+  connectOrCreate?: Prisma.OdysseyPuzzleCreateOrConnectWithoutThemesInput
+  connect?: Prisma.OdysseyPuzzleWhereUniqueInput
+}
+
+export type OdysseyPuzzleUpdateOneRequiredWithoutThemesNestedInput = {
+  create?: Prisma.XOR<Prisma.OdysseyPuzzleCreateWithoutThemesInput, Prisma.OdysseyPuzzleUncheckedCreateWithoutThemesInput>
+  connectOrCreate?: Prisma.OdysseyPuzzleCreateOrConnectWithoutThemesInput
+  upsert?: Prisma.OdysseyPuzzleUpsertWithoutThemesInput
+  connect?: Prisma.OdysseyPuzzleWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OdysseyPuzzleUpdateToOneWithWhereWithoutThemesInput, Prisma.OdysseyPuzzleUpdateWithoutThemesInput>, Prisma.OdysseyPuzzleUncheckedUpdateWithoutThemesInput>
+}
+
+export type OdysseyPuzzleCreateWithoutThemesInput = {
+  id?: string
+  fen: string
+  solution: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  puzzleRatingDifficulty: number
+  type: $Enums.OdysseyPuzzleType
+  mateIn?: number | null
+  source?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type OdysseyPuzzleUncheckedCreateWithoutThemesInput = {
+  id?: string
+  fen: string
+  solution: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  puzzleRatingDifficulty: number
+  type: $Enums.OdysseyPuzzleType
+  mateIn?: number | null
+  source?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type OdysseyPuzzleCreateOrConnectWithoutThemesInput = {
+  where: Prisma.OdysseyPuzzleWhereUniqueInput
+  create: Prisma.XOR<Prisma.OdysseyPuzzleCreateWithoutThemesInput, Prisma.OdysseyPuzzleUncheckedCreateWithoutThemesInput>
+}
+
+export type OdysseyPuzzleUpsertWithoutThemesInput = {
+  update: Prisma.XOR<Prisma.OdysseyPuzzleUpdateWithoutThemesInput, Prisma.OdysseyPuzzleUncheckedUpdateWithoutThemesInput>
+  create: Prisma.XOR<Prisma.OdysseyPuzzleCreateWithoutThemesInput, Prisma.OdysseyPuzzleUncheckedCreateWithoutThemesInput>
+  where?: Prisma.OdysseyPuzzleWhereInput
+}
+
+export type OdysseyPuzzleUpdateToOneWithWhereWithoutThemesInput = {
+  where?: Prisma.OdysseyPuzzleWhereInput
+  data: Prisma.XOR<Prisma.OdysseyPuzzleUpdateWithoutThemesInput, Prisma.OdysseyPuzzleUncheckedUpdateWithoutThemesInput>
+}
+
+export type OdysseyPuzzleUpdateWithoutThemesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  fen?: Prisma.StringFieldUpdateOperationsInput | string
+  solution?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  puzzleRatingDifficulty?: Prisma.IntFieldUpdateOperationsInput | number
+  type?: Prisma.EnumOdysseyPuzzleTypeFieldUpdateOperationsInput | $Enums.OdysseyPuzzleType
+  mateIn?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type OdysseyPuzzleUncheckedUpdateWithoutThemesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  fen?: Prisma.StringFieldUpdateOperationsInput | string
+  solution?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  puzzleRatingDifficulty?: Prisma.IntFieldUpdateOperationsInput | number
+  type?: Prisma.EnumOdysseyPuzzleTypeFieldUpdateOperationsInput | $Enums.OdysseyPuzzleType
+  mateIn?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+
+/**
+ * Count Type OdysseyPuzzleCountOutputType
+ */
+
+export type OdysseyPuzzleCountOutputType = {
+  themes: number
+}
+
+export type OdysseyPuzzleCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  themes?: boolean | OdysseyPuzzleCountOutputTypeCountThemesArgs
+}
+
+/**
+ * OdysseyPuzzleCountOutputType without action
+ */
+export type OdysseyPuzzleCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the OdysseyPuzzleCountOutputType
+   */
+  select?: Prisma.OdysseyPuzzleCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * OdysseyPuzzleCountOutputType without action
+ */
+export type OdysseyPuzzleCountOutputTypeCountThemesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.OdysseyPuzzleThemeWhereInput
+}
 
 
 export type OdysseyPuzzleSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -453,6 +572,8 @@ export type OdysseyPuzzleSelect<ExtArgs extends runtime.Types.Extensions.Interna
   source?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  themes?: boolean | Prisma.OdysseyPuzzle$themesArgs<ExtArgs>
+  _count?: boolean | Prisma.OdysseyPuzzleCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["odysseyPuzzle"]>
 
 export type OdysseyPuzzleSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -492,10 +613,18 @@ export type OdysseyPuzzleSelectScalar = {
 }
 
 export type OdysseyPuzzleOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "fen" | "solution" | "puzzleRatingDifficulty" | "type" | "mateIn" | "source" | "createdAt" | "updatedAt", ExtArgs["result"]["odysseyPuzzle"]>
+export type OdysseyPuzzleInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  themes?: boolean | Prisma.OdysseyPuzzle$themesArgs<ExtArgs>
+  _count?: boolean | Prisma.OdysseyPuzzleCountOutputTypeDefaultArgs<ExtArgs>
+}
+export type OdysseyPuzzleIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type OdysseyPuzzleIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
 
 export type $OdysseyPuzzlePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "OdysseyPuzzle"
-  objects: {}
+  objects: {
+    themes: Prisma.$OdysseyPuzzleThemePayload<ExtArgs>[]
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     fen: string
@@ -900,6 +1029,7 @@ readonly fields: OdysseyPuzzleFieldRefs;
  */
 export interface Prisma__OdysseyPuzzleClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  themes<T extends Prisma.OdysseyPuzzle$themesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OdysseyPuzzle$themesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OdysseyPuzzleThemePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -955,6 +1085,10 @@ export type OdysseyPuzzleFindUniqueArgs<ExtArgs extends runtime.Types.Extensions
    */
   omit?: Prisma.OdysseyPuzzleOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OdysseyPuzzleInclude<ExtArgs> | null
+  /**
    * Filter, which OdysseyPuzzle to fetch.
    */
   where: Prisma.OdysseyPuzzleWhereUniqueInput
@@ -973,6 +1107,10 @@ export type OdysseyPuzzleFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Ext
    */
   omit?: Prisma.OdysseyPuzzleOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OdysseyPuzzleInclude<ExtArgs> | null
+  /**
    * Filter, which OdysseyPuzzle to fetch.
    */
   where: Prisma.OdysseyPuzzleWhereUniqueInput
@@ -990,6 +1128,10 @@ export type OdysseyPuzzleFindFirstArgs<ExtArgs extends runtime.Types.Extensions.
    * Omit specific fields from the OdysseyPuzzle
    */
   omit?: Prisma.OdysseyPuzzleOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OdysseyPuzzleInclude<ExtArgs> | null
   /**
    * Filter, which OdysseyPuzzle to fetch.
    */
@@ -1039,6 +1181,10 @@ export type OdysseyPuzzleFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Exte
    */
   omit?: Prisma.OdysseyPuzzleOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OdysseyPuzzleInclude<ExtArgs> | null
+  /**
    * Filter, which OdysseyPuzzle to fetch.
    */
   where?: Prisma.OdysseyPuzzleWhereInput
@@ -1086,6 +1232,10 @@ export type OdysseyPuzzleFindManyArgs<ExtArgs extends runtime.Types.Extensions.I
    * Omit specific fields from the OdysseyPuzzle
    */
   omit?: Prisma.OdysseyPuzzleOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OdysseyPuzzleInclude<ExtArgs> | null
   /**
    * Filter, which OdysseyPuzzles to fetch.
    */
@@ -1135,6 +1285,10 @@ export type OdysseyPuzzleCreateArgs<ExtArgs extends runtime.Types.Extensions.Int
    */
   omit?: Prisma.OdysseyPuzzleOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OdysseyPuzzleInclude<ExtArgs> | null
+  /**
    * The data needed to create a OdysseyPuzzle.
    */
   data: Prisma.XOR<Prisma.OdysseyPuzzleCreateInput, Prisma.OdysseyPuzzleUncheckedCreateInput>
@@ -1182,6 +1336,10 @@ export type OdysseyPuzzleUpdateArgs<ExtArgs extends runtime.Types.Extensions.Int
    * Omit specific fields from the OdysseyPuzzle
    */
   omit?: Prisma.OdysseyPuzzleOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OdysseyPuzzleInclude<ExtArgs> | null
   /**
    * The data needed to update a OdysseyPuzzle.
    */
@@ -1249,6 +1407,10 @@ export type OdysseyPuzzleUpsertArgs<ExtArgs extends runtime.Types.Extensions.Int
    */
   omit?: Prisma.OdysseyPuzzleOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OdysseyPuzzleInclude<ExtArgs> | null
+  /**
    * The filter to search for the OdysseyPuzzle to update in case it exists.
    */
   where: Prisma.OdysseyPuzzleWhereUniqueInput
@@ -1275,6 +1437,10 @@ export type OdysseyPuzzleDeleteArgs<ExtArgs extends runtime.Types.Extensions.Int
    */
   omit?: Prisma.OdysseyPuzzleOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OdysseyPuzzleInclude<ExtArgs> | null
+  /**
    * Filter which OdysseyPuzzle to delete.
    */
   where: Prisma.OdysseyPuzzleWhereUniqueInput
@@ -1295,6 +1461,30 @@ export type OdysseyPuzzleDeleteManyArgs<ExtArgs extends runtime.Types.Extensions
 }
 
 /**
+ * OdysseyPuzzle.themes
+ */
+export type OdysseyPuzzle$themesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the OdysseyPuzzleTheme
+   */
+  select?: Prisma.OdysseyPuzzleThemeSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the OdysseyPuzzleTheme
+   */
+  omit?: Prisma.OdysseyPuzzleThemeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OdysseyPuzzleThemeInclude<ExtArgs> | null
+  where?: Prisma.OdysseyPuzzleThemeWhereInput
+  orderBy?: Prisma.OdysseyPuzzleThemeOrderByWithRelationInput | Prisma.OdysseyPuzzleThemeOrderByWithRelationInput[]
+  cursor?: Prisma.OdysseyPuzzleThemeWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.OdysseyPuzzleThemeScalarFieldEnum | Prisma.OdysseyPuzzleThemeScalarFieldEnum[]
+}
+
+/**
  * OdysseyPuzzle without action
  */
 export type OdysseyPuzzleDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1306,4 +1496,8 @@ export type OdysseyPuzzleDefaultArgs<ExtArgs extends runtime.Types.Extensions.In
    * Omit specific fields from the OdysseyPuzzle
    */
   omit?: Prisma.OdysseyPuzzleOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OdysseyPuzzleInclude<ExtArgs> | null
 }
