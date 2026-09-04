@@ -57,10 +57,15 @@ export const adminAuthConfig: ExpressAuthConfig = {
     // Runs before the adapter is asked to create or link anything, so a
     // non-admin never reaches createUser.
     async signIn({ user }) {
-      if (!user.email) return false;
+      // Returning a path (rather than false) routes the refusal through the
+      // redirect callback below, which resolves it against CLIENT_ORIGIN. Falling
+      // back to `pages.error` would build the URL from AUTH_URL's origin, which
+      // is the backend host in some deployments — a 404 for the admin.
+      const denied = "/admin?error=AccessDenied";
+      if (!user.email) return denied;
 
       const admin = await prisma.adminUser.findUnique({ where: { email: user.email } });
-      if (!admin?.isActive) return false;
+      if (!admin?.isActive) return denied;
 
       await prisma.adminUser.update({ where: { id: admin.id }, data: { lastLoginAt: new Date() } });
       return true;
