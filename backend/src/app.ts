@@ -17,6 +17,7 @@ import { maiaRouter } from "./maia/maia.route.js";
 import { pathwayProgressRouter } from "./routes/pathway-progress.route.js";
 import { gamesRouter } from "./routes/games.route.js";
 import { assessmentRouter } from "./routes/assessment.route.js";
+import { adminAuthRouter } from "./admin/auth/adminAuth.route.js";
 import { errorHandler } from "./middleware/error.middleware.js";
 
 const app = express();
@@ -34,6 +35,20 @@ const apiLimiter = rateLimit({
   message: {
     status: "fail",
     message: "Too many requests from this IP, please try again after 15 minutes.",
+  },
+});
+
+// Sign-in is the one unauthenticated admin surface, so it is limited harder
+// than the global /api allowance.
+const adminAuthLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  validate: { trustProxy: false },
+  message: {
+    status: "fail",
+    message: "Too many sign-in attempts, please try again after 15 minutes.",
   },
 });
 
@@ -74,8 +89,7 @@ app.get("/api/auth/signin/", (req, res) => {
 });
 
 // Ensure Auth.js sees the correct public hostname when behind a reverse proxy (Vercel rewrite).
-
-app.use("/api/auth/*", (req, _res, next) => {
+function forceAuthHost(req: express.Request, _res: express.Response, next: express.NextFunction) {
   try {
     const authUrl = new URL(env.AUTH_URL);
     req.headers.host = authUrl.host;
@@ -83,7 +97,16 @@ app.use("/api/auth/*", (req, _res, next) => {
     // If AUTH_URL is invalid, fall through with the original host header.
   }
   next();
-}, authRouter);
+}
+
+app.use("/api/auth/*", forceAuthHost, authRouter);
+
+// Admin portal. Separate Auth.js instance, separate cookies, separate tables —
+// mounted before /api/admin so the guarded routes never see the auth endpoints.
+app.get("/api/admin/auth/signin/:provider", (_req, res) => {
+  res.redirect("/admin");
+});
+app.use("/api/admin/auth/*", adminAuthLimiter, forceAuthHost, adminAuthRouter);
 app.use("/api/users", userRouter);
 app.use("/api/custom-links", customLinksRouter);
 app.use("/api/payments", paymentRouter);

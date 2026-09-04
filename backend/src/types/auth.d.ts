@@ -26,6 +26,9 @@ declare global {
     interface Request {
       user?: Session["user"];
       session?: Session;
+      // Set by requireAdminAuth. Unrelated to `user` above, which is the
+      // user-facing player session.
+      adminUser?: import("../generated/prisma/models.js").AdminUserModel;
     }
   }
 }

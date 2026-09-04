@@ -67,6 +67,12 @@ export const env = {
   // a WASM engine per finished game, so it stays off until deliberately enabled.
   ANTICHEAT_ENABLED: process.env.ANTICHEAT_ENABLED === "true",
 
+  // Admin portal. Shorter-lived than the 30-day user-facing session.
+  ADMIN_SESSION_MAX_AGE_SECONDS: (() => {
+    const parsed = Number(process.env.ADMIN_SESSION_MAX_AGE_SECONDS);
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : 8 * 60 * 60;
+  })(),
+
   // Rollbar error monitoring
   ROLLBAR_ACCESS_TOKEN: process.env.ROLLBAR_ACCESS_TOKEN!,
 };
