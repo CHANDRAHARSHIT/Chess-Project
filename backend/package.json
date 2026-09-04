@@ -12,7 +12,8 @@
     "db:seed": "tsx src/seed.ts",
     "db:seed:puzzles": "tsx src/scripts/seed-puzzles.ts",
     "test": "tsx --test src/**/__tests__/*.test.ts",
-    "db:seed:assessments": "tsx src/scripts/seed-assessments.ts"
+    "db:seed:assessments": "tsx src/scripts/seed-assessments.ts",
+    "db:seed:admin": "tsx src/scripts/seed-admin.ts"
   },
   "dependencies": {
     "@auth/core": "^0.37.4",
