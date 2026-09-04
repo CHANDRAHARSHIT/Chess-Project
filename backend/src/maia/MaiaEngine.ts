@@ -11,7 +11,7 @@
  */
 
 import { spawn, type ChildProcessWithoutNullStreams } from "child_process";
-import { reportError } from "../observability/index.js";
+import { reportError } from "../realtime/observability/index.js";
 
 export interface MaiaMoveRequest {
   /** Moves from the standard start, in UCI ("e2e4"). Maia conditions on history. */

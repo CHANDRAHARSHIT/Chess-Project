@@ -48,8 +48,8 @@ export default function AssessmentAlreadyCompleteScreen({
           Looks like you already took the assessment on{' '}
           <span className="text-brand-text font-semibold">{submittedAtLabel}</span>. Your
           attempt {describeOutcome(result)}. If you'd like to get in touch, please use our{' '}
-          <a href="/contact-us" className="text-brand-accent underline hover:text-brand-accent/80">
-            Contact Us
+          <a href="/contact" className="text-brand-accent underline hover:text-brand-accent/80">
+            Contact
           </a>{' '}
           page.
         </p>
@@ -59,7 +59,7 @@ export default function AssessmentAlreadyCompleteScreen({
             type="button"
             onClick={() => {
               soundManager.playButtonClick();
-              navigate('/join-us');
+              navigate('/join');
             }}
             className="inline-flex items-center gap-2 px-8 py-3.5 rounded-2xl border border-brand-text/25 text-brand-text hover:bg-brand-surface/80 hover:border-brand-accent transition-all cursor-pointer font-semibold text-sm"
           >

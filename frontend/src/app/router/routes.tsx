@@ -1,5 +1,4 @@
 import HomePage from "@/pages/HomePage";
-import HomeV2Page from "@/pages/HomeV2Page";
 import ContactPage from "@/pages/ContactPage";
 import JoinUsPage from "@/pages/JoinUsPage";
 import PuzzlePage from "@/pages/PuzzlePage";
@@ -39,6 +38,7 @@ import PlayHubPage from "@/pages/PlayHubPage";
 import StatsPage from "@/pages/StatsPage";
 import AssessmentPage from "@/pages/AssessmentPage";
 import NewsPage from "@/pages/NewsPage";
+import { ROUTES } from "./routes.config";
 
 export interface RouteConfig {
   path: string;
@@ -48,30 +48,28 @@ export interface RouteConfig {
 
 // Routes that run inside the MainLayout (Navbar + Sidebar + Footer)
 export const mainRoutes: RouteConfig[] = [
-  { path: "/", element: <HomePage />, title: "XLChess - Play Chess Online" },
-  { path: "/home-v2", element: <HomeV2Page />, title: "XLChess - Home V2" },
-  { path: "/news", element: <NewsPage />, title: "News & Ratings | XLChess" },
-  { path: "/contact-us", element: <ContactPage />, title: "Contact Us | XLChess" },
+  // Core Application
+  { path: ROUTES.HOME, element: <HomePage />, title: "XLChess - Play Chess Online" },
+  { path: ROUTES.NEWS, element: <NewsPage />, title: "News & Ratings | XLChess" },
+  { path: ROUTES.CONTACT, element: <ContactPage />, title: "Contact Us | XLChess" },
+  { path: ROUTES.PUZZLES, element: <PuzzlePage />, title: "Chess Puzzles | XLChess" },
+  { path: ROUTES.ODYSSEY, element: <StoryModePage />, title: "Story Mode | XLChess" },
+  { path: ROUTES.OPENINGS, element: <OpeningsPage />, title: "Chess Openings | XLChess" },
+  { path: ROUTES.PRICING, element: <PricingPage />, title: "Pricing | XLChess" },
   {
-    path: "/puzzles",
-    element: <PuzzlePage />,
-    title: "Chess Puzzles | XLChess",
+    path: ROUTES.PREMIUM,
+    element: (
+      <ProtectedRoute>
+        <PremiumPage />
+      </ProtectedRoute>
+    ),
+    title: "XLChess Premium | XLChess",
   },
-  {
-    path: "/odyssey",
-    element: <StoryModePage />,
-    title: "Story Mode | XLChess",
-  },
-  {
-    path: "/openings",
-    element: <OpeningsPage />,
-    title: "Chess Openings | XLChess",
-  },
-  {
-    path: "/database",
-    element: <DatabasePage />,
-    title: "Chess Database | XLChess",
-  },
+  { path: ROUTES.STATS, element: <StatsPage />, title: "Stats | XLChess" },
+  { path: ROUTES.REPORT, element: <ReportPage />, title: "Report | XLChess" },
+
+  // Database
+  { path: ROUTES.DATABASE, element: <DatabasePage />, title: "Chess Database | XLChess" },
   {
     path: "/database/:id",
     element: <DatabasePlayerPage />,
@@ -82,83 +80,49 @@ export const mainRoutes: RouteConfig[] = [
     element: <DatabaseGamePage />,
     title: "Game Database | XLChess",
   },
+
+  // Subscriptions & Library
   {
-    path: "/subscriptions",
+    path: ROUTES.SUBSCRIPTIONS,
     element: <SubscriptionsPage />,
     title: "My Subscriptions | XLChess",
   },
   {
-    // /variants → Play Hub Variants tab. Navigate replace keeps browser history clean.
-    path: "/variants",
-    element: <Navigate to="/play?tab=variants" replace />,
-    title: "Chess Variants | XLChess",
+    path: ROUTES.SAVED,
+    element: <CompleteLaterPage />,
+    title: "Saved | XLChess",
   },
   {
-    path: "/play/chess960",
-    element: <Chess960Page />,
-    title: "Chess 960 | XLChess",
+    path: ROUTES.CONTENT,
+    element: <YourContentPage />,
+    title: "Your Content | XLChess",
   },
   {
-    // Scratch page for evaluating Maia-3. Not in navigation — reached by URL.
-    path: "/test-maia",
-    element: <TestMaiaPage />,
-    title: "Test Maia | XLChess",
+    path: ROUTES.CHANNEL,
+    element: <YourChannelPage />,
+    title: "Your Channel | XLChess",
   },
-  {
-    path: "/lesson-builder",
-    element: (
-      <ProtectedRoute>
-        <LessonDashboardPage />
-      </ProtectedRoute>
-    ),
-    title: "Lesson Builder | XLChess",
-  },
-  {
-    path: "/lesson-builder/:id",
-    element: (
-      <ProtectedRoute>
-        <LessonBuilderPage />
-      </ProtectedRoute>
-    ),
-    title: "Edit Lesson | XLChess",
-  },
-  {
-    // /play/chess → Play Hub Online tab. Navigate replace keeps browser history clean.
-    path: "/play/chess",
-    element: <Navigate to="/play?tab=online" replace />,
-    title: "Play Chess Online | XLChess",
-  },
-  {
-    path: "/profile",
-    element: <Navigate to="/settings/profile" replace />,
-    title: "Profile | XLChess",
-  },
-  // Not behind ProtectedRoute: board/piece preferences are stored in
-  // localStorage (like the Sound toggle) so guests can use them too.
-  { path: "/settings", element: <SettingsPage />, title: "Settings | XLChess" },
-  {
-    path: "/settings/:category",
-    element: <SettingsPage />,
-    title: "Settings | XLChess",
-  },
-  {
-    path: "/premium",
-    element: (
-      <ProtectedRoute>
-        <PremiumPage />
-      </ProtectedRoute>
-    ),
-    title: "XLChess Premium | XLChess",
-  },
-  { path: "/pricing", element: <PricingPage />, title: "Pricing | XLChess" },
 
+  // Play Hub
   {
-    path: "/play",
+    path: ROUTES.PLAY,
     element: <PlayHubPage />,
     title: "Play Chess | XLChess",
   },
   {
-    path: "/lessons",
+    path: ROUTES.PLAY_CHESS960,
+    element: <Chess960Page />,
+    title: "Chess 960 | XLChess",
+  },
+  {
+    path: ROUTES.MAIA,
+    element: <TestMaiaPage />,
+    title: "Test Maia | XLChess",
+  },
+
+  // Lessons & Lesson Builder
+  {
+    path: ROUTES.LESSONS,
     element: <LessonsPage />,
     title: "Lesson Library | XLChess",
   },
@@ -168,79 +132,43 @@ export const mainRoutes: RouteConfig[] = [
     title: "Chess Lesson | XLChess",
   },
   {
-    path: "/lesson/:id",
-    element: <LessonViewerPage />,
-    title: "Chess Lesson | XLChess",
+    path: ROUTES.LESSON_BUILDER,
+    element: (
+      <ProtectedRoute>
+        <LessonDashboardPage />
+      </ProtectedRoute>
+    ),
+    title: "Lesson Builder | XLChess",
   },
   {
-    path: "/stats",
-    element: <StatsPage />,
-    title: "Stats | XLChess",
-  },
-  {
-    path: "/complete-later",
-    element: <CompleteLaterPage />,
-    title: "Complete Later | XLChess",
-  },
-  {
-    path: "/your-content",
-    element: <YourContentPage />,
-    title: "Your Content | XLChess",
-  },
-  {
-    path: "/channel",
-    element: <YourChannelPage />,
-    title: "Your Channel | XLChess",
-  },
-  {
-    path: "/your-channel",
-    element: <YourChannelPage />,
-    title: "Your Channel | XLChess",
-  },
-  {
-    path: "/report",
-    element: <ReportPage />,
-    title: "Report | XLChess",
+    path: "/lessons/builder/:id",
+    element: (
+      <ProtectedRoute>
+        <LessonBuilderPage />
+      </ProtectedRoute>
+    ),
+    title: "Edit Lesson | XLChess",
   },
 
-  // ── Footer page placeholder routes ───────────────────────────────────────
+  // Settings & Profile
+  { path: ROUTES.PROFILE, element: <Navigate to={ROUTES.SETTINGS_PROFILE} replace />, title: "Profile | XLChess" },
+  { path: ROUTES.SETTINGS, element: <SettingsPage />, title: "Settings | XLChess" },
   {
-    path: "/about",
-    element: <AboutPage />,
-    title: "About Us | XLChess",
+    path: "/settings/:category",
+    element: <SettingsPage />,
+    title: "Settings | XLChess",
   },
+
+  // Informational / Footer Pages
+  { path: ROUTES.ABOUT, element: <AboutPage />, title: "About Us | XLChess" },
+  { path: ROUTES.COPYRIGHT, element: <CopyrightPage />, title: "Copyright | XLChess" },
+  { path: ROUTES.CREATOR, element: <CreatorPage />, title: "Creators | XLChess" },
+  { path: ROUTES.ADVERTISE, element: <AdvertisePage />, title: "Advertise | XLChess" },
+  { path: ROUTES.DEVELOPERS, element: <DevelopersPage />, title: "Developers | XLChess" },
+  { path: ROUTES.TERMS, element: <TermsOfServicePage />, title: "Terms of Service | XLChess" },
+  { path: ROUTES.PRIVACY, element: <PrivacyPolicyPage />, title: "Privacy Policy | XLChess" },
   {
-    path: "/copyright",
-    element: <CopyrightPage />,
-    title: "Copyright | XLChess",
-  },
-  {
-    path: "/creator",
-    element: <CreatorPage />,
-    title: "Creators | XLChess",
-  },
-  {
-    path: "/advertise",
-    element: <AdvertisePage />,
-    title: "Advertise | XLChess",
-  },
-  {
-    path: "/developers",
-    element: <DevelopersPage />,
-    title: "Developers | XLChess",
-  },
-  {
-    path: "/terms",
-    element: <TermsOfServicePage />,
-    title: "Terms of Service | XLChess",
-  },
-  {
-    path: "/privacy",
-    element: <PrivacyPolicyPage />,
-    title: "Privacy Policy | XLChess",
-  },
-  {
-    path: "/how-xlchess-works",
+    path: ROUTES.HOW_IT_WORKS,
     element: <HowXLChessWorksPage />,
     title: "How XLChess Works | XLChess",
   },
@@ -248,13 +176,14 @@ export const mainRoutes: RouteConfig[] = [
 
 // Routes that run inside the MinimalLayout (Navbar only, no Sidebar/Footer)
 export const minimalRoutes: RouteConfig[] = [
+  // Join & Career Flow
   {
-    path: "/join-us",
+    path: ROUTES.JOIN,
     element: <JoinUsPage />,
     title: "Join Us | XLChess",
   },
   {
-    path: "/join-us/assessment",
+    path: ROUTES.JOIN_ASSESSMENT,
     element: (
       <ProtectedRoute>
         <AssessmentPage />
@@ -262,19 +191,16 @@ export const minimalRoutes: RouteConfig[] = [
     ),
     title: "Assessment | XLChess",
   },
-  { path: "/payment", element: <CheckoutPage />, title: "Checkout | XLChess" },
+
+  // Checkout & Payment Flow
+  { path: ROUTES.PAYMENT, element: <CheckoutPage />, title: "Checkout | XLChess" },
   {
-    path: "/successful",
+    path: ROUTES.PAYMENT_SUCCESS,
     element: <SuccessfulPage />,
     title: "Payment Successful | XLChess",
   },
   {
-    path: "/payment/success",
-    element: <SuccessfulPage />,
-    title: "Payment Successful | XLChess",
-  },
-  {
-    path: "/payment/failed",
+    path: ROUTES.PAYMENT_FAILED,
     element: <FailedPage />,
     title: "Payment Failed | XLChess",
   },

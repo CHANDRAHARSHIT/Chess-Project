@@ -160,7 +160,7 @@ export default function CopyrightPage() {
             For all copyright-related inquiries — including takedown requests,
             licensing questions, and fair use determinations — please use our{" "}
             <a
-              href="/contact-us"
+              href="/contact"
               className="text-brand-accent hover:underline transition-colors"
             >
               contact page

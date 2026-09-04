@@ -32,6 +32,7 @@ import { useNavigate, useLocation } from "react-router";
 import { useNavigationStack } from "@/app/navigation/useNavigationStack";
 import rollbar from "@/shared/lib/rollbar";
 import { featureFlags } from "@/shared/lib/featureFlags";
+import { ROUTES } from "@/app/router/routes.config";
 
 // Hook for clicking outside the custom dropdown
 function useOnClickOutside(
@@ -105,7 +106,7 @@ export default function SidebarLayout({
     };
   }, []);
 
-  const { status } = useSession();
+  const { status, authHint } = useSession();
   const navigate = useNavigate();
   const location = useLocation();
   const { push } = useNavigationStack();
@@ -395,55 +396,55 @@ export default function SidebarLayout({
   };
 
   // Nav Items Data
-  const baseSection = [{ name: "Home", href: "/", icon: Home }];
+  const baseSection = [{ name: "Home", href: ROUTES.HOME, icon: Home }];
 
   const exploreSection = [
-    { name: "Play", href: "/play", icon: Swords },
-    { name: "Lessons", href: "/lessons", icon: BookOpen },
+    { name: "Play", href: ROUTES.PLAY, icon: Swords },
+    { name: "Lessons", href: ROUTES.LESSONS, icon: BookOpen },
     ...(featureFlags.showBuildLessons
-      ? [{ name: "Build Lessons", href: "/lesson-builder", icon: PenTool }]
+      ? [{ name: "Build Lessons", href: ROUTES.LESSON_BUILDER, icon: PenTool }]
       : []),
-    { name: "Puzzles", href: "/puzzles", icon: Puzzle },
-    { name: "Upgrade", href: "/pricing", icon: Crown },
+    { name: "Puzzles", href: ROUTES.PUZZLES, icon: Puzzle },
+    { name: "Upgrade", href: ROUTES.PRICING, icon: Crown },
   ];
 
   const footerLinks = [
-    { name: "About", href: "/about" },
-    { name: "Copyright", href: "/copyright" },
-    { name: "Contact Us", href: "/contact-us" },
-    { name: "Join Us", href: "/join-us" },
-    { name: "Creator", href: "/creator" },
-    { name: "Advertise", href: "/advertise" },
-    { name: "Developers", href: "/developers" },
-    { name: "Terms", href: "/terms" },
-    { name: "Privacy Policy & Safety", href: "/privacy" },
-    { name: "How XLChess works", href: "/how-xlchess-works" },
+    { name: "About", href: ROUTES.ABOUT },
+    { name: "Copyright", href: ROUTES.COPYRIGHT },
+    { name: "Contact Us", href: ROUTES.CONTACT },
+    { name: "Join Us", href: ROUTES.JOIN },
+    { name: "Creator", href: ROUTES.CREATOR },
+    { name: "Advertise", href: ROUTES.ADVERTISE },
+    { name: "Developers", href: ROUTES.DEVELOPERS },
+    { name: "Terms", href: ROUTES.TERMS },
+    { name: "Privacy Policy & Safety", href: ROUTES.PRIVACY },
+    { name: "How XLChess works", href: ROUTES.HOW_IT_WORKS },
   ];
 
   const youSection = [
-    { name: "Stats", href: "/stats", icon: BarChart2, comingSoon: true },
+    { name: "Stats", href: ROUTES.STATS, icon: BarChart2, comingSoon: true },
     {
       name: "Complete Later",
-      href: "/complete-later",
+      href: ROUTES.SAVED,
       icon: Clock,
     },
     {
       name: "Your Content",
-      href: "/your-content",
+      href: ROUTES.CONTENT,
       icon: Video,
     },
     {
       name: "Your Channel",
-      href: "/channel",
+      href: ROUTES.CHANNEL,
       icon: UserCircle2,
     },
   ];
 
   const moreStaticSection = [
-    { name: "Game Database", href: "/database", icon: Database },
+    { name: "Game Database", href: ROUTES.DATABASE, icon: Database },
   ];
 
-  const miscSection = [{ name: "Report", href: "/report", icon: Flag }];
+  const miscSection = [{ name: "Report", href: ROUTES.REPORT, icon: Flag }];
 
   const urlOptions = [
     { label: "Analysis Board", value: "/analysis" },
@@ -733,7 +734,11 @@ export default function SidebarLayout({
         <div className="flex items-center gap-2 sm:gap-3">
           {status !== "authenticated" && <MoreMenu />}
           {status === "loading" ? (
-            <div className="w-6 h-6 rounded-full border-2 border-brand-accent/30 border-t-brand-accent animate-spin" />
+            authHint === "authenticated" ? (
+              <div className="w-8 h-8 rounded-full bg-brand-text/10 animate-pulse" />
+            ) : (
+              <div className="h-8 w-20 rounded-full bg-brand-text/10 animate-pulse" />
+            )
           ) : status === "authenticated" ? (
             <AvatarDropdown />
           ) : (
@@ -795,34 +800,62 @@ export default function SidebarLayout({
             )}
             <Divider />
 
-            {/* AUTH / SUBSCRIPTIONS SECTION */}
+            {/* AUTH / YOU SECTION */}
             {status === "loading" ? (
-              <>
-                {isExpanded && (
-                  <div className="flex items-center px-6 py-2">
-                    <span className="h-4 w-28 rounded bg-brand-text/10 animate-pulse" />
-                  </div>
-                )}
-                <div className="flex flex-col w-full">
-                  <div
-                    className={`flex items-center mx-2 rounded-xl ${
-                      isExpanded
-                        ? "py-2.5 px-3"
-                        : "flex-col justify-center py-[14px]"
-                    }`}
-                  >
-                    <div
-                      className={`flex items-center justify-center shrink-0 ${isExpanded ? "w-10" : "w-full"}`}
-                    >
-                      <div className="w-6 h-6 rounded-full bg-brand-text/10 animate-pulse" />
+              authHint === "authenticated" ? (
+                <>
+                  {isExpanded ? (
+                    <>
+                      <div className="flex items-center justify-between px-6 py-2">
+                        <span className="h-4 w-12 rounded bg-brand-text/10 animate-pulse" />
+                        <span className="h-4 w-4 rounded bg-brand-text/10 animate-pulse" />
+                      </div>
+                      <div className="flex flex-col w-full">
+                        {[56, 112, 96, 96].map((w, idx) => (
+                          <div
+                            key={idx}
+                            className="flex items-center py-2.5 mx-2 px-3 rounded-xl"
+                          >
+                            <div className="w-10 flex items-center justify-center shrink-0">
+                              <div className="w-5 h-5 rounded-lg bg-brand-text/10 animate-pulse" />
+                            </div>
+                            <div
+                              className="h-3.5 ml-2 rounded bg-brand-text/10 animate-pulse"
+                              style={{ width: `${w}px` }}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  ) : (
+                    <div className="flex flex-col w-full">
+                      {[1, 2, 3, 4].map((idx) => (
+                        <div
+                          key={idx}
+                          className="flex flex-col items-center justify-center py-[14px] mx-2 rounded-lg"
+                        >
+                          <div className="w-5 h-5 rounded-lg bg-brand-text/10 animate-pulse" />
+                          <div className="h-2 w-8 mt-1.5 rounded bg-brand-text/10 animate-pulse" />
+                        </div>
+                      ))}
                     </div>
-                    {isExpanded && (
-                      <div className="flex-1 h-3.5 ml-2 rounded bg-brand-text/10 animate-pulse" />
-                    )}
-                  </div>
-                </div>
-                <Divider />
-              </>
+                  )}
+                  <Divider />
+                </>
+              ) : (
+                isExpanded && (
+                  <>
+                    <div className="px-6 py-4">
+                      <div className="space-y-1.5 mb-3">
+                        <div className="h-3 w-full rounded bg-brand-text/10 animate-pulse" />
+                        <div className="h-3 w-3/4 rounded bg-brand-text/10 animate-pulse" />
+                      </div>
+                      <div className="h-8 w-24 rounded-full bg-brand-text/10 animate-pulse" />
+                    </div>
+                    <Divider />
+                  </>
+                )
+              )
             ) : status !== "authenticated" ? (
               isExpanded && (
                 <>
@@ -1118,17 +1151,42 @@ export default function SidebarLayout({
             <Divider />
 
             {status === "loading" ? (
-              <>
-                <div className="mx-2 px-3 py-2">
-                  <span className="h-4 w-28 rounded bg-brand-text/10 animate-pulse inline-block" />
-                </div>
-                <div className="flex items-center py-2.5 mx-2 px-3 rounded-xl">
-                  <div className="w-10 flex items-center justify-center shrink-0">
-                    <div className="w-6 h-6 rounded-full bg-brand-text/10 animate-pulse" />
+              authHint === "authenticated" ? (
+                <>
+                  <div className="mx-2 px-3 py-2 flex items-center justify-between">
+                    <span className="h-4 w-12 rounded bg-brand-text/10 animate-pulse inline-block" />
+                    <span className="h-4 w-4 rounded bg-brand-text/10 animate-pulse inline-block" />
                   </div>
-                  <div className="flex-1 h-3.5 ml-2 rounded bg-brand-text/10 animate-pulse" />
-                </div>
-              </>
+                  <div className="flex flex-col w-full">
+                    {[56, 112, 96, 96].map((w, idx) => (
+                      <div
+                        key={idx}
+                        className="flex items-center py-2.5 mx-2 px-3 rounded-xl"
+                      >
+                        <div className="w-10 flex items-center justify-center shrink-0">
+                          <div className="w-5 h-5 rounded-lg bg-brand-text/10 animate-pulse" />
+                        </div>
+                        <div
+                          className="h-3.5 ml-2 rounded bg-brand-text/10 animate-pulse"
+                          style={{ width: `${w}px` }}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                  <Divider />
+                </>
+              ) : (
+                <>
+                  <div className="px-4 py-2">
+                    <div className="space-y-1.5 mb-3">
+                      <div className="h-3 w-full rounded bg-brand-text/10 animate-pulse" />
+                      <div className="h-3 w-3/4 rounded bg-brand-text/10 animate-pulse" />
+                    </div>
+                    <div className="h-8 w-24 rounded-full bg-brand-text/10 animate-pulse" />
+                  </div>
+                  <Divider />
+                </>
+              )
             ) : status !== "authenticated" ? (
               <div className="px-4 py-2">
                 <p className="text-[13px] text-brand-text/80 mb-3 leading-tight">

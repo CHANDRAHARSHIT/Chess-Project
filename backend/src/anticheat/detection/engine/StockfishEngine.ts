@@ -11,7 +11,7 @@
 
 import { createRequire } from "module";
 import path from "path";
-import { reportError } from "../../../observability/index.js";
+import { reportError } from "../../../realtime/observability/index.js";
 
 const require = createRequire(import.meta.url);
 

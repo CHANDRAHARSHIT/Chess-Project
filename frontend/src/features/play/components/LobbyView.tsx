@@ -19,9 +19,9 @@ export function LobbyView({ historyRefreshKey }: { historyRefreshKey: number }) 
   }, []);
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8 animate-fade-in">
+    <div className="max-w-5xl mx-auto space-y-4 sm:space-y-8 animate-fade-in">
       {/* Hero Header & Quick Specs */}
-      <div className="relative overflow-hidden rounded-3xl border border-brand-text/15 bg-brand-surface p-6 sm:p-8">
+      <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl border border-brand-text/15 bg-brand-surface p-4 sm:p-8">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="flex items-start gap-4">
             <div className="p-3 rounded-2xl bg-brand-accent/10 border border-brand-accent/20 text-brand-accent shrink-0">
