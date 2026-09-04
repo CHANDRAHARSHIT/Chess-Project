@@ -4,8 +4,12 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  darkMode: ['class', '[data-theme="dark"]'],
   theme: {
     extend: {
+      borderColor: {
+        DEFAULT: 'transparent',
+      },
       colors: {
         // NOTE: these all resolve through CSS custom properties defined in
         // src/index.css (`:root` / `:root[data-theme="light"]`), so they

@@ -563,13 +563,17 @@ export default function SidebarLayout({
               isExpanded || isMobileOpen
                 ? `items-center py-2.5 mx-2 px-3 rounded-xl ${
                     isActive
-                      ? "text-brand-accent bg-brand-accent/15 border border-brand-accent/30 backdrop-blur-md font-semibold"
-                      : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 group-hover/navitem:bg-brand-text/5 group-hover/navitem:text-brand-text border border-transparent"
+                      ? isAdmin
+                        ? "text-brand-accent bg-brand-accent/15 backdrop-blur-md font-semibold"
+                        : "text-brand-accent bg-brand-text/10 font-medium"
+                      : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 group-hover/navitem:bg-brand-text/5 group-hover/navitem:text-brand-text"
                   }`
                 : `flex-col items-center justify-center py-[14px] mx-2 rounded-lg text-center ${
                     isActive
-                      ? "text-brand-accent bg-brand-accent/15 border border-brand-accent/30 backdrop-blur-md font-semibold"
-                      : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 group-hover/navitem:bg-brand-text/5 group-hover/navitem:text-brand-text border border-transparent"
+                      ? isAdmin
+                        ? "text-brand-accent bg-brand-accent/15 backdrop-blur-md font-semibold"
+                        : "text-brand-accent bg-brand-text/10 font-medium"
+                      : "text-brand-secondary hover:text-brand-text hover:bg-brand-text/5 group-hover/navitem:bg-brand-text/5 group-hover/navitem:text-brand-text"
                   }`
             }`}
           >
@@ -773,7 +777,7 @@ export default function SidebarLayout({
   return (
     <div className="min-h-screen text-brand-text bg-brand-bg flex flex-col relative select-none">
       {/* ── TOP HEADER ──────────────────────────────────────────────────────── */}
-      <header className="fixed top-0 left-0 right-0 h-16 z-40 bg-brand-bg/85 backdrop-blur-xl flex items-center justify-between pr-2.5 sm:pr-4 md:pr-6 border-b border-brand-border/60">
+      <header className="fixed top-0 left-0 right-0 h-16 z-40 flex items-center justify-between pr-2.5 sm:pr-4 md:pr-6 bg-brand-bg/95 backdrop-blur-md border-b border-transparent">
         {/* Left: Hamburger & Logo */}
         <div className={`flex items-center h-full ${isAdmin ? "pl-4 sm:pl-6" : ""}`}>
           {!isAdmin && (
@@ -836,7 +840,7 @@ export default function SidebarLayout({
       <div className="flex flex-1 pt-16">
         {/* Desktop Sidebar (Fixed) */}
         <aside
-          className={`fixed top-16 left-0 bottom-0 z-30 bg-brand-bg/85 backdrop-blur-xl border-r border-brand-border/60 flex flex-col py-2 transition-all duration-300 ${
+          className={`fixed top-16 left-0 bottom-0 z-30 flex flex-col py-2 transition-all duration-300 bg-brand-bg/95 backdrop-blur-md ${
             isTheaterMode ? "hidden" : "hidden md:flex"
           } overflow-y-auto overscroll-contain pb-6 sidebar-scrollbar ${
             isAdmin || isExpanded ? "w-64" : "w-20"
@@ -844,10 +848,7 @@ export default function SidebarLayout({
         >
           <nav className="flex-1 flex flex-col space-y-1">
             {isAdmin ? (
-              <>
-                {renderAdminNav()}
-                <Divider />
-              </>
+              renderAdminNav()
             ) : (
               <>
                 {/* BASE SECTION */}
@@ -1148,7 +1149,7 @@ export default function SidebarLayout({
           onClick={() => setIsMobileOpen(false)}
         />
         <aside
-          className={`fixed top-0 left-0 bottom-0 w-64 z-50 bg-brand-bg/95 backdrop-blur-xl border-r border-brand-border/60 flex flex-col py-2 transition-transform duration-300 ease-in-out ${!isTheaterMode && !isAdmin ? "md:hidden" : "hidden"} overflow-y-auto overscroll-contain sidebar-scrollbar ${
+          className={`fixed top-0 left-0 bottom-0 w-64 z-50 bg-brand-bg flex flex-col py-2 transition-transform duration-300 ease-in-out ${!isTheaterMode && !isAdmin ? "md:hidden" : "hidden"} overflow-y-auto overscroll-contain sidebar-scrollbar ${
             isMobileOpen ? "translate-x-0" : "-translate-x-full"
           }`}
         >

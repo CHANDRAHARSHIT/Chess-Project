@@ -5,7 +5,6 @@ import {
   ShieldCheck,
   Settings,
   ArrowRight,
-  Sparkles,
   Server,
   Lock,
 } from "lucide-react";
@@ -17,7 +16,7 @@ import { useAdminSession } from "@/features/admin/useAdminSession";
  * Executive Command Center for XLChess Administrators.
  * Built with design-taste-frontend and frontend-ui-dark-ts standards:
  * - Luxury obsidian/cream theme awareness
- * - Tactile glassmorphic cards with gold-accented borders
+ * - Tactile frosted glassmorphic cards with clean, shadowless styling
  * - Accessible, responsive bento layout with micro-interactions
  */
 export const AdminHomePage: React.FC = () => {
@@ -35,7 +34,7 @@ export const AdminHomePage: React.FC = () => {
   return (
     <div className="w-full min-h-[calc(100vh-4rem)] bg-brand-bg text-brand-text px-4 sm:px-8 py-8 max-w-7xl mx-auto font-sans transition-colors duration-200 select-none">
       {/* ── Top Welcome Bar ─────────────────────────────────────────────────── */}
-      <header className="mb-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-6 border-b border-brand-border/60">
+      <header className="mb-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-6 border-b border-brand-text/10">
         <div>
           <div className="flex items-center gap-2 mb-2">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs font-semibold">
@@ -56,8 +55,8 @@ export const AdminHomePage: React.FC = () => {
         </div>
 
         {/* Quick Identity Tag */}
-        <div className="flex items-center gap-3 bg-brand-surface/80 border border-brand-border/80 ring-1 ring-white/15 dark:ring-white/5 rounded-2xl px-4 py-3 backdrop-blur-xl transition-all self-start md:self-auto">
-          <div className="w-10 h-10 rounded-xl bg-brand-accent/15 border border-brand-accent/30 text-brand-accent flex items-center justify-center shrink-0">
+        <div className="flex items-center gap-3 bg-brand-surface/80 rounded-2xl px-4 py-3 backdrop-blur-xl transition-all self-start md:self-auto">
+          <div className="w-10 h-10 rounded-xl bg-brand-accent/15 text-brand-accent flex items-center justify-center shrink-0">
             <ShieldCheck className="w-5 h-5" />
           </div>
           <div className="text-left">
@@ -76,12 +75,12 @@ export const AdminHomePage: React.FC = () => {
         {/* 1. ACS Documents Card */}
         <div
           onClick={() => navigate("/admin/acs/documents")}
-          className="group relative bg-brand-surface/80 hover:bg-brand-surface border border-brand-border/80 hover:border-brand-accent/60 ring-1 ring-white/20 dark:ring-white/5 rounded-3xl p-6 sm:p-8 hover:-translate-y-1 backdrop-blur-xl transition-all duration-300 cursor-pointer flex flex-col justify-between overflow-hidden"
+          className="group relative bg-brand-surface/80 hover:bg-brand-surface rounded-3xl p-6 sm:p-8 hover:-translate-y-1 backdrop-blur-xl transition-all duration-300 cursor-pointer flex flex-col justify-between overflow-hidden"
         >
           <div className="absolute top-0 right-0 w-32 h-32 bg-brand-accent/5 rounded-full blur-2xl group-hover:bg-brand-accent/10 transition-all duration-300 pointer-events-none" />
 
           <div>
-            <div className="w-12 h-12 rounded-2xl bg-brand-accent/10 border border-brand-border text-brand-accent flex items-center justify-center mb-6 group-hover:scale-105 transition-transform duration-200">
+            <div className="w-12 h-12 rounded-2xl bg-brand-accent/10 text-brand-accent flex items-center justify-center mb-6 group-hover:scale-105 transition-transform duration-200">
               <FileText className="w-6 h-6" />
             </div>
             <div className="flex items-center gap-2 mb-2">
@@ -100,7 +99,7 @@ export const AdminHomePage: React.FC = () => {
             </p>
           </div>
 
-          <div className="mt-8 pt-4 border-t border-brand-border/40 flex items-center justify-between text-sm font-semibold text-brand-accent group-hover:text-gold transition-colors">
+          <div className="mt-8 pt-4 border-t border-brand-text/10 flex items-center justify-between text-sm font-semibold text-brand-accent group-hover:text-gold transition-colors">
             <span>Explore Documents</span>
             <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1.5 transition-transform duration-200" />
           </div>
@@ -109,12 +108,12 @@ export const AdminHomePage: React.FC = () => {
         {/* 2. Admin Settings Card */}
         <div
           onClick={() => navigate("/admin/settings")}
-          className="group relative bg-brand-surface/80 hover:bg-brand-surface border border-brand-border/80 hover:border-brand-accent/60 ring-1 ring-white/20 dark:ring-white/5 rounded-3xl p-6 sm:p-8 hover:-translate-y-1 backdrop-blur-xl transition-all duration-300 cursor-pointer flex flex-col justify-between overflow-hidden"
+          className="group relative bg-brand-surface/80 hover:bg-brand-surface rounded-3xl p-6 sm:p-8 hover:-translate-y-1 backdrop-blur-xl transition-all duration-300 cursor-pointer flex flex-col justify-between overflow-hidden"
         >
           <div className="absolute top-0 right-0 w-32 h-32 bg-brand-accent/5 rounded-full blur-2xl group-hover:bg-brand-accent/10 transition-all duration-300 pointer-events-none" />
 
           <div>
-            <div className="w-12 h-12 rounded-2xl bg-brand-accent/10 border border-brand-border text-brand-accent flex items-center justify-center mb-6 group-hover:scale-105 transition-transform duration-200">
+            <div className="w-12 h-12 rounded-2xl bg-brand-accent/10 text-brand-accent flex items-center justify-center mb-6 group-hover:scale-105 transition-transform duration-200">
               <Settings className="w-6 h-6" />
             </div>
             <div className="flex items-center gap-2 mb-2">
@@ -133,16 +132,16 @@ export const AdminHomePage: React.FC = () => {
             </p>
           </div>
 
-          <div className="mt-8 pt-4 border-t border-brand-border/40 flex items-center justify-between text-sm font-semibold text-brand-accent group-hover:text-gold transition-colors">
+          <div className="mt-8 pt-4 border-t border-brand-text/10 flex items-center justify-between text-sm font-semibold text-brand-accent group-hover:text-gold transition-colors">
             <span>Open Settings</span>
             <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1.5 transition-transform duration-200" />
           </div>
         </div>
 
         {/* 3. Security & Access Overview Card */}
-        <div className="relative bg-brand-surface/80 border border-brand-border/80 ring-1 ring-white/20 dark:ring-white/5 rounded-3xl p-6 sm:p-8 backdrop-blur-xl flex flex-col justify-between overflow-hidden">
+        <div className="relative bg-brand-surface/80 rounded-3xl p-6 sm:p-8 backdrop-blur-xl flex flex-col justify-between overflow-hidden">
           <div>
-            <div className="w-12 h-12 rounded-2xl bg-brand-accent/10 border border-brand-border text-brand-accent flex items-center justify-center mb-6">
+            <div className="w-12 h-12 rounded-2xl bg-brand-accent/10 text-brand-accent flex items-center justify-center mb-6">
               <Lock className="w-6 h-6" />
             </div>
             <div className="flex items-center gap-2 mb-2">
@@ -160,7 +159,7 @@ export const AdminHomePage: React.FC = () => {
               Restricted to authorized Google Workspace accounts with cryptographic session authentication.
             </p>
 
-            <div className="space-y-2 pt-2 border-t border-brand-border/40 text-xs text-brand-secondary">
+            <div className="space-y-2 pt-2 border-t border-brand-text/10 text-xs text-brand-secondary">
               <div className="flex items-center justify-between">
                 <span>Domain Auth:</span>
                 <span className="font-mono text-brand-text">Active</span>
@@ -172,18 +171,18 @@ export const AdminHomePage: React.FC = () => {
             </div>
           </div>
 
-          <div className="mt-6 pt-4 border-t border-brand-border/40 flex items-center gap-2 text-xs text-brand-secondary">
-            <Sparkles className="w-3.5 h-3.5 text-brand-accent" />
+          <div className="mt-6 pt-4 border-t border-brand-text/10 flex items-center gap-2 text-xs text-brand-secondary">
+            <ShieldCheck className="w-3.5 h-3.5 text-brand-accent" />
             <span>Zero-Trust isolated admin runtime</span>
           </div>
         </div>
       </div>
 
       {/* ── Platform Telemetry Row ──────────────────────────────────────────── */}
-      <section className="bg-brand-surface/70 border border-brand-border/80 ring-1 ring-white/10 dark:ring-white/5 rounded-3xl p-6 sm:p-8 backdrop-blur-xl">
+      <section className="bg-brand-surface/70 rounded-3xl p-6 sm:p-8 backdrop-blur-xl">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-brand-accent/10 border border-brand-border text-brand-accent flex items-center justify-center">
+            <div className="w-9 h-9 rounded-xl bg-brand-accent/10 text-brand-accent flex items-center justify-center">
               <Server className="w-4 h-4" />
             </div>
             <div>
@@ -195,13 +194,13 @@ export const AdminHomePage: React.FC = () => {
               </p>
             </div>
           </div>
-          <span className="text-xs font-mono text-brand-secondary bg-brand-bg/60 border border-brand-border px-3 py-1.5 rounded-xl self-start sm:self-auto">
+          <span className="text-xs font-mono text-brand-secondary bg-brand-bg/60 px-3 py-1.5 rounded-xl self-start sm:self-auto">
             XLChess Engine v1.0.0
           </span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="p-4 rounded-2xl bg-brand-bg/60 border border-brand-border/60 flex items-center gap-3.5">
+          <div className="p-4 rounded-2xl bg-brand-bg/60 flex items-center gap-3.5">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 dark:bg-emerald-400 shrink-0" />
             <div>
               <p className="text-xs text-brand-secondary">PostgreSQL / Supabase</p>
@@ -209,7 +208,7 @@ export const AdminHomePage: React.FC = () => {
             </div>
           </div>
 
-          <div className="p-4 rounded-2xl bg-brand-bg/60 border border-brand-border/60 flex items-center gap-3.5">
+          <div className="p-4 rounded-2xl bg-brand-bg/60 flex items-center gap-3.5">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 dark:bg-emerald-400 shrink-0" />
             <div>
               <p className="text-xs text-brand-secondary">Real-Time Transport</p>
@@ -217,7 +216,7 @@ export const AdminHomePage: React.FC = () => {
             </div>
           </div>
 
-          <div className="p-4 rounded-2xl bg-brand-bg/60 border border-brand-border/60 flex items-center gap-3.5">
+          <div className="p-4 rounded-2xl bg-brand-bg/60 flex items-center gap-3.5">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 dark:bg-emerald-400 shrink-0" />
             <div>
               <p className="text-xs text-brand-secondary">Admin API Gateway</p>

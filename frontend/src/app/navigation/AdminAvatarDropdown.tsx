@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
-import { LogOut, Settings, Palette, ChevronRight } from "lucide-react";
+import { LogOut, Settings, Palette } from "lucide-react";
 import { useNavigate } from "react-router";
-import { ThemeSubmenu } from "./ThemeSubmenu";
 import { useAdminSession } from "@/features/admin/useAdminSession";
 import { adminSignOut } from "@/features/admin/adminAuth";
+import { ThemeToggle } from "@/shared/ui/ThemeToggle";
 
 export const AdminAvatarDropdown: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [activeMenu, setActiveMenu] = useState<"main" | "theme">("main");
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -24,7 +23,6 @@ export const AdminAvatarDropdown: React.FC = () => {
     const handleClickOutside = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setIsOpen(false);
-        setActiveMenu("main");
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -38,7 +36,6 @@ export const AdminAvatarDropdown: React.FC = () => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape" && isOpen) {
         setIsOpen(false);
-        setActiveMenu("main");
       }
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -89,68 +86,60 @@ export const AdminAvatarDropdown: React.FC = () => {
           role="menu"
           aria-label="Admin user options"
         >
-          {activeMenu === "main" && (
-            <>
-              {/* User Meta header matching img2 */}
-              <div className="px-4 py-2.5 border-b border-brand-border mb-1">
-                <p className="text-sm font-semibold text-brand-text truncate">
-                  {admin?.name ?? "Admin"}
-                </p>
-                <p className="text-xs text-brand-secondary truncate mt-0.5">
-                  {admin?.email ?? ""}
-                </p>
-              </div>
+          {/* User Meta header matching img2 */}
+          <div className="px-4 py-2.5 border-b border-brand-border mb-1">
+            <p className="text-sm font-semibold text-brand-text truncate">
+              {admin?.name ?? "Admin"}
+            </p>
+            <p className="text-xs text-brand-secondary truncate mt-0.5">
+              {admin?.email ?? ""}
+            </p>
+          </div>
 
-              {/* ── Settings ──────────────────────────────────────────────────── */}
-              <button
-                id="admin-avatar-menu-settings"
-                role="menuitem"
-                onClick={handleSettingsClick}
-                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06] text-left transition-colors duration-150 cursor-pointer group"
-                tabIndex={0}
-              >
-                <Settings className="w-4 h-4 text-brand-accent/80 group-hover:text-brand-accent shrink-0 transition-colors duration-150" />
-                <span className="flex-1 font-medium">Settings</span>
-              </button>
+          {/* ── Settings ──────────────────────────────────────────────────── */}
+          <button
+            id="admin-avatar-menu-settings"
+            role="menuitem"
+            onClick={handleSettingsClick}
+            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06] text-left transition-colors duration-150 cursor-pointer group"
+            tabIndex={0}
+          >
+            <Settings className="w-4 h-4 text-brand-accent/80 group-hover:text-brand-accent shrink-0 transition-colors duration-150" />
+            <span className="flex-1 font-medium">Settings</span>
+          </button>
 
-              {/* ── Theme ─────────────────────────────────────────────────────── */}
-              <button
-                id="admin-avatar-menu-theme"
-                type="button"
-                role="menuitem"
-                onClick={() => setActiveMenu("theme")}
-                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06] text-left transition-colors duration-150 cursor-pointer group"
-              >
-                <Palette className="w-4 h-4 text-brand-accent/80 group-hover:text-brand-accent shrink-0 transition-colors duration-150" />
-                <span className="flex-1 font-medium text-left">Theme</span>
-                <ChevronRight className="w-4 h-4 text-brand-secondary" />
-              </button>
+          {/* ── Theme — Interactive Toggler with Waveform Animation ──────── */}
+          <div
+            id="admin-avatar-menu-theme"
+            onClick={(e) => {
+              const target = e.target as HTMLElement;
+              if (!target.closest('button')) {
+                const btn = e.currentTarget.querySelector('button');
+                btn?.click();
+              }
+            }}
+            className="w-full flex items-center justify-between px-4 py-1.5 text-sm text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06] transition-colors duration-150 cursor-pointer group"
+          >
+            <div className="flex items-center gap-3 select-none">
+              <Palette className="w-4 h-4 text-brand-accent/80 group-hover:text-brand-accent shrink-0 transition-colors duration-150" />
+              <span className="font-medium">Theme</span>
+            </div>
+            <ThemeToggle className="w-14 h-7" />
+          </div>
 
-              {/* Note: Sound item is removed per Jimmy's explicit instructions */}
+          {/* Note: Sound item is removed per Jimmy's explicit instructions */}
 
-              <div className="my-1.5 border-t border-brand-text/10" role="separator" />
+          <div className="my-1.5 border-t border-brand-text/10" role="separator" />
 
-              {/* ── Sign Out ──────────────────────────────────────────────────── */}
-              <button
-                onClick={handleSignOut}
-                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-500 hover:text-red-400 hover:bg-red-500/10 text-left transition-colors duration-150 cursor-pointer group font-medium"
-                role="menuitem"
-              >
-                <LogOut className="w-4 h-4 text-red-500 group-hover:text-red-400 transition-colors" />
-                <span>Sign Out</span>
-              </button>
-            </>
-          )}
-
-          {activeMenu === "theme" && (
-            <ThemeSubmenu
-              onBack={() => setActiveMenu("main")}
-              onSelect={() => {
-                setActiveMenu("main");
-                setIsOpen(false);
-              }}
-            />
-          )}
+          {/* ── Sign Out ──────────────────────────────────────────────────── */}
+          <button
+            onClick={handleSignOut}
+            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-500 hover:text-red-400 hover:bg-red-500/10 text-left transition-colors duration-150 cursor-pointer group font-medium"
+            role="menuitem"
+          >
+            <LogOut className="w-4 h-4 text-red-500 group-hover:text-red-400 transition-colors" />
+            <span>Sign Out</span>
+          </button>
         </div>
       )}
     </div>

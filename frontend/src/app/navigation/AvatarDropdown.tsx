@@ -1,15 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
-import { LogOut, Settings, Palette, Volume2, VolumeX, ChevronRight } from "lucide-react";
+import { LogOut, Settings, Palette, Volume2, VolumeX } from "lucide-react";
 import { useSession } from "@/features/account/useSession";
 import { useNavigate } from "react-router";
 import { soundManager } from "@/shared/lib/SoundManager";
-import { ThemeSubmenu } from "./ThemeSubmenu";
+import { ThemeToggle } from "@/shared/ui/ThemeToggle";
 
 const STORAGE_KEY = 'sound-enabled';
 
 export const AvatarDropdown: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [activeMenu, setActiveMenu] = useState<"main" | "theme">("main");
 
   const { session, signOut } = useSession();
 
@@ -39,7 +38,6 @@ export const AvatarDropdown: React.FC = () => {
     const handleClickOutside = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setIsOpen(false);
-        setActiveMenu("main");
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -53,7 +51,6 @@ export const AvatarDropdown: React.FC = () => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape" && isOpen) {
         setIsOpen(false);
-        setActiveMenu("main");
       }
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -99,8 +96,6 @@ export const AvatarDropdown: React.FC = () => {
           role="menu"
           aria-label="User options"
         >
-          {activeMenu === "main" && (
-           <>
           {/* User Meta header */}
           <div className="px-4 py-2 border-b border-[rgba(212,175,110,0.40)] mb-1">
             <p className="text-xs font-sans font-semibold text-brand-text truncate">
@@ -110,8 +105,6 @@ export const AvatarDropdown: React.FC = () => {
               {user.email || ""}
             </p>
           </div>
-
-          
 
           {/* ── Settings ──────────────────────────────────────────────────── */}
           <button
@@ -125,22 +118,24 @@ export const AvatarDropdown: React.FC = () => {
             <span className="flex-1">Settings</span>
           </button>
 
-          {/* ── Theme — */}
-         <button
-              id="avatar-menu-theme"
-              type="button"
-              role="menuitem"
-              onClick={() => setActiveMenu("theme")}
-              className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-sans text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06] text-left transition-colors duration-150 cursor-pointer group"
-              >
+          {/* ── Theme — Interactive Toggler with Waveform Animation ──────── */}
+          <div
+            id="avatar-menu-theme"
+            onClick={(e) => {
+              const target = e.target as HTMLElement;
+              if (!target.closest('button')) {
+                const btn = e.currentTarget.querySelector('button');
+                btn?.click();
+              }
+            }}
+            className="w-full flex items-center justify-between px-4 py-1.5 text-sm font-sans text-brand-secondary hover:text-brand-text hover:bg-brand-text/[0.06] transition-colors duration-150 cursor-pointer group"
+          >
+            <div className="flex items-center gap-3 select-none">
               <Palette className="w-4 h-4 text-brand-accent/70 group-hover:text-brand-accent shrink-0 transition-colors duration-150" />
-
-              <span className="flex-1 text-left">
-               Theme
-              </span>
-            
-              <ChevronRight className="w-4 h-4 text-brand-secondary" />
-             </button>
+              <span>Theme</span>
+            </div>
+            <ThemeToggle className="w-14 h-7" />
+          </div>
 
           {/* ── Sound — full-row button ────────────────────────────────────── */}
           <button
@@ -185,19 +180,10 @@ export const AvatarDropdown: React.FC = () => {
             <LogOut className="w-4 h-4 text-red-400" />
             Sign Out
           </button>
-           </>
-           )}
-          {activeMenu === "theme" && (
-            <ThemeSubmenu
-              onBack={() => setActiveMenu("main")}
-              onSelect={() => {
-                setActiveMenu("main");
-                setIsOpen(false);
-              }}
-            />
-          )}
         </div>
       )}
     </div>
   );
 };
+
+export default AvatarDropdown;
