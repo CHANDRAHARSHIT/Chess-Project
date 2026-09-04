@@ -42,6 +42,7 @@ import NewsPage from "@/pages/NewsPage";
 import AdminLoginPage from "@/pages/AdminLoginPage";
 import AdminHomePage from "@/pages/AdminHomePage";
 import AdminProtectedRoute from "@/features/admin/AdminProtectedRoute";
+import AdminDocumentsPage from "@/pages/admin/AdminDocumentsPage";
 
 export interface RouteConfig {
   path: string;
@@ -255,6 +256,15 @@ export const mainRoutes: RouteConfig[] = [
       </AdminProtectedRoute>
     ),
     title: "Admin Home | XLChess",
+  },
+  {
+    path: "/admin/acs/documents",
+    element: (
+      <AdminProtectedRoute>
+        <AdminDocumentsPage />
+      </AdminProtectedRoute>
+    ),
+    title: "Documentation | XLChess",
   },
   {
     path: "/admin/settings",
