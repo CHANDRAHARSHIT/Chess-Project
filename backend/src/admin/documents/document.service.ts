@@ -43,18 +43,27 @@ function cleanDescription(value: unknown) {
   return description;
 }
 
+/** Clamps and whitelists untrusted list parameters before they reach Prisma. */
+export function parseListQuery(query: Record<string, unknown>) {
+  const rawLimit = Number(query.limit);
+  const limit = Number.isFinite(rawLimit) ? Math.min(Math.max(Math.trunc(rawLimit), 1), MAX_LIMIT) : DEFAULT_LIMIT;
+
+  const rawOffset = Number(query.offset);
+  const offset = Number.isFinite(rawOffset) ? Math.max(Math.trunc(rawOffset), 0) : 0;
+
+  // Whitelisted, not passed through: sortBy reaches Prisma's orderBy.
+  const sortBy: SortField = SORT_FIELDS.includes(query.sortBy as SortField)
+    ? (query.sortBy as SortField)
+    : "createdAt";
+  const sortDir: SortDir = query.sortDir === "asc" ? "asc" : "desc";
+  const search = typeof query.search === "string" && query.search.trim() ? query.search.trim() : undefined;
+
+  return { limit, offset, sortBy, sortDir, search };
+}
+
 export class DocumentService {
   static async list(query: Record<string, unknown>) {
-    const rawLimit = Number(query.limit);
-    const limit = Number.isFinite(rawLimit) ? Math.min(Math.max(Math.trunc(rawLimit), 1), MAX_LIMIT) : DEFAULT_LIMIT;
-
-    const rawOffset = Number(query.offset);
-    const offset = Number.isFinite(rawOffset) ? Math.max(Math.trunc(rawOffset), 0) : 0;
-
-    // Whitelisted, not passed through: sortBy reaches Prisma's orderBy.
-    const sortBy = SORT_FIELDS.includes(query.sortBy as SortField) ? (query.sortBy as SortField) : "createdAt";
-    const sortDir: SortDir = query.sortDir === "asc" ? "asc" : "desc";
-    const search = typeof query.search === "string" && query.search.trim() ? query.search.trim() : undefined;
+    const { limit, offset, sortBy, sortDir, search } = parseListQuery(query);
 
     const [items, total] = await Promise.all([
       DocumentRepository.findMany({ skip: offset, take: limit, sortBy, sortDir, search }),
