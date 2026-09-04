@@ -62,6 +62,7 @@ export const ModelName = {
   ProductFeature: 'ProductFeature',
   WebhookEvent: 'WebhookEvent',
   CuratedPuzzle: 'CuratedPuzzle',
+  OdysseyPuzzle: 'OdysseyPuzzle',
   Opening: 'Opening',
   BuilderLesson: 'BuilderLesson',
   BuilderSegment: 'BuilderSegment',
@@ -266,6 +267,21 @@ export const CuratedPuzzleScalarFieldEnum = {
 } as const
 
 export type CuratedPuzzleScalarFieldEnum = (typeof CuratedPuzzleScalarFieldEnum)[keyof typeof CuratedPuzzleScalarFieldEnum]
+
+
+export const OdysseyPuzzleScalarFieldEnum = {
+  id: 'id',
+  fen: 'fen',
+  solution: 'solution',
+  puzzleRatingDifficulty: 'puzzleRatingDifficulty',
+  type: 'type',
+  mateIn: 'mateIn',
+  source: 'source',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OdysseyPuzzleScalarFieldEnum = (typeof OdysseyPuzzleScalarFieldEnum)[keyof typeof OdysseyPuzzleScalarFieldEnum]
 
 
 export const OpeningScalarFieldEnum = {

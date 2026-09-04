@@ -29,6 +29,8 @@ export interface PositionEval {
   readonly mateIn?: number;
   /** Engine's preferred move, UCI ("e2e4", "e7e8q"). */
   readonly bestMove?: string;
+  /** The full principal variation (best line found) in UCI moves, from the latest `info` line. Longer than mateIn*2-1 plies if the engine's line continues past the mate it announces. */
+  readonly pv?: string[];
   readonly depth: number;
 }
 
@@ -199,6 +201,7 @@ export class StockfishEngine {
 
       let lastScoreCp: number | null = null;
       let lastMate: number | null = null;
+      let lastPv: string[] | null = null;
       let reachedDepth = 0;
       let settled = false;
 
@@ -238,6 +241,10 @@ export class StockfishEngine {
             lastMate = Number(mate[1]);
             lastScoreCp = null;
           }
+          const pv = /\bpv (.+)$/.exec(line);
+          if (pv) {
+            lastPv = pv[1].trim().split(/\s+/);
+          }
           return;
         }
 
@@ -252,6 +259,7 @@ export class StockfishEngine {
               scoreCp: lastMate !== null ? mateToCp(lastMate) : (lastScoreCp ?? 0),
               ...(lastMate !== null ? { mateIn: lastMate } : {}),
               ...(terminal ? {} : { bestMove: best }),
+              ...(lastPv ? { pv: lastPv } : {}),
               depth: reachedDepth,
             })
           );

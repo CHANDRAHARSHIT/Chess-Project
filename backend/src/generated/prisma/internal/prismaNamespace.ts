@@ -395,6 +395,7 @@ export const ModelName = {
   ProductFeature: 'ProductFeature',
   WebhookEvent: 'WebhookEvent',
   CuratedPuzzle: 'CuratedPuzzle',
+  OdysseyPuzzle: 'OdysseyPuzzle',
   Opening: 'Opening',
   BuilderLesson: 'BuilderLesson',
   BuilderSegment: 'BuilderSegment',
@@ -425,7 +426,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "account" | "session" | "verificationToken" | "subscription" | "payment" | "billingProfile" | "product" | "productFeature" | "webhookEvent" | "curatedPuzzle" | "opening" | "builderLesson" | "builderSegment" | "builderSlide" | "course" | "lesson" | "lessonProgress" | "customLink" | "gameRecord" | "gameAnalysis" | "gameParticipant" | "playerRating" | "pathwayProgress" | "assessmentTemplate" | "assessmentAttempt"
+    modelProps: "user" | "account" | "session" | "verificationToken" | "subscription" | "payment" | "billingProfile" | "product" | "productFeature" | "webhookEvent" | "curatedPuzzle" | "odysseyPuzzle" | "opening" | "builderLesson" | "builderSegment" | "builderSlide" | "course" | "lesson" | "lessonProgress" | "customLink" | "gameRecord" | "gameAnalysis" | "gameParticipant" | "playerRating" | "pathwayProgress" | "assessmentTemplate" | "assessmentAttempt"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1240,6 +1241,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.CuratedPuzzleCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.CuratedPuzzleCountAggregateOutputType> | number
+        }
+      }
+    }
+    OdysseyPuzzle: {
+      payload: Prisma.$OdysseyPuzzlePayload<ExtArgs>
+      fields: Prisma.OdysseyPuzzleFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.OdysseyPuzzleFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OdysseyPuzzlePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.OdysseyPuzzleFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OdysseyPuzzlePayload>
+        }
+        findFirst: {
+          args: Prisma.OdysseyPuzzleFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OdysseyPuzzlePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.OdysseyPuzzleFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OdysseyPuzzlePayload>
+        }
+        findMany: {
+          args: Prisma.OdysseyPuzzleFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OdysseyPuzzlePayload>[]
+        }
+        create: {
+          args: Prisma.OdysseyPuzzleCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OdysseyPuzzlePayload>
+        }
+        createMany: {
+          args: Prisma.OdysseyPuzzleCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.OdysseyPuzzleCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OdysseyPuzzlePayload>[]
+        }
+        delete: {
+          args: Prisma.OdysseyPuzzleDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OdysseyPuzzlePayload>
+        }
+        update: {
+          args: Prisma.OdysseyPuzzleUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OdysseyPuzzlePayload>
+        }
+        deleteMany: {
+          args: Prisma.OdysseyPuzzleDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.OdysseyPuzzleUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.OdysseyPuzzleUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OdysseyPuzzlePayload>[]
+        }
+        upsert: {
+          args: Prisma.OdysseyPuzzleUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OdysseyPuzzlePayload>
+        }
+        aggregate: {
+          args: Prisma.OdysseyPuzzleAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateOdysseyPuzzle>
+        }
+        groupBy: {
+          args: Prisma.OdysseyPuzzleGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OdysseyPuzzleGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.OdysseyPuzzleCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OdysseyPuzzleCountAggregateOutputType> | number
         }
       }
     }
@@ -2565,6 +2640,21 @@ export const CuratedPuzzleScalarFieldEnum = {
 export type CuratedPuzzleScalarFieldEnum = (typeof CuratedPuzzleScalarFieldEnum)[keyof typeof CuratedPuzzleScalarFieldEnum]
 
 
+export const OdysseyPuzzleScalarFieldEnum = {
+  id: 'id',
+  fen: 'fen',
+  solution: 'solution',
+  puzzleRatingDifficulty: 'puzzleRatingDifficulty',
+  type: 'type',
+  mateIn: 'mateIn',
+  source: 'source',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OdysseyPuzzleScalarFieldEnum = (typeof OdysseyPuzzleScalarFieldEnum)[keyof typeof OdysseyPuzzleScalarFieldEnum]
+
+
 export const OpeningScalarFieldEnum = {
   id: 'id',
   eco: 'eco',
@@ -2953,6 +3043,20 @@ export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$Prisma
 
 
 /**
+ * Reference to a field of type 'OdysseyPuzzleType'
+ */
+export type EnumOdysseyPuzzleTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OdysseyPuzzleType'>
+    
+
+
+/**
+ * Reference to a field of type 'OdysseyPuzzleType[]'
+ */
+export type ListEnumOdysseyPuzzleTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OdysseyPuzzleType[]'>
+    
+
+
+/**
  * Reference to a field of type 'BuilderLessonStatus'
  */
 export type EnumBuilderLessonStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BuilderLessonStatus'>
@@ -3184,6 +3288,7 @@ export type GlobalOmitConfig = {
   productFeature?: Prisma.ProductFeatureOmit
   webhookEvent?: Prisma.WebhookEventOmit
   curatedPuzzle?: Prisma.CuratedPuzzleOmit
+  odysseyPuzzle?: Prisma.OdysseyPuzzleOmit
   opening?: Prisma.OpeningOmit
   builderLesson?: Prisma.BuilderLessonOmit
   builderSegment?: Prisma.BuilderSegmentOmit

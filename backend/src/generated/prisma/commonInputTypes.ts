@@ -287,23 +287,6 @@ export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
   _max?: Prisma.NestedJsonNullableFilter<$PrismaModel>
 }
 
-export type EnumBuilderLessonStatusFilter<$PrismaModel = never> = {
-  equals?: $Enums.BuilderLessonStatus | Prisma.EnumBuilderLessonStatusFieldRefInput<$PrismaModel>
-  in?: $Enums.BuilderLessonStatus[] | Prisma.ListEnumBuilderLessonStatusFieldRefInput<$PrismaModel>
-  notIn?: $Enums.BuilderLessonStatus[] | Prisma.ListEnumBuilderLessonStatusFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumBuilderLessonStatusFilter<$PrismaModel> | $Enums.BuilderLessonStatus
-}
-
-export type EnumBuilderLessonStatusWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.BuilderLessonStatus | Prisma.EnumBuilderLessonStatusFieldRefInput<$PrismaModel>
-  in?: $Enums.BuilderLessonStatus[] | Prisma.ListEnumBuilderLessonStatusFieldRefInput<$PrismaModel>
-  notIn?: $Enums.BuilderLessonStatus[] | Prisma.ListEnumBuilderLessonStatusFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumBuilderLessonStatusWithAggregatesFilter<$PrismaModel> | $Enums.BuilderLessonStatus
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumBuilderLessonStatusFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumBuilderLessonStatusFilter<$PrismaModel>
-}
-
 export type JsonFilter<$PrismaModel = never> =
 | Prisma.PatchUndefined<
     Prisma.Either<Required<JsonFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonFilterBase<$PrismaModel>>, 'path'>>,
@@ -326,6 +309,13 @@ export type JsonFilterBase<$PrismaModel = never> = {
   gt?: runtime.InputJsonValue | Prisma.JsonFieldRefInput<$PrismaModel>
   gte?: runtime.InputJsonValue | Prisma.JsonFieldRefInput<$PrismaModel>
   not?: runtime.InputJsonValue | Prisma.JsonFieldRefInput<$PrismaModel> | Prisma.JsonNullValueFilter
+}
+
+export type EnumOdysseyPuzzleTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.OdysseyPuzzleType | Prisma.EnumOdysseyPuzzleTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.OdysseyPuzzleType[] | Prisma.ListEnumOdysseyPuzzleTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.OdysseyPuzzleType[] | Prisma.ListEnumOdysseyPuzzleTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumOdysseyPuzzleTypeFilter<$PrismaModel> | $Enums.OdysseyPuzzleType
 }
 
 export type JsonWithAggregatesFilter<$PrismaModel = never> =
@@ -353,6 +343,33 @@ export type JsonWithAggregatesFilterBase<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedJsonFilter<$PrismaModel>
   _max?: Prisma.NestedJsonFilter<$PrismaModel>
+}
+
+export type EnumOdysseyPuzzleTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.OdysseyPuzzleType | Prisma.EnumOdysseyPuzzleTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.OdysseyPuzzleType[] | Prisma.ListEnumOdysseyPuzzleTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.OdysseyPuzzleType[] | Prisma.ListEnumOdysseyPuzzleTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumOdysseyPuzzleTypeWithAggregatesFilter<$PrismaModel> | $Enums.OdysseyPuzzleType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumOdysseyPuzzleTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumOdysseyPuzzleTypeFilter<$PrismaModel>
+}
+
+export type EnumBuilderLessonStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.BuilderLessonStatus | Prisma.EnumBuilderLessonStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.BuilderLessonStatus[] | Prisma.ListEnumBuilderLessonStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.BuilderLessonStatus[] | Prisma.ListEnumBuilderLessonStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumBuilderLessonStatusFilter<$PrismaModel> | $Enums.BuilderLessonStatus
+}
+
+export type EnumBuilderLessonStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.BuilderLessonStatus | Prisma.EnumBuilderLessonStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.BuilderLessonStatus[] | Prisma.ListEnumBuilderLessonStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.BuilderLessonStatus[] | Prisma.ListEnumBuilderLessonStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumBuilderLessonStatusWithAggregatesFilter<$PrismaModel> | $Enums.BuilderLessonStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumBuilderLessonStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumBuilderLessonStatusFilter<$PrismaModel>
 }
 
 export type FloatNullableFilter<$PrismaModel = never> = {
@@ -743,21 +760,11 @@ export type NestedJsonNullableFilterBase<$PrismaModel = never> = {
   not?: runtime.InputJsonValue | Prisma.JsonFieldRefInput<$PrismaModel> | Prisma.JsonNullValueFilter
 }
 
-export type NestedEnumBuilderLessonStatusFilter<$PrismaModel = never> = {
-  equals?: $Enums.BuilderLessonStatus | Prisma.EnumBuilderLessonStatusFieldRefInput<$PrismaModel>
-  in?: $Enums.BuilderLessonStatus[] | Prisma.ListEnumBuilderLessonStatusFieldRefInput<$PrismaModel>
-  notIn?: $Enums.BuilderLessonStatus[] | Prisma.ListEnumBuilderLessonStatusFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumBuilderLessonStatusFilter<$PrismaModel> | $Enums.BuilderLessonStatus
-}
-
-export type NestedEnumBuilderLessonStatusWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.BuilderLessonStatus | Prisma.EnumBuilderLessonStatusFieldRefInput<$PrismaModel>
-  in?: $Enums.BuilderLessonStatus[] | Prisma.ListEnumBuilderLessonStatusFieldRefInput<$PrismaModel>
-  notIn?: $Enums.BuilderLessonStatus[] | Prisma.ListEnumBuilderLessonStatusFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumBuilderLessonStatusWithAggregatesFilter<$PrismaModel> | $Enums.BuilderLessonStatus
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumBuilderLessonStatusFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumBuilderLessonStatusFilter<$PrismaModel>
+export type NestedEnumOdysseyPuzzleTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.OdysseyPuzzleType | Prisma.EnumOdysseyPuzzleTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.OdysseyPuzzleType[] | Prisma.ListEnumOdysseyPuzzleTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.OdysseyPuzzleType[] | Prisma.ListEnumOdysseyPuzzleTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumOdysseyPuzzleTypeFilter<$PrismaModel> | $Enums.OdysseyPuzzleType
 }
 
 export type NestedJsonFilter<$PrismaModel = never> =
@@ -782,6 +789,33 @@ export type NestedJsonFilterBase<$PrismaModel = never> = {
   gt?: runtime.InputJsonValue | Prisma.JsonFieldRefInput<$PrismaModel>
   gte?: runtime.InputJsonValue | Prisma.JsonFieldRefInput<$PrismaModel>
   not?: runtime.InputJsonValue | Prisma.JsonFieldRefInput<$PrismaModel> | Prisma.JsonNullValueFilter
+}
+
+export type NestedEnumOdysseyPuzzleTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.OdysseyPuzzleType | Prisma.EnumOdysseyPuzzleTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.OdysseyPuzzleType[] | Prisma.ListEnumOdysseyPuzzleTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.OdysseyPuzzleType[] | Prisma.ListEnumOdysseyPuzzleTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumOdysseyPuzzleTypeWithAggregatesFilter<$PrismaModel> | $Enums.OdysseyPuzzleType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumOdysseyPuzzleTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumOdysseyPuzzleTypeFilter<$PrismaModel>
+}
+
+export type NestedEnumBuilderLessonStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.BuilderLessonStatus | Prisma.EnumBuilderLessonStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.BuilderLessonStatus[] | Prisma.ListEnumBuilderLessonStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.BuilderLessonStatus[] | Prisma.ListEnumBuilderLessonStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumBuilderLessonStatusFilter<$PrismaModel> | $Enums.BuilderLessonStatus
+}
+
+export type NestedEnumBuilderLessonStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.BuilderLessonStatus | Prisma.EnumBuilderLessonStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.BuilderLessonStatus[] | Prisma.ListEnumBuilderLessonStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.BuilderLessonStatus[] | Prisma.ListEnumBuilderLessonStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumBuilderLessonStatusWithAggregatesFilter<$PrismaModel> | $Enums.BuilderLessonStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumBuilderLessonStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumBuilderLessonStatusFilter<$PrismaModel>
 }
 
 export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {

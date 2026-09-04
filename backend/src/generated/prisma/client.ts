@@ -97,6 +97,11 @@ export type WebhookEvent = Prisma.WebhookEventModel
  */
 export type CuratedPuzzle = Prisma.CuratedPuzzleModel
 /**
+ * Model OdysseyPuzzle
+ * 
+ */
+export type OdysseyPuzzle = Prisma.OdysseyPuzzleModel
+/**
  * Model Opening
  * 
  */
