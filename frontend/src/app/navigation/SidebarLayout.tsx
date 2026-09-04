@@ -27,6 +27,7 @@ import {
 import { soundManager } from "@/shared/lib/SoundManager";
 import { useSession } from "@/features/account/useSession";
 import { AvatarDropdown } from "./AvatarDropdown";
+import { AdminAvatarDropdown } from "./AdminAvatarDropdown";
 import { AuthModal } from "@/features/account/AuthModal";
 import { MoreMenu } from "./MoreMenu";
 import { useNavigate, useLocation } from "react-router";
@@ -112,6 +113,7 @@ export default function SidebarLayout({
   const { push } = useNavigationStack();
 
   const isTheaterMode = location.pathname === "/odyssey";
+  const isAdmin = location.pathname.startsWith("/admin");
 
   const openModal = (mode: "login" | "register") => {
     setModalMode(mode);
@@ -706,49 +708,59 @@ export default function SidebarLayout({
       {/* ── TOP HEADER ──────────────────────────────────────────────────────── */}
       <header className="fixed top-0 left-0 right-0 h-16 z-40 bg-brand-bg/95 backdrop-blur-md flex items-center justify-between pr-2.5 sm:pr-4 md:pr-6 border-b border-transparent">
         {/* Left: Hamburger & Logo */}
-        <div className="flex items-center h-full">
-          <div className="w-14 sm:w-20 flex justify-center items-center shrink-0">
-            <button
-              onClick={handleToggle}
-              className="p-2 text-brand-secondary hover:text-brand-text rounded-full hover:bg-brand-text/10 transition-colors cursor-pointer"
-              aria-label="Toggle Navigation Sidebar"
-            >
-              <Menu className="w-5 h-5" />
-            </button>
-          </div>
-
-          <div
-            className="flex items-center gap-2 cursor-pointer select-none"
-            onClick={(e) => handleLinkClick("/", e)}
-          >
-            <img
-              src="/logo-without-text.png"
-              alt="XLChess logo"
-              className="h-10 w-auto object-contain"
-              draggable={false}
-            />
-            <div className="flex flex-col leading-none">
-              <h1 className="text-1xl font-bold tracking-wide">XLCHESS</h1>
-              <p className="text-xs">Excel at Chess</p>
+        <div className={`flex items-center h-full ${isAdmin ? "pl-4 sm:pl-6" : ""}`}>
+          {!isAdmin && (
+            <div className="w-14 sm:w-20 flex justify-center items-center shrink-0">
+              <button
+                onClick={handleToggle}
+                className="p-2 text-brand-secondary hover:text-brand-text rounded-full hover:bg-brand-text/10 transition-colors cursor-pointer"
+                aria-label="Toggle Navigation Sidebar"
+              >
+                <Menu className="w-5 h-5" />
+              </button>
             </div>
-          </div>
+          )}
+
+          {!isAdmin && (
+            <div
+              className="flex items-center gap-2 cursor-pointer select-none"
+              onClick={(e) => handleLinkClick("/", e)}
+            >
+              <img
+                src="/logo-without-text.png"
+                alt="XLChess logo"
+                className="h-10 w-auto object-contain"
+                draggable={false}
+              />
+              <div className="flex flex-col leading-none">
+                <h1 className="text-1xl font-bold tracking-wide">XLCHESS</h1>
+                <p className="text-xs">Excel at Chess</p>
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="flex items-center gap-2 sm:gap-3">
-          {status !== "authenticated" && <MoreMenu />}
-          {status === "loading" ? (
-            <div className="w-6 h-6 rounded-full border-2 border-brand-accent/30 border-t-brand-accent animate-spin" />
-          ) : status === "authenticated" ? (
-            <AvatarDropdown />
+          {isAdmin ? (
+            <AdminAvatarDropdown />
           ) : (
-            <button
-              onClick={() => openModal("login")}
-              aria-label="Sign In"
-              className="btn-gold-outline flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-border/50 text-brand-accent hover:bg-brand-accent/10 transition-all duration-200 text-xs sm:text-sm font-sans cursor-pointer"
-            >
-              <CircleUserRound className="w-5 h-5" strokeWidth={1.8} />
-              <span>Sign In</span>
-            </button>
+            <>
+              {status !== "authenticated" && <MoreMenu />}
+              {status === "loading" ? (
+                <div className="w-6 h-6 rounded-full border-2 border-brand-accent/30 border-t-brand-accent animate-spin" />
+              ) : status === "authenticated" ? (
+                <AvatarDropdown />
+              ) : (
+                <button
+                  onClick={() => openModal("login")}
+                  aria-label="Sign In"
+                  className="btn-gold-outline flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-border/50 text-brand-accent hover:bg-brand-accent/10 transition-all duration-200 text-xs sm:text-sm font-sans cursor-pointer"
+                >
+                  <CircleUserRound className="w-5 h-5" strokeWidth={1.8} />
+                  <span>Sign In</span>
+                </button>
+              )}
+            </>
           )}
         </div>
       </header>
@@ -757,14 +769,27 @@ export default function SidebarLayout({
       <div className="flex flex-1 pt-16">
         {/* Desktop Sidebar (Fixed) */}
         <aside
-          className={`fixed top-16 left-0 bottom-0 z-30 bg-brand-bg/95 backdrop-blur-md flex flex-col py-2 transition-all duration-300 ${isTheaterMode ? "hidden" : "hidden md:flex"} overflow-y-auto overscroll-contain pb-6 sidebar-scrollbar ${
-            isExpanded ? "w-64" : "w-20"
+          className={`fixed top-16 left-0 bottom-0 z-30 bg-brand-bg/95 backdrop-blur-md flex flex-col py-2 transition-all duration-300 ${
+            isTheaterMode ? "hidden" : "hidden md:flex"
+          } overflow-y-auto overscroll-contain pb-6 sidebar-scrollbar ${
+            isAdmin || isExpanded ? "w-64" : "w-20"
           }`}
         >
           <nav className="flex-1 flex flex-col space-y-1">
-            {/* BASE SECTION */}
-            {baseSection.map((item) => renderNavItem(item))}
-            <Divider />
+            {isAdmin ? (
+              <>
+                {renderNavItem({
+                  name: "Home",
+                  href: "/admin/home",
+                  icon: Home,
+                })}
+                <Divider />
+              </>
+            ) : (
+              <>
+                {/* BASE SECTION */}
+                {baseSection.map((item) => renderNavItem(item))}
+                <Divider />
 
             {/* EXPLORE SECTION */}
             {isExpanded && (
@@ -997,6 +1022,8 @@ export default function SidebarLayout({
                 </div>
               </div>
             )}
+              </>
+            )}
           </nav>
         </aside>
 
@@ -1052,13 +1079,13 @@ export default function SidebarLayout({
 
         {/* Mobile Sidebar (Slide-out) */}
         <div
-          className={`fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${!isTheaterMode ? "md:hidden" : ""} ${
+          className={`fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${!isTheaterMode && !isAdmin ? "md:hidden" : "hidden"} ${
             isMobileOpen ? "opacity-100" : "opacity-0 pointer-events-none"
           }`}
           onClick={() => setIsMobileOpen(false)}
         />
         <aside
-          className={`fixed top-0 left-0 bottom-0 w-64 z-50 bg-brand-bg flex flex-col py-2 transition-transform duration-300 ease-in-out ${!isTheaterMode ? "md:hidden" : ""} overflow-y-auto overscroll-contain sidebar-scrollbar ${
+          className={`fixed top-0 left-0 bottom-0 w-64 z-50 bg-brand-bg flex flex-col py-2 transition-transform duration-300 ease-in-out ${!isTheaterMode && !isAdmin ? "md:hidden" : "hidden"} overflow-y-auto overscroll-contain sidebar-scrollbar ${
             isMobileOpen ? "translate-x-0" : "-translate-x-full"
           }`}
         >
@@ -1392,7 +1419,13 @@ export default function SidebarLayout({
 
         {/* ── MAIN CONTENT WORKSPACE ─────────────────────────────────────────── */}
         <div
-          className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${isTheaterMode ? "pl-0" : isExpanded ? "md:pl-64" : "md:pl-20"}`}
+          className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${
+            isTheaterMode
+              ? "pl-0"
+              : isAdmin || isExpanded
+                ? "md:pl-64"
+                : "md:pl-20"
+          }`}
         >
           {children}
         </div>

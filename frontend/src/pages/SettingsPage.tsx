@@ -6,7 +6,7 @@
  * content panel with tabs.
  */
 import { useState, useEffect } from "react";
-import { useNavigate, useSearchParams, useParams } from "react-router";
+import { useNavigate, useSearchParams, useParams, useLocation } from "react-router";
 import {
   ArrowLeft,
   Settings as SettingsIcon,
@@ -110,34 +110,34 @@ const resolveCategoryFromSlug = (slugOrId: string | null | undefined): string | 
   return match ? match.id : null;
 };
 
-export default function SettingsPage() {
+export default function SettingsPage({ allSoon = false }: { allSoon?: boolean }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const params = useParams<{ category?: string }>();
   const { push } = useNavigationStack();
   const { boardTheme, pieceSet, setBoardThemeId, setPieceSetId } =
     useBoardSettings();
   const [searchParams] = useSearchParams();
 
+  const isAllSoon = allSoon || location.pathname.startsWith("/admin");
+
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<TabId>("boards");
 
-  const initialCategory =
+  const resolvedCategory =
     resolveCategoryFromSlug(params.category) ||
     resolveCategoryFromSlug(searchParams.get("tab")) ||
     "board-pieces";
-  const [activeCategory, setActiveCategory] = useState(initialCategory);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const activeCategory = selectedCategory ?? resolvedCategory;
 
   useEffect(() => {
-    const resolved =
-      resolveCategoryFromSlug(params.category) ||
-      resolveCategoryFromSlug(searchParams.get("tab"));
-    if (resolved) {
-      setActiveCategory(resolved);
-    } else if (!params.category) {
+    if (isAllSoon) return;
+    if (!params.category) {
       // Default to /settings/board-and-pieces in URL
       navigate("/settings/board-and-pieces", { replace: true });
     }
-  }, [params.category, searchParams, navigate]);
+  }, [params.category, navigate, isAllSoon]);
 
   const handleCategorySelect = (cat: SettingsCategory) => {
     soundManager.playButtonClick();
@@ -150,7 +150,7 @@ export default function SettingsPage() {
       }
       navigate(cat.path);
     } else {
-      setActiveCategory(cat.id);
+      setSelectedCategory(cat.id);
       navigate(`/settings/${cat.slug}`);
     }
   };
@@ -193,11 +193,11 @@ export default function SettingsPage() {
         {/* Back link */}
         <div className="mt-4">
           <button
-            onClick={() => navigate("/")}
+            onClick={() => navigate(isAllSoon ? "/admin/home" : "/")}
             className="inline-flex items-center gap-2 text-brand-secondary hover:text-brand-text transition-colors duration-200 font-sans text-sm font-semibold cursor-pointer group"
           >
             <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
-            Back to Home
+            {isAllSoon ? "Back to Admin Home" : "Back to Home"}
           </button>
         </div>
 
@@ -233,7 +233,7 @@ export default function SettingsPage() {
                 const Icon = cat.icon;
                 const isActive = cat.id === activeCategory;
 
-                if (!cat.available) {
+                if (isAllSoon || !cat.available) {
                   return (
                     <div
                       key={cat.id}
@@ -276,8 +276,20 @@ export default function SettingsPage() {
             </nav>
           </div>
 
-          {/* ── RIGHT: Board & Pieces panel or Profile Content ──────────── */}
-          {activeCategory === "board-pieces" ? (
+          {/* ── RIGHT: Board & Pieces panel or Profile Content or Admin placeholder ── */}
+          {isAllSoon ? (
+            <div className="bg-brand-surface/30 border border-[rgba(212,175,110,0.40)] rounded-2xl p-8 sm:p-12 flex flex-col items-center justify-center text-center">
+              <div className="w-12 h-12 rounded-xl bg-brand-accent/10 flex items-center justify-center text-brand-accent mb-4">
+                <SettingsIcon className="w-6 h-6" />
+              </div>
+              <h2 className="text-xl font-display font-bold text-brand-text tracking-wide">
+                Admin Settings
+              </h2>
+              <p className="text-sm font-sans text-brand-secondary mt-1.5 max-w-sm">
+                All settings and administrative configurations are coming soon.
+              </p>
+            </div>
+          ) : activeCategory === "board-pieces" ? (
             <div className="bg-brand-surface/30 border border-[rgba(212,175,110,0.40)] rounded-2xl p-5 sm:p-7">
               <h2 className="text-xl font-display font-bold text-brand-text tracking-wide">
                 Board & Pieces
