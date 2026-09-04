@@ -721,21 +721,23 @@ export default function SidebarLayout({
             </div>
           )}
 
-          <div
-            className="flex items-center gap-2 cursor-pointer select-none"
-            onClick={(e) => handleLinkClick(isAdmin ? "/admin/home" : "/", e)}
-          >
-            <img
-              src="/logo-without-text.png"
-              alt="XLChess logo"
-              className="h-10 w-auto object-contain"
-              draggable={false}
-            />
-            <div className="flex flex-col leading-none">
-              <h1 className="text-1xl font-bold tracking-wide">XLCHESS</h1>
-              <p className="text-xs">Excel at Chess</p>
+          {!isAdmin && (
+            <div
+              className="flex items-center gap-2 cursor-pointer select-none"
+              onClick={(e) => handleLinkClick("/", e)}
+            >
+              <img
+                src="/logo-without-text.png"
+                alt="XLChess logo"
+                className="h-10 w-auto object-contain"
+                draggable={false}
+              />
+              <div className="flex flex-col leading-none">
+                <h1 className="text-1xl font-bold tracking-wide">XLCHESS</h1>
+                <p className="text-xs">Excel at Chess</p>
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         <div className="flex items-center gap-2 sm:gap-3">
@@ -767,14 +769,27 @@ export default function SidebarLayout({
       <div className="flex flex-1 pt-16">
         {/* Desktop Sidebar (Fixed) */}
         <aside
-          className={`fixed top-16 left-0 bottom-0 z-30 bg-brand-bg/95 backdrop-blur-md flex flex-col py-2 transition-all duration-300 ${isTheaterMode || isAdmin ? "hidden" : "hidden md:flex"} overflow-y-auto overscroll-contain pb-6 sidebar-scrollbar ${
-            isExpanded ? "w-64" : "w-20"
+          className={`fixed top-16 left-0 bottom-0 z-30 bg-brand-bg/95 backdrop-blur-md flex flex-col py-2 transition-all duration-300 ${
+            isTheaterMode ? "hidden" : "hidden md:flex"
+          } overflow-y-auto overscroll-contain pb-6 sidebar-scrollbar ${
+            isAdmin || isExpanded ? "w-64" : "w-20"
           }`}
         >
           <nav className="flex-1 flex flex-col space-y-1">
-            {/* BASE SECTION */}
-            {baseSection.map((item) => renderNavItem(item))}
-            <Divider />
+            {isAdmin ? (
+              <>
+                {renderNavItem({
+                  name: "Home",
+                  href: "/admin/home",
+                  icon: Home,
+                })}
+                <Divider />
+              </>
+            ) : (
+              <>
+                {/* BASE SECTION */}
+                {baseSection.map((item) => renderNavItem(item))}
+                <Divider />
 
             {/* EXPLORE SECTION */}
             {isExpanded && (
@@ -1006,6 +1021,8 @@ export default function SidebarLayout({
                   </span>
                 </div>
               </div>
+            )}
+              </>
             )}
           </nav>
         </aside>
@@ -1402,7 +1419,13 @@ export default function SidebarLayout({
 
         {/* ── MAIN CONTENT WORKSPACE ─────────────────────────────────────────── */}
         <div
-          className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${isTheaterMode || isAdmin ? "pl-0" : isExpanded ? "md:pl-64" : "md:pl-20"}`}
+          className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${
+            isTheaterMode
+              ? "pl-0"
+              : isAdmin || isExpanded
+                ? "md:pl-64"
+                : "md:pl-20"
+          }`}
         >
           {children}
         </div>
