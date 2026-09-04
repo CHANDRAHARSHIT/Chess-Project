@@ -56,7 +56,7 @@ export const adminAuthConfig: ExpressAuthConfig = {
   callbacks: {
     // Runs before the adapter is asked to create or link anything, so a
     // non-admin never reaches createUser.
-    async signIn({ user }) {
+    async signIn({ user, profile }) {
       // Returning a path (rather than false) routes the refusal through the
       // redirect callback below, which resolves it against CLIENT_ORIGIN. Falling
       // back to `pages.error` would build the URL from AUTH_URL's origin, which
@@ -67,7 +67,16 @@ export const adminAuthConfig: ExpressAuthConfig = {
       const admin = await prisma.adminUser.findUnique({ where: { email: user.email } });
       if (!admin?.isActive) return denied;
 
-      await prisma.adminUser.update({ where: { id: admin.id }, data: { lastLoginAt: new Date() } });
+      // Read the picture off `profile`, never off `user`: once an AdminAccount
+      // exists Auth.js passes this callback the adapter's own DTO, whose `image`
+      // is the stored avatarUrl — so `user.image` would read back the value it is
+      // meant to be setting and stay null forever. Only `profile` carries Google's.
+      // The adapter's updateUser is no help either: Auth.js calls it only on the
+      // email-provider path.
+      await prisma.adminUser.update({
+        where: { id: admin.id },
+        data: { lastLoginAt: new Date(), avatarUrl: profile?.picture ?? admin.avatarUrl },
+      });
       return true;
     },
 
