@@ -195,9 +195,23 @@ model OdysseyPuzzle {
   source                 String?
   createdAt              DateTime          @default(now())
   updatedAt              DateTime          @updatedAt
+  themes                 OdysseyPuzzleTheme[]
 
   @@index([type, mateIn])
   @@map("odyssey_puzzles")
+}
+
+// Many-to-many: a puzzle can carry several tags (e.g. "mateIn2" + "sacrifice").
+// Theme codes match Lichess's own puzzle-theme vocabulary so imports need no
+// translation layer.
+model OdysseyPuzzleTheme {
+  puzzleId String
+  theme    String
+  puzzle   OdysseyPuzzle @relation(fields: [puzzleId], references: [id], onDelete: Cascade)
+
+  @@id([puzzleId, theme])
+  @@index([theme])
+  @@map("odyssey_puzzle_themes")
 }
 
 model Opening {

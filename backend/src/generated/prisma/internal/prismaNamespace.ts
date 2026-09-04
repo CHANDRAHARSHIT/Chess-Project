@@ -396,6 +396,7 @@ export const ModelName = {
   WebhookEvent: 'WebhookEvent',
   CuratedPuzzle: 'CuratedPuzzle',
   OdysseyPuzzle: 'OdysseyPuzzle',
+  OdysseyPuzzleTheme: 'OdysseyPuzzleTheme',
   Opening: 'Opening',
   BuilderLesson: 'BuilderLesson',
   BuilderSegment: 'BuilderSegment',
@@ -427,7 +428,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "account" | "session" | "verificationToken" | "subscription" | "payment" | "billingProfile" | "product" | "productFeature" | "webhookEvent" | "curatedPuzzle" | "odysseyPuzzle" | "opening" | "builderLesson" | "builderSegment" | "builderSlide" | "course" | "lesson" | "lessonProgress" | "customLink" | "gameRecord" | "gameAnalysis" | "gameParticipant" | "playerRating" | "pathwayProgress" | "odysseyGame" | "assessmentTemplate" | "assessmentAttempt"
+    modelProps: "user" | "account" | "session" | "verificationToken" | "subscription" | "payment" | "billingProfile" | "product" | "productFeature" | "webhookEvent" | "curatedPuzzle" | "odysseyPuzzle" | "odysseyPuzzleTheme" | "opening" | "builderLesson" | "builderSegment" | "builderSlide" | "course" | "lesson" | "lessonProgress" | "customLink" | "gameRecord" | "gameAnalysis" | "gameParticipant" | "playerRating" | "pathwayProgress" | "odysseyGame" | "assessmentTemplate" | "assessmentAttempt"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1316,6 +1317,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.OdysseyPuzzleCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.OdysseyPuzzleCountAggregateOutputType> | number
+        }
+      }
+    }
+    OdysseyPuzzleTheme: {
+      payload: Prisma.$OdysseyPuzzleThemePayload<ExtArgs>
+      fields: Prisma.OdysseyPuzzleThemeFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.OdysseyPuzzleThemeFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OdysseyPuzzleThemePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.OdysseyPuzzleThemeFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OdysseyPuzzleThemePayload>
+        }
+        findFirst: {
+          args: Prisma.OdysseyPuzzleThemeFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OdysseyPuzzleThemePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.OdysseyPuzzleThemeFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OdysseyPuzzleThemePayload>
+        }
+        findMany: {
+          args: Prisma.OdysseyPuzzleThemeFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OdysseyPuzzleThemePayload>[]
+        }
+        create: {
+          args: Prisma.OdysseyPuzzleThemeCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OdysseyPuzzleThemePayload>
+        }
+        createMany: {
+          args: Prisma.OdysseyPuzzleThemeCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.OdysseyPuzzleThemeCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OdysseyPuzzleThemePayload>[]
+        }
+        delete: {
+          args: Prisma.OdysseyPuzzleThemeDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OdysseyPuzzleThemePayload>
+        }
+        update: {
+          args: Prisma.OdysseyPuzzleThemeUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OdysseyPuzzleThemePayload>
+        }
+        deleteMany: {
+          args: Prisma.OdysseyPuzzleThemeDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.OdysseyPuzzleThemeUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.OdysseyPuzzleThemeUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OdysseyPuzzleThemePayload>[]
+        }
+        upsert: {
+          args: Prisma.OdysseyPuzzleThemeUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OdysseyPuzzleThemePayload>
+        }
+        aggregate: {
+          args: Prisma.OdysseyPuzzleThemeAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateOdysseyPuzzleTheme>
+        }
+        groupBy: {
+          args: Prisma.OdysseyPuzzleThemeGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OdysseyPuzzleThemeGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.OdysseyPuzzleThemeCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OdysseyPuzzleThemeCountAggregateOutputType> | number
         }
       }
     }
@@ -2730,6 +2805,14 @@ export const OdysseyPuzzleScalarFieldEnum = {
 export type OdysseyPuzzleScalarFieldEnum = (typeof OdysseyPuzzleScalarFieldEnum)[keyof typeof OdysseyPuzzleScalarFieldEnum]
 
 
+export const OdysseyPuzzleThemeScalarFieldEnum = {
+  puzzleId: 'puzzleId',
+  theme: 'theme'
+} as const
+
+export type OdysseyPuzzleThemeScalarFieldEnum = (typeof OdysseyPuzzleThemeScalarFieldEnum)[keyof typeof OdysseyPuzzleThemeScalarFieldEnum]
+
+
 export const OpeningScalarFieldEnum = {
   id: 'id',
   eco: 'eco',
@@ -3382,6 +3465,7 @@ export type GlobalOmitConfig = {
   webhookEvent?: Prisma.WebhookEventOmit
   curatedPuzzle?: Prisma.CuratedPuzzleOmit
   odysseyPuzzle?: Prisma.OdysseyPuzzleOmit
+  odysseyPuzzleTheme?: Prisma.OdysseyPuzzleThemeOmit
   opening?: Prisma.OpeningOmit
   builderLesson?: Prisma.BuilderLessonOmit
   builderSegment?: Prisma.BuilderSegmentOmit
