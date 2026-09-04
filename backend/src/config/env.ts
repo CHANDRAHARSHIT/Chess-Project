@@ -54,6 +54,19 @@ export const env = {
     return Number.isFinite(parsed) && parsed > 0 ? parsed : 10_000;
   })(),
 
+  // Maia-3 human-like engine. Requires Python with the `maia3` package on the
+  // host — see backend/src/maia/README.md.
+  MAIA_ENABLED: process.env.MAIA_ENABLED === "true",
+  // Empty lets the engine probe for a usable Python itself.
+  MAIA_UCI_COMMAND: process.env.MAIA_UCI_COMMAND ?? "",
+  // Must match the model nixpacks.toml pre-caches, or the first request downloads it.
+  MAIA_MODEL: process.env.MAIA_MODEL ?? "maia3-23m",
+
+  // Anti-cheat (optional — ANTICHEAT_ENABLED=false disables all ACS behaviour).
+  // Gates the post-game analysis hook and the /analysis endpoint. Analysis runs
+  // a WASM engine per finished game, so it stays off until deliberately enabled.
+  ANTICHEAT_ENABLED: process.env.ANTICHEAT_ENABLED === "true",
+
   // Rollbar error monitoring
   ROLLBAR_ACCESS_TOKEN: process.env.ROLLBAR_ACCESS_TOKEN!,
 };

@@ -1,5 +1,13 @@
 import { useNavigate } from "react-router";
-import { Crown, Target, Users, Zap, BookOpen, Globe, ArrowLeft } from "lucide-react";
+import {
+  Crown,
+  Target,
+  Users,
+  Zap,
+  BookOpen,
+  Globe,
+  ArrowLeft,
+} from "lucide-react";
 import { soundManager } from "@/shared/lib/SoundManager";
 
 interface ValueCardProps {
@@ -10,15 +18,17 @@ interface ValueCardProps {
 
 function ValueCard({ icon: Icon, title, description }: ValueCardProps) {
   return (
-    <div
-      className="flex gap-4 p-5 rounded-2xl border border-brand-border/40 bg-brand-surface/30 hover:border-brand-accent/30 hover:bg-brand-surface/50 transition-all duration-300"
-    >
+    <div className="flex gap-4 p-5 rounded-2xl border border-brand-border/40 bg-brand-surface/30 hover:border-brand-accent/30 hover:bg-brand-surface/50 transition-all duration-300">
       <div className="shrink-0 w-10 h-10 rounded-xl bg-brand-accent/10 border border-brand-accent/20 flex items-center justify-center mt-0.5">
         <Icon className="w-5 h-5 text-brand-accent" />
       </div>
       <div>
-        <h3 className="text-base font-display font-semibold text-brand-text mb-1">{title}</h3>
-        <p className="text-sm text-brand-secondary leading-relaxed">{description}</p>
+        <h3 className="text-base font-display font-semibold text-brand-text mb-1">
+          {title}
+        </h3>
+        <p className="text-sm text-brand-secondary leading-relaxed">
+          {description}
+        </p>
       </div>
     </div>
   );
@@ -72,7 +82,7 @@ export default function AboutPage() {
       <div className="relative overflow-hidden border-b border-brand-border/30">
         <div className="absolute inset-0 bg-gradient-to-br from-brand-accent/5 via-transparent to-brand-accent/3 pointer-events-none" />
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[300px] bg-brand-accent/5 rounded-full blur-[120px] pointer-events-none" />
-        <div className="max-w-4xl mx-auto px-6 pt-6 pb-16 sm:pb-20 relative z-10">
+        <div className="max-w-4xl mx-auto px-2.5 sm:px-6 pt-6 pb-16 sm:pb-20 relative z-10">
           <div className="mb-6">
             <button
               type="button"
@@ -101,12 +111,12 @@ export default function AboutPage() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-4xl mx-auto px-6 py-12">
+      <div className="max-w-4xl mx-auto px-2.5 sm:px-6 py-8 sm:py-12">
         {/* Mission */}
-        <section
-          className="mb-14"
-        >
-          <h2 className="text-xl font-display font-semibold mb-4 text-brand-text">Our Mission</h2>
+        <section className="mb-14">
+          <h2 className="text-xl font-display font-semibold mb-4 text-brand-text">
+            Our Mission
+          </h2>
           <div className="space-y-4 text-brand-secondary leading-relaxed">
             <p>
               XLChess is a modern chess platform dedicated to democratizing
@@ -125,10 +135,10 @@ export default function AboutPage() {
             </p>
             <p>
               Today, XLChess offers interactive puzzles, structured lessons,
-              variant games, creator channels, and a thriving community — all
-              in one place. Whether you are picking up the game for the first
-              time or preparing for a tournament, XLChess is your home for
-              chess growth.
+              variant games, creator channels, and a thriving community — all in
+              one place. Whether you are picking up the game for the first time
+              or preparing for a tournament, XLChess is your home for chess
+              growth.
             </p>
           </div>
         </section>
@@ -137,9 +147,7 @@ export default function AboutPage() {
 
         {/* Values Grid */}
         <section className="mb-14">
-          <h2
-            className="text-xl font-display font-semibold mb-6 text-brand-text"
-          >
+          <h2 className="text-xl font-display font-semibold mb-6 text-brand-text">
             What We Stand For
           </h2>
           <div className="grid sm:grid-cols-2 gap-4">
@@ -152,10 +160,10 @@ export default function AboutPage() {
         <div className="w-full h-px bg-gradient-to-r from-transparent via-brand-accent/20 to-transparent mb-14" />
 
         {/* Team */}
-        <section
-          className="mb-14"
-        >
-          <h2 className="text-xl font-display font-semibold mb-4 text-brand-text">The Team</h2>
+        <section className="mb-14">
+          <h2 className="text-xl font-display font-semibold mb-4 text-brand-text">
+            The Team
+          </h2>
           <div className="space-y-4 text-brand-secondary leading-relaxed">
             <p>
               XLChess is built and maintained by a small but dedicated team
@@ -177,9 +185,7 @@ export default function AboutPage() {
         <div className="w-full h-px bg-gradient-to-r from-transparent via-brand-accent/20 to-transparent mb-14" />
 
         {/* Contact CTA */}
-        <section
-          className="rounded-2xl border border-brand-accent/20 bg-brand-accent/5 p-8 text-center"
-        >
+        <section className="rounded-2xl border border-brand-accent/20 bg-brand-accent/5 p-8 text-center">
           <h2 className="text-xl font-display font-semibold mb-3 text-brand-text">
             Want to Reach Out?
           </h2>
@@ -189,7 +195,7 @@ export default function AboutPage() {
             responds within two business days.
           </p>
           <a
-            href="/contact-us"
+            href="/contact"
             className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full border border-brand-accent/50 text-brand-accent hover:bg-brand-accent/10 transition-all duration-200 text-sm font-semibold font-sans"
           >
             Contact Us

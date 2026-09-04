@@ -29,6 +29,7 @@ model User {
   playerRatings        PlayerRating[]
   pathwayProgress      PathwayProgress?
   assessmentAttempts   AssessmentAttempt[]
+  odysseyGames         OdysseyGame[]
 }
 
 model Account {
@@ -177,6 +178,40 @@ model CuratedPuzzle {
   createdAt       DateTime @default(now())
 
   @@index([rating])
+}
+
+enum OdysseyPuzzleType {
+  FIND_MATE
+  BEST_MOVE
+}
+
+model OdysseyPuzzle {
+  id                     String            @id @default(cuid())
+  fen                    String            @unique
+  solution               Json // UCI move strings, e.g. ["g6g7","h8g8","g7g8q"]
+  puzzleRatingDifficulty Int
+  type                   OdysseyPuzzleType
+  mateIn                 Int?
+  source                 String?
+  createdAt              DateTime          @default(now())
+  updatedAt              DateTime          @updatedAt
+  themes                 OdysseyPuzzleTheme[]
+
+  @@index([type, mateIn])
+  @@map("odyssey_puzzles")
+}
+
+// Many-to-many: a puzzle can carry several tags (e.g. "mateIn2" + "sacrifice").
+// Theme codes match Lichess's own puzzle-theme vocabulary so imports need no
+// translation layer.
+model OdysseyPuzzleTheme {
+  puzzleId String
+  theme    String
+  puzzle   OdysseyPuzzle @relation(fields: [puzzleId], references: [id], onDelete: Cascade)
+
+  @@id([puzzleId, theme])
+  @@index([theme])
+  @@map("odyssey_puzzle_themes")
 }
 
 model Opening {
@@ -363,9 +398,41 @@ model GameRecord {
   endedAt           DateTime
   createdAt         DateTime              @default(now())
   participants      GameParticipant[]
+  analysis          GameAnalysis?
 
   @@index([endedAt])
   @@index([variantId])
+}
+
+/// Cached engine analysis of one finished game.
+///
+/// Stores raw engine output only — evaluations and best moves, never derived
+/// classifications. Classification depends on PolicyRegistry values the Feedback
+/// module is expected to change; storing it would mean re-running Stockfish over
+/// the whole history on every policy edit, instead of a re-aggregation.
+///
+/// Written post-game; read by multi-game suspect review, which never runs the
+/// engine itself. See backend/src/anticheat/MULTI_GAME_REVIEW_REQUIREMENTS.md §11.2.
+model GameAnalysis {
+  id             String   @id @default(cuid())
+  gameRecordId   String   @unique
+  /// Engine build and search settings, so a review never mixes evaluations
+  /// produced under different conditions into one comparison.
+  engineName     String
+  engineDepth    Int
+  multiPvLines   Int      @default(1)
+  startingFen    String
+  plyCount       Int
+  /// Per ply: ply, side, san, uci, evalBeforeCp, evalAfterCp, bestMove, legalMoveCount.
+  plies          Json
+  /// Bumped when the plies payload shape changes, so stale rows are re-analysed
+  /// rather than silently misread.
+  payloadVersion Int      @default(1)
+  analysedAt     DateTime @default(now())
+
+  gameRecord     GameRecord @relation(fields: [gameRecordId], references: [id], onDelete: Cascade)
+
+  @@index([analysedAt])
 }
 
 model GameParticipant {
@@ -440,6 +507,32 @@ model PathwayProgress {
   totalSolved  Int      @default(0)
   updatedAt    DateTime @updatedAt
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Odyssey (Story Mode) — one row per save slot (up to 3 per user).
+// relics/mapNodes are stored as JSON since their shape is owned by the
+// OdysseyRelic/OdysseyNode class hierarchies, not fixed relational
+// columns. Reconstructing rows into domain model instances (OdysseyGame,
+// OdysseyPlayer, OdysseyMap/OdysseyNode subclasses) is OdysseyGameRepository's
+// job, not this schema's.
+// ─────────────────────────────────────────────────────────────────────────
+model OdysseyGame {
+  id              String   @id @default(cuid())
+  userId          String
+  slotId          Int
+  playerType      String? // EPlayerType value, or null before a character is chosen
+  coins           Int      @default(50)
+  relics          Json     @default("[]") // { type: ERelicType; charges: number }[]
+  completedNodes  Int[]    @default([])
+  currentNodeId   Int      @default(-1)
+  journeyComplete Boolean  @default(false)
+  mapNodes        Json // serialized OdysseyNode[] (each tagged with its subclass kind)
+  playtimeSeconds Int      @default(0)
+  updatedAt       DateTime @updatedAt
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, slotId])
 }
 
 // ─────────────────────────────────────────────────────────────────────────

@@ -12,6 +12,7 @@ export type AuthStatus = "authenticated" | "unauthenticated" | "loading";
 export interface SessionContextType {
   session: Session | null;
   status: AuthStatus;
+  authHint: "authenticated" | "unauthenticated";
   updateSession: () => Promise<Session | null>;
   signIn: (provider?: string) => void;
   signOut: () => void;

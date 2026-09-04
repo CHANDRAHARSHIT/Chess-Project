@@ -45,7 +45,7 @@ export function PlayOnlineView() {
 
   if (gameSession.descriptor) {
     return (
-      <div className="min-h-[calc(100dvh-4rem)] p-3 sm:p-4 lg:p-6 bg-gradient-to-b from-brand-bg to-brand-surface/30">
+      <div className="min-h-[calc(100dvh-4rem)] p-2 sm:p-4 lg:p-6 bg-gradient-to-b from-brand-bg to-brand-surface/30">
         <PlayChessGame
           key={gameSession.descriptor.matchId}
           onLeave={handleLeave}
@@ -57,14 +57,14 @@ export function PlayOnlineView() {
 
   if (matchmaking.phase === "found" && matchmaking.descriptor) {
     return (
-      <div className="min-h-[calc(100dvh-4rem)] flex items-center justify-center p-4 sm:p-6 bg-gradient-to-b from-brand-bg to-brand-surface/40">
+      <div className="min-h-[calc(100dvh-4rem)] flex items-center justify-center px-2 py-3 sm:p-6 bg-gradient-to-b from-brand-bg to-brand-surface/40">
         <MatchFoundCard descriptor={matchmaking.descriptor} onEnter={handleEnterGame} />
       </div>
     );
   }
 
   return (
-    <div className="min-h-[calc(100dvh-4rem)] p-4 sm:p-6 lg:p-8 bg-gradient-to-b from-brand-bg via-brand-bg to-brand-surface/20">
+    <div className="min-h-[calc(100dvh-4rem)] px-2 py-3 sm:p-6 lg:p-8 bg-gradient-to-b from-brand-bg via-brand-bg to-brand-surface/20">
       <LobbyView historyRefreshKey={historyRefreshKey} />
     </div>
   );

@@ -37,7 +37,7 @@ export default function Chess960Page() {
   return (
 
     <div className="
-      flex flex-col gap-3 px-3 py-3 select-none
+      flex flex-col gap-3 px-2.5 py-3 select-none
       lg:h-[calc(100vh-4rem)] lg:px-5 lg:py-4 lg:overflow-hidden
     ">
 

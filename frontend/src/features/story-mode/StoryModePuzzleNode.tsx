@@ -5,6 +5,8 @@ import { PuzzleApiService } from "@/features/puzzles/puzzle.service";
 import type { CuratedPuzzle } from "@/features/puzzles/puzzle.types";
 import type { ChessPuzzle } from "@/features/puzzles/puzzleLoader";
 import { useStoryModeRun } from "./StoryModeContext";
+import { useSession } from "@/features/account/useSession";
+import { OdysseyApiService } from "./api/odysseyApi";
 import { Chess } from "chess.js";
 import { Loader2, Swords, Trophy, RotateCcw } from "lucide-react";
 
@@ -31,6 +33,7 @@ function convertPuzzle(raw: CuratedPuzzle): ChessPuzzle {
 }
 
 interface StoryModePuzzleNodeProps {
+  nodeId: number;
   nodeLabel: string;
   difficulty: number;
   onComplete: () => void;
@@ -38,12 +41,14 @@ interface StoryModePuzzleNodeProps {
 }
 
 export default function StoryModePuzzleNode({
+  nodeId,
   nodeLabel,
   difficulty,
   onComplete,
   onRetreat,
 }: StoryModePuzzleNodeProps) {
-  const { runState, updateRunState } = useStoryModeRun();
+  const { runState, updateRunState, activeSlot } = useStoryModeRun();
+  const { status } = useSession();
   const [puzzles, setPuzzles] = useState<CuratedPuzzle[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -98,8 +103,16 @@ export default function StoryModePuzzleNode({
       // Reward coins based on difficulty
       const reward = difficulty * 20;
       updateRunState({ coins: runState.coins + reward });
+
+      // Best-effort backend sync — the local reward above is already authoritative.
+      // The "Next" button is only enabled once a puzzle is genuinely solved (see PuzzleBoard),
+      // so reaching handleWin via real play always means every puzzle in the set was solved —
+      // a full clear, matching the backend's own all-or-nothing reward rule.
+      if (status === 'authenticated' && puzzles.length > 0) {
+        OdysseyApiService.resolvePuzzle(activeSlot, nodeId, puzzles.length, puzzles.length);
+      }
     }
-  }, [nodeComplete, difficulty, runState.coins, updateRunState]);
+  }, [nodeComplete, difficulty, runState.coins, updateRunState, status, activeSlot, nodeId, puzzles.length]);
 
   const handleNextPuzzle = useCallback(() => {
     if (currentIndex < puzzles.length - 1) {

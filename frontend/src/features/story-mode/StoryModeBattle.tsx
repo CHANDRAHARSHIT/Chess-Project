@@ -46,6 +46,8 @@ import {
 import { useScrollReveal } from "@/shared/hooks/useScrollReveal";
 import { BoardCoordinates } from "@/shared/ui/BoardCoordinates";
 import { useStoryModeRun } from "./StoryModeContext";
+import { useSession } from "@/features/account/useSession";
+import { OdysseyApiService, type OdysseyBattleEndReason } from "./api/odysseyApi";
 
 interface StoryModeBattleProps {
   nodeId: number;
@@ -63,8 +65,9 @@ export default function StoryModeBattle({
   onRetreat,
 }: StoryModeBattleProps) {
   // ── Game state ────────────────────────────────────────────────────────────
-  const { runState, useCharge, addCoins } = useStoryModeRun();
-  
+  const { runState, useCharge, addCoins, activeSlot } = useStoryModeRun();
+  const { status } = useSession();
+
   const gameRef = useRef(new Chess());
   const [gameFen, setGameFen] = useState(() => gameRef.current.fen());
   const [playerColor, setPlayerColor] = useState<"w" | "b">("w");
@@ -134,22 +137,38 @@ export default function StoryModeBattle({
   }, [nodeId, difficulty, runState.mapNodes]);
 
   // ── Layout measurements ───────────────────────────────────────────────────
-  const [boardHeight, setBoardHeight] = useState<number>(0);
+  // The board must never exceed the SMALLER of its column's available width
+  // or height — sizing it from width alone (aspect-square width:100%) let a
+  // square wider than it was tall grow past the remaining vertical space and
+  // get clipped by the column's overflow-hidden, cutting off the bottom rank.
+  // boardColumnRef measures the column itself (available space); boardSize is
+  // the actual pixel size then applied to the board container below it.
+  const [boardSize, setBoardSize] = useState<number>(0);
   const [isDesktop, setIsDesktop] = useState<boolean>(false);
+  const boardColumnRef = useRef<HTMLDivElement>(null);
   const boardContainerRef = useRef<HTMLDivElement>(null);
+  const turnIndicatorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const measure = () => {
-      if (boardContainerRef.current) {
-        setBoardHeight(boardContainerRef.current.getBoundingClientRect().height);
+      if (boardColumnRef.current) {
+        const { width, height } = boardColumnRef.current.getBoundingClientRect();
+        // Reserve room for the turn-indicator row below the board — sizing the
+        // board to the column's FULL height left it flush against the card's
+        // edge with no space for that row at all.
+        const reserved = turnIndicatorRef.current?.getBoundingClientRect().height ?? 0;
+        const availableHeight = height - reserved;
+        if (width > 0 && availableHeight > 0) {
+          setBoardSize(Math.floor(Math.min(width, availableHeight)));
+        }
       }
       setIsDesktop(window.innerWidth >= 1024);
     };
 
     measure();
     const resizeObserver = new ResizeObserver(() => measure());
-    if (boardContainerRef.current) {
-      resizeObserver.observe(boardContainerRef.current);
+    if (boardColumnRef.current) {
+      resizeObserver.observe(boardColumnRef.current);
     }
     window.addEventListener("resize", measure);
 
@@ -517,8 +536,51 @@ export default function StoryModeBattle({
   const handleVictory = useCallback(() => {
     const baseCoins = difficulty === 5 ? 50 : difficulty >= 3 ? 30 : 15;
     addCoins(baseCoins);
+
+    // Best-effort backend sync — coins above are already the authoritative local reward.
+    // nodeId 0 is special-cased: the frontend always renders it as an immediate battle
+    // (matching mapGenerator.ts's own convention), but the backend's node 0 is genuinely
+    // its Start node (not an OdysseyBattleNode) — resolveBattleOutcome would 400 for it, so
+    // completeNode (a generic, reward-less completion) is used there instead.
+    if (status === 'authenticated') {
+      if (nodeId === 0) {
+        OdysseyApiService.completeNode(activeSlot, nodeId);
+      } else {
+        const endReason: OdysseyBattleEndReason =
+          gameOverReason === 'timeout' ? 'timeout' : gameRef.current.isCheckmate() ? 'checkmate' : 'draw';
+        OdysseyApiService.resolveBattleOutcome(
+          activeSlot,
+          nodeId,
+          {
+            playerInitialSeconds: playerInitialTime,
+            enemyInitialSeconds: enemyInitialTime,
+            playerSeconds: playerTime,
+            enemySeconds: enemyTime,
+            evalMovesRemaining,
+            botConditions: botStatus,
+          },
+          endReason,
+          true
+        );
+      }
+    }
+
     onVictory();
-  }, [addCoins, difficulty, onVictory]);
+  }, [
+    addCoins,
+    difficulty,
+    onVictory,
+    status,
+    activeSlot,
+    nodeId,
+    gameOverReason,
+    playerInitialTime,
+    enemyInitialTime,
+    playerTime,
+    enemyTime,
+    evalMovesRemaining,
+    botStatus,
+  ]);
 
   const loadFreshGame = useCallback(
     (fen?: string) => {
@@ -825,7 +887,7 @@ export default function StoryModeBattle({
       </motion.div>
       <div
         ref={dashboardRef}
-        className="luxury-card rounded-sm shadow-2xl p-2 sm:p-4 lg:p-4 w-full max-w-full mx-auto relative h-fit max-h-full my-auto flex flex-col"
+        className="luxury-card rounded-sm shadow-2xl p-2 sm:p-4 lg:p-4 w-full max-w-full mx-auto relative flex-1 min-h-0 flex flex-col"
         style={{ opacity: 0 }}
       >
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:items-center flex-1 min-h-0">
@@ -839,7 +901,7 @@ export default function StoryModeBattle({
                 <EvaluationBar
                   evaluation={displayEval}
                   isDesktop={isDesktop}
-                  boardHeight={boardHeight}
+                  boardHeight={boardSize}
                 />
                 {evalMovesRemaining !== Infinity && (
                   <div className="absolute top-2 left-1/2 -translate-x-1/2 bg-black/80 px-2 py-1 rounded text-[10px] text-white font-mono z-10 whitespace-nowrap">
@@ -851,11 +913,15 @@ export default function StoryModeBattle({
           </div>
 
           {/* ── Col 2: Chessboard ────────────────────────────────────────── */}
-          <div className="lg:col-span-7 flex flex-col lg:justify-start justify-center flex-1 min-h-0 items-center overflow-hidden w-full h-full">
+          <div ref={boardColumnRef} className="lg:col-span-7 flex flex-col lg:justify-start justify-center flex-1 min-h-0 items-center overflow-hidden w-full h-full">
             <div
               ref={boardContainerRef}
-              className="aspect-square mx-auto shadow-xl border border-brand-border relative overflow-hidden flex-shrink"
-              style={{ borderRadius: "4px", transform: "translateZ(0)", maxWidth: "100%", maxHeight: "100%", width: "100%" }}
+              className="mx-auto shadow-xl border border-brand-border relative overflow-hidden flex-shrink-0"
+              style={
+                boardSize
+                  ? { borderRadius: "4px", transform: "translateZ(0)", width: boardSize, height: boardSize }
+                  : { borderRadius: "4px", transform: "translateZ(0)", width: "100%", aspectRatio: "1 / 1" }
+              }
             >
               <ThemedChessboard
                 options={{
@@ -873,7 +939,7 @@ export default function StoryModeBattle({
             </div>
 
             {/* Turn indicator */}
-            <div className="mt-3 flex items-center justify-between text-xs text-brand-secondary px-1">
+            <div ref={turnIndicatorRef} className="mt-3 flex items-center justify-between text-xs text-brand-secondary px-1">
               <div className="flex items-center gap-2">
                 <span
                   className={`w-2.5 h-2.5 rounded-full border border-brand-border ${
@@ -906,7 +972,7 @@ export default function StoryModeBattle({
           {/* ── Col 3: Control Panel ────────────────────────────────────────── */}
           <div
             className="lg:col-span-4 flex flex-col lg:gap-4 gap-6 lg:self-stretch"
-            style={{ height: isDesktop && boardHeight ? `${boardHeight}px` : undefined }}
+            style={{ height: isDesktop && boardSize ? `${boardSize}px` : undefined }}
           >
             <div className="flex flex-col gap-3">
               {/* Clocks */}

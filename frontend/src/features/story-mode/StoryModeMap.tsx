@@ -22,6 +22,8 @@ import StoryModePuzzleNode from "./StoryModePuzzleNode";
 import StoryModeCharacterSelect from "./StoryModeCharacterSelect";
 import { ConfirmAbandonModal } from "./TitleScreen/ConfirmAbandonModal";
 import { useStoryModeRun } from "./StoryModeContext";
+import { useSession } from "@/features/account/useSession";
+import { OdysseyApiService } from "./api/odysseyApi";
 
 type ActiveView =
   | { kind: "map" }
@@ -36,7 +38,8 @@ interface StoryModeMapProps {
 }
 
 export default function StoryModeMap({ onResetToTitle }: StoryModeMapProps = {}) {
-  const { runState, resetRun, updateRunState } = useStoryModeRun();
+  const { runState, resetRun, updateRunState, activeSlot } = useStoryModeRun();
+  const { status } = useSession();
 
   // ── Game state derived from Context ──
   const completedNodes = useMemo(() => new Set(runState.completedNodes || []), [runState.completedNodes]);
@@ -116,6 +119,11 @@ export default function StoryModeMap({ onResetToTitle }: StoryModeMapProps = {})
 
       updateRunState({ currentNodeId: nodeId });
 
+      // Best-effort backend sync — local navigation above is already authoritative.
+      if (status === 'authenticated') {
+        OdysseyApiService.enterNode(activeSlot, nodeId);
+      }
+
       switch (node.type) {
         case "start":
           setActiveView({ kind: "characterSelect", nodeId });
@@ -137,7 +145,7 @@ export default function StoryModeMap({ onResetToTitle }: StoryModeMapProps = {})
           break;
       }
     },
-    [getNodeStatus, runState.mapNodes, updateRunState]
+    [getNodeStatus, runState.mapNodes, updateRunState, status, activeSlot]
   );
 
 
@@ -513,6 +521,7 @@ export default function StoryModeMap({ onResetToTitle }: StoryModeMapProps = {})
             className="flex-1 min-h-0 overflow-hidden flex flex-col"
           >
             <StoryModeMerchant
+              nodeId={activeView.nodeId}
               onComplete={handleMerchantComplete}
             />
           </motion.div>
@@ -526,6 +535,7 @@ export default function StoryModeMap({ onResetToTitle }: StoryModeMapProps = {})
             className="flex-1 min-h-0 overflow-hidden flex flex-col"
           >
             <StoryModePuzzleNode
+              nodeId={activeView.nodeId}
               nodeLabel={
                 (runState.mapNodes || []).find((n) => n.id === activeView.nodeId)
                   ?.label ?? "Puzzle Trial"
@@ -548,6 +558,7 @@ export default function StoryModeMap({ onResetToTitle }: StoryModeMapProps = {})
             className="flex-1 min-h-0 overflow-hidden flex flex-col"
           >
             <StoryModeRestSite
+              nodeId={activeView.nodeId}
               nodeLabel={
                 (runState.mapNodes || []).find((n) => n.id === activeView.nodeId)
                   ?.label ?? "Rest Site"

@@ -62,6 +62,8 @@ export const ModelName = {
   ProductFeature: 'ProductFeature',
   WebhookEvent: 'WebhookEvent',
   CuratedPuzzle: 'CuratedPuzzle',
+  OdysseyPuzzle: 'OdysseyPuzzle',
+  OdysseyPuzzleTheme: 'OdysseyPuzzleTheme',
   Opening: 'Opening',
   BuilderLesson: 'BuilderLesson',
   BuilderSegment: 'BuilderSegment',
@@ -71,9 +73,11 @@ export const ModelName = {
   LessonProgress: 'LessonProgress',
   CustomLink: 'CustomLink',
   GameRecord: 'GameRecord',
+  GameAnalysis: 'GameAnalysis',
   GameParticipant: 'GameParticipant',
   PlayerRating: 'PlayerRating',
   PathwayProgress: 'PathwayProgress',
+  OdysseyGame: 'OdysseyGame',
   AssessmentTemplate: 'AssessmentTemplate',
   AssessmentAttempt: 'AssessmentAttempt'
 } as const
@@ -267,6 +271,29 @@ export const CuratedPuzzleScalarFieldEnum = {
 export type CuratedPuzzleScalarFieldEnum = (typeof CuratedPuzzleScalarFieldEnum)[keyof typeof CuratedPuzzleScalarFieldEnum]
 
 
+export const OdysseyPuzzleScalarFieldEnum = {
+  id: 'id',
+  fen: 'fen',
+  solution: 'solution',
+  puzzleRatingDifficulty: 'puzzleRatingDifficulty',
+  type: 'type',
+  mateIn: 'mateIn',
+  source: 'source',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OdysseyPuzzleScalarFieldEnum = (typeof OdysseyPuzzleScalarFieldEnum)[keyof typeof OdysseyPuzzleScalarFieldEnum]
+
+
+export const OdysseyPuzzleThemeScalarFieldEnum = {
+  puzzleId: 'puzzleId',
+  theme: 'theme'
+} as const
+
+export type OdysseyPuzzleThemeScalarFieldEnum = (typeof OdysseyPuzzleThemeScalarFieldEnum)[keyof typeof OdysseyPuzzleThemeScalarFieldEnum]
+
+
 export const OpeningScalarFieldEnum = {
   id: 'id',
   eco: 'eco',
@@ -415,6 +442,22 @@ export const GameRecordScalarFieldEnum = {
 export type GameRecordScalarFieldEnum = (typeof GameRecordScalarFieldEnum)[keyof typeof GameRecordScalarFieldEnum]
 
 
+export const GameAnalysisScalarFieldEnum = {
+  id: 'id',
+  gameRecordId: 'gameRecordId',
+  engineName: 'engineName',
+  engineDepth: 'engineDepth',
+  multiPvLines: 'multiPvLines',
+  startingFen: 'startingFen',
+  plyCount: 'plyCount',
+  plies: 'plies',
+  payloadVersion: 'payloadVersion',
+  analysedAt: 'analysedAt'
+} as const
+
+export type GameAnalysisScalarFieldEnum = (typeof GameAnalysisScalarFieldEnum)[keyof typeof GameAnalysisScalarFieldEnum]
+
+
 export const GameParticipantScalarFieldEnum = {
   id: 'id',
   gameRecordId: 'gameRecordId',
@@ -453,6 +496,24 @@ export const PathwayProgressScalarFieldEnum = {
 } as const
 
 export type PathwayProgressScalarFieldEnum = (typeof PathwayProgressScalarFieldEnum)[keyof typeof PathwayProgressScalarFieldEnum]
+
+
+export const OdysseyGameScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  slotId: 'slotId',
+  playerType: 'playerType',
+  coins: 'coins',
+  relics: 'relics',
+  completedNodes: 'completedNodes',
+  currentNodeId: 'currentNodeId',
+  journeyComplete: 'journeyComplete',
+  mapNodes: 'mapNodes',
+  playtimeSeconds: 'playtimeSeconds',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OdysseyGameScalarFieldEnum = (typeof OdysseyGameScalarFieldEnum)[keyof typeof OdysseyGameScalarFieldEnum]
 
 
 export const AssessmentTemplateScalarFieldEnum = {

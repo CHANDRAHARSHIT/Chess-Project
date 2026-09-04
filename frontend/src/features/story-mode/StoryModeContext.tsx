@@ -2,6 +2,8 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useSession } from "@/features/account/useSession";
 import { generateStoryMap } from "@/shared/chess/mapGenerator";
 import type { StoryNode } from "./storyModeMapData";
+import { OdysseyApiService, type OdysseySlotSummary } from "./api/odysseyApi";
+import { toRunStateFields } from "./api/odysseyMapConverter";
 
 export type RelicType = 'undo' | 'hint' | 'evalBar' | 'time' | 'reroll';
 
@@ -9,10 +11,10 @@ export const MAX_RELIC_CHARGES = 5;
 
 export interface RunState {
   coins: number;
-  
+
   // Inventory of equipped relics (max 5 slots)
   relics: RelicType[];
-  
+
   undoCharges: number;
   hintCharges: number;
   evalBarCharges: number;
@@ -23,9 +25,12 @@ export interface RunState {
   currentNodeId: number;
   journeyComplete: boolean;
   mapNodes: StoryNode[];
-  
+
   playtimeSeconds: number;
   lastUpdated: string | null;
+
+  /** The backend OdysseyGame row's id, once synced — null for guests or before the first sync lands. Merchant pricing derives its seed from this + a nodeId, so it must match what the backend actually charges. */
+  gameId: string | null;
 }
 
 const defaultState: RunState = {
@@ -41,9 +46,10 @@ const defaultState: RunState = {
   currentNodeId: -1,
   journeyComplete: false,
   mapNodes: [],
-  
+
   playtimeSeconds: 0,
   lastUpdated: null,
+  gameId: null,
 };
 
 import type { ProfileState } from './TitleScreen/SaveProfileScreen';
@@ -58,6 +64,7 @@ interface StoryModeContextType {
   setActiveSlot: (slot: number) => void;
   getAllProfiles: () => ProfileState[];
   deleteProfile: (slotId: number) => void;
+  beginNewRun: () => Promise<void>;
 }
 
 const StoryModeContext = createContext<StoryModeContextType | undefined>(undefined);
@@ -69,29 +76,78 @@ export function StoryModeProvider({ children }: { children: React.ReactNode }) {
   const [activeSlot, setActiveSlot] = useState<number>(1);
   const [runState, setRunState] = useState<RunState>(defaultState);
   const [isLoaded, setIsLoaded] = useState(false);
+  // Backend progress summaries for every slot — used by getAllProfiles() for the
+  // *inactive* slots in the picker (the active slot's own progress always comes
+  // from the live runState above, already backend-sourced by the load effect).
+  const [slotSummaries, setSlotSummaries] = useState<OdysseySlotSummary[]>([]);
 
-  // Load state when slot or user changes
+  const refreshSlotSummaries = React.useCallback(() => {
+    if (status !== 'authenticated' || !session?.user?.id) return;
+    OdysseyApiService.getAllSlots().then(summaries => {
+      if (summaries) setSlotSummaries(summaries);
+    });
+  }, [status, session?.user?.id]);
+
+  useEffect(() => {
+    if (status !== 'authenticated' || !session?.user?.id) {
+      setSlotSummaries([]);
+      return;
+    }
+    refreshSlotSummaries();
+  }, [status, session?.user?.id, refreshSlotSummaries]);
+
+  // Load state when slot or user changes. Local parsing/generation is defined
+  // once here (readLocal) so both the backend-first authenticated path and
+  // its fallback can share the exact same "parse localStorage, or generate a
+  // fresh map" logic that used to be the only path.
   useEffect(() => {
     if (status === 'loading') return;
-    
-    if (status === 'authenticated' && session?.user?.id) {
-      const stored = localStorage.getItem(getSlotKey(session.user.id, activeSlot));
+
+    const readLocal = (userId: string): RunState => {
+      const stored = localStorage.getItem(getSlotKey(userId, activeSlot));
       if (stored) {
         try {
           const parsed = JSON.parse(stored);
           const loadedNodes = parsed.mapNodes && parsed.mapNodes.length > 0 ? parsed.mapNodes : generateStoryMap();
-          setRunState({ ...defaultState, ...parsed, relics: parsed.relics || [], mapNodes: loadedNodes });
+          return { ...defaultState, ...parsed, relics: parsed.relics || [], mapNodes: loadedNodes };
         } catch (e) {
           console.error("Failed to parse run state", e);
-          setRunState({ ...defaultState, mapNodes: generateStoryMap(), lastUpdated: new Date().toISOString() });
         }
-      } else {
-        setRunState({ ...defaultState, mapNodes: generateStoryMap(), lastUpdated: new Date().toISOString() });
       }
+      return { ...defaultState, mapNodes: generateStoryMap(), lastUpdated: new Date().toISOString() };
+    };
+
+    if (status === 'authenticated' && session?.user?.id) {
+      const userId = session.user.id;
+      let cancelled = false;
+
+      (async () => {
+        // The backend is the source of truth for gameplay state once a run exists there.
+        // playtimeSeconds/lastUpdated are never synced to it (see toRunStateFields), so
+        // those two always come from the local copy regardless of which branch wins below.
+        const backendGame = await OdysseyApiService.getSlot(activeSlot);
+        if (cancelled) return;
+
+        const local = readLocal(userId);
+
+        if (backendGame) {
+          setRunState({
+            ...defaultState,
+            ...toRunStateFields(backendGame),
+            playtimeSeconds: local.playtimeSeconds,
+            lastUpdated: local.lastUpdated,
+          });
+        } else {
+          setRunState(local);
+        }
+        setIsLoaded(true);
+      })();
+
+      return () => { cancelled = true; };
     } else {
       setRunState({ ...defaultState, mapNodes: generateStoryMap() });
+      setIsLoaded(true);
     }
-    setIsLoaded(true);
   }, [status, session?.user?.id, activeSlot]);
 
   // Save state when runState changes
@@ -132,6 +188,20 @@ export function StoryModeProvider({ children }: { children: React.ReactNode }) {
         localStorage.removeItem(getSlotKey(session.user.id, activeSlot));
       }
     }
+
+    // Best-effort backend sync. The local state set above renders immediately;
+    // once the backend's own post-reset state comes back, adopt it instead — the
+    // player is always several screens away (title -> singleplayer -> map) by the
+    // time this resolves, so swapping it in here doesn't disrupt anything on screen.
+    if (status === 'authenticated' && session?.user?.id) {
+      const slotId = activeSlot;
+      OdysseyApiService.resetRun(slotId, keepProgress).then((game) => {
+        if (game) {
+          updateRunState(toRunStateFields(game));
+        }
+        refreshSlotSummaries();
+      });
+    }
   };
 
   const deleteProfile = (slotId: number) => {
@@ -141,29 +211,49 @@ export function StoryModeProvider({ children }: { children: React.ReactNode }) {
       if (slotId === activeSlot) {
         setRunState({ ...defaultState, mapNodes: generateStoryMap(), lastUpdated: new Date().toISOString() });
       }
+      OdysseyApiService.deleteSlot(slotId).then(() => refreshSlotSummaries());
     }
+  };
+
+  /**
+   * Syncs the moment a new run actually begins (Strategist screen
+   * confirmed): creates the backend run only if this slot doesn't already
+   * have one there — a New Game+ reset already updated the existing
+   * backend row via resetRun() above, and calling startNewRun again here
+   * would wipe the coins/relics it just preserved. Awaited by the caller
+   * before it navigates to the map, so the backend's authoritative map
+   * (adopted into mapNodes below) is in place before the player can click
+   * anything on it — see the "frontend adopts backend's map" decision.
+   */
+  const beginNewRun = async () => {
+    if (status !== 'authenticated' || !session?.user?.id) return;
+    const slotId = activeSlot;
+    const existing = await OdysseyApiService.slotExists(slotId);
+    if (!existing) {
+      const game = await OdysseyApiService.startNewRun(slotId);
+      if (!game) return;
+      updateRunState(toRunStateFields(game));
+      refreshSlotSummaries();
+    }
+    OdysseyApiService.selectCharacter(slotId, 'strategist');
   };
 
   const addCoins = (amount: number) => {
     setRunState(prev => ({ ...prev, coins: Math.max(0, prev.coins + amount) }));
   };
 
+  // A relic stays in the owned inventory (relics[]) once acquired, even once its charges hit
+  // 0 — it's still equipped/refillable via Rest/Merchant. Only an explicit sell removes it.
+  // Matches the backend model exactly: OdysseyRelic.consume() only ever decrements charges;
+  // only OdysseyGame.removeRelic() (Merchant.sell) takes it out of the inventory.
   const useCharge = (type: RelicType) => {
     const chargeKey = `${type}Charges` as keyof RunState;
     const current = runState[chargeKey] as number;
     if (current > 0) {
-      setRunState(prev => {
-        const newRelics = [...prev.relics];
-        const idx = newRelics.indexOf(type);
-        if (idx > -1) {
-          newRelics.splice(idx, 1);
-        }
-        return {
-          ...prev,
-          [chargeKey]: current - 1,
-          relics: newRelics
-        };
-      });
+      setRunState(prev => ({
+        ...prev,
+        [chargeKey]: current - 1,
+      }));
       return true;
     }
     return false;
@@ -209,19 +299,28 @@ export function StoryModeProvider({ children }: { children: React.ReactNode }) {
           progress = Math.round(((runState.completedNodes?.length || 0) / 16) * 100);
         }
       } else if (status === 'authenticated' && session?.user?.id) {
-        // Read from localstorage for inactive slots
-        const stored = localStorage.getItem(getSlotKey(session.user.id, slot));
-        if (stored) {
-          try {
-            const parsed = JSON.parse(stored);
-            playtimeSeconds = parsed.playtimeSeconds || 0;
-            updated = parsed.lastUpdated || null;
-            if (parsed.journeyComplete) {
-              progress = 100;
-            } else {
-              progress = Math.round(((parsed.completedNodes?.length || 0) / 16) * 100);
-            }
-          } catch (e) {}
+        // Inactive slots: prefer the backend's summary (the source of truth for
+        // any slot this browser hasn't loaded locally), falling back to
+        // localStorage only if the backend has nothing for this slot.
+        const summary = slotSummaries.find(s => s.slotId === slot);
+        if (summary) {
+          playtimeSeconds = summary.playtimeSeconds || 0;
+          updated = summary.updatedAt || null;
+          progress = summary.progressPercent || 0;
+        } else {
+          const stored = localStorage.getItem(getSlotKey(session.user.id, slot));
+          if (stored) {
+            try {
+              const parsed = JSON.parse(stored);
+              playtimeSeconds = parsed.playtimeSeconds || 0;
+              updated = parsed.lastUpdated || null;
+              if (parsed.journeyComplete) {
+                progress = 100;
+              } else {
+                progress = Math.round(((parsed.completedNodes?.length || 0) / 16) * 100);
+              }
+            } catch (e) {}
+          }
         }
       }
 
@@ -237,7 +336,7 @@ export function StoryModeProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <StoryModeContext.Provider value={{ runState, updateRunState, resetRun, addCoins, useCharge, activeSlot, setActiveSlot, getAllProfiles, deleteProfile }}>
+    <StoryModeContext.Provider value={{ runState, updateRunState, resetRun, addCoins, useCharge, activeSlot, setActiveSlot, getAllProfiles, deleteProfile, beginNewRun }}>
       {children}
     </StoryModeContext.Provider>
   );

@@ -28,6 +28,7 @@ import {
 } from "@/features/lessons/builderLesson.service";
 import { AuthModal } from "@/features/account/AuthModal";
 import { getNextUntitledTitle } from "@/features/lessons/utils/lessonNaming";
+import { ROUTES } from "@/app/router/routes.config";
 import { ThumbnailEditorModal } from "@/features/lessons/components/ThumbnailEditorModal";
 import { ThumbnailComingSoonModal } from "@/features/lessons/components/ThumbnailComingSoonModal";
 
@@ -337,7 +338,7 @@ export default function LessonDashboardPage() {
       }
 
       const newLesson = await builderLessonService.createLesson(initialTitle, templateId);
-      navigate(`/lesson-builder/${newLesson.id}`);
+      navigate(ROUTES.LESSON_BUILDER_EDIT(newLesson.id));
     } catch (error) {
       console.error("Failed to create lesson", error);
     } finally {
@@ -491,7 +492,7 @@ export default function LessonDashboardPage() {
     : null;
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-8 select-none">
+    <div className="min-h-[calc(100vh-4rem)] px-2.5 py-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-8 select-none">
       {/* Hidden File Picker Input */}
       <input
         ref={fileInputRef}
@@ -659,7 +660,7 @@ export default function LessonDashboardPage() {
               return (
                 <div
                   key={lesson.id}
-                  onClick={() => navigate(`/lesson-builder/${lesson.id}`)}
+                  onClick={() => navigate(ROUTES.LESSON_BUILDER_EDIT(lesson.id))}
                   className="group relative rounded-2xl bg-brand-surface border border-brand-border/60 hover:border-brand-accent/50 shadow-md hover:shadow-xl transition-all duration-200 cursor-pointer flex flex-col justify-between"
                 >
                   {/* Top Banner Thumbnail (Aspect 16:9 box) */}
@@ -754,7 +755,7 @@ export default function LessonDashboardPage() {
               return (
                 <div
                   key={lesson.id}
-                  onClick={() => navigate(`/lesson-builder/${lesson.id}`)}
+                  onClick={() => navigate(ROUTES.LESSON_BUILDER_EDIT(lesson.id))}
                   className="group flex items-center justify-between p-4 hover:bg-brand-bg/50 cursor-pointer transition-colors"
                 >
                   <div className="flex items-center gap-4">

@@ -15,7 +15,7 @@ export default function ShortTextInput({
   value,
   onChange,
   wordLimit = 1,
-  placeholder = 'Enter your answer...',
+  placeholder = 'Answer',
   disabled = false,
 }: ShortTextInputProps) {
   const trimmed = value.trim();

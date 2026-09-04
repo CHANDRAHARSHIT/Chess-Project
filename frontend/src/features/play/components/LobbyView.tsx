@@ -1,13 +1,27 @@
+import { useEffect } from "react";
 import { Swords, ShieldCheck, Zap, Sparkles } from "lucide-react";
 import { QueuePanel } from "./QueuePanel";
 import { GameHistoryList } from "./GameHistoryList";
 import { LeaderboardPanel } from "./LeaderboardPanel";
 
 export function LobbyView({ historyRefreshKey }: { historyRefreshKey: number }) {
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash) {
+      const targetId = hash.replace("#", "");
+      const el = document.getElementById(targetId);
+      if (el) {
+        setTimeout(() => {
+          el.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 100);
+      }
+    }
+  }, []);
+
   return (
-    <div className="max-w-5xl mx-auto space-y-8 animate-fade-in">
+    <div className="max-w-5xl mx-auto space-y-4 sm:space-y-8 animate-fade-in">
       {/* Hero Header & Quick Specs */}
-      <div className="relative overflow-hidden rounded-3xl border border-brand-text/15 bg-brand-surface p-6 sm:p-8">
+      <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl border border-brand-text/15 bg-brand-surface p-4 sm:p-8">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="flex items-start gap-4">
             <div className="p-3 rounded-2xl bg-brand-accent/10 border border-brand-accent/20 text-brand-accent shrink-0">
@@ -46,8 +60,12 @@ export function LobbyView({ historyRefreshKey }: { historyRefreshKey: number }) 
 
       {/* History & Leaderboard */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <GameHistoryList key={historyRefreshKey} />
-        <LeaderboardPanel />
+        <div id="recent-games" className="scroll-mt-6">
+          <GameHistoryList key={historyRefreshKey} />
+        </div>
+        <div id="leaderboard" className="scroll-mt-6">
+          <LeaderboardPanel />
+        </div>
       </div>
     </div>
   );

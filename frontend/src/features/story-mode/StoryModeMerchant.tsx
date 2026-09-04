@@ -3,8 +3,12 @@ import { motion } from "framer-motion";
 import { Coins, ArrowRight, RotateCcw, Package, ShoppingBag, Sparkles } from "lucide-react";
 import { useStoryModeRun, MAX_RELIC_CHARGES } from "./StoryModeContext";
 import type { RelicType } from "./StoryModeContext";
+import { useSession } from "@/features/account/useSession";
+import { OdysseyApiService } from "./api/odysseyApi";
+import { computeServerPrices } from "./api/odysseyMerchantPricing";
 
 interface StoryModeMerchantProps {
+  nodeId: number;
   onComplete: () => void;
 
 }
@@ -18,9 +22,11 @@ type ShopItem = {
 };
 
 export default function StoryModeMerchant({
+  nodeId,
   onComplete,
 }: StoryModeMerchantProps) {
-  const { runState, updateRunState, useCharge } = useStoryModeRun();
+  const { runState, updateRunState, useCharge, activeSlot } = useStoryModeRun();
+  const { status } = useSession();
   const [purchasedIds, setPurchasedIds] = useState<Set<string>>(new Set());
   const [activeTab, setActiveTab] = useState<'buy' | 'sell'>('buy');
   const [quantities, setQuantities] = useState<Record<string, number>>({});
@@ -41,23 +47,23 @@ export default function StoryModeMerchant({
     { type: 'reroll' as RelicType, name: 'Moirai\'s Thread', description: '+1 to max Rerolls.' },
   ];
 
-  // Generate available pool based on current state
+  // Generate available pool based on current state. When synced (a real backend run
+  // exists), prices are derived the SAME way the server will independently derive
+  // them for a purchase — see computeServerPrices — so what's shown here is exactly
+  // what a purchase will charge. Guests (no gameId) get genuinely random prices,
+  // matching the old behavior, since there's no backend to reconcile with.
   const availablePool = useMemo(() => {
-    const pool: ShopItem[] = [];
+    const serverPrices = runState.gameId ? computeServerPrices(`${runState.gameId}:${nodeId}`) : null;
     const v = (base: number) => Math.max(5, base + Math.floor(Math.random() * 11) - 5);
 
-    relicData.forEach(r => {
-      pool.push({
-        id: `${r.type}_${Math.random()}`,
-        name: r.name,
-        description: r.description,
-        cost: v(20), // 20 base cost per charge
-        type: r.type,
-      });
-    });
-
-    return pool;
-  }, []);
+    return relicData.map(r => ({
+      id: `${r.type}_${Math.random()}`,
+      name: r.name,
+      description: r.description,
+      cost: serverPrices ? serverPrices[r.type] : v(20), // 20 base cost per charge
+      type: r.type,
+    }));
+  }, [runState.gameId, nodeId]);
 
   // State to hold current random offerings
   const [offerings, setOfferings] = useState<ShopItem[]>(() => getRandomOfferings(availablePool, 3));
@@ -67,10 +73,12 @@ export default function StoryModeMerchant({
     return shuffled.slice(0, count);
   }
 
+  const isSynced = status === 'authenticated';
+
   const handleReroll = () => {
     if (runState.rerollCharges > 0 && !isRerolling) {
       setIsRerolling(true);
-      
+
       // Delay to let items fade out
       setTimeout(() => {
         const used = useCharge('reroll');
@@ -78,8 +86,14 @@ export default function StoryModeMerchant({
           setOfferings(getRandomOfferings(availablePool, 3));
           setPurchasedIds(new Set());
           setQuantities({});
+
+          // Best-effort backend sync — local offerings above are already the authoritative result.
+          // No catalog payload needed: the server derives the same catalog itself from (run, node).
+          if (isSynced) {
+            OdysseyApiService.merchantReroll(activeSlot, nodeId);
+          }
         }
-        
+
         // Wait a tiny bit before fading new items in
         setTimeout(() => setIsRerolling(false), 50);
       }, 400);
@@ -89,28 +103,34 @@ export default function StoryModeMerchant({
   const handlePurchase = (item: ShopItem) => {
     const qty = quantities[item.id] || 1;
     const currentCharges = (runState[`${item.type}Charges`] as number) || 0;
-    
+
     // Prevent exceeding max charges (5)
     const actualQty = Math.min(qty, MAX_RELIC_CHARGES - currentCharges);
     if (actualQty <= 0) return;
 
     const totalCost = item.cost * actualQty;
-    
+
     if (runState.coins >= totalCost) {
       if (!runState.relics.includes(item.type) && runState.relics.length >= MAX_SLOTS) {
         return; // No slots available for a new relic
       }
-      
-      const newRelics = runState.relics.includes(item.type) 
-        ? runState.relics 
+
+      const newRelics = runState.relics.includes(item.type)
+        ? runState.relics
         : [...runState.relics, item.type];
-      
-      updateRunState({ 
+
+      updateRunState({
         coins: runState.coins - totalCost,
         relics: newRelics,
         [`${item.type}Charges`]: currentCharges + actualQty
       });
       setPurchasedIds(prev => new Set([...prev, item.id]));
+
+      // Best-effort backend sync — the local grant above is already the authoritative reward.
+      // No price sent: the server derives item.cost's real value itself from (run, node, type).
+      if (isSynced) {
+        OdysseyApiService.merchantPurchase(activeSlot, nodeId, item.type, actualQty);
+      }
     }
   };
 
@@ -121,14 +141,26 @@ export default function StoryModeMerchant({
     if (idx > -1) {
       newRelics.splice(idx, 1);
     }
-    
+
     const currentCharges = (runState[`${type}Charges`] as number) || 0;
 
-    updateRunState({ 
-      relics: newRelics, 
+    updateRunState({
+      relics: newRelics,
       coins: runState.coins + sellPrice,
       [`${type}Charges`]: Math.max(0, currentCharges - 1)
     });
+
+    // Best-effort backend sync — the local +25 coins above is already the authoritative reward.
+    if (isSynced) {
+      OdysseyApiService.merchantSell(activeSlot, type);
+    }
+  };
+
+  const handleLeave = () => {
+    if (isSynced) {
+      OdysseyApiService.merchantLeaveShop(activeSlot, nodeId);
+    }
+    onComplete();
   };
 
   const ownedRelics = runState.relics.map(type => relicData.find(r => r.type === type)).filter(Boolean) as typeof relicData;
@@ -137,7 +169,7 @@ export default function StoryModeMerchant({
 
   return (
     <motion.div
-      className="min-h-[70vh] flex items-center justify-center p-4 sm:p-6"
+      className="min-h-[70vh] flex items-center justify-center px-2.5 py-4 sm:p-6"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -148,7 +180,7 @@ export default function StoryModeMerchant({
       />
 
       <motion.div
-        className="relative z-10 max-w-2xl w-full flex flex-col items-center gap-6 py-8 px-4 sm:px-6 rounded-2xl border border-yellow-500/20 bg-yellow-500/5 backdrop-blur-md mx-auto shadow-2xl"
+        className="relative z-10 max-w-2xl w-full flex flex-col items-center gap-6 py-8 px-2.5 sm:px-6 rounded-2xl border border-yellow-500/20 bg-yellow-500/5 backdrop-blur-md mx-auto shadow-2xl"
         initial={{ scale: 0.9, y: 20 }}
         animate={{ scale: 1, y: 0 }}
         transition={{ duration: 0.5, type: "spring" }}
@@ -334,7 +366,7 @@ export default function StoryModeMerchant({
         </div>
 
         <button
-          onClick={onComplete}
+          onClick={handleLeave}
           className="mt-4 flex items-center gap-2 px-6 py-2.5 rounded-xl border border-brand-border text-brand-text hover:border-brand-accent hover:text-brand-accent transition-all cursor-pointer"
         >
           Leave Shop <ArrowRight className="w-4 h-4" />

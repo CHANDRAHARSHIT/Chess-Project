@@ -138,7 +138,7 @@ export default function CompleteLaterPage() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] bg-brand-bg flex justify-center p-3 md:p-6 lg:p-8">
+    <div className="min-h-[calc(100vh-4rem)] bg-brand-bg flex justify-center px-2.5 py-4 md:p-6 lg:p-8">
       <div className="max-w-[1400px] w-full flex flex-col">
         
         <button

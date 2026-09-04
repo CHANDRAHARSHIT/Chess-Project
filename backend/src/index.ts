@@ -1,21 +1,27 @@
 import { env } from "./config/env.js";
 import { app } from "./app.js";
-import { initRollbar, reportError } from "./observability/index.js";
-import { bootstrapTransport } from "./transport/index.js";
+import { initRollbar, reportError } from "./realtime/observability/index.js";
+import { bootstrapTransport } from "./realtime/transport/index.js";
 import {
   SessionManager,
   ClockTicker,
   sessionTransportImpl,
   wireSessionTransportBridge,
   wireMatchmakingSessionBridge,
-} from "./session/index.js";
-import { matchmakingQueue, ExpiryTicker } from "./matchmaking/index.js";
-import { handleGameResult } from "./results/index.js";
-import { attachBot, acquireBot, releaseBot } from "./bot/botPlayer.js";
+} from "./realtime/session/index.js";
+import { matchmakingQueue, ExpiryTicker } from "./realtime/matchmaking/index.js";
+import { handleGameResult } from "./realtime/results/index.js";
+import { attachBot, acquireBot, releaseBot } from "./realtime/bot/bot-player.js";
+import { eventManager } from "./events/index.js";
+import { registerAntiCheatActions } from "./anticheat/index.js";
+import { warmMaiaEngine } from "./maia/maia.route.js";
 import type { GameResult, ParticipantAssignment } from "./contracts/index.js";
 
 // Initialise observability first so the very first server error is captured.
 initRollbar();
+
+// Actions must be registered before any trigger can fire.
+registerAntiCheatActions(eventManager);
 
 /**
  * Capture the http.Server instance returned by app.listen().
@@ -27,6 +33,9 @@ export const server = app.listen(env.PORT, () => {
   console.log(
     `[Server]: Node.js Express server is listening in ${env.NODE_ENV} mode at http://localhost:${env.PORT}`,
   );
+  // Loads the Maia model now rather than making the first player wait for it.
+  // Self-gating on MAIA_ENABLED and fire-and-forget.
+  warmMaiaEngine();
 });
 
 server.on("error", (err: any) => {

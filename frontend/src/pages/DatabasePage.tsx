@@ -57,7 +57,7 @@ export default function DatabasePage() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-brand-bg text-brand-text font-sans p-6 md:p-10 lg:p-12 overflow-y-auto w-full">
+    <div className="min-h-screen bg-brand-bg text-brand-text font-sans px-2.5 py-6 sm:p-6 md:p-10 lg:p-12 overflow-y-auto w-full">
       <div className="max-w-[1200px] mx-auto flex flex-col lg:flex-row gap-10">
         {/* Left Content Area */}
         <div className="flex-1">

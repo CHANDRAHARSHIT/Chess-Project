@@ -19,6 +19,9 @@ package-lock.json
 
 backend/supabase
 
+# Downloaded PGN game archives used by one-off data-population scripts (large, re-fetchable)
+backend/data
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -32,3 +35,17 @@ backend/supabase
 *.env
 /src/generated/prisma
 .claude
+
+# Private planning, audits & internal guides
+Backend_Refactoring_implementation_plan.md
+DATABASE_MIGRATION_SAFETY_GUIDE.md
+backend_architecture_audit.md
+backend_restructuring_plan.md
+frontend_lint_remediation_plan.md
+frontend_restructuring_plan.md
+m4_implementation_plan.md
+m5_implementation_plan.md
+m7_bot_fallback_implementation_plan.md
+database_architecture_audit.md
+developer_handoff.md
+

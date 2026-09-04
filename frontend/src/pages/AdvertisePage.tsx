@@ -77,7 +77,7 @@ export default function AdvertisePage() {
       <div className="relative overflow-hidden border-b border-brand-border/30">
         <div className="absolute inset-0 bg-gradient-to-br from-brand-accent/5 via-transparent to-brand-accent/3 pointer-events-none" />
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[300px] bg-brand-accent/5 rounded-full blur-[120px] pointer-events-none" />
-        <div className="max-w-4xl mx-auto px-6 pt-6 pb-16 sm:pb-20 relative z-10">
+        <div className="max-w-4xl mx-auto px-2.5 sm:px-6 pt-6 pb-16 sm:pb-20 relative z-10">
           <div className="mb-6">
             <button
               type="button"
@@ -107,7 +107,7 @@ export default function AdvertisePage() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-4xl mx-auto px-6 py-12">
+      <div className="max-w-4xl mx-auto px-2.5 sm:px-6 py-8 sm:py-12">
         {/* Audience Stats */}
         <section
           className="mb-14"
@@ -206,7 +206,7 @@ export default function AdvertisePage() {
             team to discuss your goals and explore what we can build together.
           </p>
           <a
-            href="/contact-us"
+            href="/contact"
             className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full border border-brand-accent/50 text-brand-accent hover:bg-brand-accent/10 transition-all duration-200 text-sm font-semibold font-sans"
           >
             Contact Our Partnerships Team
