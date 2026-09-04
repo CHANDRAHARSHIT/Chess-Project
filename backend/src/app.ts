@@ -18,6 +18,7 @@ import { pathwayProgressRouter } from "./routes/pathway-progress.route.js";
 import { gamesRouter } from "./routes/games.route.js";
 import { assessmentRouter } from "./routes/assessment.route.js";
 import { adminAuthRouter } from "./admin/auth/adminAuth.route.js";
+import { adminRouter } from "./admin/admin.router.js";
 import { errorHandler } from "./middleware/error.middleware.js";
 
 const app = express();
@@ -107,6 +108,7 @@ app.get("/api/admin/auth/signin/:provider", (_req, res) => {
   res.redirect("/admin");
 });
 app.use("/api/admin/auth/*", adminAuthLimiter, forceAuthHost, adminAuthRouter);
+app.use("/api/admin", adminRouter);
 app.use("/api/users", userRouter);
 app.use("/api/custom-links", customLinksRouter);
 app.use("/api/payments", paymentRouter);
