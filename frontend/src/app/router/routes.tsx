@@ -39,6 +39,8 @@ import PlayHubPage from "@/pages/PlayHubPage";
 import StatsPage from "@/pages/StatsPage";
 import AssessmentPage from "@/pages/AssessmentPage";
 import NewsPage from "@/pages/NewsPage";
+import AdminLoginPage from "@/pages/AdminLoginPage";
+import AdminHomePage from "@/pages/AdminHomePage";
 
 export interface RouteConfig {
   path: string;
@@ -244,10 +246,25 @@ export const mainRoutes: RouteConfig[] = [
     element: <HowXLChessWorksPage />,
     title: "How XLChess Works | XLChess",
   },
+  {
+    path: "/admin/home",
+    element: <AdminHomePage />,
+    title: "Admin Home | XLChess",
+  },
+  {
+    path: "/admin/settings",
+    element: <SettingsPage allSoon={true} />,
+    title: "Admin Settings | XLChess",
+  },
 ];
 
 // Routes that run inside the MinimalLayout (Navbar only, no Sidebar/Footer)
 export const minimalRoutes: RouteConfig[] = [
+  {
+    path: "/admin",
+    element: <AdminLoginPage />,
+    title: "Admin Sign In | XLChess",
+  },
   {
     path: "/join-us",
     element: <JoinUsPage />,

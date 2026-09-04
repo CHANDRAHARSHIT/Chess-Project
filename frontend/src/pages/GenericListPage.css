@@ -1,0 +1,567 @@
+/* ══════════════════════════════════════════════════════════════════════════════
+   GenericListPage.css — Reusable Admin Generic List Page Styles
+   Adapted from Jimmy's reference prototype (generic_list.css) for XLChess
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+.generic-list-root {
+  --gl-bg: #ffffff;
+  --gl-surface: #f7f7f8;
+  --gl-surface-2: #f1f1f3;
+  --gl-text: #111111;
+  --gl-muted: #6b6b70;
+  --gl-border: #dddddf;
+  --gl-border-strong: #c8c8cc;
+  --gl-accent: #8b6fc7;
+  --gl-accent-soft: #f2edf9;
+  
+  width: min(1500px, 100%);
+  margin: 0 auto;
+  padding: 28px 16px;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: var(--gl-text);
+  box-sizing: border-box;
+}
+
+.generic-list-root * {
+  box-sizing: border-box;
+}
+
+/* ─── Header Section ──────────────────────────────────────────────────────── */
+.generic-list-header {
+  background: #f4f4f5;
+  border: 1px solid #dddddf;
+  border-radius: 14px;
+  padding: 18px;
+  margin-bottom: 18px;
+  position: relative;
+}
+
+.generic-list-title {
+  display: none;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  font-size: 24px;
+  font-weight: 800;
+  white-space: nowrap;
+  color: var(--gl-text);
+  pointer-events: none;
+}
+
+.generic-list-title.show {
+  display: block;
+}
+
+.generic-list-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.generic-list-header-left,
+.generic-list-header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* ─── Header Buttons ──────────────────────────────────────────────────────── */
+.generic-list-add-btn {
+  width: 42px;
+  min-width: 42px;
+  height: 42px;
+  min-height: 42px;
+  border: 1px solid #cfe7d3;
+  border-radius: 10px;
+  background: #eaf8ed;
+  color: #1f6f38;
+  font-size: 26px;
+  font-weight: 700;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  line-height: 1;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.generic-list-add-btn:hover:not(:disabled) {
+  background: #def3e3;
+  border-color: #bcdcc3;
+}
+
+.generic-list-search-box {
+  min-width: 220px;
+  min-height: 42px;
+  border: 1px solid #dddddf;
+  border-radius: 10px;
+  padding: 0 14px;
+  background: #fff;
+  color: #777;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.generic-list-search-icon {
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  color: #888;
+}
+
+.generic-list-generic-btn {
+  min-height: 42px;
+  border: 1px solid #dddddf;
+  border-radius: 10px;
+  background: #fff;
+  color: #111;
+  padding: 0 14px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.generic-list-generic-btn:hover:not(:disabled) {
+  background: #fafafa;
+}
+
+.generic-list-icon-btn {
+  width: 42px;
+  min-width: 42px;
+  height: 42px;
+  border: 1px solid #dddddf;
+  border-radius: 10px;
+  background: #fff;
+  color: #333;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.generic-list-icon-btn:hover:not(:disabled) {
+  background: #fafafa;
+  border-color: #c8c8cc;
+}
+
+.generic-list-add-btn:disabled,
+.generic-list-generic-btn:disabled,
+.generic-list-icon-btn:disabled,
+.generic-list-quick-action:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ─── Popups & Dropdown Menus ─────────────────────────────────────────────── */
+.generic-list-wrap {
+  position: relative;
+}
+
+.generic-list-filter-popup {
+  position: absolute;
+  right: 0;
+  top: 48px;
+  min-width: 130px;
+  padding: 10px 14px;
+  border: 1px solid #dddddf;
+  border-radius: 10px;
+  background: #fff;
+  color: #555;
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.12);
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  z-index: 30;
+  display: none;
+}
+
+.generic-list-filter-popup.open {
+  display: block;
+}
+
+.generic-list-settings-menu {
+  position: absolute;
+  right: 0;
+  top: 48px;
+  width: 150px;
+  padding: 6px;
+  border: 1px solid #dddddf;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.12);
+  z-index: 30;
+  display: none;
+}
+
+.generic-list-settings-menu.open {
+  display: block;
+}
+
+.generic-list-settings-menu button {
+  width: 100%;
+  min-height: 38px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  text-align: left;
+  padding: 0 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #222;
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.generic-list-settings-menu button:hover {
+  background: #f7f7f8;
+}
+
+/* ─── Panel & Table ───────────────────────────────────────────────────────── */
+.generic-list-panel {
+  border: 1px solid var(--gl-border);
+  border-radius: 14px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.generic-list-table-head,
+.generic-list-table-row {
+  display: grid;
+  gap: 12px;
+  align-items: center;
+}
+
+.generic-list-table-head {
+  min-height: 48px;
+  padding: 0 14px;
+  background: var(--gl-surface);
+  border-bottom: 1px solid var(--gl-border);
+  color: var(--gl-muted);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.generic-list-table-row {
+  min-height: 72px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--gl-border);
+  background: #fff;
+  position: relative;
+  transition: background-color 0.15s ease;
+}
+
+.generic-list-table-row:last-child {
+  border-bottom: 0;
+}
+
+/* Hover overlay ("View") matching prototype */
+.generic-list-table-row::before {
+  content: "";
+  position: absolute;
+  inset: 7px 328px 7px 8px;
+  border-radius: 10px;
+  background: rgba(139, 111, 199, 0.05);
+  border: 1px solid rgba(139, 111, 199, 0.09);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.16s ease;
+  z-index: 2;
+}
+
+.generic-list-table-row::after {
+  content: attr(data-view-label);
+  position: absolute;
+  left: calc((100% - 320px) / 2);
+  top: 50%;
+  transform: translate(-50%, -50%);
+  color: #111111;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.16s ease;
+  z-index: 3;
+}
+
+.generic-list-table-row:hover::before,
+.generic-list-table-row:hover::after {
+  opacity: 1;
+}
+
+.generic-list-table-row > * {
+  position: relative;
+  z-index: 1;
+  transition: opacity 0.12s ease;
+}
+
+.generic-list-table-row:hover {
+  cursor: pointer;
+}
+
+.generic-list-table-row:hover .generic-list-cell {
+  color: #d2d2d5;
+}
+
+/* Cells */
+.generic-list-cell {
+  min-width: 0;
+  font-size: 14px;
+  color: #222;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.12s ease;
+}
+
+.generic-list-cell.primary {
+  font-weight: 750;
+  color: #111;
+}
+
+/* ─── Quick Actions ───────────────────────────────────────────────────────── */
+.generic-list-quick-action {
+  min-height: 34px;
+  border: 1px solid var(--gl-border);
+  background: #fff;
+  color: #222;
+  border-radius: 8px;
+  padding: 0 10px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.generic-list-quick-action:hover:not(:disabled) {
+  background: var(--gl-accent-soft);
+  border-color: #d6c8ee;
+}
+
+/* ─── Pill Toggle Switch ─────────────────────────────────────────────────── */
+.generic-list-switch {
+  width: 46px;
+  height: 26px;
+  border: 1px solid var(--gl-border);
+  border-radius: 999px;
+  background: #fff;
+  position: relative;
+  cursor: pointer;
+  transition: border-color 0.18s ease;
+  padding: 0;
+}
+
+.generic-list-switch::after {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  top: 2px;
+  left: 3px;
+  background: #f8dede;
+  border: 0;
+  box-shadow: none;
+  transition: left 0.18s ease, background 0.18s ease;
+}
+
+.generic-list-switch.on::after {
+  left: 21px;
+  background: #dff3e4;
+}
+
+.generic-list-switch:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ─── Row 3-Dots Menu ─────────────────────────────────────────────────────── */
+.generic-list-actions {
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.generic-list-more-btn {
+  width: 38px;
+  height: 38px;
+  border: 1px solid transparent;
+  background: transparent;
+  border-radius: 9px;
+  cursor: pointer;
+  font-size: 20px;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+  color: #333;
+  transition: background 0.12s ease, border-color 0.12s ease;
+}
+
+.generic-list-more-btn:hover {
+  background: var(--gl-surface);
+  border-color: var(--gl-border);
+}
+
+.generic-list-row-menu {
+  position: absolute;
+  top: 42px;
+  right: 0;
+  width: 170px;
+  padding: 6px;
+  border: 1px solid var(--gl-border);
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.12);
+  z-index: 25;
+  display: none;
+}
+
+.generic-list-row-menu.open {
+  display: block;
+}
+
+.generic-list-row-menu button {
+  width: 100%;
+  min-height: 38px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  text-align: left;
+  padding: 0 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #222;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+
+.generic-list-row-menu button:hover {
+  background: var(--gl-surface);
+}
+
+.generic-list-row-menu button.delete {
+  color: #c83b3b;
+}
+
+.generic-list-row-menu button.delete:hover {
+  color: #a92727;
+  background: #fff0f0;
+}
+
+.generic-list-menu-icon {
+  width: 16px;
+  text-align: center;
+  opacity: 0.75;
+  font-size: 14px;
+  display: inline-block;
+}
+
+/* ─── Pagination ──────────────────────────────────────────────────────────── */
+.generic-list-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 4px 0;
+}
+
+.generic-list-pagination-info {
+  color: var(--gl-muted);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.generic-list-pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.generic-list-page-btn {
+  min-width: 38px;
+  height: 38px;
+  padding: 0 10px;
+  border: 1px solid var(--gl-border);
+  border-radius: 9px;
+  background: #fff;
+  color: #222;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.generic-list-page-btn:hover:not(:disabled) {
+  background: var(--gl-surface);
+  border-color: var(--gl-border-strong);
+}
+
+.generic-list-page-btn.active {
+  background: #111;
+  color: #fff;
+  border-color: #111;
+}
+
+.generic-list-page-btn:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+
+/* ─── Empty State ─────────────────────────────────────────────────────────── */
+.generic-list-empty {
+  padding: 48px 16px;
+  text-align: center;
+  color: var(--gl-muted);
+  font-size: 14px;
+}
+
+/* ─── Responsive Queries matching prototype ───────────────────────────────── */
+@media (max-width: 1100px) {
+  .generic-list-panel {
+    overflow-x: auto;
+  }
+  .generic-list-table-head,
+  .generic-list-table-row {
+    min-width: 1160px;
+  }
+}
+
+@media (max-width: 760px) {
+  .generic-list-title {
+    position: static;
+    transform: none;
+    text-align: center;
+    margin-bottom: 12px;
+  }
+  .generic-list-header-row {
+    align-items: stretch;
+  }
+  .generic-list-header-left,
+  .generic-list-header-right {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 640px) {
+  .generic-list-root {
+    padding: 16px;
+  }
+  .generic-list-pagination {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
