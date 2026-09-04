@@ -454,7 +454,7 @@ export default function SettingsPage({ allSoon = false }: { allSoon?: boolean })
                   type="button"
                   onClick={handleCancel}
                   disabled={!hasChanges}
-                  className="px-5 py-2.5 rounded-xl font-sans text-sm font-semibold bg-brand-text/5 border border-white/10 text-brand-secondary hover:text-brand-text hover:border-white/20 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                  className="px-5 py-2.5 rounded-xl font-sans text-sm font-semibold bg-brand-text/5 border border-brand-border text-brand-secondary hover:text-brand-text hover:border-brand-accent/50 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
                 >
                   Cancel
                 </button>

@@ -108,7 +108,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMo
         {/* Google OAuth Trigger */}
         <button
           onClick={handleGoogleSignIn}
-          className="w-full flex items-center justify-center gap-3 bg-white text-black hover:bg-gray-100 font-sans font-medium text-sm px-4 py-3 rounded-lg transition-all duration-200 active:scale-[0.98]"
+          className="w-full flex items-center justify-center gap-3 bg-white text-black hover:bg-gray-100 font-sans font-medium text-sm px-4 py-3 rounded-lg border border-brand-border transition-all duration-200 active:scale-[0.98]"
         >
           {/* Inline Premium Flat Google G Logo */}
           <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -133,7 +133,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMo
         </button>
 
         {/* Modal Mode Toggle Footer */}
-        <div className="mt-8 text-center border-t border-[rgba(212,175,110,0.40)] pt-4">
+        <div className="mt-8 text-center border-t border-brand-border pt-4">
           {mode === "login" ? (
             <button
               onClick={() => setMode("register")}

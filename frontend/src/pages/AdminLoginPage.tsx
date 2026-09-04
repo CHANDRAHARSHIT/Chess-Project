@@ -27,8 +27,8 @@ export const AdminLoginPage: React.FC = () => {
       <div className="absolute inset-0 bg-gradient-to-b from-brand-surface/40 via-brand-bg to-brand-bg pointer-events-none" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand-accent/5 rounded-full blur-3xl pointer-events-none" />
 
-      {/* Login Card with clean, borderless dark obsidian aesthetic */}
-      <div className="relative w-full max-w-[460px] bg-brand-surface/95 rounded-3xl p-8 sm:p-10 backdrop-blur-2xl transition-colors duration-200 z-10">
+      {/* Login Card with subtle, theme-aware border (warm gold in dark mode, warm bronze in light mode) */}
+      <div className="relative w-full max-w-[460px] bg-brand-surface/95 border border-brand-border rounded-3xl p-8 sm:p-10 backdrop-blur-2xl transition-colors duration-200 z-10">
         {/* Close Button without harsh borders */}
         <button
           onClick={handleClose}
@@ -40,7 +40,7 @@ export const AdminLoginPage: React.FC = () => {
 
         {/* Header content */}
         <div className="text-center mt-4 mb-8">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-brand-bg/80 mb-4 text-brand-accent">
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-brand-bg/80 border border-brand-border mb-4 text-brand-accent">
             <Lock className="w-5 h-5" />
           </div>
           <h1 className="text-3xl sm:text-4xl font-bold text-brand-text tracking-tight font-sans">
@@ -67,7 +67,7 @@ export const AdminLoginPage: React.FC = () => {
           type="button"
           onClick={handleGoogleSignIn}
           disabled={isSigningIn}
-          className="w-full flex items-center justify-center gap-3.5 bg-white text-gray-900 hover:bg-gray-50 disabled:opacity-60 disabled:cursor-not-allowed font-sans font-semibold text-base py-4 px-6 rounded-2xl transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.98] cursor-pointer mb-6 group"
+          className="w-full flex items-center justify-center gap-3.5 bg-white text-gray-900 hover:bg-gray-50 disabled:opacity-60 disabled:cursor-not-allowed font-sans font-semibold text-base py-4 px-6 rounded-2xl border border-brand-border transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.98] cursor-pointer mb-6 group"
         >
           {/* Official Google G Logo SVG */}
           <svg className="w-6 h-6 shrink-0 transition-transform duration-200 group-hover:scale-105" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -92,7 +92,7 @@ export const AdminLoginPage: React.FC = () => {
         </button>
 
         {/* Security / Authorization Footer */}
-        <div className="flex items-center justify-center gap-1.5 pt-4 border-t border-brand-text/10 text-xs text-brand-secondary font-sans select-none">
+        <div className="flex items-center justify-center gap-1.5 pt-4 border-t border-brand-border text-xs text-brand-secondary font-sans select-none">
           <ShieldCheck className="w-3.5 h-3.5 text-brand-accent shrink-0" />
           <span>Authorized Personnel Only • Secure OAuth 2.0</span>
         </div>

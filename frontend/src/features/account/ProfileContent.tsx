@@ -31,7 +31,7 @@ const PlatformButton: React.FC<PlatformButtonProps> = ({ name, icon, brandColor 
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onClick={() => alert(`${name} connection coming in the next release!`)}
-      className="flex items-center justify-center gap-2.5 bg-brand-text/5 hover:bg-brand-text/10 active:scale-[0.98] border border-white/10 hover:border-brand-accent/40 rounded-xl py-3 px-4 transition-all duration-200 cursor-pointer text-sm font-sans font-medium text-brand-secondary hover:text-brand-text group relative overflow-hidden w-full"
+      className="flex items-center justify-center gap-2.5 bg-brand-text/5 hover:bg-brand-text/10 active:scale-[0.98] border border-brand-border hover:border-brand-accent/40 rounded-xl py-3 px-4 transition-all duration-200 cursor-pointer text-sm font-sans font-medium text-brand-secondary hover:text-brand-text group relative overflow-hidden w-full"
       style={{
         boxShadow: 'none',
       }}
@@ -439,7 +439,7 @@ export default function ProfileContent() {
                   <div className="space-y-3 mt-4">
                     <div className="flex items-center justify-between text-xs font-sans">
                       <span className="text-brand-secondary">Status</span>
-                      <span className="font-semibold text-brand-secondary/60 font-mono uppercase bg-brand-text/5 px-2 py-0.5 rounded border border-white/5 text-[10px]">
+                      <span className="font-semibold text-brand-secondary/60 font-mono uppercase bg-brand-text/5 px-2 py-0.5 rounded border border-brand-border text-[10px]">
                         Free Tier
                       </span>
                     </div>
@@ -548,7 +548,7 @@ export default function ProfileContent() {
                     <p className="text-xs text-brand-secondary/50 font-sans mt-0.5">Google Sign-In Active</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 mt-3 bg-brand-text/5 border border-white/10 rounded-lg px-3 py-1.5 w-fit">
+                <div className="flex items-center gap-2 mt-3 bg-brand-text/5 border border-brand-border rounded-lg px-3 py-1.5 w-fit">
                   {/* Tiny Google Icon */}
                   <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />

@@ -87,8 +87,8 @@ export const MoreMenu: React.FC = () => {
           'focus:outline-none focus:ring-2 focus:ring-brand-accent/40',
           'cursor-pointer',
           isOpen
-            ? 'border-[rgba(212,175,110,0.60)] bg-brand-text/[0.08] text-brand-text'
-            : 'border-transparent text-brand-secondary hover:text-brand-text hover:border-[rgba(212,175,110,0.40)] hover:bg-brand-text/5',
+            ? 'border-brand-accent/60 bg-brand-text/[0.08] text-brand-text'
+            : 'border-transparent text-brand-secondary hover:text-brand-text hover:border-brand-border hover:bg-brand-text/5',
         ].join(' ')}
       >
         <MoreVertical className="w-4 h-4" />
@@ -135,7 +135,7 @@ export const MoreMenu: React.FC = () => {
           </div>
 
           {/* ── Divider ───────────────────────────────────────────────────── */}
-          <div className="my-1.5 border-t border-[rgba(212,175,110,0.40)]" role="separator" />
+          <div className="my-1.5 border-t border-brand-border" role="separator" />
 
           {/* ── Sound — full-row button ────────────────────────────────────── */}
           <button
@@ -159,7 +159,7 @@ export const MoreMenu: React.FC = () => {
                 'text-[10px] font-mono px-1.5 py-0.5 rounded-full border transition-colors duration-200',
                 soundEnabled
                   ? 'border-brand-accent/40 text-brand-accent bg-brand-accent/10'
-                  : 'border-[rgba(212,175,110,0.40)] text-brand-secondary/50 bg-brand-text/5',
+                  : 'border-brand-border text-brand-secondary/50 bg-brand-text/5',
               ].join(' ')}
             >
               {soundEnabled ? 'ON' : 'OFF'}

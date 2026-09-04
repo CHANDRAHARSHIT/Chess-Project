@@ -97,7 +97,7 @@ export const AvatarDropdown: React.FC = () => {
           aria-label="User options"
         >
           {/* User Meta header */}
-          <div className="px-4 py-2 border-b border-[rgba(212,175,110,0.40)] mb-1">
+          <div className="px-4 py-2 border-b border-brand-border mb-1">
             <p className="text-xs font-sans font-semibold text-brand-text truncate">
               {user.name || "User Profile"}
             </p>
@@ -159,14 +159,14 @@ export const AvatarDropdown: React.FC = () => {
                 'text-[10px] font-mono px-1.5 py-0.5 rounded-full border transition-colors duration-200',
                 soundEnabled
                   ? 'border-brand-accent/40 text-brand-accent bg-brand-accent/10'
-                  : 'border-[rgba(212,175,110,0.40)] text-brand-secondary/50 bg-brand-text/5',
+                  : 'border-brand-border text-brand-secondary/50 bg-brand-text/5',
               ].join(' ')}
             >
               {soundEnabled ? 'ON' : 'OFF'}
             </span>
           </button>
 
-          <div className="my-1.5 border-t border-brand-text/10" role="separator" />
+          <div className="my-1.5 border-t border-brand-border" role="separator" />
 
           {/* Sign Out option */}
           <button
