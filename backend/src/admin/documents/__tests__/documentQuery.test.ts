@@ -13,11 +13,14 @@ describe("parseListQuery", () => {
 
   it("falls back to createdAt desc for a sortBy outside the whitelist", () => {
     // sortBy reaches Prisma's orderBy, so an unrecognised value must never pass through.
-    assert.deepEqual(
-      { ...parseListQuery({ sortBy: "id; DROP TABLE", sortDir: "sideways" }) },
-      { limit: 20, offset: 0, sortBy: "createdAt", sortDir: "desc", search: undefined },
-    );
+    assert.deepEqual(parseListQuery({ sortBy: "id; DROP TABLE", sortDirection: "sideways" }), {
+      limit: 20,
+      offset: 0,
+      sortBy: "createdAt",
+      sortDirection: "desc",
+      searchTerm: undefined,
+    });
 
-    assert.equal(parseListQuery({ sortBy: "title", sortDir: "asc" }).sortBy, "title");
+    assert.equal(parseListQuery({ sortBy: "title", sortDirection: "asc" }).sortBy, "title");
   });
 });

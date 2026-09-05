@@ -1,52 +1,71 @@
 import type { Request, Response, NextFunction } from "express";
 import { DocumentService } from "./document.service.js";
 
+const HTTP_OK = 200;
+const HTTP_CREATED = 201;
+const HTTP_NO_CONTENT = 204;
+
+/**
+ * HTTP layer for /api/admin/documents.
+ *
+ * Deliberately thin: it reads the request, calls DocumentService, and shapes the
+ * response. All validation and business rules live in the service, and errors are
+ * passed to the shared error middleware rather than formatted here.
+ */
 export class DocumentController {
   /** GET /api/admin/documents */
-  static async list(req: Request, res: Response, next: NextFunction) {
+  static async listDocuments(req: Request, res: Response, next: NextFunction) {
     try {
-      const { items, total, limit, offset } = await DocumentService.list(req.query);
-      res.status(200).json({ status: "success", data: { documents: items, total, limit, offset } });
+      const { items, total, limit, offset } = await DocumentService.getDocuments(req.query);
+
+      res.status(HTTP_OK).json({
+        status: "success",
+        data: { documents: items, total, limit, offset },
+      });
     } catch (error) {
       next(error);
     }
   }
 
   /** POST /api/admin/documents */
-  static async create(req: Request, res: Response, next: NextFunction) {
+  static async createDocument(req: Request, res: Response, next: NextFunction) {
     try {
-      const document = await DocumentService.create(req.body ?? {}, req.adminUser!.id);
-      res.status(201).json({ status: "success", data: { document } });
+      const document = await DocumentService.createDocument(req.body ?? {}, req.adminUser!.id);
+
+      res.status(HTTP_CREATED).json({ status: "success", data: { document } });
     } catch (error) {
       next(error);
     }
   }
 
   /** GET /api/admin/documents/:id */
-  static async getById(req: Request, res: Response, next: NextFunction) {
+  static async getDocumentById(req: Request, res: Response, next: NextFunction) {
     try {
-      const document = await DocumentService.getById(req.params.id);
-      res.status(200).json({ status: "success", data: { document } });
+      const document = await DocumentService.getDocumentById(req.params.id);
+
+      res.status(HTTP_OK).json({ status: "success", data: { document } });
     } catch (error) {
       next(error);
     }
   }
 
   /** PATCH /api/admin/documents/:id */
-  static async update(req: Request, res: Response, next: NextFunction) {
+  static async updateDocument(req: Request, res: Response, next: NextFunction) {
     try {
-      const document = await DocumentService.update(req.params.id, req.body ?? {});
-      res.status(200).json({ status: "success", data: { document } });
+      const document = await DocumentService.updateDocument(req.params.id, req.body ?? {});
+
+      res.status(HTTP_OK).json({ status: "success", data: { document } });
     } catch (error) {
       next(error);
     }
   }
 
-  /** DELETE /api/admin/documents/:id */
-  static async remove(req: Request, res: Response, next: NextFunction) {
+  /** DELETE /api/admin/documents/:id — soft delete. */
+  static async deleteDocument(req: Request, res: Response, next: NextFunction) {
     try {
-      await DocumentService.remove(req.params.id, req.adminUser!.id);
-      res.status(204).send();
+      await DocumentService.deleteDocument(req.params.id, req.adminUser!.id);
+
+      res.status(HTTP_NO_CONTENT).send();
     } catch (error) {
       next(error);
     }

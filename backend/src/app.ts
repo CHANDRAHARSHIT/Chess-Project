@@ -41,9 +41,12 @@ const apiLimiter = rateLimit({
 
 // Sign-in is the one unauthenticated admin surface, so it is limited harder
 // than the global /api allowance.
+const ADMIN_AUTH_RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
+const ADMIN_AUTH_RATE_LIMIT_MAX_REQUESTS = 20;
+
 const adminAuthLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  limit: 20,
+  windowMs: ADMIN_AUTH_RATE_LIMIT_WINDOW_MS,
+  limit: ADMIN_AUTH_RATE_LIMIT_MAX_REQUESTS,
   standardHeaders: true,
   legacyHeaders: false,
   validate: { trustProxy: false },

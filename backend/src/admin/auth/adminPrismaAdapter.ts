@@ -12,7 +12,7 @@ import type { AdminUserModel } from "../../generated/prisma/models.js";
 
 // AdminUser has no emailVerified column: admins are provisioned by seed, and the
 // email is already verified by Google before sign-in is allowed.
-function toAdapterUser(admin: AdminUserModel): AdapterUser {
+function convertToAdapterUser(admin: AdminUserModel): AdapterUser {
   return {
     id: admin.id,
     email: admin.email,
@@ -22,6 +22,13 @@ function toAdapterUser(admin: AdminUserModel): AdapterUser {
   };
 }
 
+/**
+ * Builds the Auth.js adapter for the admin domain.
+ *
+ * Implements only the methods the Google + database-session flow reaches. The
+ * verification-token methods are omitted because they serve the email provider,
+ * which the admin portal does not use.
+ */
 export function adminPrismaAdapter(): Adapter {
   return {
     async createUser() {
@@ -30,12 +37,12 @@ export function adminPrismaAdapter(): Adapter {
 
     async getUser(id) {
       const admin = await prisma.adminUser.findUnique({ where: { id } });
-      return admin && toAdapterUser(admin);
+      return admin && convertToAdapterUser(admin);
     },
 
     async getUserByEmail(email) {
       const admin = await prisma.adminUser.findUnique({ where: { email } });
-      return admin && toAdapterUser(admin);
+      return admin && convertToAdapterUser(admin);
     },
 
     async getUserByAccount({ provider, providerAccountId }) {
@@ -43,7 +50,7 @@ export function adminPrismaAdapter(): Adapter {
         where: { provider_providerAccountId: { provider, providerAccountId } },
         include: { adminUser: true },
       });
-      return account && toAdapterUser(account.adminUser);
+      return account && convertToAdapterUser(account.adminUser);
     },
 
     async updateUser({ id, name, image }) {
@@ -51,7 +58,7 @@ export function adminPrismaAdapter(): Adapter {
         where: { id },
         data: { name, avatarUrl: image },
       });
-      return toAdapterUser(admin);
+      return convertToAdapterUser(admin);
     },
 
     // Columns are listed rather than spread: AdapterAccount carries provider-specific
@@ -89,7 +96,7 @@ export function adminPrismaAdapter(): Adapter {
       if (!session) return null;
       return {
         session: { sessionToken: session.sessionToken, userId: session.adminUserId, expires: session.expires },
-        user: toAdapterUser(session.adminUser),
+        user: convertToAdapterUser(session.adminUser),
       };
     },
 

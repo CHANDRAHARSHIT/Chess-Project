@@ -69,8 +69,10 @@ export const env = {
 
   // Admin portal. Shorter-lived than the 30-day user-facing session.
   ADMIN_SESSION_MAX_AGE_SECONDS: (() => {
+    const DEFAULT_ADMIN_SESSION_MAX_AGE_SECONDS = 8 * 60 * 60;
     const parsed = Number(process.env.ADMIN_SESSION_MAX_AGE_SECONDS);
-    return Number.isFinite(parsed) && parsed > 0 ? parsed : 8 * 60 * 60;
+
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : DEFAULT_ADMIN_SESSION_MAX_AGE_SECONDS;
   })(),
 
   // Rollbar error monitoring

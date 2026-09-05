@@ -19,7 +19,8 @@ const prisma = new PrismaClient({ adapter });
 
 const SUPER_ADMIN = { email: "orandsw@gmail.com", name: "Jimmy Saha" };
 
-type NavSeed = {
+/** One seeded navigation item. `parentKey` refers to another item's `key`. */
+type NavItemSeed = {
   key: string;
   label: string;
   path?: string;
@@ -30,62 +31,91 @@ type NavSeed = {
   isUniversal?: boolean;
 };
 
+// Navigation is data: adding a link means adding an entry here, never new logic.
 // Parents precede their children — parentId is resolved from keys seeded earlier.
-const NAV_ITEMS: NavSeed[] = [
+const NAV_ITEMS: NavItemSeed[] = [
   { key: "home", label: "Home", path: "/admin/home", icon: "Home", sortOrder: 0, isUniversal: true },
   { key: "acs", label: "ACS", sortOrder: 10 },
   { key: "acs.documents", label: "Documentation", path: "/admin/acs/documents", icon: "FileText", parentKey: "acs", sortOrder: 11 },
   { key: "acs.configuration", label: "Configuration", path: "/admin/acs/configuration", icon: "Settings", parentKey: "acs", sortOrder: 12, isDisabled: true },
 ];
 
-async function main() {
+/** Creates or refreshes the super admin, and returns the row. */
+async function createSuperAdmin() {
   const admin = await prisma.adminUser.upsert({
     where: { email: SUPER_ADMIN.email },
     update: { name: SUPER_ADMIN.name, role: "SUPER_ADMIN", isActive: true },
     create: { email: SUPER_ADMIN.email, name: SUPER_ADMIN.name, role: "SUPER_ADMIN" },
   });
+
   console.log(`Super admin: ${admin.email} (${admin.id})`);
 
-  const idsByKey = new Map<string, string>();
+  return admin;
+}
 
-  for (const item of NAV_ITEMS) {
-    const parentId = item.parentKey ? idsByKey.get(item.parentKey) : null;
-    if (item.parentKey && !parentId) {
-      throw new Error(`Nav item "${item.key}" lists parent "${item.parentKey}", which is not seeded before it.`);
+/** Creates or refreshes every nav item, and returns their ids keyed by `key`. */
+async function createNavItems() {
+  const navItemIdsByKey = new Map<string, string>();
+
+  for (const seed of NAV_ITEMS) {
+    const parentId = seed.parentKey ? navItemIdsByKey.get(seed.parentKey) : null;
+
+    if (seed.parentKey && !parentId) {
+      throw new Error(
+        `Nav item "${seed.key}" lists parent "${seed.parentKey}", which is not seeded before it.`,
+      );
     }
 
     const fields = {
-      label: item.label,
-      path: item.path ?? null,
-      icon: item.icon ?? null,
+      label: seed.label,
+      path: seed.path ?? null,
+      icon: seed.icon ?? null,
       parentId: parentId ?? null,
-      sortOrder: item.sortOrder,
-      isDisabled: item.isDisabled ?? false,
-      isUniversal: item.isUniversal ?? false,
+      sortOrder: seed.sortOrder,
+      isDisabled: seed.isDisabled ?? false,
+      isUniversal: seed.isUniversal ?? false,
     };
 
     const navItem = await prisma.adminNavItem.upsert({
-      where: { key: item.key },
+      where: { key: seed.key },
       update: fields,
-      create: { key: item.key, ...fields },
+      create: { key: seed.key, ...fields },
     });
-    idsByKey.set(item.key, navItem.id);
-    console.log(`Nav item: ${item.key}`);
+
+    navItemIdsByKey.set(seed.key, navItem.id);
+    console.log(`Nav item: ${seed.key}`);
   }
 
-  // Universal items reach every active admin without a grant row, so granting one
-  // would make Home revocable by deleting it.
-  const grantable = NAV_ITEMS.filter((item) => !item.isUniversal);
+  return navItemIdsByKey;
+}
 
-  for (const item of grantable) {
-    const navItemId = idsByKey.get(item.key)!;
+/**
+ * Grants every non-universal nav item to the admin.
+ *
+ * Universal items reach all active admins without a grant row, so granting one
+ * would make Home revocable by deleting that row.
+ */
+async function grantNavItemsToAdmin(adminUserId: string, navItemIdsByKey: Map<string, string>) {
+  const grantableItems = NAV_ITEMS.filter((seed) => !seed.isUniversal);
+
+  for (const seed of grantableItems) {
+    const navItemId = navItemIdsByKey.get(seed.key)!;
+
     await prisma.adminUserNavItem.upsert({
-      where: { adminUserId_navItemId: { adminUserId: admin.id, navItemId } },
+      where: { adminUserId_navItemId: { adminUserId, navItemId } },
       update: {},
-      create: { adminUserId: admin.id, navItemId },
+      create: { adminUserId, navItemId },
     });
-    console.log(`Granted: ${item.key} -> ${admin.email}`);
+
+    console.log(`Granted: ${seed.key}`);
   }
+}
+
+async function main() {
+  const admin = await createSuperAdmin();
+  const navItemIdsByKey = await createNavItems();
+
+  await grantNavItemsToAdmin(admin.id, navItemIdsByKey);
 }
 
 main()
