@@ -20,43 +20,65 @@ type DocumentList = {
 
 const PAGE_SIZE = 20;
 
+/** One status badge's presentation. Adding a status is an entry here, not a branch. */
+type StatusBadgeDefinition = {
+  label: string;
+  badgeClassName: string;
+  dotClassName: string;
+};
+
+const STATUS_BADGES: Record<string, StatusBadgeDefinition> = {
+  PUBLISHED: {
+    label: "Published",
+    badgeClassName: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30",
+    dotClassName: "bg-emerald-500 dark:bg-emerald-400",
+  },
+  ACTIVE: {
+    label: "Published",
+    badgeClassName: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30",
+    dotClassName: "bg-emerald-500 dark:bg-emerald-400",
+  },
+  DRAFT: {
+    label: "Draft",
+    badgeClassName: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30",
+    dotClassName: "bg-amber-500 dark:bg-amber-400",
+  },
+  PENDING: {
+    label: "Draft",
+    badgeClassName: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30",
+    dotClassName: "bg-amber-500 dark:bg-amber-400",
+  },
+  ARCHIVED: {
+    label: "Archived",
+    badgeClassName: "bg-zinc-500/10 text-zinc-600 dark:text-zinc-400 border-zinc-500/30",
+    dotClassName: "bg-zinc-400",
+  },
+};
+
+const BADGE_BASE_CLASS_NAME =
+  "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold border";
+
 function formatDate(value: string) {
   return new Date(value).toLocaleDateString();
 }
 
+/** Renders a known status as a badge, or an unknown one as plain text. */
 function renderStatusBadge(status: string) {
-  const s = status.toUpperCase();
-  if (s === "PUBLISHED" || s === "ACTIVE") {
-    return (
-      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
-        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400 shrink-0" />
-        Published
-      </span>
-    );
+  const badge = STATUS_BADGES[status.toUpperCase()];
+
+  if (!badge) {
+    return <span className="text-xs font-semibold text-brand-secondary">{status}</span>;
   }
-  if (s === "DRAFT" || s === "PENDING") {
-    return (
-      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30">
-        <span className="w-1.5 h-1.5 rounded-full bg-amber-500 dark:bg-amber-400 shrink-0" />
-        Draft
-      </span>
-    );
-  }
-  if (s === "ARCHIVED") {
-    return (
-      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-zinc-500/10 text-zinc-600 dark:text-zinc-400 border border-zinc-500/30">
-        <span className="w-1.5 h-1.5 rounded-full bg-zinc-400 shrink-0" />
-        Archived
-      </span>
-    );
-  }
+
   return (
-    <span className="text-xs font-semibold text-brand-secondary">
-      {status}
+    <span className={`${BADGE_BASE_CLASS_NAME} ${badge.badgeClassName}`}>
+      <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${badge.dotClassName}`} />
+      {badge.label}
     </span>
   );
 }
 
+/** Renders an author as an initial avatar plus their name, or an em dash when unset. */
 function renderAuthorCell(author: { name: string | null; email: string } | null) {
   if (!author) {
     return <span className="text-brand-secondary text-sm">—</span>;
