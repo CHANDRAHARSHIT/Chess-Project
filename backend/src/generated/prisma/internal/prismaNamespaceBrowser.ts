@@ -76,7 +76,14 @@ export const ModelName = {
   PlayerRating: 'PlayerRating',
   PathwayProgress: 'PathwayProgress',
   AssessmentTemplate: 'AssessmentTemplate',
-  AssessmentAttempt: 'AssessmentAttempt'
+  AssessmentAttempt: 'AssessmentAttempt',
+  AdminUser: 'AdminUser',
+  AdminAccount: 'AdminAccount',
+  AdminSession: 'AdminSession',
+  AdminVerificationToken: 'AdminVerificationToken',
+  AdminNavItem: 'AdminNavItem',
+  AdminUserNavItem: 'AdminUserNavItem',
+  AdminDocument: 'AdminDocument'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -508,6 +515,102 @@ export const AssessmentAttemptScalarFieldEnum = {
 } as const
 
 export type AssessmentAttemptScalarFieldEnum = (typeof AssessmentAttemptScalarFieldEnum)[keyof typeof AssessmentAttemptScalarFieldEnum]
+
+
+export const AdminUserScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  name: 'name',
+  avatarUrl: 'avatarUrl',
+  role: 'role',
+  isActive: 'isActive',
+  lastLoginAt: 'lastLoginAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AdminUserScalarFieldEnum = (typeof AdminUserScalarFieldEnum)[keyof typeof AdminUserScalarFieldEnum]
+
+
+export const AdminAccountScalarFieldEnum = {
+  id: 'id',
+  adminUserId: 'adminUserId',
+  type: 'type',
+  provider: 'provider',
+  providerAccountId: 'providerAccountId',
+  refresh_token: 'refresh_token',
+  access_token: 'access_token',
+  expires_at: 'expires_at',
+  token_type: 'token_type',
+  scope: 'scope',
+  id_token: 'id_token',
+  session_state: 'session_state'
+} as const
+
+export type AdminAccountScalarFieldEnum = (typeof AdminAccountScalarFieldEnum)[keyof typeof AdminAccountScalarFieldEnum]
+
+
+export const AdminSessionScalarFieldEnum = {
+  id: 'id',
+  sessionToken: 'sessionToken',
+  adminUserId: 'adminUserId',
+  expires: 'expires'
+} as const
+
+export type AdminSessionScalarFieldEnum = (typeof AdminSessionScalarFieldEnum)[keyof typeof AdminSessionScalarFieldEnum]
+
+
+export const AdminVerificationTokenScalarFieldEnum = {
+  identifier: 'identifier',
+  token: 'token',
+  expires: 'expires'
+} as const
+
+export type AdminVerificationTokenScalarFieldEnum = (typeof AdminVerificationTokenScalarFieldEnum)[keyof typeof AdminVerificationTokenScalarFieldEnum]
+
+
+export const AdminNavItemScalarFieldEnum = {
+  id: 'id',
+  key: 'key',
+  label: 'label',
+  path: 'path',
+  icon: 'icon',
+  parentId: 'parentId',
+  sortOrder: 'sortOrder',
+  isDisabled: 'isDisabled',
+  isUniversal: 'isUniversal',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AdminNavItemScalarFieldEnum = (typeof AdminNavItemScalarFieldEnum)[keyof typeof AdminNavItemScalarFieldEnum]
+
+
+export const AdminUserNavItemScalarFieldEnum = {
+  id: 'id',
+  adminUserId: 'adminUserId',
+  navItemId: 'navItemId',
+  createdAt: 'createdAt'
+} as const
+
+export type AdminUserNavItemScalarFieldEnum = (typeof AdminUserNavItemScalarFieldEnum)[keyof typeof AdminUserNavItemScalarFieldEnum]
+
+
+export const AdminDocumentScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  slug: 'slug',
+  description: 'description',
+  content: 'content',
+  status: 'status',
+  authorId: 'authorId',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AdminDocumentScalarFieldEnum = (typeof AdminDocumentScalarFieldEnum)[keyof typeof AdminDocumentScalarFieldEnum]
 
 
 export const SortOrder = {

@@ -100,3 +100,21 @@ export const AssessmentResult = {
 } as const
 
 export type AssessmentResult = (typeof AssessmentResult)[keyof typeof AssessmentResult]
+
+
+export const AdminRole = {
+  SUPER_ADMIN: 'SUPER_ADMIN',
+  ADMIN: 'ADMIN',
+  VIEWER: 'VIEWER'
+} as const
+
+export type AdminRole = (typeof AdminRole)[keyof typeof AdminRole]
+
+
+export const DocumentStatus = {
+  DRAFT: 'DRAFT',
+  PUBLISHED: 'PUBLISHED',
+  ARCHIVED: 'ARCHIVED'
+} as const
+
+export type DocumentStatus = (typeof DocumentStatus)[keyof typeof DocumentStatus]

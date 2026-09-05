@@ -155,3 +155,38 @@ export type AssessmentTemplate = Prisma.AssessmentTemplateModel
  * 
  */
 export type AssessmentAttempt = Prisma.AssessmentAttemptModel
+/**
+ * Model AdminUser
+ * 
+ */
+export type AdminUser = Prisma.AdminUserModel
+/**
+ * Model AdminAccount
+ * 
+ */
+export type AdminAccount = Prisma.AdminAccountModel
+/**
+ * Model AdminSession
+ * 
+ */
+export type AdminSession = Prisma.AdminSessionModel
+/**
+ * Model AdminVerificationToken
+ * 
+ */
+export type AdminVerificationToken = Prisma.AdminVerificationTokenModel
+/**
+ * Model AdminNavItem
+ * 
+ */
+export type AdminNavItem = Prisma.AdminNavItemModel
+/**
+ * Model AdminUserNavItem
+ * 
+ */
+export type AdminUserNavItem = Prisma.AdminUserNavItemModel
+/**
+ * Model AdminDocument
+ * 
+ */
+export type AdminDocument = Prisma.AdminDocumentModel
