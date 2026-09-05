@@ -459,12 +459,12 @@ export default function OpeningsPage() {
                       Incorrect move — try again
                     </span>
                   ) : status === "opponent" ? (
-                    <span className="font-mono uppercase tracking-wider text-xs font-bold text-brand-secondary flex items-center gap-1.5 bg-brand-text/5 border border-white/10 px-3 py-1 rounded-full">
+                    <span className="font-mono uppercase tracking-wider text-xs font-bold text-brand-secondary flex items-center gap-1.5 bg-brand-text/5 border border-brand-border px-3 py-1 rounded-full">
                       <span className="w-2 h-2 rounded-full bg-brand-secondary animate-pulse" />
                       Opponent thinking…
                     </span>
                   ) : status === "idle" ? (
-                    <span className="font-mono uppercase tracking-wider text-xs font-bold text-brand-secondary/50 flex items-center gap-1.5 bg-brand-text/5 border border-white/5 px-3 py-1 rounded-full">
+                    <span className="font-mono uppercase tracking-wider text-xs font-bold text-brand-secondary/50 flex items-center gap-1.5 bg-brand-text/5 border border-brand-border px-3 py-1 rounded-full">
                       Choose an opening to begin
                     </span>
                   ) : (

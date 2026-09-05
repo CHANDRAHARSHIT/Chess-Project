@@ -28,7 +28,7 @@ export default function TimedSectionWarningModal({
       aria-modal="true"
       aria-labelledby="timed-section-warning-title"
     >
-      <div className="w-full max-w-lg bg-brand-surface rounded-3xl border border-brand-text/15 p-6 sm:p-8 space-y-6 shadow-2xl relative overflow-hidden">
+      <div className="w-full max-w-lg bg-brand-surface rounded-3xl border border-brand-border p-6 sm:p-8 space-y-6 relative overflow-hidden">
         <div className="absolute -top-16 -right-16 w-48 h-48 bg-brand-accent/10 blur-[80px] rounded-full pointer-events-none" />
 
         <div className="flex items-start gap-3">

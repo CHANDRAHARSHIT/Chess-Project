@@ -73,7 +73,7 @@ export function SideClock({ remainingMs, lastMoveAt, isLive, label }: SideClockP
           ? "clock-plate--flagged border-rose-500 bg-rose-500/20 text-rose-400 font-bold"
           : isLive
             ? "bg-brand-accent/15 border-brand-accent/50 text-brand-accent"
-            : "bg-brand-surface/60 border-white/10 text-brand-secondary/80"
+            : "bg-brand-surface/60 border-brand-border text-brand-secondary/80"
       }`}
     >
       <span

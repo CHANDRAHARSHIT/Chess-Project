@@ -42,9 +42,9 @@ export function MaiaMoveLog({ sanHistory }: MaiaMoveLogProps) {
   const totalPlies = sanHistory.length;
 
   return (
-    <div className="flex flex-col h-full max-h-full min-h-0 bg-brand-surface/70 border border-white/10 rounded-xl overflow-hidden backdrop-blur-md">
+    <div className="flex flex-col h-full max-h-full min-h-0 bg-brand-surface/70 border border-brand-border rounded-xl overflow-hidden backdrop-blur-md">
       {/* Header */}
-      <div className="px-3.5 py-2 border-b border-white/10 bg-brand-surface/90 flex items-center justify-between shrink-0">
+      <div className="px-3.5 py-2 border-b border-brand-border bg-brand-surface/90 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-1.5">
           <ListOrdered className="w-3.5 h-3.5 text-brand-accent" />
           <h3 className="font-display font-bold text-xs text-brand-text tracking-wide uppercase">

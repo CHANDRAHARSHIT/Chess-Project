@@ -32,7 +32,7 @@ export function GameActionBar({ canAct, onResign }: GameActionBarProps) {
   };
 
   return (
-    <div className="grid grid-cols-2 gap-2.5 p-2 h-[64px] items-center bg-brand-surface/60 border border-white/10 rounded-2xl backdrop-blur-xl">
+    <div className="grid grid-cols-2 gap-2.5 p-2 h-[64px] items-center bg-brand-surface/60 border border-brand-border rounded-2xl backdrop-blur-xl">
       <button
         onClick={handleResignClick}
         onBlur={() => setConfirming(false)}
@@ -40,7 +40,7 @@ export function GameActionBar({ canAct, onResign }: GameActionBarProps) {
         className={`flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-mono text-[11px] uppercase tracking-wider font-bold transition-all duration-[var(--dur-quick)] disabled:opacity-40 disabled:cursor-not-allowed min-h-[44px] cursor-pointer ${
           confirming
             ? "bg-rose-500/20 border border-rose-500/60 text-rose-300"
-            : "border border-white/10 bg-brand-bg/40 text-brand-secondary hover:text-brand-text hover:border-brand-accent/40 hover:bg-brand-surface/50"
+            : "border border-brand-border bg-brand-bg/40 text-brand-secondary hover:text-brand-text hover:border-brand-accent/40 hover:bg-brand-surface/50"
         }`}
         title={confirming ? "Click again to confirm resignation" : "Resign this game"}
       >
@@ -52,7 +52,7 @@ export function GameActionBar({ canAct, onResign }: GameActionBarProps) {
         disabled
         aria-disabled="true"
         aria-describedby="draw-offer-reason"
-        className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-mono text-[11px] uppercase tracking-wider font-semibold border border-white/5 bg-brand-bg/20 text-brand-secondary/40 opacity-40 cursor-not-allowed min-h-[44px]"
+        className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-mono text-[11px] uppercase tracking-wider font-semibold border border-brand-border bg-brand-bg/20 text-brand-secondary/40 opacity-40 cursor-not-allowed min-h-[44px]"
         title="Draw offers aren't available yet"
       >
         <Handshake className="w-4 h-4" />

@@ -228,7 +228,7 @@ export default function CompleteLaterPage() {
                 onDragEnd={handleDragEnd}
                 onDrop={handleDragEnd}
                 className={`group flex items-center gap-2 sm:gap-4 p-2 sm:p-3 rounded-xl transition-colors cursor-pointer border border-transparent relative
-                  ${draggedIndex === index ? 'opacity-40 bg-white/5 border-white/20' : 'hover:bg-white/5 hover:border-white/10'}
+                  ${draggedIndex === index ? 'opacity-40 bg-brand-accent/10 border-brand-accent/30' : 'hover:bg-brand-surface/60 hover:border-brand-border'}
                 `}
               >
                 {/* Drag Handle & Index */}

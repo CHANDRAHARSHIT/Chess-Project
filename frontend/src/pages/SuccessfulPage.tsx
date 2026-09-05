@@ -353,14 +353,14 @@ export default function SuccessfulPage() {
 
           <button
             onClick={() => navigate("/puzzles")}
-            className="w-full sm:w-auto px-6 py-3.5 rounded-xl font-mono text-xs uppercase tracking-widest font-semibold bg-brand-text/5 border border-white/10 hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text transition-all duration-300 cursor-pointer active:scale-[0.99]"
+            className="w-full sm:w-auto px-6 py-3.5 rounded-xl font-mono text-xs uppercase tracking-widest font-semibold bg-brand-text/5 border border-brand-border hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text transition-all duration-300 cursor-pointer active:scale-[0.99]"
           >
             Start Playing
           </button>
 
           <button
             onClick={() => navigate("/profile")}
-            className="w-full sm:w-auto px-6 py-3.5 rounded-xl font-mono text-xs uppercase tracking-widest font-semibold bg-brand-text/5 border border-white/10 hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text transition-all duration-300 cursor-pointer active:scale-[0.99]"
+            className="w-full sm:w-auto px-6 py-3.5 rounded-xl font-mono text-xs uppercase tracking-widest font-semibold bg-brand-text/5 border border-brand-border hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text transition-all duration-300 cursor-pointer active:scale-[0.99]"
           >
             View Membership
           </button>

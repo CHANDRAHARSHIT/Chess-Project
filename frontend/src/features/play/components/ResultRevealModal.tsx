@@ -135,7 +135,7 @@ export function ResultRevealModal({ result, myUserId, onFindAnother, onBackToLob
       aria-modal="true"
       aria-labelledby="result-title"
       aria-describedby="result-reason"
-      className="@container absolute inset-0 z-30 bg-brand-bg/95 backdrop-blur-xl flex flex-col items-center justify-center gap-4 p-4 text-center rounded-2xl overflow-y-auto min-h-0 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+      className="@container absolute inset-0 z-30 bg-brand-bg/95 border border-brand-border backdrop-blur-xl flex flex-col items-center justify-center gap-4 p-4 text-center rounded-2xl overflow-y-auto min-h-0 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
     >
       {/* Top Section: Outcome Pill & Signature Emblem Ring */}
       <div className="flex flex-col items-center gap-2 w-full max-w-sm">
@@ -168,7 +168,7 @@ export function ResultRevealModal({ result, myUserId, onFindAnother, onBackToLob
 
       {/* Middle Section: Structured 3-Card Stat Grid — always one row, never stacked */}
       <div className="grid grid-cols-3 gap-1.5 w-full max-w-sm">
-        <div className="flex flex-col items-center justify-center px-1.5 py-2 rounded-xl bg-brand-surface/80 border border-white/10 text-center min-w-0">
+        <div className="flex flex-col items-center justify-center px-1.5 py-2 rounded-xl bg-brand-surface/80 border border-brand-border text-center min-w-0">
           <span className="font-mono text-[8px] uppercase tracking-wider text-brand-secondary/80 font-bold">
             Moves
           </span>
@@ -177,7 +177,7 @@ export function ResultRevealModal({ result, myUserId, onFindAnother, onBackToLob
           </span>
         </div>
 
-        <div className="flex flex-col items-center justify-center px-1.5 py-2 rounded-xl bg-brand-surface/80 border border-white/10 text-center min-w-0">
+        <div className="flex flex-col items-center justify-center px-1.5 py-2 rounded-xl bg-brand-surface/80 border border-brand-border text-center min-w-0">
           <span className="font-mono text-[8px] uppercase tracking-wider text-brand-secondary/80 font-bold">
             Duration
           </span>
@@ -186,7 +186,7 @@ export function ResultRevealModal({ result, myUserId, onFindAnother, onBackToLob
           </span>
         </div>
 
-        <div className="flex flex-col items-center justify-center px-1.5 py-2 rounded-xl bg-brand-surface/80 border border-white/10 text-center min-w-0">
+        <div className="flex flex-col items-center justify-center px-1.5 py-2 rounded-xl bg-brand-surface/80 border border-brand-border text-center min-w-0">
           <span className="font-mono text-[8px] uppercase tracking-wider text-brand-secondary/80 font-bold">
             Mode
           </span>
@@ -209,7 +209,7 @@ export function ResultRevealModal({ result, myUserId, onFindAnother, onBackToLob
 
         <button
           onClick={onBackToLobby}
-          className="flex-1 px-3 py-2.5 rounded-xl font-mono text-[10px] uppercase tracking-widest font-bold border border-white/10 bg-brand-surface/80 text-brand-text hover:bg-brand-surface focus-visible:ring-2 focus-visible:ring-brand-accent focus-visible:ring-offset-2 outline-none cursor-pointer flex items-center justify-center gap-1.5 transition-colors"
+          className="flex-1 px-3 py-2.5 rounded-xl font-mono text-[10px] uppercase tracking-widest font-bold border border-brand-border bg-brand-surface/80 text-brand-text hover:bg-brand-surface focus-visible:ring-2 focus-visible:ring-brand-accent focus-visible:ring-offset-2 outline-none cursor-pointer flex items-center justify-center gap-1.5 transition-colors"
         >
           <span>Return to Lobby</span>
         </button>

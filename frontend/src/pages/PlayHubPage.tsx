@@ -94,7 +94,7 @@ export default function PlayHubPage() {
   return (
     <div className="min-h-[calc(100dvh-4rem)] flex flex-col bg-gradient-to-b from-brand-bg via-brand-bg to-brand-surface/20">
       {/* ── Tab Bar Chrome ── */}
-      <div className="sticky top-0 z-10 px-2.5 sm:px-6 lg:px-8 pt-4 pb-3 border-b border-white/5 bg-brand-bg/80 backdrop-blur-xl">
+      <div className="sticky top-0 z-10 px-2.5 sm:px-6 lg:px-8 pt-4 pb-3 border-b border-brand-border bg-brand-bg/80 backdrop-blur-xl">
         <PlayTabBar
           activeTab={activeTab}
           onTabChange={handleTabChange}

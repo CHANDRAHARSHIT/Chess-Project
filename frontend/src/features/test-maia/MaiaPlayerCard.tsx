@@ -45,7 +45,7 @@ export function MaiaPlayerCard({
       className={`flex items-center justify-between gap-2.5 rounded-xl border px-3 py-1.5 h-[48px] backdrop-blur-md transition-all duration-200 ${
         isTurn
           ? "bg-brand-surface/90 border-brand-accent/50 ring-1 ring-brand-accent/30"
-          : "bg-brand-surface/50 border-white/10 opacity-90"
+          : "bg-brand-surface/50 border-brand-border opacity-90"
       }`}
     >
       {/* Left: Avatar & Identity */}
@@ -56,7 +56,7 @@ export function MaiaPlayerCard({
             className={`w-7 h-7 rounded-lg flex items-center justify-center border overflow-hidden transition-all ${
               isBot
                 ? "bg-brand-accent/15 border-brand-accent/30 text-brand-accent"
-                : "bg-brand-bg/80 border-white/15 text-brand-text"
+                : "bg-brand-bg/80 border-brand-border text-brand-text"
             }`}
           >
             {isBot ? (
@@ -100,7 +100,7 @@ export function MaiaPlayerCard({
             )}
 
             {!isBot && (
-              <span className="shrink-0 px-1.5 py-0.2 rounded font-mono text-[9px] text-brand-secondary bg-white/5 border border-white/10 uppercase">
+              <span className="shrink-0 px-1.5 py-0.2 rounded font-mono text-[9px] text-brand-secondary bg-brand-text/5 border border-brand-border uppercase">
                 {isWhite ? "White" : "Black"}
               </span>
             )}

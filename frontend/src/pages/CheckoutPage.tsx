@@ -215,7 +215,7 @@ export default function CheckoutPage() {
 
               <button
                 onClick={() => handleOpenAuth("register")}
-                className="w-full py-3 px-6 rounded-xl font-mono text-xs uppercase tracking-widest font-semibold bg-brand-text/5 border border-white/10 hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text transition-all duration-300 cursor-pointer active:scale-[0.99]"
+                className="w-full py-3 px-6 rounded-xl font-mono text-xs uppercase tracking-widest font-semibold bg-brand-text/5 border border-brand-border hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text transition-all duration-300 cursor-pointer active:scale-[0.99]"
               >
                 Create Account
               </button>

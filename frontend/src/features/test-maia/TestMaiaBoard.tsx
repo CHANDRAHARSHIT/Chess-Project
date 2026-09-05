@@ -367,7 +367,7 @@ export default function TestMaiaBoard() {
 
           {/* Square Chessboard Container (No rounded corners) */}
           <div
-            className="relative w-full aspect-square border border-white/10 bg-brand-surface/70 backdrop-blur-md p-1.5 overflow-hidden"
+            className="relative w-full aspect-square border border-brand-border bg-brand-surface/70 backdrop-blur-md p-1.5 overflow-hidden"
             style={{ borderRadius: "0px" }}
           >
             <div className="relative w-full h-full overflow-hidden" style={{ borderRadius: "0px" }}>
@@ -430,7 +430,7 @@ export default function TestMaiaBoard() {
         {/* ── Right Column: Studio Console (Strength + Actions + Move Log + Status) ── */}
         <div className="w-full max-w-[420px] lg:max-w-none lg:flex-1 lg:h-[552px] flex flex-col gap-2 min-h-0 overflow-hidden">
           {/* 1. Opponent Strength Chip Bar */}
-          <div className="p-2.5 rounded-xl bg-brand-surface/70 border border-white/10 backdrop-blur-md">
+          <div className="p-2.5 rounded-xl bg-brand-surface/70 border border-brand-border backdrop-blur-md">
             <div className="flex items-center justify-between mb-1.5">
               <span className="text-[10px] font-mono font-bold tracking-wider text-brand-secondary uppercase">
                 Opponent Strength
@@ -452,7 +452,7 @@ export default function TestMaiaBoard() {
                     className={`py-1 px-0.5 rounded text-center transition-all duration-150 border cursor-pointer ${
                       active
                         ? "bg-brand-accent text-black border-brand-accent font-bold"
-                        : "border-white/5 bg-brand-surface/40 text-brand-secondary hover:text-brand-text hover:bg-white/5"
+                        : "border-brand-border bg-brand-surface/40 text-brand-secondary hover:text-brand-text hover:bg-brand-surface/80"
                     }`}
                   >
                     <span className="block text-[10px] font-mono leading-tight">{s.short}</span>
@@ -473,7 +473,7 @@ export default function TestMaiaBoard() {
           <div className="grid grid-cols-4 gap-1.5">
             <button
               onClick={() => resetGame()}
-              className="flex items-center justify-center gap-1 py-2 px-2 rounded-xl border border-white/10 bg-brand-surface/70 text-brand-text hover:border-brand-accent/40 hover:bg-brand-surface text-xs font-mono font-semibold transition-all active:scale-95 cursor-pointer"
+              className="flex items-center justify-center gap-1 py-2 px-2 rounded-xl border border-brand-border bg-brand-surface/70 text-brand-text hover:border-brand-accent/40 hover:bg-brand-surface text-xs font-mono font-semibold transition-all active:scale-95 cursor-pointer"
               title="Start a new game"
             >
               <RotateCcw className="w-3.5 h-3.5 text-brand-accent" />
@@ -483,7 +483,7 @@ export default function TestMaiaBoard() {
             <button
               onClick={handleUndo}
               disabled={!canUndo}
-              className="flex items-center justify-center gap-1 py-2 px-2 rounded-xl border border-white/10 bg-brand-surface/70 text-brand-text hover:border-brand-accent/40 hover:bg-brand-surface text-xs font-mono font-semibold transition-all active:scale-95 disabled:opacity-35 disabled:pointer-events-none cursor-pointer"
+              className="flex items-center justify-center gap-1 py-2 px-2 rounded-xl border border-brand-border bg-brand-surface/70 text-brand-text hover:border-brand-accent/40 hover:bg-brand-surface text-xs font-mono font-semibold transition-all active:scale-95 disabled:opacity-35 disabled:pointer-events-none cursor-pointer"
               title="Take back turn"
             >
               <CornerUpLeft className="w-3.5 h-3.5 text-amber-400" />
@@ -492,7 +492,7 @@ export default function TestMaiaBoard() {
 
             <button
               onClick={handleSwitchSide}
-              className="flex items-center justify-center gap-1 py-2 px-2 rounded-xl border border-white/10 bg-brand-surface/70 text-brand-text hover:border-brand-accent/40 hover:bg-brand-surface text-xs font-mono font-semibold transition-all active:scale-95 cursor-pointer"
+              className="flex items-center justify-center gap-1 py-2 px-2 rounded-xl border border-brand-border bg-brand-surface/70 text-brand-text hover:border-brand-accent/40 hover:bg-brand-surface text-xs font-mono font-semibold transition-all active:scale-95 cursor-pointer"
               title={`Currently playing as ${playerColor === "w" ? "White" : "Black"}`}
             >
               <ArrowUpDown className="w-3.5 h-3.5 text-sky-400" />
@@ -501,7 +501,7 @@ export default function TestMaiaBoard() {
 
             <button
               onClick={() => setShowInfoModal(true)}
-              className="flex items-center justify-center gap-1 py-2 px-2 rounded-xl border border-white/10 bg-brand-surface/70 text-brand-secondary hover:text-brand-text hover:border-brand-accent/40 hover:bg-brand-surface text-xs font-mono font-semibold transition-all active:scale-95 cursor-pointer"
+              className="flex items-center justify-center gap-1 py-2 px-2 rounded-xl border border-brand-border bg-brand-surface/70 text-brand-secondary hover:text-brand-text hover:border-brand-accent/40 hover:bg-brand-surface text-xs font-mono font-semibold transition-all active:scale-95 cursor-pointer"
               title="About Maia Model"
             >
               <Info className="w-3.5 h-3.5 text-brand-accent" />
@@ -515,7 +515,7 @@ export default function TestMaiaBoard() {
           </div>
 
           {/* 4. Live Neural Status Footer */}
-          <div className="p-2.5 rounded-xl bg-brand-surface/70 border border-white/10 backdrop-blur-md flex items-center justify-between text-xs font-mono shrink-0">
+          <div className="p-2.5 rounded-xl bg-brand-surface/70 border border-brand-border backdrop-blur-md flex items-center justify-between text-xs font-mono shrink-0">
             <div className="flex items-center gap-2 min-w-0">
               <span
                 className={`w-2 h-2 rounded-full shrink-0 ${
@@ -555,7 +555,7 @@ export default function TestMaiaBoard() {
           aria-modal="true"
           className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in"
         >
-          <div className="max-w-md w-full rounded-2xl border border-white/15 bg-brand-surface/95 backdrop-blur-xl p-5 space-y-3.5">
+          <div className="max-w-md w-full rounded-2xl border border-brand-border bg-brand-surface/95 backdrop-blur-xl p-5 space-y-3.5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-brand-accent">
                 <Brain className="w-5 h-5" />
@@ -575,7 +575,7 @@ export default function TestMaiaBoard() {
               games from Lichess.
             </p>
 
-            <div className="p-3 rounded-xl bg-brand-bg/60 border border-white/10 space-y-1 text-xs">
+            <div className="p-3 rounded-xl bg-brand-bg/60 border border-brand-border space-y-1 text-xs">
               <p className="font-bold text-brand-text">How it benefits your training:</p>
               <ul className="list-disc list-inside text-brand-secondary/90 space-y-0.5 text-[11px]">
                 <li>Plays genuine human tactical motifs, habits, and realistic blunders.</li>

@@ -44,7 +44,7 @@ export function PlayTabBar({
   isOnlineActive = false,
 }: PlayTabBarProps) {
   return (
-    <div className="flex items-center gap-1 p-1 rounded-2xl bg-brand-surface/60 border border-white/5 backdrop-blur-md w-full sm:w-auto">
+    <div className="flex items-center gap-1 p-1 rounded-2xl bg-brand-surface/60 border border-brand-border backdrop-blur-md w-full sm:w-auto">
       {TABS.map(({ id, label, Icon, disabled }) => {
         const isActive = activeTab === id;
         const showPing = id === "online" && isOnlineActive && !isActive;

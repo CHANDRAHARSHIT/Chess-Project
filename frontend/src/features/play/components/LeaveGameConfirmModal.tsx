@@ -63,7 +63,7 @@ export function LeaveGameConfirmModal({ isOpen, onStay, onLeave }: LeaveGameConf
     >
       <div
         ref={modalRef}
-        className="relative max-w-sm w-full bg-brand-surface/95 border border-brand-border rounded-xl p-8 shadow-2xl shadow-brand-bg/50 backdrop-blur-md animate-in fade-in zoom-in-95 duration-200"
+        className="relative max-w-sm w-full bg-brand-surface/95 border border-brand-border rounded-xl p-8 backdrop-blur-md animate-in fade-in zoom-in-95 duration-200"
       >
         {/* Icon */}
         <div className="flex justify-center mb-5">
@@ -93,7 +93,7 @@ export function LeaveGameConfirmModal({ isOpen, onStay, onLeave }: LeaveGameConf
           <button
             ref={stayButtonRef}
             onClick={onStay}
-            className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-brand-accent text-black font-mono font-bold text-xs uppercase tracking-widest transition-all duration-200 hover:brightness-110 active:scale-[0.98] cursor-pointer shadow-md shadow-brand-accent/20"
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-brand-accent text-black font-mono font-bold text-xs uppercase tracking-widest transition-all duration-200 hover:brightness-110 active:scale-[0.98] cursor-pointer"
           >
             <Swords className="w-3.5 h-3.5" />
             Stay in game

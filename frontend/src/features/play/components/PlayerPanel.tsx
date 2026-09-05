@@ -32,7 +32,7 @@ export function PlayerPanel({
       className={`flex items-center justify-between gap-3 rounded-2xl border px-3.5 py-2 h-[62px] backdrop-blur-xl transition-colors ${
         isLive
           ? "bg-brand-surface/90 border-brand-accent/60 ring-1 ring-brand-accent/40"
-          : "bg-brand-surface/50 border-white/10 opacity-90"
+          : "bg-brand-surface/50 border-brand-border opacity-90"
       }`}
     >
       {/* Left: Player Crest & Identity */}

@@ -37,8 +37,8 @@ export function MoveLog({ moves }: MoveLogProps) {
   }, [moves]);
 
   return (
-    <div className="flex flex-col h-full max-h-full min-h-0 bg-brand-surface/60 border border-white/10 rounded-2xl overflow-hidden backdrop-blur-xl">
-      <div className="px-4 py-2.5 border-b border-white/10 bg-brand-surface/80 flex items-center justify-between shrink-0">
+    <div className="flex flex-col h-full max-h-full min-h-0 bg-brand-surface/60 border border-brand-border rounded-2xl overflow-hidden backdrop-blur-xl">
+      <div className="px-4 py-2.5 border-b border-brand-border bg-brand-surface/80 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-2">
           <ListOrdered className="w-4 h-4 text-brand-accent" />
           <h3 className="font-display font-bold text-xs text-brand-text tracking-wide uppercase">

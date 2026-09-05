@@ -43,9 +43,9 @@ export default function StoryModeCharacterSelect({ onSelect, onClose }: StoryMod
       <motion.div
         initial={{ opacity: 0, scale: 0.9, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        className="w-full max-w-4xl bg-[var(--obsidian-mid)] rounded-2xl border border-[var(--obsidian-light)] shadow-2xl overflow-hidden flex flex-col"
+        className="w-full max-w-4xl bg-[var(--obsidian-mid)] rounded-2xl border border-brand-border overflow-hidden flex flex-col"
       >
-        <div className="relative p-6 border-b border-white/5 text-center">
+        <div className="relative p-6 border-b border-brand-border text-center">
           <button 
             onClick={handleBack}
             className="absolute left-6 top-1/2 -translate-y-1/2 p-2 rounded-full hover:bg-white/10 text-white/60 hover:text-white transition-colors cursor-pointer"
@@ -72,7 +72,7 @@ export default function StoryModeCharacterSelect({ onSelect, onClose }: StoryMod
                 onClick={() => !char.locked && onSelect(char.id)}
                 className={`relative group rounded-xl overflow-hidden border-2 transition-all duration-300 ${
                   char.locked
-                    ? 'border-white/5 cursor-not-allowed'
+                    ? 'border-brand-border cursor-not-allowed opacity-50'
                     : 'border-amber-500/30 cursor-pointer hover:border-amber-400 hover:shadow-[0_0_20px_rgba(251,191,36,0.2)]'
                 }`}
               >

@@ -74,7 +74,7 @@ export default function FailedPage() {
         <div className="w-full space-y-4">
           <button
             onClick={() => navigate("/pricing")}
-            className="w-full py-4 px-6 rounded-xl font-mono text-xs uppercase tracking-widest font-semibold bg-brand-text/5 border border-white/10 hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text transition-all duration-300 cursor-pointer flex items-center justify-center gap-2 active:scale-[0.99]"
+            className="w-full py-4 px-6 rounded-xl font-mono text-xs uppercase tracking-widest font-semibold bg-brand-text/5 border border-brand-border hover:border-brand-accent/40 text-brand-secondary hover:text-brand-text transition-all duration-300 cursor-pointer flex items-center justify-center gap-2 active:scale-[0.99]"
           >
             <RefreshCw className="w-4 h-4" />
             <span>Try Again</span>

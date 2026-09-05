@@ -185,11 +185,11 @@ export function PlayChessGame({ onLeave, onFindAnother }: PlayChessGameProps) {
       <LiveRegion politeMessage={politeMessage} assertiveMessage={finalAssertiveMessage} />
 
       {/* Top Session Bar - Stretches flush across full arena width */}
-      <div className="w-full flex items-center justify-between gap-3 px-5 py-3 rounded-2xl bg-brand-surface/80 border border-white/10 backdrop-blur-xl">
+      <div className="w-full flex items-center justify-between gap-3 px-5 py-3 rounded-2xl bg-brand-surface/80 border border-brand-border backdrop-blur-xl">
         <div className="flex items-center gap-3">
           <button
             onClick={handleBackClick}
-            className="p-1.5 rounded-lg border border-white/10 bg-brand-bg/40 text-brand-secondary hover:text-brand-text hover:border-brand-accent/40 transition-all cursor-pointer"
+            className="p-1.5 rounded-lg border border-brand-border bg-brand-bg/40 text-brand-secondary hover:text-brand-text hover:border-brand-accent/40 transition-all cursor-pointer"
             title="Return to lobby"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -206,7 +206,7 @@ export function PlayChessGame({ onLeave, onFindAnother }: PlayChessGameProps) {
       </div>
 
       {status === "WAITING" && !waitedTooLong && (
-        <div className="w-full flex items-center gap-3 px-4 py-2 rounded-2xl border border-white/10 bg-brand-surface/50 text-brand-secondary text-xs">
+        <div className="w-full flex items-center gap-3 px-4 py-2 rounded-2xl border border-brand-border bg-brand-surface/50 text-brand-secondary text-xs">
           <span className="h-2 w-2 rounded-full bg-brand-accent shrink-0" />
           <span>Waiting for your opponent to connect…</span>
         </div>
@@ -358,7 +358,7 @@ export function PlayChessGame({ onLeave, onFindAnother }: PlayChessGameProps) {
           aria-labelledby="leave-confirm-title"
           className="fixed inset-0 z-40 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
         >
-          <div className="max-w-sm w-full rounded-2xl border border-white/10 bg-brand-surface/95 backdrop-blur-xl p-6 space-y-4">
+          <div className="max-w-sm w-full rounded-2xl border border-brand-border bg-brand-surface/95 backdrop-blur-xl p-6 space-y-4">
             <div className="flex items-center gap-2.5 text-amber-400">
               <AlertTriangle className="w-5 h-5 shrink-0" />
               <h2 id="leave-confirm-title" className="font-display text-lg font-bold text-brand-text">
@@ -371,7 +371,7 @@ export function PlayChessGame({ onLeave, onFindAnother }: PlayChessGameProps) {
             <div className="flex justify-end gap-3 pt-1">
               <button
                 onClick={() => setShowLeaveConfirm(false)}
-                className="px-4 py-2 rounded-lg font-mono text-xs uppercase tracking-widest font-semibold border border-brand-border/60 text-brand-secondary hover:text-brand-text hover:border-brand-accent/40 bg-brand-bg/40 transition-all cursor-pointer"
+                className="px-4 py-2 rounded-lg font-mono text-xs uppercase tracking-widest font-semibold border border-brand-border text-brand-secondary hover:text-brand-text hover:border-brand-accent/40 bg-brand-bg/40 transition-all cursor-pointer"
               >
                 Cancel
               </button>

@@ -58,14 +58,14 @@ export function Chess960SetupPanel({
       aria-labelledby="setup-title"
     >
       <div
-        className="relative bg-brand-surface border border-brand-text/15 rounded-3xl max-w-xl w-full p-6 sm:p-8 space-y-6 text-brand-text backdrop-blur-2xl overflow-hidden"
+        className="relative bg-brand-surface border border-brand-border rounded-3xl max-w-xl w-full p-6 sm:p-8 space-y-6 text-brand-text backdrop-blur-2xl overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Top Ambient Glow Ring */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-72 h-36 bg-brand-accent/10 rounded-full blur-3xl pointer-events-none -z-10" />
 
         {/* Header */}
-        <div className="relative border-b border-brand-text/10 pb-4 sm:pb-5 space-y-3">
+        <div className="relative border-b border-brand-border pb-4 sm:pb-5 space-y-3">
           {/* Top Bar: Variant Icon + Badge (Left) and Close Cross (Right) */}
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2.5 min-w-0">
